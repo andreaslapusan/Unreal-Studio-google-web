@@ -1,0 +1,692 @@
+import React, { useMemo, useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
+import { Project, AppConfig } from '../types';
+import { useCurrency } from '../App';
+import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
+
+const ProjectDetail: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const [project, setProject] = useState<Project | null>(null);
+  const [similarProjects, setSimilarProjects] = useState<Project[]>([]);
+  const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
+  const { formatPrice } = useCurrency();
+  const [loading, setLoading] = useState(true);
+  const [lightbox, setLightbox] = useState<{ open: boolean, index: number }>({ open: false, index: 0 });
+
+  const [showClientLogin, setShowClientLogin] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  // Helper date formatter
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return '';
+    try {
+        // If it's already in DD/MM/YYYY format (from admin free text input for completion date), return as is
+        if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) return dateString;
+        
+        return new Date(dateString).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    } catch {
+        return dateString;
+    }
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        // Carga de Configuración
+        const { data: configRows } = await supabase.from('app_config').select('*');
+        if (configRows && configRows.length > 0) {
+            const configObj: Record<string, any> = {};
+            configRows.forEach((row: any) => {
+              configObj[row.key] = row.value;
+            });
+            setConfig({ ...DEFAULT_CONFIG, ...configObj } as AppConfig);
+        }
+
+        if (slug) {
+           // Cargar Proyecto (Por Slug)
+           const { data: projectData, error } = await supabase
+             .from('projects')
+             .select('*')
+             .eq('slug', slug)
+             .single();
+
+           if (projectData) {
+              const rawProject = projectData as any;
+              const loadedProject: Project = {
+                  ...rawProject,
+                  gallery: parseJsonField(rawProject.gallery, []),
+                  investor_tiers: parseJsonField(rawProject.investor_tiers, []),
+                  amenities: parseJsonField(rawProject.amenities, [])
+              };
+              setProject(loadedProject);
+              document.title = `${loadedProject.name} | Unreal Studio Madrid`;
+
+              // Dynamic OG meta tags
+              const setMeta = (property: string, content: string) => {
+                let el = document.querySelector(`meta[property="${property}"]`) || document.querySelector(`meta[name="${property}"]`);
+                if (el) { el.setAttribute('content', content); }
+                else {
+                  el = document.createElement('meta');
+                  el.setAttribute(property.startsWith('og:') ? 'property' : 'name', property);
+                  el.setAttribute('content', content);
+                  document.head.appendChild(el);
+                }
+              };
+              setMeta('og:title', `${loadedProject.name} | Unreal Studio Madrid`);
+              setMeta('og:description', loadedProject.description?.substring(0, 160) || '');
+              setMeta('og:image', getImageUrl(loadedProject.image));
+              setMeta('og:url', window.location.href);
+              setMeta('twitter:title', `${loadedProject.name} | Unreal Studio Madrid`);
+              setMeta('twitter:description', loadedProject.description?.substring(0, 160) || '');
+              setMeta('twitter:image', getImageUrl(loadedProject.image));
+
+              // Cargar Proyectos Similares (Misma ubicación/zona)
+              const { data: similarData } = await supabase
+                .from('projects')
+                .select('*')
+                .eq('location', loadedProject.location) // Usamos location como zone
+                .neq('id', loadedProject.id)
+                .eq('is_hidden', false)
+                .limit(3);
+              
+              if (similarData) {
+                const safeSimilar = similarData.map((p: any) => ({
+                    ...p,
+                    gallery: parseJsonField(p.gallery, []),
+                    investor_tiers: parseJsonField(p.investor_tiers, [])
+                }));
+                setSimilarProjects(safeSimilar as unknown as Project[]);
+              }
+           } else if (error) {
+              console.error("Project not found:", error);
+           }
+        }
+      } catch (error) {
+        console.error("Error loading project details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, [slug]);
+
+  const allImages = useMemo(() => {
+    if (!project) return [];
+    const list = [project.image];
+    if (project.gallery) list.push(...project.gallery);
+    if (project.construction_gallery) list.push(...project.construction_gallery);
+    // Filtrar y convertir a URLs completas
+    return list.filter(img => img && img.length > 0).map(path => getImageUrl(path));
+  }, [project]);
+
+  const nextSlide = () => setLightbox(p => ({ ...p, index: (p.index + 1) % allImages.length }));
+  const prevSlide = () => setLightbox(p => ({ ...p, index: (p.index - 1 + allImages.length) % allImages.length }));
+
+  useEffect(() => {
+    if (!lightbox.open) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'Escape') setLightbox({ open: false, index: 0 });
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [lightbox.open, lightbox.index]);
+
+  const tiersArray = useMemo(() => {
+    if (!project || !project.investor_tiers) return [];
+    return typeof project.investor_tiers === 'string'
+        ? project.investor_tiers.split('\n').filter((t: string) => t.trim().length > 0)
+        : parseJsonField(project.investor_tiers, []);
+  }, [project]);
+
+  const isClientLoggedIn = (): boolean => {
+      const session = localStorage.getItem('_ust_client_');
+      if (!session) return false;
+      try {
+          const decoded = atob(session);
+          return decoded.startsWith('client_');
+      } catch { return false; }
+  };
+
+  const handleClientLoginForDoc = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoginError('');
+      setLoginLoading(true);
+      try {
+          const isEmail = loginEmail.includes('@');
+          
+          const { data, error } = await supabase.rpc('verify_client_login', {
+              p_email: isEmail ? loginEmail : null,
+              p_phone: !isEmail ? loginEmail : null,
+              p_password: loginPassword
+          });
+          if (error || !data || !data.success) {
+              setLoginError('Credenciales incorrectas.');
+              setLoginLoading(false);
+              return;
+          }
+          const token = btoa(`client_${data.client_id}_${Date.now()}`);
+          localStorage.setItem('_ust_client_', token);
+          setShowClientLogin(false);
+          setLoginEmail('');
+          setLoginPassword('');
+          
+          // Abrir el documento ahora que está logueado
+          if (project?.construction_update_url) {
+              window.open(getImageUrl(project.construction_update_url), '_blank');
+          }
+      } catch (err) {
+          setLoginError('Error de conexión.');
+      } finally {
+          setLoginLoading(false);
+      }
+  };
+
+  if (loading) {
+      return (
+          <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
+              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">Cargando proyecto...</p>
+          </div>
+      );
+  }
+
+  if (!project) {
+      return (
+          <div className="min-h-screen bg-almond flex flex-col items-center justify-center p-6 text-center">
+              <h1 className="text-4xl font-serif text-primary mb-4">Proyecto no encontrado</h1>
+              <Link to="/proyectos" className="text-primary font-bold uppercase tracking-widest border-b border-primary text-xs">Volver a Proyectos</Link>
+          </div>
+      );
+  }
+
+  return (
+    <div className="bg-almond transition-colors duration-300 overflow-x-hidden text-left relative">
+      {/* Lightbox Modal */}
+      {lightbox.open && (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
+          <button onClick={() => setLightbox({ open: false, index: 0 })} className="absolute top-8 right-8 text-white z-[110] hover:scale-110 transition">
+            <span className="material-symbols-outlined text-4xl">close</span>
+          </button>
+          <button onClick={prevSlide} className="absolute left-4 md:left-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
+            <span className="material-symbols-outlined text-4xl">arrow_back</span>
+          </button>
+          <img src={allImages[lightbox.index]} className="max-w-full max-h-[90vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300" />
+          <button onClick={nextSlide} className="absolute right-4 md:right-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
+            <span className="material-symbols-outlined text-4xl">arrow_forward</span>
+          </button>
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 font-bold text-xs uppercase tracking-widest">
+            {lightbox.index + 1} / {allImages.length}
+          </div>
+        </div>
+      )}
+
+      <section className="relative h-[75vh] w-full overflow-hidden">
+        <img alt={project.name} className="absolute inset-0 w-full h-full object-cover" src={getImageUrl(project.image)} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        <div className="absolute bottom-12 left-6 md:left-12 max-w-md w-full">
+          <div className="bg-white/95 backdrop-blur-md p-8 rounded-xl shadow-2xl border-l-4 border-primary">
+            <span className="bg-primary text-white text-[10px] uppercase font-bold px-3 py-2 rounded tracking-wide mb-4 inline-block">
+              {project.property_type}
+            </span>
+            <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}</h1>
+            <div className="flex items-center text-gray-500 text-sm font-medium text-left">
+              <span className="material-symbols-outlined text-base mr-1">location_on</span>
+              {project.location}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 md:divide-x divide-white/10">
+          <div className="px-4 first:pl-0 text-center md:text-left">
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">ROI Alquiler</p>
+            <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || 'Consultar'} <span className="text-xs font-sans opacity-80">Bruto/año</span></p>
+          </div>
+          <div className="px-4 text-center md:text-left">
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">ROI Reventa</p>
+            <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : 'Consultar'}</p>
+          </div>
+          <div className="px-4 text-center md:text-left">
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{config.labels.price}</p>
+            <p className="text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
+          </div>
+          <div className="px-4 text-center md:text-left">
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{config.labels.market_price}</p>
+            <p className="text-3xl font-serif line-through opacity-40">{formatPrice(project.market_price, project.price_currency)}</p>
+          </div>
+          <div className="px-4 border-r-0 text-center md:text-left">
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">Estado</p>
+            <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
+              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+              {project.status}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <main className="max-w-7xl mx-auto px-6 md:px-12 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div className="lg:col-span-8 space-y-20">
+          <section>
+            <h2 className="text-4xl text-primary mb-8">El Proyecto</h2>
+            <div className="prose prose-lg text-primary/80 font-light space-y-6 mb-12">
+              <p>{project.description}</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {[
+                { icon: 'beach_access', label: config.labels.distance_beach, value: project.distance_beach },
+                { icon: 'history', label: config.labels.years_contract, value: `${project.years_contract} años + ${project.years_extension} ext.` },
+                { icon: 'inventory_2', label: config.labels.available_units, value: `${project.available_units} Unidades` },
+                { icon: 'construction', label: config.labels.completion_percent, value: `${project.completion_percent}% Completado` }
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-primary/5">
+                  <div className="bg-almond p-3 rounded-xl"><span className="material-symbols-outlined text-primary">{item.icon}</span></div>
+                  <div>
+                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-widest">{item.label}</p>
+                    <p className="font-bold text-primary text-sm">{item.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+              {project.bedrooms > 0 && (
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
+                  <span className="material-symbols-outlined text-primary/40 text-2xl">bed</span>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Dormitorios</p>
+                  <p className="text-lg font-bold text-primary">{project.bedrooms}</p>
+                </div>
+              )}
+              {project.bathrooms > 0 && (
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
+                  <span className="material-symbols-outlined text-primary/40 text-2xl">shower</span>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Baños</p>
+                  <p className="text-lg font-bold text-primary">{project.bathrooms}</p>
+                </div>
+              )}
+              {project.area_m2 > 0 && (
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
+                  <span className="material-symbols-outlined text-primary/40 text-2xl">straighten</span>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Superficie</p>
+                  <p className="text-lg font-bold text-primary">{project.area_m2} m²</p>
+                </div>
+              )}
+              {project.furnishing && (
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
+                  <span className="material-symbols-outlined text-primary/40 text-2xl">chair</span>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Equipamiento</p>
+                  <p className="text-lg font-bold text-primary">{project.furnishing}</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Botones de Descarga en Columna Principal - MOVIDO AQUÍ PARA MAYOR VISIBILIDAD */}
+          {(project.brochure_url || project.construction_update_url || (project.floor_plans && project.floor_plans.length > 0)) && (
+            <section className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm">
+                <h3 className="text-2xl font-serif text-primary mb-6">Documentación del Proyecto</h3>
+                <div className="flex flex-wrap gap-4">
+                  {project.brochure_url && (
+                    <a href={getImageUrl(project.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
+                      <span className="material-symbols-outlined">download</span>
+                      Descargar Brochure
+                    </a>
+                  )}
+                  {project.construction_update_url && (
+                    <button onClick={() => {
+                        if (isClientLoggedIn()) {
+                            window.open(getImageUrl(project.construction_update_url), '_blank');
+                        } else {
+                            setShowClientLogin(true);
+                        }
+                    }} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-white text-primary border-2 border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-gray-50 hover:border-primary/30 transition">
+                        <span className="material-symbols-outlined">construction</span>
+                        <div className="text-left">
+                            <span className="block leading-none">Informe de Obra</span>
+                            <span className="text-[10px] font-medium opacity-60 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[10px]">lock</span> Acceso Inversor
+                                {project.construction_update_date && ` (${formatDate(project.construction_update_date)})`}
+                            </span>
+                        </div>
+                    </button>
+                  )}
+                </div>
+                
+                {project.floor_plans && project.floor_plans.length > 0 && (
+                  <div className="mt-8 pt-8 border-t border-gray-100">
+                    <h4 className="text-lg font-serif text-primary mb-4">Planos del Proyecto</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {project.floor_plans.map((pdf, idx) => (
+                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:bg-gray-100 transition group">
+                          <div className="bg-red-100 text-red-500 p-2 rounded-xl group-hover:scale-110 transition">
+                            <span className="material-symbols-outlined">picture_as_pdf</span>
+                          </div>
+                          <div className="flex-1 overflow-hidden">
+                            <p className="text-sm font-bold text-primary truncate">{pdf.split('/').pop()}</p>
+                            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">Ver PDF</p>
+                          </div>
+                          <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition">open_in_new</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </section>
+          )}
+
+          {project.amenities && project.amenities.length > 0 && (
+            <section>
+              <h2 className="text-3xl text-primary mb-8">Servicios incluidos</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {project.amenities.map((amenity, idx) => {
+                  const icons: Record<string, string> = {
+                    'Piscina privada': 'pool', 'Piscina compartida': 'pool', 'Gimnasio': 'fitness_center',
+                    'Coworking': 'desktop_windows', 'Jardín tropical': 'park', 'Terraza': 'deck',
+                    'Parking': 'local_parking', 'Seguridad 24h': 'shield', 'Cámaras de seguridad': 'videocam',
+                    'WiFi': 'wifi', 'Aire acondicionado': 'ac_unit', 'Ventilador': 'mode_fan_off',
+                    'Cocina equipada': 'kitchen', 'Lavandería': 'local_laundry_service', 'Zona barbacoa': 'outdoor_grill',
+                    'Vistas al mar': 'water', 'Cercano a la playa': 'beach_access', 'Recepción': 'concierge',
+                    'Bar': 'local_bar', 'Almacén': 'warehouse', 'Spa': 'spa',
+                    'Sala de juegos': 'sports_esports', 'Servicio de limpieza': 'cleaning_services', 'Alquiler de motos': 'two_wheeler'
+                  };
+                  return (
+                    <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
+                      <span className="material-symbols-outlined text-primary/40">{icons[amenity] || 'check_circle'}</span>
+                      <span className="text-sm font-medium text-primary">{amenity}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {project.furnishing_items && project.furnishing_items.length > 0 && (() => {
+            const categories: Record<string, { icon: string, items: string[] }> = {
+              'Baño': { icon: 'shower', items: ['Ducha', 'Grifería', 'Lavabo', 'Espejo de baño', 'Toallero', 'Mampara'] },
+              'Instalaciones': { icon: 'electrical_services', items: ['Iluminación', 'Enchufes', 'Interruptores', 'Aire acondicionado', 'Ventilador de techo', 'Puertas', 'Topes de puerta'] },
+              'Dormitorio': { icon: 'bed', items: ['Estructura de cama', 'Colchón', 'Mesilla de noche', 'Armario', 'Ropa de cama', 'Almohadas', 'Cortinas'] },
+              'Salón': { icon: 'weekend', items: ['Sofá', 'Mesa de centro', 'Sillas', 'Estanterías', 'Alfombra', 'Cojines decorativos', 'Lámpara de pie'] },
+              'Exterior': { icon: 'deck', items: ['Tumbonas de piscina', 'Mesa exterior', 'Sillas exterior', 'Sombrilla', 'Macetas'] },
+              'Cocina': { icon: 'kitchen', items: ['Nevera', 'Microondas', 'Horno', 'Placa de cocción', 'Campana extractora', 'Fregadero', 'Cafetera', 'Tostadora', 'Hervidor', 'Batidora', 'Utensilios de cocina', 'Cubertería', 'Vajilla', 'Cristalería', 'Sartenes y ollas'] },
+              'Decoración': { icon: 'palette', items: ['Cuadros', 'Jarrones', 'Plantas artificiales', 'Espejos decorativos'] }
+            };
+            const grouped = Object.entries(categories).filter(([_, cat]) => 
+              cat.items.some(item => project.furnishing_items!.includes(item))
+            );
+            if (grouped.length === 0) return null;
+            return (
+              <section>
+                <h2 className="text-3xl text-primary mb-8">Equipamiento incluido</h2>
+                <div className="space-y-6">
+                  {grouped.map(([catName, cat]) => {
+                    const activeItems = cat.items.filter(item => project.furnishing_items!.includes(item));
+                    return (
+                      <div key={catName}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="material-symbols-outlined text-primary/30">{cat.icon}</span>
+                          <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">{catName}</p>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {activeItems.map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-2 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
+                              <span className="material-symbols-outlined text-primary/30 text-sm">check_circle</span>
+                              <span className="text-sm font-medium text-primary">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })()}
+          
+          {showClientLogin && (
+            <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowClientLogin(false); }}>
+                <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl">
+                    <div className="text-center mb-8">
+                        <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">lock</span>
+                        <h2 className="text-xl font-serif text-primary mb-2">Acceso exclusivo para inversores</h2>
+                        <p className="text-sm text-primary/50">Inicia sesión con tus credenciales de cliente para ver el informe de obra.</p>
+                    </div>
+                    {loginError && <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl mb-4 text-center">{loginError}</div>}
+                    <form onSubmit={handleClientLoginForDoc} className="space-y-4">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Email o Teléfono</label>
+                            <input type="text" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="tu@email.com o +34..." className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Contraseña</label>
+                            <input type="password" required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                        </div>
+                        <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">
+                            {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> Verificando...</> : 'Acceder al informe'}
+                        </button>
+                    </form>
+                    <button onClick={() => setShowClientLogin(false)} className="w-full mt-4 text-primary/40 hover:text-primary text-xs font-bold uppercase tracking-widest py-2 transition">Cerrar</button>
+                    <p className="text-center text-[10px] text-primary/30 mt-6">¿No tienes acceso? Contacta con tu asesor de Unreal Studio.</p>
+                </div>
+            </div>
+          )}
+
+          {project.google_maps_url && (() => {
+            const getEmbedUrl = (url: string): string | null => {
+              if (!url) return null;
+              if (url.includes('/maps/embed')) return url;
+              if (url.includes('maps.app.goo.gl') || url.includes('goo.gl/maps')) {
+                return null;
+              }
+              const placeMatch = url.match(/place\/([^\/]+)/);
+              if (placeMatch) {
+                const query = encodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+                return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${query}`;
+              }
+              const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+              if (coordMatch) {
+                return `https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=${coordMatch[1]},${coordMatch[2]}&zoom=15`;
+              }
+              const qMatch = url.match(/[?&]q=([^&]+)/);
+              if (qMatch) {
+                return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${qMatch[1]}`;
+              }
+              return null;
+            };
+
+            const embedUrl = getEmbedUrl(project.google_maps_url);
+            const isShortLink = project.google_maps_url.includes('maps.app.goo.gl') || project.google_maps_url.includes('goo.gl/maps');
+
+            return (
+              <section className="mt-12">
+                <h2 className="text-3xl text-primary mb-8">Ubicación</h2>
+                {embedUrl ? (
+                  <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5" style={{height: '400px'}}>
+                    <iframe
+                      src={embedUrl}
+                      width="100%"
+                      height="100%"
+                      style={{border: 0}}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5 bg-gray-100 flex items-center justify-center" style={{height: '400px'}}>
+                    <a href={project.google_maps_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-3 text-primary/50 hover:text-primary transition">
+                      <span className="material-symbols-outlined text-4xl">map</span>
+                      <span className="text-sm font-bold uppercase tracking-widest">Ver en Google Maps</span>
+                      {isShortLink && <span className="text-[9px] text-primary/30">El enlace corto no permite vista embebida</span>}
+                    </a>
+                  </div>
+                )}
+              </section>
+            );
+          })()}
+
+          {tiersArray && tiersArray.length > 0 && (
+            <section className="bg-white p-8 md:p-12 rounded-3xl border border-primary/5 shadow-sm">
+              <h3 className="text-3xl text-primary mb-8">Estructura de Inversión</h3>
+              <div className="space-y-4">
+                {tiersArray.map((tier: string, idx: number) => (
+                  <div key={idx} className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0">
+                    <span className="text-primary/80 font-medium">{tier}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {project.construction_gallery && project.construction_gallery.length > 0 && (
+            <section>
+              <h3 className="text-3xl text-primary mb-8 text-left flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary/40 text-4xl">construction</span>
+                Avance de Obra
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {project.construction_gallery.map((img, idx) => {
+                  // Find the index of this image in the allImages array for the lightbox
+                  const globalIdx = allImages.findIndex(url => url === getImageUrl(img));
+                  return (
+                    <div 
+                      key={idx} 
+                      onClick={() => globalIdx !== -1 && setLightbox({ open: true, index: globalIdx })}
+                      className="relative rounded-2xl overflow-hidden shadow-sm group cursor-pointer aspect-square border border-gray-100"
+                    >
+                      <img loading="lazy" alt={`Avance de obra ${idx + 1}`} className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105" src={getImageUrl(img)} />
+                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                        <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          <section>
+            <h3 className="text-3xl text-primary mb-8 text-left">Galería del Proyecto</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {allImages.map((img, idx) => (
+                <div 
+                  key={idx} 
+                  onClick={() => setLightbox({ open: true, index: idx })}
+                  className={`relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${idx === 0 ? 'md:col-span-2 md:row-span-2 aspect-video' : 'aspect-square'}`}
+                >
+                  <img loading="lazy" alt={`${project.name} - Imagen ${idx + 1}`} className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105" src={img} />
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                    <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <div className="lg:col-span-4 relative">
+          <div className="sticky top-24 space-y-6">
+            <div className="bg-white p-8 rounded-2xl shadow-2xl border border-primary/5 text-left">
+              <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">Resumen de Activo</h3>
+              <div className="space-y-8 mb-10">
+                <div>
+                  <div className="flex justify-between text-[11px] font-bold text-gray-500 mb-3 uppercase tracking-wider">
+                    <span>{config.labels.completion_percent}</span>
+                    <span className="text-primary">{project.completion_percent}%</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                    <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${project.completion_percent}%` }}></div>
+                  </div>
+                </div>
+                
+                {/* Nuevo bloque de datos extra en sidebar */}
+                <div>
+                    {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Dormitorios</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
+                    {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Baños</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
+                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Superficie</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
+                    {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Equipamiento</span><span className="text-sm font-bold">{project.furnishing}</span></div>}
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Piscina</span><span className="text-sm font-bold">{project.has_pool ? 'Sí' : 'No'}</span></div>
+                    {project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Finalización</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                    <span>ROI Alquiler</span>
+                    <span className="text-primary">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
+                  </div>
+                  <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                    <span>ROI Reventa</span>
+                    <span className="text-primary">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
+                  </div>
+                </div>
+
+                {/* Botones en Sidebar */}
+                {(project.brochure_url || project.construction_update_url) && (
+                  <div className="pt-6 border-t border-gray-100 space-y-3">
+                    {project.brochure_url && (
+                      <a href={getImageUrl(project.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
+                        <span className="material-symbols-outlined text-sm">download</span> Descargar Brochure
+                      </a>
+                    )}
+                    {project.construction_update_url && (
+                      <button onClick={() => {
+                          if (isClientLoggedIn()) {
+                              window.open(getImageUrl(project.construction_update_url), '_blank');
+                          } else {
+                              setShowClientLogin(true);
+                          }
+                      }} className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-green-600 hover:text-white text-green-700 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
+                          <span className="material-symbols-outlined text-sm">construction</span>
+                          <span className="material-symbols-outlined text-xs opacity-50">lock</span>
+                          Informe Obra {project.construction_update_date && <span className="opacity-70 ml-1">({formatDate(project.construction_update_date)})</span>}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <a 
+                href={`https://wa.me/6285217790692?text=${encodeURIComponent(`¡Hola! Me interesa el proyecto "${project.name}" en ${project.location}. Me gustaría recibir más información y agendar una reunión.`)}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"
+              >
+                Solicitar info de este proyecto
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <section className="max-w-7xl mx-auto px-6 md:px-12 py-20 border-t border-primary/10">
+        <h3 className="text-3xl text-primary mb-12 text-left">Activos Similares</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {similarProjects.map((similar) => (
+            <Link key={similar.id} to={`/proyecto/${similar.slug}`} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group border border-primary/5">
+              <div className="h-48 overflow-hidden relative">
+                <img loading="lazy" alt={similar.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" src={getImageUrl(similar.image)} />
+                <span className="absolute top-3 left-3 bg-primary/80 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg">{similar.status}</span>
+              </div>
+              <div className="p-6 text-left">
+                <h4 className="text-lg font-bold text-primary mb-2 truncate">{similar.name}</h4>
+                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">{similar.location}</p>
+                <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                  <p className="font-bold text-primary">{formatPrice(similar.investor_price, similar.price_currency)}</p>
+                  <span className="material-symbols-outlined text-primary group-hover:translate-x-1 transition">arrow_forward</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default ProjectDetail;
