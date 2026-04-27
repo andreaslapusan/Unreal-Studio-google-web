@@ -1,3 +1,12 @@
 User-agent: *
 Allow: /
-Sitemap: https://unrealstudio.es/public/sitemap.xml
+
+# Block admin and internal team areas from search indexing
+Disallow: /admin
+Disallow: /equipo/
+
+# Block search engines from crawling private dashboards (still accessible via login)
+Disallow: /agencias/dashboard
+Disallow: /inversores/dashboard
+
+Sitemap: https://unrealstudiobali.com/sitemap.xml

@@ -2,35 +2,68 @@
 <html lang="es">
 <head>
     <meta charset="utf-8"/>
-    <!-- Google Analytics -->
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+
+    <!-- Performance: preconnect to critical 3rd-party origins (saves 100-300ms first paint) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://esm.sh">
+
+    <!-- Preload hero / og image so it's available before the page first paints -->
+    <link rel="preload" as="image" href="https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/og-image.webp" fetchpriority="high">
+
+    <!-- Google Analytics (deferred so it doesn't block render) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM1PBTZ06W"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-VM1PBTZ06W');
+      gtag('config', 'G-VM1PBTZ06W', { send_page_view: true, anonymize_ip: true });
     </script>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Unreal Studio Madrid | Inversiones Inmobiliarias en Bali</title>
-    <meta name="description" content="Promotor inmobiliario en Bali para inversores españoles. Inversión directa en villas, lofts y apartamentos sin intermediarios desde 80.000€. ROI proyectado del 28% anual bruto. Gestión integral desde Madrid 🌴">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://unrealstudio.es/">
+
+    <title>Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€</title>
+    <meta name="description" content="Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. ROI proyectado 15-28% anual. Compra remota con POA. Sede en Madrid + Bali.">
+    <meta name="keywords" content="invertir en Bali, propiedad Bali, villa Bali, loft Uluwatu, inversión Indonesia, real estate Bali, Unreal Studio, leasehold Bali, Canggu, Pererenan, Melasti, Balangan">
+    <meta name="author" content="Unreal Studio Bali">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta http-equiv="content-language" content="es">
+    <link rel="canonical" href="https://unrealstudiobali.com/">
+    <link rel="alternate" hreflang="es" href="https://unrealstudiobali.com/">
+    <link rel="alternate" hreflang="x-default" href="https://unrealstudiobali.com/">
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://unrealstudio.es/">
-    <meta property="og:title" content="Unreal Studio Madrid | Inversiones Inmobiliarias en Bali">
-    <meta property="og:description" content="Promotor inmobiliario en Bali para inversores españoles. Inversión directa en villas, lofts y apartamentos sin intermediarios desde 80.000€. ROI proyectado del 28% anual bruto. Gestión integral desde Madrid 🌴">
+    <meta property="og:url" content="https://unrealstudiobali.com/">
+    <meta property="og:title" content="Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€">
+    <meta property="og:description" content="Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. ROI 15-28% anual.">
     <meta property="og:image" content="https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/og-image.webp">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Villa de inversión en Bali — Unreal Studio">
     <meta property="og:locale" content="es_ES">
-    <meta property="og:site_name" content="Unreal Studio Madrid">
+    <meta property="og:site_name" content="Unreal Studio Bali">
+
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Unreal Studio Madrid | Inversiones Inmobiliarias en Bali">
-    <meta name="twitter:description" content="Promotor inmobiliario en Bali para inversores españoles. Inversión directa en villas, lofts y apartamentos sin intermediarios desde 80.000€. ROI proyectado del 28% anual bruto. Gestión integral desde Madrid 🌴">
+    <meta name="twitter:site" content="@unrealstudiobali">
+    <meta name="twitter:title" content="Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€">
+    <meta name="twitter:description" content="Villas, lofts y apartamentos en Bali desde 75.000€. ROI 15-28% anual. Inversión directa con sede en Madrid + Bali.">
     <meta name="twitter:image" content="https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/og-image.webp">
+
+    <!-- Tailwind CDN — TODO: migrate to local build for ~80kb savings on first paint -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@200;300;400;500;600;700;800&family=Montserrat:wght@200;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+
+    <!-- Fonts: media print swap-on-load trick keeps it non-render-blocking -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@200;300;400;500;600;700;800&family=Montserrat:wght@200;900&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@200;300;400;500;600;700;800&family=Montserrat:wght@200;900&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+    </noscript>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -89,17 +122,26 @@
     {
       "@context": "https://schema.org",
       "@type": "RealEstateAgent",
-      "name": "Unreal Studio Madrid",
-      "description": "Promotor inmobiliario en Bali para inversores españoles. Inversión directa en villas sin intermediarios.",
-      "url": "https://unrealstudio.es",
-      "logo": "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/favicon_io/android-chrome-512x512.png",
+      "@id": "https://unrealstudiobali.com/#organization",
+      "name": "Unreal Studio Bali",
+      "alternateName": "Unreal Studio Madrid",
+      "description": "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. Compra directa, sin intermediarios.",
+      "url": "https://unrealstudiobali.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/favicon_io/android-chrome-512x512.png",
+        "width": 512,
+        "height": 512
+      },
       "image": "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/og-image.webp",
-      "telephone": "+6285217790692",
+      "telephone": "+34625710770",
+      "email": "hello@unrealstudiobali.com",
       "address": [
         {
           "@type": "PostalAddress",
           "streetAddress": "C. de San Nicolás 17",
           "addressLocality": "Madrid",
+          "postalCode": "28013",
           "addressCountry": "ES"
         },
         {
@@ -110,10 +152,33 @@
         }
       ],
       "sameAs": [
-        "https://instagram.com/unrealstudiomadrid"
+        "https://instagram.com/unrealstudiomadrid",
+        "https://www.linkedin.com/company/unreal-studio-bali"
       ],
-      "areaServed": ["España", "Indonesia"],
-      "priceRange": "€€€"
+      "areaServed": [
+        { "@type": "Country", "name": "España" },
+        { "@type": "Country", "name": "Indonesia" }
+      ],
+      "priceRange": "€75.000 - €300.000",
+      "foundingDate": "2023",
+      "knowsLanguage": ["es", "en", "id"]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://unrealstudiobali.com/#website",
+      "url": "https://unrealstudiobali.com/",
+      "name": "Unreal Studio Bali",
+      "description": "Inversión inmobiliaria en Bali desde 75.000€",
+      "publisher": { "@id": "https://unrealstudiobali.com/#organization" },
+      "inLanguage": "es-ES",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://unrealstudiobali.com/proyectos?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
 <link rel="stylesheet" href="/index.css">
