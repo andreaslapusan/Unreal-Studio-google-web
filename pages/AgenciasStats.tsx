@@ -91,7 +91,8 @@ export default function AgenciasStats() {
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
   if (!user) return <Navigate to="/agencias/login" replace />;
-  if (role && role !== "lister" && role !== "admin") {
+  // Strict guard: deny null/unknown roles.
+  if (!role || (role !== "lister" && role !== "admin")) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>

@@ -14,7 +14,12 @@ interface AuthCtx {
   session: Session | null;
   role: UserRole;
   loading: boolean;
-  sendMagicLink: (email: string) => Promise<void>;
+  /**
+   * Send a magic-link email. Pass createIfMissing=true only when the
+   * caller is admin-side and has validated the email (e.g. application
+   * approval flow). Public login pages should leave it false.
+   */
+  sendMagicLink: (email: string, createIfMissing?: boolean) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -70,14 +75,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const sendMagicLink = async (email: string) => {
+  /**
+   * Send a magic link.
+   *
+   * @param email   destination email
+   * @param createIfMissing
+   *   when true, Supabase creates a user if the email is not registered.
+   *   Default is FALSE for public-facing logins (lister/investor) so anon
+   *   visitors cannot create accounts by enumerating emails.
+   *   AdminPortalManager passes `true` when explicitly approving an
+   *   application — there the email has been validated by an admin first.
+   */
+  const sendMagicLink = async (email: string, createIfMissing = false) => {
     const redirect =
       typeof window !== "undefined"
         ? `${window.location.origin}/#/auth/finish`
         : undefined;
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: redirect, shouldCreateUser: true },
+      options: { emailRedirectTo: redirect, shouldCreateUser: createIfMissing },
     });
     if (error) throw error;
   };

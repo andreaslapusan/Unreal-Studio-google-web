@@ -163,8 +163,9 @@ export default function InversoresDashboard() {
   }, [user]);
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
-  if (!user) return <Navigate to="/inversores" replace />;
-  if (role && role !== "investor" && role !== "admin") {
+  if (!user) return <Navigate to="/inversores/login" replace />;
+  // Strict guard: deny null/unknown roles.
+  if (!role || (role !== "investor" && role !== "admin")) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>

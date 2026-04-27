@@ -26,17 +26,21 @@ function spaRedirectPlugin() {
 }
 
 export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, '.', '');
+    // Only load VITE_-prefixed env vars into the client. This prevents server-side
+    // secrets like GEMINI_API_KEY (without a VITE_ prefix) from being inlined into
+    // the bundle by accident. Anything that needs to reach the browser must be
+    // explicitly named VITE_*.
+    const env = loadEnv(mode, '.', 'VITE_');
     return {
       server: {
         port: 3000,
         host: '0.0.0.0',
       },
       plugins: [react(), spaRedirectPlugin()],
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-      },
+      // NOTE: We deliberately do NOT inline GEMINI_API_KEY into the client bundle.
+      // If Gemini calls are needed from the SPA, route them through a Supabase
+      // Edge Function or a server proxy that holds the key securely.
+      define: {},
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),

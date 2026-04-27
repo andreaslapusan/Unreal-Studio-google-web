@@ -43,8 +43,9 @@ export default function EquipoUpload() {
   }, [user]);
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
-  if (!user) return <Navigate to="/agencias" replace />;
-  if (role && role !== "admin" && role !== "team") {
+  if (!user) return <Navigate to="/admin/login" replace />;
+  // Strict guard: deny null/unknown roles.
+  if (!role || (role !== "admin" && role !== "team")) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>

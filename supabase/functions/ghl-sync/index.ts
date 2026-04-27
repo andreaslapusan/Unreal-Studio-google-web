@@ -18,9 +18,12 @@
 //  - GHL_LOCATION_ID
 //  - GHL_PIPELINE_LISTING_ID  (default: YNiATL5JmkQ5ZtpRuWLr)
 //  - GHL_PIPELINE_PRINCIPAL_ID (default: X5mByoeHMbsYrFJbM4GP)
+//  - WEBHOOK_SECRET            (shared secret with Supabase DB webhooks; required)
 //  - SUPABASE_URL
 //  - SUPABASE_SERVICE_ROLE_KEY  (auto-injected by Supabase)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET") ?? "";
 
 const GHL_TOKEN = Deno.env.get("GHL_API_TOKEN") ?? "";
 const GHL_LOC = Deno.env.get("GHL_LOCATION_ID") ?? "";
@@ -270,6 +273,17 @@ async function handlePropertyUpdateInsert(row: UpdateRow) {
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+
+  // Webhook signature: require X-Webhook-Secret header to match WEBHOOK_SECRET.
+  // Supabase DB webhooks let you set custom HTTP headers per webhook config.
+  // Reject everything else to prevent unauthenticated payload spoofing.
+  if (!WEBHOOK_SECRET) {
+    return new Response("Server misconfigured: WEBHOOK_SECRET not set", { status: 500 });
+  }
+  const presented = req.headers.get("x-webhook-secret");
+  if (presented !== WEBHOOK_SECRET) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   let body: unknown;
   try {
