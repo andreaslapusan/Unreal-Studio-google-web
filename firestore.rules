@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check role from custom claims
+    function role() {
+      return request.auth.token.role;
+    }
+
+    function isAdmin() { return role() == 'admin'; }
+    function isTeam()  { return role() in ['admin','team']; }
+    function isLister() { return role() == 'lister'; }
+    function isInvestor() { return role() == 'investor'; }
+    function isAuth() { return request.auth != null; }
+
+    // Properties: public read for available, admins write
+    match /properties/{propertyId} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      match /units/{unitId} {
+        allow read: if true;
+        allow write: if isAdmin();
+      }
+
+      match /updates/{updateId} {
+        allow read: if isAuth() && (
+          resource.data.visibility == 'all'
+          || (isLister() && resource.data.visibility == 'listers-only')
+          || (isInvestor() && resource.data.visibility == 'investors-only')
+          || isAdmin()
+        );
+        allow create: if isTeam();
+        allow update, delete: if isAdmin();
+
+        match /assets/{assetId} {
+          allow read: if isAuth();
+          allow write: if isTeam();
+        }
+      }
+    }
+
+    // Listing partners: lister sees own record, admin sees all
+    match /listing_partners/{partnerId} {
+      allow read: if isAdmin() || (isAuth() && resource.data.user_id == request.auth.uid);
+      allow write: if isAdmin();
+    }
+
+    // Investors: investor sees own, admin sees all
+    match /investors/{investorId} {
+      allow read: if isAdmin() || (isAuth() && resource.data.user_id == request.auth.uid);
+      allow write: if isAdmin();
+    }
+
+    // Investor units: investor sees own only, admin sees all
+    match /investor_units/{docId} {
+      allow read: if isAdmin() || (
+        isInvestor() &&
+        resource.data.investor_id == request.auth.token.investorId
+      );
+      allow write: if isAdmin();
+    }
+
+    // System health (admin only)
+    match /system_health/{docId} {
+      allow read: if isAdmin();
+      allow write: if false; // only Cloud Functions
+    }
+
+    // GHL events log (admin only)
+    match /ghl_events/{docId} {
+      allow read: if isAdmin();
+      allow write: if false; // only Cloud Functions
+    }
+
+    // Pending signups (write from client during signup, function reads)
+    match /pending_signups/{uid} {
+      allow create: if isAuth() && request.auth.uid == uid;
+      allow read, update, delete: if false;
+    }
+
+    // Mail outbox (Trigger Email extension reads from here)
+    match /mail/{docId} {
+      allow read, write: if false; // only Cloud Functions write
+    }
+  }
+}

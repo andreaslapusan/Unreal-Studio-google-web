@@ -1,0 +1,33 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuth() { return request.auth != null; }
+    function role() { return request.auth.token.role; }
+    function isAdmin() { return role() == 'admin'; }
+    function isTeam() { return role() in ['admin','team']; }
+
+    // Property update assets (photos, videos, pdfs uploaded by team)
+    match /property-updates/{property}/{allPaths=**} {
+      allow read: if isAuth();
+      allow write: if isTeam();
+    }
+
+    // Public dossiers (PDFs, brochures)
+    match /dossiers/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Contracts (only investor + admin)
+    match /contracts/{investorId}/{allPaths=**} {
+      allow read: if request.auth.token.investorId == investorId || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
