@@ -14,7 +14,7 @@ const config: FirebaseOptions = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY ?? "",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? "gen-lang-client-0678977822.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? "gen-lang-client-0678977822",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ?? "gen-lang-client-0678977822.appspot.com",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ?? "gen-lang-client-0678977822.firebasestorage.app",
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? "343975482095",
   appId: import.meta.env.VITE_FIREBASE_APP_ID ?? "",
 };
