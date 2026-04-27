@@ -87,6 +87,80 @@ const LandingGlobalitae: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // Meta Pixel - load via script tag injection
+    const loadPixel = () => {
+      if ((window as any).fbq) return; // Already loaded
+      
+      const f = window as any;
+      const n = f.fbq = function() {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n;
+      n.push = n;
+      n.loaded = true;
+      n.version = '2.0';
+      n.queue = [] as any[];
+      
+      const t = document.createElement('script');
+      t.async = true;
+      t.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      const s = document.getElementsByTagName('script')[0];
+      if (s && s.parentNode) {
+        s.parentNode.insertBefore(t, s);
+      } else {
+        document.head.appendChild(t);
+      }
+      
+      (window as any).fbq('init', '2063788554445408');
+      (window as any).fbq('track', 'PageView');
+    };
+    
+    loadPixel();
+
+    // Listen for GHL form submission via postMessage
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        if (typeof event.data === 'string' && event.data.includes('form_submitted')) {
+          if ((window as any).fbq) {
+            (window as any).fbq('track', 'CompleteRegistration');
+          }
+        }
+        // Also check for GHL specific message format
+        if (event.data && typeof event.data === 'object' && event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmit') {
+          if ((window as any).fbq) {
+            (window as any).fbq('track', 'CompleteRegistration');
+          }
+        }
+      } catch (e) {
+        // Ignore cross-origin errors
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Also observe the iframe for URL changes (form completion usually redirects)
+    const checkFormCompletion = setInterval(() => {
+      try {
+        const iframe = document.getElementById('inline-sJULfOixnegP6pWUFDy1') as HTMLIFrameElement;
+        if (iframe && iframe.contentDocument) {
+          const thankYou = iframe.contentDocument.querySelector('.thank-you, .success-message, [data-form-submitted]');
+          if (thankYou && (window as any).fbq) {
+            (window as any).fbq('track', 'CompleteRegistration');
+            clearInterval(checkFormCompletion);
+          }
+        }
+      } catch (e) {
+        // Cross-origin - can't access iframe content, rely on postMessage
+      }
+    }, 2000);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      clearInterval(checkFormCompletion);
+    };
+  }, []);
+
   if (loading) {
       return (
           <div className="min-h-screen bg-[#f5f0eb] flex flex-col items-center justify-center space-y-4">
@@ -107,6 +181,9 @@ const LandingGlobalitae: React.FC = () => {
 
   return (
     <div className="bg-[#f5f0eb] min-h-screen font-sans text-primary selection:bg-primary selection:text-white pb-12">
+      <noscript>
+        <img height="1" width="1" style={{display: 'none'}} src="https://www.facebook.com/tr?id=2063788554445408&ev=PageView&noscript=1" alt="" />
+      </noscript>
       <style>{`
         .font-serif { font-family: 'Nexa Heavy', serif !important; }
         .font-sans { font-family: 'Anglemoxi Regular', sans-serif !important; }

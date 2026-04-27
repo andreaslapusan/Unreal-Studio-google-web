@@ -55,7 +55,13 @@ const AMENITIES_LIST = [
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
   
   const { currency, setCurrency, formatPrice } = useCurrency();
-  const [activeView, setActiveView] = useState<'projects' | 'blogs' | 'config' | 'users' | 'clients'>('projects');
+  const [activeView, setActiveView] = useState<'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar'>('projects');
+
+  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+  const [daysOff, setDaysOff] = useState<Record<string, string[]>>({});
+  const [calendarAdminPassword, setCalendarAdminPassword] = useState('');
+  const [calendarEditMode, setCalendarEditMode] = useState(false);
+  const [calendarAuthError, setCalendarAuthError] = useState('');
 
   const LOGO_URL = "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/logo-06.png";
 
@@ -99,6 +105,37 @@ const AMENITIES_LIST = [
       const decoded = atob(session);
       return decoded.split('_')[1] || null;
     } catch { return null; }
+  };
+
+  const loadDaysOff = async () => {
+    const { data } = await supabase.from('app_config').select('value').eq('key', 'days_off').single();
+    if (data?.value) {
+      try { setDaysOff(JSON.parse(data.value)); } catch { setDaysOff({}); }
+    }
+  };
+
+  const saveDaysOff = async (newDaysOff: Record<string, string[]>) => {
+    setDaysOff(newDaysOff);
+    await supabase.from('app_config').upsert({ key: 'days_off', value: JSON.stringify(newDaysOff) });
+  };
+
+  const toggleDayOff = (userId: string, date: string) => {
+    if (!calendarEditMode) return;
+    const userDays = [...(daysOff[userId] || [])];
+    const idx = userDays.indexOf(date);
+    if (idx >= 0) userDays.splice(idx, 1); else userDays.push(date);
+    const newDaysOff = { ...daysOff, [userId]: userDays };
+    saveDaysOff(newDaysOff);
+  };
+
+  const handleCalendarAuth = async () => {
+    const { data } = await supabase.rpc('verify_admin_login', { p_username: 'admin', p_password: calendarAdminPassword });
+    if (data?.success) {
+      setCalendarEditMode(true);
+      setCalendarAuthError('');
+    } else {
+      setCalendarAuthError('Contraseña incorrecta');
+    }
   };
 
   const getAdminUsername = (): string | null => {
@@ -186,6 +223,7 @@ const AMENITIES_LIST = [
     if (!session) { navigate('/admin/login'); return; }
 
     loadData();
+    loadDaysOff();
 
     try {
         const decoded = atob(session);
@@ -849,13 +887,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
         <div className="flex space-x-6 mb-12 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide">
-          {['projects', 'blogs', 'clients', 'users', 'config'].map((v) => (
+          {['projects', 'blogs', 'clients', 'users', 'config', 'calendar'].map((v) => (
             <button 
               key={v}
               onClick={() => setActiveView(v as any)}
               className={`text-lg font-serif pb-2 transition-all whitespace-nowrap capitalize ${activeView === v ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-primary'}`}
             >
-              {v === 'projects' ? 'Propiedades' : v === 'blogs' ? 'Blog' : v === 'clients' ? 'Clientes' : v === 'users' ? 'Usuarios' : 'Configuración'}
+              {v === 'projects' ? 'Propiedades' : v === 'blogs' ? 'Blog' : v === 'clients' ? 'Clientes' : v === 'users' ? 'Usuarios' : v === 'calendar' ? 'Calendario' : 'Configuración'}
             </button>
           ))}
         </div>
@@ -1103,6 +1141,111 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </div>
              </div>
            </div>
+        )}
+
+        {activeView === 'calendar' && (
+          <div>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-serif text-primary">Calendario de Días Libres</h2>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setCalendarYear(y => y - 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_left</span></button>
+                <span className="text-xl font-bold text-primary">{calendarYear}</span>
+                <button onClick={() => setCalendarYear(y => y + 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_right</span></button>
+              </div>
+            </div>
+
+            {!calendarEditMode && (
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-primary/5 mb-8 max-w-md">
+                <p className="text-sm text-primary/60 mb-3">Para editar días libres, introduce la contraseña de administrador:</p>
+                <div className="flex gap-2">
+                  <input type="password" value={calendarAdminPassword} onChange={(e) => setCalendarAdminPassword(e.target.value)} placeholder="Contraseña admin" className="flex-1 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 font-medium" onKeyDown={(e) => e.key === 'Enter' && handleCalendarAuth()} />
+                  <button onClick={handleCalendarAuth} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">Desbloquear</button>
+                </div>
+                {calendarAuthError && <p className="text-red-500 text-xs mt-2">{calendarAuthError}</p>}
+              </div>
+            )}
+
+            {calendarEditMode && (
+              <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-green-600 text-sm">lock_open</span>
+                <span className="text-xs font-bold text-green-700">Modo edición activo — haz clic en los días para marcar/desmarcar</span>
+                <button onClick={() => setCalendarEditMode(false)} className="ml-auto text-xs text-green-600 hover:text-green-800 font-bold">Bloquear</button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 12 }, (_, monthIdx) => {
+                const monthDate = new Date(calendarYear, monthIdx, 1);
+                const monthName = monthDate.toLocaleDateString('es-ES', { month: 'long' });
+                const daysInMonth = new Date(calendarYear, monthIdx + 1, 0).getDate();
+                const firstDayOfWeek = (monthDate.getDay() + 6) % 7;
+                
+                return (
+                  <div key={monthIdx} className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3 text-center capitalize">{monthName}</h3>
+                    <div className="grid grid-cols-7 gap-1 text-center">
+                      {['L','M','X','J','V','S','D'].map(d => (
+                        <span key={d} className="text-[8px] font-bold text-primary/30">{d}</span>
+                      ))}
+                      {Array.from({ length: firstDayOfWeek }, (_, i) => (
+                        <span key={`empty-${i}`} />
+                      ))}
+                      {Array.from({ length: daysInMonth }, (_, dayIdx) => {
+                        const day = dayIdx + 1;
+                        const dateStr = `${calendarYear}-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        const usersOff = users.filter(u => (daysOff[u.id] || []).includes(dateStr));
+                        const isWeekend = new Date(calendarYear, monthIdx, day).getDay() === 0 || new Date(calendarYear, monthIdx, day).getDay() === 6;
+                        const isToday = dateStr === new Date().toISOString().split('T')[0];
+                        
+                        return (
+                          <div 
+                            key={day}
+                            className={`relative text-[10px] rounded-lg p-1 min-h-[28px] flex flex-col items-center justify-center cursor-pointer transition
+                              ${isToday ? 'ring-2 ring-primary' : ''}
+                              ${isWeekend ? 'bg-gray-50 text-gray-300' : 'hover:bg-primary/5'}
+                              ${usersOff.length > 0 ? 'bg-red-50' : ''}
+                            `}
+                            onClick={() => {
+                              if (!calendarEditMode) return;
+                              const userId = getAdminUserId();
+                              if (userId) toggleDayOff(userId, dateStr);
+                            }}
+                            title={usersOff.length > 0 ? usersOff.map(u => u.username).join(', ') : ''}
+                          >
+                            <span className={`font-bold ${usersOff.length > 0 ? 'text-red-600' : ''}`}>{day}</span>
+                            {usersOff.length > 0 && (
+                              <div className="flex gap-0.5 mt-0.5">
+                                {usersOff.slice(0, 3).map((u, i) => (
+                                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-red-400" title={u.username} />
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {users.length > 0 && (
+              <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-primary/5">
+                <h3 className="text-lg font-serif text-primary mb-4">Resumen por empleado</h3>
+                <div className="space-y-3">
+                  {users.map(u => {
+                    const userDays = (daysOff[u.id] || []).filter(d => d.startsWith(String(calendarYear)));
+                    return (
+                      <div key={u.id} className="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span className="font-medium text-primary">{u.username}</span>
+                        <span className="text-sm text-primary/50">{userDays.length} días libres en {calendarYear}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </main>
 
