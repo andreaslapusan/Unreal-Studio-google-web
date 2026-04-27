@@ -19,6 +19,7 @@ import AgenciasLogin from './pages/AgenciasLogin';
 import AgenciasPartnership from './pages/AgenciasPartnership';
 import AgenciasRegistrar from './pages/AgenciasRegistrar';
 import AgenciasDashboard from './pages/AgenciasDashboard';
+import AgenciasStats from './pages/AgenciasStats';
 import InversoresLogin from './pages/InversoresLogin';
 import InversoresDashboard from './pages/InversoresDashboard';
 import AuthFinish from './pages/AuthFinish';
@@ -152,6 +153,7 @@ const App: React.FC = () => {
             <Route path="/agencias/login" element={<AgenciasLogin />} />
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
+            <Route path="/agencias/stats" element={<AgenciasStats />} />
             <Route path="/inversores" element={<InversoresLogin />} />
             <Route path="/inversores/dashboard" element={<InversoresDashboard />} />
             <Route path="/equipo/upload" element={<EquipoUpload />} />

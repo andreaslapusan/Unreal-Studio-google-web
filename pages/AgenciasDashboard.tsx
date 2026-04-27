@@ -3,7 +3,7 @@
  * Lista los proyectos asignados a la agencia desde Supabase.
  */
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
@@ -94,14 +94,15 @@ export default function AgenciasDashboard() {
 
   return (
     <div className="min-h-screen bg-almond pb-16">
-      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between">
+      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="font-serif text-2xl">Portal Agencias</h1>
           <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
         </div>
-        <button onClick={() => void signOut()} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
-          Salir
-        </button>
+        <nav className="flex gap-2 text-sm">
+          <Link to="/agencias/stats" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">📊 Estadísticas</Link>
+          <button onClick={() => void signOut()} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">Salir</button>
+        </nav>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-10">

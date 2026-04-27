@@ -11,7 +11,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
-type Tab = "activity" | "properties" | "units" | "partners" | "applications";
+type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications";
 
 interface ActivityEvent {
   id: string;
