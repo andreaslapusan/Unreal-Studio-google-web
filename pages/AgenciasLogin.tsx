@@ -3,9 +3,11 @@
  */
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 
 export default function AgenciasLogin() {
+  const { t } = useTranslation();
   const { sendMagicLink, signInWithGoogle, user } = useAuth();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -39,23 +41,20 @@ export default function AgenciasLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-almond px-6 py-16">
       <div className="w-full max-w-md glass-card rounded-2xl p-8 shadow-xl">
-        <h1 className="text-3xl font-serif text-primary mb-2">Portal Agencias</h1>
-        <p className="text-primary/70 mb-8 text-sm">
-          Acceso para agencias colaboradoras de Unreal Studio Bali. Te enviamos
-          un enlace mágico al email para entrar sin contraseña.
-        </p>
+        <h1 className="text-3xl font-serif text-primary mb-2">{t("agenciasLogin.title")}</h1>
+        <p className="text-primary/70 mb-8 text-sm">{t("agenciasLogin.subtitle")}</p>
 
         {status === "sent" ? (
           <div className="bg-green-50 border-l-4 border-green-500 text-green-900 p-4 rounded">
-            <p className="font-medium">📧 Email enviado</p>
+            <p className="font-medium">{t("agenciasLogin.sentTitle")}</p>
             <p className="text-sm mt-1">
-              Revisa <strong>{email}</strong> y abre el enlace para iniciar sesión.
+              <Trans i18nKey="agenciasLogin.sentBody" values={{ email }} components={{ strong: <strong /> }} />
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <label className="block">
-              <span className="text-sm text-primary font-medium">Email</span>
+              <span className="text-sm text-primary font-medium">{t("common.email")}</span>
               <input
                 type="email"
                 required
@@ -71,7 +70,7 @@ export default function AgenciasLogin() {
               disabled={status === "sending"}
               className="w-full bg-primary text-white py-3 rounded-lg font-bold hover:translate-y-[-2px] transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {status === "sending" ? "Enviando…" : "Enviar enlace mágico"}
+              {status === "sending" ? t("common.sending") : t("agenciasLogin.btn")}
             </button>
 
             <div className="flex items-center gap-3 my-4">
@@ -91,7 +90,7 @@ export default function AgenciasLogin() {
                 <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.962H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.331z" fill="#FBBC05"/>
                 <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.962L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
               </svg>
-              Continuar con Google
+              {t("agenciasLogin.btnGoogle")}
             </button>
 
             {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
@@ -99,9 +98,9 @@ export default function AgenciasLogin() {
         )}
 
         <p className="text-xs text-primary/50 mt-6 text-center">
-          ¿Aún no eres colaborador?{" "}
+          {t("agenciasLogin.noPartner")}{" "}
           <a href="/#/contacto" className="underline">
-            Contáctanos
+            {t("agenciasLogin.contact")}
           </a>
         </p>
       </div>

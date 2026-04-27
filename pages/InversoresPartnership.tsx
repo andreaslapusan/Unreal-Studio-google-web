@@ -4,6 +4,7 @@
  */
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const benefits = [
   { emoji: "📈", title: "ROI 15–28% bruto anual", body: "Validado en proyectos en operación. Recuperación de inversión en 5–6 años + plusvalía a la salida." },
@@ -51,31 +52,31 @@ const faqs: { q: string; a: string }[] = [
 ];
 
 export default function InversoresPartnership() {
+  const { t } = useTranslation();
   return (
     <div className="bg-almond text-primary">
       <section className="relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 pt-20 pb-16">
           <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium mb-4">
-            Programa Inversor
+            {t("inversoresPartnership.tag")}
           </div>
           <h1 className="font-serif text-5xl md:text-6xl leading-tight mb-4">
-            Invierte en Bali.
+            {t("inversoresPartnership.heroTitle1")}
             <br />
-            <span className="text-primary/60">Cobra 1.300€/mes desde el primer alquiler.</span>
+            <span className="text-primary/60">{t("inversoresPartnership.heroTitle2")}</span>
           </h1>
           <p className="text-lg text-primary/70 max-w-2xl mb-8">
-            Villas y lofts en Uluwatu, Pererenan y Tabanan desde 75.000€.
-            ROI 15–28% bruto anual validado. Compra 100% remota desde España, sin intermediarios.
+            {t("inversoresPartnership.heroBody")}
           </p>
           <div className="flex flex-wrap gap-3">
             <Link to="/contacto" className="bg-primary text-white px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-lg">
-              Hablar con un asesor
+              {t("inversoresPartnership.ctaTalk")}
             </Link>
             <Link to="/proyectos" className="bg-white border border-primary/20 text-primary px-8 py-4 rounded-full font-medium hover:bg-primary/5 transition">
-              Ver proyectos
+              {t("inversoresPartnership.ctaSeeProjects")}
             </Link>
-            <Link to="/inversores" className="bg-white border border-primary/20 text-primary px-8 py-4 rounded-full font-medium hover:bg-primary/5 transition">
-              Ya soy inversor — login
+            <Link to="/inversores/login" className="bg-white border border-primary/20 text-primary px-8 py-4 rounded-full font-medium hover:bg-primary/5 transition">
+              {t("inversoresPartnership.ctaLogin")}
             </Link>
           </div>
         </div>
@@ -83,7 +84,7 @@ export default function InversoresPartnership() {
 
       <section className="bg-white">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-12 text-center">Por qué invertir con nosotros</h2>
+          <h2 className="font-serif text-3xl mb-12 text-center">{t("inversoresPartnership.whyTitle")}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((b) => (
               <article key={b.title} className="bg-almond rounded-2xl p-6">
@@ -98,8 +99,10 @@ export default function InversoresPartnership() {
 
       <section className="bg-almond">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-2 text-center">Proyectos disponibles</h2>
-          <p className="text-primary/60 text-center mb-12">Snapshot a {new Date().toLocaleDateString("es-ES")}</p>
+          <h2 className="font-serif text-3xl mb-2 text-center">{t("inversoresPartnership.projectsTitle")}</h2>
+          <p className="text-primary/60 text-center mb-12">
+            {t("inversoresPartnership.projectsSubtitle", { date: new Date().toLocaleDateString() })}
+          </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {projects.map((p) => (
               <article key={p.name} className="bg-white rounded-xl p-5">
@@ -120,7 +123,7 @@ export default function InversoresPartnership() {
 
       <section className="bg-white">
         <div className="max-w-3xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-8 text-center">Preguntas frecuentes</h2>
+          <h2 className="font-serif text-3xl mb-8 text-center">{t("inversoresPartnership.faqTitle")}</h2>
           <div className="space-y-3">
             {faqs.map((f) => (
               <details key={f.q} className="bg-almond rounded-xl p-5 group">
@@ -137,13 +140,12 @@ export default function InversoresPartnership() {
 
       <section className="bg-primary text-white">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
-          <h2 className="font-serif text-4xl mb-4">¿Hablamos?</h2>
+          <h2 className="font-serif text-4xl mb-4">{t("inversoresPartnership.ctaFinalTitle")}</h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            15 minutos por videollamada. Te respondemos cualquier duda y te enviamos
-            los dossiers actualizados de los proyectos que mejor encajen con tu perfil.
+            {t("inversoresPartnership.ctaFinalBody")}
           </p>
           <Link to="/contacto" className="inline-block bg-white text-primary px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-xl">
-            Agendar llamada con un asesor →
+            {t("inversoresPartnership.ctaFinalBtn")}
           </Link>
         </div>
       </section>
