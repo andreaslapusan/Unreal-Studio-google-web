@@ -16,6 +16,7 @@ interface PartnerRow {
 
 interface PropertyRow {
   id: string;
+  slug?: string;
   name: string;
   short_pitch: string | null;
   area: string | null;
@@ -61,7 +62,7 @@ export default function AgenciasDashboard() {
         }
         const { data: props, error: propErr } = await supabase
           .from("properties")
-          .select("id, name, short_pitch, area, pct_progress, delivery_date, hero_image_url, brand_pdf_url, walkthrough_url")
+          .select("id, slug, name, short_pitch, area, pct_progress, delivery_date, hero_image_url, brand_pdf_url, walkthrough_url")
           .in("id", ids);
         if (propErr) throw propErr;
         setProjects((props ?? []) as PropertyRow[]);
@@ -142,7 +143,7 @@ export default function AgenciasDashboard() {
                     Entrega estimada: <strong>{p.delivery_date}</strong>
                   </p>
                 )}
-                <div className="flex gap-2 mt-4">
+                <div className="flex flex-wrap gap-2 mt-4">
                   {p.brand_pdf_url && (
                     <a href={p.brand_pdf_url} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary text-white px-3 py-2 rounded-full">
                       📄 Dossier
@@ -153,6 +154,9 @@ export default function AgenciasDashboard() {
                       🎥 Walkthrough
                     </a>
                   )}
+                  {partner && p.slug && (
+                    <ShareWithClientButton partnerId={partner.id} slug={p.slug} />
+                  )}
                 </div>
               </div>
             </article>
@@ -160,5 +164,41 @@ export default function AgenciasDashboard() {
         </div>
       </main>
     </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+
+function ShareWithClientButton({
+  partnerId,
+  slug,
+}: {
+  partnerId: string;
+  slug: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    const base = typeof window !== "undefined" ? window.location.origin : "https://unrealstudiobali.com";
+    const url = `${base}/#/proyecto/${slug}?utm_source=lister&utm_partner=${partnerId}&utm_property=${slug}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    } catch {
+      // fallback: open prompt so user can copy manually
+      window.prompt("Copia el link:", url);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className={`text-xs px-3 py-2 rounded-full transition ${
+        copied ? "bg-green-600 text-white" : "bg-white border border-primary text-primary hover:bg-primary/5"
+      }`}
+    >
+      {copied ? "✅ Copiado" : "🔗 Compartir con cliente"}
+    </button>
   );
 }
