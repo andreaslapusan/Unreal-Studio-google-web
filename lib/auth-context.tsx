@@ -15,6 +15,7 @@ interface AuthCtx {
   role: UserRole;
   loading: boolean;
   sendMagicLink: (email: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -81,12 +82,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
+  const signInWithGoogle = async () => {
+    const redirect =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/#/auth/finish`
+        : undefined;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: redirect },
+    });
+    if (error) throw error;
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, role, loading, sendMagicLink, signOut }}>
+    <AuthContext.Provider
+      value={{ user, session, role, loading, sendMagicLink, signInWithGoogle, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
