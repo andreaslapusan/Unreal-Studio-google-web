@@ -1,103 +1,92 @@
 /**
- * Auth context for Firebase Authentication.
- * Exposes current user, role (from custom claims), and helper functions.
+ * Auth context backed by Supabase Auth.
+ * Uses magic link (signInWithOtp / passwordless email) and exposes
+ * the current user + role from a `profiles` table joined with auth.users.
  */
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  onAuthStateChanged,
-  sendSignInLinkToEmail,
-  signInWithEmailLink,
-  isSignInWithEmailLink,
-  signOut as fbSignOut,
-  type User,
-} from "firebase/auth";
-import { auth, isFirebaseConfigured } from "./firebase";
+import type { Session, User } from "@supabase/supabase-js";
+import { supabase } from "./supabase";
 
 export type UserRole = "admin" | "team" | "lister" | "investor" | null;
 
 interface AuthCtx {
   user: User | null;
+  session: Session | null;
   role: UserRole;
   loading: boolean;
-  configured: boolean;
   sendMagicLink: (email: string) => Promise<void>;
-  completeSignIn: () => Promise<User | null>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthCtx | undefined>(undefined);
 
-const ACTION_CODE_SETTINGS = {
-  url: typeof window !== "undefined" ? `${window.location.origin}/#/auth/finish` : "",
-  handleCodeInApp: true,
-};
-
-const STORAGE_EMAIL_KEY = "_unrealauth_email";
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<UserRole>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isFirebaseConfigured) {
+    let unsub: (() => void) | undefined;
+
+    const init = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session);
+      setUser(data.session?.user ?? null);
+      if (data.session?.user) {
+        await loadRole(data.session.user.id);
+      }
       setLoading(false);
-      return;
-    }
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
-      if (u) {
-        try {
-          const tokenResult = await u.getIdTokenResult();
-          setRole((tokenResult.claims.role as UserRole) ?? null);
-        } catch {
-          setRole(null);
-        }
+    };
+    void init();
+
+    const sub = supabase.auth.onAuthStateChange(async (_event, sess) => {
+      setSession(sess);
+      setUser(sess?.user ?? null);
+      if (sess?.user) {
+        await loadRole(sess.user.id);
       } else {
         setRole(null);
       }
-      setLoading(false);
     });
-    return unsub;
+    unsub = () => sub.data.subscription.unsubscribe();
+
+    return () => {
+      if (unsub) unsub();
+    };
   }, []);
 
-  const sendMagicLink = async (email: string): Promise<void> => {
-    if (!isFirebaseConfigured) {
-      throw new Error("Firebase no está configurado todavía");
+  const loadRole = async (userId: string) => {
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("user_id", userId)
+        .maybeSingle();
+      setRole((data?.role as UserRole) ?? null);
+    } catch {
+      setRole(null);
     }
-    await sendSignInLinkToEmail(auth, email, ACTION_CODE_SETTINGS);
-    window.localStorage.setItem(STORAGE_EMAIL_KEY, email);
   };
 
-  const completeSignIn = async (): Promise<User | null> => {
-    if (!isFirebaseConfigured) return null;
-    if (!isSignInWithEmailLink(auth, window.location.href)) return null;
-    let email = window.localStorage.getItem(STORAGE_EMAIL_KEY);
-    if (!email) {
-      email = window.prompt("Confirma tu email para completar el login") ?? "";
-    }
-    if (!email) return null;
-    const result = await signInWithEmailLink(auth, email, window.location.href);
-    window.localStorage.removeItem(STORAGE_EMAIL_KEY);
-    return result.user;
+  const sendMagicLink = async (email: string) => {
+    const redirect =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/#/auth/finish`
+        : undefined;
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: redirect, shouldCreateUser: true },
+    });
+    if (error) throw error;
   };
 
-  const signOut = async (): Promise<void> => {
-    await fbSignOut(auth);
+  const signOut = async () => {
+    await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        role,
-        loading,
-        configured: isFirebaseConfigured,
-        sendMagicLink,
-        completeSignIn,
-        signOut,
-      }}
-    >
+    <AuthContext.Provider value={{ user, session, role, loading, sendMagicLink, signOut }}>
       {children}
     </AuthContext.Provider>
   );

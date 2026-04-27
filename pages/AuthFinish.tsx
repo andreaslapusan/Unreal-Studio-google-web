@@ -1,66 +1,47 @@
 /**
- * /auth/finish — completes magic-link sign in flow.
- * Redirects to the role-specific dashboard.
+ * /auth/finish — completes magic-link sign in (Supabase).
+ * Supabase auto-handles the URL hash exchange via onAuthStateChange.
+ * We just wait for `user` to populate and redirect by role.
  */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 
 export default function AuthFinish() {
-  const { completeSignIn, role } = useAuth();
-  const [status, setStatus] = useState<"working" | "ok" | "error">("working");
-  const [error, setError] = useState("");
+  const { user, role, loading } = useAuth();
   const navigate = useNavigate();
+  const [errored, setErrored] = useState(false);
 
   useEffect(() => {
-    const run = async () => {
-      try {
-        const u = await completeSignIn();
-        if (!u) {
-          setStatus("error");
-          setError("No se pudo completar el login. Pide otro enlace mágico.");
-          return;
-        }
-        setStatus("ok");
-        // Wait for auth state propagation, then redirect
-        setTimeout(() => {
-          if (role === "lister") navigate("/agencias/dashboard", { replace: true });
-          else if (role === "investor") navigate("/inversores/dashboard", { replace: true });
-          else if (role === "admin" || role === "team") navigate("/admin", { replace: true });
-          else navigate("/", { replace: true });
-        }, 1500);
-      } catch (err) {
-        setStatus("error");
-        setError(err instanceof Error ? err.message : String(err));
-      }
-    };
-    void run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (loading) return;
+    if (!user) {
+      // Give Supabase 2s to process the hash; otherwise show error
+      const timer = setTimeout(() => setErrored(true), 2500);
+      return () => clearTimeout(timer);
+    }
+    // user logged in → route by role
+    setTimeout(() => {
+      if (role === "lister") navigate("/agencias/dashboard", { replace: true });
+      else if (role === "investor") navigate("/inversores/dashboard", { replace: true });
+      else if (role === "admin" || role === "team") navigate("/admin", { replace: true });
+      else navigate("/", { replace: true });
+    }, 800);
+  }, [user, role, loading, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-almond px-6 text-center">
       <div className="max-w-md">
-        {status === "working" && (
+        {!errored && (
           <>
             <h1 className="text-3xl font-serif text-primary mb-4">Iniciando sesión…</h1>
             <p>Validando tu enlace mágico.</p>
           </>
         )}
-        {status === "ok" && (
-          <>
-            <h1 className="text-3xl font-serif text-primary mb-4">¡Bienvenido!</h1>
-            <p>Redirigiendo a tu panel…</p>
-          </>
-        )}
-        {status === "error" && (
+        {errored && (
           <>
             <h1 className="text-3xl font-serif text-primary mb-4">Algo no va bien</h1>
-            <p className="text-red-700">{error}</p>
-            <a
-              href="/#/agencias"
-              className="inline-block mt-4 underline text-primary"
-            >
+            <p className="text-red-700">El enlace ha expirado o ya se usó.</p>
+            <a href="/#/agencias" className="inline-block mt-4 underline text-primary">
               Volver al login
             </a>
           </>

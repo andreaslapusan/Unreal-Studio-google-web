@@ -19,6 +19,7 @@ import AgenciasLogin from './pages/AgenciasLogin';
 import AgenciasDashboard from './pages/AgenciasDashboard';
 import InversoresLogin from './pages/InversoresLogin';
 import AuthFinish from './pages/AuthFinish';
+import EquipoUpload from './pages/EquipoUpload';
 import { AuthProvider } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
@@ -57,6 +58,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
     || location.pathname.startsWith('/cliente')
     || location.pathname.startsWith('/agencias')
     || location.pathname.startsWith('/inversores')
+    || location.pathname.startsWith('/equipo')
     || location.pathname.startsWith('/auth')
     || location.pathname === '/lofts-globalitae';
   return (
@@ -145,6 +147,7 @@ const App: React.FC = () => {
             <Route path="/agencias" element={<AgenciasLogin />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
             <Route path="/inversores" element={<InversoresLogin />} />
+            <Route path="/equipo/upload" element={<EquipoUpload />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

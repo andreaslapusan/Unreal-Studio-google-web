@@ -1,81 +1,84 @@
 /**
  * /agencias/dashboard — Dashboard de la agencia logueada.
- * Muestra proyectos asignados con detalles, dossiers, updates de obra.
+ * Lista los proyectos asignados a la agencia desde Supabase.
  */
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { collection, getDocs, query, where, type DocumentData } from "firebase/firestore";
 import { useAuth } from "../lib/auth-context";
-import { db } from "../lib/firebase";
+import { supabase } from "../lib/supabase";
 
-interface Property {
+interface PartnerRow {
   id: string;
-  name: string;
-  short_pitch?: string;
-  area?: string;
-  pct_progress?: number;
-  delivery_date?: string;
-  hero_image_url?: string;
-  brand_pdf_url?: string;
-  walkthrough_url?: string;
+  agency_name: string;
+  status: string;
+  projects_assigned: string[] | null;
 }
 
-interface PartnerDoc extends DocumentData {
+interface PropertyRow {
   id: string;
-  agency_name?: string;
-  projects_assigned?: string[];
-  status?: string;
+  name: string;
+  short_pitch: string | null;
+  area: string | null;
+  pct_progress: number | null;
+  delivery_date: string | null;
+  hero_image_url: string | null;
+  brand_pdf_url: string | null;
+  walkthrough_url: string | null;
 }
 
 export default function AgenciasDashboard() {
   const { user, role, loading: authLoading, signOut } = useAuth();
-  const [partner, setPartner] = useState<PartnerDoc | null>(null);
-  const [projects, setProjects] = useState<Property[]>([]);
+  const [partner, setPartner] = useState<PartnerRow | null>(null);
+  const [projects, setProjects] = useState<PropertyRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!user) return;
+    let cancelled = false;
+
     const load = async () => {
       try {
-        // Find listing_partner doc by user_id
-        const q = query(collection(db, "listing_partners"), where("user_id", "==", user.uid));
-        const snap = await getDocs(q);
-        if (snap.empty) {
+        const { data: partnerRow, error: partnerErr } = await supabase
+          .from("listing_partners")
+          .select("id, agency_name, status, projects_assigned")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (cancelled) return;
+        if (partnerErr) throw partnerErr;
+        if (!partnerRow) {
           setError("Tu cuenta aún no está vinculada a una agencia. Contacta soporte.");
           setLoading(false);
           return;
         }
-        const partnerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() } as PartnerDoc;
-        setPartner(partnerDoc);
+        setPartner(partnerRow as PartnerRow);
 
-        // Load assigned projects
-        const projectIds = partnerDoc.projects_assigned ?? [];
-        if (projectIds.length === 0) {
+        const ids = partnerRow.projects_assigned ?? [];
+        if (!ids.length) {
           setProjects([]);
           setLoading(false);
           return;
         }
-        const projectDocs = await Promise.all(
-          projectIds.map(async (pid: string) => {
-            const propsQ = query(collection(db, "properties"), where("__name__", "==", pid));
-            const ps = await getDocs(propsQ);
-            return ps.empty ? null : ({ id: ps.docs[0].id, ...ps.docs[0].data() } as Property);
-          })
-        );
-        setProjects(projectDocs.filter((p): p is Property => p !== null));
+        const { data: props, error: propErr } = await supabase
+          .from("properties")
+          .select("id, name, short_pitch, area, pct_progress, delivery_date, hero_image_url, brand_pdf_url, walkthrough_url")
+          .in("id", ids);
+        if (propErr) throw propErr;
+        setProjects((props ?? []) as PropertyRow[]);
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
         setLoading(false);
       }
     };
+
     void load();
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
-  if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
-  }
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
   if (!user) return <Navigate to="/agencias" replace />;
   if (role && role !== "lister" && role !== "admin") {
     return (
@@ -95,10 +98,7 @@ export default function AgenciasDashboard() {
           <h1 className="font-serif text-2xl">Portal Agencias</h1>
           <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
         </div>
-        <button
-          onClick={() => void signOut()}
-          className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full"
-        >
+        <button onClick={() => void signOut()} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
           Salir
         </button>
       </header>
@@ -110,25 +110,17 @@ export default function AgenciasDashboard() {
         {!loading && !error && projects.length === 0 && (
           <div className="bg-white/60 rounded-xl p-6 text-center">
             <p className="text-primary/70">
-              Aún no tienes proyectos asignados. Contacta con tu manager para que
-              te active los proyectos en los que vas a colaborar.
+              Aún no tienes proyectos asignados. Contacta con tu manager para que te
+              active los proyectos en los que vas a colaborar.
             </p>
           </div>
         )}
 
         <div className="grid gap-6 md:grid-cols-2">
           {projects.map((p) => (
-            <article
-              key={p.id}
-              className="glass-card rounded-2xl overflow-hidden shadow-sm"
-            >
+            <article key={p.id} className="glass-card rounded-2xl overflow-hidden shadow-sm">
               {p.hero_image_url && (
-                <img
-                  src={p.hero_image_url}
-                  alt={p.name}
-                  className="w-full h-48 object-cover"
-                  loading="lazy"
-                />
+                <img src={p.hero_image_url} alt={p.name} className="w-full h-48 object-cover" loading="lazy" />
               )}
               <div className="p-6">
                 <h2 className="font-serif text-xl text-primary mb-2">{p.name}</h2>
@@ -141,10 +133,7 @@ export default function AgenciasDashboard() {
                       <span className="font-bold">{p.pct_progress}%</span>
                     </div>
                     <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary"
-                        style={{ width: `${p.pct_progress}%` }}
-                      />
+                      <div className="h-full bg-primary" style={{ width: `${p.pct_progress}%` }} />
                     </div>
                   </div>
                 )}
@@ -155,22 +144,12 @@ export default function AgenciasDashboard() {
                 )}
                 <div className="flex gap-2 mt-4">
                   {p.brand_pdf_url && (
-                    <a
-                      href={p.brand_pdf_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs bg-primary text-white px-3 py-2 rounded-full hover:translate-y-[-1px] transition"
-                    >
+                    <a href={p.brand_pdf_url} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary text-white px-3 py-2 rounded-full">
                       📄 Dossier
                     </a>
                   )}
                   {p.walkthrough_url && (
-                    <a
-                      href={p.walkthrough_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs bg-white border border-primary text-primary px-3 py-2 rounded-full hover:bg-primary/5 transition"
-                    >
+                    <a href={p.walkthrough_url} target="_blank" rel="noopener noreferrer" className="text-xs bg-white border border-primary text-primary px-3 py-2 rounded-full">
                       🎥 Walkthrough
                     </a>
                   )}

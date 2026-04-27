@@ -1,21 +1,17 @@
 /**
- * /inversores — Login con magic link para inversores.
+ * /inversores — Login con magic link para inversores (Supabase Auth).
  */
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 
 export default function InversoresLogin() {
-  const { sendMagicLink, configured, user } = useAuth();
+  const { sendMagicLink, user } = useAuth();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const navigate = useNavigate();
 
-  if (user) {
-    navigate("/inversores/dashboard", { replace: true });
-    return null;
-  }
+  if (user) return <Navigate to="/inversores/dashboard" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,12 +36,6 @@ export default function InversoresLogin() {
           de tu propiedad, recibe reportes de obra y accede a tu documentación.
         </p>
 
-        {!configured && (
-          <div className="bg-amber-50 border-l-4 border-amber-500 text-amber-900 p-4 rounded text-sm mb-6">
-            ⚠️ Firebase aún no está configurado.
-          </div>
-        )}
-
         {status === "sent" ? (
           <div className="bg-green-50 border-l-4 border-green-500 text-green-900 p-4 rounded">
             <p className="font-medium">📧 Email enviado</p>
@@ -69,7 +59,7 @@ export default function InversoresLogin() {
 
             <button
               type="submit"
-              disabled={status === "sending" || !configured}
+              disabled={status === "sending"}
               className="w-full bg-primary text-white py-3 rounded-lg font-bold hover:translate-y-[-2px] transition disabled:opacity-50"
             >
               {status === "sending" ? "Enviando…" : "Enviar enlace mágico"}
