@@ -15,6 +15,11 @@ import Terms from './pages/Terms';
 import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
 import LandingGlobalitae from './pages/LandingGlobalitae';
+import AgenciasLogin from './pages/AgenciasLogin';
+import AgenciasDashboard from './pages/AgenciasDashboard';
+import InversoresLogin from './pages/InversoresLogin';
+import AuthFinish from './pages/AuthFinish';
+import { AuthProvider } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
 import { supabase } from './lib/supabase';
@@ -48,7 +53,12 @@ const ScrollToTop = () => {
 
 const Layout = ({ children }: { children?: React.ReactNode }) => {
   const location = useLocation();
-  const isHiddenPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/cliente') || location.pathname === '/lofts-globalitae';
+  const isHiddenPath = location.pathname.startsWith('/admin')
+    || location.pathname.startsWith('/cliente')
+    || location.pathname.startsWith('/agencias')
+    || location.pathname.startsWith('/inversores')
+    || location.pathname.startsWith('/auth')
+    || location.pathname === '/lofts-globalitae';
   return (
     <div className="flex flex-col min-h-screen">
       {!isHiddenPath && <Navbar />}
@@ -118,6 +128,7 @@ const App: React.FC = () => {
 
   return (
     <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice }}>
+      <AuthProvider>
       <HashRouter>
         <ScrollToTop />
         <Layout>
@@ -131,6 +142,10 @@ const App: React.FC = () => {
             <Route path="/privacidad" element={<Privacy />} />
             <Route path="/terminos" element={<Terms />} />
             <Route path="/lofts-globalitae" element={<LandingGlobalitae />} />
+            <Route path="/agencias" element={<AgenciasLogin />} />
+            <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
+            <Route path="/inversores" element={<InversoresLogin />} />
+            <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/cliente" element={<ClientLogin />} />
@@ -147,6 +162,7 @@ const App: React.FC = () => {
           </Routes>
         </Layout>
       </HashRouter>
+      </AuthProvider>
     </CurrencyContext.Provider>
   );
 };
