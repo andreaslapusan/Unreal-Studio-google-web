@@ -16,8 +16,10 @@ import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
 import LandingGlobalitae from './pages/LandingGlobalitae';
 import AgenciasLogin from './pages/AgenciasLogin';
+import AgenciasRegistrar from './pages/AgenciasRegistrar';
 import AgenciasDashboard from './pages/AgenciasDashboard';
 import InversoresLogin from './pages/InversoresLogin';
+import InversoresDashboard from './pages/InversoresDashboard';
 import AuthFinish from './pages/AuthFinish';
 import EquipoUpload from './pages/EquipoUpload';
 import { AuthProvider } from './lib/auth-context';
@@ -145,8 +147,10 @@ const App: React.FC = () => {
             <Route path="/terminos" element={<Terms />} />
             <Route path="/lofts-globalitae" element={<LandingGlobalitae />} />
             <Route path="/agencias" element={<AgenciasLogin />} />
+            <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
             <Route path="/inversores" element={<InversoresLogin />} />
+            <Route path="/inversores/dashboard" element={<InversoresDashboard />} />
             <Route path="/equipo/upload" element={<EquipoUpload />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />

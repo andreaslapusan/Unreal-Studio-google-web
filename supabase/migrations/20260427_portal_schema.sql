@@ -106,6 +106,29 @@ create table if not exists public.listing_partners (
 create index if not exists listing_partners_user_idx on public.listing_partners (user_id);
 create index if not exists listing_partners_email_idx on public.listing_partners (email);
 
+-- Public-facing application form for prospective listing partners.
+-- Anyone can insert (anon role policy below); only admins can read/update.
+create table if not exists public.listing_partner_applications (
+  id                    uuid primary key default gen_random_uuid(),
+  agency_name           text not null,
+  manager_name          text,
+  email                 text not null,
+  phone                 text,
+  whatsapp              text,
+  website               text,
+  country               text,
+  projects_interested   text[] default '{}',
+  experience            text,
+  monthly_volume        text,
+  source                text,
+  notes                 text,
+  status                text default 'pending' check (status in ('pending','approved','rejected','contacted')),
+  reviewed_by           text,
+  reviewed_at           timestamptz,
+  created_at            timestamptz default now()
+);
+create index if not exists lpa_status_idx on public.listing_partner_applications (status);
+
 -- ─── Investors ────────────────────────────────────────────────────────────
 
 create table if not exists public.investors (
@@ -161,14 +184,15 @@ create table if not exists public.update_assets (
 
 -- ─── Row-Level Security ───────────────────────────────────────────────────
 
-alter table public.profiles            enable row level security;
-alter table public.properties          enable row level security;
-alter table public.property_units      enable row level security;
-alter table public.listing_partners    enable row level security;
-alter table public.investors           enable row level security;
-alter table public.investor_units      enable row level security;
-alter table public.property_updates    enable row level security;
-alter table public.update_assets       enable row level security;
+alter table public.profiles                       enable row level security;
+alter table public.properties                     enable row level security;
+alter table public.property_units                 enable row level security;
+alter table public.listing_partners               enable row level security;
+alter table public.listing_partner_applications   enable row level security;
+alter table public.investors                      enable row level security;
+alter table public.investor_units                 enable row level security;
+alter table public.property_updates               enable row level security;
+alter table public.update_assets                  enable row level security;
 
 -- Helper: read role from profiles
 create or replace function public.current_role() returns text
@@ -201,6 +225,17 @@ create policy partners_self on public.listing_partners
 drop policy if exists partners_admin_write on public.listing_partners;
 create policy partners_admin_write on public.listing_partners
   for all using (public.current_role() = 'admin');
+
+-- Listing partner applications: anyone can submit, only admins read
+drop policy if exists lpa_anon_insert on public.listing_partner_applications;
+create policy lpa_anon_insert on public.listing_partner_applications
+  for insert with check (true);
+drop policy if exists lpa_admin_read on public.listing_partner_applications;
+create policy lpa_admin_read on public.listing_partner_applications
+  for select using (public.current_role() = 'admin');
+drop policy if exists lpa_admin_modify on public.listing_partner_applications;
+create policy lpa_admin_modify on public.listing_partner_applications
+  for update using (public.current_role() = 'admin');
 
 -- Investors
 drop policy if exists investors_self on public.investors;
