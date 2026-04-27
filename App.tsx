@@ -16,6 +16,7 @@ import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
 import LandingGlobalitae from './pages/LandingGlobalitae';
 import AgenciasLogin from './pages/AgenciasLogin';
+import AgenciasPartnership from './pages/AgenciasPartnership';
 import AgenciasRegistrar from './pages/AgenciasRegistrar';
 import AgenciasDashboard from './pages/AgenciasDashboard';
 import InversoresLogin from './pages/InversoresLogin';
@@ -147,7 +148,8 @@ const App: React.FC = () => {
             <Route path="/privacidad" element={<Privacy />} />
             <Route path="/terminos" element={<Terms />} />
             <Route path="/lofts-globalitae" element={<LandingGlobalitae />} />
-            <Route path="/agencias" element={<AgenciasLogin />} />
+            <Route path="/agencias" element={<AgenciasPartnership />} />
+            <Route path="/agencias/login" element={<AgenciasLogin />} />
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
             <Route path="/inversores" element={<InversoresLogin />} />
