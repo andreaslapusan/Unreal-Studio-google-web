@@ -11,7 +11,16 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
-type Tab = "properties" | "units" | "partners" | "applications";
+type Tab = "activity" | "properties" | "units" | "partners" | "applications";
+
+interface ActivityEvent {
+  id: string;
+  kind: string;
+  title: string;
+  detail: string;
+  ts: string;
+  href?: string;
+}
 
 interface Property {
   id: string;
@@ -66,11 +75,12 @@ interface Application {
 export default function AdminPortalManager() {
   const { user, role, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<Tab>("properties");
+  const [tab, setTab] = useState<Tab>("activity");
   const [properties, setProperties] = useState<Property[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [activity, setActivity] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -82,16 +92,50 @@ export default function AdminPortalManager() {
   const reloadAll = async () => {
     setLoading(true);
     try {
-      const [p, u, lp, app] = await Promise.all([
+      const [p, u, lp, app, updates, attribs] = await Promise.all([
         supabase.from("properties").select("id, slug, name, area, pct_progress, delivery_date, hero_image_url, walkthrough_url, brand_pdf_url").order("name"),
         supabase.from("property_units").select("id, property_id, unit_name, price_publico, price_inversor, price_agencia, commission_default_pct, bedrooms, bathrooms, available, reserved, sold").order("unit_name"),
         supabase.from("listing_partners").select("id, agency_name, email, status, projects_assigned, user_id").order("agency_name"),
         supabase.from("listing_partner_applications").select("id, agency_name, manager_name, email, whatsapp, country, projects_interested, monthly_volume, notes, status, created_at").order("created_at", { ascending: false }),
+        supabase.from("property_updates").select("id, property_id, title, posted_by, posted_at, visibility").order("posted_at", { ascending: false }).limit(15),
+        supabase.from("lead_attributions").select("id, partner_id, property_slug, event_type, contact_email, created_at").order("created_at", { ascending: false }).limit(15),
       ]);
       setProperties((p.data ?? []) as Property[]);
       setUnits((u.data ?? []) as Unit[]);
       setPartners((lp.data ?? []) as Partner[]);
       setApplications((app.data ?? []) as Application[]);
+
+      // Build a unified activity feed
+      const events: ActivityEvent[] = [];
+      for (const a of (app.data ?? []).slice(0, 8)) {
+        events.push({
+          id: `app-${a.id}`,
+          kind: "📨 Solicitud agencia",
+          title: a.agency_name,
+          detail: `${a.email} · ${a.country ?? "—"} · ${a.status}`,
+          ts: a.created_at,
+        });
+      }
+      for (const up of (updates.data ?? []).slice(0, 10)) {
+        events.push({
+          id: `upd-${up.id}`,
+          kind: "🏗️ Update obra",
+          title: up.title,
+          detail: `${up.posted_by} · ${up.visibility}`,
+          ts: up.posted_at,
+        });
+      }
+      for (const at of (attribs.data ?? []).slice(0, 10)) {
+        events.push({
+          id: `at-${at.id}`,
+          kind: "🔗 Atribución lister",
+          title: at.event_type,
+          detail: `${at.contact_email ?? "anónimo"} · property: ${at.property_slug ?? "—"}`,
+          ts: at.created_at,
+        });
+      }
+      events.sort((a, b) => (b.ts > a.ts ? 1 : -1));
+      setActivity(events.slice(0, 30));
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -179,7 +223,7 @@ export default function AdminPortalManager() {
       </header>
 
       <nav className="max-w-6xl mx-auto px-6 mt-6 flex flex-wrap gap-2">
-        {(["properties","units","partners","applications"] as Tab[]).map((t) => (
+        {(["activity","properties","units","partners","applications"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -187,6 +231,7 @@ export default function AdminPortalManager() {
               tab === t ? "bg-primary text-white" : "bg-white/60 text-primary hover:bg-white"
             }`}
           >
+            {t === "activity" && `📡 Actividad (${activity.length})`}
             {t === "properties" && `📁 Proyectos (${properties.length})`}
             {t === "units" && `🏠 Unidades (${units.length})`}
             {t === "partners" && `🤝 Agencias (${partners.length})`}
@@ -199,6 +244,9 @@ export default function AdminPortalManager() {
         {loading && <p>Cargando…</p>}
         {error && <p className="text-red-600">{error}</p>}
 
+        {tab === "activity" && (
+          <ActivityTab events={activity} />
+        )}
         {tab === "properties" && (
           <PropertiesTab data={properties} onChange={reloadAll} />
         )}
@@ -217,6 +265,25 @@ export default function AdminPortalManager() {
 }
 
 // ─── Subcomponents ────────────────────────────────────────────────────────
+
+function ActivityTab({ events }: { events: ActivityEvent[] }) {
+  if (events.length === 0) return <p className="text-primary/60">Aún no hay actividad reciente.</p>;
+  return (
+    <ol className="space-y-2">
+      {events.map((e) => (
+        <li key={e.id} className="bg-white/60 rounded-lg p-3 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="text-xs text-primary/60">
+              {e.kind} · {new Date(e.ts).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}
+            </div>
+            <div className="font-medium truncate">{e.title}</div>
+            <div className="text-xs text-primary/60 truncate">{e.detail}</div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
 
 function PropertiesTab({ data, onChange }: { data: Property[]; onChange: () => Promise<void> }) {
   const [editing, setEditing] = useState<Property | null>(null);

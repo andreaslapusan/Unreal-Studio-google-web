@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
+import PaymentTimeline from "../components/PaymentTimeline";
 
 interface InvestorRow {
   id: string;
@@ -41,6 +42,7 @@ interface PropertyRow {
 }
 
 interface MyUnit {
+  investor_unit_id: string;
   unit: UnitRow;
   property: PropertyRow | null;
   price_paid: number | null;
@@ -101,6 +103,7 @@ export default function InversoresDashboard() {
           )
           .eq("investor_id", invRow.id);
         if (iuErr) throw iuErr;
+        // Type the rows as `any` for the join nesting; we copy investor_unit id below
 
         const propertyIds = Array.from(
           new Set(
@@ -124,6 +127,7 @@ export default function InversoresDashboard() {
         );
 
         const enrichedUnits: MyUnit[] = (ius ?? []).map((iu: any) => ({
+          investor_unit_id: iu.id,
           unit: iu.property_units as UnitRow,
           property: iu.property_units?.property_id
             ? propMap.get(iu.property_units.property_id) ?? null
@@ -237,6 +241,9 @@ export default function InversoresDashboard() {
                         🎥 Walkthrough
                       </a>
                     )}
+                    <div className="mt-5 pt-4 border-t border-primary/10">
+                      <PaymentTimeline investorUnitId={mu.investor_unit_id} />
+                    </div>
                   </div>
                 </article>
               ))}
