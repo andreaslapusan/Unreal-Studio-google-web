@@ -22,6 +22,7 @@ import InversoresLogin from './pages/InversoresLogin';
 import InversoresDashboard from './pages/InversoresDashboard';
 import AuthFinish from './pages/AuthFinish';
 import EquipoUpload from './pages/EquipoUpload';
+import AdminPortalManager from './pages/AdminPortalManager';
 import { AuthProvider } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
@@ -155,6 +156,7 @@ const App: React.FC = () => {
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/portal" element={<AdminPortalManager />} />
             <Route path="/cliente" element={<ClientLogin />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />
             <Route path="*" element={

@@ -7,7 +7,7 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const spaRoutes = ['proyectos', 'blog', 'contacto', 'invertir', 'admin', 'privacy', 'terms'];
+const spaRoutes = ['proyectos', 'blog', 'contacto', 'invertir', 'admin', 'privacy', 'terms', 'agencias', 'inversores', 'equipo'];
 
 function spaRedirectPlugin() {
   return {
@@ -41,6 +41,25 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        // Reduce main bundle size by splitting framework + vendor libs
+        rollupOptions: {
+          output: {
+            manualChunks: (id: string) => {
+              if (id.includes('node_modules')) {
+                if (id.includes('react-router') || id.includes('@remix-run')) return 'router';
+                if (id.includes('react-dom') || /[\\/]react[\\/]/.test(id)) return 'react';
+                if (id.includes('@supabase')) return 'supabase';
+                if (id.includes('firebase')) return 'firebase';
+                return 'vendor';
+              }
+              return undefined;
+            },
+          },
+        },
+        // Increase warning limit a bit since admin page is heavy
+        chunkSizeWarningLimit: 600,
       }
     };
 });
