@@ -4,13 +4,17 @@ import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
+import RolePricingBadge from '../components/RolePricingBadge';
+import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [similarProjects, setSimilarProjects] = useState<Project[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
+  const [matchedUnitId, setMatchedUnitId] = useState<string | null>(null);
   const { formatPrice } = useCurrency();
+  const { role } = useAuth();
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ open: boolean, index: number }>({ open: false, index: 0 });
 
@@ -64,6 +68,28 @@ const ProjectDetail: React.FC = () => {
                   amenities: parseJsonField(rawProject.amenities, [])
               };
               setProject(loadedProject);
+
+              // Try to map this slug to a row in the new portal schema
+              // (properties → property_units) for role-based pricing.
+              try {
+                const { data: propRow } = await supabase
+                  .from('properties')
+                  .select('id')
+                  .eq('slug', slug)
+                  .maybeSingle();
+                if (propRow?.id) {
+                  const { data: unitRow } = await supabase
+                    .from('property_units')
+                    .select('id')
+                    .eq('property_id', propRow.id)
+                    .eq('available', true)
+                    .limit(1)
+                    .maybeSingle();
+                  if (unitRow?.id) setMatchedUnitId(unitRow.id);
+                }
+              } catch {
+                // schema may not be migrated yet on this Supabase project — that's fine
+              }
               document.title = `${loadedProject.name} | Unreal Studio Madrid`;
 
               // Dynamic OG meta tags
@@ -244,6 +270,15 @@ const ProjectDetail: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Role-aware pricing pill: only renders when user is logged in
+          and has a role (lister/investor/admin). Sits above the public
+          stats strip so partners see their personalized number first. */}
+      {role && matchedUnitId && (
+        <div className="max-w-7xl mx-auto px-6 md:px-12 -mt-4 mb-2 flex justify-end">
+          <RolePricingBadge unitId={matchedUnitId} />
+        </div>
+      )}
 
       <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 md:divide-x divide-white/10">
