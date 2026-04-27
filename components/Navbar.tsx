@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../App';
 import { WHATSAPP_URL, CURRENCIES } from '../constants';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,11 +37,12 @@ const Navbar: React.FC = () => {
     return false;
   };
 
+  const { t } = useTranslation();
   const navLinks = [
-    { name: 'Inicio', path: '/' },
-    { name: 'Proyectos', path: '/proyectos' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Contacto', path: '/contacto' },
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.projects'), path: '/proyectos' },
+    { name: t('nav.blog'), path: '/blog' },
+    { name: t('nav.contact'), path: '/contacto' },
   ];
 
   return (
@@ -72,8 +75,11 @@ const Navbar: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
+          {/* Language switcher (compact) */}
+          <LanguageSwitcher />
+
           {/* Selector de Divisa */}
-          <select 
+          <select
             value={currency} 
             onChange={(e) => setCurrency(e.target.value as any)}
             className="bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition"
