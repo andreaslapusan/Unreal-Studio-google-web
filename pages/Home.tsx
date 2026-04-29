@@ -6,6 +6,7 @@ import { Project, AppConfig, BlogPost } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { readSWR, writeSWR } from '../lib/swrCache';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -13,10 +14,13 @@ const ANY_TYPE = 'Cualquier tipo';
 const Home: React.FC = () => {
   const { t } = useTranslation();
   useEffect(() => { document.title = t('home.title'); }, [t]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
-  const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
-  const [loading, setLoading] = useState(true);
+  // SWR: hydrate from localStorage cache so the first paint already has the
+  // featured project + grid + blog teasers. Background fetch refreshes.
+  const [projects, setProjects] = useState<Project[]>(() => readSWR<Project[]>('home_projects') ?? []);
+  const [blogs, setBlogs] = useState<BlogPost[]>(() => readSWR<BlogPost[]>('home_blogs') ?? []);
+  const [config, setConfig] = useState<AppConfig>(() => readSWR<AppConfig>('home_config') ?? DEFAULT_CONFIG);
+  // Only show the full-page loader when we have absolutely nothing to render.
+  const [loading, setLoading] = useState<boolean>(() => (readSWR<Project[]>('home_projects') ?? []).length === 0);
   
   const { formatPrice, currency } = useCurrency();
   
@@ -45,20 +49,22 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
+    // Only flip into a blocking loading state when there's no cached data
+    // to render. With SWR, repeat visitors render instantly from
+    // localStorage and we silently refresh in the background.
     const fetchData = async () => {
-      setLoading(true);
       try {
-        // Carga de Configuración
         const { data: configRows } = await supabase.from('app_config').select('*');
         if (configRows && configRows.length > 0) {
             const configObj: Record<string, any> = {};
             configRows.forEach((row: any) => {
               configObj[row.key] = row.value;
             });
-            setConfig({ ...DEFAULT_CONFIG, ...configObj } as AppConfig);
+            const next = { ...DEFAULT_CONFIG, ...configObj } as AppConfig;
+            setConfig(next);
+            writeSWR('home_config', next);
         }
 
-        // Carga de Proyectos
         const { data: projectsData } = await supabase
             .from('projects')
             .select('*')
@@ -69,11 +75,11 @@ const Home: React.FC = () => {
                 ...p,
                 gallery: parseJsonField(p.gallery, []),
                 investor_tiers: parseJsonField(p.investor_tiers, [])
-            }));
-            setProjects(safeProjects as unknown as Project[]);
+            })) as unknown as Project[];
+            setProjects(safeProjects);
+            writeSWR('home_projects', safeProjects);
         }
 
-        // Carga de Blogs (Recientes)
         const { data: blogsData } = await supabase
             .from('blogs')
             .select('*')
@@ -81,7 +87,9 @@ const Home: React.FC = () => {
             .limit(3);
 
         if (blogsData) {
-            setBlogs(blogsData as unknown as BlogPost[]);
+            const fresh = blogsData as unknown as BlogPost[];
+            setBlogs(fresh);
+            writeSWR('home_blogs', fresh);
         }
 
       } catch (error) {
@@ -91,7 +99,7 @@ const Home: React.FC = () => {
       }
     };
 
-    fetchData();
+    void fetchData();
   }, []);
 
   const featuredProject = useMemo(() => {

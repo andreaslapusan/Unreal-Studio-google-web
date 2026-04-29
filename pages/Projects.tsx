@@ -6,6 +6,7 @@ import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { readSWR, writeSWR } from '../lib/swrCache';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -14,10 +15,12 @@ const Projects: React.FC = () => {
   const { t } = useTranslation();
   useEffect(() => { document.title = t('projects.title'); }, [t]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
+  // SWR — repeat visitors see the catalogue instantly from localStorage; we
+  // refresh in the background. Same pattern as Home.tsx.
+  const [projects, setProjects] = useState<Project[]>(() => readSWR<Project[]>('projects_list') ?? []);
+  const [config, setConfig] = useState<AppConfig>(() => readSWR<AppConfig>('home_config') ?? DEFAULT_CONFIG);
   const { formatPrice, currency } = useCurrency();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(() => (readSWR<Project[]>('projects_list') ?? []).length === 0);
   
   // Inicializar estado con formato de miles si existe en URL
   const formatInitialPrice = (val: string | null) => {
@@ -35,31 +38,31 @@ const Projects: React.FC = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
       try {
-        // Carga de Configuración
         const { data: configRows } = await supabase.from('app_config').select('*');
         if (configRows && configRows.length > 0) {
              const configObj: any = {};
              configRows.forEach((row: any) => {
                configObj[row.key] = row.value;
              });
-             setConfig({ ...DEFAULT_CONFIG, ...configObj } as AppConfig);
+             const next = { ...DEFAULT_CONFIG, ...configObj } as AppConfig;
+             setConfig(next);
+             writeSWR('home_config', next);
         }
 
-        // Carga de Proyectos
         const { data } = await supabase
           .from('projects')
           .select('*')
           .order('sort_order', { ascending: true });
-        
+
         if (data) {
           const safeProjects = data.map((p: any) => ({
             ...p,
             gallery: parseJsonField(p.gallery, []),
             investor_tiers: parseJsonField(p.investor_tiers, [])
-          }));
-          setProjects(safeProjects as unknown as Project[]);
+          })) as unknown as Project[];
+          setProjects(safeProjects);
+          writeSWR('projects_list', safeProjects);
         }
       } catch (error) {
         console.error('Error loading projects:', error);
@@ -67,7 +70,7 @@ const Projects: React.FC = () => {
         setLoading(false);
       }
     };
-    loadData();
+    void loadData();
   }, []);
 
   const filteredProjects = useMemo(() => {
