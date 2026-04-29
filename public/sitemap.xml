@@ -26,6 +26,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://unrealstudiobali.com/faq</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://unrealstudiobali.com/contacto</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

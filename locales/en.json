@@ -30,6 +30,7 @@
     "home": "Home",
     "projects": "Projects",
     "blog": "Blog",
+    "faq": "FAQ",
     "contact": "Contact",
     "agencies": "Agencies",
     "investors": "Investors"
@@ -159,6 +160,26 @@
     "no": "No",
     "similarTitle": "Similar assets",
     "ctaWhatsapp": "Chat on WhatsApp"
+  },
+  "faq": {
+    "title": "FAQ | Unreal Studio Bali",
+    "heroTitle": "Frequently asked questions",
+    "heroSubtitle": "The questions investors keep asking before closing — answered directly by Andreas, no fluff.",
+    "search": "Search question...",
+    "noResults": "No matches. Try a different search or contact us directly.",
+    "categories": {
+      "all": "All",
+      "compra": "Purchase",
+      "leasehold": "Leasehold",
+      "construccion": "Construction",
+      "alquiler": "Rental",
+      "fiscalidad": "Taxation",
+      "legal": "Legal",
+      "general": "General"
+    },
+    "ctaTitle": "Question not here?",
+    "ctaBody": "15-minute video call with Andreas or Mark. Free, no commitment, just clear answers.",
+    "ctaBtn": "Talk to an advisor →"
   },
   "blog": {
     "title": "Blog | Unreal Studio Madrid",

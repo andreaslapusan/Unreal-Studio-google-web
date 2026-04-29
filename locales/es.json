@@ -30,6 +30,7 @@
     "home": "Inicio",
     "projects": "Proyectos",
     "blog": "Blog",
+    "faq": "FAQ",
     "contact": "Contacto",
     "agencies": "Agencias",
     "investors": "Inversores"
@@ -159,6 +160,26 @@
     "no": "No",
     "similarTitle": "Activos Similares",
     "ctaWhatsapp": "Hablar por WhatsApp"
+  },
+  "faq": {
+    "title": "Preguntas frecuentes | Unreal Studio Bali",
+    "heroTitle": "Preguntas frecuentes",
+    "heroSubtitle": "Las preguntas que más nos hacen los inversores antes de cerrar — con la respuesta directa de Andreas, sin rellenos ni corporativismo.",
+    "search": "Buscar pregunta...",
+    "noResults": "Sin resultados. Prueba con otra búsqueda o escríbenos directamente.",
+    "categories": {
+      "all": "Todas",
+      "compra": "Compra",
+      "leasehold": "Leasehold",
+      "construccion": "Construcción",
+      "alquiler": "Alquiler",
+      "fiscalidad": "Fiscalidad",
+      "legal": "Legal",
+      "general": "General"
+    },
+    "ctaTitle": "¿Tu pregunta no está aquí?",
+    "ctaBody": "15 minutos por videollamada con Andreas o Mark. Te respondemos cualquier duda sin compromiso.",
+    "ctaBtn": "Hablar con un asesor →"
   },
   "blog": {
     "title": "Blog | Unreal Studio Madrid",

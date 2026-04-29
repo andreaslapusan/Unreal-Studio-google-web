@@ -30,6 +30,7 @@
     "home": "Beranda",
     "projects": "Proyek",
     "blog": "Blog",
+    "faq": "FAQ",
     "contact": "Kontak",
     "agencies": "Agensi",
     "investors": "Investor"
@@ -159,6 +160,26 @@
     "no": "Tidak",
     "similarTitle": "Aset Serupa",
     "ctaWhatsapp": "Chat di WhatsApp"
+  },
+  "faq": {
+    "title": "FAQ | Unreal Studio Bali",
+    "heroTitle": "Pertanyaan yang sering diajukan",
+    "heroSubtitle": "Pertanyaan yang paling sering diajukan investor sebelum memutuskan — dijawab langsung oleh Andreas, tanpa basa-basi.",
+    "search": "Cari pertanyaan...",
+    "noResults": "Tidak ada hasil. Coba kata kunci lain atau hubungi kami langsung.",
+    "categories": {
+      "all": "Semua",
+      "compra": "Pembelian",
+      "leasehold": "Leasehold",
+      "construccion": "Konstruksi",
+      "alquiler": "Sewa",
+      "fiscalidad": "Pajak",
+      "legal": "Hukum",
+      "general": "Umum"
+    },
+    "ctaTitle": "Pertanyaan Anda tidak ada di sini?",
+    "ctaBody": "Panggilan video 15 menit dengan Andreas atau Mark. Gratis, tanpa komitmen.",
+    "ctaBtn": "Bicara dengan penasihat →"
   },
   "blog": {
     "title": "Blog | Unreal Studio Madrid",

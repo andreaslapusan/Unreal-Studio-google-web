@@ -7,7 +7,7 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const spaRoutes = ['proyectos', 'blog', 'contacto', 'invertir', 'admin', 'privacy', 'terms', 'agencias', 'inversores', 'equipo'];
+const spaRoutes = ['proyectos', 'blog', 'contacto', 'invertir', 'admin', 'privacy', 'terms', 'agencias', 'inversores', 'equipo', 'faq', 'preguntas-frecuentes'];
 
 function spaRedirectPlugin() {
   return {

@@ -34,6 +34,7 @@ const STATIC_ROUTES = [
   { path: "/inversores", priority: "0.85", changefreq: "weekly" },
   { path: "/agencias", priority: "0.8", changefreq: "weekly" },
   { path: "/blog", priority: "0.7", changefreq: "weekly" },
+  { path: "/faq", priority: "0.7", changefreq: "weekly" },
   { path: "/contacto", priority: "0.5", changefreq: "monthly" },
   { path: "/privacidad", priority: "0.3", changefreq: "yearly" },
   { path: "/terminos", priority: "0.3", changefreq: "yearly" },
