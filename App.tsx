@@ -1,31 +1,36 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, lazy, Suspense } from 'react';
 import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+// Home is eagerly imported because it's the landing route — lazy() would
+// add a needless extra round-trip on first paint. Everything else is split:
+// each page becomes its own JS chunk, only fetched when the user navigates
+// there. Keeps the initial bundle tight and offloads admin/dashboard code
+// from public-facing first paint.
 import Home from './pages/Home';
-import Projects from './pages/Projects';
-import ProjectDetail from './pages/ProjectDetail';
-import Contact from './pages/Contact';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import ClientLogin from './pages/ClientLogin';
-import ClientDashboard from './pages/ClientDashboard';
-import Privacy from './pages/Privacy';
-import Terms from './pages/Terms';
-import Blog from './pages/Blog';
-import BlogDetail from './pages/BlogDetail';
-import LandingGlobalitae from './pages/LandingGlobalitae';
-import AgenciasLogin from './pages/AgenciasLogin';
-import AgenciasPartnership from './pages/AgenciasPartnership';
-import AgenciasRegistrar from './pages/AgenciasRegistrar';
-import AgenciasDashboard from './pages/AgenciasDashboard';
-import AgenciasStats from './pages/AgenciasStats';
-import InversoresLogin from './pages/InversoresLogin';
-import InversoresPartnership from './pages/InversoresPartnership';
-import InversoresDashboard from './pages/InversoresDashboard';
-import AuthFinish from './pages/AuthFinish';
-import EquipoUpload from './pages/EquipoUpload';
-import AdminPortalManager from './pages/AdminPortalManager';
+const Projects = lazy(() => import('./pages/Projects'));
+const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
+const Contact = lazy(() => import('./pages/Contact'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const ClientLogin = lazy(() => import('./pages/ClientLogin'));
+const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogDetail = lazy(() => import('./pages/BlogDetail'));
+const LandingGlobalitae = lazy(() => import('./pages/LandingGlobalitae'));
+const AgenciasLogin = lazy(() => import('./pages/AgenciasLogin'));
+const AgenciasPartnership = lazy(() => import('./pages/AgenciasPartnership'));
+const AgenciasRegistrar = lazy(() => import('./pages/AgenciasRegistrar'));
+const AgenciasDashboard = lazy(() => import('./pages/AgenciasDashboard'));
+const AgenciasStats = lazy(() => import('./pages/AgenciasStats'));
+const InversoresLogin = lazy(() => import('./pages/InversoresLogin'));
+const InversoresPartnership = lazy(() => import('./pages/InversoresPartnership'));
+const InversoresDashboard = lazy(() => import('./pages/InversoresDashboard'));
+const AuthFinish = lazy(() => import('./pages/AuthFinish'));
+const EquipoUpload = lazy(() => import('./pages/EquipoUpload'));
+const AdminPortalManager = lazy(() => import('./pages/AdminPortalManager'));
 import { AuthProvider } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
@@ -140,6 +145,13 @@ const App: React.FC = () => {
       <HashRouter>
         <ScrollToTop />
         <Layout>
+          <Suspense
+            fallback={
+              <div className="min-h-screen flex items-center justify-center bg-almond">
+                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+              </div>
+            }
+          >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/proyectos" element={<Projects />} />
@@ -175,6 +187,7 @@ const App: React.FC = () => {
               </div>
             } />
           </Routes>
+          </Suspense>
         </Layout>
       </HashRouter>
       </AuthProvider>
