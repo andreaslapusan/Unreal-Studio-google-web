@@ -1,0 +1,27 @@
+{
+  "name": "Unreal Studio Bali",
+  "short_name": "Unreal Bali",
+  "description": "Inversión inmobiliaria en Bali desde 75.000€. Villas, lofts y apartamentos en Uluwatu, Pererenan y Tabanan.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3E5D8",
+  "theme_color": "#3F2305",
+  "lang": "es",
+  "categories": ["business", "finance", "real-estate"],
+  "icons": [
+    {
+      "src": "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/favicon_io/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/favicon_io/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

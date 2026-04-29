@@ -114,6 +114,55 @@ const ProjectDetail: React.FC = () => {
               setMeta('twitter:description', loadedProject.description?.substring(0, 160) || '');
               setMeta('twitter:image', getImageUrl(loadedProject.image));
 
+              // JSON-LD Schema.org RealEstateListing — gives Google a structured
+              // record per project with price, currency, photos, geo, amenities.
+              // Replaces any prior listing block on this page so revisits don't
+              // accumulate stale schemas in the head.
+              const oldLd = document.getElementById('ld-project-listing');
+              if (oldLd) oldLd.remove();
+              const ld = document.createElement('script');
+              ld.type = 'application/ld+json';
+              ld.id = 'ld-project-listing';
+              const priceCurrency = (loadedProject.price_currency ?? 'EUR').toUpperCase();
+              const galleryUrls = [
+                getImageUrl(loadedProject.image),
+                ...((loadedProject.gallery ?? []) as string[]).slice(0, 6).map((p) => getImageUrl(p)),
+              ].filter(Boolean);
+              ld.textContent = JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'Apartment',
+                name: loadedProject.name,
+                description: (loadedProject.description ?? '').slice(0, 500),
+                url: window.location.href,
+                image: galleryUrls,
+                numberOfBedrooms: loadedProject.bedrooms || undefined,
+                numberOfBathroomsTotal: loadedProject.bathrooms || undefined,
+                floorSize:
+                  loadedProject.area_m2 > 0
+                    ? { '@type': 'QuantitativeValue', value: loadedProject.area_m2, unitCode: 'MTK' }
+                    : undefined,
+                address: loadedProject.location
+                  ? { '@type': 'PostalAddress', addressLocality: loadedProject.location, addressCountry: 'ID' }
+                  : undefined,
+                offers:
+                  loadedProject.investor_price > 0
+                    ? {
+                        '@type': 'Offer',
+                        price: loadedProject.investor_price,
+                        priceCurrency,
+                        availability: 'https://schema.org/InStock',
+                        url: window.location.href,
+                      }
+                    : undefined,
+                provider: {
+                  '@type': 'RealEstateAgent',
+                  '@id': 'https://unrealstudiobali.com/#organization',
+                  name: 'Unreal Studio Bali',
+                  url: 'https://unrealstudiobali.com',
+                },
+              });
+              document.head.appendChild(ld);
+
               // Cargar Proyectos Similares (Misma ubicación/zona)
               const { data: similarData } = await supabase
                 .from('projects')
