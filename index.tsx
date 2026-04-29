@@ -2,6 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import ErrorBoundary from './components/ErrorBoundary';
+import { initWebVitals } from './lib/webVitals';
 import './index.css';
 import './lib/i18n';
 
@@ -13,6 +15,11 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>
 );
+
+// Boot real-user metrics after first paint so we don't compete with hydration.
+initWebVitals();
