@@ -6,8 +6,8 @@ import { Project, AppConfig, BlogPost } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 
-const ANY_ZONE = ANY_ZONE;
-const ANY_TYPE = ANY_TYPE;
+const ANY_ZONE = 'Cualquier zona';
+const ANY_TYPE = 'Cualquier tipo';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();

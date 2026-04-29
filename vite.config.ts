@@ -47,11 +47,6 @@ export default defineConfig(({ mode }) => {
         }
       },
       build: {
-        // Note: a manual `react`/`vendor` chunk split caused a circular chunk
-        // (`vendor -> react -> vendor`) that broke the production bundle with
-        // "Cannot read properties of undefined (reading 'createContext')" at
-        // runtime. Letting Rollup auto-split keeps the site working; revisit
-        // splitting only with a verified topological-safe partitioning.
         chunkSizeWarningLimit: 700,
       }
     };
