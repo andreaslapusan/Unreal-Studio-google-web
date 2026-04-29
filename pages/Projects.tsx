@@ -186,9 +186,10 @@ const Projects: React.FC = () => {
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
                 <div className="relative">
-                  <select 
-                    value={filters.sort} 
-                    onChange={(e) => handleFilterChange('sort', e.target.value)} 
+                  <select
+                    aria-label={t('projects.filters.sortBy')}
+                    value={filters.sort}
+                    onChange={(e) => handleFilterChange('sort', e.target.value)}
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
                   >
                     <option value="featured">{t('projects.sort.featured')}</option>
@@ -232,7 +233,7 @@ const Projects: React.FC = () => {
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
-                  <select value={filters.zone} onChange={(e) => handleFilterChange('zone', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => handleFilterChange('zone', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
                     {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
                   </select>
@@ -247,7 +248,7 @@ const Projects: React.FC = () => {
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
-                  <select value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
                     <option value="Villa">Villa</option>
                     <option value="Loft">Loft</option>

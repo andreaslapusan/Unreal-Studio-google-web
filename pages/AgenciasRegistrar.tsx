@@ -231,6 +231,7 @@ export default function AgenciasRegistrar() {
           <label className="block">
             <span className="text-sm font-medium text-primary">Volumen mensual aproximado</span>
             <select
+              aria-label="Volumen mensual aproximado"
               value={form.monthly_volume}
               onChange={(e) => update("monthly_volume", e.target.value)}
               className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none"

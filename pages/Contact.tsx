@@ -88,7 +88,8 @@ const Contact: React.FC = () => {
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.reason')}</label>
                       <div className="relative">
-                        <select 
+                        <select
+                            aria-label={t('contact.reason')}
                             name="reason"
                             value={formData.reason}
                             onChange={handleChange}
@@ -108,7 +109,8 @@ const Contact: React.FC = () => {
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.budget')}</label>
                        <div className="relative">
-                         <select 
+                         <select
+                            aria-label={t('contact.budget')}
                             name="budget"
                             value={formData.budget}
                             onChange={handleChange}
@@ -126,7 +128,8 @@ const Contact: React.FC = () => {
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.timeframe')}</label>
                        <div className="relative">
-                         <select 
+                         <select
+                            aria-label={t('contact.timeframe')}
                             name="timeframe"
                             value={formData.timeframe}
                             onChange={handleChange}

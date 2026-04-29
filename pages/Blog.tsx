@@ -122,8 +122,9 @@ const Blog: React.FC = () => {
             {/* Ordenar */}
             <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-primary/5">
               <span className="material-symbols-outlined text-primary/30 text-sm">sort</span>
-              <select 
-                value={sortOrder} 
+              <select
+                aria-label={t('blog.sortNewest')}
+                value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
                 className="bg-transparent border-none text-[10px] font-black uppercase tracking-widest text-primary outline-none cursor-pointer appearance-none"
               >
