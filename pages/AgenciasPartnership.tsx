@@ -12,6 +12,7 @@
  */
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const projectsAvailable = [
   { name: "Lofts Balangan", price: "99.000€", area: "Uluwatu Oeste", progress: "60%+" },
@@ -50,36 +51,35 @@ const faqs: { q: string; a: string }[] = [
 ];
 
 export default function AgenciasPartnership() {
+  const { t } = useTranslation();
   return (
     <div className="bg-almond text-primary">
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 pt-20 pb-16">
           <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium mb-4">
-            Programa Listing Partners
+            {t("agenciasPartnership.tag")}
           </div>
           <h1 className="font-serif text-5xl md:text-6xl leading-tight mb-4">
-            Lista nuestras villas en Bali.
+            {t("agenciasPartnership.heroTitle1")}
             <br />
-            <span className="text-primary/60">Cobra 5% por cada unidad cerrada.</span>
+            <span className="text-primary/60">{t("agenciasPartnership.heroTitle2")}</span>
           </h1>
           <p className="text-lg text-primary/70 max-w-2xl mb-8">
-            Si tienes una agencia inmobiliaria con clientes interesados en
-            inversión en el extranjero, te damos todo el material para vender
-            nuestras villas como si fueran tuyas.
+            {t("agenciasPartnership.heroBody")}
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
               to="/agencias/registrar"
               className="bg-primary text-white px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-lg"
             >
-              Aplicar ahora
+              {t("agenciasPartnership.ctaApply")}
             </Link>
             <Link
               to="/agencias/login"
               className="bg-white border border-primary/20 text-primary px-8 py-4 rounded-full font-medium hover:bg-primary/5 transition"
             >
-              Ya soy partner — login
+              {t("agenciasPartnership.ctaLogin")}
             </Link>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function AgenciasPartnership() {
       {/* Why */}
       <section className="bg-white">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-12 text-center">Por qué colaborar con nosotros</h2>
+          <h2 className="font-serif text-3xl mb-12 text-center">{t("agenciasPartnership.whyTitle")}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
@@ -141,7 +141,7 @@ export default function AgenciasPartnership() {
       {/* How it works */}
       <section className="bg-almond">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-12 text-center">Cómo funciona</h2>
+          <h2 className="font-serif text-3xl mb-12 text-center">{t("agenciasPartnership.howTitle")}</h2>
           <ol className="space-y-6">
             {[
               {
@@ -180,8 +180,10 @@ export default function AgenciasPartnership() {
       {/* Available projects */}
       <section className="bg-white">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-2 text-center">Proyectos disponibles para listing</h2>
-          <p className="text-primary/60 text-center mb-12">Snapshot a {new Date().toLocaleDateString("es-ES")} · contacta para detalles actualizados</p>
+          <h2 className="font-serif text-3xl mb-2 text-center">{t("agenciasPartnership.projectsTitle")}</h2>
+          <p className="text-primary/60 text-center mb-12">
+            {t("agenciasPartnership.projectsSubtitle", { date: new Date().toLocaleDateString() })}
+          </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {projectsAvailable.map((p) => (
               <article key={p.name} className="bg-almond rounded-xl p-5">
@@ -198,7 +200,7 @@ export default function AgenciasPartnership() {
       {/* FAQ */}
       <section className="bg-almond">
         <div className="max-w-3xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-8 text-center">Preguntas frecuentes</h2>
+          <h2 className="font-serif text-3xl mb-8 text-center">{t("agenciasPartnership.faqTitle")}</h2>
           <div className="space-y-3">
             {faqs.map((f) => (
               <details key={f.q} className="bg-white rounded-xl p-5 group">
@@ -216,15 +218,15 @@ export default function AgenciasPartnership() {
       {/* CTA */}
       <section className="bg-primary text-white">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
-          <h2 className="font-serif text-4xl mb-4">¿Listo para listar Bali con nosotros?</h2>
+          <h2 className="font-serif text-4xl mb-4">{t("agenciasPartnership.ctaFinalTitle")}</h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            Te respondemos en 24-48h. Si encajas, te damos acceso al portal y empezamos.
+            {t("agenciasPartnership.ctaFinalBody")}
           </p>
           <Link
             to="/agencias/registrar"
             className="inline-block bg-white text-primary px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-xl"
           >
-            Aplicar al programa →
+            {t("agenciasPartnership.ctaFinalBtn")}
           </Link>
         </div>
       </section>

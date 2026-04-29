@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 functions/node_modules/
 functions/lib/
+.claude-flow/
+supabase/.temp/
