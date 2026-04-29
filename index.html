@@ -13,13 +13,31 @@
     <!-- Preload hero / og image so it's available before the page first paints -->
     <link rel="preload" as="image" href="https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/og-image.webp" fetchpriority="high">
 
-    <!-- Google Analytics (deferred so it doesn't block render) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM1PBTZ06W"></script>
+    <!-- Google Analytics — deferred until the browser is idle so the
+         157 KiB gtag bundle never competes with first paint or LCP image
+         download. dataLayer is queued synchronously so any gtag() calls
+         that fire before idle still get captured and replayed. -->
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag(){ window.dataLayer.push(arguments); }
+      window.gtag = gtag;
       gtag('js', new Date());
       gtag('config', 'G-VM1PBTZ06W', { send_page_view: true, anonymize_ip: true });
+
+      function _loadGA() {
+        if (window._gaInjected) return;
+        window._gaInjected = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-VM1PBTZ06W';
+        document.head.appendChild(s);
+      }
+      // Prefer idle scheduling; fall back to window load for older Safari.
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(_loadGA, { timeout: 4000 });
+      } else {
+        window.addEventListener('load', function () { setTimeout(_loadGA, 1500); });
+      }
     </script>
 
     <title>Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€</title>
