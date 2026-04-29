@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { recordFormSubmit } from '../lib/attribution';
 
 const Contact: React.FC = () => {
   const { t } = useTranslation();
@@ -14,17 +15,20 @@ const Contact: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Construcción del mensaje con los nuevos campos
+
+    // Best-effort attribution capture before navigating away. Fire-and-forget
+    // so a slow Supabase call doesn't block the WhatsApp redirect.
+    void recordFormSubmit({ name: formData.name });
+
     const text = `*SOLICITUD DE REUNIÓN - UNREAL STUDIO*%0A%0A` +
       `👤 *Nombre:* ${formData.name}%0A` +
       `🎯 *Motivo:* ${formData.reason}%0A` +
       `💰 *Presupuesto:* ${formData.budget}%0A` +
       `⏳ *Plazo:* ${formData.timeframe}%0A` +
       `📝 *Mensaje:* ${formData.message || 'Sin mensaje adicional'}`;
-      
+
     const url = `https://wa.me/6285217790692?text=${text}`;
-    
+
     window.open(url, '_blank');
   };
 

@@ -6,6 +6,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { recordFormSubmit } from "../lib/attribution";
 
 interface FormState {
   agency_name: string;
@@ -92,6 +93,15 @@ export default function AgenciasRegistrar() {
           status: "pending",
         });
       if (insertErr) throw insertErr;
+
+      // Record attribution alongside the application so the partner who
+      // referred this agency (if any) gets credit in their stats panel.
+      void recordFormSubmit({
+        email: form.email.trim().toLowerCase(),
+        phone: form.phone.trim() || form.whatsapp.trim() || null,
+        name: form.manager_name.trim() || form.agency_name.trim(),
+      });
+
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));

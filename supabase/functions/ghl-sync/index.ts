@@ -269,6 +269,102 @@ async function handlePropertyUpdateInsert(row: UpdateRow) {
   return { ok: true, note: "property_update logged; per-project GHL workflow trigger TBD" };
 }
 
+interface AttributionRow {
+  id: string;
+  contact_email: string | null;
+  contact_phone: string | null;
+  contact_name: string | null;
+  partner_id: string | null;
+  property_slug: string | null;
+  utm_source: string | null;
+  utm_campaign: string | null;
+  utm_medium: string | null;
+  event_type: string;
+}
+
+/**
+ * When a `form_submit` lead_attribution lands and a partner is attached,
+ * push the contact into GHL and tag it with `lister:<agency_slug>` so the
+ * sales team knows which agency to credit. Visit-level events are
+ * intentionally skipped — they're high-volume and not actionable for sales.
+ */
+async function handleAttributionInsert(row: AttributionRow) {
+  if (row.event_type !== "form_submit") return { ok: true, skipped: "not form_submit" };
+  if (!row.contact_email && !row.contact_phone) return { ok: true, skipped: "no contact" };
+
+  // Resolve the partner agency name + slug for the tag
+  let partnerSlug: string | null = null;
+  let agencyName: string | null = null;
+  if (row.partner_id) {
+    const { data } = await supa
+      .from("listing_partners")
+      .select("agency_name, personal_link_slug")
+      .eq("id", row.partner_id)
+      .maybeSingle();
+    partnerSlug = data?.personal_link_slug ?? null;
+    agencyName = data?.agency_name ?? null;
+  }
+
+  // Find or create GHL contact
+  let contactId: string | undefined;
+  if (row.contact_email) {
+    const search = await ghl(
+      `/contacts/search/duplicate?locationId=${GHL_LOC}&email=${encodeURIComponent(row.contact_email)}`
+    );
+    const sd = await search.json();
+    contactId = sd?.contact?.id as string | undefined;
+  }
+
+  const tags = [
+    "form_submit_web",
+    row.utm_source ? `utm_source_${row.utm_source}` : null,
+    partnerSlug ? `lister_${partnerSlug}` : null,
+    row.property_slug ? `interes_${row.property_slug}` : null,
+  ].filter(Boolean) as string[];
+
+  if (!contactId) {
+    const [firstName, ...rest] = (row.contact_name ?? "").split(" ");
+    const created = await ghl("/contacts/", {
+      method: "POST",
+      body: JSON.stringify({
+        locationId: GHL_LOC,
+        firstName: firstName || "Lead",
+        lastName: rest.join(" ") || undefined,
+        email: row.contact_email,
+        phone: row.contact_phone,
+        tags,
+        source: agencyName ? `Web (referido por ${agencyName})` : `Web ${row.utm_source ?? "direct"}`,
+      }),
+    });
+    const cd = await created.json();
+    contactId = cd?.contact?.id ?? cd?.id;
+  } else {
+    // Existing contact — append tags
+    await ghl(`/contacts/${contactId}/tags`, {
+      method: "POST",
+      body: JSON.stringify({ tags }),
+    });
+  }
+  if (!contactId) return { ok: false, error: "no contact id" };
+
+  // Note with full attribution context for the sales team
+  const noteBody = [
+    `🔗 Form submit web con atribución`,
+    `Partner: ${agencyName ?? "—"} (${partnerSlug ?? "n/a"})`,
+    `Property slug: ${row.property_slug ?? "—"}`,
+    `UTM: source=${row.utm_source ?? "—"} medium=${row.utm_medium ?? "—"} campaign=${row.utm_campaign ?? "—"}`,
+  ].join("\n");
+  await ghl(`/contacts/${contactId}/notes`, {
+    method: "POST",
+    body: JSON.stringify({ body: noteBody.slice(0, 5000) }),
+  });
+
+  // Persist link back from the attribution row
+  await supa.from("lead_attributions").update({ ghl_contact_id: contactId }).eq("id", row.id);
+
+  return { ok: true, ghl_contact_id: contactId, tags };
+}
+
 // ─── HTTP entry point ────────────────────────────────────────────────────
 
 Deno.serve(async (req) => {
@@ -304,6 +400,8 @@ Deno.serve(async (req) => {
       result = await handleInvestorInsert(wh.record as InvestorRow);
     } else if (wh.type === "INSERT" && wh.table === "property_updates") {
       result = await handlePropertyUpdateInsert(wh.record as UpdateRow);
+    } else if (wh.type === "INSERT" && wh.table === "lead_attributions") {
+      result = await handleAttributionInsert(wh.record as AttributionRow);
     } else if ((body as { source?: string }).source === "ghl") {
       // Inbound webhook from GHL — handle contact tag changes here later
       result = { ok: true, note: "ghl inbound webhook received (no handler yet)" };

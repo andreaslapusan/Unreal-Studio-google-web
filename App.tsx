@@ -35,6 +35,7 @@ import { AuthProvider } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
 import { supabase } from './lib/supabase';
+import { trackPageVisit } from './lib/attribution';
 
 interface CurrencyContextType {
   currency: CurrencyCode;
@@ -60,6 +61,18 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
+const AttributionTracker = () => {
+  const { pathname, search, hash } = useLocation();
+  // Re-run on every navigation: SPA hash routes mean a partner-shared link
+  // can be opened mid-session and we still want to capture the UTM params.
+  // trackPageVisit is idempotent — it no-ops when there are no UTM params.
+  useEffect(() => {
+    void trackPageVisit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, search, hash]);
   return null;
 };
 
@@ -144,6 +157,7 @@ const App: React.FC = () => {
       <AuthProvider>
       <HashRouter>
         <ScrollToTop />
+        <AttributionTracker />
         <Layout>
           <Suspense
             fallback={
