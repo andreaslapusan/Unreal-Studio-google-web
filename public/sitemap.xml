@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://unrealstudiobali.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://unrealstudiobali.com/"/>
   </url>
   <url>
     <loc>https://unrealstudiobali.com/proyectos</loc>
@@ -13,24 +11,14 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://unrealstudiobali.com/proyecto/golf-bay-lofts-1bd</loc>
+    <loc>https://unrealstudiobali.com/inversores</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://unrealstudiobali.com/proyecto/golf-bay-villa-3bd</loc>
+    <loc>https://unrealstudiobali.com/agencias</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://unrealstudiobali.com/proyecto/deseo-studio</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://unrealstudiobali.com/proyecto/mambo-villa</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://unrealstudiobali.com/blog</loc>
@@ -40,36 +28,124 @@
   <url>
     <loc>https://unrealstudiobali.com/contacto</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://unrealstudiobali.com/agencias-partnership</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unrealstudiobali.com/agencias/registrar</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://unrealstudiobali.com/agencias</loc>
-    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://unrealstudiobali.com/inversores</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://unrealstudiobali.com/privacy</loc>
+    <loc>https://unrealstudiobali.com/privacidad</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://unrealstudiobali.com/terms</loc>
+    <loc>https://unrealstudiobali.com/terminos</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/proyecto/deseo-studio-tipo-b-1bd</loc>
+    <lastmod>2026-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/proyecto/deseo-studio-tipo-a-1bd</loc>
+    <lastmod>2026-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/proyecto/golf-bay-lofts-1bd</loc>
+    <lastmod>2026-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/proyecto/golf-bay-villa-3bd</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/proyecto/the-nook-1bd</loc>
+    <lastmod>2026-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/proyecto/venaso-3bd</loc>
+    <lastmod>2026-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/por-que-bali-es-el-destino-de-inversion-del-momento</loc>
+    <lastmod>2026-02-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/guia-completa-leasehold-vs-freehold-en-indonesia</loc>
+    <lastmod>2026-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/roi-en-bali-cifras-reales-de-nuestros-proyectos</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/nomadas-digitales-en-bali-como-estan-transformando-el-mercado-inmobiliario</loc>
+    <lastmod>2025-12-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/canggu-uluwatu-o-ubud-donde-invertir-en-bali-en-2026</loc>
+    <lastmod>2025-11-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/fiscalidad-para-espanoles-que-invierten-en-bali-lo-que-debes-saber</loc>
+    <lastmod>2025-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/como-funciona-la-gestion-de-una-villa-en-bali-a-distancia</loc>
+    <lastmod>2025-10-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/bali-vs-tailandia-vs-portugal-comparativa-para-inversores-espanoles</loc>
+    <lastmod>2025-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/el-proceso-de-inversion-paso-a-paso-con-unreal-studio</loc>
+    <lastmod>2025-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/que-buscar-en-una-inspeccion-de-villa-antes-de-invertir</loc>
+    <lastmod>2025-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/la-visa-de-inversor-en-indonesia-opciones-para-residir-en-bali</loc>
+    <lastmod>2025-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://unrealstudiobali.com/blog/por-que-el-turismo-en-bali-seguira-creciendo-datos-y-tendencias</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
