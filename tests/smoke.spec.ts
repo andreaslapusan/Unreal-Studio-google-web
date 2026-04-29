@@ -31,8 +31,9 @@ test.describe("public pages render", () => {
 
   test("agencias landing — partnership program", async ({ page }) => {
     await open(page, "/agencias");
-    // The hero title fragment is rendered via i18n
-    await expect(page.getByRole("link", { name: /aplicar/i })).toBeVisible();
+    // Hero CTA renders via i18n. Both "Aplicar ahora" hero link and
+    // "Aplicar al programa →" footer CTA match — assert the first one.
+    await expect(page.getByRole("link", { name: /aplicar/i }).first()).toBeVisible();
   });
 
   test("agencias registrar form", async ({ page }) => {
@@ -50,7 +51,9 @@ test.describe("public pages render", () => {
 
   test("inversores landing — investor program", async ({ page }) => {
     await open(page, "/inversores");
-    await expect(page.getByRole("link", { name: /asesor|advisor|penasihat/i })).toBeVisible();
+    // Hero "Hablar con un asesor" + footer "Agendar llamada con un asesor →"
+    // both match — assert the first.
+    await expect(page.getByRole("link", { name: /asesor|advisor|penasihat/i }).first()).toBeVisible();
   });
 
   test("inversores login", async ({ page }) => {
@@ -114,8 +117,11 @@ test.describe("auth flows do not leak", () => {
   test("agencias dashboard redirects without auth", async ({ page }) => {
     await open(page, "/agencias/dashboard");
     await page.waitForTimeout(1500);
-    // Should bounce to login screen — magic link button visible
-    const loginCta = page.getByRole("button", { name: /enlace mágico|magic link/i });
-    await expect(loginCta).toBeVisible({ timeout: 3000 });
+    // AgenciasDashboard <Navigate to="/agencias" /> when no user. Confirm the
+    // partner-only UI ("Mis proyectos asignados") is NOT rendered.
+    const dashboardOnly = page.getByText(/Mis proyectos asignados|Mi panel|Salir de la cuenta/i);
+    await expect(dashboardOnly).toHaveCount(0);
+    // And the public partnership CTA is visible (proves the redirect landed).
+    await expect(page.getByRole("link", { name: /aplicar/i }).first()).toBeVisible();
   });
 });
