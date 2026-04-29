@@ -5,6 +5,7 @@ import { CURRENCIES, DEFAULT_CONFIG } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
+import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -263,7 +264,15 @@ const Projects: React.FC = () => {
             {filteredProjects.map((proj, idx) => (
               <Link key={proj.id} to={`/proyecto/${proj.slug}`} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
                 <div className="relative h-32 md:h-80 overflow-hidden">
-                  <img loading={idx === 0 ? undefined : "lazy"} alt={proj.name} className="w-full h-full object-cover transition duration-1000 group-hover:scale-110" src={getImageUrl(proj.image)} />
+                  <img
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    fetchPriority={idx === 0 ? "high" : "auto"}
+                    alt={proj.name}
+                    className="w-full h-full object-cover transition duration-1000 group-hover:scale-110"
+                    src={imgSrc(getImageUrl(proj.image), 600)}
+                    srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
                   <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
                     <span className="bg-primary/90 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{proj.status}</span>
                   </div>
@@ -311,7 +320,14 @@ const Projects: React.FC = () => {
               {soldProjects.map((proj, idx) => (
                 <div key={proj.id} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-white/50 flex flex-col h-full grayscale-[0.5]">
                   <div className="relative h-32 md:h-80 overflow-hidden">
-                    <img loading="lazy" alt={proj.name} className="w-full h-full object-cover" src={getImageUrl(proj.image)} />
+                    <img
+                      loading="lazy"
+                      alt={proj.name}
+                      className="w-full h-full object-cover"
+                      src={imgSrc(getImageUrl(proj.image), 600)}
+                      srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
                     <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
                       <span className="bg-red-600 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{t('projects.statusSold')}</span>
                     </div>

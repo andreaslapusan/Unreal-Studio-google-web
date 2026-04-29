@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
+import { compressImage } from "../lib/imageCompress";
 
 interface PartnerRow {
   id: string;
@@ -261,11 +262,14 @@ function BrandingPanel({
     setUploading(true);
     setUploadError("");
     try {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
+      // Compress to WebP at max 800px — logos are small UI elements; bigger
+      // origin file = wasted bytes for everyone downloading the dashboard.
+      const compressed = await compressImage(file, { maxDim: 800, quality: 0.85 });
+      const ext = compressed.name.split(".").pop()?.toLowerCase() ?? "webp";
       const path = `partner-logos/${partner.id}-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage
         .from("images")
-        .upload(path, file, { cacheControl: "3600", upsert: true, contentType: file.type });
+        .upload(path, compressed, { cacheControl: "3600", upsert: true, contentType: compressed.type });
       if (upErr) throw upErr;
 
       const { data: pub } = supabase.storage.from("images").getPublicUrl(path);

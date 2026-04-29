@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
+import { compressImage } from "../lib/imageCompress";
 
 interface PropertySummary {
   id: string;
@@ -97,18 +98,28 @@ export default function EquipoUpload() {
       if (insertErr) throw insertErr;
       const updateId = updateRow.id as string;
 
-      // 2. Upload files in parallel
+      // 2. Upload files in parallel. Images get client-side compressed to
+      //    WebP (max 1920px, q=0.82) so the construction team can drop raw
+      //    DSLR/phone photos straight in without exploding storage size.
       const assets = await Promise.all(
         files.map(async (qf, i) => {
-          const ext = qf.file.name.split(".").pop() ?? "bin";
+          const isImage = qf.file.type.startsWith("image/");
+          const toUpload = isImage
+            ? await compressImage(qf.file, { maxDim: 1920, quality: 0.82 })
+            : qf.file;
+          const ext = toUpload.name.split(".").pop() ?? "bin";
           const path = `property-updates/${propertyId}/${updateId}/${i}-${Date.now()}.${ext}`;
           const { error: upErr } = await supabase.storage
             .from("images")
-            .upload(path, qf.file, { cacheControl: "3600", upsert: false });
+            .upload(path, toUpload, {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: toUpload.type,
+            });
           if (upErr) throw upErr;
           const { data: pub } = supabase.storage.from("images").getPublicUrl(path);
 
-          const assetType = qf.file.type.startsWith("image/")
+          const assetType = isImage
             ? "image"
             : qf.file.type.startsWith("video/")
             ? "video"
@@ -122,8 +133,8 @@ export default function EquipoUpload() {
             storage_path: path,
             external_url: pub.publicUrl,
             file_name: qf.file.name,
-            file_size: qf.file.size,
-            mime_type: qf.file.type,
+            file_size: toUpload.size,
+            mime_type: toUpload.type,
             position: i,
           };
         })

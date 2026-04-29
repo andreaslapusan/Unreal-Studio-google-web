@@ -5,6 +5,7 @@ import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig, BlogPost } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
+import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -322,7 +323,15 @@ const Home: React.FC = () => {
           {featuredProject ? (
               <Link to={`/proyecto/${featuredProject.slug}`} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-700 flex flex-row md:flex-col group h-full md:h-auto items-stretch">
                 <div className="w-[40%] md:w-full relative md:h-[500px] shrink-0 overflow-hidden">
-                  <img src={getImageUrl(featuredProject.image)} className="absolute inset-0 md:relative w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt={featuredProject.name} />
+                  <img
+                    src={imgSrc(getImageUrl(featuredProject.image), 1000)}
+                    srcSet={imgSrcSet(getImageUrl(featuredProject.image), [480, 800, 1000, 1400])}
+                    sizes="(max-width: 768px) 40vw, 50vw"
+                    className="absolute inset-0 md:relative w-full h-full object-cover group-hover:scale-105 transition duration-1000"
+                    alt={featuredProject.name}
+                    loading="eager"
+                    fetchPriority="high"
+                  />
                   <div className="absolute top-3 left-3 md:top-8 md:left-8">
                     <span className="bg-primary text-white text-[8px] md:text-[10px] font-black px-3 py-1.5 md:px-6 md:py-3 uppercase rounded-lg md:rounded-2xl shadow-2xl">
                       {featuredProject.status}
@@ -466,7 +475,14 @@ const Home: React.FC = () => {
           {filteredGridProjects.slice(0, 3).map((proj) => (
             <Link key={proj.id} to={`/proyecto/${proj.slug}`} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group border border-primary/5">
               <div className="h-32 md:h-64 relative overflow-hidden">
-                <img loading="lazy" src={getImageUrl(proj.image)} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt={proj.name} />
+                <img
+                  loading="lazy"
+                  src={imgSrc(getImageUrl(proj.image), 600)}
+                  srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                  alt={proj.name}
+                />
                 <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-lg shadow-xl">{proj.status}</span>
               </div>
               <div className="p-4 md:p-8 flex-grow flex flex-col text-left">
@@ -550,7 +566,14 @@ const Home: React.FC = () => {
           <div className="lg:w-1/2 relative">
             <div className="relative w-full">
               <div className="rounded-3xl overflow-hidden shadow-2xl h-96 md:h-auto md:aspect-square relative group">
-                <img loading="lazy" src={getImageUrl("https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/The%20Nook/1-04.png")} className="w-full h-full object-cover" alt="Interior Architecture" />
+                <img
+                  loading="lazy"
+                  src={imgSrc("https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/The%20Nook/1-04.png", 800)}
+                  srcSet={imgSrcSet("https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/The%20Nook/1-04.png", [400, 800, 1200])}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="w-full h-full object-cover"
+                  alt="Interior Architecture"
+                />
                 <div className="absolute inset-0 bg-black/10"></div>
               </div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:bottom-10 md:translate-y-0 bg-primary p-6 md:p-8 rounded-3xl shadow-2xl text-left min-w-[200px] md:min-w-[280px] z-10 border border-white/10 backdrop-blur-md bg-primary/95">
@@ -704,7 +727,14 @@ const Home: React.FC = () => {
               {/* Imagen */}
               <div className="order-1 md:order-2">
                  <div className="aspect-[16/10] rounded-[2rem] overflow-hidden relative shadow-lg">
-                    <img loading="lazy" src={getImageUrl(post.image)} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-105" alt={post.title} />
+                    <img
+                      loading="lazy"
+                      src={imgSrc(getImageUrl(post.image), 600)}
+                      srcSet={imgSrcSet(getImageUrl(post.image), [320, 600, 900])}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-105"
+                      alt={post.title}
+                    />
                  </div>
               </div>
 

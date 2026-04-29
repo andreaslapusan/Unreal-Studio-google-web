@@ -4,6 +4,7 @@ import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
+import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import { useAuth } from '../lib/auth-context';
 
@@ -255,7 +256,15 @@ const ProjectDetail: React.FC = () => {
       )}
 
       <section className="relative h-[75vh] w-full overflow-hidden">
-        <img alt={project.name} className="absolute inset-0 w-full h-full object-cover" src={getImageUrl(project.image)} />
+        <img
+          alt={project.name}
+          className="absolute inset-0 w-full h-full object-cover"
+          src={imgSrc(getImageUrl(project.image), 1600)}
+          srcSet={imgSrcSet(getImageUrl(project.image), [600, 1000, 1400, 1800])}
+          sizes="100vw"
+          loading="eager"
+          fetchPriority="high"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
         <div className="absolute bottom-12 left-6 md:left-12 max-w-md w-full">
           <div className="bg-white/95 backdrop-blur-md p-8 rounded-xl shadow-2xl border-l-4 border-primary">
@@ -596,7 +605,14 @@ const ProjectDetail: React.FC = () => {
                       onClick={() => globalIdx !== -1 && setLightbox({ open: true, index: globalIdx })}
                       className="relative rounded-2xl overflow-hidden shadow-sm group cursor-pointer aspect-square border border-gray-100"
                     >
-                      <img loading="lazy" alt={`Avance de obra ${idx + 1}`} className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105" src={getImageUrl(img)} />
+                      <img
+                        loading="lazy"
+                        alt={`Avance de obra ${idx + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                        src={imgSrc(getImageUrl(img), 600)}
+                        srcSet={imgSrcSet(getImageUrl(img), [320, 600, 900])}
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                      />
                       <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
                       </div>
@@ -616,7 +632,14 @@ const ProjectDetail: React.FC = () => {
                   onClick={() => setLightbox({ open: true, index: idx })}
                   className={`relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${idx === 0 ? 'md:col-span-2 md:row-span-2 aspect-video' : 'aspect-square'}`}
                 >
-                  <img loading="lazy" alt={`${project.name} - Imagen ${idx + 1}`} className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105" src={img} />
+                  <img
+                    loading="lazy"
+                    alt={`${project.name} - Imagen ${idx + 1}`}
+                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                    src={imgSrc(img, 800)}
+                    srcSet={imgSrcSet(img, [400, 800, 1200])}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
                   <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                     <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
                   </div>
@@ -705,7 +728,14 @@ const ProjectDetail: React.FC = () => {
           {similarProjects.map((similar) => (
             <Link key={similar.id} to={`/proyecto/${similar.slug}`} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group border border-primary/5">
               <div className="h-48 overflow-hidden relative">
-                <img loading="lazy" alt={similar.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" src={getImageUrl(similar.image)} />
+                <img
+                  loading="lazy"
+                  alt={similar.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                  src={imgSrc(getImageUrl(similar.image), 500)}
+                  srcSet={imgSrcSet(getImageUrl(similar.image), [320, 500, 800])}
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
                 <span className="absolute top-3 left-3 bg-primary/80 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg">{similar.status}</span>
               </div>
               <div className="p-6 text-left">
