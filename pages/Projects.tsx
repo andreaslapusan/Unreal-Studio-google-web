@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CURRENCIES, DEFAULT_CONFIG } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 
+const ANY_ZONE = 'Cualquier zona';
+const ANY_TYPE = 'Cualquier tipo';
+
 const Projects: React.FC = () => {
-  useEffect(() => { document.title = 'Proyectos | Unreal Studio Madrid'; }, []);
+  const { t } = useTranslation();
+  useEffect(() => { document.title = t('projects.title'); }, [t]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [projects, setProjects] = useState<Project[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
@@ -20,10 +25,10 @@ const Projects: React.FC = () => {
   };
 
   const [filters, setFilters] = useState({
-    zone: searchParams.get('zone') || 'Cualquier zona',
+    zone: searchParams.get('zone') || ANY_ZONE,
     minPrice: formatInitialPrice(searchParams.get('minPrice')),
     maxPrice: formatInitialPrice(searchParams.get('maxPrice')),
-    type: searchParams.get('type') || 'Cualquier tipo',
+    type: searchParams.get('type') || ANY_TYPE,
     sort: searchParams.get('sort') || 'asc'
   });
 
@@ -68,8 +73,8 @@ const Projects: React.FC = () => {
     let result = projects.filter(p => {
       if (p.is_hidden) return false; // Hide hidden projects from main list
       
-      const zoneMatch = filters.zone === 'Cualquier zona' || p.location.toLowerCase().includes(filters.zone.toLowerCase());
-      const typeMatch = filters.type === 'Cualquier tipo' || p.property_type === filters.type;
+      const zoneMatch = filters.zone === ANY_ZONE || p.location.toLowerCase().includes(filters.zone.toLowerCase());
+      const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
       
       const rates = config.exchangeRates;
       const projectRate = rates[p.price_currency] || 1;
@@ -126,8 +131,8 @@ const Projects: React.FC = () => {
     
     // Update URL params
     const params = new URLSearchParams();
-    if (newFilters.zone !== 'Cualquier zona') params.append('zone', newFilters.zone);
-    if (newFilters.type !== 'Cualquier tipo') params.append('type', newFilters.type);
+    if (newFilters.zone !== ANY_ZONE) params.append('zone', newFilters.zone);
+    if (newFilters.type !== ANY_TYPE) params.append('type', newFilters.type);
     if (newFilters.minPrice) params.append('minPrice', newFilters.minPrice.replace(/\./g, ''));
     if (newFilters.maxPrice) params.append('maxPrice', newFilters.maxPrice.replace(/\./g, ''));
     params.append('sort', newFilters.sort);
@@ -145,7 +150,7 @@ const Projects: React.FC = () => {
       return (
           <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
               <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">Cargando...</p>
+              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('common.loading')}</p>
           </div>
       );
   }
@@ -158,10 +163,10 @@ const Projects: React.FC = () => {
         </div>
         <div className="relative z-10 max-w-5xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl leading-[1.1] text-primary tracking-tight">
-            Proyectos y Oportunidades de Inversión
+            {t('projects.heroTitle')}
           </h1>
           <p className="text-lg md:text-2xl text-primary/70 max-w-3xl mx-auto leading-relaxed font-light">
-            Explora nuestra selección completa de activos inmobiliarios.
+            {t('projects.heroSubtitle')}
           </p>
         </div>
       </header>
@@ -175,17 +180,17 @@ const Projects: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Ordenar por</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
                 <div className="relative">
                   <select 
                     value={filters.sort} 
                     onChange={(e) => handleFilterChange('sort', e.target.value)} 
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
                   >
-                    <option value="featured">Destacados</option>
-                    <option value="roi">Mayor ROI alquiler</option>
-                    <option value="asc">Menor precio</option>
-                    <option value="desc">Mayor precio</option>
+                    <option value="featured">{t('projects.sort.featured')}</option>
+                    <option value="roi">{t('projects.sort.roi')}</option>
+                    <option value="asc">{t('projects.sort.asc')}</option>
+                    <option value="desc">{t('projects.sort.desc')}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
@@ -196,19 +201,19 @@ const Projects: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Presupuesto (€)</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
                 <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
-                  <input 
-                    type="text" 
-                    placeholder="Min" 
+                  <input
+                    type="text"
+                    placeholder={t('projects.filters.min')}
                     value={filters.minPrice}
                     onChange={(e) => handlePriceChange('minPrice', e.target.value)}
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
                   />
                   <span className="text-gray-300 text-[10px]">•</span>
-                  <input 
-                    type="text" 
-                    placeholder="Max" 
+                  <input
+                    type="text"
+                    placeholder={t('projects.filters.max')}
                     value={filters.maxPrice}
                     onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
@@ -221,10 +226,10 @@ const Projects: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Zona</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
                   <select value={filters.zone} onChange={(e) => handleFilterChange('zone', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option>Cualquier zona</option>
+                    <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
                     {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
@@ -236,10 +241,10 @@ const Projects: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Tipo</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
                   <select value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option>Cualquier tipo</option>
+                    <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
                     <option value="Villa">Villa</option>
                     <option value="Loft">Loft</option>
                     {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
@@ -267,7 +272,7 @@ const Projects: React.FC = () => {
                   <h3 className="text-sm md:text-3xl font-serif text-primary mb-2 md:mb-3 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
                   {proj.completion_percent > 0 && (
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[9px] font-black uppercase text-primary/30">Obra</span>
+                      <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
                       <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
                         <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
                       </div>
@@ -277,7 +282,7 @@ const Projects: React.FC = () => {
                   <div className="mt-auto">
                     <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
                       <div>
-                        <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">Desde</p>
+                        <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">{t('projects.card.from')}</p>
                         <div className="flex items-baseline gap-2">
                           <p className="font-extrabold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
                           {Number(proj.market_price) > Number(proj.investor_price) && (
@@ -294,21 +299,21 @@ const Projects: React.FC = () => {
           </div>
         ) : (
           <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
-            <h3 className="text-2xl text-primary font-serif">No se encontraron resultados</h3>
-            <button onClick={() => setFilters({zone:'Cualquier zona', minPrice:'', maxPrice:'', type:'Cualquier tipo', sort:'featured'})} className="mt-6 text-primary font-bold border-b border-primary">Limpiar filtros</button>
+            <h3 className="text-2xl text-primary font-serif">{t('projects.noResults')}</h3>
+            <button onClick={() => setFilters({zone:ANY_ZONE, minPrice:'', maxPrice:'', type:ANY_TYPE, sort:'featured'})} className="mt-6 text-primary font-bold border-b border-primary">{t('projects.clearFilters')}</button>
           </div>
         )}
 
         {soldProjects.length > 0 && (
           <div className="mt-32">
-            <h2 className="text-4xl text-primary mb-12 text-center font-serif">Proyectos Vendidos</h2>
+            <h2 className="text-4xl text-primary mb-12 text-center font-serif">{t('projects.soldTitle')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 opacity-70">
               {soldProjects.map((proj, idx) => (
                 <div key={proj.id} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-white/50 flex flex-col h-full grayscale-[0.5]">
                   <div className="relative h-32 md:h-80 overflow-hidden">
                     <img loading="lazy" alt={proj.name} className="w-full h-full object-cover" src={getImageUrl(proj.image)} />
                     <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
-                      <span className="bg-red-600 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">VENDIDO</span>
+                      <span className="bg-red-600 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{t('projects.statusSold')}</span>
                     </div>
                   </div>
                   <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
@@ -316,7 +321,7 @@ const Projects: React.FC = () => {
                     <div className="mt-auto">
                       <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
                         <div>
-                          <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">Precio Final</p>
+                          <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">{t('projects.card.finalPrice')}</p>
                           <p className="font-extrabold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
                         </div>
                       </div>

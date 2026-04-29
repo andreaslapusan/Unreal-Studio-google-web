@@ -34,6 +34,64 @@
     "agencies": "Agensi",
     "investors": "Investor"
   },
+  "projects": {
+    "title": "Proyek | Unreal Studio Madrid",
+    "heroTitle": "Proyek & Peluang Investasi",
+    "heroSubtitle": "Jelajahi pilihan lengkap aset real estate kami.",
+    "filters": {
+      "sortBy": "Urutkan berdasarkan",
+      "budget": "Anggaran (€)",
+      "zone": "Zona",
+      "type": "Tipe",
+      "min": "Min",
+      "max": "Max",
+      "anyZone": "Semua zona",
+      "anyType": "Semua tipe"
+    },
+    "sort": {
+      "featured": "Unggulan",
+      "roi": "ROI sewa tertinggi",
+      "asc": "Harga terendah",
+      "desc": "Harga tertinggi"
+    },
+    "card": {
+      "from": "Mulai",
+      "work": "Konstruksi",
+      "finalPrice": "Harga Final"
+    },
+    "noResults": "Tidak ada hasil",
+    "clearFilters": "Hapus filter",
+    "soldTitle": "Proyek Terjual",
+    "statusSold": "TERJUAL"
+  },
+  "contact": {
+    "title": "Kontak | Unreal Studio Madrid",
+    "heroTitle1": "Mari bicara tentang",
+    "heroTitle2": "investasi Anda berikutnya",
+    "heroSubtitle": "Kami pangkas birokrasi. Isi formulir dan kami akan menghubungi via WhatsApp dengan proposal konkret.",
+    "formTitle": "Permintaan cepat",
+    "formIntro": "Isi preferensi Anda. Saat dikirim, WhatsApp Anda akan terbuka dengan info untuk tim kami.",
+    "fullName": "Nama Lengkap",
+    "fullNamePlaceholder": "Nama Anda",
+    "reason": "Tujuan Investasi",
+    "budget": "Anggaran",
+    "timeframe": "Waktu Pembelian",
+    "message": "Pesan (opsional)",
+    "messagePlaceholder": "Hal lain yang ingin Anda sampaikan…",
+    "submit": "Kirim via WhatsApp",
+    "reasons": {
+      "diversify": "Diversifikasi aset",
+      "roi": "Imbal hasil tinggi (ROI)",
+      "vacation": "Rumah liburan",
+      "retirement": "Rencana pensiun"
+    },
+    "timeframes": {
+      "asap": "Sesegera mungkin",
+      "month1to3": "1-3 bulan",
+      "month3to6": "3-6 bulan",
+      "exploring": "Masih melihat-lihat"
+    }
+  },
   "agenciasPartnership": {
     "tag": "Program Mitra Listing",
     "heroTitle1": "Listing villa kami di Bali.",

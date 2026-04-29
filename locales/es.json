@@ -34,6 +34,64 @@
     "agencies": "Agencias",
     "investors": "Inversores"
   },
+  "projects": {
+    "title": "Proyectos | Unreal Studio Madrid",
+    "heroTitle": "Proyectos y Oportunidades de Inversión",
+    "heroSubtitle": "Explora nuestra selección completa de activos inmobiliarios.",
+    "filters": {
+      "sortBy": "Ordenar por",
+      "budget": "Presupuesto (€)",
+      "zone": "Zona",
+      "type": "Tipo",
+      "min": "Min",
+      "max": "Max",
+      "anyZone": "Cualquier zona",
+      "anyType": "Cualquier tipo"
+    },
+    "sort": {
+      "featured": "Destacados",
+      "roi": "Mayor ROI alquiler",
+      "asc": "Menor precio",
+      "desc": "Mayor precio"
+    },
+    "card": {
+      "from": "Desde",
+      "work": "Obra",
+      "finalPrice": "Precio Final"
+    },
+    "noResults": "No se encontraron resultados",
+    "clearFilters": "Limpiar filtros",
+    "soldTitle": "Proyectos Vendidos",
+    "statusSold": "VENDIDO"
+  },
+  "contact": {
+    "title": "Contacto | Unreal Studio Madrid",
+    "heroTitle1": "Hablemos de tu",
+    "heroTitle2": "próxima inversión",
+    "heroSubtitle": "Eliminamos la burocracia. Rellena el formulario y te contactaremos por WhatsApp inmediatamente con propuestas concretas.",
+    "formTitle": "Solicitud Rápida",
+    "formIntro": "Completa tus preferencias. Al enviar, se abrirá tu WhatsApp con la información pre-cargada para nuestro equipo.",
+    "fullName": "Nombre Completo",
+    "fullNamePlaceholder": "Tu nombre",
+    "reason": "Motivo de Inversión",
+    "budget": "Presupuesto",
+    "timeframe": "Plazo de Compra",
+    "message": "Mensaje (opcional)",
+    "messagePlaceholder": "Cuéntanos cualquier detalle adicional…",
+    "submit": "Enviar por WhatsApp",
+    "reasons": {
+      "diversify": "Diversificar patrimonio",
+      "roi": "Alta rentabilidad (ROI)",
+      "vacation": "Casa vacacional",
+      "retirement": "Plan de retiro"
+    },
+    "timeframes": {
+      "asap": "Lo antes posible",
+      "month1to3": "1-3 meses",
+      "month3to6": "3-6 meses",
+      "exploring": "Estoy explorando opciones"
+    }
+  },
   "agenciasPartnership": {
     "tag": "Programa Listing Partners",
     "heroTitle1": "Lista nuestras villas en Bali.",

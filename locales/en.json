@@ -34,6 +34,64 @@
     "agencies": "Agencies",
     "investors": "Investors"
   },
+  "projects": {
+    "title": "Projects | Unreal Studio Madrid",
+    "heroTitle": "Projects & Investment Opportunities",
+    "heroSubtitle": "Explore our complete selection of real estate assets.",
+    "filters": {
+      "sortBy": "Sort by",
+      "budget": "Budget (€)",
+      "zone": "Zone",
+      "type": "Type",
+      "min": "Min",
+      "max": "Max",
+      "anyZone": "Any zone",
+      "anyType": "Any type"
+    },
+    "sort": {
+      "featured": "Featured",
+      "roi": "Highest rental ROI",
+      "asc": "Lowest price",
+      "desc": "Highest price"
+    },
+    "card": {
+      "from": "From",
+      "work": "Build",
+      "finalPrice": "Final price"
+    },
+    "noResults": "No results found",
+    "clearFilters": "Clear filters",
+    "soldTitle": "Sold projects",
+    "statusSold": "SOLD"
+  },
+  "contact": {
+    "title": "Contact | Unreal Studio Madrid",
+    "heroTitle1": "Let's talk about your",
+    "heroTitle2": "next investment",
+    "heroSubtitle": "We cut the bureaucracy. Fill in the form and we will reach out on WhatsApp immediately with concrete proposals.",
+    "formTitle": "Quick request",
+    "formIntro": "Fill in your preferences. On submit, your WhatsApp opens with the info pre-loaded for our team.",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "reason": "Investment reason",
+    "budget": "Budget",
+    "timeframe": "Purchase timeframe",
+    "message": "Message (optional)",
+    "messagePlaceholder": "Anything else we should know…",
+    "submit": "Send via WhatsApp",
+    "reasons": {
+      "diversify": "Diversify wealth",
+      "roi": "High yield (ROI)",
+      "vacation": "Vacation home",
+      "retirement": "Retirement plan"
+    },
+    "timeframes": {
+      "asap": "As soon as possible",
+      "month1to3": "1-3 months",
+      "month3to6": "3-6 months",
+      "exploring": "Just exploring"
+    }
+  },
   "agenciasPartnership": {
     "tag": "Listing Partners Program",
     "heroTitle1": "List our villas in Bali.",
