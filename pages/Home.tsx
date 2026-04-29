@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig, BlogPost } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 
+const ANY_ZONE = ANY_ZONE;
+const ANY_TYPE = ANY_TYPE;
+
 const Home: React.FC = () => {
-  useEffect(() => { document.title = 'Unreal Studio Madrid | Inversiones Inmobiliarias en Bali'; }, []);
+  const { t } = useTranslation();
+  useEffect(() => { document.title = t('home.title'); }, [t]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
@@ -21,8 +26,8 @@ const Home: React.FC = () => {
   const [filters, setFilters] = useState({
     minPrice: '',
     maxPrice: '',
-    zone: 'Cualquier zona',
-    type: 'Cualquier tipo',
+    zone: ANY_ZONE,
+    type: ANY_TYPE,
     sort: 'asc' // asc | desc
   });
 
@@ -147,9 +152,9 @@ const Home: React.FC = () => {
       if (p.is_hidden) return false; // Hide hidden projects from main list
       
       // Filtro de Zona
-      const zoneMatch = filters.zone === 'Cualquier zona' || p.location.toLowerCase().includes(filters.zone.toLowerCase());
+      const zoneMatch = filters.zone === ANY_ZONE || p.location.toLowerCase().includes(filters.zone.toLowerCase());
       // Filtro de Tipo
-      const typeMatch = filters.type === 'Cualquier tipo' || p.property_type === filters.type;
+      const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
       
       // Filtro de Precio (con conversión de divisa)
       const rates = config.exchangeRates;
@@ -202,8 +207,8 @@ const Home: React.FC = () => {
   const handleSearch = () => {
     // Redirigir a la página de proyectos con los filtros aplicados
     const params = new URLSearchParams();
-    if (filters.zone !== 'Cualquier zona') params.append('zone', filters.zone);
-    if (filters.type !== 'Cualquier tipo') params.append('type', filters.type);
+    if (filters.zone !== ANY_ZONE) params.append('zone', filters.zone);
+    if (filters.type !== ANY_TYPE) params.append('type', filters.type);
     if (filters.minPrice) params.append('minPrice', filters.minPrice.replace(/\./g, ''));
     if (filters.maxPrice) params.append('maxPrice', filters.maxPrice.replace(/\./g, ''));
     params.append('sort', filters.sort);
@@ -223,7 +228,7 @@ const Home: React.FC = () => {
       return (
           <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
               <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">Cargando...</p>
+              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('common.loading')}</p>
           </div>
       );
   }
@@ -274,10 +279,14 @@ const Home: React.FC = () => {
         <div className="space-y-8 md:space-y-10 z-10">
           <div className="max-w-xl">
             <h1 className="text-5xl md:text-6xl lg:text-7xl leading-[1.1] text-primary mb-8">
-              Invierte en <span className="italic font-extralight">Bali</span> desde {minPriceDisplay} con <span className="italic font-extralight">Unreal Studio</span>
+              <Trans
+                i18nKey="home.heroTitle"
+                values={{ price: minPriceDisplay }}
+                components={{ i: <span className="italic font-extralight" /> }}
+              />
             </h1>
             <p className="text-lg md:text-xl text-primary/70 mb-10 leading-relaxed font-medium">
-              Genera hasta un <span className="font-bold">28% anual bruto</span> invirtiendo a coste directo de promotor junto a nuestro estudio propio de arquitectura en Bali.
+              <Trans i18nKey="home.heroBody" components={{ b: <span className="font-bold" /> }} />
             </p>
             <div className="flex flex-col sm:flex-row gap-5">
               <a 
@@ -286,13 +295,13 @@ const Home: React.FC = () => {
                 rel="noopener noreferrer" 
                 className="bg-primary text-white px-10 py-5 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2"
               >
-                Agenda una reunión <span className="material-symbols-outlined">arrow_forward</span>
+                {t('home.ctaMeeting')} <span className="material-symbols-outlined">arrow_forward</span>
               </a>
               <button 
                 onClick={() => setIsVideoOpen(true)}
                 className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border border-primary/20 font-bold text-primary hover:bg-white transition text-sm cursor-pointer"
               >
-                <span className="material-symbols-outlined text-primary">play_circle</span> Ver video intro
+                <span className="material-symbols-outlined text-primary">play_circle</span> {t('home.ctaVideo')}
               </button>
             </div>
           </div>
@@ -303,13 +312,13 @@ const Home: React.FC = () => {
                <img loading="lazy" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 2" />
                <img loading="lazy" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 3" />
              </div>
-             <p className="text-[11px] font-black uppercase tracking-widest text-primary/40">+150 inversores en todo el mundo.</p>
+             <p className="text-[11px] font-black uppercase tracking-widest text-primary/40">{t('home.investorsCount')}</p>
           </div>
         </div>
         
         {/* Featured Project Card */}
         <div className="w-full">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4 text-left">Proyecto Destacado</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4 text-left">{t('home.featuredTag')}</p>
           {featuredProject ? (
               <Link to={`/proyecto/${featuredProject.slug}`} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-700 flex flex-row md:flex-col group h-full md:h-auto items-stretch">
                 <div className="w-[40%] md:w-full relative md:h-[500px] shrink-0 overflow-hidden">
@@ -327,7 +336,7 @@ const Home: React.FC = () => {
                   
                   <div className="mt-auto pt-3 md:pt-10 border-t border-gray-100 flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-4">
                     <div>
-                      <p className="text-[8px] md:text-[10px] uppercase text-gray-400 font-black mb-1 md:mb-2 tracking-widest">Inversión desde</p>
+                      <p className="text-[8px] md:text-[10px] uppercase text-gray-400 font-black mb-1 md:mb-2 tracking-widest">{t('home.investmentFrom')}</p>
                       <div className="flex items-baseline gap-2">
                         <p className="font-bold text-lg md:text-3xl text-primary leading-none">{formatPrice(featuredProject.investor_price, featuredProject.price_currency)}</p>
                         {Number(featuredProject.market_price) > Number(featuredProject.investor_price) && (
@@ -337,12 +346,12 @@ const Home: React.FC = () => {
                     </div>
                     
                     <div className="hidden md:flex items-center justify-center gap-3 bg-almond/30 px-6 py-4 rounded-2xl group-hover:bg-primary group-hover:text-white transition-all duration-500 self-start sm:self-auto w-full sm:w-auto">
-                      <span className="text-primary group-hover:text-white font-bold text-xs uppercase tracking-widest">Ver Proyecto</span>
+                      <span className="text-primary group-hover:text-white font-bold text-xs uppercase tracking-widest">{t('home.viewProject')}</span>
                       <span className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </div>
 
                     <div className="md:hidden flex items-center gap-1 text-primary mt-1">
-                      <span className="text-[9px] font-bold uppercase tracking-widest">Ver</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest">{t('home.viewShort')}</span>
                       <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </div>
                   </div>
@@ -351,7 +360,7 @@ const Home: React.FC = () => {
           ) : (
              <div className="bg-white rounded-3xl p-12 text-center shadow-lg h-full flex flex-col items-center justify-center">
                  <span className="material-symbols-outlined text-4xl text-gray-300 mb-2">home_work</span>
-                 <p className="text-primary/40 font-bold uppercase tracking-widest text-xs">Próximamente</p>
+                 <p className="text-primary/40 font-bold uppercase tracking-widest text-xs">{t('home.comingSoon')}</p>
              </div>
           )}
         </div>
@@ -366,17 +375,17 @@ const Home: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Ordenar por</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
                 <div className="relative">
-                  <select 
-                    value={filters.sort} 
-                    onChange={(e) => setFilters({...filters, sort: e.target.value})} 
+                  <select
+                    value={filters.sort}
+                    onChange={(e) => setFilters({...filters, sort: e.target.value})}
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
                   >
-                    <option value="featured">Destacados</option>
-                    <option value="roi">Mayor ROI alquiler</option>
-                    <option value="asc">Menor precio</option>
-                    <option value="desc">Mayor precio</option>
+                    <option value="featured">{t('projects.sort.featured')}</option>
+                    <option value="roi">{t('projects.sort.roi')}</option>
+                    <option value="asc">{t('projects.sort.asc')}</option>
+                    <option value="desc">{t('projects.sort.desc')}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
@@ -387,19 +396,19 @@ const Home: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Presupuesto (€)</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
                 <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
-                  <input 
-                    type="text" 
-                    placeholder="Min" 
+                  <input
+                    type="text"
+                    placeholder={t('projects.filters.min')}
                     value={filters.minPrice}
                     onChange={(e) => handlePriceChange('minPrice', e.target.value)}
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
                   />
                   <span className="text-gray-300 text-[10px]">•</span>
-                  <input 
-                    type="text" 
-                    placeholder="Max" 
+                  <input
+                    type="text"
+                    placeholder={t('projects.filters.max')}
                     value={filters.maxPrice}
                     onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
@@ -412,10 +421,10 @@ const Home: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Zona</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
                   <select value={filters.zone} onChange={(e) => setFilters({...filters, zone: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option>Cualquier zona</option>
+                    <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
                     {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
@@ -427,10 +436,10 @@ const Home: React.FC = () => {
             <div className="flex-1 flex items-center gap-4 px-6 py-4 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">Tipo</label>
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
                   <select value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option>Cualquier tipo</option>
+                    <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
                     <option>Co-Inversión</option>
                     <option>Propiedad Única</option>
                     {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
@@ -444,7 +453,7 @@ const Home: React.FC = () => {
               onClick={handleSearch}
               className="bg-primary text-white m-2 px-8 py-4 rounded-2xl md:rounded-[2rem] font-black text-[10px] uppercase tracking-widest hover:brightness-125 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
             >
-              <span>Buscar</span>
+              <span>{t('home.searchBtn')}</span>
               <span className="material-symbols-outlined text-sm">search</span>
             </button>
           </div>
@@ -465,7 +474,7 @@ const Home: React.FC = () => {
                 <h3 className="text-sm md:text-2xl font-bold mb-3 md:mb-6 text-primary line-clamp-2 md:line-clamp-none leading-tight">{proj.name}</h3>
                 {proj.completion_percent > 0 && (
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[9px] font-black uppercase text-primary/30">Obra</span>
+                    <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
                     <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
                       <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
                     </div>
@@ -483,7 +492,7 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                   <span className="text-primary font-bold text-[8px] md:text-[10px] uppercase tracking-widest flex items-center gap-1 group-hover:gap-3 transition-all">
-                     <span className="hidden md:inline">Ver más</span> 
+                     <span className="hidden md:inline">{t('home.viewShort')}</span>
                      <span className="material-symbols-outlined text-sm md:text-base">add</span>
                   </span>
                 </div>
@@ -494,7 +503,7 @@ const Home: React.FC = () => {
         
         <div className="mt-12 md:mt-16 text-center">
           <button onClick={handleSearch} className="inline-flex items-center gap-2 border-b-2 border-primary text-primary font-bold pb-1 uppercase tracking-widest text-xs hover:text-primary/70 hover:border-primary/70 transition">
-            Ver más propiedades <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            {t('home.viewMoreProperties')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
           </button>
         </div>
       </section>
@@ -503,10 +512,10 @@ const Home: React.FC = () => {
       <section className="py-24 md:py-32 bg-white px-6 md:px-12">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
           <div className="lg:w-1/2 space-y-10 text-left">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">LA DIFERENCIA UNREAL</p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl text-primary leading-tight">Por qué invertir fuera de Europa</h2>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section1Tag')}</p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl text-primary leading-tight">{t('home.section1Title')}</h2>
             <p className="text-lg text-primary/60 font-light leading-relaxed max-w-xl">
-              La presión fiscal y regulatoria reduce cada vez más la rentabilidad inmobiliaria en Europa. Te damos acceso a mercados emergentes con mayor potencial y gestión profesional.
+              {t('home.section1Body')}
             </p>
             <div className="space-y-10">
               <div className="flex gap-6 items-start">
@@ -545,9 +554,9 @@ const Home: React.FC = () => {
                 <div className="absolute inset-0 bg-black/10"></div>
               </div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:bottom-10 md:translate-y-0 bg-primary p-6 md:p-8 rounded-3xl shadow-2xl text-left min-w-[200px] md:min-w-[280px] z-10 border border-white/10 backdrop-blur-md bg-primary/95">
-                <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-almond/40 mb-1 md:mb-2">ROI MEDIO PROYECTADO</p>
+                <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-almond/40 mb-1 md:mb-2">{t('home.roiAvgTag')}</p>
                 <p className="text-4xl md:text-6xl text-almond font-serif mb-1 md:mb-2 leading-none">28%</p>
-                <p className="text-[8px] md:text-[10px] font-bold text-almond/60 uppercase tracking-wider">Rentabilidad bruta anual</p>
+                <p className="text-[8px] md:text-[10px] font-bold text-almond/60 uppercase tracking-wider">{t('home.roiAvgFooter')}</p>
               </div>
             </div>
           </div>
@@ -558,10 +567,10 @@ const Home: React.FC = () => {
       <section className="py-24 md:py-32 bg-[#F3E5D8] px-6 md:px-12">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
           <div className="lg:w-1/2 text-left space-y-10">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">CASO DE USO DEFINIDO</p>
-            <h2 className="text-4xl md:text-5xl text-primary leading-tight">¿Cómo creamos valor?</h2>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section2Tag')}</p>
+            <h2 className="text-4xl md:text-5xl text-primary leading-tight">{t('home.section2Title')}</h2>
             <p className="text-lg text-primary/70 font-light leading-relaxed max-w-lg">
-              Eliminamos intermediarios y optimizamos todo el proceso. Diseñamos, desarrollamos y comercializamos activos por debajo del mercado, generando valor desde la fase inicial del proyecto
+              {t('home.section2Body')}
             </p>
             <div className="space-y-6">
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
@@ -589,7 +598,7 @@ const Home: React.FC = () => {
           </div>
           <div className="lg:w-1/2 w-full">
             <div className="bg-white p-10 md:p-14 rounded-[3rem] shadow-2xl border border-primary/5 text-center space-y-12">
-              <h3 className="text-2xl text-primary font-serif">Desglose de Rentabilidad</h3>
+              <h3 className="text-2xl text-primary font-serif">{t('home.profitTitle')}</h3>
               
               {profitabilityData ? (
                 <div className="space-y-12 text-left">
@@ -646,7 +655,7 @@ const Home: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <p className="text-primary/40 font-bold uppercase tracking-widest text-xs py-10">Sin datos de proyecto disponibles</p>
+                <p className="text-primary/40 font-bold uppercase tracking-widest text-xs py-10">{t('home.noProjectData')}</p>
               )}
             </div>
           </div>
@@ -660,9 +669,9 @@ const Home: React.FC = () => {
            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] border border-white rounded-full translate-y-1/2 -translate-x-1/2"></div>
         </div>
         <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-          <h2 className="text-6xl md:text-8xl text-almond font-serif leading-none">No pierdas tiempo.</h2>
+          <h2 className="text-6xl md:text-8xl text-almond font-serif leading-none">{t('home.ctaSectionTitle')}</h2>
           <p className="text-lg md:text-xl text-almond/70 font-light max-w-2xl mx-auto leading-relaxed px-4">
-            Agenda una reunión de 15 minutos sin compromiso. Evaluamos tu perfil inversor y te mostramos oportunidades reales.
+            {t('home.ctaSectionBody')}
           </p>
           
           <div className="flex flex-col items-center justify-center gap-6 mt-16 px-4">
@@ -672,7 +681,7 @@ const Home: React.FC = () => {
               rel="noopener noreferrer"
               className="w-full max-w-sm bg-almond text-primary px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:scale-105 transition-all duration-300 shadow-2xl flex items-center justify-center gap-3"
             >
-              CONTACTAR POR WHATSAPP <span className="material-symbols-outlined text-base">chat</span>
+              {t('home.ctaWhatsapp')} <span className="material-symbols-outlined text-base">chat</span>
             </a>
           </div>
         </div>
@@ -682,10 +691,10 @@ const Home: React.FC = () => {
       <section className="py-24 md:py-32 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="flex justify-between items-end mb-16 border-b border-primary/5 pb-8">
           <div className="text-left">
-            <h2 className="text-4xl md:text-5xl text-primary font-serif">Últimas Novedades</h2>
+            <h2 className="text-4xl md:text-5xl text-primary font-serif">{t('home.blogTitle')}</h2>
           </div>
           <Link to="/blog" className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group">
-            Ver Blog <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            {t('home.blogCta')} <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </Link>
         </div>
         
