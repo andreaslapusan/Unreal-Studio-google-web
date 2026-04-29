@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
+import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 
 const BlogDetail: React.FC = () => {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +53,7 @@ const BlogDetail: React.FC = () => {
       return (
           <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
               <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">Cargando artículo...</p>
+              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('blog.loadingArticle')}</p>
           </div>
       );
   }
@@ -58,8 +61,8 @@ const BlogDetail: React.FC = () => {
   if (!post) {
       return (
           <div className="h-screen flex flex-col items-center justify-center bg-almond text-primary gap-4">
-              <h1 className="font-serif text-3xl">Artículo no encontrado</h1>
-              <Link to="/blog" className="text-xs font-bold uppercase tracking-widest border-b border-primary">Volver al blog</Link>
+              <h1 className="font-serif text-3xl">{t('blog.articleNotFound')}</h1>
+              <Link to="/blog" className="text-xs font-bold uppercase tracking-widest border-b border-primary">{t('blog.backToBlog')}</Link>
           </div>
       );
   }
@@ -67,7 +70,15 @@ const BlogDetail: React.FC = () => {
   return (
     <div className="bg-almond min-h-screen pb-24 transition-colors duration-300">
        <div className="h-[60vh] w-full relative overflow-hidden">
-           <img src={getImageUrl(post.image)} className="w-full h-full object-cover" alt={post.title} />
+           <img
+             src={imgSrc(getImageUrl(post.image), 1600)}
+             srcSet={imgSrcSet(getImageUrl(post.image), [600, 1000, 1400, 1800])}
+             sizes="100vw"
+             className="w-full h-full object-cover"
+             alt={post.title}
+             loading="eager"
+             fetchPriority="high"
+           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-20 max-w-7xl mx-auto">
                <span className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-lg w-fit mb-6 shadow-xl">{post.tag}</span>
@@ -83,7 +94,7 @@ const BlogDetail: React.FC = () => {
                         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{formatDate(post.published_date)}</span>
                     </div>
                     <Link to="/blog" className="text-[10px] font-black text-primary uppercase tracking-widest hover:translate-x-[-4px] transition-transform flex items-center gap-2">
-                        <span className="material-symbols-outlined text-sm">arrow_back</span> Volver al Blog
+                        <span className="material-symbols-outlined text-sm">arrow_back</span> {t('blog.backToBlog')}
                     </Link>
                 </div>
                 
@@ -95,8 +106,8 @@ const BlogDetail: React.FC = () => {
 
                 <div className="mt-20 pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-8">
                     <div>
-                        <h4 className="text-xl font-bold text-primary mb-2">¿Te ha gustado este artículo?</h4>
-                        <p className="text-sm text-primary/50 font-medium">Compártelo con otros inversores interesados en el mercado internacional.</p>
+                        <h4 className="text-xl font-bold text-primary mb-2">{t('blog.shareTitle')}</h4>
+                        <p className="text-sm text-primary/50 font-medium">{t('blog.shareBody')}</p>
                     </div>
                     <div className="flex gap-4">
                         <button className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">

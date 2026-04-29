@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
@@ -9,6 +10,7 @@ import RolePricingBadge from '../components/RolePricingBadge';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [similarProjects, setSimilarProjects] = useState<Project[]>([]);
@@ -220,7 +222,7 @@ const ProjectDetail: React.FC = () => {
       return (
           <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
               <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">Cargando proyecto...</p>
+              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('projectDetail.loading')}</p>
           </div>
       );
   }
@@ -228,8 +230,8 @@ const ProjectDetail: React.FC = () => {
   if (!project) {
       return (
           <div className="min-h-screen bg-almond flex flex-col items-center justify-center p-6 text-center">
-              <h1 className="text-4xl font-serif text-primary mb-4">Proyecto no encontrado</h1>
-              <Link to="/proyectos" className="text-primary font-bold uppercase tracking-widest border-b border-primary text-xs">Volver a Proyectos</Link>
+              <h1 className="text-4xl font-serif text-primary mb-4">{t('projectDetail.notFound')}</h1>
+              <Link to="/proyectos" className="text-primary font-bold uppercase tracking-widest border-b border-primary text-xs">{t('projectDetail.backToProjects')}</Link>
           </div>
       );
   }
@@ -292,11 +294,11 @@ const ProjectDetail: React.FC = () => {
       <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 md:divide-x divide-white/10">
           <div className="px-4 first:pl-0 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">ROI Alquiler</p>
-            <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || 'Consultar'} <span className="text-xs font-sans opacity-80">Bruto/año</span></p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
+            <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
           </div>
           <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">ROI Reventa</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
             <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : 'Consultar'}</p>
           </div>
           <div className="px-4 text-center md:text-left">
@@ -308,7 +310,7 @@ const ProjectDetail: React.FC = () => {
             <p className="text-3xl font-serif line-through opacity-40">{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
           <div className="px-4 border-r-0 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">Estado</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
             <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
               {project.status}
@@ -320,7 +322,7 @@ const ProjectDetail: React.FC = () => {
       <main className="max-w-7xl mx-auto px-6 md:px-12 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-8 space-y-20">
           <section>
-            <h2 className="text-4xl text-primary mb-8">El Proyecto</h2>
+            <h2 className="text-4xl text-primary mb-8">{t('projectDetail.sectionProject')}</h2>
             <div className="prose prose-lg text-primary/80 font-light space-y-6 mb-12">
               <p>{project.description}</p>
             </div>
@@ -345,28 +347,28 @@ const ProjectDetail: React.FC = () => {
               {project.bedrooms > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">bed</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Dormitorios</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelBedrooms')}</p>
                   <p className="text-lg font-bold text-primary">{project.bedrooms}</p>
                 </div>
               )}
               {project.bathrooms > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">shower</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Baños</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelBathrooms')}</p>
                   <p className="text-lg font-bold text-primary">{project.bathrooms}</p>
                 </div>
               )}
               {project.area_m2 > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">straighten</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Superficie</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelArea')}</p>
                   <p className="text-lg font-bold text-primary">{project.area_m2} m²</p>
                 </div>
               )}
               {project.furnishing && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">chair</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Equipamiento</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelFurnishing')}</p>
                   <p className="text-lg font-bold text-primary">{project.furnishing}</p>
                 </div>
               )}
@@ -376,7 +378,7 @@ const ProjectDetail: React.FC = () => {
           {/* Botones de Descarga en Columna Principal - MOVIDO AQUÍ PARA MAYOR VISIBILIDAD */}
           {(project.brochure_url || project.construction_update_url || (project.floor_plans && project.floor_plans.length > 0)) && (
             <section className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm">
-                <h3 className="text-2xl font-serif text-primary mb-6">Documentación del Proyecto</h3>
+                <h3 className="text-2xl font-serif text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
                 <div className="flex flex-wrap gap-4">
                   {project.brochure_url && (
                     <a href={getImageUrl(project.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
@@ -394,7 +396,7 @@ const ProjectDetail: React.FC = () => {
                     }} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-white text-primary border-2 border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-gray-50 hover:border-primary/30 transition">
                         <span className="material-symbols-outlined">construction</span>
                         <div className="text-left">
-                            <span className="block leading-none">Informe de Obra</span>
+                            <span className="block leading-none">{t('projectDetail.constructionReport')}</span>
                             <span className="text-[10px] font-medium opacity-60 flex items-center gap-1">
                                 <span className="material-symbols-outlined text-[10px]">lock</span> Acceso Inversor
                                 {project.construction_update_date && ` (${formatDate(project.construction_update_date)})`}
@@ -406,7 +408,7 @@ const ProjectDetail: React.FC = () => {
                 
                 {project.floor_plans && project.floor_plans.length > 0 && (
                   <div className="mt-8 pt-8 border-t border-gray-100">
-                    <h4 className="text-lg font-serif text-primary mb-4">Planos del Proyecto</h4>
+                    <h4 className="text-lg font-serif text-primary mb-4">{t('projectDetail.plansTitle')}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {project.floor_plans.map((pdf, idx) => (
                         <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:bg-gray-100 transition group">
@@ -415,7 +417,7 @@ const ProjectDetail: React.FC = () => {
                           </div>
                           <div className="flex-1 overflow-hidden">
                             <p className="text-sm font-bold text-primary truncate">{pdf.split('/').pop()}</p>
-                            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">Ver PDF</p>
+                            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">{t('projectDetail.viewPdf')}</p>
                           </div>
                           <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition">open_in_new</span>
                         </a>
@@ -428,7 +430,7 @@ const ProjectDetail: React.FC = () => {
 
           {project.amenities && project.amenities.length > 0 && (
             <section>
-              <h2 className="text-3xl text-primary mb-8">Servicios incluidos</h2>
+              <h2 className="text-3xl text-primary mb-8">{t('projectDetail.servicesTitle')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {project.amenities.map((amenity, idx) => {
                   const icons: Record<string, string> = {
@@ -468,7 +470,7 @@ const ProjectDetail: React.FC = () => {
             if (grouped.length === 0) return null;
             return (
               <section>
-                <h2 className="text-3xl text-primary mb-8">Equipamiento incluido</h2>
+                <h2 className="text-3xl text-primary mb-8">{t('projectDetail.equipmentTitle')}</h2>
                 <div className="space-y-6">
                   {grouped.map(([catName, cat]) => {
                     const activeItems = cat.items.filter(item => project.furnishing_items!.includes(item));
@@ -499,24 +501,24 @@ const ProjectDetail: React.FC = () => {
                 <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl">
                     <div className="text-center mb-8">
                         <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">lock</span>
-                        <h2 className="text-xl font-serif text-primary mb-2">Acceso exclusivo para inversores</h2>
-                        <p className="text-sm text-primary/50">Inicia sesión con tus credenciales de cliente para ver el informe de obra.</p>
+                        <h2 className="text-xl font-serif text-primary mb-2">{t('projectDetail.investorAccessTitle')}</h2>
+                        <p className="text-sm text-primary/50">{t('projectDetail.investorAccessBody')}</p>
                     </div>
                     {loginError && <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl mb-4 text-center">{loginError}</div>}
                     <form onSubmit={handleClientLoginForDoc} className="space-y-4">
                         <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Email o Teléfono</label>
+                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
                             <input type="text" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="tu@email.com o +34..." className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Contraseña</label>
+                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.password')}</label>
                             <input type="password" required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                         </div>
                         <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">
                             {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> Verificando...</> : 'Acceder al informe'}
                         </button>
                     </form>
-                    <button onClick={() => setShowClientLogin(false)} className="w-full mt-4 text-primary/40 hover:text-primary text-xs font-bold uppercase tracking-widest py-2 transition">Cerrar</button>
+                    <button onClick={() => setShowClientLogin(false)} className="w-full mt-4 text-primary/40 hover:text-primary text-xs font-bold uppercase tracking-widest py-2 transition">{t('projectDetail.close')}</button>
                     <p className="text-center text-[10px] text-primary/30 mt-6">¿No tienes acceso? Contacta con tu asesor de Unreal Studio.</p>
                 </div>
             </div>
@@ -550,7 +552,7 @@ const ProjectDetail: React.FC = () => {
 
             return (
               <section className="mt-12">
-                <h2 className="text-3xl text-primary mb-8">Ubicación</h2>
+                <h2 className="text-3xl text-primary mb-8">{t('projectDetail.locationTitle')}</h2>
                 {embedUrl ? (
                   <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5" style={{height: '400px'}}>
                     <iframe
@@ -567,8 +569,8 @@ const ProjectDetail: React.FC = () => {
                   <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5 bg-gray-100 flex items-center justify-center" style={{height: '400px'}}>
                     <a href={project.google_maps_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-3 text-primary/50 hover:text-primary transition">
                       <span className="material-symbols-outlined text-4xl">map</span>
-                      <span className="text-sm font-bold uppercase tracking-widest">Ver en Google Maps</span>
-                      {isShortLink && <span className="text-[9px] text-primary/30">El enlace corto no permite vista embebida</span>}
+                      <span className="text-sm font-bold uppercase tracking-widest">{t('projectDetail.viewOnMaps')}</span>
+                      {isShortLink && <span className="text-[9px] text-primary/30">{t('projectDetail.shortLinkWarning')}</span>}
                     </a>
                   </div>
                 )}
@@ -578,7 +580,7 @@ const ProjectDetail: React.FC = () => {
 
           {tiersArray && tiersArray.length > 0 && (
             <section className="bg-white p-8 md:p-12 rounded-3xl border border-primary/5 shadow-sm">
-              <h3 className="text-3xl text-primary mb-8">Estructura de Inversión</h3>
+              <h3 className="text-3xl text-primary mb-8">{t('projectDetail.investmentStructureTitle')}</h3>
               <div className="space-y-4">
                 {tiersArray.map((tier: string, idx: number) => (
                   <div key={idx} className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0">
@@ -624,7 +626,7 @@ const ProjectDetail: React.FC = () => {
           )}
 
           <section>
-            <h3 className="text-3xl text-primary mb-8 text-left">Galería del Proyecto</h3>
+            <h3 className="text-3xl text-primary mb-8 text-left">{t('projectDetail.galleryTitle')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allImages.map((img, idx) => (
                 <div 
@@ -652,7 +654,7 @@ const ProjectDetail: React.FC = () => {
         <div className="lg:col-span-4 relative">
           <div className="sticky top-24 space-y-6">
             <div className="bg-white p-8 rounded-2xl shadow-2xl border border-primary/5 text-left">
-              <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">Resumen de Activo</h3>
+              <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">{t('projectDetail.assetSummary')}</h3>
               <div className="space-y-8 mb-10">
                 <div>
                   <div className="flex justify-between text-[11px] font-bold text-gray-500 mb-3 uppercase tracking-wider">
@@ -666,12 +668,12 @@ const ProjectDetail: React.FC = () => {
                 
                 {/* Nuevo bloque de datos extra en sidebar */}
                 <div>
-                    {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Dormitorios</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
-                    {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Baños</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
-                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Superficie</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
-                    {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Equipamiento</span><span className="text-sm font-bold">{project.furnishing}</span></div>}
-                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Piscina</span><span className="text-sm font-bold">{project.has_pool ? 'Sí' : 'No'}</span></div>
-                    {project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">Finalización</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
+                    {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
+                    {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
+                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
+                    {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{project.furnishing}</span></div>}
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{project.has_pool ? t('projectDetail.yes') : t('projectDetail.no')}</span></div>
+                    {project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
                 </div>
 
                 <div className="space-y-3">
@@ -723,7 +725,7 @@ const ProjectDetail: React.FC = () => {
       </main>
 
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-20 border-t border-primary/10">
-        <h3 className="text-3xl text-primary mb-12 text-left">Activos Similares</h3>
+        <h3 className="text-3xl text-primary mb-12 text-left">{t('projectDetail.similarTitle')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {similarProjects.map((similar) => (
             <Link key={similar.id} to={`/proyecto/${similar.slug}`} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group border border-primary/5">
