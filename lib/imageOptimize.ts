@@ -52,13 +52,22 @@ export function imgSrc(url: string | null | undefined, widthOrOpts: number | Img
 
   if (opts.bypass) return url;
 
+  const lower = url.toLowerCase();
+
   const params = new URLSearchParams();
   params.set("url", url);
   if (opts.width) params.set("w", String(opts.width));
   params.set("q", String(opts.quality ?? 78));
-  params.set("output", opts.format ?? "webp");
+  // The catalogue is now physically WebP after the storage conversion script
+  // ran — the proxy only needs to resize. Skip the format coercion when the
+  // source is already WebP/AVIF so wsrv just hands back a re-sized version.
+  if (opts.format) {
+    params.set("output", opts.format);
+  } else if (!/\.(webp|avif)$/i.test(lower)) {
+    params.set("output", "webp");
+  }
   // Avoid wsrv re-encoding to a worse format for already-tiny SVG
-  if (url.toLowerCase().endsWith(".svg")) params.set("output", "png");
+  if (lower.endsWith(".svg")) params.set("output", "png");
 
   return `${WSRV_BASE}?${params.toString()}`;
 }
