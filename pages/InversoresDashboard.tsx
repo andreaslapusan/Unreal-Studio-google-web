@@ -4,6 +4,7 @@
  */
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import PaymentTimeline from "../components/PaymentTimeline";
@@ -61,6 +62,7 @@ interface Update {
 }
 
 export default function InversoresDashboard() {
+  const { t } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
   const [investor, setInvestor] = useState<InvestorRow | null>(null);
   const [myUnits, setMyUnits] = useState<MyUnit[]>([]);
@@ -82,9 +84,7 @@ export default function InversoresDashboard() {
         if (cancelled) return;
         if (invErr) throw invErr;
         if (!invRow) {
-          setError(
-            "Tu cuenta aún no está vinculada a un perfil de inversor. Contacta soporte."
-          );
+          setError(t('inversoresDashboard.noInvestorProfile'));
           setLoading(false);
           return;
         }
@@ -162,15 +162,14 @@ export default function InversoresDashboard() {
     };
   }, [user]);
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('inversoresDashboard.loadingAuth')}</div>;
   if (!user) return <Navigate to="/inversores/login" replace />;
-  // Strict guard: deny null/unknown roles.
   if (!role || (role !== "investor" && role !== "admin")) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>
-          <h1 className="text-3xl font-serif mb-4">Acceso no autorizado</h1>
-          <p>Tu cuenta no tiene perfil de inversor.</p>
+          <h1 className="text-3xl font-serif mb-4">{t('inversoresDashboard.accessDenied')}</h1>
+          <p>{t('inversoresDashboard.accessDeniedBody')}</p>
         </div>
       </div>
     );
@@ -185,27 +184,27 @@ export default function InversoresDashboard() {
     <div className="min-h-screen bg-almond pb-16">
       <header className="bg-primary text-white px-6 py-5 flex items-center justify-between">
         <div>
-          <h1 className="font-serif text-2xl">Portal Inversores</h1>
+          <h1 className="font-serif text-2xl">{t('inversoresDashboard.headerTitle')}</h1>
           <p className="text-sm opacity-80">{investor?.full_name ?? user.email}</p>
         </div>
         <button onClick={() => void signOut()} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
-          Salir
+          {t('inversoresDashboard.navLogout')}
         </button>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-10">
-        {loading && <p>Cargando tus unidades…</p>}
+        {loading && <p>{t('inversoresDashboard.loadingUnits')}</p>}
         {error && <p className="text-red-600">{error}</p>}
 
         {!loading && !error && myUnits.length === 0 && (
           <div className="bg-white/60 rounded-xl p-6 text-center">
-            <p className="text-primary/70">Aún no tienes unidades registradas a tu nombre.</p>
+            <p className="text-primary/70">{t('inversoresDashboard.noUnitsYet')}</p>
           </div>
         )}
 
         {myUnits.length > 0 && (
           <>
-            <h2 className="font-serif text-2xl text-primary mb-4">Mis unidades</h2>
+            <h2 className="font-serif text-2xl text-primary mb-4">{t('inversoresDashboard.yourUnits')}</h2>
             <div className="grid gap-6 md:grid-cols-2 mb-12">
               {myUnits.map((mu) => (
                 <article key={mu.unit.id} className="glass-card rounded-2xl overflow-hidden shadow-sm">
@@ -213,23 +212,23 @@ export default function InversoresDashboard() {
                     <img src={mu.property.hero_image_url} alt={mu.property.name ?? ""} className="w-full h-44 object-cover" loading="lazy" />
                   )}
                   <div className="p-6">
-                    <h3 className="font-serif text-xl text-primary">{mu.property?.name ?? "Proyecto"}</h3>
+                    <h3 className="font-serif text-xl text-primary">{mu.property?.name ?? t('inversoresDashboard.labelProject')}</h3>
                     <p className="text-sm text-primary/70 mb-3">{mu.unit.unit_name}</p>
                     <ul className="text-sm space-y-1">
                       {typeof mu.price_paid === "number" && (
-                        <li><strong>Precio pagado:</strong> {fmt(mu.price_paid)}</li>
+                        <li><strong>{t('inversoresDashboard.labelPricePaid')}</strong> {fmt(mu.price_paid)}</li>
                       )}
-                      <li><strong>Reserva:</strong> {mu.reservation_paid ? "✅" : "—"}</li>
-                      <li><strong>Pago completo:</strong> {mu.full_paid ? "✅" : "—"}</li>
-                      <li><strong>Contrato firmado:</strong> {mu.contract_signed_at ? new Date(mu.contract_signed_at).toLocaleDateString("es-ES") : "—"}</li>
+                      <li><strong>{t('inversoresDashboard.labelReservation')}</strong> {mu.reservation_paid ? "✅" : "—"}</li>
+                      <li><strong>{t('inversoresDashboard.labelFullPayment')}</strong> {mu.full_paid ? "✅" : "—"}</li>
+                      <li><strong>{t('inversoresDashboard.labelContractSigned')}</strong> {mu.contract_signed_at ? new Date(mu.contract_signed_at).toLocaleDateString() : "—"}</li>
                       {mu.property?.delivery_date && (
-                        <li><strong>Entrega estimada:</strong> {mu.property.delivery_date}</li>
+                        <li><strong>{t('inversoresDashboard.labelDelivery')}</strong> {mu.property.delivery_date}</li>
                       )}
                     </ul>
                     {typeof mu.property?.pct_progress === "number" && (
                       <div className="mt-3">
                         <div className="flex items-center justify-between text-xs mb-1">
-                          <span>Avance obra</span>
+                          <span>{t('inversoresDashboard.constructionProgress')}</span>
                           <span className="font-bold">{mu.property.pct_progress}%</span>
                         </div>
                         <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
@@ -239,7 +238,7 @@ export default function InversoresDashboard() {
                     )}
                     {mu.property?.walkthrough_url && (
                       <a href={mu.property.walkthrough_url} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-xs bg-white border border-primary text-primary px-3 py-2 rounded-full">
-                        🎥 Walkthrough
+                        {t('inversoresDashboard.walkthrough')}
                       </a>
                     )}
                     <div className="mt-5 pt-4 border-t border-primary/10">
@@ -250,15 +249,15 @@ export default function InversoresDashboard() {
               ))}
             </div>
 
-            <h2 className="font-serif text-2xl text-primary mb-4">Updates de obra</h2>
+            <h2 className="font-serif text-2xl text-primary mb-4">{t('inversoresDashboard.constructionUpdates')}</h2>
             {updates.length === 0 && (
-              <p className="text-primary/60">Aún no hay updates publicados para tus proyectos.</p>
+              <p className="text-primary/60">{t('inversoresDashboard.noUpdatesYet')}</p>
             )}
             <ul className="space-y-3">
               {updates.map((u) => (
                 <li key={u.id} className="bg-white/60 rounded-xl p-4">
                   <div className="flex items-center justify-between text-sm text-primary/60 mb-1">
-                    <span>{new Date(u.posted_at).toLocaleDateString("es-ES")}</span>
+                    <span>{new Date(u.posted_at).toLocaleDateString()}</span>
                     {typeof u.pct_progress_at_update === "number" && (
                       <span className="font-bold">{u.pct_progress_at_update}%</span>
                     )}

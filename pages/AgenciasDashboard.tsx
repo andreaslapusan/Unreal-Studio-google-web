@@ -4,6 +4,7 @@
  */
 import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
@@ -31,6 +32,7 @@ interface PropertyRow {
 }
 
 export default function AgenciasDashboard() {
+  const { t } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
   const [partner, setPartner] = useState<PartnerRow | null>(null);
   const [projects, setProjects] = useState<PropertyRow[]>([]);
@@ -82,14 +84,14 @@ export default function AgenciasDashboard() {
     };
   }, [user]);
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('agenciasDashboard.loadingAuth')}</div>;
   if (!user) return <Navigate to="/agencias" replace />;
   if (role && role !== "lister" && role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>
-          <h1 className="text-3xl font-serif mb-4">Acceso no autorizado</h1>
-          <p>Tu cuenta no tiene rol de agencia colaboradora.</p>
+          <h1 className="text-3xl font-serif mb-4">{t('agenciasDashboard.accessDenied')}</h1>
+          <p>{t('agenciasDashboard.accessDeniedBody')}</p>
         </div>
       </div>
     );
@@ -99,12 +101,12 @@ export default function AgenciasDashboard() {
     <div className="min-h-screen bg-almond pb-16">
       <header className="bg-primary text-white px-6 py-5 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-serif text-2xl">Portal Agencias</h1>
+          <h1 className="font-serif text-2xl">{t('agenciasDashboard.headerTitle')}</h1>
           <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
         </div>
         <nav className="flex gap-2 text-sm">
-          <Link to="/agencias/stats" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">📊 Estadísticas</Link>
-          <button onClick={() => void signOut()} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">Salir</button>
+          <Link to="/agencias/stats" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navStats')}</Link>
+          <button onClick={() => void signOut()} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navLogout')}</button>
         </nav>
       </header>
 
@@ -116,15 +118,12 @@ export default function AgenciasDashboard() {
           />
         )}
 
-        {loading && <p>Cargando proyectos…</p>}
+        {loading && <p>{t('agenciasDashboard.loadingProjects')}</p>}
         {error && <p className="text-red-600">{error}</p>}
 
         {!loading && !error && projects.length === 0 && (
           <div className="bg-white/60 rounded-xl p-6 text-center">
-            <p className="text-primary/70">
-              Aún no tienes proyectos asignados. Contacta con tu manager para que te
-              active los proyectos en los que vas a colaborar.
-            </p>
+            <p className="text-primary/70">{t('agenciasDashboard.noProjectsYet')}</p>
           </div>
         )}
 
@@ -141,7 +140,7 @@ export default function AgenciasDashboard() {
                 {typeof p.pct_progress === "number" && (
                   <div className="mt-4">
                     <div className="flex items-center justify-between text-xs mb-1">
-                      <span>Avance obra</span>
+                      <span>{t('agenciasDashboard.constructionProgress')}</span>
                       <span className="font-bold">{p.pct_progress}%</span>
                     </div>
                     <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
@@ -151,18 +150,18 @@ export default function AgenciasDashboard() {
                 )}
                 {p.delivery_date && (
                   <p className="text-xs text-primary/60 mt-2">
-                    Entrega estimada: <strong>{p.delivery_date}</strong>
+                    {t('agenciasDashboard.estimatedDelivery')} <strong>{p.delivery_date}</strong>
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2 mt-4">
                   {p.brand_pdf_url && (
                     <a href={p.brand_pdf_url} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary text-white px-3 py-2 rounded-full">
-                      📄 Dossier
+                      {t('agenciasDashboard.dossier')}
                     </a>
                   )}
                   {p.walkthrough_url && (
                     <a href={p.walkthrough_url} target="_blank" rel="noopener noreferrer" className="text-xs bg-white border border-primary text-primary px-3 py-2 rounded-full">
-                      🎥 Walkthrough
+                      {t('agenciasDashboard.walkthrough')}
                     </a>
                   )}
                   {partner && p.slug && (
@@ -193,6 +192,7 @@ function ShareWithClientButton({
   partnerSlug: string | null;
   slug: string;
 }) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -204,7 +204,7 @@ function ShareWithClientButton({
       setCopied(true);
       setTimeout(() => setCopied(false), 2200);
     } catch {
-      window.prompt("Copia el link:", url);
+      window.prompt(t('agenciasDashboard.copyPrompt'), url);
     }
   };
 
@@ -215,7 +215,7 @@ function ShareWithClientButton({
         copied ? "bg-green-600 text-white" : "bg-white border border-primary text-primary hover:bg-primary/5"
       }`}
     >
-      {copied ? "✅ Copiado" : "🔗 Compartir con cliente"}
+      {copied ? t('agenciasDashboard.copied') : t('agenciasDashboard.shareWithClient')}
     </button>
   );
 }
@@ -229,6 +229,7 @@ function BrandingPanel({
   partner: PartnerRow;
   onUpdate: (patch: Partial<PartnerRow>) => void;
 }) {
+  const { t } = useTranslation();
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [linkCopied, setLinkCopied] = useState(false);
@@ -243,7 +244,7 @@ function BrandingPanel({
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2200);
     } catch {
-      window.prompt("Copia tu link:", catalogLink);
+      window.prompt(t('agenciasDashboard.copyPersonalLinkPrompt'), catalogLink);
     }
   };
 
@@ -251,11 +252,11 @@ function BrandingPanel({
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
-      setUploadError("Logo demasiado grande (máx 2MB).");
+      setUploadError(t('agenciasDashboard.logoErrorSize'));
       return;
     }
     if (!file.type.startsWith("image/")) {
-      setUploadError("Sube un archivo de imagen (PNG, JPG, SVG).");
+      setUploadError(t('agenciasDashboard.logoErrorType'));
       return;
     }
 
@@ -293,11 +294,8 @@ function BrandingPanel({
     <section className="grid md:grid-cols-2 gap-6">
       {/* Logo upload */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-primary/5">
-        <h3 className="font-serif text-lg text-primary mb-1">Tu logo</h3>
-        <p className="text-xs text-primary/60 mb-4">
-          Personaliza las presentaciones que envías a tus clientes. Lo añadimos
-          automáticamente a los dossiers compartidos desde tu link.
-        </p>
+        <h3 className="font-serif text-lg text-primary mb-1">{t('agenciasDashboard.logoTitle')}</h3>
+        <p className="text-xs text-primary/60 mb-4">{t('agenciasDashboard.logoBody')}</p>
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 rounded-xl bg-almond border border-primary/10 flex items-center justify-center overflow-hidden shrink-0">
             {partner.logo_url ? (
@@ -314,7 +312,7 @@ function BrandingPanel({
                   : "bg-primary text-white hover:translate-y-[-1px]"
               }`}
             >
-              {uploading ? "Subiendo…" : partner.logo_url ? "Cambiar logo" : "Subir logo"}
+              {uploading ? t('agenciasDashboard.logoUploading') : partner.logo_url ? t('agenciasDashboard.logoChange') : t('agenciasDashboard.logoUpload')}
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/svg+xml,image/webp"
@@ -323,7 +321,7 @@ function BrandingPanel({
                 className="hidden"
               />
             </label>
-            <p className="text-[10px] text-primary/40 mt-2">PNG, JPG, SVG o WebP. Máx 2MB.</p>
+            <p className="text-[10px] text-primary/40 mt-2">{t('agenciasDashboard.logoFormatHint')}</p>
             {uploadError && <p className="text-[11px] text-red-600 mt-1">{uploadError}</p>}
           </div>
         </div>
@@ -331,11 +329,8 @@ function BrandingPanel({
 
       {/* Personal share link */}
       <div className="bg-primary text-white rounded-2xl p-6 shadow-sm">
-        <h3 className="font-serif text-lg mb-1">Tu link personal</h3>
-        <p className="text-xs text-white/70 mb-4">
-          Comparte este link con tus clientes. Cualquier registro o reserva que
-          venga de aquí queda atribuido a tu agencia automáticamente.
-        </p>
+        <h3 className="font-serif text-lg mb-1">{t('agenciasDashboard.linkTitle')}</h3>
+        <p className="text-xs text-white/70 mb-4">{t('agenciasDashboard.linkBody')}</p>
         <div className="bg-white/10 rounded-lg p-3 mb-3">
           <code className="text-[11px] break-all text-white/90">{catalogLink}</code>
         </div>
@@ -345,11 +340,11 @@ function BrandingPanel({
             linkCopied ? "bg-green-500 text-white" : "bg-white text-primary hover:translate-y-[-1px]"
           }`}
         >
-          {linkCopied ? "✅ Copiado al portapapeles" : "🔗 Copiar mi link"}
+          {linkCopied ? t('agenciasDashboard.linkCopied') : t('agenciasDashboard.linkCopy')}
         </button>
         {partner.personal_link_slug && (
           <p className="text-[10px] text-white/50 mt-3">
-            Slug: <strong>{partner.personal_link_slug}</strong>
+            {t('agenciasDashboard.linkSlugLabel')} <strong>{partner.personal_link_slug}</strong>
           </p>
         )}
       </div>

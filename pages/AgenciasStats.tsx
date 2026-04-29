@@ -5,6 +5,7 @@
  */
 import React, { useEffect, useState } from "react";
 import { Navigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
@@ -32,6 +33,7 @@ const fmtEUR = (n: number) =>
   }).format(n);
 
 export default function AgenciasStats() {
+  const { t } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
   const [partner, setPartner] = useState<PartnerRow | null>(null);
   const [rows, setRows] = useState<AttributionRow[]>([]);
@@ -50,7 +52,7 @@ export default function AgenciasStats() {
           .maybeSingle();
         if (pErr) throw pErr;
         if (!pData) {
-          setError("Tu cuenta aún no está vinculada a una agencia.");
+          setError(t('agenciasStats.noPartnerLink'));
           setLoading(false);
           return;
         }
@@ -89,15 +91,14 @@ export default function AgenciasStats() {
     })();
   }, [user]);
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('agenciasStats.loadingAuth')}</div>;
   if (!user) return <Navigate to="/agencias/login" replace />;
-  // Strict guard: deny null/unknown roles.
   if (!role || (role !== "lister" && role !== "admin")) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>
-          <h1 className="text-3xl font-serif mb-4">Acceso restringido</h1>
-          <p>Solo agencias colaboradoras.</p>
+          <h1 className="text-3xl font-serif mb-4">{t('agenciasStats.accessDenied')}</h1>
+          <p>{t('agenciasStats.accessDeniedBody')}</p>
         </div>
       </div>
     );
@@ -127,47 +128,43 @@ export default function AgenciasStats() {
     <div className="min-h-screen bg-almond pb-16">
       <header className="bg-primary text-white px-6 py-5 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-serif text-2xl">Mis estadísticas</h1>
+          <h1 className="font-serif text-2xl">{t('agenciasStats.headerTitle')}</h1>
           <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
         </div>
         <nav className="flex gap-2 text-sm">
-          <Link to="/agencias/dashboard" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">📁 Mis proyectos</Link>
-          <button onClick={() => void signOut()} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">Salir</button>
+          <Link to="/agencias/dashboard" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasStats.navProjects')}</Link>
+          <button onClick={() => void signOut()} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasStats.navLogout')}</button>
         </nav>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-8">
-        {loading && <p>Cargando estadísticas…</p>}
+        {loading && <p>{t('agenciasStats.loading')}</p>}
         {error && <p className="text-red-600">{error}</p>}
 
         {!loading && !error && (
           <>
             {/* KPI tiles */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <Tile label="Visitas atribuidas" value={visits} />
-              <Tile label="Form submissions" value={formSubmits} />
-              <Tile label="Reservas" value={reservations} />
-              <Tile label="Ventas cerradas" value={sales} />
-              <Tile label="Conversión" value={`${conversionRate}%`} />
+              <Tile label={t('agenciasStats.kpiVisits')} value={visits} />
+              <Tile label={t('agenciasStats.kpiSubmissions')} value={formSubmits} />
+              <Tile label={t('agenciasStats.kpiReservations')} value={reservations} />
+              <Tile label={t('agenciasStats.kpiSales')} value={sales} />
+              <Tile label={t('agenciasStats.kpiConversion')} value={`${conversionRate}%`} />
             </div>
 
             {/* Earnings potential */}
             <section className="glass-card rounded-2xl p-6">
-              <h2 className="font-serif text-xl mb-2">Earnings potenciales</h2>
-              <p className="text-sm text-primary/70 mb-3">
-                Comisión esperada si vendes todo el inventario disponible que tienes asignado:
-              </p>
+              <h2 className="font-serif text-xl mb-2">{t('agenciasStats.earningsTitle')}</h2>
+              <p className="text-sm text-primary/70 mb-3">{t('agenciasStats.earningsBody')}</p>
               <div className="text-4xl font-serif text-primary">{fmtEUR(potential)}</div>
-              <p className="text-xs text-primary/50 mt-1">Calculado al 5% sobre precio agencia (puede variar por overrides individuales).</p>
+              <p className="text-xs text-primary/50 mt-1">{t('agenciasStats.earningsHint')}</p>
             </section>
 
             {/* Top properties */}
             <section className="glass-card rounded-2xl p-6">
-              <h2 className="font-serif text-xl mb-4">Top proyectos compartidos</h2>
+              <h2 className="font-serif text-xl mb-4">{t('agenciasStats.topTitle')}</h2>
               {topProperties.length === 0 && (
-                <p className="text-primary/60 text-sm italic">
-                  Aún no hay visitas atribuidas. Comparte tu link único desde "Mis proyectos" → "Compartir con cliente".
-                </p>
+                <p className="text-primary/60 text-sm italic">{t('agenciasStats.topEmpty')}</p>
               )}
               <ul className="space-y-2">
                 {topProperties.map(([slug, count]) => (
@@ -175,7 +172,7 @@ export default function AgenciasStats() {
                     <Link to={`/proyecto/${slug}`} className="font-medium underline">
                       {slug}
                     </Link>
-                    <span className="text-primary/60">{count} eventos</span>
+                    <span className="text-primary/60">{count} {t('agenciasStats.events')}</span>
                   </li>
                 ))}
               </ul>
@@ -183,15 +180,15 @@ export default function AgenciasStats() {
 
             {/* Recent activity */}
             <section className="glass-card rounded-2xl p-6">
-              <h2 className="font-serif text-xl mb-4">Actividad reciente</h2>
-              {recent.length === 0 && <p className="text-primary/60 text-sm italic">Sin actividad por ahora.</p>}
+              <h2 className="font-serif text-xl mb-4">{t('agenciasStats.recentTitle')}</h2>
+              {recent.length === 0 && <p className="text-primary/60 text-sm italic">{t('agenciasStats.recentEmpty')}</p>}
               <ul className="space-y-1 text-sm">
                 {recent.map((r) => (
                   <li key={r.id} className="flex items-center justify-between border-b border-primary/10 py-2">
                     <span className="text-xs text-primary/60">{new Date(r.created_at).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}</span>
                     <span className="font-medium">{r.event_type}</span>
                     <span className="text-primary/70 truncate max-w-[40%]">{r.property_slug ?? "—"}</span>
-                    <span className="text-xs text-primary/50 truncate">{r.contact_email ?? "anon"}</span>
+                    <span className="text-xs text-primary/50 truncate">{r.contact_email ?? t('agenciasStats.anon')}</span>
                   </li>
                 ))}
               </ul>
