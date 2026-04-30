@@ -9,6 +9,7 @@ import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import BookingWidget from '../components/BookingWidget';
+import { trackViewContent } from '../lib/fbPixel';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
@@ -73,6 +74,16 @@ const ProjectDetail: React.FC = () => {
                   amenities: parseJsonField(rawProject.amenities, [])
               };
               setProject(loadedProject);
+
+              // Meta Pixel: track that a specific project was viewed.
+              trackViewContent({
+                content_ids: [loadedProject.slug ?? loadedProject.id],
+                content_name: loadedProject.name,
+                content_category: loadedProject.location ?? 'project',
+                content_type: 'product',
+                value: loadedProject.investor_price,
+                currency: (loadedProject.price_currency ?? 'EUR').toUpperCase(),
+              });
 
               // Try to map this slug to a row in the new portal schema
               // (properties → property_units) for role-based pricing.

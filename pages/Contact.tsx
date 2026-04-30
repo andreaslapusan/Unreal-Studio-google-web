@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { recordFormSubmit } from '../lib/attribution';
+import { trackLead } from '../lib/fbPixel';
 
 const Contact: React.FC = () => {
   const { t } = useTranslation();
@@ -28,6 +29,9 @@ const Contact: React.FC = () => {
       phone: formData.phone || null,
       defaultSource: 'web_form_contacto',
     });
+
+    // Meta Pixel: form submit = Lead conversion event.
+    trackLead({ content_name: 'Contact form', content_category: 'web_form_contacto' });
 
     const text = `*SOLICITUD DE REUNIÓN - UNREAL STUDIO*%0A%0A` +
       `👤 *Nombre:* ${formData.name}%0A` +

@@ -45,6 +45,28 @@
       }
     </script>
 
+    <!-- Facebook Pixel (deferred). Stub fbq() so any track() calls from
+         app code before the script is fetched still queue and replay
+         once fbevents.js arrives. PageView is fired site-wide; per-route
+         events go through lib/fbPixel.ts. -->
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window,document);
+      window.fbq('init', '866349369727610');
+      window.fbq('track', 'PageView');
+      function _loadFb() {
+        if (window._fbLoaded) return;
+        window._fbLoaded = true;
+        var t=document.createElement('script');t.async=true;t.src='https://connect.facebook.net/en_US/fbevents.js';
+        document.head.appendChild(t);
+      }
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(_loadFb, { timeout: 4000 });
+      } else {
+        window.addEventListener('load', function () { setTimeout(_loadFb, 1500); });
+      }
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=866349369727610&ev=PageView&noscript=1"/></noscript>
+
     <title>Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€</title>
     <meta name="description" content="Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. ROI proyectado 15-28% anual. Compra remota con POA. Sede en Madrid + Bali.">
     <meta name="keywords" content="invertir en Bali, propiedad Bali, villa Bali, loft Uluwatu, inversión Indonesia, real estate Bali, Unreal Studio, leasehold Bali, Canggu, Pererenan, Melasti, Balangan">

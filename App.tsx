@@ -38,6 +38,7 @@ import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
 import { supabase } from './lib/supabase';
 import { trackPageVisit } from './lib/attribution';
+import { trackPageView } from './lib/fbPixel';
 
 interface CurrencyContextType {
   currency: CurrencyCode;
@@ -68,11 +69,13 @@ const ScrollToTop = () => {
 
 const AttributionTracker = () => {
   const { pathname, search, hash } = useLocation();
-  // Re-run on every navigation: SPA hash routes mean a partner-shared link
-  // can be opened mid-session and we still want to capture the UTM params.
-  // trackPageVisit is idempotent — it no-ops when there are no UTM params.
   useEffect(() => {
+    // UTM/partner attribution into lead_attributions table
     void trackPageVisit();
+    // Meta Pixel virtual pageview for SPA navigation. The initial pageview
+    // already fires from index.html on first paint; this captures every
+    // subsequent in-app route change.
+    trackPageView(pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, search, hash]);
   return null;
