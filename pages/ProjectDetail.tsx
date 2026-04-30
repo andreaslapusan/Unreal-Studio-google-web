@@ -10,6 +10,7 @@ import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import BookingWidget from '../components/BookingWidget';
 import LazyMap from '../components/LazyMap';
+import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent } from '../lib/fbPixel';
 import { useAuth } from '../lib/auth-context';
 
@@ -59,12 +60,31 @@ const ProjectDetail: React.FC = () => {
         }
 
         if (slug) {
-           // Cargar Proyecto (Por Slug)
-           const { data: projectData, error } = await supabase
+           // The URL slug may be either the bare DB slug ("golf-bay-lofts-1bd")
+           // or the SEO long form ("golf-bay-lofts-1bd-balangan-uluwatu"). Try
+           // exact match first; if it misses, fall back to prefix-resolution
+           // against the full slug catalog.
+           let { data: projectData } = await supabase
              .from('projects')
              .select('*')
              .eq('slug', slug)
-             .single();
+             .maybeSingle();
+
+           if (!projectData) {
+             const { data: allSlugs } = await supabase
+               .from('projects')
+               .select('slug');
+             const dbSlugs = (allSlugs ?? []).map((r: any) => r.slug as string);
+             const canonical = resolveCanonicalSlug(slug, dbSlugs);
+             if (canonical) {
+               const { data: hit } = await supabase
+                 .from('projects')
+                 .select('*')
+                 .eq('slug', canonical)
+                 .maybeSingle();
+               projectData = hit;
+             }
+           }
 
            if (projectData) {
               const rawProject = projectData as any;
@@ -75,6 +95,16 @@ const ProjectDetail: React.FC = () => {
                   amenities: parseJsonField(rawProject.amenities, [])
               };
               setProject(loadedProject);
+
+              // SEO canonical: if the URL slug differs from the SEO-friendly
+              // form (e.g. bare DB slug, or slug+wrong-zone), rewrite the URL
+              // in place so reload/share give the canonical long form. Single
+              // source of truth in the address bar without a 301 round-trip.
+              const seoSlug = projectSeoSlug(loadedProject);
+              if (slug !== seoSlug) {
+                const search = window.location.search;
+                window.history.replaceState({}, '', `/proyecto/${seoSlug}${search}`);
+              }
 
               // Meta Pixel: track that a specific project was viewed.
               trackViewContent({
@@ -194,8 +224,8 @@ const ProjectDetail: React.FC = () => {
                 }));
                 setSimilarProjects(safeSimilar as unknown as Project[]);
               }
-           } else if (error) {
-              console.error("Project not found:", error);
+           } else {
+              console.error("Project not found for slug:", slug);
            }
         }
       } catch (error) {
@@ -747,7 +777,11 @@ const ProjectDetail: React.FC = () => {
         </div>
 
         <div className="lg:col-span-4 relative">
-          <div className="sticky top-24 space-y-6">
+          {/* Sticky sidebar follows the reader on desktop. max-h + overflow-auto
+              guarantees the panel fits the viewport when its content is taller
+              than the screen — without that, sticky never engages because the
+              element's bottom never enters view before the parent ends. */}
+          <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-6 [scrollbar-width:thin]">
             <div className="bg-white p-8 rounded-2xl shadow-2xl border border-primary/5 text-left">
               <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">{t('projectDetail.assetSummary')}</h3>
               <div className="space-y-8 mb-10">
@@ -823,7 +857,7 @@ const ProjectDetail: React.FC = () => {
         <h3 className="text-3xl text-primary mb-12 text-left">{t('projectDetail.similarTitle')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {similarProjects.map((similar) => (
-            <Link key={similar.id} to={`/proyecto/${similar.slug}`} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group border border-primary/5">
+            <Link key={similar.id} to={projectPath(similar)} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group border border-primary/5">
               <div className="h-48 overflow-hidden relative">
                 <img
                   loading="lazy"

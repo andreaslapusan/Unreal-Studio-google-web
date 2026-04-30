@@ -21,13 +21,15 @@ export interface Attribution {
 export function captureAttributionFromUrl(): Attribution | null {
   if (typeof window === "undefined") return null;
 
-  // Hash router: real query string lives after the route, e.g. /#/proyecto/foo?utm_source=...
-  // location.search is empty for hash routes; pull from hash.
-  const hash = window.location.hash;
-  const queryStart = hash.indexOf("?");
-  if (queryStart < 0) return readStoredAttribution();
-
-  const params = new URLSearchParams(hash.slice(queryStart + 1));
+  // BrowserRouter: query string is now in location.search. Legacy hash-based
+  // URLs (e.g. /#/proyecto/foo?utm_source=...) are still handled as a fallback
+  // for old shared links.
+  let params = new URLSearchParams(window.location.search);
+  if (!params.get("utm_source")) {
+    const hash = window.location.hash;
+    const queryStart = hash.indexOf("?");
+    if (queryStart >= 0) params = new URLSearchParams(hash.slice(queryStart + 1));
+  }
   const source = params.get("utm_source");
   if (!source) return readStoredAttribution();
 

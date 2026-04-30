@@ -41,6 +41,26 @@ const STATIC_ROUTES = [
   { path: "/terminos", priority: "0.3", changefreq: "yearly" },
 ];
 
+function slugify(s) {
+  return (s ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-+/g, "-");
+}
+
+function seoSlug(project) {
+  const parts = (project.location ?? "")
+    .split(",")
+    .map((p) => slugify(p))
+    .filter((p) => p && p !== "bali" && p !== "indonesia");
+  if (parts.length === 0) return project.slug;
+  if (project.slug.endsWith(`-${parts[0]}`) || project.slug.includes(`-${parts[0]}-`)) return project.slug;
+  return `${project.slug}-${parts.join("-")}`;
+}
+
 function urlEntry({ path, priority, changefreq, lastmod }) {
   const lm = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : "";
   return `  <url>
@@ -56,14 +76,14 @@ async function main() {
   try {
     const { data: projects, error: pErr } = await sb
       .from("projects")
-      .select("slug, updated_at, is_hidden")
+      .select("slug, location, updated_at, is_hidden")
       .order("sort_order", { ascending: true });
     if (pErr) throw pErr;
     for (const p of projects ?? []) {
       if (p.is_hidden || !p.slug) continue;
       entries.push(
         urlEntry({
-          path: `/proyecto/${p.slug}`,
+          path: `/proyecto/${seoSlug(p)}`,
           priority: "0.85",
           changefreq: "weekly",
           lastmod: p.updated_at?.slice(0, 10),

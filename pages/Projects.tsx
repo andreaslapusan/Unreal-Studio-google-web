@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CURRENCIES, DEFAULT_CONFIG } from '../constants';
+import { projectPath } from '../lib/projectUrl';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
@@ -266,7 +267,7 @@ const Projects: React.FC = () => {
         {filteredProjects.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
             {filteredProjects.map((proj, idx) => (
-              <Link key={proj.id} to={`/proyecto/${proj.slug}`} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
+              <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
                 <div className="relative h-32 md:h-80 overflow-hidden">
                   <img
                     loading={idx === 0 ? "eager" : "lazy"}

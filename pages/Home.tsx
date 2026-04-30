@@ -7,6 +7,7 @@ import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
+import { projectPath } from '../lib/projectUrl';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -329,7 +330,7 @@ const Home: React.FC = () => {
         <div className="w-full">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4 text-left">{t('home.featuredTag')}</p>
           {featuredProject ? (
-              <Link to={`/proyecto/${featuredProject.slug}`} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-700 flex flex-row md:flex-col group h-full md:h-auto items-stretch">
+              <Link to={projectPath(featuredProject)} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-700 flex flex-row md:flex-col group h-full md:h-auto items-stretch">
                 <div className="w-[40%] md:w-full relative md:h-[500px] shrink-0 overflow-hidden">
                   <img
                     src={imgSrc(getImageUrl(featuredProject.image), 1000)}
@@ -482,7 +483,7 @@ const Home: React.FC = () => {
       <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {filteredGridProjects.slice(0, 3).map((proj) => (
-            <Link key={proj.id} to={`/proyecto/${proj.slug}`} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group border border-primary/5">
+            <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group border border-primary/5">
               <div className="h-32 md:h-64 relative overflow-hidden">
                 <img
                   loading="lazy"
@@ -678,7 +679,7 @@ const Home: React.FC = () => {
                     <div className="space-y-6 text-center">
                       <p className="text-primary font-bold text-sm">¿Quieres invertir en una unidad con esta rentabilidad?</p>
                       <Link 
-                        to={`/proyecto/${featuredProject.slug}`}
+                        to={projectPath(featuredProject)}
                         className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2 mx-auto w-fit"
                       >
                         Ver propiedad destacada <span className="material-symbols-outlined">arrow_forward</span>

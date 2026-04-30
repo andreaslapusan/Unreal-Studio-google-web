@@ -223,7 +223,7 @@ export default function AdminPortalManager() {
         .update({ status: "approved", reviewed_by: user.email ?? user.id, reviewed_at: new Date().toISOString() })
         .eq("id", app.id);
       // Magic link
-      const redirect = `${window.location.origin}/#/auth/finish`;
+      const redirect = `${window.location.origin}/auth/finish`;
       await supabase.auth.signInWithOtp({ email: app.email, options: { emailRedirectTo: redirect, shouldCreateUser: true } });
       await reloadAll();
       alert("Aprobada + magic link enviado");

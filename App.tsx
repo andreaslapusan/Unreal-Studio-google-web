@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, lazy, Suspense } from 'react';
-import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 // Home is eagerly imported because it's the landing route — lazy() would
@@ -160,7 +160,7 @@ const App: React.FC = () => {
   return (
     <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice }}>
       <AuthProvider>
-      <HashRouter>
+      <BrowserRouter>
         <ScrollToTop />
         <AttributionTracker />
         <Layout>
@@ -212,7 +212,7 @@ const App: React.FC = () => {
           </Routes>
           </Suspense>
         </Layout>
-      </HashRouter>
+      </BrowserRouter>
       </AuthProvider>
     </CurrencyContext.Provider>
   );

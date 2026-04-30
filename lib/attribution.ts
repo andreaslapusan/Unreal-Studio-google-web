@@ -2,7 +2,7 @@
  * Lead attribution glue.
  *
  * Goal: when a visitor lands on a project page from a partner-shared link
- * (e.g. /#/proyecto/foo?utm_source=lister&utm_partner=madrid-realty), we
+ * (e.g. /proyecto/foo?utm_source=lister&utm_partner=madrid-realty), we
  * want to:
  *
  *   1. Cache the attribution so subsequent form submits can claim it

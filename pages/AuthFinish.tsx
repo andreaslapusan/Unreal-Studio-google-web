@@ -1,14 +1,12 @@
 /**
  * /auth/finish — completes the auth handshake for both flows:
  *   1. Magic-link (Supabase appends ?code= to the redirect URL)
- *   2. Google OAuth (Supabase appends #access_token=...&refresh_token=... AFTER
- *      the HashRouter hash, so the URL ends up like
- *      `/#/auth/finish#access_token=...`. The Supabase auto-detect-session
- *      doesn't catch this because it sees `/auth/finish` as the hash content
- *      and stops parsing.)
+ *   2. Google OAuth (Supabase appends #access_token=...&refresh_token=... after
+ *      the path, so the URL ends up like `/auth/finish#access_token=...`).
  *
- * We extract the OAuth tokens manually and call supabase.auth.setSession()
- * to land the session, then route by role.
+ * Supabase's auto-detect-session normally handles the hash fragment, but we
+ * parse it explicitly to be defensive and to strip the fragment after use so
+ * a refresh doesn't re-process a consumed token.
  */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,13 +14,9 @@ import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
 function extractOAuthTokens(href: string): { access_token: string; refresh_token: string } | null {
-  // Find the SECOND '#' (the first is the HashRouter prefix). Everything
-  // after it is the OAuth fragment.
-  const firstHash = href.indexOf("#");
-  if (firstHash < 0) return null;
-  const secondHash = href.indexOf("#", firstHash + 1);
-  if (secondHash < 0) return null;
-  const fragment = href.slice(secondHash + 1);
+  const hashIdx = href.indexOf("#");
+  if (hashIdx < 0) return null;
+  const fragment = href.slice(hashIdx + 1);
   const params = new URLSearchParams(fragment);
   const access_token = params.get("access_token");
   const refresh_token = params.get("refresh_token");
@@ -84,7 +78,7 @@ export default function AuthFinish() {
           <>
             <h1 className="text-3xl font-serif text-primary mb-4">Algo no va bien</h1>
             <p className="text-red-700">El enlace ha expirado o ya se usó.</p>
-            <a href="/#/agencias" className="inline-block mt-4 underline text-primary">
+            <a href="/agencias" className="inline-block mt-4 underline text-primary">
               Volver al login
             </a>
           </>

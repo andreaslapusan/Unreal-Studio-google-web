@@ -290,7 +290,7 @@ export default function AgenciasRegistrar() {
           {error && <p className="text-red-600 text-sm">{error}</p>}
 
           <p className="text-xs text-primary/50 text-center">
-            ¿Ya eres colaborador? <a href="/#/agencias" className="underline">Login aquí</a>.
+            ¿Ya eres colaborador? <a href="/agencias" className="underline">Login aquí</a>.
           </p>
         </form>
       </div>

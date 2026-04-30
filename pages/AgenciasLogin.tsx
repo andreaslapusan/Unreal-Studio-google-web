@@ -99,7 +99,7 @@ export default function AgenciasLogin() {
 
         <p className="text-xs text-primary/50 mt-6 text-center">
           {t("agenciasLogin.noPartner")}{" "}
-          <a href="/#/contacto" className="underline">
+          <a href="/contacto" className="underline">
             {t("agenciasLogin.contact")}
           </a>
         </p>

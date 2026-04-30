@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const sendMagicLink = async (email: string, createIfMissing = false) => {
     const redirect =
       typeof window !== "undefined"
-        ? `${window.location.origin}/#/auth/finish`
+        ? `${window.location.origin}/auth/finish`
         : undefined;
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     const redirect =
       typeof window !== "undefined"
-        ? `${window.location.origin}/#/auth/finish`
+        ? `${window.location.origin}/auth/finish`
         : undefined;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",

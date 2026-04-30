@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
+import { projectSeoSlug } from "../lib/projectUrl";
 
 interface PartnerRow {
   id: string;
@@ -169,6 +170,7 @@ export default function AgenciasDashboard() {
                       partnerId={partner.id}
                       partnerSlug={partner.personal_link_slug}
                       slug={p.slug}
+                      location={p.area ?? null}
                     />
                   )}
                 </div>
@@ -187,10 +189,12 @@ function ShareWithClientButton({
   partnerId,
   partnerSlug,
   slug,
+  location,
 }: {
   partnerId: string;
   partnerSlug: string | null;
   slug: string;
+  location: string | null;
 }) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
@@ -198,7 +202,8 @@ function ShareWithClientButton({
   const handleCopy = async () => {
     const base = typeof window !== "undefined" ? window.location.origin : "https://unrealstudiobali.com";
     const partnerParam = partnerSlug ?? partnerId;
-    const url = `${base}/#/proyecto/${slug}?utm_source=lister&utm_partner=${partnerParam}&utm_property=${slug}`;
+    const seoSlug = projectSeoSlug({ slug, location });
+    const url = `${base}/proyecto/${seoSlug}?utm_source=lister&utm_partner=${partnerParam}&utm_property=${slug}`;
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
@@ -236,7 +241,7 @@ function BrandingPanel({
 
   const base = typeof window !== "undefined" ? window.location.origin : "https://unrealstudiobali.com";
   const partnerParam = partner.personal_link_slug ?? partner.id;
-  const catalogLink = `${base}/#/proyectos?utm_source=lister&utm_partner=${partnerParam}`;
+  const catalogLink = `${base}/proyectos?utm_source=lister&utm_partner=${partnerParam}`;
 
   const copyLink = async () => {
     try {

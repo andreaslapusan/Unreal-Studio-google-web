@@ -2,6 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="utf-8"/>
+    <!-- Legacy hash redirect: preserves bookmarks/ad-campaign links shared back
+         when we used HashRouter (URLs like /#/proyecto/foo). Anything matching
+         /#/<rest> is rewritten to /<rest> before React mounts so the new
+         BrowserRouter sees a clean URL. Runs synchronously, no flash. -->
+    <script>
+      (function () {
+        var h = location.hash;
+        if (h && h.length > 2 && h.charAt(1) === '/') {
+          // HashRouter URLs are always served from "/", so rewrite to /<rest>
+          location.replace('/' + h.slice(2));
+        }
+      })();
+    </script>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <meta name="theme-color" content="#3F2305"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
