@@ -13,8 +13,8 @@ import { test, expect, type Page } from "@playwright/test";
 const BASE = process.env.PW_BASE_URL ?? "https://gen-lang-client-0678977822.web.app";
 
 async function open(page: Page, path: string) {
-  // SPA uses hash routing → must keep "#" prefix
-  await page.goto(`${BASE}/#${path}`, { waitUntil: "domcontentloaded" });
+  // SPA was switched to BrowserRouter on 2026-04-30 — clean URLs.
+  await page.goto(`${BASE}${path}`, { waitUntil: "domcontentloaded" });
 }
 
 test.describe("public pages render", () => {
@@ -101,6 +101,38 @@ test.describe("i18n switcher", () => {
       await id.click();
       await expect(page.getByText(/daftar|listing|villa/i).first()).toBeVisible({ timeout: 5000 });
     }
+  });
+});
+
+test.describe("team portal", () => {
+  test("equipo login form renders", async ({ page }) => {
+    await open(page, "/equipo");
+    await expect(page.getByText(/Portal Equipo/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /enlace mágico/i })).toBeVisible();
+  });
+
+  test("equipo dashboard redirects without auth", async ({ page }) => {
+    await open(page, "/equipo/dashboard");
+    await page.waitForTimeout(1500);
+    // Without session, page either shows the spinner or routes back to /equipo
+    // login. Either way, the dashboard's "Días totales" stat card must NOT
+    // be rendered.
+    const dashOnly = page.getByText(/Días totales/i);
+    await expect(dashOnly).toHaveCount(0);
+  });
+});
+
+test.describe("seo project urls", () => {
+  test("project url with location suffix loads", async ({ page }) => {
+    await open(page, "/proyecto/golf-bay-lofts-1bd-balangan-uluwatu");
+    // Either the project page renders, or the legacy short slug renders and
+    // self-rewrites — both are acceptable. Just assert the page didn't 404.
+    await expect(page.locator("h1, h2").first()).toBeVisible();
+  });
+
+  test("legacy short project url still works", async ({ page }) => {
+    await open(page, "/proyecto/golf-bay-lofts-1bd");
+    await expect(page.locator("h1, h2").first()).toBeVisible();
   });
 });
 

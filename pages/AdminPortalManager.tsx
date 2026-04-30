@@ -9,7 +9,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
-import { supabase } from "../lib/supabase";
+import { supabase, getImageUrl } from "../lib/supabase";
 
 type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs" | "timelines" | "equipo";
 
@@ -1231,22 +1231,35 @@ interface HolidayRow {
   country: string;
 }
 
+interface FieldReportRow {
+  id: string;
+  member_id: string;
+  project_slug: string | null;
+  comment: string;
+  photo_path: string | null;
+  weather: string | null;
+  created_at: string;
+}
+
 function EquipoTab() {
   const [members, setMembers] = useState<TeamMemberRow[]>([]);
   const [requests, setRequests] = useState<TimeOffRow[]>([]);
   const [holidays, setHolidays] = useState<HolidayRow[]>([]);
+  const [reports, setReports] = useState<FieldReportRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   const reload = async () => {
     setLoading(true);
-    const [m, r, h] = await Promise.all([
+    const [m, r, h, fr] = await Promise.all([
       supabase.from("team_members").select("*").order("full_name"),
       supabase.from("time_off_requests").select("*").order("start_date", { ascending: false }),
       supabase.from("holidays").select("*").order("date"),
+      supabase.from("field_reports").select("*").order("created_at", { ascending: false }).limit(50),
     ]);
     setMembers((m.data ?? []) as TeamMemberRow[]);
     setRequests((r.data ?? []) as TimeOffRow[]);
     setHolidays((h.data ?? []) as HolidayRow[]);
+    setReports((fr.data ?? []) as FieldReportRow[]);
     setLoading(false);
   };
 
@@ -1256,7 +1269,7 @@ function EquipoTab() {
   const onLeaveNow = requests.filter((r) => r.start_date <= today && r.end_date >= today && r.status === "approved");
   const upcoming = requests.filter((r) => r.start_date > today && r.status === "approved");
 
-  const memberById = new Map(members.map((m) => [m.id, m]));
+  const memberById = new Map<string, TeamMemberRow>(members.map((m) => [m.id, m]));
   const daysTakenByMember = (mid: string, year: number) =>
     requests
       .filter((r) => r.member_id === mid && r.status === "approved" && r.start_date.slice(0, 4) === String(year))
@@ -1405,6 +1418,35 @@ function EquipoTab() {
               </li>
             ))}
           </ul>
+        )}
+      </section>
+
+      <section className="bg-white rounded-xl border border-primary/5 p-5">
+        <h3 className="font-bold text-primary mb-4">Partes de obra recientes ({reports.length})</h3>
+        {reports.length === 0 ? (
+          <p className="text-sm text-primary/50">Aún no hay partes enviados.</p>
+        ) : (
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {reports.map((r) => (
+              <article key={r.id} className="border border-primary/5 rounded-lg p-3 flex gap-3 text-sm">
+                {r.photo_path && (
+                  <img src={getImageUrl(r.photo_path)} alt="" className="w-20 h-20 object-cover rounded flex-shrink-0" loading="lazy" />
+                )}
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-primary/60">
+                      <b>{memberById.get(r.member_id)?.full_name ?? "?"}</b>
+                      {" · "}
+                      {new Date(r.created_at).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}
+                    </span>
+                    {r.project_slug && <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">{r.project_slug}</span>}
+                  </div>
+                  <p className="text-primary whitespace-pre-line">{r.comment}</p>
+                  {r.weather && <p className="text-[10px] text-primary/40 mt-1">Tiempo: {r.weather}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
         )}
       </section>
 
