@@ -56,8 +56,23 @@ export default function AuthFinish() {
       const timer = setTimeout(() => setErrored(true), 4000);
       return () => clearTimeout(timer);
     }
-    // user logged in → route by role
-    setTimeout(() => {
+    // user logged in → route by role. Employees (team_members table) take
+    // precedence: a team member who is also a profile.admin still wants
+    // their /equipo/dashboard so they can manage their own time off.
+    setTimeout(async () => {
+      try {
+        const { data: m } = await supabase
+          .from("team_members")
+          .select("id,role")
+          .eq("email", user.email)
+          .maybeSingle();
+        if (m) {
+          navigate("/equipo/dashboard", { replace: true });
+          return;
+        }
+      } catch {
+        // fall through to legacy role routing
+      }
       if (role === "lister") navigate("/agencias/dashboard", { replace: true });
       else if (role === "investor") navigate("/inversores/dashboard", { replace: true });
       else if (role === "admin" || role === "team") navigate("/admin", { replace: true });

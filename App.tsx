@@ -32,6 +32,8 @@ const InversoresPartnership = lazy(() => import('./pages/InversoresPartnership')
 const InversoresDashboard = lazy(() => import('./pages/InversoresDashboard'));
 const AuthFinish = lazy(() => import('./pages/AuthFinish'));
 const EquipoUpload = lazy(() => import('./pages/EquipoUpload'));
+const EquipoLogin = lazy(() => import('./pages/EquipoLogin'));
+const EquipoDashboard = lazy(() => import('./pages/EquipoDashboard'));
 const AdminPortalManager = lazy(() => import('./pages/AdminPortalManager'));
 import { AuthProvider } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
@@ -193,6 +195,8 @@ const App: React.FC = () => {
             <Route path="/inversores" element={<InversoresPartnership />} />
             <Route path="/inversores/login" element={<InversoresLogin />} />
             <Route path="/inversores/dashboard" element={<InversoresDashboard />} />
+            <Route path="/equipo" element={<EquipoLogin />} />
+            <Route path="/equipo/dashboard" element={<EquipoDashboard />} />
             <Route path="/equipo/upload" element={<EquipoUpload />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />

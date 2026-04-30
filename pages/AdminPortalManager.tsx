@@ -11,7 +11,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
-type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs" | "timelines";
+type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs" | "timelines" | "equipo";
 
 interface ProjectRow {
   id: string;
@@ -270,7 +270,7 @@ export default function AdminPortalManager() {
       </header>
 
       <nav className="max-w-6xl mx-auto px-6 mt-6 flex flex-wrap gap-2">
-        {(["activity","properties","units","partners","applications","faqs","timelines"] as Tab[]).map((t) => (
+        {(["activity","properties","units","partners","applications","faqs","timelines","equipo"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -314,6 +314,7 @@ export default function AdminPortalManager() {
         {tab === "timelines" && (
           <TimelinesTab data={projectsCatalog} onChange={reloadAll} />
         )}
+        {tab === "equipo" && <EquipoTab />}
       </main>
     </div>
   );
@@ -1195,6 +1196,229 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* Equipo tab — admin overview of team time-off                              */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+interface TeamMemberRow {
+  id: string;
+  full_name: string;
+  email: string | null;
+  role: string;
+  total_days_per_year: number;
+  active: boolean;
+}
+
+interface TimeOffRow {
+  id: string;
+  member_id: string;
+  start_date: string;
+  end_date: string;
+  days: number;
+  reason: string | null;
+  status: string;
+  created_at: string;
+}
+
+interface HolidayRow {
+  id: string;
+  date: string;
+  name: string;
+  country: string;
+}
+
+function EquipoTab() {
+  const [members, setMembers] = useState<TeamMemberRow[]>([]);
+  const [requests, setRequests] = useState<TimeOffRow[]>([]);
+  const [holidays, setHolidays] = useState<HolidayRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const reload = async () => {
+    setLoading(true);
+    const [m, r, h] = await Promise.all([
+      supabase.from("team_members").select("*").order("full_name"),
+      supabase.from("time_off_requests").select("*").order("start_date", { ascending: false }),
+      supabase.from("holidays").select("*").order("date"),
+    ]);
+    setMembers((m.data ?? []) as TeamMemberRow[]);
+    setRequests((r.data ?? []) as TimeOffRow[]);
+    setHolidays((h.data ?? []) as HolidayRow[]);
+    setLoading(false);
+  };
+
+  useEffect(() => { void reload(); }, []);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const onLeaveNow = requests.filter((r) => r.start_date <= today && r.end_date >= today && r.status === "approved");
+  const upcoming = requests.filter((r) => r.start_date > today && r.status === "approved");
+
+  const memberById = new Map(members.map((m) => [m.id, m]));
+  const daysTakenByMember = (mid: string, year: number) =>
+    requests
+      .filter((r) => r.member_id === mid && r.status === "approved" && r.start_date.slice(0, 4) === String(year))
+      .reduce((s, r) => s + r.days, 0);
+
+  const updateMember = async (id: string, patch: Partial<TeamMemberRow>) => {
+    await supabase.from("team_members").update({ ...patch, updated_at: new Date().toISOString() }).eq("id", id);
+    await reload();
+  };
+
+  const addMember = async () => {
+    const name = prompt("Nombre completo:");
+    if (!name) return;
+    const email = prompt("Email (opcional):") || null;
+    await supabase.from("team_members").insert({ full_name: name, email, role: "employee", total_days_per_year: 60 });
+    await reload();
+  };
+
+  if (loading) {
+    return <div className="text-sm text-primary/60">Cargando equipo…</div>;
+  }
+
+  const year = new Date().getFullYear();
+
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl p-5 border border-primary/5">
+          <p className="text-xs uppercase tracking-widest text-primary/50">Empleados activos</p>
+          <p className="text-3xl font-serif text-primary mt-1">{members.filter((m) => m.active).length}</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-primary/5">
+          <p className="text-xs uppercase tracking-widest text-primary/50">Fuera hoy</p>
+          <p className="text-3xl font-serif text-primary mt-1">{onLeaveNow.length}</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-primary/5">
+          <p className="text-xs uppercase tracking-widest text-primary/50">Festivos {year}</p>
+          <p className="text-3xl font-serif text-primary mt-1">{holidays.filter((h) => h.date.startsWith(String(year))).length}</p>
+        </div>
+      </div>
+
+      {onLeaveNow.length > 0 && (
+        <section className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+          <h3 className="text-sm font-bold text-amber-900 mb-2">De vacaciones hoy</h3>
+          <ul className="text-sm text-amber-900 space-y-1">
+            {onLeaveNow.map((r) => (
+              <li key={r.id}>
+                <b>{memberById.get(r.member_id)?.full_name ?? "?"}</b> · vuelve el {r.end_date}
+                {r.reason && <span className="text-amber-700"> · {r.reason}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section className="bg-white rounded-xl border border-primary/5">
+        <div className="flex justify-between items-center px-5 py-4 border-b border-primary/5">
+          <h3 className="font-bold text-primary">Equipo</h3>
+          <button onClick={addMember} className="text-xs bg-primary text-white px-3 py-1.5 rounded-full">+ Añadir</button>
+        </div>
+        <table className="w-full text-sm">
+          <thead className="text-xs uppercase tracking-widest text-primary/50">
+            <tr>
+              <th className="text-left p-3">Nombre</th>
+              <th className="text-left p-3">Email</th>
+              <th className="text-left p-3">Rol</th>
+              <th className="text-left p-3">Días/año</th>
+              <th className="text-left p-3">Tomados {year}</th>
+              <th className="text-left p-3">Restantes</th>
+              <th className="text-left p-3">Activo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {members.map((m) => {
+              const taken = daysTakenByMember(m.id, year);
+              return (
+                <tr key={m.id} className="border-t border-primary/5">
+                  <td className="p-3">{m.full_name}</td>
+                  <td className="p-3 text-primary/60">
+                    <input
+                      type="email"
+                      defaultValue={m.email ?? ""}
+                      onBlur={(e) => e.target.value !== (m.email ?? "") && void updateMember(m.id, { email: e.target.value || null })}
+                      className="w-full bg-transparent border-b border-transparent hover:border-primary/20 focus:border-primary outline-none text-sm"
+                      placeholder="(sin email)"
+                    />
+                  </td>
+                  <td className="p-3">
+                    <select
+                      value={m.role}
+                      onChange={(e) => void updateMember(m.id, { role: e.target.value })}
+                      className="text-xs bg-gray-50 rounded px-2 py-1"
+                    >
+                      <option value="employee">employee</option>
+                      <option value="admin">admin</option>
+                    </select>
+                  </td>
+                  <td className="p-3">
+                    <input
+                      type="number"
+                      defaultValue={m.total_days_per_year}
+                      onBlur={(e) => Number(e.target.value) !== m.total_days_per_year && void updateMember(m.id, { total_days_per_year: Number(e.target.value) })}
+                      className="w-16 bg-gray-50 rounded px-2 py-1 text-sm"
+                    />
+                  </td>
+                  <td className="p-3">{taken}</td>
+                  <td className={`p-3 font-bold ${m.total_days_per_year - taken < 0 ? "text-red-600" : "text-green-700"}`}>
+                    {m.total_days_per_year - taken}
+                  </td>
+                  <td className="p-3">
+                    <input
+                      type="checkbox"
+                      checked={m.active}
+                      onChange={(e) => void updateMember(m.id, { active: e.target.checked })}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="bg-white rounded-xl border border-primary/5 p-5">
+        <h3 className="font-bold text-primary mb-4">Próximas vacaciones</h3>
+        {upcoming.length === 0 ? (
+          <p className="text-sm text-primary/50">Nadie tiene vacaciones programadas próximamente.</p>
+        ) : (
+          <ul className="text-sm space-y-2">
+            {upcoming.slice(0, 30).map((r) => (
+              <li key={r.id} className="flex items-center justify-between border-b border-primary/5 pb-2">
+                <span>
+                  <b>{memberById.get(r.member_id)?.full_name ?? "?"}</b> · {r.start_date} → {r.end_date} · {r.days} días
+                  {r.reason && <span className="text-primary/50"> · {r.reason}</span>}
+                </span>
+                <button
+                  onClick={async () => {
+                    if (!confirm("¿Eliminar esta solicitud?")) return;
+                    await supabase.from("time_off_requests").delete().eq("id", r.id);
+                    await reload();
+                  }}
+                  className="text-xs text-red-600 underline"
+                >
+                  Eliminar
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="bg-white rounded-xl border border-primary/5 p-5">
+        <h3 className="font-bold text-primary mb-4">Festivos cargados ({holidays.length})</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm max-h-64 overflow-y-auto">
+          {holidays.map((h) => (
+            <div key={h.id} className="flex justify-between border-b border-primary/5 pb-1">
+              <span>{h.date}</span>
+              <span className="text-primary/70">{h.name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
