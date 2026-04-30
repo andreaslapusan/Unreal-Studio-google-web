@@ -11,7 +11,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
-type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications";
+type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs";
 
 interface ActivityEvent {
   id: string;
@@ -72,6 +72,30 @@ interface Application {
   created_at: string;
 }
 
+interface Faq {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  tags: string[] | null;
+  project_filter: string[] | null;
+  language: string;
+  is_published: boolean;
+  sort_order: number;
+  source: string | null;
+  updated_at: string | null;
+}
+
+const FAQ_CATEGORIES = [
+  "compra",
+  "leasehold",
+  "construccion",
+  "alquiler",
+  "fiscalidad",
+  "legal",
+  "general",
+] as const;
+
 export default function AdminPortalManager() {
   const { user, role, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -80,6 +104,7 @@ export default function AdminPortalManager() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [faqs, setFaqs] = useState<Faq[]>([]);
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -92,18 +117,20 @@ export default function AdminPortalManager() {
   const reloadAll = async () => {
     setLoading(true);
     try {
-      const [p, u, lp, app, updates, attribs] = await Promise.all([
+      const [p, u, lp, app, updates, attribs, faqRes] = await Promise.all([
         supabase.from("properties").select("id, slug, name, area, pct_progress, delivery_date, hero_image_url, walkthrough_url, brand_pdf_url").order("name"),
         supabase.from("property_units").select("id, property_id, unit_name, price_publico, price_inversor, price_agencia, commission_default_pct, bedrooms, bathrooms, available, reserved, sold").order("unit_name"),
         supabase.from("listing_partners").select("id, agency_name, email, status, projects_assigned, user_id").order("agency_name"),
         supabase.from("listing_partner_applications").select("id, agency_name, manager_name, email, whatsapp, country, projects_interested, monthly_volume, notes, status, created_at").order("created_at", { ascending: false }),
         supabase.from("property_updates").select("id, property_id, title, posted_by, posted_at, visibility").order("posted_at", { ascending: false }).limit(15),
         supabase.from("lead_attributions").select("id, partner_id, property_slug, event_type, contact_email, created_at").order("created_at", { ascending: false }).limit(15),
+        supabase.from("faqs").select("id, question, answer, category, tags, project_filter, language, is_published, sort_order, source, updated_at").order("sort_order"),
       ]);
       setProperties((p.data ?? []) as Property[]);
       setUnits((u.data ?? []) as Unit[]);
       setPartners((lp.data ?? []) as Partner[]);
       setApplications((app.data ?? []) as Application[]);
+      setFaqs((faqRes.data ?? []) as Faq[]);
 
       // Build a unified activity feed
       const events: ActivityEvent[] = [];
@@ -223,7 +250,7 @@ export default function AdminPortalManager() {
       </header>
 
       <nav className="max-w-6xl mx-auto px-6 mt-6 flex flex-wrap gap-2">
-        {(["activity","properties","units","partners","applications"] as Tab[]).map((t) => (
+        {(["activity","properties","units","partners","applications","faqs"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -236,6 +263,7 @@ export default function AdminPortalManager() {
             {t === "units" && `🏠 Unidades (${units.length})`}
             {t === "partners" && `🤝 Agencias (${partners.length})`}
             {t === "applications" && `📨 Solicitudes (${applications.filter((a) => a.status === "pending").length})`}
+            {t === "faqs" && `❓ FAQs (${faqs.length})`}
           </button>
         ))}
       </nav>
@@ -258,6 +286,9 @@ export default function AdminPortalManager() {
         )}
         {tab === "applications" && (
           <ApplicationsTab data={applications} onApprove={handleApproveApplication} onReject={handleRejectApplication} />
+        )}
+        {tab === "faqs" && (
+          <FaqsTab data={faqs} onChange={reloadAll} />
         )}
       </main>
     </div>
@@ -649,5 +680,291 @@ function Toggle({ label, value, onChange }: { label: string; value: boolean; onC
       <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} />
       {label}
     </label>
+  );
+}
+
+// ─── FAQ admin ────────────────────────────────────────────────────────────
+
+function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promise<void> }) {
+  const [editing, setEditing] = useState<Faq | null>(null);
+  const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
+  const filtered = useMemo(() => {
+    let out = data;
+    if (filter === "published") out = out.filter((f) => f.is_published);
+    if (filter === "draft") out = out.filter((f) => !f.is_published);
+    if (categoryFilter !== "all") out = out.filter((f) => f.category === categoryFilter);
+    return out;
+  }, [data, filter, categoryFilter]);
+
+  const togglePublish = async (f: Faq) => {
+    await supabase.from("faqs").update({ is_published: !f.is_published }).eq("id", f.id);
+    await onChange();
+  };
+
+  const remove = async (f: Faq) => {
+    if (!confirm(`¿Borrar FAQ "${f.question.slice(0, 50)}…"?`)) return;
+    await supabase.from("faqs").delete().eq("id", f.id);
+    await onChange();
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3 justify-between">
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            aria-label="Estado"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as "all" | "published" | "draft")}
+            className="rounded-lg border border-primary/20 px-3 py-1.5 text-sm bg-white"
+          >
+            <option value="all">Todos los estados</option>
+            <option value="published">Publicadas</option>
+            <option value="draft">Borradores</option>
+          </select>
+          <select
+            aria-label="Categoría"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="rounded-lg border border-primary/20 px-3 py-1.5 text-sm bg-white"
+          >
+            <option value="all">Todas las categorías</option>
+            {FAQ_CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <span className="text-xs text-primary/50">{filtered.length} de {data.length}</span>
+        </div>
+        <button
+          onClick={() => setEditing({
+            id: "", question: "", answer: "", category: "general",
+            tags: [], project_filter: [], language: "es",
+            is_published: false, sort_order: (data[data.length - 1]?.sort_order ?? 100) + 10,
+            source: "manual", updated_at: null,
+          })}
+          className="bg-primary text-white px-4 py-2 rounded-full text-sm font-bold"
+        >
+          + Nueva FAQ
+        </button>
+      </div>
+
+      <div className="bg-white rounded-xl overflow-hidden border border-primary/5">
+        <table className="w-full text-sm">
+          <thead className="bg-almond text-left text-[11px] uppercase tracking-widest text-primary/60">
+            <tr>
+              <th className="p-3 w-16">Estado</th>
+              <th className="p-3">Pregunta</th>
+              <th className="p-3 w-28">Categoría</th>
+              <th className="p-3 w-16">Lang</th>
+              <th className="p-3 w-20">Orden</th>
+              <th className="p-3 w-44">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((f) => (
+              <tr key={f.id} className="border-t border-primary/5 align-top">
+                <td className="p-3">
+                  <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${
+                    f.is_published ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                  }`}>
+                    {f.is_published ? "live" : "draft"}
+                  </span>
+                </td>
+                <td className="p-3 max-w-md">
+                  <div className="font-medium text-primary line-clamp-2">{f.question}</div>
+                  <div className="text-[11px] text-primary/50 line-clamp-1 mt-1">{f.answer}</div>
+                </td>
+                <td className="p-3 text-xs">{f.category}</td>
+                <td className="p-3 text-xs uppercase">{f.language}</td>
+                <td className="p-3 text-xs">{f.sort_order}</td>
+                <td className="p-3">
+                  <div className="flex flex-wrap gap-1">
+                    <button
+                      onClick={() => setEditing(f)}
+                      className="text-[10px] bg-white border border-primary/20 text-primary px-2 py-1 rounded-full"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => void togglePublish(f)}
+                      className="text-[10px] bg-primary text-white px-2 py-1 rounded-full"
+                    >
+                      {f.is_published ? "Despublicar" : "Publicar"}
+                    </button>
+                    <button
+                      onClick={() => void remove(f)}
+                      className="text-[10px] bg-red-50 text-red-700 border border-red-200 px-2 py-1 rounded-full"
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={6} className="p-6 text-center text-primary/50">
+                  Sin FAQs en este filtro.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {editing && (
+        <FaqEditor
+          faq={editing}
+          onClose={() => setEditing(null)}
+          onSaved={async () => {
+            setEditing(null);
+            await onChange();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; onSaved: () => Promise<void> }) {
+  const [form, setForm] = useState<Faq>(faq);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+
+  const save = async () => {
+    if (!form.question.trim() || !form.answer.trim()) {
+      setErr("Pregunta y respuesta son obligatorias");
+      return;
+    }
+    setSaving(true);
+    setErr("");
+    try {
+      if (form.id) {
+        const { error } = await supabase.from("faqs").update({
+          question: form.question.trim(),
+          answer: form.answer,
+          category: form.category,
+          tags: form.tags,
+          project_filter: form.project_filter,
+          language: form.language,
+          is_published: form.is_published,
+          sort_order: form.sort_order,
+        }).eq("id", form.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("faqs").insert({
+          question: form.question.trim(),
+          answer: form.answer,
+          category: form.category,
+          tags: form.tags,
+          project_filter: form.project_filter,
+          language: form.language,
+          is_published: form.is_published,
+          sort_order: form.sort_order,
+          source: form.source ?? "manual",
+        });
+        if (error) throw error;
+      }
+      await onSaved();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-start justify-center p-6 overflow-y-auto z-50" onClick={onClose}>
+      <div className="bg-white rounded-2xl max-w-3xl w-full p-6 mt-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-serif text-xl text-primary">{form.id ? "Editar FAQ" : "Nueva FAQ"}</h3>
+          <button onClick={onClose} className="text-primary/40 hover:text-primary">✕</button>
+        </div>
+
+        <div className="space-y-4">
+          <Input
+            label="Pregunta *"
+            value={form.question}
+            onChange={(v) => setForm({ ...form, question: v })}
+          />
+
+          <label className="block">
+            <span className="text-sm font-medium text-primary">Respuesta * (markdown — **negrita**, listas con -)</span>
+            <textarea
+              value={form.answer}
+              onChange={(e) => setForm({ ...form, answer: e.target.value })}
+              rows={10}
+              className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40 font-mono text-xs"
+            />
+          </label>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <label className="block">
+              <span className="text-sm font-medium text-primary">Categoría</span>
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="mt-1 block w-full rounded-lg border border-primary/20 px-3 py-2.5 outline-none bg-white"
+              >
+                {FAQ_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium text-primary">Idioma</span>
+              <select
+                value={form.language}
+                onChange={(e) => setForm({ ...form, language: e.target.value })}
+                className="mt-1 block w-full rounded-lg border border-primary/20 px-3 py-2.5 outline-none bg-white"
+              >
+                <option value="es">es</option>
+                <option value="en">en</option>
+                <option value="id">id</option>
+              </select>
+            </label>
+            <Input
+              label="Orden"
+              type="number"
+              value={String(form.sort_order)}
+              onChange={(v) => setForm({ ...form, sort_order: Number(v) || 100 })}
+            />
+            <label className="flex items-end gap-2 pb-2">
+              <input
+                type="checkbox"
+                checked={form.is_published}
+                onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
+              />
+              <span className="text-sm">Publicada</span>
+            </label>
+          </div>
+
+          <Input
+            label="Tags (coma)"
+            value={(form.tags ?? []).join(", ")}
+            onChange={(v) => setForm({ ...form, tags: v.split(",").map((t) => t.trim()).filter(Boolean) })}
+          />
+          <Input
+            label="Project filter (slugs separados por coma; vacío = todos)"
+            value={(form.project_filter ?? []).join(", ")}
+            onChange={(v) => setForm({ ...form, project_filter: v.split(",").map((t) => t.trim()).filter(Boolean) })}
+          />
+
+          {err && <p className="text-red-600 text-sm">{err}</p>}
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-primary/5">
+            <button onClick={onClose} className="px-4 py-2 rounded-full text-primary border border-primary/20">
+              Cancelar
+            </button>
+            <button
+              onClick={() => void save()}
+              disabled={saving}
+              className="bg-primary text-white px-6 py-2 rounded-full font-bold disabled:opacity-50"
+            >
+              {saving ? "Guardando…" : form.id ? "Guardar" : "Crear"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
