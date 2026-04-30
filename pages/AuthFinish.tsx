@@ -1,22 +1,65 @@
 /**
- * /auth/finish — completes magic-link sign in (Supabase).
- * Supabase auto-handles the URL hash exchange via onAuthStateChange.
- * We just wait for `user` to populate and redirect by role.
+ * /auth/finish — completes the auth handshake for both flows:
+ *   1. Magic-link (Supabase appends ?code= to the redirect URL)
+ *   2. Google OAuth (Supabase appends #access_token=...&refresh_token=... AFTER
+ *      the HashRouter hash, so the URL ends up like
+ *      `/#/auth/finish#access_token=...`. The Supabase auto-detect-session
+ *      doesn't catch this because it sees `/auth/finish` as the hash content
+ *      and stops parsing.)
+ *
+ * We extract the OAuth tokens manually and call supabase.auth.setSession()
+ * to land the session, then route by role.
  */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
+import { supabase } from "../lib/supabase";
+
+function extractOAuthTokens(href: string): { access_token: string; refresh_token: string } | null {
+  // Find the SECOND '#' (the first is the HashRouter prefix). Everything
+  // after it is the OAuth fragment.
+  const firstHash = href.indexOf("#");
+  if (firstHash < 0) return null;
+  const secondHash = href.indexOf("#", firstHash + 1);
+  if (secondHash < 0) return null;
+  const fragment = href.slice(secondHash + 1);
+  const params = new URLSearchParams(fragment);
+  const access_token = params.get("access_token");
+  const refresh_token = params.get("refresh_token");
+  if (!access_token || !refresh_token) return null;
+  return { access_token, refresh_token };
+}
 
 export default function AuthFinish() {
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
   const [errored, setErrored] = useState(false);
 
+  // Manual OAuth-fragment exchange. Runs once on mount.
+  useEffect(() => {
+    const tokens = extractOAuthTokens(window.location.href);
+    if (!tokens) return;
+    void supabase.auth
+      .setSession(tokens)
+      .then(({ error }) => {
+        if (error) {
+          console.error("[auth-finish] setSession failed:", error);
+          setErrored(true);
+        } else {
+          // Strip the OAuth fragment from the URL so a refresh doesn't
+          // re-process an already-consumed token.
+          const cleaned = window.location.href.replace(/#access_token=[^]*$/, "");
+          window.history.replaceState({}, "", cleaned);
+        }
+      })
+      .catch(() => setErrored(true));
+  }, []);
+
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      // Give Supabase 2s to process the hash; otherwise show error
-      const timer = setTimeout(() => setErrored(true), 2500);
+      // Give Supabase 4s (longer for OAuth round-trip) before bailing.
+      const timer = setTimeout(() => setErrored(true), 4000);
       return () => clearTimeout(timer);
     }
     // user logged in → route by role

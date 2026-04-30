@@ -123,6 +123,13 @@
       "exploring": "Just exploring"
     }
   },
+  "projectTimeline": {
+    "tag": "CONSTRUCTION ROADMAP",
+    "title": "Project milestones",
+    "payment": "payment",
+    "done": "completed",
+    "inProgress": "in progress"
+  },
   "projectDetail": {
     "loading": "Loading project...",
     "notFound": "Project not found",

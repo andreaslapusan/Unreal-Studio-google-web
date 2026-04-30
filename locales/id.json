@@ -123,6 +123,13 @@
       "exploring": "Masih melihat-lihat"
     }
   },
+  "projectTimeline": {
+    "tag": "JADWAL KONSTRUKSI",
+    "title": "Tonggak proyek",
+    "payment": "pembayaran",
+    "done": "selesai",
+    "inProgress": "berlangsung"
+  },
   "projectDetail": {
     "loading": "Memuat proyek...",
     "notFound": "Proyek tidak ditemukan",

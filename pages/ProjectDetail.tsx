@@ -7,6 +7,7 @@ import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
+import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
@@ -626,6 +627,14 @@ const ProjectDetail: React.FC = () => {
               </section>
             );
           })()}
+
+          {Array.isArray((project as { timeline?: TimelinePhase[] }).timeline) &&
+           ((project as { timeline?: TimelinePhase[] }).timeline?.length ?? 0) > 0 && (
+            <ProjectTimeline
+              phases={(project as { timeline?: TimelinePhase[] }).timeline as TimelinePhase[]}
+              completionPercent={project.completion_percent}
+            />
+          )}
 
           {tiersArray && tiersArray.length > 0 && (
             <section className="bg-white p-8 md:p-12 rounded-3xl border border-primary/5 shadow-sm">

@@ -123,6 +123,13 @@
       "exploring": "Estoy explorando opciones"
     }
   },
+  "projectTimeline": {
+    "tag": "ROADMAP DE OBRA",
+    "title": "Hitos del proyecto",
+    "payment": "pago",
+    "done": "completado",
+    "inProgress": "en curso"
+  },
   "projectDetail": {
     "loading": "Cargando proyecto...",
     "notFound": "Proyecto no encontrado",
