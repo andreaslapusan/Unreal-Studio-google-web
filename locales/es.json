@@ -60,7 +60,7 @@
     "profitTitle": "Desglose de Rentabilidad",
     "noProjectData": "Sin datos de proyecto disponibles",
     "ctaSectionTitle": "No pierdas tiempo.",
-    "ctaSectionBody": "Agenda una reunión de 15 minutos sin compromiso. Evaluamos tu perfil inversor y te mostramos oportunidades reales.",
+    "ctaSectionBody": "Agenda una reunión de 30 minutos sin compromiso. Evaluamos tu perfil inversor y te mostramos oportunidades reales.",
     "ctaWhatsapp": "CONTACTAR POR WHATSAPP",
     "blogTitle": "Últimas Novedades",
     "blogCta": "Ver Blog"
@@ -122,6 +122,11 @@
       "month3to6": "3-6 meses",
       "exploring": "Estoy explorando opciones"
     }
+  },
+  "bookingWidget": {
+    "tag": "AGENDAR LLAMADA",
+    "title": "Reserva 30 minutos con un asesor",
+    "body": "Te resolvemos cualquier duda y te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil."
   },
   "projectTimeline": {
     "tag": "ROADMAP DE OBRA",
@@ -185,7 +190,7 @@
       "general": "General"
     },
     "ctaTitle": "¿Tu pregunta no está aquí?",
-    "ctaBody": "15 minutos por videollamada con Andreas o Mark. Te respondemos cualquier duda sin compromiso.",
+    "ctaBody": "30 minutos por videollamada con Andreas o Mark. Te respondemos cualquier duda sin compromiso.",
     "ctaBtn": "Hablar con un asesor →"
   },
   "blog": {
@@ -234,7 +239,7 @@
     "projectsSubtitle": "Snapshot a {{date}}",
     "faqTitle": "Preguntas frecuentes",
     "ctaFinalTitle": "¿Hablamos?",
-    "ctaFinalBody": "15 minutos por videollamada. Te respondemos cualquier duda y te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
+    "ctaFinalBody": "30 minutos por videollamada. Te respondemos cualquier duda y te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
     "ctaFinalBtn": "Agendar llamada con un asesor →"
   },
   "agenciasRegistrar": {

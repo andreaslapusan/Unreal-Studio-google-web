@@ -60,7 +60,7 @@
     "profitTitle": "Rincian Imbal Hasil",
     "noProjectData": "Tidak ada data proyek",
     "ctaSectionTitle": "Jangan buang waktu.",
-    "ctaSectionBody": "Atur pertemuan 15 menit, tanpa komitmen. Kami evaluasi profil investor Anda dan tunjukkan peluang nyata.",
+    "ctaSectionBody": "Atur pertemuan 30 menit, tanpa komitmen. Kami evaluasi profil investor Anda dan tunjukkan peluang nyata.",
     "ctaWhatsapp": "HUBUNGI VIA WHATSAPP",
     "blogTitle": "Berita Terbaru",
     "blogCta": "Lihat Blog"
@@ -122,6 +122,11 @@
       "month3to6": "3-6 bulan",
       "exploring": "Masih melihat-lihat"
     }
+  },
+  "bookingWidget": {
+    "tag": "JADWALKAN PANGGILAN",
+    "title": "Pesan 30 menit dengan penasihat",
+    "body": "Kami jawab pertanyaan Anda dan kirim dossier terbaru untuk proyek yang sesuai dengan profil Anda."
   },
   "projectTimeline": {
     "tag": "JADWAL KONSTRUKSI",
@@ -185,7 +190,7 @@
       "general": "Umum"
     },
     "ctaTitle": "Pertanyaan Anda tidak ada di sini?",
-    "ctaBody": "Panggilan video 15 menit dengan Andreas atau Mark. Gratis, tanpa komitmen.",
+    "ctaBody": "Panggilan video 30 menit dengan Andreas atau Mark. Gratis, tanpa komitmen.",
     "ctaBtn": "Bicara dengan penasihat →"
   },
   "blog": {
@@ -234,7 +239,7 @@
     "projectsSubtitle": "Snapshot per {{date}}",
     "faqTitle": "Pertanyaan yang sering diajukan",
     "ctaFinalTitle": "Mari bicara",
-    "ctaFinalBody": "Panggilan video 15 menit. Kami jawab pertanyaan Anda dan kirim dossier terbaru dari proyek yang sesuai profil Anda.",
+    "ctaFinalBody": "Panggilan video 30 menit. Kami jawab pertanyaan Anda dan kirim dossier terbaru dari proyek yang sesuai profil Anda.",
     "ctaFinalBtn": "Atur panggilan dengan penasihat →"
   },
   "agenciasRegistrar": {

@@ -60,7 +60,7 @@
     "profitTitle": "Yield Breakdown",
     "noProjectData": "No project data available",
     "ctaSectionTitle": "Don't waste time.",
-    "ctaSectionBody": "Book a 15-minute meeting, no commitment. We assess your investor profile and show you real opportunities.",
+    "ctaSectionBody": "Book a 30-minute meeting, no commitment. We assess your investor profile and show you real opportunities.",
     "ctaWhatsapp": "CONTACT US ON WHATSAPP",
     "blogTitle": "Latest news",
     "blogCta": "Visit blog"
@@ -122,6 +122,11 @@
       "month3to6": "3-6 months",
       "exploring": "Just exploring"
     }
+  },
+  "bookingWidget": {
+    "tag": "BOOK A CALL",
+    "title": "Book 30 minutes with an advisor",
+    "body": "We answer your questions and send you up-to-date dossiers for the projects that fit your profile."
   },
   "projectTimeline": {
     "tag": "CONSTRUCTION ROADMAP",
@@ -185,7 +190,7 @@
       "general": "General"
     },
     "ctaTitle": "Question not here?",
-    "ctaBody": "15-minute video call with Andreas or Mark. Free, no commitment, just clear answers.",
+    "ctaBody": "30-minute video call with Andreas or Mark. Free, no commitment, just clear answers.",
     "ctaBtn": "Talk to an advisor →"
   },
   "blog": {
@@ -234,7 +239,7 @@
     "projectsSubtitle": "Snapshot as of {{date}}",
     "faqTitle": "Frequently asked questions",
     "ctaFinalTitle": "Let's talk",
-    "ctaFinalBody": "15-minute video call. We answer your questions and send you up-to-date dossiers for the projects that fit your profile.",
+    "ctaFinalBody": "30-minute video call. We answer your questions and send you up-to-date dossiers for the projects that fit your profile.",
     "ctaFinalBtn": "Book a call with an advisor →"
   },
   "agenciasRegistrar": {

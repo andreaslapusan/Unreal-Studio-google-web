@@ -8,6 +8,7 @@ import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
+import BookingWidget from '../components/BookingWidget';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
@@ -658,6 +659,13 @@ const ProjectDetail: React.FC = () => {
             <ProjectTimeline
               phases={(project as { timeline?: TimelinePhase[] }).timeline as TimelinePhase[]}
               completionPercent={project.completion_percent}
+            />
+          )}
+
+          {(project as { booking_widget_url?: string }).booking_widget_url && (
+            <BookingWidget
+              url={(project as { booking_widget_url: string }).booking_widget_url}
+              propertySlug={project.slug}
             />
           )}
 
