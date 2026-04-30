@@ -119,26 +119,33 @@ export async function trackPageVisit(): Promise<ResolvedAttribution | null> {
  *
  * Safe to call when there's no stored attribution — does nothing.
  */
+/**
+ * Record a form_submit. ALWAYS writes a row so the lead syncs to GHL
+ * (the lead_attributions trigger fires ghl-sync which creates a GHL
+ * contact + tags it). If there's no stored UTM attribution, we still
+ * record `utm_source = 'web_form'` so the funnel team can see the lead
+ * came from a direct site form fill.
+ */
 export async function recordFormSubmit(contact: {
   email?: string | null;
   phone?: string | null;
   name?: string | null;
+  /** Override the default source ('web_form') for direct form fills. */
+  defaultSource?: string;
 }): Promise<void> {
   const stored = readStoredAttribution();
-  if (!stored) return;
-
-  const partner_uuid = await resolvePartnerUuid(stored.partner_id);
+  const partner_uuid = stored?.partner_id ? await resolvePartnerUuid(stored.partner_id) : null;
 
   try {
     await supabase.from("lead_attributions").insert({
       contact_email: contact.email ?? null,
       contact_phone: contact.phone ?? null,
       contact_name: contact.name ?? null,
-      utm_source: stored.source,
+      utm_source: stored?.source ?? contact.defaultSource ?? "web_form",
       partner_id: partner_uuid,
-      property_slug: stored.property_slug ?? null,
-      utm_campaign: stored.campaign ?? null,
-      utm_medium: stored.medium ?? null,
+      property_slug: stored?.property_slug ?? null,
+      utm_campaign: stored?.campaign ?? null,
+      utm_medium: stored?.medium ?? null,
       event_type: "form_submit",
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
       referrer: typeof document !== "undefined" ? document.referrer || null : null,

@@ -7,21 +7,32 @@ const Contact: React.FC = () => {
   useEffect(() => { document.title = t('contact.title'); }, [t]);
   const [formData, setFormData] = useState({
     name: '',
-    reason: 'Diversificar patrimonio', // Nuevo campo reemplazando teléfono
+    email: '',
+    phone: '',
+    reason: 'Diversificar patrimonio',
     budget: '50k - 100k',
-    timeframe: 'Lo antes posible', // Nuevo campo reemplazando interés
+    timeframe: 'Lo antes posible',
     message: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Best-effort attribution capture before navigating away. Fire-and-forget
-    // so a slow Supabase call doesn't block the WhatsApp redirect.
-    void recordFormSubmit({ name: formData.name });
+    // Sync to GHL via lead_attributions → ghl-sync trigger. Always writes
+    // (not just when UTM stored), so direct form fills also create a
+    // GHL contact with email/phone for follow-up. Fire-and-forget so a
+    // slow Supabase call doesn't block the WhatsApp redirect.
+    void recordFormSubmit({
+      name: formData.name,
+      email: formData.email || null,
+      phone: formData.phone || null,
+      defaultSource: 'web_form_contacto',
+    });
 
     const text = `*SOLICITUD DE REUNIÓN - UNREAL STUDIO*%0A%0A` +
       `👤 *Nombre:* ${formData.name}%0A` +
+      `📧 *Email:* ${formData.email || '—'}%0A` +
+      `📞 *Teléfono:* ${formData.phone || '—'}%0A` +
       `🎯 *Motivo:* ${formData.reason}%0A` +
       `💰 *Presupuesto:* ${formData.budget}%0A` +
       `⏳ *Plazo:* ${formData.timeframe}%0A` +
@@ -82,6 +93,32 @@ const Contact: React.FC = () => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder={t('contact.fullNamePlaceholder')}
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">Email *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="tu@email.com"
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">WhatsApp / Teléfono</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="+34 600 000 000"
                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
                       />
                     </div>

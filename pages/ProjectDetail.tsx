@@ -654,18 +654,11 @@ const ProjectDetail: React.FC = () => {
             );
           })()}
 
-          {Array.isArray((project as { timeline?: TimelinePhase[] }).timeline) &&
-           ((project as { timeline?: TimelinePhase[] }).timeline?.length ?? 0) > 0 && (
-            <ProjectTimeline
-              phases={(project as { timeline?: TimelinePhase[] }).timeline as TimelinePhase[]}
-              completionPercent={project.completion_percent}
-            />
-          )}
-
           {/* Inline GHL booking iframe removed — it was capturing wheel events
               and breaking page scroll. The "Agendar llamada" CTAs in the
               Navbar (and the floating button) now open the calendar in a
-              new tab with full UTM passthrough via lib/bookingLink.ts. */}
+              new tab with full UTM passthrough via lib/bookingLink.ts.
+              Marcelino: gallery should appear before timeline. */}
 
           {tiersArray && tiersArray.length > 0 && (
             <section className="bg-white p-8 md:p-12 rounded-3xl border border-primary/5 shadow-sm">
@@ -738,6 +731,14 @@ const ProjectDetail: React.FC = () => {
               ))}
             </div>
           </section>
+
+          {Array.isArray((project as { timeline?: TimelinePhase[] }).timeline) &&
+           ((project as { timeline?: TimelinePhase[] }).timeline?.length ?? 0) > 0 && (
+            <ProjectTimeline
+              phases={(project as { timeline?: TimelinePhase[] }).timeline as TimelinePhase[]}
+              completionPercent={project.completion_percent}
+            />
+          )}
         </div>
 
         <div className="lg:col-span-4 relative">
