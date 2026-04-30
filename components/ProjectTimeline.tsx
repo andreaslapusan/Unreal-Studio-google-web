@@ -157,8 +157,49 @@ function PhaseRow({ index, phase, lang, paymentLabel, doneLabel, inProgressLabel
   );
 }
 
+function useScrollProgress(elRef: React.RefObject<HTMLElement>) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const el = elRef.current;
+    if (!el) return;
+    let raf = 0;
+    const compute = () => {
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      // Start filling when the section's top reaches 70% of the viewport;
+      // finish when it reaches 30%. That window keeps the line tied to
+      // the user's reading pace rather than the absolute scroll position.
+      const start = vh * 0.7;
+      const end = vh * 0.3;
+      // distance from "start" line to top of section. 0 = section top is at
+      // the start line, negative = above (already past), positive = below
+      // (not yet reached).
+      const passed = start - rect.top;
+      const span = rect.height + (start - end);
+      const p = Math.max(0, Math.min(1, passed / span));
+      setProgress(p);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(compute);
+    };
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return progress;
+}
+
 export default function ProjectTimeline({ phases, completionPercent }: Props) {
   const { t, i18n } = useTranslation();
+  const olRef = useRef<HTMLOListElement>(null);
+  const lineProgress = useScrollProgress(olRef);
 
   const enriched = useMemo(() => {
     if (!phases) return [];
@@ -189,11 +230,17 @@ export default function ProjectTimeline({ phases, completionPercent }: Props) {
           {t("projectTimeline.title", { defaultValue: "Hitos del proyecto" })}
         </h2>
 
-        <ol className="relative">
-          {/* Vertical line — left edge on mobile, centered on desktop */}
+        <ol ref={olRef} className="relative">
+          {/* Static background line */}
           <span
             aria-hidden="true"
-            className="absolute top-2 bottom-2 w-px bg-primary/20 left-6 md:left-1/2 md:-translate-x-1/2"
+            className="absolute top-2 bottom-2 w-px bg-primary/15 left-6 md:left-1/2 md:-translate-x-1/2"
+          />
+          {/* Animated foreground line — draws downward as user scrolls */}
+          <span
+            aria-hidden="true"
+            className="absolute top-2 w-[2px] bg-primary left-6 md:left-1/2 md:-translate-x-1/2 transition-[height] duration-150 ease-out"
+            style={{ height: `calc((100% - 1rem) * ${lineProgress})` }}
           />
 
           {enriched.map((p, i) => (
