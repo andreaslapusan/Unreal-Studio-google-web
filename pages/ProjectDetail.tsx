@@ -9,6 +9,7 @@ import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import BookingWidget from '../components/BookingWidget';
+import LazyMap from '../components/LazyMap';
 import { trackViewContent } from '../lib/fbPixel';
 import { useAuth } from '../lib/auth-context';
 
@@ -641,17 +642,10 @@ const ProjectDetail: React.FC = () => {
               <section className="mt-12">
                 <h2 className="text-3xl text-primary mb-8">{t('projectDetail.locationTitle')}</h2>
                 {embedUrl ? (
-                  <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5" style={{height: '400px'}}>
-                    <iframe
-                      src={embedUrl}
-                      width="100%"
-                      height="100%"
-                      style={{border: 0}}
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
-                  </div>
+                  <LazyMap
+                    embedUrl={embedUrl}
+                    className="rounded-2xl overflow-hidden shadow-lg border border-primary/5"
+                  />
                 ) : (
                   <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5 bg-gray-100 flex items-center justify-center" style={{height: '400px'}}>
                     <a href={project.google_maps_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-3 text-primary/50 hover:text-primary transition">
