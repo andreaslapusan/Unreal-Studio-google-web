@@ -65,7 +65,9 @@
         window.addEventListener('load', function () { setTimeout(_loadFb, 1500); });
       }
     </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=866349369727610&ev=PageView&noscript=1"/></noscript>
+    <!-- Meta's <noscript> img fallback intentionally omitted — this is an SPA
+         (empty without JS), and parse5/Vite rejects <img> inside <noscript>
+         when <noscript> is in <head>. JS-disabled visitors aren't tracked. -->
 
     <title>Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€</title>
     <meta name="description" content="Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. ROI proyectado 15-28% anual. Compra remota con POA. Sede en Madrid + Bali.">
