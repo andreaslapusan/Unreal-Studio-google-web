@@ -11,7 +11,24 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 
-type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs";
+type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs" | "timelines";
+
+interface ProjectRow {
+  id: string;
+  slug: string;
+  name: string;
+  status: string | null;
+  completion_percent: number | null;
+  timeline: TimelinePhaseRow[] | null;
+}
+
+interface TimelinePhaseRow {
+  title: string;
+  date?: string;
+  payment_pct?: number;
+  description?: string;
+  status?: "done" | "in_progress" | "pending";
+}
 
 interface ActivityEvent {
   id: string;
@@ -105,6 +122,7 @@ export default function AdminPortalManager() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [faqs, setFaqs] = useState<Faq[]>([]);
+  const [projectsCatalog, setProjectsCatalog] = useState<ProjectRow[]>([]);
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -117,7 +135,7 @@ export default function AdminPortalManager() {
   const reloadAll = async () => {
     setLoading(true);
     try {
-      const [p, u, lp, app, updates, attribs, faqRes] = await Promise.all([
+      const [p, u, lp, app, updates, attribs, faqRes, projRes] = await Promise.all([
         supabase.from("properties").select("id, slug, name, area, pct_progress, delivery_date, hero_image_url, walkthrough_url, brand_pdf_url").order("name"),
         supabase.from("property_units").select("id, property_id, unit_name, price_publico, price_inversor, price_agencia, commission_default_pct, bedrooms, bathrooms, available, reserved, sold").order("unit_name"),
         supabase.from("listing_partners").select("id, agency_name, email, status, projects_assigned, user_id").order("agency_name"),
@@ -125,12 +143,14 @@ export default function AdminPortalManager() {
         supabase.from("property_updates").select("id, property_id, title, posted_by, posted_at, visibility").order("posted_at", { ascending: false }).limit(15),
         supabase.from("lead_attributions").select("id, partner_id, property_slug, event_type, contact_email, created_at").order("created_at", { ascending: false }).limit(15),
         supabase.from("faqs").select("id, question, answer, category, tags, project_filter, language, is_published, sort_order, source, updated_at").order("sort_order"),
+        supabase.from("projects").select("id, slug, name, status, completion_percent, timeline").order("sort_order"),
       ]);
       setProperties((p.data ?? []) as Property[]);
       setUnits((u.data ?? []) as Unit[]);
       setPartners((lp.data ?? []) as Partner[]);
       setApplications((app.data ?? []) as Application[]);
       setFaqs((faqRes.data ?? []) as Faq[]);
+      setProjectsCatalog((projRes.data ?? []) as ProjectRow[]);
 
       // Build a unified activity feed
       const events: ActivityEvent[] = [];
@@ -250,7 +270,7 @@ export default function AdminPortalManager() {
       </header>
 
       <nav className="max-w-6xl mx-auto px-6 mt-6 flex flex-wrap gap-2">
-        {(["activity","properties","units","partners","applications","faqs"] as Tab[]).map((t) => (
+        {(["activity","properties","units","partners","applications","faqs","timelines"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -264,6 +284,7 @@ export default function AdminPortalManager() {
             {t === "partners" && `🤝 Agencias (${partners.length})`}
             {t === "applications" && `📨 Solicitudes (${applications.filter((a) => a.status === "pending").length})`}
             {t === "faqs" && `❓ FAQs (${faqs.length})`}
+            {t === "timelines" && `📅 Timelines (${projectsCatalog.filter((p) => Array.isArray(p.timeline) && p.timeline.length > 0).length}/${projectsCatalog.length})`}
           </button>
         ))}
       </nav>
@@ -289,6 +310,9 @@ export default function AdminPortalManager() {
         )}
         {tab === "faqs" && (
           <FaqsTab data={faqs} onChange={reloadAll} />
+        )}
+        {tab === "timelines" && (
+          <TimelinesTab data={projectsCatalog} onChange={reloadAll} />
         )}
       </main>
     </div>
@@ -961,6 +985,212 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
               className="bg-primary text-white px-6 py-2 rounded-full font-bold disabled:opacity-50"
             >
               {saving ? "Guardando…" : form.id ? "Guardar" : "Crear"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Timelines admin ──────────────────────────────────────────────────────
+
+function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange: () => Promise<void> }) {
+  const [editing, setEditing] = useState<ProjectRow | null>(null);
+
+  return (
+    <div className="space-y-4">
+      <p className="text-xs text-primary/60">
+        Cada proyecto del catálogo público (`projects`) puede tener un timeline visible en su ficha. Edítalo aquí; los cambios salen en `/proyecto/&lt;slug&gt;` al instante.
+      </p>
+
+      <div className="bg-white rounded-xl overflow-hidden border border-primary/5">
+        <table className="w-full text-sm">
+          <thead className="bg-almond text-left text-[11px] uppercase tracking-widest text-primary/60">
+            <tr>
+              <th className="p-3">Proyecto</th>
+              <th className="p-3 w-28">Status</th>
+              <th className="p-3 w-24">% Obra</th>
+              <th className="p-3 w-24">Fases</th>
+              <th className="p-3 w-44">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((p) => {
+              const phaseCount = Array.isArray(p.timeline) ? p.timeline.length : 0;
+              return (
+                <tr key={p.id} className="border-t border-primary/5">
+                  <td className="p-3">
+                    <div className="font-medium text-primary">{p.name}</div>
+                    <div className="text-[11px] text-primary/50">{p.slug}</div>
+                  </td>
+                  <td className="p-3 text-xs">{p.status ?? "—"}</td>
+                  <td className="p-3 text-xs">{p.completion_percent ?? 0}%</td>
+                  <td className="p-3 text-xs">
+                    <span className={`inline-block px-2 py-1 rounded-full text-[10px] font-bold ${
+                      phaseCount > 0 ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"
+                    }`}>
+                      {phaseCount > 0 ? `${phaseCount} fases` : "sin timeline"}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => setEditing(p)}
+                      className="text-[10px] bg-primary text-white px-3 py-1.5 rounded-full"
+                    >
+                      {phaseCount > 0 ? "Editar" : "Crear timeline"}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+            {data.length === 0 && (
+              <tr><td colSpan={5} className="p-6 text-center text-primary/50">Sin proyectos en el catálogo.</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {editing && (
+        <TimelineEditor
+          project={editing}
+          onClose={() => setEditing(null)}
+          onSaved={async () => { setEditing(null); await onChange(); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; onClose: () => void; onSaved: () => Promise<void> }) {
+  const [phases, setPhases] = useState<TimelinePhaseRow[]>(
+    Array.isArray(project.timeline) && project.timeline.length > 0
+      ? project.timeline
+      : [{ title: "", date: "", payment_pct: 0, description: "" }]
+  );
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+
+  const updatePhase = (i: number, patch: Partial<TimelinePhaseRow>) => {
+    setPhases(phases.map((p, idx) => (idx === i ? { ...p, ...patch } : p)));
+  };
+  const addPhase = () => {
+    setPhases([...phases, { title: "", date: "", payment_pct: 0, description: "" }]);
+  };
+  const removePhase = (i: number) => {
+    setPhases(phases.filter((_, idx) => idx !== i));
+  };
+  const movePhase = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= phases.length) return;
+    const next = phases.slice();
+    [next[i], next[j]] = [next[j], next[i]];
+    setPhases(next);
+  };
+
+  const totalPct = phases.reduce((sum, p) => sum + (Number(p.payment_pct) || 0), 0);
+
+  const save = async () => {
+    setSaving(true);
+    setErr("");
+    try {
+      const cleaned = phases
+        .filter((p) => p.title.trim())
+        .map((p) => ({
+          title: p.title.trim(),
+          date: p.date?.trim() || undefined,
+          payment_pct: typeof p.payment_pct === "number" ? p.payment_pct : Number(p.payment_pct) || 0,
+          description: p.description?.trim() || undefined,
+          status: p.status,
+        }));
+      const { error } = await supabase
+        .from("projects")
+        .update({ timeline: cleaned.length > 0 ? cleaned : null })
+        .eq("id", project.id);
+      if (error) throw error;
+      await onSaved();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const clearAll = async () => {
+    if (!confirm(`¿Borrar el timeline completo de "${project.name}"?`)) return;
+    setSaving(true);
+    try {
+      await supabase.from("projects").update({ timeline: null }).eq("id", project.id);
+      await onSaved();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-start justify-center p-6 overflow-y-auto z-50" onClick={onClose}>
+      <div className="bg-white rounded-2xl max-w-3xl w-full p-6 mt-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h3 className="font-serif text-xl text-primary">Timeline · {project.name}</h3>
+            <p className="text-xs text-primary/50">{project.slug}</p>
+          </div>
+          <button onClick={onClose} className="text-primary/40 hover:text-primary text-xl">✕</button>
+        </div>
+        <p className="text-xs text-primary/60 mb-4">
+          Cada fase: título obligatorio, fecha opcional (formato `YYYY-MM` o `YYYY-MM-DD`), % pago y descripción. El status (done/in_progress/pending) se autoderiva del % de obra del proyecto.
+        </p>
+
+        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+          {phases.map((p, i) => (
+            <div key={i} className="border border-primary/10 rounded-xl p-4 bg-almond/30">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-primary/60">
+                  Fase {i + 1}
+                </span>
+                <div className="flex gap-1">
+                  <button onClick={() => movePhase(i, -1)} disabled={i === 0} className="text-xs px-2 py-1 rounded bg-white border border-primary/10 disabled:opacity-30">↑</button>
+                  <button onClick={() => movePhase(i, 1)} disabled={i === phases.length - 1} className="text-xs px-2 py-1 rounded bg-white border border-primary/10 disabled:opacity-30">↓</button>
+                  <button onClick={() => removePhase(i)} className="text-xs px-2 py-1 rounded bg-red-50 text-red-700 border border-red-200">Borrar</button>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
+                <Input label="Título *" value={p.title} onChange={(v) => updatePhase(i, { title: v })} />
+                <Input label="Fecha (YYYY-MM)" value={p.date ?? ""} onChange={(v) => updatePhase(i, { date: v })} />
+                <Input label="% pago" type="number" value={String(p.payment_pct ?? "")} onChange={(v) => updatePhase(i, { payment_pct: v ? Number(v) : 0 })} />
+              </div>
+              <label className="block">
+                <span className="text-sm font-medium text-primary">Descripción</span>
+                <textarea
+                  value={p.description ?? ""}
+                  onChange={(e) => updatePhase(i, { description: e.target.value })}
+                  rows={2}
+                  className="mt-1 block w-full rounded-lg border border-primary/20 px-3 py-2 outline-none focus:ring-2 focus:ring-primary/40 text-sm"
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-primary/5">
+          <button onClick={addPhase} className="text-sm bg-white border border-primary/20 text-primary px-4 py-2 rounded-full">
+            + Añadir fase
+          </button>
+          <span className={`text-xs font-bold ${totalPct === 100 ? "text-green-700" : "text-amber-700"}`}>
+            Total pagos: {totalPct}% {totalPct === 100 ? "✓" : "(debería sumar 100%)"}
+          </span>
+        </div>
+
+        {err && <p className="text-red-600 text-sm mt-3">{err}</p>}
+
+        <div className="flex justify-between gap-2 pt-4 mt-4 border-t border-primary/5">
+          <button onClick={() => void clearAll()} className="text-xs text-red-700 hover:underline">
+            Borrar timeline completo
+          </button>
+          <div className="flex gap-2">
+            <button onClick={onClose} className="px-4 py-2 rounded-full text-primary border border-primary/20 text-sm">Cancelar</button>
+            <button onClick={() => void save()} disabled={saving} className="bg-primary text-white px-6 py-2 rounded-full font-bold text-sm disabled:opacity-50">
+              {saving ? "Guardando…" : "Guardar"}
             </button>
           </div>
         </div>
