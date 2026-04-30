@@ -20,6 +20,7 @@ const Terms = lazy(() => import('./pages/Terms'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogDetail = lazy(() => import('./pages/BlogDetail'));
 const Faq = lazy(() => import('./pages/Faq'));
+const Booking = lazy(() => import('./pages/Booking'));
 const LandingGlobalitae = lazy(() => import('./pages/LandingGlobalitae'));
 const AgenciasLogin = lazy(() => import('./pages/AgenciasLogin'));
 const AgenciasPartnership = lazy(() => import('./pages/AgenciasPartnership'));
@@ -175,6 +176,8 @@ const App: React.FC = () => {
             <Route path="/blog/:slug" element={<BlogDetail />} />
             <Route path="/faq" element={<Faq />} />
             <Route path="/preguntas-frecuentes" element={<Faq />} />
+            <Route path="/agendar" element={<Booking />} />
+            <Route path="/booking" element={<Booking />} />
             <Route path="/contacto" element={<Contact />} />
             <Route path="/privacidad" element={<Privacy />} />
             <Route path="/terminos" element={<Terms />} />

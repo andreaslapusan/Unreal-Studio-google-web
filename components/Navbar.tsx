@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../App';
-import { WHATSAPP_URL, CURRENCIES } from '../constants';
+import { CURRENCIES } from '../constants';
 import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar: React.FC = () => {
@@ -91,10 +91,8 @@ const Navbar: React.FC = () => {
           </select>
 
           {/* Botón Header: Optimizado para Móvil (2 líneas) y Desktop (1 línea) */}
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/agendar?utm_source=web&utm_medium=cta_navbar&utm_campaign=agendar_btn"
             className="bg-primary text-white rounded-full font-bold uppercase tracking-widest hover:bg-opacity-90 transition shadow-xl whitespace-nowrap flex items-center justify-center px-4 py-2 md:px-7 md:py-3"
           >
             {/* Versión Móvil: Texto apilado y más pequeño */}
@@ -104,7 +102,7 @@ const Navbar: React.FC = () => {
             </div>
             {/* Versión Desktop: Texto normal (Visible desde md en adelante) */}
             <span className="hidden md:inline text-[10px] md:text-xs">Agendar llamada</span>
-          </a>
+          </Link>
 
           {/* Hamburger Menu - Visible on Mobile AND Tablet (Hidden on LG+) */}
           <button 
@@ -143,16 +141,14 @@ const Navbar: React.FC = () => {
             ))}
             
             {/* Botón Agendar en el Menú */}
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/agendar?utm_source=web&utm_medium=cta_mobile_menu&utm_campaign=agendar_btn"
               onClick={() => setIsMenuOpen(false)}
               className="bg-primary text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl flex items-center gap-3 mt-8 whitespace-nowrap w-full justify-center max-w-xs"
             >
               <span>Agendar llamada</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </a>
+            </Link>
           </div>
         </div>
       )}
@@ -168,15 +164,13 @@ const Navbar: React.FC = () => {
             : 'translate-y-20 opacity-0 pointer-events-none'
         }`}
       >
-        <a 
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          to="/agendar?utm_source=web&utm_medium=cta_floating&utm_campaign=agendar_btn"
           className="bg-primary text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest shadow-2xl flex items-center gap-3 border border-almond/20 hover:scale-105 transition-transform whitespace-nowrap"
         >
           <span>Agendar Llamada</span>
           <span className="material-symbols-outlined text-sm">calendar_month</span>
-        </a>
+        </Link>
       </div>
     </>
   );
