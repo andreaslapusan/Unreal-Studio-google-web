@@ -11,11 +11,12 @@
  * see everything in the Equipo tab.
  */
 // @ts-nocheck — Deno runtime types not in the Vite tsconfig
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
 const GHL_API_TOKEN = Deno.env.get("GHL_API_TOKEN") ?? "";
 const GHL_LOCATION_ID = Deno.env.get("GHL_LOCATION_ID") ?? "Hg9YAlmBewj8oe5HaEjl";
-const ANDREAS_EMAIL = Deno.env.get("ANDREAS_EMAIL") ?? "andreas@unrealstudiobali.com";
+// Andreas's GHL contactId. Hardcoded (instead of email lookup) because his
+// actual GHL email differs from his domain email and the lookup would miss.
+const ANDREAS_CONTACT_ID = Deno.env.get("ANDREAS_CONTACT_ID") ?? "DbukIcbl6JVw9c9aMt1m";
 
 interface TimeOffEvent {
   event: string;
@@ -27,7 +28,7 @@ interface TimeOffEvent {
   reason: string;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
 
   let payload: TimeOffEvent;
@@ -61,25 +62,7 @@ serve(async (req) => {
     });
   }
 
-  // Look up Andreas's contactId in GHL
-  let contactId: string | null = null;
-  try {
-    const lookup = await fetch(
-      `https://services.leadconnectorhq.com/contacts/?locationId=${GHL_LOCATION_ID}&query=${encodeURIComponent(ANDREAS_EMAIL)}&limit=1`,
-      { headers: { Authorization: `Bearer ${GHL_API_TOKEN}`, Version: "2021-07-28" } }
-    );
-    const data = await lookup.json();
-    contactId = data?.contacts?.[0]?.id ?? null;
-  } catch (err) {
-    console.warn("[team-notify] contact lookup failed:", err);
-  }
-
-  if (!contactId) {
-    console.warn("[team-notify] Andreas not found in GHL, skipping");
-    return new Response(JSON.stringify({ status: "skipped", reason: "no_contact" }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  const contactId = ANDREAS_CONTACT_ID;
 
   // Send email via GHL
   try {
@@ -94,7 +77,7 @@ serve(async (req) => {
         type: "Email",
         contactId,
         subject,
-        message: body,
+        html: body.replace(/\n/g, "<br>"),
         emailFrom: "Unreal Studio <noreply@unrealstudiobali.com>",
       }),
     });
