@@ -662,12 +662,10 @@ const ProjectDetail: React.FC = () => {
             />
           )}
 
-          {(project as { booking_widget_url?: string }).booking_widget_url && (
-            <BookingWidget
-              url={(project as { booking_widget_url: string }).booking_widget_url}
-              propertySlug={project.slug}
-            />
-          )}
+          {/* Inline GHL booking iframe removed — it was capturing wheel events
+              and breaking page scroll. The "Agendar llamada" CTAs in the
+              Navbar (and the floating button) now open the calendar in a
+              new tab with full UTM passthrough via lib/bookingLink.ts. */}
 
           {tiersArray && tiersArray.length > 0 && (
             <section className="bg-white p-8 md:p-12 rounded-3xl border border-primary/5 shadow-sm">

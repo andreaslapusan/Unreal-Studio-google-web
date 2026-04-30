@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
+import { bookingLink } from '../lib/bookingLink';
 import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar: React.FC = () => {
@@ -91,8 +92,10 @@ const Navbar: React.FC = () => {
           </select>
 
           {/* Botón Header: Optimizado para Móvil (2 líneas) y Desktop (1 línea) */}
-          <Link
-            to="/agendar?utm_source=web&utm_medium=cta_navbar&utm_campaign=agendar_btn"
+          <a
+            href={bookingLink({ medium: 'cta_navbar' })}
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-primary text-white rounded-full font-bold uppercase tracking-widest hover:bg-opacity-90 transition shadow-xl whitespace-nowrap flex items-center justify-center px-4 py-2 md:px-7 md:py-3"
           >
             {/* Versión Móvil: Texto apilado y más pequeño */}
@@ -102,7 +105,7 @@ const Navbar: React.FC = () => {
             </div>
             {/* Versión Desktop: Texto normal (Visible desde md en adelante) */}
             <span className="hidden md:inline text-[10px] md:text-xs">Agendar llamada</span>
-          </Link>
+          </a>
 
           {/* Hamburger Menu - Visible on Mobile AND Tablet (Hidden on LG+) */}
           <button 
@@ -141,14 +144,16 @@ const Navbar: React.FC = () => {
             ))}
             
             {/* Botón Agendar en el Menú */}
-            <Link
-              to="/agendar?utm_source=web&utm_medium=cta_mobile_menu&utm_campaign=agendar_btn"
+            <a
+              href={bookingLink({ medium: 'cta_mobile_menu' })}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setIsMenuOpen(false)}
               className="bg-primary text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl flex items-center gap-3 mt-8 whitespace-nowrap w-full justify-center max-w-xs"
             >
               <span>Agendar llamada</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </Link>
+            </a>
           </div>
         </div>
       )}
@@ -164,13 +169,15 @@ const Navbar: React.FC = () => {
             : 'translate-y-20 opacity-0 pointer-events-none'
         }`}
       >
-        <Link
-          to="/agendar?utm_source=web&utm_medium=cta_floating&utm_campaign=agendar_btn"
+        <a
+          href={bookingLink({ medium: 'cta_floating' })}
+          target="_blank"
+          rel="noopener noreferrer"
           className="bg-primary text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest shadow-2xl flex items-center gap-3 border border-almond/20 hover:scale-105 transition-transform whitespace-nowrap"
         >
           <span>Agendar Llamada</span>
           <span className="material-symbols-outlined text-sm">calendar_month</span>
-        </Link>
+        </a>
       </div>
     </>
   );

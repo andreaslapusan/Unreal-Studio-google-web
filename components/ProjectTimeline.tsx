@@ -52,14 +52,20 @@ interface PhaseRowProps {
 
 function PhaseRow({ index, phase, lang, paymentLabel, doneLabel, inProgressLabel }: PhaseRowProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [revealed, setRevealed] = useState(false);
-  const isLeft = index % 2 === 0; // even index → card on left side
+  // Animations only on desktop — Marcelino: mobile users have less patience
+  // and the JS overhead of IntersectionObserver + transitions slows the
+  // project page meaningfully on cheap phones.
+  const isDesktop =
+    typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches;
+  const [revealed, setRevealed] = useState<boolean>(!isDesktop);
+  const isLeft = index % 2 === 0;
 
   useEffect(() => {
+    if (!isDesktop) return;
     const el = cardRef.current;
     if (!el) return;
     if (typeof IntersectionObserver === "undefined") {
-      setRevealed(true); // fallback — no animation in old browsers
+      setRevealed(true);
       return;
     }
     const obs = new IntersectionObserver(
@@ -76,7 +82,7 @@ function PhaseRow({ index, phase, lang, paymentLabel, doneLabel, inProgressLabel
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [isDesktop]);
 
   const card = (
     <div
@@ -158,8 +164,11 @@ function PhaseRow({ index, phase, lang, paymentLabel, doneLabel, inProgressLabel
 }
 
 function useScrollProgress(elRef: React.RefObject<HTMLElement>) {
-  const [progress, setProgress] = useState(0);
+  const isDesktop =
+    typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches;
+  const [progress, setProgress] = useState(isDesktop ? 0 : 1);
   useEffect(() => {
+    if (!isDesktop) return; // mobile: line is static, full height
     const el = elRef.current;
     if (!el) return;
     let raf = 0;
@@ -192,7 +201,7 @@ function useScrollProgress(elRef: React.RefObject<HTMLElement>) {
       window.removeEventListener("resize", onScroll);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isDesktop]);
   return progress;
 }
 
@@ -221,7 +230,7 @@ export default function ProjectTimeline({ phases, completionPercent }: Props) {
   if (!phases || phases.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-28 px-6 md:px-12 bg-white">
+    <section className="py-16 md:py-28 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-3 text-center">
           {t("projectTimeline.tag", { defaultValue: "ROADMAP DE OBRA" })}
