@@ -1,13 +1,19 @@
 /**
- * Construction timeline shown on /proyecto/:slug.
+ * Construction timeline — zigzag layout with scroll-triggered reveal.
  *
- * Pattern lifted from cocodevelopmentgroup.com/aura-wellness-resort —
- * vertical milestone list with payment %, date, description.
+ * Design lifted from cocodevelopmentgroup.com/aura-wellness-resort:
+ *   - Vertical line down the center, dark circular icon badges on it
+ *   - Cards alternate left / right ("zigzag")
+ *   - Each card fades + slides in from its side when it enters the viewport
  *
- * Data source: `projects.timeline` (jsonb) — array of phases. Falls back
- * to nothing if the column is empty, keeping legacy projects unchanged.
+ * On mobile (< md), the zigzag collapses into a single left-aligned column
+ * with the line shifted to the left edge, so the animation still reads
+ * but content stays one-column.
+ *
+ * Status (done/in_progress/pending) is auto-derived from the project's
+ * `completion_percent` if a phase doesn't set its own.
  */
-import React from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export interface TimelinePhase {
@@ -20,17 +26,11 @@ export interface TimelinePhase {
 
 interface Props {
   phases: TimelinePhase[];
-  /**
-   * Auto-derive status from the project's `completion_percent` if individual
-   * phases don't set their own. Each phase is "done" when its
-   * cumulative-payment marker is below the project's current completion.
-   */
   completionPercent?: number;
 }
 
 function formatDate(d: string | undefined, lang: string): string {
   if (!d) return "";
-  // Accept "YYYY-MM" or "YYYY-MM-DD". Fall back to raw string.
   const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(d);
   if (!m) return d;
   const date = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3] ?? 1));
@@ -41,95 +41,171 @@ function formatDate(d: string | undefined, lang: string): string {
   return date.toLocaleDateString(lang, { month: "long", year: "numeric" });
 }
 
+interface PhaseRowProps {
+  index: number;
+  phase: TimelinePhase & { cumulative: number };
+  lang: string;
+  paymentLabel: string;
+  doneLabel: string;
+  inProgressLabel: string;
+}
+
+function PhaseRow({ index, phase, lang, paymentLabel, doneLabel, inProgressLabel }: PhaseRowProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
+  const isLeft = index % 2 === 0; // even index → card on left side
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setRevealed(true); // fallback — no animation in old browsers
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setRevealed(true);
+            obs.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const card = (
+    <div
+      ref={cardRef}
+      className={`bg-almond/80 rounded-2xl p-6 md:p-8 shadow-sm border border-primary/5 transition-all duration-700 ease-out ${
+        revealed
+          ? "opacity-100 translate-x-0"
+          : `opacity-0 ${isLeft ? "-translate-x-12" : "translate-x-12"}`
+      }`}
+    >
+      {phase.date && (
+        <p className="text-sm md:text-base text-primary/70 mb-1">{phase.title}</p>
+      )}
+      {!phase.date && (
+        <h3 className="text-xl md:text-2xl font-bold text-primary mb-2">{phase.title}</h3>
+      )}
+      {phase.date && (
+        <p className="text-xl md:text-2xl font-bold text-primary mb-3">
+          {formatDate(phase.date, lang)}
+        </p>
+      )}
+      {phase.description && (
+        <p className="text-sm text-primary/60 leading-relaxed">{phase.description}</p>
+      )}
+      <div className="flex flex-wrap gap-2 mt-4">
+        {typeof phase.payment_pct === "number" && phase.payment_pct > 0 && (
+          <span className="text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full">
+            {phase.payment_pct}% {paymentLabel}
+          </span>
+        )}
+        {phase.status === "done" && (
+          <span className="text-[10px] font-black uppercase tracking-widest text-green-700 bg-green-50 px-3 py-1 rounded-full">
+            ✓ {doneLabel}
+          </span>
+        )}
+        {phase.status === "in_progress" && (
+          <span className="text-[10px] font-black uppercase tracking-widest text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+            {inProgressLabel}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+
+  // --- mobile: single column, line on the left
+  // --- desktop: alternating columns with center badge
+  const badge = (
+    <div
+      className={`shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-md transition-all duration-500 ${
+        phase.status === "done"
+          ? "bg-primary text-white"
+          : phase.status === "in_progress"
+          ? "bg-amber-500 text-white"
+          : "bg-primary/80 text-white"
+      } ${revealed ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}
+    >
+      <span className="material-symbols-outlined text-lg md:text-xl">
+        {phase.status === "done" ? "check_circle" : "construction"}
+      </span>
+    </div>
+  );
+
+  return (
+    <li className="relative">
+      {/* Mobile layout: badge + card stacked horizontally with line on the left */}
+      <div className="md:hidden flex gap-4 items-start">
+        <div className="flex flex-col items-center">{badge}</div>
+        <div className="flex-1 pb-12">{card}</div>
+      </div>
+
+      {/* Desktop layout: alternating left / right with center badge */}
+      <div className="hidden md:grid grid-cols-[1fr_auto_1fr] gap-8 items-start pb-16">
+        <div className={isLeft ? "" : "invisible"}>{isLeft && card}</div>
+        <div className="flex flex-col items-center">{badge}</div>
+        <div className={isLeft ? "invisible" : ""}>{!isLeft && card}</div>
+      </div>
+    </li>
+  );
+}
+
 export default function ProjectTimeline({ phases, completionPercent }: Props) {
   const { t, i18n } = useTranslation();
 
+  const enriched = useMemo(() => {
+    if (!phases) return [];
+    let cumulative = 0;
+    return phases.map((p) => {
+      cumulative += p.payment_pct ?? 0;
+      const auto =
+        typeof completionPercent === "number"
+          ? completionPercent >= cumulative
+            ? ("done" as const)
+            : completionPercent >= cumulative - (p.payment_pct ?? 0)
+            ? ("in_progress" as const)
+            : ("pending" as const)
+          : ("pending" as const);
+      return { ...p, status: p.status ?? auto, cumulative };
+    });
+  }, [phases, completionPercent]);
+
   if (!phases || phases.length === 0) return null;
 
-  // Derive cumulative payment % at each milestone so we can mark phases as
-  // "done" automatically when the project's overall completion crosses them.
-  let cumulative = 0;
-  const enriched = phases.map((p) => {
-    cumulative += p.payment_pct ?? 0;
-    const auto =
-      typeof completionPercent === "number"
-        ? completionPercent >= cumulative
-          ? ("done" as const)
-          : completionPercent >= cumulative - (p.payment_pct ?? 0)
-          ? ("in_progress" as const)
-          : ("pending" as const)
-        : ("pending" as const);
-    return { ...p, status: p.status ?? auto, cumulative };
-  });
-
   return (
-    <section className="py-16 md:py-24 px-6 md:px-12 bg-white">
-      <div className="max-w-4xl mx-auto">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-3">
+    <section className="py-16 md:py-28 px-6 md:px-12 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-3 text-center">
           {t("projectTimeline.tag", { defaultValue: "ROADMAP DE OBRA" })}
         </p>
-        <h2 className="text-3xl md:text-5xl font-serif text-primary mb-12">
+        <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif text-primary mb-16 md:mb-20 text-center">
           {t("projectTimeline.title", { defaultValue: "Hitos del proyecto" })}
         </h2>
 
         <ol className="relative">
-          {/* Vertical line */}
+          {/* Vertical line — left edge on mobile, centered on desktop */}
           <span
             aria-hidden="true"
-            className="absolute left-6 top-2 bottom-2 w-px bg-primary/15"
+            className="absolute top-2 bottom-2 w-px bg-primary/20 left-6 md:left-1/2 md:-translate-x-1/2"
           />
 
           {enriched.map((p, i) => (
-            <li key={i} className="relative pl-16 pb-10 last:pb-0">
-              {/* Milestone dot */}
-              <span
-                aria-hidden="true"
-                className={`absolute left-3 top-2 w-7 h-7 rounded-full flex items-center justify-center border-4 transition ${
-                  p.status === "done"
-                    ? "bg-primary border-primary text-white"
-                    : p.status === "in_progress"
-                    ? "bg-amber-100 border-amber-400 text-amber-700"
-                    : "bg-white border-primary/30 text-primary/40"
-                }`}
-              >
-                {p.status === "done" ? (
-                  <span className="material-symbols-outlined text-sm">check_circle</span>
-                ) : (
-                  <span className="text-[11px] font-black">{i + 1}</span>
-                )}
-              </span>
-
-              <div>
-                <div className="flex flex-wrap items-baseline gap-3 mb-2">
-                  {p.date && (
-                    <span className="text-xs font-bold uppercase tracking-widest text-primary/40">
-                      {formatDate(p.date, i18n.language)}
-                    </span>
-                  )}
-                  {typeof p.payment_pct === "number" && (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-almond px-2 py-1 rounded-full">
-                      {p.payment_pct}% {t("projectTimeline.payment", { defaultValue: "pago" })}
-                    </span>
-                  )}
-                  {p.status === "done" && (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-green-700">
-                      ✓ {t("projectTimeline.done", { defaultValue: "completado" })}
-                    </span>
-                  )}
-                  {p.status === "in_progress" && (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-amber-700">
-                      {t("projectTimeline.inProgress", { defaultValue: "en curso" })}
-                    </span>
-                  )}
-                </div>
-                <h3 className="text-xl md:text-2xl font-serif text-primary mb-2">{p.title}</h3>
-                {p.description && (
-                  <p className="text-sm md:text-base text-primary/70 leading-relaxed max-w-2xl">
-                    {p.description}
-                  </p>
-                )}
-              </div>
-            </li>
+            <PhaseRow
+              key={i}
+              index={i}
+              phase={p}
+              lang={i18n.language}
+              paymentLabel={t("projectTimeline.payment", { defaultValue: "pago" })}
+              doneLabel={t("projectTimeline.done", { defaultValue: "completado" })}
+              inProgressLabel={t("projectTimeline.inProgress", { defaultValue: "en curso" })}
+            />
           ))}
         </ol>
       </div>
