@@ -190,9 +190,17 @@ export default function AdminPortalManager() {
     }
   };
 
+  // Accept either Supabase Auth (Google / magic-link) OR the legacy
+  // username+password session that sets `_ust_sh_` in storage. This way
+  // admins who logged in through /admin/login (Andreas/Cemagi2025!) can
+  // still reach this panel without re-authenticating with Supabase.
+  const hasLegacySession =
+    typeof window !== "undefined" &&
+    (!!localStorage.getItem("_ust_sh_") || !!sessionStorage.getItem("_ust_sh_"));
+
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
-  if (!user) return <Navigate to="/admin/login" replace />;
-  if (role && role !== "admin" && role !== "team") {
+  if (!user && !hasLegacySession) return <Navigate to="/admin/login" replace />;
+  if (user && role && role !== "admin" && role !== "team") {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>

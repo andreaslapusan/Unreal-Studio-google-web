@@ -878,6 +878,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
             {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
           </select>
+          <Link to="/admin/portal" className="bg-primary text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition flex items-center gap-1">
+             <span className="material-symbols-outlined text-xs">dashboard</span> Portal Manager
+          </Link>
           <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
              <span className="material-symbols-outlined text-xs">help</span> Ver guía
           </button>
