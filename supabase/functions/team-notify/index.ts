@@ -41,19 +41,34 @@ Deno.serve(async (req) => {
     return new Response("Ignored", { status: 200 });
   }
 
+  const PORTAL_BASE = Deno.env.get("PORTAL_BASE") ?? "https://unrealstudiobali.com";
+  const adminUrl = `${PORTAL_BASE}/admin/portal`;
+  const employeeUrl = `${PORTAL_BASE}/equipo/dashboard`;
+
   const subject = `[Equipo] ${payload.member_name} pide vacaciones (${payload.days} días)`;
-  const body = [
-    `Solicitud de vacaciones (auto-aprobada):`,
-    ``,
-    `Nombre: ${payload.member_name}`,
-    `Email: ${payload.member_email ?? "(sin email)"}`,
-    `Desde: ${payload.start_date}`,
-    `Hasta: ${payload.end_date}`,
-    `Días: ${payload.days}`,
-    `Motivo: ${payload.reason}`,
-    ``,
-    `Ver detalle en /admin/portal → Equipo`,
-  ].join("\n");
+  // HTML body — links rendered as <a> so they're clickable in Gmail/Outlook.
+  // Plain-text fallback uses the same URLs spelled out.
+  const html = `
+    <p><b>Solicitud de vacaciones (auto-aprobada)</b></p>
+    <p>
+      <b>Nombre:</b> ${payload.member_name}<br>
+      <b>Email:</b> ${payload.member_email ?? "(sin email)"}<br>
+      <b>Desde:</b> ${payload.start_date}<br>
+      <b>Hasta:</b> ${payload.end_date}<br>
+      <b>Días:</b> ${payload.days}<br>
+      <b>Motivo:</b> ${payload.reason}
+    </p>
+    <p>
+      Acceso al portal admin (vista global del equipo + cancelar/editar):<br>
+      → <a href="${adminUrl}">${adminUrl}</a><br>
+      Pestaña <i>Equipo</i> dentro del panel.
+    </p>
+    <p>
+      Acceso al portal empleado:<br>
+      → <a href="${PORTAL_BASE}/equipo">${PORTAL_BASE}/equipo</a> (login con magic link)<br>
+      → <a href="${employeeUrl}">${employeeUrl}</a> (dashboard ya logueado)
+    </p>
+  `.trim();
 
   if (!GHL_API_TOKEN) {
     console.warn("[team-notify] GHL_API_TOKEN not set, skipping email");
@@ -77,7 +92,7 @@ Deno.serve(async (req) => {
         type: "Email",
         contactId,
         subject,
-        html: body.replace(/\n/g, "<br>"),
+        html,
         emailFrom: "Unreal Studio <noreply@unrealstudiobali.com>",
       }),
     });
