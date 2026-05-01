@@ -868,23 +868,24 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
       )}
 
-      <header className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center">
-        <div className="flex items-center">
+      <header className="bg-white border-b border-gray-200 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center gap-2">
+        <div className="flex items-center flex-shrink-0">
           <Link to="/">
-            <img src={LOGO_URL} alt="Unreal Studio" className="h-10 w-auto object-contain" />
+            <img src={LOGO_URL} alt="Unreal Studio" className="h-8 md:h-10 w-auto object-contain" />
           </Link>
         </div>
-        <div className="flex items-center gap-4">
-          <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
+        <div className="flex items-center gap-2 md:gap-3 flex-wrap justify-end">
+          <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="hidden md:block bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
             {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
           </select>
-          <Link to="/admin/portal" className="bg-primary text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition flex items-center gap-1">
-             <span className="material-symbols-outlined text-xs">dashboard</span> Portal Manager
+          <Link to="/admin/portal" className="bg-primary text-white px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition flex items-center gap-1" title="Portal Manager">
+             <span className="material-symbols-outlined text-sm">dashboard</span>
+             <span className="hidden sm:inline">Portal Manager</span>
           </Link>
-          <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
+          <button onClick={() => setWalkthroughStep(0)} className="hidden md:flex text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition items-center gap-1">
              <span className="material-symbols-outlined text-xs">help</span> Ver guía
           </button>
-          <button onClick={handleLogout} className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">Salir</button>
+          <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">Salir</button>
         </div>
       </header>
 

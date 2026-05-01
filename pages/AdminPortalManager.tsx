@@ -223,12 +223,12 @@ export default function AdminPortalManager() {
         country: app.country,
         status: "active",
         approved_at: new Date().toISOString(),
-        approved_by: user.email ?? user.id,
+        approved_by: user?.email ?? user?.id ?? "andreas-legacy",
       });
       if (insErr) throw insErr;
       await supabase
         .from("listing_partner_applications")
-        .update({ status: "approved", reviewed_by: user.email ?? user.id, reviewed_at: new Date().toISOString() })
+        .update({ status: "approved", reviewed_by: user?.email ?? user?.id ?? "andreas-legacy", reviewed_at: new Date().toISOString() })
         .eq("id", app.id);
       // Magic link
       const redirect = `${window.location.origin}/auth/finish`;
@@ -244,7 +244,7 @@ export default function AdminPortalManager() {
     if (!confirm(`¿Rechazar ${app.agency_name}?`)) return;
     await supabase
       .from("listing_partner_applications")
-      .update({ status: "rejected", reviewed_by: user.email ?? user.id, reviewed_at: new Date().toISOString() })
+      .update({ status: "rejected", reviewed_by: user?.email ?? user?.id ?? "andreas-legacy", reviewed_at: new Date().toISOString() })
       .eq("id", app.id);
     await reloadAll();
   };
@@ -266,14 +266,14 @@ export default function AdminPortalManager() {
 
   return (
     <div className="min-h-screen bg-almond pb-16">
-      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between">
+      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-serif text-2xl">Admin Portal Manager</h1>
-          <p className="text-sm opacity-80">{user.email}</p>
+          <h1 className="font-serif text-xl md:text-2xl">Admin Portal Manager</h1>
+          <p className="text-xs md:text-sm opacity-80">{user?.email ?? "Sesión Andreas"}</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => navigate("/admin")} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">Admin clásico</button>
-          <button onClick={() => void signOut()} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">Salir</button>
+          <button onClick={() => navigate("/admin")} className="text-xs md:text-sm bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full">Admin clásico</button>
+          <button onClick={() => { localStorage.removeItem("_ust_sh_"); sessionStorage.removeItem("_ust_sh_"); void signOut(); navigate("/admin/login"); }} className="text-xs md:text-sm bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full">Salir</button>
         </div>
       </header>
 
