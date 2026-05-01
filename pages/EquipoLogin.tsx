@@ -2,7 +2,7 @@
  * /equipo — magic-link login for the internal team portal.
  *
  * Auth flow: enter your Unreal email → Supabase mails a magic link → click
- * it → /auth/finish lands the session → we redirect to /equipo/dashboard.
+ * it → /auth/finish lands the session → we redirect to /manager/dashboard.
  *
  * Note: shouldCreateUser is false. Only emails already on the team_members
  * roster (seeded by the admin) can sign in.
@@ -20,7 +20,7 @@ export default function EquipoLogin() {
   const [busy, setBusy] = useState(false);
 
   if (loading) return null;
-  if (user) return <Navigate to="/equipo/dashboard" replace />;
+  if (user) return <Navigate to="/manager/dashboard" replace />;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,9 +44,9 @@ export default function EquipoLogin() {
   return (
     <div className="min-h-screen bg-almond flex items-center justify-center px-6">
       <div className="bg-white rounded-3xl shadow-xl border border-primary/10 max-w-md w-full p-10">
-        <h1 className="text-3xl font-serif text-primary mb-2">Portal Equipo</h1>
+        <h1 className="text-3xl font-serif text-primary mb-2">Portal Manager</h1>
         <p className="text-sm text-primary/60 mb-8">
-          Acceso interno · Vacaciones · Calendario
+          Acceso interno equipo · Vacaciones · Partes de obra
         </p>
         {sent ? (
           <div className="text-sm text-primary">

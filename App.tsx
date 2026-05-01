@@ -195,8 +195,14 @@ const App: React.FC = () => {
             <Route path="/inversores" element={<InversoresPartnership />} />
             <Route path="/inversores/login" element={<InversoresLogin />} />
             <Route path="/inversores/dashboard" element={<InversoresDashboard />} />
-            <Route path="/equipo" element={<EquipoLogin />} />
-            <Route path="/equipo/dashboard" element={<EquipoDashboard />} />
+            {/* Manager Portal — para trabajadores (Agun/Adam/Paris/Marc/Luis/Raul).
+                Acceso por magic link al email registrado. NO tienen acceso a /admin.
+                Las rutas legacy /equipo/* redirigen a /manager/* para no romper enlaces
+                viejos en correos enviados o documentos. */}
+            <Route path="/manager" element={<EquipoLogin />} />
+            <Route path="/manager/dashboard" element={<EquipoDashboard />} />
+            <Route path="/equipo" element={<Navigate to="/manager" replace />} />
+            <Route path="/equipo/dashboard" element={<Navigate to="/manager/dashboard" replace />} />
             <Route path="/equipo/upload" element={<EquipoUpload />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />

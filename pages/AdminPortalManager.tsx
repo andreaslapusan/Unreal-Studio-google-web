@@ -7,7 +7,7 @@
  * Acceso: rol admin o team. Si no, redirige a /agencias.
  */
 import React, { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase, getImageUrl } from "../lib/supabase";
 
@@ -266,14 +266,28 @@ export default function AdminPortalManager() {
 
   return (
     <div className="min-h-screen bg-almond pb-16">
-      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="font-serif text-xl md:text-2xl">Admin Portal Manager</h1>
-          <p className="text-xs md:text-sm opacity-80">{user?.email ?? "Sesión Andreas"}</p>
+      {/* Top white logo bar — extends into iOS safe area so the page never
+          starts with empty colored space above the chrome. */}
+      <div className="bg-white border-b border-primary/10" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+        <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-3">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="font-serif text-primary text-base md:text-xl tracking-wide">UNREAL <span className="opacity-50">Studio</span></span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <button onClick={() => navigate("/admin")} className="hidden sm:block text-xs bg-primary/5 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">Admin clásico</button>
+            <button onClick={() => { localStorage.removeItem("_ust_sh_"); sessionStorage.removeItem("_ust_sh_"); void signOut(); navigate("/admin/login"); }} className="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">Salir</button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => navigate("/admin")} className="text-xs md:text-sm bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full">Admin clásico</button>
-          <button onClick={() => { localStorage.removeItem("_ust_sh_"); sessionStorage.removeItem("_ust_sh_"); void signOut(); navigate("/admin/login"); }} className="text-xs md:text-sm bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full">Salir</button>
+      </div>
+
+      {/* Brown contextual header */}
+      <header className="bg-primary text-white px-4 md:px-6 py-4 md:py-5">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+          <div>
+            <h1 className="font-serif text-lg md:text-2xl">Admin Portal Manager</h1>
+            <p className="text-[10px] md:text-xs opacity-70">{user?.email ?? "Sesión Andreas"}</p>
+          </div>
+          <button onClick={() => navigate("/admin")} className="sm:hidden text-[10px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold whitespace-nowrap">Admin clásico</button>
         </div>
       </header>
 

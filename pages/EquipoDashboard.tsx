@@ -1,5 +1,5 @@
 /**
- * /equipo/dashboard — employee self-service.
+ * /manager/dashboard — employee self-service.
  *
  * Two tabs:
  *   - Vacaciones: pick dates, see remaining days, list of own requests.
@@ -105,7 +105,7 @@ export default function EquipoDashboard() {
       </div>
     );
   }
-  if (!user) return <Navigate to="/equipo" replace />;
+  if (!user) return <Navigate to="/manager" replace />;
   if (notFound) {
     return (
       <div className="min-h-screen bg-almond flex items-center justify-center px-6 text-center">
@@ -127,7 +127,7 @@ export default function EquipoDashboard() {
       <header className="bg-primary text-white px-8 py-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-serif">Hola, {member?.full_name}</h1>
-          <p className="text-xs opacity-70">Portal Equipo · {new Date().getFullYear()}</p>
+          <p className="text-xs opacity-70">Portal Manager · {new Date().getFullYear()}</p>
         </div>
         <button onClick={() => signOut()} className="text-xs uppercase tracking-widest underline">
           Cerrar sesión

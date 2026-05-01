@@ -43,9 +43,10 @@ Deno.serve(async (req) => {
 
   const PORTAL_BASE = Deno.env.get("PORTAL_BASE") ?? "https://unrealstudiobali.com";
   const adminUrl = `${PORTAL_BASE}/admin/portal`;
-  const employeeUrl = `${PORTAL_BASE}/equipo/dashboard`;
+  const employeeUrl = `${PORTAL_BASE}/manager/dashboard`;
 
   const subject = `[Equipo] ${payload.member_name} pide vacaciones (${payload.days} días)`;
+  // Subject keeps the [Equipo] prefix as the email tag — Andreas filters by it.
   // HTML body — links rendered as <a> so they're clickable in Gmail/Outlook.
   // Plain-text fallback uses the same URLs spelled out.
   const html = `
@@ -65,7 +66,7 @@ Deno.serve(async (req) => {
     </p>
     <p>
       Acceso al portal empleado:<br>
-      → <a href="${PORTAL_BASE}/equipo">${PORTAL_BASE}/equipo</a> (login con magic link)<br>
+      → <a href="${PORTAL_BASE}/manager">${PORTAL_BASE}/manager</a> (login con magic link)<br>
       → <a href="${employeeUrl}">${employeeUrl}</a> (dashboard ya logueado)
     </p>
   `.trim();
