@@ -42,6 +42,7 @@ import { DEFAULT_CONFIG } from './constants';
 import { supabase } from './lib/supabase';
 import { trackPageVisit } from './lib/attribution';
 import { trackPageView } from './lib/fbPixel';
+import { gtmPageView } from './lib/gtm';
 
 interface CurrencyContextType {
   currency: CurrencyCode;
@@ -79,6 +80,9 @@ const AttributionTracker = () => {
     // already fires from index.html on first paint; this captures every
     // subsequent in-app route change.
     trackPageView(pathname);
+    // GTM dataLayer pageview — central dispatcher that fans out to GA4,
+    // Meta CAPI, Google Ads, etc. (configured tag-side in tagmanager.google.com).
+    gtmPageView(pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, search, hash]);
   return null;

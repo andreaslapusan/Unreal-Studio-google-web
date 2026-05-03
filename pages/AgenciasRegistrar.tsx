@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { recordFormSubmit } from "../lib/attribution";
 import { trackLead } from "../lib/fbPixel";
+import { gtmGenerateLead } from "../lib/gtm";
 
 interface FormState {
   agency_name: string;
@@ -105,6 +106,7 @@ export default function AgenciasRegistrar() {
 
       // Meta Pixel — Lead event for the listing partner application.
       trackLead({ content_name: 'Listing Partner application', content_category: 'agencias_registrar' });
+      gtmGenerateLead({ form_id: 'agencias_registrar', form_destination: 'supabase' });
 
       setSubmitted(true);
     } catch (err) {

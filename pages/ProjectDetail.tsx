@@ -12,6 +12,7 @@ import BookingWidget from '../components/BookingWidget';
 import LazyMap from '../components/LazyMap';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent } from '../lib/fbPixel';
+import { gtmViewItem } from '../lib/gtm';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
@@ -113,6 +114,14 @@ const ProjectDetail: React.FC = () => {
                 content_category: loadedProject.location ?? 'project',
                 content_type: 'product',
                 value: loadedProject.investor_price,
+                currency: (loadedProject.price_currency ?? 'EUR').toUpperCase(),
+              });
+              // GTM dataLayer: GA4-style view_item event.
+              gtmViewItem({
+                item_id: loadedProject.slug ?? loadedProject.id,
+                item_name: loadedProject.name,
+                item_category: loadedProject.location ?? 'project',
+                price: loadedProject.investor_price,
                 currency: (loadedProject.price_currency ?? 'EUR').toUpperCase(),
               });
 

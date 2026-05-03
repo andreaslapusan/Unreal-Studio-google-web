@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
+import { gtmLogin } from '../lib/gtm';
 
 const AdminLogin: React.FC = () => {
   const { sendMagicLink, signInWithGoogle, user, role } = useAuth();
@@ -30,6 +31,7 @@ const AdminLogin: React.FC = () => {
   const handleGoogle = async () => {
     setMagicError('');
     try {
+      gtmLogin({ method: 'google' });
       await signInWithGoogle();
     } catch (err) {
       setMagicError(err instanceof Error ? err.message : String(err));
@@ -43,6 +45,7 @@ const AdminLogin: React.FC = () => {
     setMagicError('');
     try {
       await sendMagicLink(magicEmail);
+      gtmLogin({ method: 'magic_link' });
       setMagicStatus('sent');
     } catch (err) {
       setMagicStatus('error');

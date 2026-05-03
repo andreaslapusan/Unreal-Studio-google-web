@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { recordFormSubmit } from '../lib/attribution';
 import { trackLead } from '../lib/fbPixel';
+import { gtmGenerateLead, gtmWhatsappClick } from '../lib/gtm';
 
 const Contact: React.FC = () => {
   const { t } = useTranslation();
@@ -32,6 +33,10 @@ const Contact: React.FC = () => {
 
     // Meta Pixel: form submit = Lead conversion event.
     trackLead({ content_name: 'Contact form', content_category: 'web_form_contacto' });
+    // GTM dataLayer: GA4 generate_lead + whatsapp_click (the form redirects
+    // to WhatsApp, so both events are fired in sequence).
+    gtmGenerateLead({ form_id: 'contact', form_destination: 'whatsapp' });
+    gtmWhatsappClick({ source: 'contact_form', phone: '6285217790692' });
 
     const text = `*SOLICITUD DE REUNIÓN - UNREAL STUDIO*%0A%0A` +
       `👤 *Nombre:* ${formData.name}%0A` +
