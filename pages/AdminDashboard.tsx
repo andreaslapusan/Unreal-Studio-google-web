@@ -882,6 +882,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              <span className="material-symbols-outlined text-sm">dashboard</span>
              <span className="hidden sm:inline">Portal Manager</span>
           </Link>
+          <Link to="/admin/marketing" className="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition flex items-center gap-1" title="Marketing · GHL Embudo y Leads">
+             <span className="material-symbols-outlined text-sm">campaign</span>
+             <span className="hidden sm:inline">Marketing</span>
+          </Link>
           <button onClick={() => setWalkthroughStep(0)} className="hidden md:flex text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition items-center gap-1">
              <span className="material-symbols-outlined text-xs">help</span> Ver guía
           </button>

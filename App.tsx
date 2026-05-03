@@ -13,6 +13,7 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const Contact = lazy(() => import('./pages/Contact'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminMarketing = lazy(() => import('./pages/AdminMarketing'));
 const ClientLogin = lazy(() => import('./pages/ClientLogin'));
 const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
 const Privacy = lazy(() => import('./pages/Privacy'));
@@ -207,6 +208,7 @@ const App: React.FC = () => {
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/marketing" element={<ProtectedRoute><AdminMarketing /></ProtectedRoute>} />
             <Route path="/admin/portal" element={<AdminPortalManager />} />
             <Route path="/cliente" element={<ClientLogin />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />

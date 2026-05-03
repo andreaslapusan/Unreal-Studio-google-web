@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'https://rnielxgackkshnatvagj.supabase.co'
+export const SUPABASE_URL = 'https://rnielxgackkshnatvagj.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuaWVseGdhY2trc2huYXR2YWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MzE4NTEsImV4cCI6MjA4NjQwNzg1MX0.5X6k4TVLrH1AJMLw797l4LWTy3cROhh-Q4gAPl-GPJY'
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = createClient(SUPABASE_URL, supabaseKey)
 
 export function getImageUrl(path: string): string {
   if (!path || path.startsWith('http')) return path || ''
