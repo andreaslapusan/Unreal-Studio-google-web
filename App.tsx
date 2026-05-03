@@ -208,7 +208,7 @@ const App: React.FC = () => {
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/marketing" element={<ProtectedRoute><AdminMarketing /></ProtectedRoute>} />
+            <Route path="/admin/marketing" element={<AdminMarketing />} />
             <Route path="/admin/portal" element={<AdminPortalManager />} />
             <Route path="/cliente" element={<ClientLogin />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />
