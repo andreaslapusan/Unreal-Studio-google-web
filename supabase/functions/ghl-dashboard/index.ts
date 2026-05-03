@@ -121,8 +121,7 @@ async function searchOpportunities(
   const url =
     `/opportunities/search?location_id=${GHL_LOC}` +
     `&pipeline_id=${pipelineId}` +
-    `&limit=${limit}` +
-    `&sort=updatedAt&sort_direction=desc`;
+    `&limit=${limit}`;
   const r = await ghl(url, { headers: { Version: "2021-04-15" } });
   if (!r.ok) {
     throw new Error(`GHL opp search ${r.status}: ${await r.text()}`);
@@ -184,7 +183,7 @@ Deno.serve(async (req: Request) => {
     const usePipelines = pipelines.filter((p) => targetIds.has(p.id));
 
     const oppsByPipeline = await Promise.all(
-      usePipelines.map((p) => searchOpportunities(p.id, 200)),
+      usePipelines.map((p) => searchOpportunities(p.id, 100)),
     );
 
     const buckets: StageBucket[] = [];
