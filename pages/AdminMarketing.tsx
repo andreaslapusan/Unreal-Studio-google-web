@@ -151,7 +151,16 @@ export default function AdminMarketing() {
     );
   }, [data, filteredBuckets]);
 
-  if (authLoading) {
+  // Defensive: if auth context never resolves we still try to render so the
+  // user gets actionable feedback instead of a frozen "Cargando…" screen.
+  const [authTimedOut, setAuthTimedOut] = useState(false);
+  useEffect(() => {
+    if (!authLoading) return;
+    const id = window.setTimeout(() => setAuthTimedOut(true), 5000);
+    return () => window.clearTimeout(id);
+  }, [authLoading]);
+
+  if (authLoading && !authTimedOut) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
         Cargando…
