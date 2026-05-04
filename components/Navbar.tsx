@@ -15,8 +15,11 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, role, signOut } = useAuth();
 
+  // Para admin/team mandamos al hub /admin desde donde se accede a Marketing,
+  // Portal Manager, propiedades, blog, etc. Solo lister/investor tienen
+  // dashboards monolíticos directos.
   const dashboardPath = role === 'admin' || role === 'team'
-    ? '/admin/marketing'
+    ? '/admin'
     : role === 'lister'
       ? '/agencias/dashboard'
       : role === 'investor'
