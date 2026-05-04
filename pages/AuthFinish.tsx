@@ -29,24 +29,53 @@ export default function AuthFinish() {
   const navigate = useNavigate();
   const [errored, setErrored] = useState(false);
 
-  // Manual OAuth-fragment exchange. Runs once on mount.
+  // Auth handshake — covers both flows:
+  //   1) Implicit/OAuth: Supabase appends #access_token=... in the fragment
+  //   2) PKCE (default for v2 magic links + Google with PKCE): ?code=xxx in the
+  //      query string. exchangeCodeForSession swaps that for an actual session.
   useEffect(() => {
-    const tokens = extractOAuthTokens(window.location.href);
-    if (!tokens) return;
-    void supabase.auth
-      .setSession(tokens)
-      .then(({ error }) => {
-        if (error) {
-          console.error("[auth-finish] setSession failed:", error);
-          setErrored(true);
-        } else {
-          // Strip the OAuth fragment from the URL so a refresh doesn't
-          // re-process an already-consumed token.
-          const cleaned = window.location.href.replace(/#access_token=[^]*$/, "");
-          window.history.replaceState({}, "", cleaned);
-        }
-      })
-      .catch(() => setErrored(true));
+    const url = window.location.href;
+
+    // Path 1: fragment tokens (OAuth implicit flow)
+    const tokens = extractOAuthTokens(url);
+    if (tokens) {
+      void supabase.auth
+        .setSession(tokens)
+        .then(({ error }) => {
+          if (error) {
+            console.error("[auth-finish] setSession failed:", error);
+            setErrored(true);
+          } else {
+            const cleaned = url.replace(/#access_token=[^]*$/, "");
+            window.history.replaceState({}, "", cleaned);
+          }
+        })
+        .catch(() => setErrored(true));
+      return;
+    }
+
+    // Path 2: PKCE code exchange
+    const search = new URLSearchParams(window.location.search);
+    const code = search.get("code");
+    if (code) {
+      void supabase.auth
+        .exchangeCodeForSession(code)
+        .then(({ error }) => {
+          if (error) {
+            console.error("[auth-finish] exchangeCodeForSession failed:", error);
+            setErrored(true);
+          } else {
+            // Drop the ?code so a refresh doesn't replay it.
+            const cleaned = window.location.pathname;
+            window.history.replaceState({}, "", cleaned);
+          }
+        })
+        .catch(() => setErrored(true));
+      return;
+    }
+    // No tokens, no code → AuthProvider's auto-detect-session may already
+    // have a valid session in storage from a previous handshake. We just
+    // wait for `user` to populate via onAuthStateChange.
   }, []);
 
   useEffect(() => {
