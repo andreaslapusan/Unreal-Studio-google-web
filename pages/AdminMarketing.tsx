@@ -96,8 +96,20 @@ export default function AdminMarketing() {
     setError("");
     setLoading(true);
     try {
-      const { data: sess } = await supabase.auth.getSession();
-      const token = sess.session?.access_token;
+      // Read the access token straight from localStorage. supabase.auth.getSession()
+      // has been observed to hang here in production; reading the persisted JSON
+      // ourselves avoids the hang and gets the exact same token Supabase uses.
+      let token: string | undefined;
+      try {
+        const raw = localStorage.getItem('sb-rnielxgackkshnatvagj-auth-token');
+        if (raw) token = JSON.parse(raw).access_token;
+      } catch {
+        // fall through; we'll still try supabase.auth as a backup
+      }
+      if (!token) {
+        const { data: sess } = await supabase.auth.getSession();
+        token = sess.session?.access_token;
+      }
       if (!token) throw new Error("Sesión expirada. Inicia sesión de nuevo.");
 
       const url = `${SUPABASE_URL}/functions/v1/ghl-dashboard`;
