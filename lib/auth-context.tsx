@@ -36,13 +36,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let unsub: (() => void) | undefined;
 
     const init = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      if (data.session?.user) {
-        await loadRole(data.session.user.id);
+      try {
+        const { data } = await supabase.auth.getSession();
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+        if (data.session?.user) {
+          await loadRole(data.session.user.id);
+        }
+      } catch (err) {
+        // Defensive: never let an auth error keep the UI stuck on "Cargando".
+        // We surface it via console so it's still discoverable in DevTools.
+        // eslint-disable-next-line no-console
+        console.error('[auth-context] init failed', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     void init();
 
