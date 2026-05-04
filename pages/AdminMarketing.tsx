@@ -84,6 +84,13 @@ export default function AdminMarketing() {
   const [error, setError] = useState<string>("");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [activePipeline, setActivePipeline] = useState<string>("all");
+  // Defensive: if auth context never resolves we still try to render.
+  const [authTimedOut, setAuthTimedOut] = useState(false);
+  useEffect(() => {
+    if (!authLoading) return;
+    const id = window.setTimeout(() => setAuthTimedOut(true), 5000);
+    return () => window.clearTimeout(id);
+  }, [authLoading]);
 
   const load = useCallback(async () => {
     setError("");
@@ -114,18 +121,24 @@ export default function AdminMarketing() {
     }
   }, []);
 
+  // Trust the edge function as the source of truth for role: it verifies the
+  // Supabase session + admin role server-side. The useAuth role flag can be
+  // out of sync (it relies on a profiles-table RLS read that occasionally
+  // hangs), so we don't gate load() on it. If the user isn't admin, the edge
+  // function returns 401/403 and we surface the error.
   useEffect(() => {
-    if (!user || role !== "admin") return;
+    if (authLoading && !authTimedOut) return;
     void load();
-  }, [user, role, load]);
+  }, [authLoading, authTimedOut, load]);
 
   useEffect(() => {
-    if (!autoRefresh || !user || role !== "admin") return;
+    if (!autoRefresh) return;
+    if (authLoading && !authTimedOut) return;
     const id = window.setInterval(() => {
       void load();
     }, REFRESH_INTERVAL_MS);
     return () => window.clearInterval(id);
-  }, [autoRefresh, user, role, load]);
+  }, [autoRefresh, authLoading, authTimedOut, load]);
 
   const filteredBuckets = useMemo(() => {
     if (!data) return [];
@@ -151,15 +164,6 @@ export default function AdminMarketing() {
     );
   }, [data, filteredBuckets]);
 
-  // Defensive: if auth context never resolves we still try to render so the
-  // user gets actionable feedback instead of a frozen "Cargando…" screen.
-  const [authTimedOut, setAuthTimedOut] = useState(false);
-  useEffect(() => {
-    if (!authLoading) return;
-    const id = window.setTimeout(() => setAuthTimedOut(true), 5000);
-    return () => window.clearTimeout(id);
-  }, [authLoading]);
-
   if (authLoading && !authTimedOut) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
@@ -167,8 +171,14 @@ export default function AdminMarketing() {
       </div>
     );
   }
-  if (!user) return <Navigate to="/admin/login" replace />;
-  if (role !== "admin") {
+  // No session at all → bounce to login. Once authLoading has settled (or
+  // timed out) we can trust this check; we don't gate on role here because
+  // the edge function is the source of truth for the admin check.
+  if (!authLoading && !user && !localStorage.getItem('sb-rnielxgackkshnatvagj-auth-token')) {
+    return <Navigate to="/admin/login" replace />;
+  }
+  // Edge function returned 403 → not admin.
+  if (error && /403|forbidden|admin role required/i.test(error)) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center max-w-md">
