@@ -1,15 +1,14 @@
 /**
- * Compact language switcher with 4 options: ES / EN / RO / ID.
- * Persists choice via localStorage (handled by i18next-browser-languagedetector).
+ * Compact language switcher with 3 options: ES / EN / RO.
+ * Persists choice via localStorage (handled by our custom geoLanguageDetector).
  */
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const LANGS: { code: "es" | "en" | "ro" | "id"; label: string }[] = [
+const LANGS: { code: "es" | "en" | "ro"; label: string }[] = [
   { code: "es", label: "ES" },
   { code: "en", label: "EN" },
   { code: "ro", label: "RO" },
-  { code: "id", label: "ID" },
 ];
 
 export default function LanguageSwitcher({ inverted = false }: { inverted?: boolean }) {

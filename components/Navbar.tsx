@@ -11,6 +11,7 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { currency, setCurrency } = useCurrency();
   const location = useLocation();
   const { user, role, signOut } = useAuth();
@@ -91,19 +92,40 @@ const Navbar: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
-          {/* Language switcher (compact) */}
-          <LanguageSwitcher />
-
-          {/* Selector de Divisa */}
-          <select
-            value={currency} 
-            onChange={(e) => setCurrency(e.target.value as any)}
-            className="bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition"
-          >
-            {CURRENCIES.map(c => (
-              <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
-            ))}
-          </select>
+          {/* Idioma + Divisa (popover desktop, también accesible en menú móvil) */}
+          <div className="relative hidden md:block">
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(!settingsOpen)}
+              onBlur={() => setTimeout(() => setSettingsOpen(false), 150)}
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-white/60 hover:bg-white border border-primary/10 text-primary transition"
+              title="Idioma y divisa"
+              aria-label="Idioma y divisa"
+            >
+              <span className="material-symbols-outlined text-[20px]">language</span>
+            </button>
+            {settingsOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-white border border-primary/10 rounded-xl shadow-2xl py-3 px-3 z-50 space-y-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 font-black mb-2">Idioma</p>
+                  <LanguageSwitcher />
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 font-black mb-2">Divisa</p>
+                  <select
+                    value={currency}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onChange={(e) => setCurrency(e.target.value as any)}
+                    className="w-full bg-white border border-primary/10 rounded-full px-3 py-1.5 text-xs font-bold text-primary focus:ring-0 cursor-pointer hover:bg-primary/5 transition"
+                  >
+                    {CURRENCIES.map(c => (
+                      <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Account icon: muestra perfil si hay sesión, login si no */}
           <div className="relative">
@@ -203,13 +225,29 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
             
+            {/* Idioma + Divisa dentro del menú lateral */}
+            <div className="w-full max-w-xs flex flex-col items-center gap-4 pt-6 border-t border-primary/10 mt-2">
+              <div className="flex items-center gap-3">
+                <LanguageSwitcher />
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as any)}
+                  className="bg-white border border-primary/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-primary/5 transition"
+                >
+                  {CURRENCIES.map(c => (
+                    <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             {/* Botón Agendar en el Menú */}
             <a
               href={bookingLink({ medium: 'cta_mobile_menu' })}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsMenuOpen(false)}
-              className="bg-primary text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl flex items-center gap-3 mt-8 whitespace-nowrap w-full justify-center max-w-xs"
+              className="bg-primary text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl flex items-center gap-3 mt-4 whitespace-nowrap w-full justify-center max-w-xs"
             >
               <span>Agendar llamada</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
