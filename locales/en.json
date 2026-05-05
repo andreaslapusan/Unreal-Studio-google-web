@@ -24,7 +24,8 @@
     "name": "Language",
     "es": "Español",
     "en": "English",
-    "id": "Bahasa"
+    "id": "Bahasa",
+    "ro": "Romanian"
   },
   "nav": {
     "home": "Home",

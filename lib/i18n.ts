@@ -5,6 +5,7 @@
  *  - es (Spanish) — primary, most existing copy
  *  - en (English) — for international investors and partners
  *  - id (Bahasa Indonesia) — for local Indonesian agencies / staff
+ *  - ro (Romanian) — for Romanian investors / Andreas's network
  *
  * Detection order: localStorage → navigator → fallback es.
  * Switching: see <LanguageSwitcher/> component.
@@ -16,6 +17,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import es from "../locales/es.json";
 import en from "../locales/en.json";
 import id from "../locales/id.json";
+import ro from "../locales/ro.json";
 
 void i18n
   .use(LanguageDetector)
@@ -25,9 +27,10 @@ void i18n
       es: { translation: es },
       en: { translation: en },
       id: { translation: id },
+      ro: { translation: ro },
     },
     fallbackLng: "es",
-    supportedLngs: ["es", "en", "id"],
+    supportedLngs: ["es", "en", "id", "ro"],
     interpolation: { escapeValue: false },
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],

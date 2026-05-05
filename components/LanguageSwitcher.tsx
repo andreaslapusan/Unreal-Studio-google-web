@@ -1,13 +1,14 @@
 /**
- * Compact language switcher with 3 options: ES / EN / ID.
+ * Compact language switcher with 4 options: ES / EN / RO / ID.
  * Persists choice via localStorage (handled by i18next-browser-languagedetector).
  */
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const LANGS: { code: "es" | "en" | "id"; label: string }[] = [
+const LANGS: { code: "es" | "en" | "ro" | "id"; label: string }[] = [
   { code: "es", label: "ES" },
   { code: "en", label: "EN" },
+  { code: "ro", label: "RO" },
   { code: "id", label: "ID" },
 ];
 
