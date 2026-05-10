@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 
 interface ProjectAgencyRow {
@@ -18,26 +19,53 @@ interface ProjectAgencyRow {
   has_powder_room: boolean | null;
   has_rooftop: boolean | null;
   parking: string | null;
+  parking_en: string | null;
+  parking_id: string | null;
   view: string | null;
+  view_en: string | null;
+  view_id: string | null;
   living_room_style: string | null;
+  living_room_style_en: string | null;
+  living_room_style_id: string | null;
   furnishing: string | null;
+  furnishing_en: string | null;
+  furnishing_id: string | null;
   furnishing_pack_cost_usd: number | null;
   investor_price: number | null;
   market_price: number | null;
   price_currency: string | null;
   payment_plan_off_plan: string | null;
+  payment_plan_off_plan_en: string | null;
+  payment_plan_off_plan_id: string | null;
   years_contract: number | null;
   years_extension: number | null;
   extension_cost_usd: number | null;
   lease_end_date: string | null;
+  lease_end_date_en: string | null;
+  lease_end_date_id: string | null;
   lease_years_paid: boolean | null;
   zoning_type: string | null;
+  zoning_type_en: string | null;
+  zoning_type_id: string | null;
   building_permit_status: string | null;
+  building_permit_status_en: string | null;
+  building_permit_status_id: string | null;
   structural_warranty: string | null;
+  structural_warranty_en: string | null;
+  structural_warranty_id: string | null;
   water_supply: string | null;
+  water_supply_en: string | null;
+  water_supply_id: string | null;
   completion_date: string | null;
+  completion_date_en: string | null;
+  completion_date_id: string | null;
   completion_percent: number | null;
   status: string | null;
+  status_en: string | null;
+  status_id: string | null;
+  distance_beach: string | null;
+  distance_beach_en: string | null;
+  distance_beach_id: string | null;
   google_maps_url: string | null;
   brochure_url: string | null;
   drive_brochure_folder_url: string | null;
@@ -51,6 +79,8 @@ interface ProjectAgencyRow {
   gallery: string[] | null;
   floor_plans: string[] | null;
   description: string | null;
+  description_en: string | null;
+  description_id: string | null;
   annual_rental_projection: number | null;
   agency_pack_status: Record<string, any> | null;
 }
@@ -80,9 +110,19 @@ const LinkBtn: React.FC<{ href: string | null | undefined; children: React.React
 
 const AgencyPack: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { i18n } = useTranslation();
   const [project, setProject] = useState<ProjectAgencyRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Resolve translatable field by current language. Falls back to ES (base).
+  const tr = (p: ProjectAgencyRow | null, base: keyof ProjectAgencyRow): string | null => {
+    if (!p) return null;
+    const lang = (i18n.language || 'es').slice(0, 2);
+    if (lang === 'en') return ((p as any)[`${String(base)}_en`] as string) || (p[base] as any) || null;
+    if (lang === 'id') return ((p as any)[`${String(base)}_id`] as string) || (p[base] as any) || null;
+    return (p[base] as any) || null;
+  };
 
   useEffect(() => {
     document.title = 'Pack Agencia — Unreal Studio Bali';
@@ -131,16 +171,16 @@ const AgencyPack: React.FC = () => {
           <div className="text-right">
             <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">Precio</p>
             <p className="text-3xl md:text-4xl font-serif">{formatPrice(project.investor_price)}</p>
-            <p className="text-xs text-white/60 mt-1">{project.furnishing} (5% comisión incluida)</p>
+            <p className="text-xs text-white/60 mt-1">{tr(project,'furnishing')} (5% comisión incluida)</p>
           </div>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-6 md:px-16 py-10 print:py-6 space-y-10">
-        {project.description && (
+        {tr(project,'description') && (
           <section>
             <h2 className="text-xs font-black uppercase tracking-widest text-primary/60 mb-3">Resumen</h2>
-            <p className="text-primary/90 leading-relaxed">{project.description}</p>
+            <p className="text-primary/90 leading-relaxed">{tr(project,'description')}</p>
           </section>
         )}
 
@@ -167,7 +207,7 @@ const AgencyPack: React.FC = () => {
             <Field label="Owner">{project.owner_name}</Field>
             <Field label="Tipo">{project.property_type}</Field>
             <Field label="Zona">{project.zone}</Field>
-            <Field label="Estado">{project.status}</Field>
+            <Field label="Estado">{tr(project,'status')}</Field>
             <Field label="Avance obra">
               {project.completion_percent != null ? `${project.completion_percent}%` : null}
             </Field>
@@ -183,7 +223,7 @@ const AgencyPack: React.FC = () => {
 
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-primary/5">
             <h2 className="text-base font-serif text-primary mb-4">Contrato y Leasehold</h2>
-            <Field label="Lease end">{project.lease_end_date}</Field>
+            <Field label="Lease end">{tr(project,'lease_end_date')}</Field>
             <Field label="Años contrato">{project.years_contract}</Field>
             <Field label="Años extensión">{project.years_extension}</Field>
             <Field label="Coste extensión">
@@ -196,9 +236,9 @@ const AgencyPack: React.FC = () => {
             <Field label="Lease pagado">
               {project.lease_years_paid == null ? null : project.lease_years_paid ? 'Sí, en su totalidad' : 'No'}
             </Field>
-            <Field label="Zoning">{project.zoning_type}</Field>
-            <Field label="Permit (IMB/PBG/SLF)">{project.building_permit_status}</Field>
-            <Field label="Structural warranty">{project.structural_warranty}</Field>
+            <Field label="Zoning">{tr(project,'zoning_type')}</Field>
+            <Field label="Permit (IMB/PBG/SLF)">{tr(project,'building_permit_status')}</Field>
+            <Field label="Structural warranty">{tr(project,'structural_warranty')}</Field>
           </section>
 
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-primary/5">
@@ -214,23 +254,23 @@ const AgencyPack: React.FC = () => {
             <Field label="Building (m²)">{project.area_m2}</Field>
             <Field label="Land (m²)">{project.land_size_m2}</Field>
             <Field label="Pool (m²)">{project.pool_size_m2}</Field>
-            <Field label="Parking">{project.parking}</Field>
-            <Field label="View">{project.view}</Field>
-            <Field label="Living room">{project.living_room_style}</Field>
-            <Field label="Water supply">{project.water_supply}</Field>
+            <Field label="Parking">{tr(project,'parking')}</Field>
+            <Field label="View">{tr(project,'view')}</Field>
+            <Field label="Living room">{tr(project,'living_room_style')}</Field>
+            <Field label="Water supply">{tr(project,'water_supply')}</Field>
           </section>
 
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-primary/5">
             <h2 className="text-base font-serif text-primary mb-4">Pricing y Mobiliario</h2>
             <Field label="Net Sale Price">{formatPrice(project.investor_price)}</Field>
-            <Field label="Furnishing">{project.furnishing}</Field>
+            <Field label="Furnishing">{tr(project,'furnishing')}</Field>
             <Field label="Pack fully-furnished">
               {project.furnishing_pack_cost_usd != null
                 ? `+ USD ${project.furnishing_pack_cost_usd.toLocaleString('en-US')}`
                 : null}
             </Field>
-            <Field label="Plan de pagos (off-plan)">{project.payment_plan_off_plan}</Field>
-            <Field label="Entrega estimada">{project.completion_date}</Field>
+            <Field label="Plan de pagos (off-plan)">{tr(project,'payment_plan_off_plan')}</Field>
+            <Field label="Entrega estimada">{tr(project,'completion_date')}</Field>
             <Field label="ROI proyectado anual">
               {project.annual_rental_projection != null
                 ? `USD ${project.annual_rental_projection.toLocaleString('en-US')}/año`
