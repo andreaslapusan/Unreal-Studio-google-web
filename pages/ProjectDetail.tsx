@@ -610,7 +610,7 @@ const ProjectDetail: React.FC = () => {
                     <form onSubmit={handleClientLoginForDoc} className="space-y-4">
                         <div>
                             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
-                            <input type="text" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="tu@email.com o +34..." className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                            <input type="text" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="tu@email.com o +34 625 710 770" className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.password')}</label>
@@ -850,7 +850,7 @@ const ProjectDetail: React.FC = () => {
                 )}
               </div>
               <a 
-                href={`https://wa.me/6285217790692?text=${encodeURIComponent(`¡Hola! Me interesa el proyecto "${project.name}" en ${project.location}. Me gustaría recibir más información y agendar una reunión.`)}`}
+                href={`https://wa.me/34625710770?text=${encodeURIComponent(`¡Hola! Me interesa el proyecto "${project.name}" en ${project.location}. Me gustaría recibir más información y agendar una reunión.`)}`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"

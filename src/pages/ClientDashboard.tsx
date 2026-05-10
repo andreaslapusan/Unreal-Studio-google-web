@@ -383,7 +383,7 @@ const ClientDashboard: React.FC = () => {
         <div className="mt-16 bg-primary text-white rounded-2xl p-10 text-center">
           <h3 className="text-2xl font-serif mb-4">¿Necesitas ayuda?</h3>
           <p className="text-white/70 text-sm mb-6">Nuestro equipo está disponible para resolver cualquier duda sobre tus inversiones.</p>
-          <a href="https://wa.me/6285217790692?text=Hola, soy inversor de Unreal Studio y necesito ayuda." target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
+          <a href="https://wa.me/34625710770?text=Hola, soy inversor de Unreal Studio y necesito ayuda." target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
             <span className="material-symbols-outlined">chat</span> Contactar por WhatsApp
           </a>
         </div>

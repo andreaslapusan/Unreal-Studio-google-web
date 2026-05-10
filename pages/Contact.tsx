@@ -36,7 +36,7 @@ const Contact: React.FC = () => {
     // GTM dataLayer: GA4 generate_lead + whatsapp_click (the form redirects
     // to WhatsApp, so both events are fired in sequence).
     gtmGenerateLead({ form_id: 'contact', form_destination: 'whatsapp' });
-    gtmWhatsappClick({ source: 'contact_form', phone: '6285217790692' });
+    gtmWhatsappClick({ source: 'contact_form', phone: '34625710770' });
 
     const text = `*SOLICITUD DE REUNIÓN - UNREAL STUDIO*%0A%0A` +
       `👤 *Nombre:* ${formData.name}%0A` +
@@ -47,7 +47,7 @@ const Contact: React.FC = () => {
       `⏳ *Plazo:* ${formData.timeframe}%0A` +
       `📝 *Mensaje:* ${formData.message || 'Sin mensaje adicional'}`;
 
-    const url = `https://wa.me/6285217790692?text=${text}`;
+    const url = `https://wa.me/34625710770?text=${text}`;
 
     window.open(url, '_blank');
   };
@@ -127,7 +127,7 @@ const Contact: React.FC = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        placeholder="+34 600 000 000"
+                        placeholder="+34 625 710 770"
                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
                       />
                     </div>
@@ -235,7 +235,7 @@ const Contact: React.FC = () => {
                     <span className="font-medium text-primary">hola@unrealstudio.com</span>
                   </div>
                 </a>
-                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="https://wa.me/6285217790692" target="_blank" rel="noopener noreferrer">
+                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="https://wa.me/34625710770" target="_blank" rel="noopener noreferrer">
                   <div className="bg-green-100 text-green-700 p-3 rounded-full group-hover:bg-green-600 group-hover:text-white transition">
                     <span className="material-symbols-outlined text-xl">chat</span>
                   </div>

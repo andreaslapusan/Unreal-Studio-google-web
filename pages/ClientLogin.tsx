@@ -60,7 +60,7 @@ const ClientLogin: React.FC = () => {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Email o Teléfono</label>
-            <input type="text" required value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="tu@email.com o +34..." className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none" />
+            <input type="text" required value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="tu@email.com o +34 625 710 770" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none" />
           </div>
           <div>
             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Contraseña</label>

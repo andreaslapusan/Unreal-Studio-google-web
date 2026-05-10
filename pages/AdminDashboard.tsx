@@ -749,7 +749,7 @@ const WHATSAPP_TEMPLATES = [
 ];
 
 const openWhatsAppTemplate = (client: Client, message: string) => {
-  const phone = client.phone?.replace(/[^0-9]/g, '') || '6285217790692';
+  const phone = client.phone?.replace(/[^0-9]/g, '') || '34625710770';
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 };
 
@@ -1560,7 +1560,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Telefono</label>
-          <input type="text" value={currentClient.phone || ''} onChange={(e) => setCurrentClient({...currentClient, phone: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="+34 600 000 000" />
+          <input type="text" value={currentClient.phone || ''} onChange={(e) => setCurrentClient({...currentClient, phone: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="+34 625 710 770" />
         </div>
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Notas</label>
