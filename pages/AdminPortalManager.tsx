@@ -8,8 +8,10 @@
  */
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase, getImageUrl } from "../lib/supabase";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs" | "timelines" | "equipo";
 
@@ -114,6 +116,7 @@ const FAQ_CATEGORIES = [
 ] as const;
 
 export default function AdminPortalManager() {
+  const { t } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("activity");
@@ -274,8 +277,9 @@ export default function AdminPortalManager() {
             <span className="font-serif text-primary text-base md:text-xl tracking-wide">UNREAL <span className="opacity-50">Studio</span></span>
           </Link>
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <button onClick={() => navigate("/admin")} className="hidden sm:block text-xs bg-primary/5 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">Admin clásico</button>
-            <button onClick={() => { localStorage.removeItem("_ust_sh_"); sessionStorage.removeItem("_ust_sh_"); void signOut(); navigate("/admin/login"); }} className="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">Salir</button>
+            <button onClick={() => { localStorage.removeItem("_ust_sh_"); sessionStorage.removeItem("_ust_sh_"); void signOut(); navigate("/admin/login"); }} className="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">{t('admin.common.logout')}</button>
           </div>
         </div>
       </div>

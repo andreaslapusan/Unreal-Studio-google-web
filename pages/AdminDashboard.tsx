@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, CURRENCIES } from '../constants';
 import { Project, AppConfig, BlogPost, User, Client, ClientProject } from '../types';
 import { useCurrency } from '../App';
 import { supabase, uploadImage, getImageUrl, parseJsonField } from '../lib/supabase';
 import Footer from '../components/Footer';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const GUIDE_STEPS = [
   { 
@@ -30,6 +32,7 @@ const GUIDE_STEPS = [
 ];
 
 const AdminDashboard: React.FC = () => {
+  const { t } = useTranslation();
 const AMENITIES_LIST = [
   'Piscina privada', 'Piscina compartida', 'Gimnasio', 'Coworking',
   'Jardín tropical', 'Terraza', 'Parking', 'Seguridad 24h',
@@ -878,18 +881,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="hidden md:block bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
             {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
           </select>
-          <Link to="/admin/portal" className="bg-primary text-white px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition flex items-center gap-1" title="Portal Manager">
+          <div className="hidden md:block"><LanguageSwitcher /></div>
+          <Link to="/admin/portal" className="bg-primary text-white px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition flex items-center gap-1" title={t('admin.nav.portalManager')}>
              <span className="material-symbols-outlined text-sm">dashboard</span>
-             <span className="hidden sm:inline">Portal Manager</span>
+             <span className="hidden sm:inline">{t('admin.nav.portalManager')}</span>
           </Link>
           <Link to="/admin/marketing" className="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition flex items-center gap-1" title="Marketing · GHL Embudo y Leads">
              <span className="material-symbols-outlined text-sm">campaign</span>
-             <span className="hidden sm:inline">Marketing</span>
+             <span className="hidden sm:inline">{t('admin.nav.marketing')}</span>
           </Link>
           <button onClick={() => setWalkthroughStep(0)} className="hidden md:flex text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition items-center gap-1">
-             <span className="material-symbols-outlined text-xs">help</span> Ver guía
+             <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
           </button>
-          <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">Salir</button>
+          <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
         </div>
       </header>
 
@@ -901,7 +905,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               onClick={() => setActiveView(v as any)}
               className={`text-lg font-serif pb-2 transition-all whitespace-nowrap capitalize ${activeView === v ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-primary'}`}
             >
-              {v === 'projects' ? 'Propiedades' : v === 'blogs' ? 'Blog' : v === 'clients' ? 'Clientes' : v === 'users' ? 'Usuarios' : v === 'calendar' ? 'Calendario' : 'Configuración'}
+              {t(`admin.nav.${v === 'config' ? 'config' : v}`)}
             </button>
           ))}
         </div>

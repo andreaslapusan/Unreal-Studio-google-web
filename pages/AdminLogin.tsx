@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { gtmLogin } from '../lib/gtm';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const AdminLogin: React.FC = () => {
+  const { t } = useTranslation();
   const { sendMagicLink, signInWithGoogle, user, role } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -66,7 +69,7 @@ const AdminLogin: React.FC = () => {
       });
 
       if (error || !data || !data.success) {
-        setError('Acceso denegado. Credenciales incorrectas.');
+        setError(t('admin.login.errorInvalid'));
         setPassword('');
         setLoading(false);
         return;
@@ -106,7 +109,7 @@ const AdminLogin: React.FC = () => {
       navigate('/admin');
     } catch (err) {
       console.error('Login error:', err);
-      setError('Error de conexión o credenciales inválidas.');
+      setError(t('admin.login.errorConnection'));
       setLoading(false);
     }
   };
@@ -114,9 +117,12 @@ const AdminLogin: React.FC = () => {
   return (
     <div className="min-h-screen bg-primary flex items-center justify-center p-6">
       <div className="bg-almond p-8 md:p-12 rounded-3xl shadow-2xl max-w-md w-full text-center border border-white/10 animate-in zoom-in-95 duration-500">
+        <div className="flex justify-end mb-2">
+          <LanguageSwitcher />
+        </div>
         <div className="mb-8 flex flex-col items-center">
           <h1 className="font-serif text-4xl font-bold text-primary mb-4">Unreal Studio</h1>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">CMS - Acceso Restringido</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">{t('admin.login.title')}</p>
         </div>
         
         <form
@@ -127,7 +133,7 @@ const AdminLogin: React.FC = () => {
           autoComplete="on"
         >
           <div className="text-left">
-            <label htmlFor="admin-username" className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Usuario</label>
+            <label htmlFor="admin-username" className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">{t('admin.login.username')}</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/30 text-xl">person</span>
               <input
@@ -145,14 +151,14 @@ const AdminLogin: React.FC = () => {
                   if(error) setError('');
                 }}
                 className="w-full pl-12 pr-5 py-4 rounded-xl bg-white border border-primary/10 outline-none transition text-primary font-bold focus:ring-2 focus:ring-primary/10"
-                placeholder="USUARIO"
+                placeholder={t('admin.login.usernamePlaceholder')}
                 disabled={loading}
               />
             </div>
           </div>
 
           <div className="text-left">
-            <label htmlFor="admin-password" className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Contraseña</label>
+            <label htmlFor="admin-password" className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">{t('admin.login.password')}</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/30 text-xl">lock</span>
               <input
@@ -192,27 +198,27 @@ const AdminLogin: React.FC = () => {
                 className="w-4 h-4 rounded border-primary/20 text-primary focus:ring-primary/20 cursor-pointer"
                 disabled={loading}
               />
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary/40 group-hover:text-primary transition">Recordar mi sesión</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary/40 group-hover:text-primary transition">{t('admin.login.rememberMe')}</span>
             </label>
             <button
               type="button"
               onClick={() => setForgotOpen(!forgotOpen)}
               className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition"
             >
-              ¿Olvidaste tu contraseña?
+              {t('admin.login.forgotPassword')}
             </button>
           </div>
 
           {forgotOpen && (
             <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 text-left text-[11px] text-primary/80 space-y-2 animate-in fade-in slide-in-from-top-2">
-              <p className="font-black uppercase tracking-widest text-[10px] text-primary">Recuperar acceso</p>
-              <p>Tienes 3 opciones:</p>
+              <p className="font-black uppercase tracking-widest text-[10px] text-primary">{t('admin.login.recoveryTitle')}</p>
+              <p>{t('admin.login.recoveryIntro')}</p>
               <ol className="list-decimal list-inside space-y-1 pl-1">
-                <li><strong>Magic link</strong> (más abajo) — entra con tu email si tu perfil en Supabase Auth tiene rol <code>admin</code>.</li>
-                <li><strong>Google</strong> — botón "Continuar con Google" si tu cuenta Google está vinculada al rol admin.</li>
-                <li><strong>Reset manual</strong> — pide a otro admin del equipo que entre en Panel → Usuarios y te asigne nueva contraseña.</li>
+                <li><Trans i18nKey="admin.login.recoveryMagic" /></li>
+                <li><Trans i18nKey="admin.login.recoveryGoogle" /></li>
+                <li><Trans i18nKey="admin.login.recoveryManual" /></li>
               </ol>
-              <p className="pt-1 text-primary/60">Tu usuario aparece como <code>Nombre</code> (con mayúscula inicial). Ejemplos activos: <code>Andreas</code>, <code>Marc</code>, <code>Marcelino</code>.</p>
+              <p className="pt-1 text-primary/60">{t('admin.login.recoveryHint')}</p>
             </div>
           )}
           
@@ -227,25 +233,25 @@ const AdminLogin: React.FC = () => {
             disabled={loading}
             className="w-full bg-primary text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-xl hover:bg-black transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
           >
-            {loading ? 'Verificando...' : 'Entrar al Panel'}
+            {loading ? t('admin.login.submitting') : t('admin.login.submit')}
           </button>
         </form>
 
         <div className="flex items-center gap-3 my-6">
           <span className="flex-1 h-px bg-primary/15" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40">o entra con Supabase</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40">{t('admin.login.orSupabase')}</span>
           <span className="flex-1 h-px bg-primary/15" />
         </div>
 
         {magicStatus === 'sent' ? (
           <div className="bg-green-50 border border-green-200 text-green-900 p-4 rounded-xl text-left">
-            <p className="text-[10px] font-black uppercase tracking-widest">Magic link enviado</p>
-            <p className="text-xs mt-1 font-medium">Abre el correo de <strong>{magicEmail}</strong> y haz click en el enlace.</p>
+            <p className="text-[10px] font-black uppercase tracking-widest">{t('admin.login.magicSentTitle')}</p>
+            <p className="text-xs mt-1 font-medium"><Trans i18nKey="admin.login.magicSentBody" values={{ email: magicEmail }} /></p>
           </div>
         ) : (
           <form onSubmit={handleMagicLink} className="space-y-4 text-left">
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Email para magic link</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">{t('admin.login.magicEmail')}</label>
               <input
                 type="email"
                 value={magicEmail}
@@ -259,7 +265,7 @@ const AdminLogin: React.FC = () => {
               disabled={magicStatus === 'sending'}
               className="w-full bg-primary/90 text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-primary transition disabled:opacity-50"
             >
-              {magicStatus === 'sending' ? 'Enviando…' : 'Enviar magic link'}
+              {magicStatus === 'sending' ? t('admin.login.magicSending') : t('admin.login.magicSend')}
             </button>
           </form>
         )}
@@ -275,13 +281,13 @@ const AdminLogin: React.FC = () => {
             <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.962H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.331z" fill="#FBBC05"/>
             <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.962L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
           </svg>
-          Continuar con Google
+          {t('admin.login.google')}
         </button>
 
         {magicError && <p className="text-red-600 text-xs mt-3">{magicError}</p>}
 
         <button onClick={() => navigate('/')} className="mt-8 text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center justify-center gap-1 mx-auto">
-          <span className="material-symbols-outlined text-xs">arrow_back</span> Volver a la web
+          <span className="material-symbols-outlined text-xs">arrow_back</span> {t('admin.login.backHome')}
         </button>
       </div>
     </div>

@@ -11,10 +11,12 @@
  */
 import React, { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { supabase, getImageUrl, uploadImage } from "../lib/supabase";
 import { useAuth } from "../lib/auth-context";
 import { compressImage } from "../lib/imageCompress";
 import WeatherWidget, { getWeatherSummary } from "../components/WeatherWidget";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 interface TeamMember {
   id: string;
@@ -54,6 +56,7 @@ function diffDaysInclusive(a: string, b: string) {
 type TabKey = "vacaciones" | "parte";
 
 export default function EquipoDashboard() {
+  const { t: tt } = useTranslation();
   const { user, loading: authLoading, signOut } = useAuth();
   const [member, setMember] = useState<TeamMember | null>(null);
   const [requests, setRequests] = useState<TimeOffRequest[]>([]);
@@ -124,14 +127,17 @@ export default function EquipoDashboard() {
 
   return (
     <div className="min-h-screen bg-almond pb-20">
-      <header className="bg-primary text-white px-8 py-6 flex items-center justify-between">
+      <header className="bg-primary text-white px-8 py-6 flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-serif">Hola, {member?.full_name}</h1>
           <p className="text-xs opacity-70">Portal Manager · {new Date().getFullYear()}</p>
         </div>
-        <button onClick={() => signOut()} className="text-xs uppercase tracking-widest underline">
-          Cerrar sesión
-        </button>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher inverted />
+          <button onClick={() => signOut()} className="text-xs uppercase tracking-widest underline">
+            {tt('admin.common.logout')}
+          </button>
+        </div>
       </header>
 
       <div className="max-w-5xl mx-auto px-6 py-8">

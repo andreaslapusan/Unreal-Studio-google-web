@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const CLIENT_GUIDE_STEPS = [
   { title: "Tu panel de inversiones", text: "Aquí verás un resumen de todas tus inversiones: el total invertido (convertido a tu divisa preferida), número de proyectos activos, estado general y rentabilidad media prevista." },
@@ -344,6 +346,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
 };
 
 const ClientDashboard: React.FC = () => {
+  const { t } = useTranslation();
   useEffect(() => { document.title = 'Mi Portal | Unreal Studio Madrid'; }, []);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -544,16 +547,17 @@ const ClientDashboard: React.FC = () => {
           </Link>
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest hidden md:block">{client.name}</span>
+            <LanguageSwitcher />
             <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
               {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
             </select>
             <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
-              <span className="material-symbols-outlined text-xs">help</span> Ver guía
+              <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
             </button>
             <button onClick={() => setShowChangePassword(true)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">lock</span> Contraseña
             </button>
-            <button onClick={handleLogout} className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">Salir</button>
+            <button onClick={handleLogout} className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
           </div>
         </div>
       </header>

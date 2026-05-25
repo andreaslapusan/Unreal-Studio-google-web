@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase, SUPABASE_URL } from "../lib/supabase";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 interface StageBucket {
   pipelineId: string;
@@ -226,6 +227,7 @@ export default function AdminMarketing() {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <LanguageSwitcher />
             <label className="text-sm text-gray-600 flex items-center gap-2">
               <input
                 type="checkbox"
