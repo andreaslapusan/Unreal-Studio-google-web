@@ -4,9 +4,11 @@
  */
 import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 interface PropertySummary {
   id: string;
@@ -21,6 +23,7 @@ interface QueuedFile {
 }
 
 export default function EquipoUpload() {
+  const { t } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,15 +46,15 @@ export default function EquipoUpload() {
     })();
   }, [user]);
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('admin.common.loading')}</div>;
   if (!user) return <Navigate to="/admin/login" replace />;
   // Strict guard: deny null/unknown roles.
   if (!role || (role !== "admin" && role !== "team")) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>
-          <h1 className="text-3xl font-serif mb-4">Acceso restringido</h1>
-          <p>Solo para equipo interno.</p>
+          <h1 className="text-3xl font-serif mb-4">{t('admin.equipoUpload.accessRestrictedTitle')}</h1>
+          <p>{t('admin.equipoUpload.accessRestrictedBody')}</p>
         </div>
       </div>
     );
@@ -159,17 +162,18 @@ export default function EquipoUpload() {
 
   return (
     <div className="min-h-screen bg-almond pb-16">
-      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between">
+      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between gap-3">
         <div>
-          <h1 className="font-serif text-2xl">Subir update de obra</h1>
+          <h1 className="font-serif text-2xl">{t('admin.equipoUpload.title')}</h1>
           <p className="text-sm opacity-80">{user.email}</p>
         </div>
         <div className="flex items-center gap-2">
+          <LanguageSwitcher inverted />
           <button onClick={() => navigate("/admin")} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
-            Admin
+            {t('admin.equipoUpload.btnAdmin')}
           </button>
           <button onClick={() => void signOut()} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
-            Salir
+            {t('admin.common.logout')}
           </button>
         </div>
       </header>
@@ -177,14 +181,14 @@ export default function EquipoUpload() {
       <main className="max-w-3xl mx-auto px-6 py-10">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">Proyecto *</label>
+            <label className="block text-sm font-medium text-primary mb-1">{t('admin.equipoUpload.labelProject')}</label>
             <select
               required
               value={propertyId}
               onChange={(e) => setPropertyId(e.target.value)}
               className="block w-full rounded-lg border border-primary/20 px-4 py-3 focus:ring-2 focus:ring-primary/40 outline-none"
             >
-              <option value="">— Elegir proyecto —</option>
+              <option value="">{t('admin.equipoUpload.chooseProject')}</option>
               {properties.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -195,18 +199,18 @@ export default function EquipoUpload() {
 
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-primary mb-1">Título *</label>
+              <label className="block text-sm font-medium text-primary mb-1">{t('admin.equipoUpload.labelTitle')}</label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Reporte semana 17"
+                placeholder={t('admin.equipoUpload.placeholderTitle')}
                 className="block w-full rounded-lg border border-primary/20 px-4 py-3 focus:ring-2 focus:ring-primary/40 outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-primary mb-1">% Obra</label>
+              <label className="block text-sm font-medium text-primary mb-1">{t('admin.equipoUpload.labelProgress')}</label>
               <input
                 type="number"
                 min="0"
@@ -220,24 +224,24 @@ export default function EquipoUpload() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">Resumen</label>
+            <label className="block text-sm font-medium text-primary mb-1">{t('admin.equipoUpload.labelSummary')}</label>
             <textarea
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               rows={3}
-              placeholder="Esta semana terminamos la cimentación del edificio principal..."
+              placeholder={t('admin.equipoUpload.placeholderSummary')}
               className="block w-full rounded-lg border border-primary/20 px-4 py-3 focus:ring-2 focus:ring-primary/40 outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">Visibilidad</label>
+            <label className="block text-sm font-medium text-primary mb-1">{t('admin.equipoUpload.labelVisibility')}</label>
             <div className="flex gap-3">
               {(["all", "investors-only", "listers-only"] as Visibility[]).map((v) => (
                 <label key={v} className="flex items-center gap-2 px-4 py-2 border border-primary/20 rounded-lg cursor-pointer">
                   <input type="radio" name="visibility" value={v} checked={visibility === v} onChange={() => setVisibility(v)} />
                   <span className="text-sm">
-                    {v === "all" ? "Todos" : v === "investors-only" ? "Solo inversores" : "Solo listers"}
+                    {v === "all" ? t('admin.equipoUpload.visAll') : v === "investors-only" ? t('admin.equipoUpload.visInvestors') : t('admin.equipoUpload.visListers')}
                   </span>
                 </label>
               ))}
@@ -245,15 +249,15 @@ export default function EquipoUpload() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">Archivos</label>
+            <label className="block text-sm font-medium text-primary mb-1">{t('admin.equipoUpload.labelFiles')}</label>
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
               className="border-2 border-dashed border-primary/30 rounded-2xl p-8 text-center cursor-pointer hover:bg-primary/5 transition"
             >
-              <p className="text-primary/70">📎 Arrastra archivos aquí o click para elegir</p>
-              <p className="text-xs text-primary/50 mt-1">Fotos, videos, PDFs</p>
+              <p className="text-primary/70">{t('admin.equipoUpload.dropHere')}</p>
+              <p className="text-xs text-primary/50 mt-1">{t('admin.equipoUpload.dropHint')}</p>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -272,7 +276,7 @@ export default function EquipoUpload() {
                       <span className="text-primary/50">({Math.round(qf.file.size / 1024)} KB)</span>
                     </span>
                     <button type="button" onClick={() => removeFile(i)} className="text-red-500 hover:underline">
-                      Quitar
+                      {t('admin.equipoUpload.removeFile')}
                     </button>
                   </li>
                 ))}
@@ -285,11 +289,11 @@ export default function EquipoUpload() {
             disabled={submitState === "submitting" || !propertyId || !title}
             className="w-full bg-primary text-white py-3 rounded-lg font-bold hover:translate-y-[-2px] transition disabled:opacity-50"
           >
-            {submitState === "submitting" ? "Subiendo…" : "Publicar update"}
+            {submitState === "submitting" ? t('admin.equipoUpload.submitting') : t('admin.equipoUpload.submit')}
           </button>
 
           {submitState === "ok" && (
-            <p className="text-green-700 text-sm">✅ Update publicado. Triggers de notificación deben reaccionar.</p>
+            <p className="text-green-700 text-sm">{t('admin.equipoUpload.successMsg')}</p>
           )}
           {submitError && <p className="text-red-700 text-sm">{submitError}</p>}
         </form>
