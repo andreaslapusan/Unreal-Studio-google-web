@@ -86,6 +86,23 @@ const AdminLogin: React.FC = () => {
         sessionStorage.setItem('_ust_sh_', sessionToken);
       }
 
+      // Ask the browser's password manager to remember these credentials.
+      // Safe-guarded: not all browsers expose PasswordCredential (Safari/older).
+      try {
+        const w = window as unknown as { PasswordCredential?: new (init: { id: string; password: string; name?: string }) => Credential };
+        if (w.PasswordCredential && navigator.credentials?.store) {
+          const cred = new w.PasswordCredential({
+            id: username.trim(),
+            password,
+            name: username.trim(),
+          });
+          await navigator.credentials.store(cred);
+        }
+      } catch {
+        // Browser doesn't support it or denied — autocomplete attributes are
+        // already enough for native save prompts. Silent fallback.
+      }
+
       navigate('/admin');
     } catch (err) {
       console.error('Login error:', err);
@@ -102,14 +119,26 @@ const AdminLogin: React.FC = () => {
           <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">CMS - Acceso Restringido</p>
         </div>
         
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form
+          onSubmit={handleLogin}
+          className="space-y-6"
+          method="post"
+          action="/admin/login"
+          autoComplete="on"
+        >
           <div className="text-left">
-            <label className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Usuario</label>
+            <label htmlFor="admin-username" className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Usuario</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/30 text-xl">person</span>
-              <input 
-                type="text" 
+              <input
+                id="admin-username"
+                name="username"
+                type="text"
                 required
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value);
@@ -123,12 +152,15 @@ const AdminLogin: React.FC = () => {
           </div>
 
           <div className="text-left">
-            <label className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Contraseña</label>
+            <label htmlFor="admin-password" className="block text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Contraseña</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/30 text-xl">lock</span>
-              <input 
-                type={showPassword ? "text" : "password"} 
+              <input
+                id="admin-password"
+                name="password"
+                type={showPassword ? "text" : "password"}
                 required
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -138,7 +170,7 @@ const AdminLogin: React.FC = () => {
                 placeholder="••••••••"
                 disabled={loading}
               />
-              <button 
+              <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary transition p-1"
