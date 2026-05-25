@@ -7,6 +7,7 @@
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase, SUPABASE_URL } from "../lib/supabase";
 import LanguageSwitcher from "../components/LanguageSwitcher";
@@ -79,6 +80,7 @@ function formatMoney(value: number) {
 }
 
 export default function AdminMarketing() {
+  const { t } = useTranslation();
   const { user, role, loading: authLoading } = useAuth();
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -217,12 +219,12 @@ export default function AdminMarketing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-wider text-gray-500">
-              Admin · Marketing
+              {t('admin.adminMarketing.header')}
             </p>
-            <h1 className="text-2xl font-semibold mt-1">Embudo y leads</h1>
+            <h1 className="text-2xl font-semibold mt-1">{t('admin.adminMarketing.title')}</h1>
             {data && (
               <p className="text-xs text-gray-500 mt-1">
-                Última actualización: {formatDate(data.generatedAt)}
+                {t('admin.adminMarketing.lastUpdate')} {formatDate(data.generatedAt)}
               </p>
             )}
           </div>
@@ -234,7 +236,7 @@ export default function AdminMarketing() {
                 checked={autoRefresh}
                 onChange={(e) => setAutoRefresh(e.target.checked)}
               />
-              Auto-refresh 60 s
+              {t('admin.adminMarketing.autoRefresh')}
             </label>
             <button
               type="button"
@@ -242,7 +244,7 @@ export default function AdminMarketing() {
               disabled={loading}
               className="px-4 py-2 rounded bg-gray-900 text-white disabled:opacity-50"
             >
-              {loading ? "Refrescando…" : "Refresh"}
+              {loading ? t('admin.adminMarketing.refreshing') : t('admin.adminMarketing.refresh')}
             </button>
           </div>
         </div>

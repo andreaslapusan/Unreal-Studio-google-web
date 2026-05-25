@@ -129,8 +129,8 @@ export default function EquipoDashboard() {
     <div className="min-h-screen bg-almond pb-20">
       <header className="bg-primary text-white px-8 py-6 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-serif">Hola, {member?.full_name}</h1>
-          <p className="text-xs opacity-70">Portal Manager · {new Date().getFullYear()}</p>
+          <h1 className="text-2xl font-serif">{tt('admin.equipoDash.greeting', { name: member?.full_name })}</h1>
+          <p className="text-xs opacity-70">{tt('admin.equipoDash.subtitle', { year: new Date().getFullYear() })}</p>
         </div>
         <div className="flex items-center gap-3">
           <LanguageSwitcher inverted />
@@ -146,15 +146,15 @@ export default function EquipoDashboard() {
 
       <div className="max-w-5xl mx-auto px-6">
         <div className="flex gap-2 mb-6">
-          {(["vacaciones", "parte"] as TabKey[]).map((t) => (
+          {(["vacaciones", "parte"] as TabKey[]).map((k) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={k}
+              onClick={() => setTab(k)}
               className={`px-4 py-2 rounded-full text-sm font-bold transition ${
-                tab === t ? "bg-primary text-white" : "bg-white text-primary border border-primary/20"
+                tab === k ? "bg-primary text-white" : "bg-white text-primary border border-primary/20"
               }`}
             >
-              {t === "vacaciones" ? "Vacaciones" : "Parte de obra"}
+              {k === "vacaciones" ? tt('admin.equipoDash.tabVacaciones') : tt('admin.equipoDash.tabParte')}
             </button>
           ))}
         </div>
@@ -175,6 +175,17 @@ export default function EquipoDashboard() {
 /* ──────────────────────────────────────────────────────────────────────── */
 /* Vacaciones tab                                                            */
 /* ──────────────────────────────────────────────────────────────────────── */
+
+function VacacionesStats({ total, taken, remaining }: { total: number; taken: number; remaining: number }) {
+  const { t: tt } = useTranslation();
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <StatCard label={tt('admin.equipoDash.statTotalDays')} value={total} />
+      <StatCard label={tt('admin.equipoDash.statTakenDays')} value={taken} />
+      <StatCard label={tt('admin.equipoDash.statAvailable')} value={remaining} negative={remaining < 0} />
+    </div>
+  );
+}
 
 function VacacionesTab({
   member, requests, holidays, reload,
@@ -237,11 +248,7 @@ function VacacionesTab({
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4">
-        <StatCard label="Días totales" value={member.total_days_per_year} />
-        <StatCard label="Días tomados" value={daysTaken} />
-        <StatCard label="Disponibles" value={daysRemaining} negative={daysRemaining < 0} />
-      </div>
+      <VacacionesStats total={member.total_days_per_year} taken={daysTaken} remaining={daysRemaining} />
 
       <section className="bg-white rounded-2xl p-8 shadow-sm border border-primary/5">
         <h2 className="text-xl font-serif text-primary mb-6">Solicitar días libres</h2>

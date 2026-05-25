@@ -31,6 +31,7 @@ const InfoTooltip = ({ text }: { text: string }) => {
 };
 
 const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => void }) => {
+  const { t } = useTranslation();
   const { formatPrice } = useCurrency();
   const investmentAmount = Number(project.investment_amount) || 0;
   const annualRental = Number(project.annual_rental_projection) || 0;
@@ -125,7 +126,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
       <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col">
         <div className="px-6 py-4 md:px-8 md:py-5 border-b border-gray-100 flex justify-between items-center bg-white z-10 shrink-0">
           <div>
-            <h2 className="text-lg md:text-xl font-serif text-primary">Calculadora de Inversión</h2>
+            <h2 className="text-lg md:text-xl font-serif text-primary">{t('admin.clientDash.calcTitle')}</h2>
             <p className="text-xs md:text-sm text-primary/50">{project.project_name}</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-primary transition">
@@ -136,31 +137,31 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
           <div className="space-y-6">
             <div className="flex justify-center">
               <div className="bg-gray-100 rounded-full p-1 flex gap-1">
-                <button onClick={() => setIsAdvanced(false)} className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition ${!isAdvanced ? 'bg-primary text-white shadow' : 'text-primary/50 hover:text-primary'}`}>Simple</button>
-                <button onClick={() => setIsAdvanced(true)} className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition ${isAdvanced ? 'bg-primary text-white shadow' : 'text-primary/50 hover:text-primary'}`}>Avanzado</button>
+                <button onClick={() => setIsAdvanced(false)} className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition ${!isAdvanced ? 'bg-primary text-white shadow' : 'text-primary/50 hover:text-primary'}`}>{t('admin.clientDash.calcSimple')}</button>
+                <button onClick={() => setIsAdvanced(true)} className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition ${isAdvanced ? 'bg-primary text-white shadow' : 'text-primary/50 hover:text-primary'}`}>{t('admin.clientDash.calcAdvanced')}</button>
               </div>
             </div>
 
             <div className={`grid ${isAdvanced ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5' : 'grid-cols-2 md:grid-cols-4'} gap-3`}>
               <div className="bg-primary/5 p-4 rounded-xl">
-                <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest">Tu inversión</p>
+                <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest">{t('admin.clientDash.calcYourInvestment')}</p>
                 <p className="text-lg font-serif text-primary">{formatPrice(investmentAmount, projCurrency)}</p>
               </div>
               <div className={`p-4 rounded-xl ${totalReturn >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
-                <p className={`text-[9px] font-black uppercase tracking-widest ${totalReturn >= 0 ? 'text-green-600/60' : 'text-red-600/60'}`}>Beneficio neto <InfoTooltip text="Ganancia total estimada: suma del alquiler neto acumulado más el valor de reventa (si está activado), menos tu inversión inicial." /></p>
+                <p className={`text-[9px] font-black uppercase tracking-widest ${totalReturn >= 0 ? 'text-green-600/60' : 'text-red-600/60'}`}>{t('admin.clientDash.calcNetProfit')} <InfoTooltip text={t('admin.clientDash.tooltipNetProfit')} /></p>
                 <p className={`text-lg font-serif ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatPrice(totalReturn, projCurrency)}</p>
               </div>
               <div className="bg-green-50 p-4 rounded-xl">
-                <p className="text-[9px] font-black uppercase text-green-600/60 tracking-widest">ROI Alquiler <InfoTooltip text="Porcentaje de retorno solo por ingresos de alquiler neto (después de mantenimiento y OPEX) respecto a tu inversión inicial. No incluye la reventa del inmueble." /></p>
+                <p className="text-[9px] font-black uppercase text-green-600/60 tracking-widest">{t('admin.clientDash.calcRoiRental')} <InfoTooltip text={t('admin.clientDash.tooltipRoiRental')} /></p>
                 <p className="text-lg font-serif text-green-600">{roiRental.toFixed(0)}%</p>
               </div>
               <div className="bg-blue-50 p-4 rounded-xl">
-                <p className="text-[9px] font-black uppercase text-blue-600/60 tracking-widest">ROI Reventa <InfoTooltip text="Porcentaje de ganancia o pérdida si vendieras el inmueble en el año seleccionado, respecto a tu inversión inicial. Tiene en cuenta la apreciación del terreno y la depreciación del lease." /></p>
+                <p className="text-[9px] font-black uppercase text-blue-600/60 tracking-widest">{t('admin.clientDash.calcRoiResale')} <InfoTooltip text={t('admin.clientDash.tooltipRoiResale')} /></p>
                 <p className={`text-lg font-serif ${roiResale >= 0 ? 'text-blue-600' : 'text-red-600'}`}>{roiResale.toFixed(0)}%</p>
               </div>
               {isAdvanced && (
                 <div className="bg-purple-50 p-4 rounded-xl">
-                  <p className="text-[9px] font-black uppercase text-purple-600/60 tracking-widest">ROI Anualizado <InfoTooltip text="ROI total dividido entre el número de años del horizonte. Indica el rendimiento medio por año de tu inversión." /></p>
+                  <p className="text-[9px] font-black uppercase text-purple-600/60 tracking-widest">{t('admin.clientDash.calcRoiAnnualized')} <InfoTooltip text={t('admin.clientDash.tooltipRoiAnnualized')} /></p>
                   <p className="text-lg font-serif text-purple-600">{annualizedROI.toFixed(1)}%</p>
                 </div>
               )}
@@ -489,7 +490,7 @@ const ClientDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-        <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">Cargando tu portal...</p>
+        <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('admin.clientDash.loading')}</p>
       </div>
     );
   }
@@ -497,7 +498,7 @@ const ClientDashboard: React.FC = () => {
   if (!clientData) {
     return (
       <div className="min-h-screen bg-almond flex items-center justify-center">
-        <p className="text-primary/50">Error al cargar datos. <button onClick={handleLogout} className="underline">Volver al login</button></p>
+        <p className="text-primary/50">{t('admin.clientDash.errorLoad')} <button onClick={handleLogout} className="underline">{t('admin.clientDash.backToLogin')}</button></p>
       </div>
     );
   }
@@ -555,7 +556,7 @@ const ClientDashboard: React.FC = () => {
               <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
             </button>
             <button onClick={() => setShowChangePassword(true)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
-              <span className="material-symbols-outlined text-xs">lock</span> Contraseña
+              <span className="material-symbols-outlined text-xs">lock</span> {t('admin.clientDash.passwordLabel')}
             </button>
             <button onClick={handleLogout} className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
           </div>
@@ -596,25 +597,25 @@ const ClientDashboard: React.FC = () => {
         {/* Resumen */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
-            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">Total invertido</p>
+            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiInvested')}</p>
             <p className="text-3xl font-serif text-primary">{getTotalConverted()}</p>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
-            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">Proyectos activos</p>
+            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiProjects')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length}</p>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
-            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">ROI Medio Alquiler</p>
+            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiRoiAvg')}</p>
             <p className="text-3xl font-serif text-green-600">{getWeightedRentalROI()}</p>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
-            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">Estado general</p>
+            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiStatus')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length > 0 ? 'Activo' : 'Sin inversiones'}</p>
           </div>
         </div>
 
         {/* Proyectos */}
-        <h2 className="text-2xl font-serif text-primary mb-8">Mis Inversiones</h2>
+        <h2 className="text-2xl font-serif text-primary mb-8">{t('admin.clientDash.myInvestments')}</h2>
         {projects.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center border border-primary/5">
             <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">home_work</span>
@@ -738,16 +739,16 @@ const ClientDashboard: React.FC = () => {
       {showChangePassword && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowChangePassword(false); }}>
           <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl">
-            <h2 className="text-xl font-serif text-primary mb-6">Cambiar Contraseña</h2>
+            <h2 className="text-xl font-serif text-primary mb-6">{t('admin.clientDash.changePasswordTitle')}</h2>
             {passwordError && <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl mb-4">{passwordError}</div>}
             {passwordSuccess && <div className="bg-green-50 text-green-600 text-sm font-bold p-3 rounded-xl mb-4">{passwordSuccess}</div>}
             <form onSubmit={handleChangePassword} className="space-y-4">
-              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Contraseña actual</label><input type="password" required value={passwords.current} onChange={(e) => setPasswords({...passwords, current: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Nueva contraseña</label><input type="password" required value={passwords.newPass} onChange={(e) => setPasswords({...passwords, newPass: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Confirmar nueva contraseña</label><input type="password" required value={passwords.confirm} onChange={(e) => setPasswords({...passwords, confirm: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.clientDash.currentPassword')}</label><input type="password" required value={passwords.current} onChange={(e) => setPasswords({...passwords, current: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.clientDash.newPassword')}</label><input type="password" required value={passwords.newPass} onChange={(e) => setPasswords({...passwords, newPass: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.clientDash.confirmPassword')}</label><input type="password" required value={passwords.confirm} onChange={(e) => setPasswords({...passwords, confirm: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
               <div className="flex gap-4 pt-4">
-                <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs">Cambiar</button>
-                <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs">Cerrar</button>
+                <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs">{t('admin.clientDash.changeBtn')}</button>
+                <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs">{t('admin.clientDash.closeBtn')}</button>
               </div>
             </form>
           </div>
