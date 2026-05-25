@@ -8,6 +8,7 @@ import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { projectPath } from '../lib/projectUrl';
+import { translateStatus } from '../lib/statusI18n';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -343,7 +344,7 @@ const Home: React.FC = () => {
                   />
                   <div className="absolute top-3 left-3 md:top-8 md:left-8">
                     <span className="bg-primary text-white text-[8px] md:text-[10px] font-black px-3 py-1.5 md:px-6 md:py-3 uppercase rounded-lg md:rounded-2xl shadow-2xl">
-                      {featuredProject.status}
+                      {translateStatus(featuredProject.status, t)}
                     </span>
                   </div>
                 </div>
@@ -493,7 +494,7 @@ const Home: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                   alt={proj.name}
                 />
-                <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-lg shadow-xl">{proj.status}</span>
+                <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-lg shadow-xl">{translateStatus(proj.status, t)}</span>
               </div>
               <div className="p-4 md:p-8 flex-grow flex flex-col text-left">
                 <p className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 md:mb-2 truncate">{proj.location}</p>

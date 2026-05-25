@@ -408,6 +408,18 @@
       "sentMessage": "Te hemos enviado un enlace mágico a <b>{{email}}</b>. Abre el correo desde el dispositivo donde quieres iniciar sesión.",
       "rosterHint": "Solo emails autorizados por administración pueden entrar."
     },
+    "statusBadge": {
+      "en_construccion": "En Construcción",
+      "pre_venta": "Pre-Venta",
+      "en_pre_venta": "En Pre-Venta",
+      "pre_construccion": "Pre-Construcción",
+      "entregado": "Entregado",
+      "estructura_completa": "Estructura completa — finishing en curso",
+      "ultimas_unidades": "Últimas Unidades",
+      "vendido_lista_espera": "Vendido (lista de espera)",
+      "oportunidad_co_inversion": "Oportunidad de Co-inversión",
+      "listo_para_entrar": "Listo para Entrar"
+    },
     "props": {
       "mgmtTitle": "Gestión de Propiedades",
       "newBtn": "Nueva",

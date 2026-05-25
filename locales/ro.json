@@ -408,6 +408,18 @@
       "sentMessage": "Am trimis un magic link la <b>{{email}}</b>. Deschide emailul pe dispozitivul unde vrei să te conectezi.",
       "rosterHint": "Doar emailurile autorizate de administrație pot intra."
     },
+    "statusBadge": {
+      "en_construccion": "În Construcție",
+      "pre_venta": "Pre-Vânzare",
+      "en_pre_venta": "În Pre-Vânzare",
+      "pre_construccion": "Pre-Construcție",
+      "entregado": "Livrat",
+      "estructura_completa": "Structură completă — finisaje în curs",
+      "ultimas_unidades": "Ultimele Unități",
+      "vendido_lista_espera": "Vândut (listă de așteptare)",
+      "oportunidad_co_inversion": "Oportunitate de Co-investiție",
+      "listo_para_entrar": "Gata de mutat"
+    },
     "props": {
       "mgmtTitle": "Gestionare Proprietăți",
       "newBtn": "Nou",

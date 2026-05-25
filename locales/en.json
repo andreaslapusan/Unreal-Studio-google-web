@@ -408,6 +408,18 @@
       "sentMessage": "We've sent a magic link to <b>{{email}}</b>. Open the email on the device where you want to sign in.",
       "rosterHint": "Only emails authorized by admin can sign in."
     },
+    "statusBadge": {
+      "en_construccion": "Under Construction",
+      "pre_venta": "Pre-Sale",
+      "en_pre_venta": "In Pre-Sale",
+      "pre_construccion": "Pre-Construction",
+      "entregado": "Delivered",
+      "estructura_completa": "Structure complete — finishing in progress",
+      "ultimas_unidades": "Last Units",
+      "vendido_lista_espera": "Sold (waiting list)",
+      "oportunidad_co_inversion": "Co-investment opportunity",
+      "listo_para_entrar": "Move-in Ready"
+    },
     "props": {
       "mgmtTitle": "Properties Management",
       "newBtn": "New",

@@ -7,6 +7,7 @@ import { useCurrency } from '../App';
 import { supabase, uploadImage, getImageUrl, parseJsonField } from '../lib/supabase';
 import Footer from '../components/Footer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { translateStatus } from '../lib/statusI18n';
 
 const GUIDE_STEPS = [
   { 
@@ -924,7 +925,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <div className="h-48 relative overflow-hidden bg-gray-100">
                     {proj.image ? <img src={getImageUrl(proj.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><span className="material-symbols-outlined text-4xl">image</span></div>}
                     <div className="absolute top-4 left-4 flex gap-2">
-                      <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{proj.status}</div>
+                      <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{translateStatus(proj.status, t)}</div>
                       {proj.is_hidden && <div className="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.hidden')}</div>}
                     </div>
                   </div>

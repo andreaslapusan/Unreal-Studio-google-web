@@ -13,6 +13,7 @@ import LazyMap from '../components/LazyMap';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent } from '../lib/fbPixel';
 import { gtmViewItem } from '../lib/gtm';
+import { translateStatus } from '../lib/statusI18n';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
@@ -415,7 +416,7 @@ const ProjectDetail: React.FC = () => {
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
             <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-              {project.status}
+              {translateStatus(project.status, t)}
             </p>
           </div>
         </div>
@@ -876,7 +877,7 @@ const ProjectDetail: React.FC = () => {
                   srcSet={imgSrcSet(getImageUrl(similar.image), [320, 500, 800])}
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
-                <span className="absolute top-3 left-3 bg-primary/80 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg">{similar.status}</span>
+                <span className="absolute top-3 left-3 bg-primary/80 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg">{translateStatus(similar.status, t)}</span>
               </div>
               <div className="p-6 text-left">
                 <h4 className="text-lg font-bold text-primary mb-2 truncate">{similar.name}</h4>

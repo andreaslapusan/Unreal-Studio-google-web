@@ -8,6 +8,7 @@ import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
+import { translateStatus } from '../lib/statusI18n';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -279,7 +280,7 @@ const Projects: React.FC = () => {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
-                    <span className="bg-primary/90 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{proj.status}</span>
+                    <span className="bg-primary/90 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{translateStatus(proj.status, t)}</span>
                   </div>
                 </div>
                 <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
