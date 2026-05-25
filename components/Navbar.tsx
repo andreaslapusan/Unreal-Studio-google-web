@@ -92,8 +92,8 @@ const Navbar: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
-          {/* Idioma + Divisa (popover desktop, también accesible en menú móvil) */}
-          <div className="relative hidden md:block">
+          {/* Idioma + Divisa (popover desktop ≥lg, accesible en menú hamburguesa en móvil/tablet) */}
+          <div className="relative hidden lg:block">
             <button
               type="button"
               onClick={() => setSettingsOpen(!settingsOpen)}
