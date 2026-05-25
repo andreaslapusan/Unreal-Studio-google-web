@@ -15,6 +15,7 @@ const AdminLogin: React.FC = () => {
   const [magicEmail, setMagicEmail] = useState('');
   const [magicStatus, setMagicStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [magicError, setMagicError] = useState('');
+  const [forgotOpen, setForgotOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -152,8 +153,8 @@ const AdminLogin: React.FC = () => {
 
           <div className="flex items-center justify-between px-1">
             <label className="flex items-center gap-2 cursor-pointer group">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 rounded border-primary/20 text-primary focus:ring-primary/20 cursor-pointer"
@@ -161,7 +162,27 @@ const AdminLogin: React.FC = () => {
               />
               <span className="text-[10px] font-black uppercase tracking-widest text-primary/40 group-hover:text-primary transition">Recordar mi sesión</span>
             </label>
+            <button
+              type="button"
+              onClick={() => setForgotOpen(!forgotOpen)}
+              className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
           </div>
+
+          {forgotOpen && (
+            <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 text-left text-[11px] text-primary/80 space-y-2 animate-in fade-in slide-in-from-top-2">
+              <p className="font-black uppercase tracking-widest text-[10px] text-primary">Recuperar acceso</p>
+              <p>Tienes 3 opciones:</p>
+              <ol className="list-decimal list-inside space-y-1 pl-1">
+                <li><strong>Magic link</strong> (más abajo) — entra con tu email si tu perfil en Supabase Auth tiene rol <code>admin</code>.</li>
+                <li><strong>Google</strong> — botón "Continuar con Google" si tu cuenta Google está vinculada al rol admin.</li>
+                <li><strong>Reset manual</strong> — pide a otro admin del equipo que entre en Panel → Usuarios y te asigne nueva contraseña.</li>
+              </ol>
+              <p className="pt-1 text-primary/60">Tu usuario aparece como <code>Nombre</code> (con mayúscula inicial). Ejemplos activos: <code>Andreas</code>, <code>Marc</code>, <code>Marcelino</code>.</p>
+            </div>
+          )}
           
           {error && (
             <div className="bg-red-50 border border-red-100 p-3 rounded-xl animate-in fade-in slide-in-from-top-2">
