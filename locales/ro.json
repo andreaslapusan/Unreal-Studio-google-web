@@ -408,6 +408,23 @@
       "sentMessage": "Am trimis un magic link la <b>{{email}}</b>. Deschide emailul pe dispozitivul unde vrei să te conectezi.",
       "rosterHint": "Doar emailurile autorizate de administrație pot intra."
     },
+    "agencias": {
+      "title": "Pack pentru Agenții",
+      "subtitle": "Starea datelor necesare pentru listarea fiecărui proiect la agenții externe. Câmpurile vin din Supabase și se actualizează live pe site-ul public.",
+      "backToAdmin": "← Admin",
+      "fieldsComplete": "{{done}}/{{total}} câmpuri complete",
+      "loadError": "Eroare",
+      "viewPublic": "Vezi pagina publică",
+      "openDrive": "Deschide folder Drive",
+      "copyPublic": "Copiază link public",
+      "agencyPack": "🏢 Pack Agenție",
+      "copyAgency": "Copiază link Pack Agenție",
+      "groupIdentification": "Identificare",
+      "groupLeasehold": "Contract & Leasehold",
+      "groupProduct": "Produs",
+      "groupPricing": "Pricing & Mobilier",
+      "groupMedia": "Media & documente"
+    },
     "login": {
       "title": "CMS — Acces Restricționat",
       "username": "Utilizator",

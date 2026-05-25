@@ -408,6 +408,23 @@
       "sentMessage": "Te hemos enviado un enlace mágico a <b>{{email}}</b>. Abre el correo desde el dispositivo donde quieres iniciar sesión.",
       "rosterHint": "Solo emails autorizados por administración pueden entrar."
     },
+    "agencias": {
+      "title": "Pack para Agencias",
+      "subtitle": "Estado de los datos requeridos para listar cada proyecto en agencias externas. Los campos vienen de Supabase y se actualizan en vivo en la web pública.",
+      "backToAdmin": "← Admin",
+      "fieldsComplete": "{{done}}/{{total}} campos completos",
+      "loadError": "Error",
+      "viewPublic": "Ver ficha pública",
+      "openDrive": "Abrir carpeta Drive",
+      "copyPublic": "Copiar link público",
+      "agencyPack": "🏢 Pack Agencia",
+      "copyAgency": "Copiar link Pack Agencia",
+      "groupIdentification": "Identificación",
+      "groupLeasehold": "Contrato y Leasehold",
+      "groupProduct": "Producto",
+      "groupPricing": "Pricing y Mobiliario",
+      "groupMedia": "Media y documentación"
+    },
     "login": {
       "title": "CMS - Acceso Restringido",
       "username": "Usuario",

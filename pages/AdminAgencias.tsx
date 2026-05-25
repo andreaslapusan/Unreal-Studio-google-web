@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 interface ProjectAgencyRow {
   id: string;
@@ -63,7 +65,7 @@ const ok = (v: any): boolean => {
 
 const buildChecklist = (p: ProjectAgencyRow): ChecklistGroup[] => [
   {
-    title: 'Identificación',
+    title: 'groupIdentification',
     items: [
       { label: 'Owner / titular', value: p.owner_name },
       { label: 'Location', value: p.location },
@@ -72,7 +74,7 @@ const buildChecklist = (p: ProjectAgencyRow): ChecklistGroup[] => [
     ],
   },
   {
-    title: 'Contrato y Leasehold',
+    title: 'groupLeasehold',
     items: [
       { label: 'Lease end date', value: p.lease_end_date },
       { label: 'Años de contrato', value: p.years_contract },
@@ -85,7 +87,7 @@ const buildChecklist = (p: ProjectAgencyRow): ChecklistGroup[] => [
     ],
   },
   {
-    title: 'Producto',
+    title: 'groupProduct',
     items: [
       { label: 'Bedrooms', value: p.bedrooms },
       { label: 'Bathrooms', value: p.bathrooms },
@@ -101,7 +103,7 @@ const buildChecklist = (p: ProjectAgencyRow): ChecklistGroup[] => [
     ],
   },
   {
-    title: 'Pricing y Mobiliario',
+    title: 'groupPricing',
     items: [
       { label: 'Net sale price', value: p.investor_price ? `${p.investor_price} ${p.price_currency || 'USD'}` : null },
       { label: 'Furnishing', value: p.furnishing },
@@ -111,7 +113,7 @@ const buildChecklist = (p: ProjectAgencyRow): ChecklistGroup[] => [
     ],
   },
   {
-    title: 'Media y documentación',
+    title: 'groupMedia',
     items: [
       { label: 'Galería fotos', value: p.gallery, href: null },
       { label: '2D plans (web)', value: p.floor_plans, href: null },
@@ -127,6 +129,7 @@ const buildChecklist = (p: ProjectAgencyRow): ChecklistGroup[] => [
 ];
 
 const AdminAgencias: React.FC = () => {
+  const { t } = useTranslation();
   const [projects, setProjects] = useState<ProjectAgencyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -158,26 +161,28 @@ const AdminAgencias: React.FC = () => {
     return { total, done, pct: Math.round((done / total) * 100) };
   };
 
-  if (loading) return <div className="p-12 text-center text-primary/60">Cargando…</div>;
-  if (error) return <div className="p-12 text-red-600">Error: {error}</div>;
+  if (loading) return <div className="p-12 text-center text-primary/60">{t('admin.common.loading')}</div>;
+  if (error) return <div className="p-12 text-red-600">{t('admin.agencias.loadError')}: {error}</div>;
 
   return (
     <div className="bg-almond min-h-screen px-6 md:px-12 py-12">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 gap-3 flex-wrap">
           <div>
-            <h1 className="text-4xl md:text-5xl font-serif text-primary">Pack para Agencias</h1>
+            <h1 className="text-4xl md:text-5xl font-serif text-primary">{t('admin.agencias.title')}</h1>
             <p className="text-primary/60 mt-2">
-              Estado de los datos requeridos para listar cada proyecto en agencias externas.
-              Los campos vienen de Supabase y se actualizan en vivo en la web pública.
+              {t('admin.agencias.subtitle')}
             </p>
           </div>
-          <Link
-            to="/admin"
-            className="text-sm font-bold text-primary/60 hover:text-primary"
-          >
-            ← Admin
-          </Link>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <Link
+              to="/admin"
+              className="text-sm font-bold text-primary/60 hover:text-primary"
+            >
+              {t('admin.agencias.backToAdmin')}
+            </Link>
+          </div>
         </div>
 
         <div className="grid gap-6">
@@ -209,7 +214,7 @@ const AdminAgencias: React.FC = () => {
                     <div>
                       <h2 className="text-2xl font-serif text-primary">{p.name}</h2>
                       <p className="text-sm text-primary/50">
-                        {totals.done}/{totals.total} campos completos · {p.location || '—'}
+                        {t('admin.agencias.fieldsComplete', { done: totals.done, total: totals.total })} · {p.location || '—'}
                       </p>
                     </div>
                   </div>
@@ -221,7 +226,7 @@ const AdminAgencias: React.FC = () => {
                     {groups.map((g) => (
                       <div key={g.title}>
                         <h3 className="text-xs font-black uppercase tracking-widest text-primary/60 mb-3">
-                          {g.title}
+                          {t(`admin.agencias.${g.title}`)}
                         </h3>
                         <ul className="space-y-2">
                           {g.items.map((it) => {
@@ -267,7 +272,7 @@ const AdminAgencias: React.FC = () => {
                                       <span>{String(it.value)}</span>
                                     )}
                                   {filled && typeof it.value === 'boolean' && (
-                                    <span>{it.value ? 'Sí' : 'No'}</span>
+                                    <span>{it.value ? t('common.yes') : t('common.no')}</span>
                                   )}
                                 </span>
                               </li>
@@ -283,7 +288,7 @@ const AdminAgencias: React.FC = () => {
                         rel="noopener noreferrer"
                         className="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold hover:opacity-90"
                       >
-                        Ver ficha pública
+                        {t('admin.agencias.viewPublic')}
                       </a>
                       {p.drive_brochure_folder_url && (
                         <a
@@ -292,7 +297,7 @@ const AdminAgencias: React.FC = () => {
                           rel="noopener noreferrer"
                           className="px-5 py-2 border border-primary text-primary rounded-full text-sm font-bold hover:bg-primary/5"
                         >
-                          Abrir carpeta Drive
+                          {t('admin.agencias.openDrive')}
                         </a>
                       )}
                       <button
@@ -302,7 +307,7 @@ const AdminAgencias: React.FC = () => {
                         }}
                         className="px-5 py-2 border border-primary/20 text-primary rounded-full text-sm font-bold hover:bg-primary/5"
                       >
-                        Copiar link público
+                        {t('admin.agencias.copyPublic')}
                       </button>
                       <a
                         href={`/agencias/${p.slug}`}
@@ -310,7 +315,7 @@ const AdminAgencias: React.FC = () => {
                         rel="noopener noreferrer"
                         className="px-5 py-2 bg-amber-500 text-white rounded-full text-sm font-bold hover:opacity-90"
                       >
-                        🏢 Pack Agencia
+                        {t('admin.agencias.agencyPack')}
                       </a>
                       <button
                         onClick={() => {
@@ -319,7 +324,7 @@ const AdminAgencias: React.FC = () => {
                         }}
                         className="px-5 py-2 border border-amber-500 text-amber-600 rounded-full text-sm font-bold hover:bg-amber-50"
                       >
-                        Copiar link Pack Agencia
+                        {t('admin.agencias.copyAgency')}
                       </button>
                     </div>
                   </div>

@@ -408,6 +408,23 @@
       "sentMessage": "We've sent a magic link to <b>{{email}}</b>. Open the email on the device where you want to sign in.",
       "rosterHint": "Only emails authorized by admin can sign in."
     },
+    "agencias": {
+      "title": "Agency Pack",
+      "subtitle": "Status of the data required to list each project on external agencies. Fields come from Supabase and update live on the public site.",
+      "backToAdmin": "← Admin",
+      "fieldsComplete": "{{done}}/{{total}} fields complete",
+      "loadError": "Error",
+      "viewPublic": "View public page",
+      "openDrive": "Open Drive folder",
+      "copyPublic": "Copy public link",
+      "agencyPack": "🏢 Agency Pack",
+      "copyAgency": "Copy Agency Pack link",
+      "groupIdentification": "Identification",
+      "groupLeasehold": "Contract & Leasehold",
+      "groupProduct": "Product",
+      "groupPricing": "Pricing & Furnishing",
+      "groupMedia": "Media & docs"
+    },
     "login": {
       "title": "CMS — Restricted Access",
       "username": "Username",
