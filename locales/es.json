@@ -408,6 +408,75 @@
       "sentMessage": "Te hemos enviado un enlace mágico a <b>{{email}}</b>. Abre el correo desde el dispositivo donde quieres iniciar sesión.",
       "rosterHint": "Solo emails autorizados por administración pueden entrar."
     },
+    "props": {
+      "mgmtTitle": "Gestión de Propiedades",
+      "newBtn": "Nueva",
+      "hidden": "OCULTO",
+      "editorTitle": "Editor de Propiedad",
+      "highlightHome": "¿Destacar en inicio?",
+      "hideFromPublic": "Ocultar de web pública",
+      "hideFromPublicHint": "(Útil para proyectos vendidos. Se mantiene en el sistema pero no aparece en la web)",
+      "mainImage": "Imagen principal",
+      "mainImagePlaceholder": "Pega URL o sube archivo ->",
+      "gallery": "Galería de Imágenes",
+      "extraUrl": "Añadir URL extra (opcional)",
+      "constructionPhotos": "Fotos de Obra",
+      "projectPlans": "Planos del proyecto (PDF)",
+      "name": "Nombre",
+      "location": "Ubicación",
+      "status": "Estado",
+      "description": "Descripción",
+      "investorPrice": "Precio Inversor",
+      "marketPrice": "P. Mercado",
+      "currency": "Divisa",
+      "investmentTiers": "Tiers de Inversión",
+      "propertyDetails": "Detalles del inmueble",
+      "bedrooms": "Dormitorios",
+      "bathrooms": "Baños",
+      "areaM2": "Superficie m²",
+      "furnishing": "Mobiliario",
+      "furnishNone": "Sin especificar",
+      "furnishUnfurnished": "Sin amueblar",
+      "furnishSemi": "Semi-amueblado",
+      "furnishFull": "Totalmente amueblado",
+      "equipment": "Equipamiento incluido",
+      "amenities": "Amenities",
+      "profitTitle": "Rentabilidad y plazos",
+      "beachDistance": "Distancia a la playa",
+      "availableUnits": "Unidades disponibles",
+      "contractYears": "Años contrato",
+      "extensionYears": "Años extensión",
+      "progressPct": "Progreso de obra (%)"
+    },
+    "blogTab": {
+      "title": "Artículos del Blog",
+      "newBtn": "Nuevo",
+      "search": "Buscar blogs...",
+      "sortNewest": "Más recientes",
+      "sortOldest": "Más antiguos"
+    },
+    "clientsTab": {
+      "title": "Gestión de Clientes",
+      "noProjects": "Sin proyectos asignados"
+    },
+    "usersTab": {
+      "title": "Administradores",
+      "thName": "Nombre",
+      "thUsername": "Usuario",
+      "thPassword": "Contraseña",
+      "thActions": "Acciones"
+    },
+    "configTab": {
+      "labels": "Etiquetas del Sitio",
+      "saveLabels": "Guardar Etiquetas"
+    },
+    "calendarTab": {
+      "passwordPrompt": "Para editar días libres, introduce la contraseña de administrador:",
+      "unlock": "Desbloquear",
+      "editActive": "Modo edición activo — haz clic en los días para marcar/desmarcar",
+      "lock": "Bloquear",
+      "summaryByEmployee": "Resumen por empleado"
+    },
     "adminDash": {
       "calendarTitle": "Calendario de Días Libres",
       "adminPassword": "Contraseña admin",

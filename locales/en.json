@@ -408,6 +408,75 @@
       "sentMessage": "We've sent a magic link to <b>{{email}}</b>. Open the email on the device where you want to sign in.",
       "rosterHint": "Only emails authorized by admin can sign in."
     },
+    "props": {
+      "mgmtTitle": "Properties Management",
+      "newBtn": "New",
+      "hidden": "HIDDEN",
+      "editorTitle": "Property Editor",
+      "highlightHome": "Highlight on homepage?",
+      "hideFromPublic": "Hide from public site",
+      "hideFromPublicHint": "(Useful for sold projects. Stays in the system but doesn't appear on the site)",
+      "mainImage": "Main image",
+      "mainImagePlaceholder": "Paste URL or upload file ->",
+      "gallery": "Image Gallery",
+      "extraUrl": "Add extra URL (optional)",
+      "constructionPhotos": "Construction Photos",
+      "projectPlans": "Project plans (PDF)",
+      "name": "Name",
+      "location": "Location",
+      "status": "Status",
+      "description": "Description",
+      "investorPrice": "Investor Price",
+      "marketPrice": "Market Price",
+      "currency": "Currency",
+      "investmentTiers": "Investment Tiers",
+      "propertyDetails": "Property details",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "areaM2": "Area m²",
+      "furnishing": "Furnishing",
+      "furnishNone": "Unspecified",
+      "furnishUnfurnished": "Unfurnished",
+      "furnishSemi": "Semi-furnished",
+      "furnishFull": "Fully furnished",
+      "equipment": "Included equipment",
+      "amenities": "Amenities",
+      "profitTitle": "Profitability & timeline",
+      "beachDistance": "Distance to beach",
+      "availableUnits": "Available units",
+      "contractYears": "Contract years",
+      "extensionYears": "Extension years",
+      "progressPct": "Construction progress (%)"
+    },
+    "blogTab": {
+      "title": "Blog Articles",
+      "newBtn": "New",
+      "search": "Search blogs...",
+      "sortNewest": "Most recent",
+      "sortOldest": "Oldest"
+    },
+    "clientsTab": {
+      "title": "Clients Management",
+      "noProjects": "No projects assigned"
+    },
+    "usersTab": {
+      "title": "Administrators",
+      "thName": "Name",
+      "thUsername": "Username",
+      "thPassword": "Password",
+      "thActions": "Actions"
+    },
+    "configTab": {
+      "labels": "Site Labels",
+      "saveLabels": "Save Labels"
+    },
+    "calendarTab": {
+      "passwordPrompt": "To edit days off, enter the admin password:",
+      "unlock": "Unlock",
+      "editActive": "Edit mode active — click days to toggle them",
+      "lock": "Lock",
+      "summaryByEmployee": "Summary by employee"
+    },
     "adminDash": {
       "calendarTitle": "Days-Off Calendar",
       "adminPassword": "Admin password",

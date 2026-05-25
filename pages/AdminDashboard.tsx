@@ -913,9 +913,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
             <div className="flex justify-between items-end mb-8 gap-4">
-              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">Gestión de Propiedades</h1>
+              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.props.mgmtTitle')}</h1>
               <button onClick={() => openEditProject()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
-                <span className="material-symbols-outlined text-base">add</span> Nueva
+                <span className="material-symbols-outlined text-base">add</span> {t('admin.props.newBtn')}
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -925,7 +925,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     {proj.image ? <img src={getImageUrl(proj.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><span className="material-symbols-outlined text-4xl">image</span></div>}
                     <div className="absolute top-4 left-4 flex gap-2">
                       <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{proj.status}</div>
-                      {proj.is_hidden && <div className="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">OCULTO</div>}
+                      {proj.is_hidden && <div className="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.hidden')}</div>}
                     </div>
                   </div>
                   <div className="p-6 flex-grow flex flex-col">
@@ -951,23 +951,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'blogs' && (
           <div className="animate-in fade-in duration-500">
             <div className="flex justify-between items-end mb-8 gap-4">
-              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">Artículos del Blog</h1>
+              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.blogTab.title')}</h1>
               <button onClick={() => openEditBlog()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
-                <span className="material-symbols-outlined text-base">post_add</span> Nuevo
+                <span className="material-symbols-outlined text-base">post_add</span> {t('admin.blogTab.newBtn')}
               </button>
             </div>
 
             <div className="flex flex-col md:flex-row gap-3 mb-6">
               <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 flex-1 border border-gray-100">
                 <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
-                <input type="text" placeholder="Buscar blogs..." value={blogSearch} onChange={(e) => setBlogSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
+                <input type="text" placeholder={t('admin.blogTab.search')} value={blogSearch} onChange={(e) => setBlogSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
               </div>
               <select value={blogTagFilter} onChange={(e) => setBlogTagFilter(e.target.value)} className="bg-white rounded-xl px-4 py-2 text-sm border border-gray-100 outline-none font-bold text-primary cursor-pointer">
                 {adminBlogTags.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
               <select value={blogSortOrder} onChange={(e) => setBlogSortOrder(e.target.value as 'newest' | 'oldest')} className="bg-white rounded-xl px-4 py-2 text-sm border border-gray-100 outline-none font-bold text-primary cursor-pointer">
-                <option value="newest">Más recientes</option>
-                <option value="oldest">Más antiguos</option>
+                <option value="newest">{t('admin.blogTab.sortNewest')}</option>
+                <option value="oldest">{t('admin.blogTab.sortOldest')}</option>
               </select>
             </div>
 
@@ -999,7 +999,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {activeView === 'clients' && (
   <div className="animate-in fade-in duration-500">
     <div className="flex justify-between items-end mb-8 gap-4">
-      <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">Gestión de Clientes</h1>
+      <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.clientsTab.title')}</h1>
       <button onClick={() => openEditClient()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
         <span className="material-symbols-outlined text-base">person_add</span> Nuevo Cliente
       </button>
@@ -1070,7 +1070,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-gray-300 italic">Sin proyectos asignados</p>
+              <p className="text-xs text-gray-300 italic">{t('admin.clientsTab.noProjects')}</p>
             )}
           </div>
         </div>
@@ -1084,7 +1084,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'users' && (
           <div className="animate-in fade-in duration-500">
              <div className="flex justify-between items-end mb-8 gap-4">
-              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">Administradores</h1>
+              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.usersTab.title')}</h1>
               <button onClick={() => openEditUser()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">person_add</span> Nuevo
               </button>
@@ -1093,7 +1093,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left min-w-[600px]">
                     <thead className="bg-gray-50 border-b border-gray-100 text-[10px] font-black uppercase text-gray-400 tracking-widest">
-                      <tr><th className="px-6 py-4">Nombre</th><th className="px-6 py-4">Usuario</th>{isSuperAdmin && <th className="px-6 py-4">Contraseña</th>}<th className="px-6 py-4 text-right">Acciones</th></tr>
+                      <tr><th className="px-6 py-4">{t('admin.usersTab.thName')}</th><th className="px-6 py-4">{t('admin.usersTab.thUsername')}</th>{isSuperAdmin && <th className="px-6 py-4">{t('admin.usersTab.thPassword')}</th>}<th className="px-6 py-4 text-right">{t('admin.usersTab.thActions')}</th></tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {users.map(u => (
@@ -1125,7 +1125,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
            <div className="animate-in fade-in duration-500">
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-                 <h3 className="text-xl font-serif text-primary mb-6">Etiquetas del Sitio</h3>
+                 <h3 className="text-xl font-serif text-primary mb-6">{t('admin.configTab.labels')}</h3>
                  <div className="space-y-4">
                    {Object.keys(config.labels).map((key) => (
                      <div key={key}>
@@ -1138,7 +1138,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                      </div>
                    ))}
                  </div>
-                 <button onClick={handleSaveLabels} className="mt-8 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar Etiquetas</button>
+                 <button onClick={handleSaveLabels} className="mt-8 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.configTab.saveLabels')}</button>
                </div>
                <div className="space-y-6">
                  {['customZones', 'customTypes', 'customStatuses'].map(field => (
@@ -1168,10 +1168,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
             {!calendarEditMode && (
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-primary/5 mb-8 max-w-md">
-                <p className="text-sm text-primary/60 mb-3">Para editar días libres, introduce la contraseña de administrador:</p>
+                <p className="text-sm text-primary/60 mb-3">{t('admin.calendarTab.passwordPrompt')}</p>
                 <div className="flex gap-2">
                   <input type="password" value={calendarAdminPassword} onChange={(e) => setCalendarAdminPassword(e.target.value)} placeholder={t('admin.adminDash.adminPassword')} className="flex-1 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 font-medium" onKeyDown={(e) => e.key === 'Enter' && handleCalendarAuth()} />
-                  <button onClick={handleCalendarAuth} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">Desbloquear</button>
+                  <button onClick={handleCalendarAuth} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">{t('admin.calendarTab.unlock')}</button>
                 </div>
                 {calendarAuthError && <p className="text-red-500 text-xs mt-2">{calendarAuthError}</p>}
               </div>
@@ -1180,8 +1180,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             {calendarEditMode && (
               <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 mb-6 flex items-center gap-2">
                 <span className="material-symbols-outlined text-green-600 text-sm">lock_open</span>
-                <span className="text-xs font-bold text-green-700">Modo edición activo — haz clic en los días para marcar/desmarcar</span>
-                <button onClick={() => setCalendarEditMode(false)} className="ml-auto text-xs text-green-600 hover:text-green-800 font-bold">Bloquear</button>
+                <span className="text-xs font-bold text-green-700">{t('admin.calendarTab.editActive')}</span>
+                <button onClick={() => setCalendarEditMode(false)} className="ml-auto text-xs text-green-600 hover:text-green-800 font-bold">{t('admin.calendarTab.lock')}</button>
               </div>
             )}
 
@@ -1243,7 +1243,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
             {users.length > 0 && (
               <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-primary/5">
-                <h3 className="text-lg font-serif text-primary mb-4">Resumen por empleado</h3>
+                <h3 className="text-lg font-serif text-primary mb-4">{t('admin.calendarTab.summaryByEmployee')}</h3>
                 <div className="space-y-3">
                   {users.map(u => {
                     const userDays = (daysOff[u.id] || []).filter(d => d.startsWith(String(calendarYear)));
@@ -1267,19 +1267,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div className="fixed inset-0 z-[150] flex items-center justify-end bg-black/60 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
           <div className="bg-white w-full max-w-[90vw] h-full shadow-2xl p-6 md:p-12 overflow-y-auto rounded-2xl md:rounded-l-[3rem]">
             <div className="flex justify-between items-center mb-8 pb-4 border-b">
-              <h2 className="text-2xl font-serif text-primary">Editor de Propiedad</h2>
+              <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}</h2>
               <button onClick={() => setIsEditing(false)} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
             <form onSubmit={handleSaveProject} className="space-y-8 pb-10">
                {/* ... form content ... */}
                <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex justify-between items-center">
-                <span className="text-[10px] font-black uppercase text-primary/60">¿Destacar en inicio?</span>
+                <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.props.highlightHome')}</span>
                 <button type="button" onClick={() => setCurrentProject({...currentProject, is_featured: !currentProject.is_featured})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_featured ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
               </div>
               <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex justify-between items-center">
                 <div>
-                  <span className="text-[10px] font-black uppercase text-primary/60 block mb-1">Ocultar de web pública</span>
-                  <span className="text-[9px] text-gray-400">(Útil para proyectos vendidos. Se mantiene en el sistema pero no aparece en la web)</span>
+                  <span className="text-[10px] font-black uppercase text-primary/60 block mb-1">{t('admin.props.hideFromPublic')}</span>
+                  <span className="text-[9px] text-gray-400">{t('admin.props.hideFromPublicHint')}</span>
                 </div>
                 <button type="button" onClick={() => setCurrentProject({...currentProject, is_hidden: !currentProject.is_hidden})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_hidden ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
               </div>
@@ -1287,9 +1287,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               <div className="space-y-6">
                 {/* ... Image Uploads ... */}
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Imagen principal</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.mainImage')}</label>
                    <div className="flex gap-2">
-                       <input type="text" value={currentProject.image || ''} onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})} placeholder="Pega URL o sube archivo ->" className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20" />
+                       <input type="text" value={currentProject.image || ''} onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})} placeholder={t('admin.props.mainImagePlaceholder')} className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20" />
                        <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_main')} disabled={uploading} />
@@ -1299,9 +1299,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
 
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Galería de Imágenes</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.gallery')}</label>
                    <div className="flex gap-2 mb-4">
-                       <input type="text" value={galleryInput} onChange={(e) => setGalleryInput(e.target.value)} placeholder="Añadir URL extra (opcional)" className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20" />
+                       <input type="text" value={galleryInput} onChange={(e) => setGalleryInput(e.target.value)} placeholder={t('admin.props.extraUrl')} className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20" />
                        <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">add_photo_alternate</span>}
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_gallery')} disabled={uploading} />
@@ -1324,7 +1324,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
 
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fotos de Obra</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.constructionPhotos')}</label>
                    <div className="flex gap-2 mb-4">
                        <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">add_photo_alternate</span>}
@@ -1344,7 +1344,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
 
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Planos del proyecto (PDF)</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.projectPlans')}</label>
                    <div className="flex gap-2 mb-4">
                        <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
@@ -1365,43 +1365,43 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
 
                 <div className="grid grid-cols-3 gap-6">
-                  <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Nombre</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-                  <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Ubicación</label><select value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">{config.customZones.map(z => <option key={z} value={z}>{z}</option>)}</select></div>
+                  <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.name')}</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+                  <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.location')}</label><select value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">{config.customZones.map(z => <option key={z} value={z}>{z}</option>)}</select></div>
                   <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Estado</label>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.status')}</label>
                     <select value={currentProject.status || config.customStatuses[0] || ''} onChange={(e) => setCurrentProject({...currentProject, status: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">
                         {config.customStatuses.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                 </div>
-                <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Descripción</label><textarea rows={4} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
+                <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.description')}</label><textarea rows={4} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
                 
                  <div className="grid grid-cols-3 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Precio Inversor</label><input type="number" value={currentProject.investor_price || 0} onChange={(e) => setCurrentProject({...currentProject, investor_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">P. Mercado</label><input type="number" value={currentProject.market_price || 0} onChange={(e) => setCurrentProject({...currentProject, market_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Divisa</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-5 py-4 bg-primary text-white rounded-2xl font-bold h-[58px]">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><input type="number" value={currentProject.investor_price || 0} onChange={(e) => setCurrentProject({...currentProject, investor_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><input type="number" value={currentProject.market_price || 0} onChange={(e) => setCurrentProject({...currentProject, market_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-5 py-4 bg-primary text-white rounded-2xl font-bold h-[58px]">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
                 </div>
                 
                  <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Tiers de Inversión</label>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investmentTiers')}</label>
                     <textarea rows={4} value={tiersInput} onChange={(e) => setTiersInput(e.target.value)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
                  </div>
 
 <div className="border-t border-gray-100 pt-8 mt-8">
-  <h3 className="text-lg font-serif text-primary mb-6">Detalles del inmueble</h3>
+  <h3 className="text-lg font-serif text-primary mb-6">{t('admin.props.propertyDetails')}</h3>
   <div className="grid grid-cols-3 gap-6 mb-6">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Dormitorios</label><input type="number" value={currentProject.bedrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bedrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Baños</label><input type="number" value={currentProject.bathrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bathrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Superficie m²</label><input type="number" value={currentProject.area_m2 || 0} onChange={(e) => setCurrentProject({...currentProject, area_m2: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><input type="number" value={currentProject.bedrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bedrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><input type="number" value={currentProject.bathrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bathrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><input type="number" value={currentProject.area_m2 || 0} onChange={(e) => setCurrentProject({...currentProject, area_m2: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
   </div>
 
   <div className="grid grid-cols-2 gap-6 mb-6">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Mobiliario</label>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.furnishing')}</label>
       <select value={currentProject.furnishing || ''} onChange={(e) => setCurrentProject({...currentProject, furnishing: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">
-        <option value="">Sin especificar</option>
-        <option value="Sin amueblar">Sin amueblar</option>
-        <option value="Semi-amueblado">Semi-amueblado</option>
-        <option value="Totalmente amueblado">Totalmente amueblado</option>
+        <option value="">{t('admin.props.furnishNone')}</option>
+        <option value="Sin amueblar">{t('admin.props.furnishUnfurnished')}</option>
+        <option value="Semi-amueblado">{t('admin.props.furnishSemi')}</option>
+        <option value="Totalmente amueblado">{t('admin.props.furnishFull')}</option>
       </select>
     </div>
     <div className="flex items-center gap-4 pt-6">
@@ -1411,7 +1411,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   </div>
 
   <div className="mb-6">
-    <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">Equipamiento incluido</label>
+    <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.props.equipment')}</label>
     {[
       { category: 'Baño', items: ['Ducha', 'Grifería', 'Lavabo', 'Espejo de baño', 'Toallero', 'Mampara'] },
       { category: 'Instalaciones', items: ['Iluminación', 'Enchufes', 'Interruptores', 'Aire acondicionado', 'Ventilador de techo', 'Puertas', 'Topes de puerta'] },
@@ -1446,7 +1446,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   </div>
 
   <div className="mb-6">
-    <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">Amenities</label>
+    <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.props.amenities')}</label>
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       {AMENITIES_LIST.map(a => (
         <label key={a} className="flex items-center gap-2 p-2 rounded-xl hover:bg-gray-50 cursor-pointer">
@@ -1462,7 +1462,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 </div>
 
 <div className="border-t border-gray-100 pt-8 mt-8">
-  <h3 className="text-lg font-serif text-primary mb-6">Rentabilidad y plazos</h3>
+  <h3 className="text-lg font-serif text-primary mb-6">{t('admin.props.profitTitle')}</h3>
   <div className="grid grid-cols-2 gap-6 mb-6">
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Proyección alquiler anual ({currentProject.price_currency || 'EUR'})</label><input type="number" value={currentProject.annual_rental_projection || 0} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
     
@@ -1479,16 +1479,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
 
     <div className="grid grid-cols-2 gap-6">
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Distancia a la playa</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder="3 minutos a Playa Balangan" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Unidades disponibles</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder="3 minutos a Playa Balangan" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
     </div>
     <div className="grid grid-cols-2 gap-6">
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Años contrato</label><input type="number" value={currentProject.years_contract || 25} onChange={(e) => setCurrentProject({...currentProject, years_contract: parseInt(e.target.value) || 25})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Años extensión</label><input type="number" value={currentProject.years_extension || 0} onChange={(e) => setCurrentProject({...currentProject, years_extension: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.contractYears')}</label><input type="number" value={currentProject.years_contract || 25} onChange={(e) => setCurrentProject({...currentProject, years_contract: parseInt(e.target.value) || 25})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.extensionYears')}</label><input type="number" value={currentProject.years_extension || 0} onChange={(e) => setCurrentProject({...currentProject, years_extension: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
     </div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Progreso de obra (%)</label><div className="flex items-center gap-3"><input type="range" min={0} max={100} value={currentProject.completion_percent || 0} onChange={(e) => setCurrentProject({...currentProject, completion_percent: parseInt(e.target.value)})} className="flex-1" /><span className="text-lg font-bold text-primary w-16 text-right">{currentProject.completion_percent || 0}%</span></div></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.progressPct')}</label><div className="flex items-center gap-3"><input type="range" min={0} max={100} value={currentProject.completion_percent || 0} onChange={(e) => setCurrentProject({...currentProject, completion_percent: parseInt(e.target.value)})} className="flex-1" /><span className="text-lg font-bold text-primary w-16 text-right">{currentProject.completion_percent || 0}%</span></div></div>
 
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fecha finalización (DD/MM/YYYY)</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.adminDash.completionDateLabel')}</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
   </div>
 
   <div className="bg-gray-50 p-6 rounded-2xl mb-6">
@@ -1639,7 +1639,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         ))}
       </div>
       <div className="flex gap-2">
-        <input type="text" value={newOptionValue} onChange={(e) => setNewOptionValue(e.target.value)} placeholder="Nueva opción..." className="flex-1 px-4 py-3 bg-gray-50 rounded-xl font-medium border border-gray-200 focus:border-primary focus:outline-none" onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddOption(); } }} />
+        <input type="text" value={newOptionValue} onChange={(e) => setNewOptionValue(e.target.value)} placeholder={t('admin.adminDash.newOptionPlaceholder')} className="flex-1 px-4 py-3 bg-gray-50 rounded-xl font-medium border border-gray-200 focus:border-primary focus:outline-none" onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddOption(); } }} />
         <button onClick={handleAddOption} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">Añadir</button>
       </div>
     </div>

@@ -408,6 +408,75 @@
       "sentMessage": "Am trimis un magic link la <b>{{email}}</b>. Deschide emailul pe dispozitivul unde vrei să te conectezi.",
       "rosterHint": "Doar emailurile autorizate de administrație pot intra."
     },
+    "props": {
+      "mgmtTitle": "Gestionare Proprietăți",
+      "newBtn": "Nou",
+      "hidden": "ASCUNS",
+      "editorTitle": "Editor Proprietate",
+      "highlightHome": "Evidențiază pe homepage?",
+      "hideFromPublic": "Ascunde de pe site-ul public",
+      "hideFromPublicHint": "(Util pentru proiecte vândute. Rămâne în sistem dar nu apare pe site)",
+      "mainImage": "Imagine principală",
+      "mainImagePlaceholder": "Lipește URL sau încarcă fișier ->",
+      "gallery": "Galerie Imagini",
+      "extraUrl": "Adaugă URL extra (opțional)",
+      "constructionPhotos": "Foto Șantier",
+      "projectPlans": "Planuri proiect (PDF)",
+      "name": "Nume",
+      "location": "Locație",
+      "status": "Status",
+      "description": "Descriere",
+      "investorPrice": "Preț Investitor",
+      "marketPrice": "Preț Piață",
+      "currency": "Monedă",
+      "investmentTiers": "Tiers Investiție",
+      "propertyDetails": "Detalii proprietate",
+      "bedrooms": "Dormitoare",
+      "bathrooms": "Băi",
+      "areaM2": "Suprafață m²",
+      "furnishing": "Mobilare",
+      "furnishNone": "Nespecificat",
+      "furnishUnfurnished": "Nemobilat",
+      "furnishSemi": "Semi-mobilat",
+      "furnishFull": "Complet mobilat",
+      "equipment": "Echipament inclus",
+      "amenities": "Amenities",
+      "profitTitle": "Rentabilitate & termene",
+      "beachDistance": "Distanță până la plajă",
+      "availableUnits": "Unități disponibile",
+      "contractYears": "Ani contract",
+      "extensionYears": "Ani extensie",
+      "progressPct": "Progres șantier (%)"
+    },
+    "blogTab": {
+      "title": "Articole Blog",
+      "newBtn": "Nou",
+      "search": "Caută bloguri...",
+      "sortNewest": "Cele mai recente",
+      "sortOldest": "Cele mai vechi"
+    },
+    "clientsTab": {
+      "title": "Gestionare Clienți",
+      "noProjects": "Fără proiecte atribuite"
+    },
+    "usersTab": {
+      "title": "Administratori",
+      "thName": "Nume",
+      "thUsername": "Utilizator",
+      "thPassword": "Parolă",
+      "thActions": "Acțiuni"
+    },
+    "configTab": {
+      "labels": "Etichete Site",
+      "saveLabels": "Salvează Etichete"
+    },
+    "calendarTab": {
+      "passwordPrompt": "Pentru a edita zilele libere, introdu parola de administrator:",
+      "unlock": "Deblochează",
+      "editActive": "Mod editare activ — apasă pe zile pentru a le bifa/debifa",
+      "lock": "Blochează",
+      "summaryByEmployee": "Sumar per angajat"
+    },
     "adminDash": {
       "calendarTitle": "Calendar Zile Libere",
       "adminPassword": "Parolă admin",
