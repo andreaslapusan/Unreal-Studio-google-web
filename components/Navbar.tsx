@@ -213,20 +213,22 @@ const Navbar: React.FC = () => {
           </div>
           
           {/* Contenido del Menú */}
-          <div className="flex flex-col items-center justify-center flex-grow space-y-8 pb-10 px-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsMenuOpen(false)}
-                className={`text-3xl font-black uppercase tracking-widest ${isActive(link.path) ? 'text-primary' : 'text-primary/40'} hover:text-primary transition-colors`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            
+          <div className="flex flex-col items-center justify-start flex-grow pt-10 md:pt-16 pb-10 px-6">
+            <nav className="flex flex-col items-center gap-y-4 md:gap-y-5">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`text-xl md:text-2xl font-black uppercase tracking-wider ${isActive(link.path) ? 'text-primary' : 'text-primary/50'} hover:text-primary transition-colors`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+
             {/* Idioma + Divisa dentro del menú lateral */}
-            <div className="w-full max-w-xs flex flex-col items-center gap-4 pt-6 border-t border-primary/10 mt-2">
+            <div className="w-full max-w-xs flex flex-col items-center gap-3 pt-6 mt-8 border-t border-primary/10">
               <div className="flex items-center gap-3">
                 <LanguageSwitcher />
                 <select
@@ -247,10 +249,10 @@ const Navbar: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsMenuOpen(false)}
-              className="bg-primary text-white px-10 py-5 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl flex items-center gap-3 mt-4 whitespace-nowrap w-full justify-center max-w-xs"
+              className="bg-primary text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl flex items-center gap-2.5 mt-6 whitespace-nowrap w-full justify-center max-w-xs"
             >
               <span>Agendar llamada</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
             </a>
           </div>
         </div>
