@@ -9,10 +9,13 @@
  */
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/auth-context";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 export default function EquipoLogin() {
+  const { t } = useTranslation();
   const { user, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
@@ -44,14 +47,16 @@ export default function EquipoLogin() {
   return (
     <div className="min-h-screen bg-almond flex items-center justify-center px-6">
       <div className="bg-white rounded-3xl shadow-xl border border-primary/10 max-w-md w-full p-10">
-        <h1 className="text-3xl font-serif text-primary mb-2">Portal Manager</h1>
+        <div className="flex justify-end mb-2">
+          <LanguageSwitcher />
+        </div>
+        <h1 className="text-3xl font-serif text-primary mb-2">{t('admin.equipoLogin.title')}</h1>
         <p className="text-sm text-primary/60 mb-8">
-          Acceso interno equipo · Vacaciones · Partes de obra
+          {t('admin.equipoLogin.subtitle')}
         </p>
         {sent ? (
           <div className="text-sm text-primary">
-            Te hemos enviado un enlace mágico a <b>{email}</b>. Abre el correo
-            desde el dispositivo donde quieres iniciar sesión.
+            <Trans i18nKey="admin.equipoLogin.sentMessage" values={{ email }} />
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-4">
@@ -60,7 +65,7 @@ export default function EquipoLogin() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@unrealstudiobali.com"
+              placeholder={t('admin.equipoLogin.emailPlaceholder')}
               className="w-full px-4 py-3 rounded-xl border border-primary/20 focus:border-primary focus:outline-none"
             />
             <button
@@ -68,11 +73,11 @@ export default function EquipoLogin() {
               disabled={busy}
               className="w-full bg-primary text-white py-3 rounded-xl font-bold disabled:opacity-50"
             >
-              {busy ? "Enviando…" : "Enviar enlace mágico"}
+              {busy ? t('admin.equipoLogin.submitting') : t('admin.equipoLogin.submit')}
             </button>
             {error && <p className="text-xs text-red-600">{error}</p>}
             <p className="text-[10px] text-primary/40 text-center pt-2">
-              Solo emails autorizados por administración pueden entrar.
+              {t('admin.equipoLogin.rosterHint')}
             </p>
           </form>
         )}

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const ClientLogin: React.FC = () => {
+  const { t } = useTranslation();
   useEffect(() => { document.title = 'Portal Inversor | Unreal Studio Madrid'; }, []);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +31,7 @@ const ClientLogin: React.FC = () => {
         p_password: password
       });
       if (rpcError || !data || !data.success) {
-        setError('Credenciales incorrectas.');
+        setError(t('admin.clientLogin.errorInvalid'));
         setPassword('');
         setLoading(false);
         return;
@@ -41,7 +44,7 @@ const ClientLogin: React.FC = () => {
         navigate('/cliente/dashboard');
       }
     } catch (err) {
-      setError('Error de conexión. Inténtalo de nuevo.');
+      setError(t('admin.clientLogin.errorConnection'));
     } finally {
       setLoading(false);
     }
@@ -50,27 +53,30 @@ const ClientLogin: React.FC = () => {
   return (
     <div className="min-h-screen bg-almond flex items-center justify-center px-6">
       <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl border border-primary/5">
+        <div className="flex justify-end mb-2">
+          <LanguageSwitcher />
+        </div>
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-serif text-primary mb-2">Portal Inversor</h1>
-          <p className="text-sm text-primary/50">Accede a tu panel de inversiones</p>
+          <h1 className="text-3xl font-serif text-primary mb-2">{t('admin.clientLogin.title')}</h1>
+          <p className="text-sm text-primary/50">{t('admin.clientLogin.subtitle')}</p>
         </div>
         {error && (
           <div className="bg-red-50 text-red-600 text-sm font-bold p-4 rounded-xl mb-6 text-center">{error}</div>
         )}
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Email o Teléfono</label>
-            <input type="text" required value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="tu@email.com o +34 625 710 770" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none" />
+            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('admin.clientLogin.identifierLabel')}</label>
+            <input type="text" required value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder={t('admin.clientLogin.identifierPlaceholder')} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none" />
           </div>
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Contraseña</label>
+            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('admin.clientLogin.passwordLabel')}</label>
             <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none" />
           </div>
           <button type="submit" disabled={loading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">
-            {loading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> Accediendo...</> : 'Acceder al Portal'}
+            {loading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.clientLogin.submitting')}</> : t('admin.clientLogin.submit')}
           </button>
         </form>
-        <p className="text-center text-xs text-primary/30 mt-8">¿No tienes acceso? Contacta con tu asesor de Unreal Studio.</p>
+        <p className="text-center text-xs text-primary/30 mt-8">{t('admin.clientLogin.noAccess')}</p>
       </div>
     </div>
   );

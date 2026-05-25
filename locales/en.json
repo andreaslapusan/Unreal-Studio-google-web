@@ -387,6 +387,27 @@
       "agencias": "Agencies",
       "dashboard": "Dashboard"
     },
+    "clientLogin": {
+      "title": "Investor Portal",
+      "subtitle": "Access your investments dashboard",
+      "identifierLabel": "Email or phone",
+      "identifierPlaceholder": "you@email.com or +34 625 710 770",
+      "passwordLabel": "Password",
+      "submitting": "Signing in...",
+      "submit": "Enter the portal",
+      "errorInvalid": "Invalid credentials.",
+      "errorConnection": "Connection error. Please try again.",
+      "noAccess": "No access yet? Contact your Unreal Studio advisor."
+    },
+    "equipoLogin": {
+      "title": "Manager Portal",
+      "subtitle": "Internal team access · Time off · Site reports",
+      "emailPlaceholder": "you@unrealstudiobali.com",
+      "submitting": "Sending…",
+      "submit": "Send magic link",
+      "sentMessage": "We've sent a magic link to <b>{{email}}</b>. Open the email on the device where you want to sign in.",
+      "rosterHint": "Only emails authorized by admin can sign in."
+    },
     "login": {
       "title": "CMS — Restricted Access",
       "username": "Username",

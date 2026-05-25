@@ -387,6 +387,27 @@
       "agencias": "Agencias",
       "dashboard": "Panel"
     },
+    "clientLogin": {
+      "title": "Portal Inversor",
+      "subtitle": "Accede a tu panel de inversiones",
+      "identifierLabel": "Email o Teléfono",
+      "identifierPlaceholder": "tu@email.com o +34 625 710 770",
+      "passwordLabel": "Contraseña",
+      "submitting": "Accediendo...",
+      "submit": "Acceder al Portal",
+      "errorInvalid": "Credenciales incorrectas.",
+      "errorConnection": "Error de conexión. Inténtalo de nuevo.",
+      "noAccess": "¿No tienes acceso? Contacta con tu asesor de Unreal Studio."
+    },
+    "equipoLogin": {
+      "title": "Portal Manager",
+      "subtitle": "Acceso interno equipo · Vacaciones · Partes de obra",
+      "emailPlaceholder": "tu@unrealstudiobali.com",
+      "submitting": "Enviando…",
+      "submit": "Enviar enlace mágico",
+      "sentMessage": "Te hemos enviado un enlace mágico a <b>{{email}}</b>. Abre el correo desde el dispositivo donde quieres iniciar sesión.",
+      "rosterHint": "Solo emails autorizados por administración pueden entrar."
+    },
     "login": {
       "title": "CMS - Acceso Restringido",
       "username": "Usuario",

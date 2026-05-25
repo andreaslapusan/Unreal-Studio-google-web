@@ -387,6 +387,27 @@
       "agencias": "Agenții",
       "dashboard": "Panou"
     },
+    "clientLogin": {
+      "title": "Portal Investitor",
+      "subtitle": "Accesează panoul tău de investiții",
+      "identifierLabel": "Email sau telefon",
+      "identifierPlaceholder": "tu@email.com sau +34 625 710 770",
+      "passwordLabel": "Parolă",
+      "submitting": "Se conectează...",
+      "submit": "Accesează portalul",
+      "errorInvalid": "Credențiale incorecte.",
+      "errorConnection": "Eroare de conexiune. Încearcă din nou.",
+      "noAccess": "Nu ai acces încă? Contactează consultantul tău Unreal Studio."
+    },
+    "equipoLogin": {
+      "title": "Portal Manager",
+      "subtitle": "Acces intern echipă · Concedii · Rapoarte șantier",
+      "emailPlaceholder": "tu@unrealstudiobali.com",
+      "submitting": "Se trimite…",
+      "submit": "Trimite magic link",
+      "sentMessage": "Am trimis un magic link la <b>{{email}}</b>. Deschide emailul pe dispozitivul unde vrei să te conectezi.",
+      "rosterHint": "Doar emailurile autorizate de administrație pot intra."
+    },
     "login": {
       "title": "CMS — Acces Restricționat",
       "username": "Utilizator",
