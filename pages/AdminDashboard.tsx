@@ -1007,7 +1007,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
     <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 mb-6 border border-gray-100 max-w-md">
       <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
-      <input type="text" placeholder="Buscar por nombre, email o teléfono..." value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
+      <input type="text" placeholder={t('admin.adminDash.searchClients')} value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
     </div>
 
     <div className="space-y-4">
@@ -1158,7 +1158,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'calendar' && (
           <div>
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-serif text-primary">Calendario de Días Libres</h2>
+              <h2 className="text-3xl font-serif text-primary">{t('admin.adminDash.calendarTitle')}</h2>
               <div className="flex items-center gap-3">
                 <button onClick={() => setCalendarYear(y => y - 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_left</span></button>
                 <span className="text-xl font-bold text-primary">{calendarYear}</span>
@@ -1170,7 +1170,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-primary/5 mb-8 max-w-md">
                 <p className="text-sm text-primary/60 mb-3">Para editar días libres, introduce la contraseña de administrador:</p>
                 <div className="flex gap-2">
-                  <input type="password" value={calendarAdminPassword} onChange={(e) => setCalendarAdminPassword(e.target.value)} placeholder="Contraseña admin" className="flex-1 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 font-medium" onKeyDown={(e) => e.key === 'Enter' && handleCalendarAuth()} />
+                  <input type="password" value={calendarAdminPassword} onChange={(e) => setCalendarAdminPassword(e.target.value)} placeholder={t('admin.adminDash.adminPassword')} className="flex-1 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 font-medium" onKeyDown={(e) => e.key === 'Enter' && handleCalendarAuth()} />
                   <button onClick={handleCalendarAuth} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">Desbloquear</button>
                 </div>
                 {calendarAuthError && <p className="text-red-500 text-xs mt-2">{calendarAuthError}</p>}
@@ -1541,7 +1541,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 </div>
 
               </div>
-              <div className="flex gap-4 pt-6"><button type="submit" className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black">Guardar Propiedad</button><button type="button" onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-400 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-200">Cancelar</button></div>
+              <div className="flex gap-4 pt-6"><button type="submit" className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black">{t('admin.adminDash.saveProperty')}</button><button type="button" onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-400 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-200">{t('admin.common.cancel')}</button></div>
             </form>
           </div>
         </div>
@@ -1551,7 +1551,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {isEditingClient && (
   <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
     <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
-      <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? 'Nuevo Cliente' : 'Editar Cliente'}</h2>
+      <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
       <p className="text-sm text-gray-400 mb-8">Completa los datos del cliente</p>
       <form onSubmit={handleSaveClient} className="space-y-5">
         <div>
@@ -1576,7 +1576,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
         <div className="flex gap-4 pt-4">
           <button type="button" onClick={() => setIsEditingClient(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">Cancelar</button>
-          <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? 'Guardando...' : 'Guardar'}</button>
+          <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? t('admin.adminDash.savingEllipsis') : t('admin.adminDash.save')}</button>
         </div>
       </form>
     </div>
@@ -1586,7 +1586,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {editingAssignment && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditingAssignment(null); }}>
         <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
-            <h2 className="text-2xl font-serif text-primary mb-2">Editar Asignación</h2>
+            <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.adminDash.editAssignment')}</h2>
             <p className="text-sm text-gray-400 mb-2">Cliente: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
             <p className="text-sm text-gray-400 mb-8">Proyecto: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
             <form onSubmit={handleEditAssignment} className="space-y-6">
@@ -1614,7 +1614,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </div>
                 </div>
                 <div className="flex gap-4 pt-4">
-                    <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> Guardando...</> : 'Guardar Cambios'}</button>
+                    <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
                     <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">Cerrar</button>
                 </div>
             </form>

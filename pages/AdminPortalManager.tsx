@@ -207,7 +207,7 @@ export default function AdminPortalManager() {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>
-          <h1 className="text-3xl font-serif mb-4">Acceso restringido</h1>
+          <h1 className="text-3xl font-serif mb-4">{t('admin.portal.accessRestricted')}</h1>
           <p>Solo equipo interno.</p>
         </div>
       </div>
@@ -278,7 +278,7 @@ export default function AdminPortalManager() {
           </Link>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            <button onClick={() => navigate("/admin")} className="hidden sm:block text-xs bg-primary/5 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">Admin clásico</button>
+            <button onClick={() => navigate("/admin")} className="hidden sm:block text-xs bg-primary/5 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">{t('admin.portal.classicAdmin')}</button>
             <button onClick={() => { localStorage.removeItem("_ust_sh_"); sessionStorage.removeItem("_ust_sh_"); void signOut(); navigate("/admin/login"); }} className="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold">{t('admin.common.logout')}</button>
           </div>
         </div>
@@ -288,35 +288,36 @@ export default function AdminPortalManager() {
       <header className="bg-primary text-white px-4 md:px-6 py-4 md:py-5">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           <div>
-            <h1 className="font-serif text-lg md:text-2xl">Admin Portal Manager</h1>
-            <p className="text-[10px] md:text-xs opacity-70">{user?.email ?? "Sesión Andreas"}</p>
+            <h1 className="font-serif text-lg md:text-2xl">{t('admin.portal.title')}</h1>
+            <p className="text-[10px] md:text-xs opacity-70">{user?.email ?? t('admin.portal.sessionFallback')}</p>
           </div>
-          <button onClick={() => navigate("/admin")} className="sm:hidden text-[10px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold whitespace-nowrap">Admin clásico</button>
+          <button onClick={() => navigate("/admin")} className="sm:hidden text-[10px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full uppercase tracking-widest font-bold whitespace-nowrap">{t('admin.portal.classicAdmin')}</button>
         </div>
       </header>
 
       <nav className="max-w-6xl mx-auto px-6 mt-6 flex flex-wrap gap-2">
-        {(["activity","properties","units","partners","applications","faqs","timelines","equipo"] as Tab[]).map((t) => (
+        {(["activity","properties","units","partners","applications","faqs","timelines","equipo"] as Tab[]).map((k) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={k}
+            onClick={() => setTab(k)}
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              tab === t ? "bg-primary text-white" : "bg-white/60 text-primary hover:bg-white"
+              tab === k ? "bg-primary text-white" : "bg-white/60 text-primary hover:bg-white"
             }`}
           >
-            {t === "activity" && `📡 Actividad (${activity.length})`}
-            {t === "properties" && `📁 Proyectos (${properties.length})`}
-            {t === "units" && `🏠 Unidades (${units.length})`}
-            {t === "partners" && `🤝 Agencias (${partners.length})`}
-            {t === "applications" && `📨 Solicitudes (${applications.filter((a) => a.status === "pending").length})`}
-            {t === "faqs" && `❓ FAQs (${faqs.length})`}
-            {t === "timelines" && `📅 Timelines (${projectsCatalog.filter((p) => Array.isArray(p.timeline) && p.timeline.length > 0).length}/${projectsCatalog.length})`}
+            {k === "activity" && `📡 ${t('admin.portal.tabActivity')} (${activity.length})`}
+            {k === "properties" && `📁 ${t('admin.portal.tabProperties')} (${properties.length})`}
+            {k === "units" && `🏠 ${t('admin.portal.tabUnits')} (${units.length})`}
+            {k === "partners" && `🤝 ${t('admin.portal.tabPartners')} (${partners.length})`}
+            {k === "applications" && `📨 ${t('admin.portal.tabApplications')} (${applications.filter((a) => a.status === "pending").length})`}
+            {k === "faqs" && `❓ FAQs (${faqs.length})`}
+            {k === "timelines" && `📅 Timelines (${projectsCatalog.filter((p) => Array.isArray(p.timeline) && p.timeline.length > 0).length}/${projectsCatalog.length})`}
+            {k === "equipo" && `👷 ${t('admin.portal.tabEquipo')}`}
           </button>
         ))}
       </nav>
 
       <main className="max-w-6xl mx-auto px-6 py-6">
-        {loading && <p>Cargando…</p>}
+        {loading && <p>{t('admin.common.loading')}</p>}
         {error && <p className="text-red-600">{error}</p>}
 
         {tab === "activity" && (
@@ -447,6 +448,7 @@ function PropertyEditor({
   onSave: (r: Property, isNew: boolean) => Promise<void>;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<Property>(row);
 
   const update = <K extends keyof Property>(k: K, v: Property[K]) => setForm((p) => ({ ...p, [k]: v }));
@@ -454,7 +456,7 @@ function PropertyEditor({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
-        <h2 className="font-serif text-2xl mb-4">{isNew ? "Nuevo proyecto" : "Editar proyecto"}</h2>
+        <h2 className="font-serif text-2xl mb-4">{isNew ? t('admin.portal.newProject') : t('admin.portal.editProject')}</h2>
         <div className="space-y-3">
           <Input label="Slug *" value={form.slug} onChange={(v) => update("slug", v)} />
           <Input label="Nombre *" value={form.name} onChange={(v) => update("name", v)} />
@@ -574,13 +576,14 @@ function UnitEditor({
   onSave: (u: Unit, n: boolean) => Promise<void>;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<Unit>(row);
   const update = <K extends keyof Unit>(k: K, v: Unit[K]) => setForm((p) => ({ ...p, [k]: v }));
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
-        <h2 className="font-serif text-2xl mb-4">{isNew ? "Nueva unidad" : "Editar unidad"}</h2>
+        <h2 className="font-serif text-2xl mb-4">{isNew ? t('admin.portal.newUnit') : t('admin.portal.editUnit')}</h2>
         <div className="space-y-3">
           <label className="block">
             <span className="text-sm font-medium">Proyecto *</span>
@@ -657,13 +660,14 @@ function ApplicationsTab({
   onApprove: (a: Application) => Promise<void>;
   onReject: (a: Application) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const pending = useMemo(() => data.filter((a) => a.status === "pending"), [data]);
   const reviewed = useMemo(() => data.filter((a) => a.status !== "pending"), [data]);
 
   return (
     <div className="space-y-6">
       <section>
-        <h3 className="font-serif text-xl mb-3">Pendientes ({pending.length})</h3>
+        <h3 className="font-serif text-xl mb-3">{t('admin.portal.pendingCount', { count: pending.length })}</h3>
         {pending.length === 0 && <p className="text-primary/60">No hay solicitudes pendientes.</p>}
         {pending.map((a) => (
           <article key={a.id} className="bg-white/60 rounded-xl p-4 mb-3">
@@ -688,7 +692,7 @@ function ApplicationsTab({
         ))}
       </section>
       <section>
-        <h3 className="font-serif text-xl mb-3">Revisadas ({reviewed.length})</h3>
+        <h3 className="font-serif text-xl mb-3">{t('admin.portal.reviewedCount', { count: reviewed.length })}</h3>
         {reviewed.map((a) => (
           <div key={a.id} className="text-sm py-2 border-b border-primary/10">
             {a.agency_name} — <span className={a.status === "approved" ? "text-green-700" : "text-red-700"}>{a.status}</span>
@@ -879,6 +883,7 @@ function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promise<void
 }
 
 function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; onSaved: () => Promise<void> }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<Faq>(faq);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
@@ -929,7 +934,7 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
     <div className="fixed inset-0 bg-black/40 flex items-start justify-center p-6 overflow-y-auto z-50" onClick={onClose}>
       <div className="bg-white rounded-2xl max-w-3xl w-full p-6 mt-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
-          <h3 className="font-serif text-xl text-primary">{form.id ? "Editar FAQ" : "Nueva FAQ"}</h3>
+          <h3 className="font-serif text-xl text-primary">{form.id ? t('admin.portal.editFAQ') : t('admin.portal.newFAQ')}</h3>
           <button onClick={onClose} className="text-primary/40 hover:text-primary">✕</button>
         </div>
 
@@ -1090,6 +1095,7 @@ function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange: () => 
 }
 
 function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; onClose: () => void; onSaved: () => Promise<void> }) {
+  const { t } = useTranslation();
   const [phases, setPhases] = useState<TimelinePhaseRow[]>(
     Array.isArray(project.timeline) && project.timeline.length > 0
       ? project.timeline
@@ -1159,7 +1165,7 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
       <div className="bg-white rounded-2xl max-w-3xl w-full p-6 mt-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h3 className="font-serif text-xl text-primary">Timeline · {project.name}</h3>
+            <h3 className="font-serif text-xl text-primary">{t('admin.portal.timelineFor', { name: project.name })}</h3>
             <p className="text-xs text-primary/50">{project.slug}</p>
           </div>
           <button onClick={onClose} className="text-primary/40 hover:text-primary text-xl">✕</button>
@@ -1268,6 +1274,7 @@ interface FieldReportRow {
 }
 
 function EquipoTab() {
+  const { t } = useTranslation();
   const [members, setMembers] = useState<TeamMemberRow[]>([]);
   const [requests, setRequests] = useState<TimeOffRow[]>([]);
   const [holidays, setHolidays] = useState<HolidayRow[]>([]);
@@ -1339,7 +1346,7 @@ function EquipoTab() {
 
       {onLeaveNow.length > 0 && (
         <section className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-          <h3 className="text-sm font-bold text-amber-900 mb-2">De vacaciones hoy</h3>
+          <h3 className="text-sm font-bold text-amber-900 mb-2">{t('admin.portal.onVacationToday')}</h3>
           <ul className="text-sm text-amber-900 space-y-1">
             {onLeaveNow.map((r) => (
               <li key={r.id}>
@@ -1353,7 +1360,7 @@ function EquipoTab() {
 
       <section className="bg-white rounded-xl border border-primary/5">
         <div className="flex justify-between items-center px-5 py-4 border-b border-primary/5">
-          <h3 className="font-bold text-primary">Equipo</h3>
+          <h3 className="font-bold text-primary">{t('admin.portal.team')}</h3>
           <button onClick={addMember} className="text-xs bg-primary text-white px-3 py-1.5 rounded-full">+ Añadir</button>
         </div>
         <table className="w-full text-sm">
@@ -1420,7 +1427,7 @@ function EquipoTab() {
       </section>
 
       <section className="bg-white rounded-xl border border-primary/5 p-5">
-        <h3 className="font-bold text-primary mb-4">Próximas vacaciones</h3>
+        <h3 className="font-bold text-primary mb-4">{t('admin.portal.upcomingVacations')}</h3>
         {upcoming.length === 0 ? (
           <p className="text-sm text-primary/50">Nadie tiene vacaciones programadas próximamente.</p>
         ) : (
@@ -1448,7 +1455,7 @@ function EquipoTab() {
       </section>
 
       <section className="bg-white rounded-xl border border-primary/5 p-5">
-        <h3 className="font-bold text-primary mb-4">Partes de obra recientes ({reports.length})</h3>
+        <h3 className="font-bold text-primary mb-4">{t('admin.portal.recentSiteReports', { count: reports.length })}</h3>
         {reports.length === 0 ? (
           <p className="text-sm text-primary/50">Aún no hay partes enviados.</p>
         ) : (
@@ -1477,7 +1484,7 @@ function EquipoTab() {
       </section>
 
       <section className="bg-white rounded-xl border border-primary/5 p-5">
-        <h3 className="font-bold text-primary mb-4">Festivos cargados ({holidays.length})</h3>
+        <h3 className="font-bold text-primary mb-4">{t('admin.portal.holidaysLoaded', { count: holidays.length })}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm max-h-64 overflow-y-auto">
           {holidays.map((h) => (
             <div key={h.id} className="flex justify-between border-b border-primary/5 pb-1">
