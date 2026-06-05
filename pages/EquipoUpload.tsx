@@ -46,18 +46,39 @@ export default function EquipoUpload() {
     })();
   }, [user]);
 
+  // Empleados (tabla employees) con can_upload_reports también pueden subir,
+  // además de los roles admin/team. null = comprobando.
+  const [empAllowed, setEmpAllowed] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (!user?.email) { setEmpAllowed(false); return; }
+    void (async () => {
+      const { data } = await supabase
+        .from("employees")
+        .select("can_upload_reports")
+        .eq("email", user.email)
+        .maybeSingle();
+      setEmpAllowed(Boolean(data?.can_upload_reports));
+    })();
+  }, [user]);
+
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('admin.common.loading')}</div>;
   if (!user) return <Navigate to="/admin/login" replace />;
-  // Strict guard: deny null/unknown roles.
-  if (!role || (role !== "admin" && role !== "team")) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6 text-center">
-        <div>
-          <h1 className="text-3xl font-serif mb-4">{t('admin.equipoUpload.accessRestrictedTitle')}</h1>
-          <p>{t('admin.equipoUpload.accessRestrictedBody')}</p>
+  // Acceso: roles admin/team (team_members) O empleado con permiso de reportes.
+  const isStaff = role === "admin" || role === "team";
+  if (!isStaff) {
+    if (empAllowed === null) {
+      return <div className="min-h-screen flex items-center justify-center">{t('admin.common.loading')}</div>;
+    }
+    if (!empAllowed) {
+      return (
+        <div className="min-h-screen flex items-center justify-center px-6 text-center">
+          <div>
+            <h1 className="text-3xl font-serif mb-4">{t('admin.equipoUpload.accessRestrictedTitle')}</h1>
+            <p>{t('admin.equipoUpload.accessRestrictedBody')}</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 
   const handleFilesAdded = (incoming: FileList | null) => {
