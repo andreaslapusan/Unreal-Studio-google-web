@@ -16,6 +16,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
 import VacationCalendar from '../components/VacationCalendar';
+import Footer from '../components/Footer';
 
 type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
 
@@ -392,6 +393,11 @@ const EmpleadosDashboard: React.FC = () => {
           {toast.msg}
         </div>
       )}
+
+      {/* Footer compartido (rompe el padding lateral del contenedor con -mx-5) */}
+      <div className="-mx-5 mt-12">
+        <Footer />
+      </div>
     </div>
   );
 };
