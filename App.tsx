@@ -40,7 +40,7 @@ const EmpleadosDashboard = lazy(() => import('./pages/EmpleadosDashboard'));
 const AdminPortalManager = lazy(() => import('./pages/AdminPortalManager'));
 const AdminAgencias = lazy(() => import('./pages/AdminAgencias'));
 const AgencyPack = lazy(() => import('./pages/AgencyPack'));
-import { AuthProvider } from './lib/auth-context';
+import { AuthProvider, useAuth } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
 import { supabase } from './lib/supabase';
@@ -63,10 +63,13 @@ export const useCurrency = () => {
 };
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
-  // Comprobar tanto en localStorage (Recordar sesión) como sessionStorage (Sesión temporal)
-  const isAuth = !!localStorage.getItem('_ust_sh_') || !!sessionStorage.getItem('_ust_sh_');
-  if (!isAuth) return <Navigate to="/admin/login" replace />;
-  return <>{children}</>;
+  // Acceso admin: token legacy (_ust_sh_) O sesión Supabase Auth con rol admin/team.
+  const { user, role, loading } = useAuth();
+  const legacy = !!localStorage.getItem('_ust_sh_') || !!sessionStorage.getItem('_ust_sh_');
+  if (legacy) return <>{children}</>;
+  if (loading) return null;
+  if (user && (role === 'admin' || role === 'team')) return <>{children}</>;
+  return <Navigate to="/admin/login" replace />;
 };
 
 const ScrollToTop = () => {
