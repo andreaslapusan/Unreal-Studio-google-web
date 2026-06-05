@@ -10,6 +10,7 @@ import { useAuth } from '../lib/auth-context';
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [footerVisible, setFooterVisible] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { currency, setCurrency } = useCurrency();
@@ -36,6 +37,19 @@ const Navbar: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Ocultar el botón flotante cuando el footer entra en viewport, para que NUNCA
+  // tape los enlaces inferiores del footer (Privacidad/Términos/Clientes/etc.).
+  useEffect(() => {
+    const footer = document.querySelector('footer');
+    if (!footer || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => setFooterVisible(entries[0]?.isIntersecting ?? false),
+      { rootMargin: '0px 0px -40px 0px', threshold: 0 }
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, [location.pathname]);
 
   // Bloquear scroll cuando el menú está abierto
   useEffect(() => {
@@ -219,8 +233,8 @@ const Navbar: React.FC = () => {
       {/* Botón Flotante Permanente (Aparece al bajar) */}
       <div 
         className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-40 transition-all duration-500 transform ${
-          isScrolled 
-            ? 'translate-y-0 opacity-100' 
+          isScrolled && !footerVisible
+            ? 'translate-y-0 opacity-100'
             : 'translate-y-20 opacity-0 pointer-events-none'
         }`}
       >

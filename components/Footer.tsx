@@ -6,7 +6,7 @@ import { WHATSAPP_URL } from '../constants';
 const Footer: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <footer className="bg-white border-t border-gray-100 pt-16 md:pt-24 pb-12 px-6 md:px-12 text-sm">
+    <footer className="bg-white border-t border-gray-100 pt-16 md:pt-24 pb-28 md:pb-12 px-6 md:px-12 text-sm">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 mb-16 md:mb-20 text-left">
         {/* Brand Column */}
         <div className="col-span-1">
@@ -84,7 +84,7 @@ const Footer: React.FC = () => {
       </div>
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-10">
         <p>{t('footer.rights')}</p>
-        <div className="flex space-x-8 mt-6 md:mt-0">
+        <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
           <Link className="hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
           <Link className="hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
           <Link className="hover:text-primary transition flex items-center gap-1" to="/cliente">
