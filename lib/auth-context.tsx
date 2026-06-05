@@ -33,44 +33,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsub: (() => void) | undefined;
+    let active = true;
 
-    const init = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
-        if (data.session?.user) {
-          await loadRole(data.session.user.id);
-        }
-      } catch (err) {
-        // Defensive: never let an auth error keep the UI stuck on "Cargando".
-        // We surface it via console so it's still discoverable in DevTools.
-        // eslint-disable-next-line no-console
-        console.error('[auth-context] init failed', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    void init();
-
-    const sub = supabase.auth.onAuthStateChange(async (_event, sess) => {
+    // Aplica una sesión y resuelve el rol. CRÍTICO: el `loadRole` (que llama a
+    // supabase.from('profiles')) se DIFIERE con setTimeout(0) para salir del
+    // contexto del lock de auth de supabase-js v2. Llamar a métodos de supabase
+    // de forma síncrona dentro del callback de onAuthStateChange (o durante
+    // getSession) provoca un DEADLOCK: la query espera el lock que retiene el
+    // propio callback → nunca resuelve → `loading` se queda en true para siempre
+    // → ProtectedRoute devuelve null → pantalla en blanco al RECARGAR /admin.
+    const applySession = (sess: Session | null) => {
+      if (!active) return;
       setSession(sess);
       setUser(sess?.user ?? null);
       if (sess?.user) {
-        // Mantener loading=true mientras se resuelve el rol, para que los guards
-        // (ProtectedRoute) no rebote antes de que `role` esté cargado tras login.
         setLoading(true);
-        await loadRole(sess.user.id);
-        setLoading(false);
+        const uid = sess.user.id;
+        setTimeout(() => {
+          if (!active) return;
+          void loadRole(uid).finally(() => {
+            if (active) setLoading(false);
+          });
+        }, 0);
       } else {
         setRole(null);
+        setLoading(false);
       }
+    };
+
+    const sub = supabase.auth.onAuthStateChange((_event, sess) => {
+      applySession(sess);
     });
-    unsub = () => sub.data.subscription.unsubscribe();
+
+    // Fallback en el montaje por si no llega el evento INITIAL_SESSION.
+    supabase.auth
+      .getSession()
+      .then(({ data }) => applySession(data.session))
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('[auth-context] getSession failed', err);
+        if (active) setLoading(false);
+      });
 
     return () => {
-      if (unsub) unsub();
+      active = false;
+      sub.data.subscription.unsubscribe();
     };
   }, []);
 
