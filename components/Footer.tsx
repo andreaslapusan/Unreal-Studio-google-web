@@ -34,13 +34,8 @@ const Footer: React.FC = () => {
           <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-6">{t('footer.offices')}</h5>
           <ul className="space-y-4 text-primary/50 text-xs font-bold tracking-wider mb-8">
             <li>
-              <a href="https://maps.app.goo.gl/abmGvNJzsbuM3pxr5?g_st=ic" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-primary transition">
-                <span className="material-symbols-outlined text-base">location_on</span> C. de San Nicolás 17, Madrid
-              </a>
-            </li>
-            <li>
               <a href="https://maps.app.goo.gl/bnYDvKsJu7GWdUfA8?g_st=ic" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-primary transition">
-                <span className="material-symbols-outlined text-base">location_on</span> Jl. Pratu Rai Madra No.15, Bali
+                <span className="material-symbols-outlined text-base">location_on</span> Jl. Pratu Rai Madra No.15, Cemagi, Bali
               </a>
             </li>
           </ul>
