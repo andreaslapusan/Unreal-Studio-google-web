@@ -16,7 +16,7 @@ import { supabase, getImageUrl, uploadImage } from "../lib/supabase";
 import { useAuth } from "../lib/auth-context";
 import { compressImage } from "../lib/imageCompress";
 import WeatherWidget, { getWeatherSummary } from "../components/WeatherWidget";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import PortalHeader from "../components/PortalHeader";
 import Footer from "../components/Footer";
 
 interface TeamMember {
@@ -128,18 +128,10 @@ export default function EquipoDashboard() {
 
   return (
     <div className="min-h-screen bg-almond pb-20">
-      <header className="bg-primary text-white px-8 py-6 flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-serif">{tt('admin.equipoDash.greeting', { name: member?.full_name })}</h1>
-          <p className="text-xs opacity-70">{tt('admin.equipoDash.subtitle', { year: new Date().getFullYear() })}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <LanguageSwitcher inverted />
-          <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/manager'; }} className="text-xs uppercase tracking-widest underline">
-            {tt('admin.common.logout')}
-          </button>
-        </div>
-      </header>
+      <PortalHeader
+        subtitle={tt('admin.equipoDash.greeting', { name: member?.full_name })}
+        onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/manager'; }}
+      />
 
       <div className="max-w-5xl mx-auto px-6 py-8">
         <WeatherWidget />

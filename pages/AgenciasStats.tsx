@@ -8,7 +8,7 @@ import { Navigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import PortalHeader from "../components/PortalHeader";
 import Footer from "../components/Footer";
 
 interface AttributionRow {
@@ -128,17 +128,15 @@ export default function AgenciasStats() {
 
   return (
     <div className="min-h-screen bg-almond pb-16">
-      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="font-serif text-2xl">{t('agenciasStats.headerTitle')}</h1>
-          <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
-        </div>
-        <nav className="flex items-center gap-2 text-sm">
-          <Link to="/agencias/dashboard" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasStats.navProjects')}</Link>
-          <LanguageSwitcher inverted />
-          <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasStats.navLogout')}</button>
-        </nav>
-      </header>
+      <PortalHeader
+        subtitle={partner?.agency_name ?? user.email ?? undefined}
+        onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }}
+        extra={
+          <Link to="/agencias/dashboard" className="bg-white border border-primary/10 text-primary/70 hover:bg-primary hover:text-white px-3 md:px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition shadow-sm">
+            {t('agenciasStats.navProjects')}
+          </Link>
+        }
+      />
 
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-8">
         {loading && <p>{t('agenciasStats.loading')}</p>}

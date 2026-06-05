@@ -5,7 +5,7 @@ import { supabase, getImageUrl } from '../lib/supabase';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import PortalHeader from '../components/PortalHeader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 
 const CLIENT_GUIDE_STEPS = [
@@ -545,28 +545,24 @@ const ClientDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-almond">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <img src="/img/Logos/logo-06.png" alt="Unreal Studio" className="h-10 w-auto object-contain" />
-          </Link>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest hidden md:block">{client.name}</span>
-            <LanguageSwitcher />
-            <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
+      {/* Header unificado del sitio */}
+      <PortalHeader
+        subtitle={client.name}
+        onLogout={handleLogout}
+        extra={
+          <>
+            <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="bg-white border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-primary/5 transition">
               {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
             </select>
-            <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
+            <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition hidden md:flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
             </button>
-            <button onClick={() => setShowChangePassword(true)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
+            <button onClick={() => setShowChangePassword(true)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition hidden md:flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">lock</span> {t('admin.clientDash.passwordLabel')}
             </button>
-            <button onClick={handleLogout} className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       {walkthroughStep !== null && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">

@@ -9,7 +9,7 @@ import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
 import { projectSeoSlug } from "../lib/projectUrl";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import PortalHeader from "../components/PortalHeader";
 import Footer from "../components/Footer";
 
 interface PartnerRow {
@@ -102,17 +102,15 @@ export default function AgenciasDashboard() {
 
   return (
     <div className="min-h-screen bg-almond pb-16">
-      <header className="bg-primary text-white px-6 py-5 flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="font-serif text-2xl">{t('agenciasDashboard.headerTitle')}</h1>
-          <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
-        </div>
-        <nav className="flex items-center gap-2 text-sm">
-          <Link to="/agencias/stats" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navStats')}</Link>
-          <LanguageSwitcher inverted />
-          <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navLogout')}</button>
-        </nav>
-      </header>
+      <PortalHeader
+        subtitle={partner?.agency_name ?? user.email ?? undefined}
+        onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }}
+        extra={
+          <Link to="/agencias/stats" className="bg-white border border-primary/10 text-primary/70 hover:bg-primary hover:text-white px-3 md:px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition shadow-sm">
+            {t('agenciasDashboard.navStats')}
+          </Link>
+        }
+      />
 
       <main className="max-w-5xl mx-auto px-6 py-10 space-y-8">
         {partner && (

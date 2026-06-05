@@ -17,7 +17,7 @@ import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
 import VacationCalendar from '../components/VacationCalendar';
 import Footer from '../components/Footer';
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import PortalHeader from '../components/PortalHeader';
 
 type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
 
@@ -253,32 +253,22 @@ const EmpleadosDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-almond px-5 py-6 md:py-10">
+    <div className="min-h-screen bg-almond">
+      <PortalHeader
+        subtitle={user.email ?? 'Team'}
+        onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/empleados'; }}
+        extra={
+          <button
+            onClick={() => setShowInstructions(true)}
+            aria-label="Instrucciones"
+            className="w-9 h-9 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition"
+          >
+            <span className="material-symbols-outlined text-[20px]">info</span>
+          </button>
+        }
+      />
+      <div className="px-5 py-6 md:py-10">
       <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Team</p>
-            <h1 className="text-xl font-serif text-primary leading-tight truncate">{user.email}</h1>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <LanguageSwitcher />
-            <button
-              onClick={() => setShowInstructions(true)}
-              aria-label="Instrucciones"
-              className="w-10 h-10 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition"
-            >
-              <span className="material-symbols-outlined">info</span>
-            </button>
-            <button
-              onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/empleados'; }}
-              aria-label="Salir"
-              className="w-10 h-10 rounded-full bg-white border border-primary/10 text-primary/60 flex items-center justify-center shadow-sm hover:bg-gray-100 transition"
-            >
-              <span className="material-symbols-outlined">logout</span>
-            </button>
-          </div>
-        </div>
-
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-primary/5 mb-6">
           <div className="flex items-center justify-between mb-3">
             <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Hoy</p>
@@ -456,6 +446,7 @@ const EmpleadosDashboard: React.FC = () => {
       {/* Footer compartido (rompe el padding lateral del contenedor con -mx-5) */}
       <div className="-mx-5 mt-12">
         <Footer />
+      </div>
       </div>
     </div>
   );
