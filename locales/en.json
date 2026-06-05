@@ -212,20 +212,63 @@
     "shareBody": "Share it with other investors interested in international real estate."
   },
   "agenciasPartnership": {
-    "tag": "Listing Partners Program",
-    "heroTitle1": "List our villas in Bali.",
-    "heroTitle2": "Earn 5% per unit closed.",
-    "heroBody": "If you run a real estate agency with clients interested in overseas investment, we provide all the material you need to sell our villas as if they were yours.",
-    "ctaApply": "Apply now",
-    "ctaLogin": "Already a partner — log in",
-    "whyTitle": "Why partner with us",
+    "tag": "Partner Agencies Program",
+    "heroTitle1": "Grow your portfolio with premium",
+    "heroTitle2": "real-estate investment in Bali",
+    "heroBody": "Offer your clients investment villas and apartments in Bali's best areas. We provide the sales material, the support of our team and a fully remote, secure and transparent buying process.",
+    "ctaApply": "Request partnership",
+    "ctaLogin": "Partner access",
+    "whyTitle": "Why partner with Unreal Studio",
     "howTitle": "How it works",
-    "projectsTitle": "Projects available for listing",
-    "projectsSubtitle": "Snapshot as of {{date}} · contact us for live availability",
-    "faqTitle": "Frequently asked questions",
-    "ctaFinalTitle": "Ready to list Bali with us?",
-    "ctaFinalBody": "We reply within 24-48h. If we are a fit, we hand you portal access and we get going.",
-    "ctaFinalBtn": "Apply to the program →"
+    "projectsTitle": "Project portfolio",
+    "projectsSubtitle": "A selection of our developments in Bali. Full details, materials and commercial terms are available in the partner portal.",
+    "ctaFinalTitle": "Let's build a partnership",
+    "ctaFinalBody": "Join our agency program and start offering real-estate investment in Bali to your clients, with all the material and the backing of our team.",
+    "ctaFinalBtn": "Request partnership",
+    "benefits": [
+      {
+        "title": "Complete sales material",
+        "body": "Dossiers, floor plans, renders, virtual tours, aerial video and location. Up-to-date documentation, ready to share with your clients from your private portal."
+      },
+      {
+        "title": "Support from our team",
+        "body": "We work through the legal, financial and construction questions of every deal with you. You keep the client relationship; we provide the technical backing."
+      },
+      {
+        "title": "100% remote purchase",
+        "body": "Your clients can invest without travelling to Bali: power of attorney and digital signature. A proven, transparent and secure process from start to finish."
+      },
+      {
+        "title": "Ongoing construction updates",
+        "body": "Access to photos, videos and progress of each project, so you can keep your client informed throughout the build."
+      },
+      {
+        "title": "High-demand product",
+        "body": "Villas and apartments in Bali's most sought-after areas, with product selected for investment."
+      },
+      {
+        "title": "Long-term collaboration",
+        "body": "We work with agencies from several countries under a serious, stable program. The terms of the agreement are detailed after validation."
+      }
+    ],
+    "steps": [
+      {
+        "title": "Get in touch or register",
+        "body": "Fill in the form with your agency details, your country and your clients' profile. Two minutes."
+      },
+      {
+        "title": "Validation in 24-48 h",
+        "body": "We have a quick call to get to know your channel. If we're a fit, we activate your access."
+      },
+      {
+        "title": "Access to the partner portal",
+        "body": "You receive a private dashboard with the projects, downloadable materials and all the program terms."
+      },
+      {
+        "title": "Sell with support",
+        "body": "We support every deal with your client all the way to signing and handover of the property."
+      }
+    ]
   },
   "inversoresPartnership": {
     "tag": "Investor Program",

@@ -212,20 +212,63 @@
     "shareBody": "Distribuie-l altor investitori interesați de piața internațională."
   },
   "agenciasPartnership": {
-    "tag": "Program Listing Partners",
-    "heroTitle1": "Listează vilele noastre din Bali.",
-    "heroTitle2": "Câștigă 5% pentru fiecare unitate închisă.",
-    "heroBody": "Dacă deții o agenție imobiliară cu clienți interesați de investiții în străinătate, îți oferim toate materialele pentru a vinde vilele noastre ca și cum ar fi ale tale.",
-    "ctaApply": "Aplică acum",
-    "ctaLogin": "Sunt deja partener — login",
-    "whyTitle": "De ce să colaborezi cu noi",
+    "tag": "Program Agenții Partenere",
+    "heroTitle1": "Crește-ți portofoliul cu investiții",
+    "heroTitle2": "imobiliare premium în Bali",
+    "heroBody": "Oferă clienților tăi vile și apartamente de investiție în cele mai bune zone din Bali. Îți punem la dispoziție materialul de vânzare, sprijinul echipei noastre și un proces de achiziție 100% la distanță, sigur și transparent.",
+    "ctaApply": "Solicită colaborare",
+    "ctaLogin": "Acces parteneri",
+    "whyTitle": "De ce să colaborezi cu Unreal Studio",
     "howTitle": "Cum funcționează",
-    "projectsTitle": "Proiecte disponibile pentru listing",
-    "projectsSubtitle": "Snapshot la {{date}} · contactează pentru detalii actualizate",
-    "faqTitle": "Întrebări frecvente",
-    "ctaFinalTitle": "Gata să listezi Bali cu noi?",
-    "ctaFinalBody": "Răspundem în 24-48h. Dacă te potrivești, îți dăm acces la portal și începem.",
-    "ctaFinalBtn": "Aplică la program →"
+    "projectsTitle": "Portofoliu de proiecte",
+    "projectsSubtitle": "O selecție a dezvoltărilor noastre din Bali. Detaliile complete, materialele și condițiile comerciale sunt disponibile în portalul de parteneri.",
+    "ctaFinalTitle": "Să construim o colaborare",
+    "ctaFinalBody": "Alătură-te programului nostru de agenții și începe să oferi investiții imobiliare în Bali clienților tăi, cu tot materialul și sprijinul echipei noastre.",
+    "ctaFinalBtn": "Solicită colaborare",
+    "benefits": [
+      {
+        "title": "Material de vânzare complet",
+        "body": "Dosare, planuri, randări, tururi virtuale, video aerian și locație. Documentație actualizată, gata de partajat cu clienții tăi din portalul tău privat."
+      },
+      {
+        "title": "Sprijinul echipei noastre",
+        "body": "Rezolvăm împreună cu tine întrebările juridice, financiare și de construcție ale fiecărei tranzacții. Tu păstrezi relația cu clientul; noi aducem sprijinul tehnic."
+      },
+      {
+        "title": "Achiziție 100% la distanță",
+        "body": "Clienții tăi pot investi fără să călătorească în Bali: procură și semnătură digitală. Un proces dovedit, transparent și sigur de la început până la final."
+      },
+      {
+        "title": "Actualizări continue de șantier",
+        "body": "Acces la fotografii, videoclipuri și progresul fiecărui proiect, ca să-ți ții clientul informat pe tot parcursul construcției."
+      },
+      {
+        "title": "Produs cu cerere mare",
+        "body": "Vile și apartamente în cele mai căutate zone din Bali, cu produs selectat pentru investiție."
+      },
+      {
+        "title": "Colaborare pe termen lung",
+        "body": "Lucrăm cu agenții din mai multe țări într-un program serios și stabil. Condițiile acordului se detaliază după validare."
+      }
+    ],
+    "steps": [
+      {
+        "title": "Contactează sau înregistrează-te",
+        "body": "Completează formularul cu datele agenției tale, țara ta și profilul clienților tăi. Două minute."
+      },
+      {
+        "title": "Validare în 24-48 h",
+        "body": "Avem o discuție scurtă pentru a-ți cunoaște canalul. Dacă ne potrivim, îți activăm accesul."
+      },
+      {
+        "title": "Acces la portalul de parteneri",
+        "body": "Primești un panou privat cu proiectele, materialele descărcabile și toate condițiile programului."
+      },
+      {
+        "title": "Vinzi cu sprijin",
+        "body": "Sprijinim fiecare tranzacție cu clientul tău până la semnare și predarea proprietății."
+      }
+    ]
   },
   "inversoresPartnership": {
     "tag": "Program Investitor",
