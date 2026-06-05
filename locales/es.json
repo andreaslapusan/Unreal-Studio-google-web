@@ -214,7 +214,7 @@
   "agenciasPartnership": {
     "tag": "Programa Listing Partners",
     "heroTitle1": "Lista nuestras villas en Bali.",
-    "heroTitle2": "Cobra 5% por cada unidad cerrada.",
+    "heroTitle2": "Gana comisión por cada venta.",
     "heroBody": "Si tienes una agencia inmobiliaria con clientes interesados en inversión en el extranjero, te damos todo el material para vender nuestras villas como si fueran tuyas.",
     "ctaApply": "Aplicar ahora",
     "ctaLogin": "Ya soy partner — login",
@@ -245,7 +245,7 @@
   },
   "agenciasRegistrar": {
     "title": "Conviértete en Listing Partner",
-    "intro": "¿Tienes una agencia inmobiliaria? Lista nuestras propiedades y gana 5% de comisión por unidad cerrada. Acceso a renders, walkthroughs, dossiers actualizados, plan de pagos detallado, y videos drone.",
+    "intro": "¿Tienes una agencia inmobiliaria? Lista nuestras propiedades y gana comisión por cada venta cerrada. Acceso a renders, walkthroughs, dossiers actualizados, plan de pagos detallado, y videos drone.",
     "agencyName": "Nombre agencia *",
     "managerName": "Manager / contacto principal",
     "whatsapp": "WhatsApp",
@@ -306,8 +306,8 @@
     "kpiSales": "Ventas cerradas",
     "kpiConversion": "Conversión",
     "earningsTitle": "Earnings potenciales",
-    "earningsBody": "Comisión esperada si vendes todo el inventario disponible que tienes asignado:",
-    "earningsHint": "Calculado al 5% sobre precio agencia (puede variar por overrides individuales).",
+    "earningsBody": "",
+    "earningsHint": "",
     "topTitle": "Top proyectos compartidos",
     "topEmpty": "Aún no hay visitas atribuidas. Comparte tu link único desde \"Mis proyectos\" → \"Compartir con cliente\".",
     "events": "eventos",
