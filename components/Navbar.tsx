@@ -127,52 +127,6 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Account icon: muestra perfil si hay sesión, login si no */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setAccountOpen(!accountOpen)}
-              onBlur={() => setTimeout(() => setAccountOpen(false), 150)}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-white/60 hover:bg-white border border-primary/10 text-primary transition"
-              title={user ? `Mi cuenta (${role || 'sin rol'})` : 'Iniciar sesión'}
-              aria-label="Cuenta"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {user ? 'account_circle' : 'login'}
-              </span>
-            </button>
-            {accountOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white border border-primary/10 rounded-xl shadow-2xl py-2 z-50">
-                {user ? (
-                  <>
-                    <div className="px-4 py-2 border-b border-primary/5">
-                      <p className="text-[10px] uppercase tracking-widest text-primary/40 font-black">Sesión</p>
-                      <p className="text-xs text-primary truncate">{user.email}</p>
-                      <p className="text-[10px] text-primary/60 mt-0.5">Rol: {role || '—'}</p>
-                    </div>
-                    <Link to={dashboardPath} className="block px-4 py-2 text-xs text-primary hover:bg-primary/5">
-                      Mi panel
-                    </Link>
-                    <button
-                      type="button"
-                      onMouseDown={async (e) => { e.preventDefault(); await signOut(); }}
-                      className="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50"
-                    >
-                      Cerrar sesión
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/admin/login" className="block px-4 py-2 text-xs text-primary hover:bg-primary/5">Soy del equipo</Link>
-                    <Link to="/agencias/login" className="block px-4 py-2 text-xs text-primary hover:bg-primary/5">Soy agencia</Link>
-                    <Link to="/inversores/login" className="block px-4 py-2 text-xs text-primary hover:bg-primary/5">Soy inversor</Link>
-                    <Link to="/cliente" className="block px-4 py-2 text-xs text-primary hover:bg-primary/5">Soy cliente</Link>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
           {/* Botón Header: Optimizado para Móvil (2 líneas) y Desktop (1 línea) */}
           <a
             href={bookingLink({ medium: 'cta_navbar' })}
