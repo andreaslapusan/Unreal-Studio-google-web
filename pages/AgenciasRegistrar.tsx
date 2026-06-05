@@ -123,18 +123,12 @@ export default function AgenciasRegistrar() {
       <div className="min-h-screen flex items-center justify-center bg-almond px-6 py-16">
         <div className="max-w-md text-center glass-card rounded-2xl p-10 shadow-xl">
           <div className="text-5xl mb-4">✅</div>
-          <h1 className="text-3xl font-serif text-primary mb-3">Solicitud recibida</h1>
-          <p className="text-primary/70 mb-6">
-            Hemos guardado tu solicitud. El equipo de Unreal Studio Bali revisará
-            los datos y te contactará en las próximas 24-48h con los siguientes
-            pasos.
-          </p>
+          <h1 className="text-3xl font-serif text-primary mb-3">{t('agenciasRegistrar.successTitle')}</h1>
+          <p className="text-primary/70 mb-6">{t('agenciasRegistrar.successBody')}</p>
           <button
             onClick={() => navigate("/")}
             className="bg-primary text-white px-6 py-3 rounded-full font-bold"
-          >
-            Volver al inicio
-          </button>
+          >{t('agenciasRegistrar.backHome')}</button>
         </div>
       </div>
     );
@@ -143,19 +137,13 @@ export default function AgenciasRegistrar() {
   return (
     <div className="min-h-screen bg-almond px-6 py-16">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-serif text-primary mb-3">Conviértete en Listing Partner</h1>
-        <p className="text-primary/70 mb-8">
-          ¿Tienes una agencia inmobiliaria en Bali, España, Australia, o donde sea?
-          Lista nuestras propiedades en tu portfolio y vende a tus clientes. Acceso a
-          renders, walkthroughs, dossiers actualizados, planos y videos drone para que
-          vendas con todo el material y el soporte de nuestro equipo. Las condiciones del
-          programa te las detallamos tras validarte.
-        </p>
+        <h1 className="text-4xl font-serif text-primary mb-3">{t('agenciasRegistrar.title')}</h1>
+        <p className="text-primary/70 mb-8">{t('agenciasRegistrar.intro')}</p>
 
         <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-2xl p-8 shadow-sm">
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-sm font-medium text-primary">Nombre agencia *</span>
+              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.agencyName')}</span>
               <input
                 type="text" required value={form.agency_name}
                 onChange={(e) => update("agency_name", e.target.value)}
@@ -163,7 +151,7 @@ export default function AgenciasRegistrar() {
               />
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-primary">Manager / contacto principal</span>
+              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.managerName')}</span>
               <input
                 type="text" value={form.manager_name}
                 onChange={(e) => update("manager_name", e.target.value)}
@@ -174,7 +162,7 @@ export default function AgenciasRegistrar() {
 
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-sm font-medium text-primary">Email *</span>
+              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.email')}</span>
               <input
                 type="email" required value={form.email}
                 onChange={(e) => update("email", e.target.value)}
@@ -182,7 +170,7 @@ export default function AgenciasRegistrar() {
               />
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-primary">WhatsApp</span>
+              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.whatsapp')}</span>
               <input
                 type="tel" value={form.whatsapp}
                 onChange={(e) => update("whatsapp", e.target.value)}
@@ -194,7 +182,7 @@ export default function AgenciasRegistrar() {
 
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-sm font-medium text-primary">País</span>
+              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.country')}</span>
               <input
                 type="text" value={form.country}
                 onChange={(e) => update("country", e.target.value)}
@@ -203,7 +191,7 @@ export default function AgenciasRegistrar() {
               />
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-primary">Web de la agencia</span>
+              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.website')}</span>
               <input
                 type="url" value={form.website}
                 onChange={(e) => update("website", e.target.value)}
@@ -214,7 +202,7 @@ export default function AgenciasRegistrar() {
           </div>
 
           <div>
-            <span className="text-sm font-medium text-primary block mb-2">¿Qué proyectos te interesan listar?</span>
+            <span className="text-sm font-medium text-primary block mb-2">{t('agenciasRegistrar.projectsInterest')}</span>
             <div className="flex flex-wrap gap-2">
               {PROJECTS.map((p) => {
                 const checked = form.projects_interested.includes(p);
@@ -237,24 +225,24 @@ export default function AgenciasRegistrar() {
           </div>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">Volumen mensual aproximado</span>
+            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.monthlyVolume')}</span>
             <select
-              aria-label="Volumen mensual aproximado"
+              aria-label={t('agenciasRegistrar.monthlyVolume')}
               value={form.monthly_volume}
               onChange={(e) => update("monthly_volume", e.target.value)}
               className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none"
             >
-              <option value="">— Selecciona —</option>
-              <option>1-2 unidades / mes</option>
-              <option>3-5 unidades / mes</option>
-              <option>6-10 unidades / mes</option>
-              <option>10+ unidades / mes</option>
-              <option>Ad-hoc, sin volumen fijo</option>
+              <option value="">{t('agenciasRegistrar.volumeSelect')}</option>
+              <option>{t('agenciasRegistrar.vol1')}</option>
+              <option>{t('agenciasRegistrar.vol2')}</option>
+              <option>{t('agenciasRegistrar.vol3')}</option>
+              <option>{t('agenciasRegistrar.vol4')}</option>
+              <option>{t('agenciasRegistrar.vol5')}</option>
             </select>
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">Experiencia previa con Bali / inversión inmobiliaria</span>
+            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.experience')}</span>
             <textarea
               value={form.experience}
               onChange={(e) => update("experience", e.target.value)}
@@ -264,7 +252,7 @@ export default function AgenciasRegistrar() {
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">¿Cómo nos has conocido?</span>
+            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.howKnow')}</span>
             <input
               type="text" value={form.source}
               onChange={(e) => update("source", e.target.value)}
@@ -274,7 +262,7 @@ export default function AgenciasRegistrar() {
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">Notas adicionales</span>
+            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.notes')}</span>
             <textarea
               value={form.notes}
               onChange={(e) => update("notes", e.target.value)}
@@ -288,14 +276,12 @@ export default function AgenciasRegistrar() {
             disabled={submitting || !form.agency_name || !form.email}
             className="w-full bg-primary text-white py-3 rounded-lg font-bold hover:translate-y-[-2px] transition disabled:opacity-50"
           >
-            {submitting ? "Enviando…" : "Enviar solicitud"}
+            {submitting ? t('agenciasRegistrar.submitting') : t('agenciasRegistrar.submit')}
           </button>
 
           {error && <p className="text-red-600 text-sm">{error}</p>}
 
-          <p className="text-xs text-primary/50 text-center">
-            ¿Ya eres colaborador? <a href="/agencias" className="underline">Login aquí</a>.
-          </p>
+          <p className="text-xs text-primary/50 text-center">{t('agenciasRegistrar.alreadyPartner')} <a href="/agencias/login" className="underline">{t('agenciasRegistrar.loginHere')}</a>.</p>
         </form>
       </div>
     </div>
