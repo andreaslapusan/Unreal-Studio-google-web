@@ -121,7 +121,7 @@ const Contact: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">WhatsApp / Teléfono</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.phoneLabel')}</label>
                       <input
                         type="tel"
                         name="phone"
@@ -141,10 +141,10 @@ const Contact: React.FC = () => {
                             onChange={handleChange}
                             className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition appearance-none cursor-pointer bg-none"
                         >
-                          <option>Diversificar patrimonio</option>
-                          <option>Alta rentabilidad (ROI)</option>
-                          <option>Casa vacacional</option>
-                          <option>Plan de retiro</option>
+                          <option>{t('contact.reasons.diversify')}</option>
+                          <option>{t('contact.reasons.roi')}</option>
+                          <option>{t('contact.reasons.vacation')}</option>
+                          <option>{t('contact.reasons.retirement')}</option>
                         </select>
                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
                       </div>
@@ -162,11 +162,11 @@ const Contact: React.FC = () => {
                             onChange={handleChange}
                             className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition appearance-none cursor-pointer bg-none"
                          >
-                           <option>Menos de 50k</option>
-                           <option>50k - 100k</option>
-                           <option>100k - 250k</option>
-                           <option>250k - 500k</option>
-                           <option>Más de 500k</option>
+                           <option>{t('contact.budgets.under50')}</option>
+                           <option>{t('contact.budgets.b50to100')}</option>
+                           <option>{t('contact.budgets.b100to250')}</option>
+                           <option>{t('contact.budgets.b250to500')}</option>
+                           <option>{t('contact.budgets.over500')}</option>
                          </select>
                          <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
                        </div>
@@ -181,10 +181,10 @@ const Contact: React.FC = () => {
                             onChange={handleChange}
                             className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition appearance-none cursor-pointer bg-none"
                          >
-                           <option>Lo antes posible</option>
-                           <option>En 1 mes</option>
-                           <option>En 3 meses</option>
-                           <option>Solo estoy explorando</option>
+                           <option>{t('contact.tf.asap')}</option>
+                           <option>{t('contact.tf.m1')}</option>
+                           <option>{t('contact.tf.m3')}</option>
+                           <option>{t('contact.tf.exploring')}</option>
                          </select>
                          <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
                        </div>
@@ -213,7 +213,7 @@ const Contact: React.FC = () => {
                   </button>
                   
                   <p className="text-[10px] text-center text-gray-400">
-                    Al enviar, aceptas nuestra política de privacidad. Te responderemos en menos de 24h.
+                    {t('contact.privacyNote')}
                   </p>
                 </form>
              </div>
@@ -223,7 +223,7 @@ const Contact: React.FC = () => {
             {/* Información de contacto estática */}
             <div className="bg-[#EBE0D3] rounded-[2.5rem] p-8 border border-primary/5">
               <h3 className="text-xl font-bold text-primary mb-6 flex items-center gap-2">
-                <span className="material-symbols-outlined text-orange-600">bolt</span> Canales Directos
+                <span className="material-symbols-outlined text-orange-600">bolt</span> {t('contact.directChannels')}
               </h3>
               <div className="space-y-4">
                 <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="mailto:hola@unrealstudio.com">
@@ -231,7 +231,7 @@ const Contact: React.FC = () => {
                     <span className="material-symbols-outlined text-xl">mail</span>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-500">Correo Electrónico</p>
+                    <p className="text-[10px] uppercase font-bold text-gray-500">{t('contact.emailLabel')}</p>
                     <span className="font-medium text-primary">hola@unrealstudio.com</span>
                   </div>
                 </a>
@@ -240,8 +240,8 @@ const Contact: React.FC = () => {
                     <span className="material-symbols-outlined text-xl">chat</span>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-500">Soporte General</p>
-                    <span className="font-medium text-primary">Chat Directo</span>
+                    <p className="text-[10px] uppercase font-bold text-gray-500">{t('contact.generalSupport')}</p>
+                    <span className="font-medium text-primary">{t('contact.directChat')}</span>
                   </div>
                 </a>
               </div>
@@ -252,7 +252,7 @@ const Contact: React.FC = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h4 className="font-bold text-xl text-primary">Madrid, España</h4>
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Sede Central</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">{t('contact.hqLabel')}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm">
                   <img alt="Madrid" className="w-full h-full object-cover grayscale opacity-80" src="https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&q=80&w=200&h=200" />
@@ -267,7 +267,7 @@ const Contact: React.FC = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                Ver ubicación <span className="material-symbols-outlined text-sm ml-1">north_east</span>
+                {t('contact.viewLocation')} <span className="material-symbols-outlined text-sm ml-1">north_east</span>
               </a>
             </div>
 
@@ -276,7 +276,7 @@ const Contact: React.FC = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h4 className="font-bold text-xl text-primary">Bali, Indonesia</h4>
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Operaciones Asia</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">{t('contact.asiaLabel')}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm">
                   <img alt="Bali" className="w-full h-full object-cover grayscale opacity-80" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=200&h=200" />
@@ -291,7 +291,7 @@ const Contact: React.FC = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                Ver ubicación <span className="material-symbols-outlined text-sm ml-1">north_east</span>
+                {t('contact.viewLocation')} <span className="material-symbols-outlined text-sm ml-1">north_east</span>
               </a>
             </div>
           </div>

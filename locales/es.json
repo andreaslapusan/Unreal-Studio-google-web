@@ -122,6 +122,28 @@
       "month1to3": "1-3 meses",
       "month3to6": "3-6 meses",
       "exploring": "Estoy explorando opciones"
+    },
+    "phoneLabel": "WhatsApp / Teléfono",
+    "privacyNote": "Al enviar, aceptas nuestra política de privacidad. Te responderemos en menos de 24h.",
+    "directChannels": "Canales Directos",
+    "emailLabel": "Correo Electrónico",
+    "generalSupport": "Soporte General",
+    "directChat": "Chat Directo",
+    "hqLabel": "Sede Central",
+    "asiaLabel": "Operaciones Asia",
+    "viewLocation": "Ver ubicación",
+    "budgets": {
+      "under50": "Menos de 50k",
+      "b50to100": "50k - 100k",
+      "b100to250": "100k - 250k",
+      "b250to500": "250k - 500k",
+      "over500": "Más de 500k"
+    },
+    "tf": {
+      "asap": "Lo antes posible",
+      "m1": "En 1 mes",
+      "m3": "En 3 meses",
+      "exploring": "Solo estoy explorando"
     }
   },
   "bookingWidget": {

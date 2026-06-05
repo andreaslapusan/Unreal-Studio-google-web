@@ -122,6 +122,28 @@
       "month1to3": "1-3 luni",
       "month3to6": "3-6 luni",
       "exploring": "Explorez opțiuni"
+    },
+    "phoneLabel": "WhatsApp / Telefon",
+    "privacyNote": "Prin trimitere, accepți politica noastră de confidențialitate. Răspundem în mai puțin de 24h.",
+    "directChannels": "Canale directe",
+    "emailLabel": "Email",
+    "generalSupport": "Suport general",
+    "directChat": "Chat direct",
+    "hqLabel": "Sediu central",
+    "asiaLabel": "Operațiuni Asia",
+    "viewLocation": "Vezi locația",
+    "budgets": {
+      "under50": "Sub 50k",
+      "b50to100": "50k - 100k",
+      "b100to250": "100k - 250k",
+      "b250to500": "250k - 500k",
+      "over500": "Peste 500k"
+    },
+    "tf": {
+      "asap": "Cât mai curând posibil",
+      "m1": "În 1 lună",
+      "m3": "În 3 luni",
+      "exploring": "Doar explorez"
     }
   },
   "bookingWidget": {
