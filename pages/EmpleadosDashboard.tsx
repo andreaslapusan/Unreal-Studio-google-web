@@ -17,7 +17,20 @@ import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
 import VacationCalendar from '../components/VacationCalendar';
 
-type FichajeType = 'check_in' | 'check_out';
+type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
+
+const FICHAJE_LABEL: Record<FichajeType, string> = {
+  check_in: 'Entrada',
+  break_start: 'Inicio pausa',
+  break_end: 'Fin pausa',
+  check_out: 'Salida',
+};
+const FICHAJE_MSG: Record<FichajeType, string> = {
+  check_in: '¡Entrada registrada! Buen trabajo 👷',
+  break_start: 'Pausa iniciada 🍽️ Buen provecho',
+  break_end: 'Pausa terminada, a seguir 💪',
+  check_out: '¡Salida registrada! Hasta luego 👋',
+};
 
 interface TodayRow {
   type: FichajeType;
@@ -133,13 +146,19 @@ const EmpleadosDashboard: React.FC = () => {
   const captureAndSubmit = async () => {
     const video = videoRef.current;
     if (!video || !user || !capture) return;
+    // La foto solo sirve para identificar el sitio (no calidad): la reducimos a
+    // máx 720px de ancho y calidad baja para que ocupe poquísimo en Supabase.
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth || 720;
-    canvas.height = video.videoHeight || 960;
+    const MAX_W = 720;
+    const vw = video.videoWidth || 720;
+    const vh = video.videoHeight || 960;
+    const scale = Math.min(1, MAX_W / vw);
+    canvas.width = Math.round(vw * scale);
+    canvas.height = Math.round(vh * scale);
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.82));
+    const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.45));
     if (!blob) {
       setToast({ ok: false, msg: 'No se pudo capturar la foto. Reintenta.' });
       return;
@@ -165,10 +184,7 @@ const EmpleadosDashboard: React.FC = () => {
         client_timestamp: now.toISOString(),
       });
       if (error) throw error;
-      setToast({
-        ok: true,
-        msg: capture === 'check_in' ? '¡Entrada registrada! Buen trabajo 👷' : '¡Salida registrada! Hasta luego 👋',
-      });
+      setToast({ ok: true, msg: FICHAJE_MSG[capture] });
       setCapture(null);
       await loadToday();
     } catch {
@@ -186,8 +202,13 @@ const EmpleadosDashboard: React.FC = () => {
     return () => clearTimeout(t);
   }, [toast]);
 
-  const lastIn = [...today].reverse().find((r) => r.type === 'check_in');
-  const lastOut = [...today].reverse().find((r) => r.type === 'check_out');
+  const lastOf = (t: FichajeType) => [...today].reverse().find((r) => r.type === t);
+  const lastIn = lastOf('check_in');
+  const lastOut = lastOf('check_out');
+  const lastBreakStart = lastOf('break_start');
+  const lastBreakEnd = lastOf('break_end');
+  // Si hay inicio de pausa más reciente que su fin (o no hay fin), está EN pausa.
+  const onBreak = !!lastBreakStart && (!lastBreakEnd || new Date(lastBreakStart.created_at) > new Date(lastBreakEnd.created_at));
 
   if (loading || !user) {
     return (
@@ -224,7 +245,12 @@ const EmpleadosDashboard: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-primary/5 mb-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-3">Hoy</p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Hoy</p>
+            {onBreak && (
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-1 rounded-full">En pausa 🍽️</span>
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-primary/50 font-bold mb-1">Entrada</p>
@@ -235,9 +261,19 @@ const EmpleadosDashboard: React.FC = () => {
               <p className="text-2xl font-serif text-primary">{lastOut ? fmtTime(lastOut.created_at) : '—'}</p>
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-primary/5">
+            <div>
+              <p className="text-xs text-primary/50 font-bold mb-1">Inicio pausa</p>
+              <p className="text-lg font-serif text-primary">{lastBreakStart ? fmtTime(lastBreakStart.created_at) : '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs text-primary/50 font-bold mb-1">Fin pausa</p>
+              <p className="text-lg font-serif text-primary">{lastBreakEnd ? fmtTime(lastBreakEnd.created_at) : '—'}</p>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-3">
           <button
             onClick={() => startCapture('check_in')}
             className="bg-green-600 text-white rounded-3xl py-6 font-bold uppercase tracking-widest text-sm shadow-lg hover:bg-green-700 transition flex items-center justify-center gap-3"
@@ -245,6 +281,22 @@ const EmpleadosDashboard: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">login</span>
             Check-in (Entrada)
           </button>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => startCapture('break_start')}
+              className="bg-amber-500 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-600 transition flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-lg">lunch_dining</span>
+              Inicio pausa
+            </button>
+            <button
+              onClick={() => startCapture('break_end')}
+              className="bg-amber-600 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-700 transition flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-lg">work_history</span>
+              Fin pausa
+            </button>
+          </div>
           <button
             onClick={() => startCapture('check_out')}
             className="bg-primary text-white rounded-3xl py-6 font-bold uppercase tracking-widest text-sm shadow-lg hover:bg-black transition flex items-center justify-center gap-3"
@@ -255,7 +307,7 @@ const EmpleadosDashboard: React.FC = () => {
         </div>
 
         <p className="text-center text-xs text-primary/40 mt-5">
-          Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas.
+          Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas. Si olvidas marcar algo, puedes ficharlo igualmente cuando quieras.
         </p>
 
         {/* Calendario de vacaciones del equipo (visible para todos) */}
@@ -292,7 +344,7 @@ const EmpleadosDashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black flex flex-col">
           <div className="flex items-center justify-between p-4 text-white">
             <span className="font-bold uppercase tracking-widest text-xs">
-              {capture === 'check_in' ? 'Entrada' : 'Salida'} · Haz la foto
+              {FICHAJE_LABEL[capture]} · Haz la foto
             </span>
             <button onClick={cancelCapture} aria-label="Cerrar" disabled={busy}>
               <span className="material-symbols-outlined">close</span>
