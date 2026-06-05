@@ -6,6 +6,7 @@ import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import ClientUnitsSection from '../components/ClientUnitsSection';
 
 const CLIENT_GUIDE_STEPS = [
   { title: "Tu panel de inversiones", text: "Aquí verás un resumen de todas tus inversiones: el total invertido (convertido a tu divisa preferida), número de proyectos activos, estado general y rentabilidad media prevista." },
@@ -594,6 +595,7 @@ const ClientDashboard: React.FC = () => {
       )}
 
       <main className="max-w-6xl mx-auto px-6 py-12">
+        {client.id && <ClientUnitsSection clientId={client.id} />}
         {/* Resumen */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
