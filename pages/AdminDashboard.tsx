@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, CURRENCIES } from '../constants';
 import { Project, AppConfig, BlogPost, User, Client, ClientProject } from '../types';
@@ -7,7 +7,11 @@ import { useCurrency } from '../App';
 import { supabase, uploadImage, getImageUrl, parseJsonField } from '../lib/supabase';
 import Footer from '../components/Footer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import AdminSidebar from '../components/AdminSidebar';
 import { translateStatus } from '../lib/statusI18n';
+
+type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees';
+const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees'];
 
 const GUIDE_STEPS = [
   { 
@@ -59,7 +63,12 @@ const AMENITIES_LIST = [
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
   
   const { currency, setCurrency, formatPrice } = useCurrency();
-  const [activeView, setActiveView] = useState<'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees'>('projects');
+  // La vista activa vive en la URL (?view=) para que el menú lateral (presente
+  // en todas las páginas admin) navegue entre secciones de forma consistente.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewParam = searchParams.get('view') as AdminView | null;
+  const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) ? viewParam : 'projects';
+  const setActiveView = (v: AdminView) => setSearchParams({ view: v });
   const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean }>>([]);
   const loadEmployees = useCallback(async () => {
     const { data } = await supabase
@@ -289,10 +298,14 @@ const AMENITIES_LIST = [
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Limpiar token legacy + cerrar sesión de Supabase Auth (el admin entra por
+    // Supabase Auth, no por el token legacy → sin signOut la sesión persistía y
+    // "cerrar sesión" no hacía nada). Redirect DURO para garantizar estado limpio.
     localStorage.removeItem('_ust_sh_');
     sessionStorage.removeItem('_ust_sh_');
-    navigate('/admin/login');
+    try { await supabase.auth.signOut(); } catch { /* ignore */ }
+    window.location.href = '/admin/login';
   };
 
   const filteredAdminBlogs = useMemo(() => {
@@ -829,8 +842,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-left overflow-x-hidden relative">
-      
+    <div className="min-h-screen bg-gray-50 flex font-sans text-left overflow-x-hidden relative">
+      <AdminSidebar />
+      <div className="flex-1 flex flex-col min-w-0">
+
       {/* 5-STEP CENTERED GUIDE OVERLAY */}
       {walkthroughStep !== null && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
@@ -920,7 +935,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </header>
 
       <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
-        <div className="flex space-x-6 mb-12 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide">
+        <div className="md:hidden flex space-x-6 mb-12 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide">
           {['projects', 'blogs', 'clients', 'users', 'employees', 'config', 'calendar'].map((v) => (
             <button 
               key={v}
@@ -1740,6 +1755,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 )}
 
     <Footer />
+      </div>
     </div>
   );
 };

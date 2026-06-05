@@ -40,6 +40,7 @@ const EmpleadosDashboard = lazy(() => import('./pages/EmpleadosDashboard'));
 const AdminPortalManager = lazy(() => import('./pages/AdminPortalManager'));
 const AdminAgencias = lazy(() => import('./pages/AdminAgencias'));
 const AgencyPack = lazy(() => import('./pages/AgencyPack'));
+import AdminShell from './components/AdminShell';
 import { AuthProvider, useAuth } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
@@ -226,9 +227,9 @@ const App: React.FC = () => {
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/marketing" element={<AdminMarketing />} />
-            <Route path="/admin/portal" element={<AdminPortalManager />} />
-            <Route path="/admin/agencias" element={<ProtectedRoute><AdminAgencias /></ProtectedRoute>} />
+            <Route path="/admin/marketing" element={<AdminShell><AdminMarketing /></AdminShell>} />
+            <Route path="/admin/portal" element={<AdminShell><AdminPortalManager /></AdminShell>} />
+            <Route path="/admin/agencias" element={<ProtectedRoute><AdminShell><AdminAgencias /></AdminShell></ProtectedRoute>} />
             <Route path="/agencias/:slug" element={<AgencyPack />} />
             <Route path="/cliente" element={<ClientLogin />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />
