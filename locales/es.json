@@ -900,5 +900,108 @@
     "s6H": "6. Jurisdicción",
     "s6P": "Cualquier disputa que surja del uso de este sitio web estará sujeta a las leyes de España y a la jurisdicción exclusiva de los tribunales de Madrid.",
     "copyright": "Copyright © 2026 Unreal Studio Madrid. Todos los derechos reservados."
+  },
+  "empleados": {
+    "header": {
+      "subtitleFallback": "Team",
+      "instructions": "Instrucciones"
+    },
+    "fichaje": {
+      "label": {
+        "check_in": "Entrada",
+        "break_start": "Inicio pausa",
+        "break_end": "Fin pausa",
+        "check_out": "Salida"
+      },
+      "msg": {
+        "check_in": "¡Entrada registrada! Buen trabajo 👷",
+        "break_start": "Pausa iniciada 🍽️ Buen provecho",
+        "break_end": "Pausa terminada, a seguir 💪",
+        "check_out": "¡Salida registrada! Hasta luego 👋"
+      }
+    },
+    "today": {
+      "title": "Hoy",
+      "onBreak": "En pausa 🍽️",
+      "checkIn": "Entrada",
+      "checkOut": "Salida",
+      "breakStart": "Inicio pausa",
+      "breakEnd": "Fin pausa"
+    },
+    "buttons": {
+      "checkIn": "Check-in (Entrada)",
+      "breakStart": "Inicio pausa",
+      "breakEnd": "Fin pausa",
+      "checkOut": "Check-out (Salida)"
+    },
+    "help": "Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas. Si olvidas marcar algo, puedes ficharlo igualmente cuando quieras.",
+    "reports": {
+      "title": "Reportes de obra",
+      "subtitle": "Sube el avance por proyecto"
+    },
+    "camera": {
+      "takePhotoSuffix": "Haz la foto",
+      "close": "Cerrar",
+      "takePhotoAria": "Hacer foto y fichar",
+      "saving": "Guardando fichaje…",
+      "errors": {
+        "blockedTitle": "La cámara está bloqueada",
+        "blockedBody": "Tu navegador no nos deja usar la cámara. Pulsa el icono de cámara 🎥 (o el candado 🔒) a la izquierda de la barra de direcciones → \"Permitir cámara\", recarga la página y reintenta. En Mac: Ajustes del Sistema → Privacidad → Cámara → activa Chrome.",
+        "busyTitle": "La cámara está ocupada",
+        "busyBody": "Otra app o pestaña está usando la cámara (Zoom, Meet, FaceTime, otra pestaña…). Ciérralas y pulsa Reintentar.",
+        "notFoundTitle": "No se detecta cámara",
+        "notFoundBody": "Este dispositivo no tiene cámara disponible. Haz el fichaje desde tu móvil, que sí tiene cámara.",
+        "genericTitle": "No se pudo abrir la cámara",
+        "genericBody": "Cierra otras apps que usen la cámara, recarga la página y reintenta. Si sigue, prueba desde el móvil.",
+        "retry": "Reintentar",
+        "close": "Cerrar"
+      }
+    },
+    "toast": {
+      "photoFailed": "No se pudo capturar la foto. Reintenta.",
+      "saveFailed": "No se pudo guardar el fichaje. Reintenta."
+    },
+    "instructions": {
+      "title": "Cómo fichar",
+      "close": "Cerrar",
+      "items": [
+        "Al llegar a tu lugar de trabajo (oficina, obra, proyecto, cliente o primera reunión del día) pulsa <b>Check-in</b> y haz una foto del sitio.",
+        "Al terminar (salir de la oficina o de la última obra) pulsa <b>Check-out</b> y haz otra foto.",
+        "Es de 2 segundos: pulsas, foto y ya. La hora y la ubicación se guardan automáticamente.",
+        "Horario habitual 10:00–18:00. Hazlo cada día que trabajes (también sábados/domingos si vas)."
+      ]
+    }
+  },
+  "vacaciones": {
+    "sectionLabel": "Equipo",
+    "title": "Calendario de vacaciones",
+    "request": "Solicitar",
+    "close": "Cerrar",
+    "types": {
+      "vacaciones": "Vacaciones",
+      "baja": "Baja",
+      "personal": "Personal"
+    },
+    "status": {
+      "pendiente": "Pendiente",
+      "aprobada": "Aprobada",
+      "rechazada": "Rechazada"
+    },
+    "form": {
+      "from": "Desde",
+      "to": "Hasta",
+      "type": "Tipo",
+      "note": "Nota (opcional)",
+      "notePlaceholder": "Motivo o detalle…",
+      "submit": "Enviar solicitud"
+    },
+    "empty": "Aún no hay vacaciones registradas. Sé el primero en solicitar.",
+    "you": "(TÚ)",
+    "errors": {
+      "loadFailed": "No se pudieron cargar las vacaciones.",
+      "datesRequired": "Indica fecha de inicio y fin.",
+      "endBeforeStart": "La fecha de fin no puede ser anterior a la de inicio.",
+      "submitFailed": "No se pudo enviar la solicitud. Reintenta."
+    }
   }
 }

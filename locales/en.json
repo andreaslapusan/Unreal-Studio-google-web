@@ -900,5 +900,108 @@
     "s6H": "6. Jurisdiction",
     "s6P": "Any dispute arising from the use of this website shall be subject to the laws of Spain and to the exclusive jurisdiction of the courts of Madrid.",
     "copyright": "Copyright © 2026 Unreal Studio Madrid. All rights reserved."
+  },
+  "empleados": {
+    "header": {
+      "subtitleFallback": "Team",
+      "instructions": "Instructions"
+    },
+    "fichaje": {
+      "label": {
+        "check_in": "Clock in",
+        "break_start": "Break start",
+        "break_end": "Break end",
+        "check_out": "Clock out"
+      },
+      "msg": {
+        "check_in": "Clock-in recorded! Nice work 👷",
+        "break_start": "Break started 🍽️ Enjoy your meal",
+        "break_end": "Break over, back to it 💪",
+        "check_out": "Clock-out recorded! See you later 👋"
+      }
+    },
+    "today": {
+      "title": "Today",
+      "onBreak": "On break 🍽️",
+      "checkIn": "Clock in",
+      "checkOut": "Clock out",
+      "breakStart": "Break start",
+      "breakEnd": "Break end"
+    },
+    "buttons": {
+      "checkIn": "Clock in (Entry)",
+      "breakStart": "Break start",
+      "breakEnd": "Break end",
+      "checkOut": "Clock out (Exit)"
+    },
+    "help": "Tap, take a photo of where you are and you're done. The time and location are saved automatically. If you forget to log something, you can still clock it in whenever you want.",
+    "reports": {
+      "title": "Site reports",
+      "subtitle": "Upload progress by project"
+    },
+    "camera": {
+      "takePhotoSuffix": "Take the photo",
+      "close": "Close",
+      "takePhotoAria": "Take photo and clock in",
+      "saving": "Saving entry…",
+      "errors": {
+        "blockedTitle": "The camera is blocked",
+        "blockedBody": "Your browser won't let us use the camera. Tap the camera icon 🎥 (or the padlock 🔒) to the left of the address bar → \"Allow camera\", reload the page and try again. On Mac: System Settings → Privacy → Camera → enable Chrome.",
+        "busyTitle": "The camera is busy",
+        "busyBody": "Another app or tab is using the camera (Zoom, Meet, FaceTime, another tab…). Close them and tap Try again.",
+        "notFoundTitle": "No camera detected",
+        "notFoundBody": "This device has no camera available. Clock in from your phone, which does have a camera.",
+        "genericTitle": "The camera could not be opened",
+        "genericBody": "Close other apps using the camera, reload the page and try again. If it persists, try from your phone.",
+        "retry": "Try again",
+        "close": "Close"
+      }
+    },
+    "toast": {
+      "photoFailed": "Couldn't capture the photo. Try again.",
+      "saveFailed": "Couldn't save the entry. Try again."
+    },
+    "instructions": {
+      "title": "How to clock in",
+      "close": "Close",
+      "items": [
+        "When you arrive at your workplace (office, site, project, client or the first meeting of the day) tap <b>Check-in</b> and take a photo of the spot.",
+        "When you finish (leaving the office or the last site) tap <b>Check-out</b> and take another photo.",
+        "It takes 2 seconds: tap, photo, done. The time and location are saved automatically.",
+        "Usual hours 10:00–18:00. Do it every day you work (also Saturdays/Sundays if you go in)."
+      ]
+    }
+  },
+  "vacaciones": {
+    "sectionLabel": "Team",
+    "title": "Vacation calendar",
+    "request": "Request",
+    "close": "Close",
+    "types": {
+      "vacaciones": "Vacation",
+      "baja": "Sick leave",
+      "personal": "Personal"
+    },
+    "status": {
+      "pendiente": "Pending",
+      "aprobada": "Approved",
+      "rechazada": "Rejected"
+    },
+    "form": {
+      "from": "From",
+      "to": "To",
+      "type": "Type",
+      "note": "Note (optional)",
+      "notePlaceholder": "Reason or detail…",
+      "submit": "Send request"
+    },
+    "empty": "No vacations recorded yet. Be the first to request one.",
+    "you": "(YOU)",
+    "errors": {
+      "loadFailed": "Could not load the vacations.",
+      "datesRequired": "Enter a start and end date.",
+      "endBeforeStart": "The end date can't be earlier than the start date.",
+      "submitFailed": "Couldn't send the request. Try again."
+    }
   }
 }

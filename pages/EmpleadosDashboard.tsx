@@ -12,6 +12,7 @@
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
@@ -20,19 +21,6 @@ import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 
 type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
-
-const FICHAJE_LABEL: Record<FichajeType, string> = {
-  check_in: 'Entrada',
-  break_start: 'Inicio pausa',
-  break_end: 'Fin pausa',
-  check_out: 'Salida',
-};
-const FICHAJE_MSG: Record<FichajeType, string> = {
-  check_in: '¡Entrada registrada! Buen trabajo 👷',
-  break_start: 'Pausa iniciada 🍽️ Buen provecho',
-  break_end: 'Pausa terminada, a seguir 💪',
-  check_out: '¡Salida registrada! Hasta luego 👋',
-};
 
 interface TodayRow {
   type: FichajeType;
@@ -49,7 +37,10 @@ function fmtTime(iso: string): string {
 
 const EmpleadosDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, loading, signOut } = useAuth();
+  const fichajeLabel = (type: FichajeType) => t(`empleados.fichaje.label.${type}`);
+  const fichajeMsg = (type: FichajeType) => t(`empleados.fichaje.msg.${type}`);
 
   const [today, setToday] = useState<TodayRow[]>([]);
   const [canUploadReports, setCanUploadReports] = useState(false);
@@ -145,26 +136,26 @@ const EmpleadosDashboard: React.FC = () => {
       if (name === 'NotAllowedError' || name === 'SecurityError') {
         setCameraError({
           type,
-          title: 'La cámara está bloqueada',
-          body: 'Tu navegador no nos deja usar la cámara. Pulsa el icono de cámara 🎥 (o el candado 🔒) a la izquierda de la barra de direcciones → "Permitir cámara", recarga la página y reintenta. En Mac: Ajustes del Sistema → Privacidad → Cámara → activa Chrome.',
+          title: t('empleados.camera.errors.blockedTitle'),
+          body: t('empleados.camera.errors.blockedBody'),
         });
       } else if (name === 'NotReadableError' || name === 'AbortError') {
         setCameraError({
           type,
-          title: 'La cámara está ocupada',
-          body: 'Otra app o pestaña está usando la cámara (Zoom, Meet, FaceTime, otra pestaña…). Ciérralas y pulsa Reintentar.',
+          title: t('empleados.camera.errors.busyTitle'),
+          body: t('empleados.camera.errors.busyBody'),
         });
       } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
         setCameraError({
           type,
-          title: 'No se detecta cámara',
-          body: 'Este dispositivo no tiene cámara disponible. Haz el fichaje desde tu móvil, que sí tiene cámara.',
+          title: t('empleados.camera.errors.notFoundTitle'),
+          body: t('empleados.camera.errors.notFoundBody'),
         });
       } else {
         setCameraError({
           type,
-          title: 'No se pudo abrir la cámara',
-          body: 'Cierra otras apps que usen la cámara, recarga la página y reintenta. Si sigue, prueba desde el móvil.',
+          title: t('empleados.camera.errors.genericTitle'),
+          body: t('empleados.camera.errors.genericBody'),
         });
       }
       setCapture(null);
@@ -194,7 +185,7 @@ const EmpleadosDashboard: React.FC = () => {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.45));
     if (!blob) {
-      setToast({ ok: false, msg: 'No se pudo capturar la foto. Reintenta.' });
+      setToast({ ok: false, msg: t('empleados.toast.photoFailed') });
       return;
     }
     stopCamera();
@@ -218,11 +209,11 @@ const EmpleadosDashboard: React.FC = () => {
         client_timestamp: now.toISOString(),
       });
       if (error) throw error;
-      setToast({ ok: true, msg: FICHAJE_MSG[capture] });
+      setToast({ ok: true, msg: fichajeMsg(capture) });
       setCapture(null);
       await loadToday();
     } catch {
-      setToast({ ok: false, msg: 'No se pudo guardar el fichaje. Reintenta.' });
+      setToast({ ok: false, msg: t('empleados.toast.saveFailed') });
       setCapture(null);
     } finally {
       setBusy(false);
@@ -255,12 +246,12 @@ const EmpleadosDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-almond">
       <PortalHeader
-        subtitle={user.email ?? 'Team'}
+        subtitle={user.email ?? t('empleados.header.subtitleFallback')}
         onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/empleados'; }}
         extra={
           <button
             onClick={() => setShowInstructions(true)}
-            aria-label="Instrucciones"
+            aria-label={t('empleados.header.instructions')}
             className="w-9 h-9 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition"
           >
             <span className="material-symbols-outlined text-[20px]">info</span>
@@ -271,28 +262,28 @@ const EmpleadosDashboard: React.FC = () => {
       <div className="max-w-md mx-auto">
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-primary/5 mb-6">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Hoy</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">{t('empleados.today.title')}</p>
             {onBreak && (
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-1 rounded-full">En pausa 🍽️</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-1 rounded-full">{t('empleados.today.onBreak')}</span>
             )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-primary/50 font-bold mb-1">Entrada</p>
+              <p className="text-xs text-primary/50 font-bold mb-1">{t('empleados.today.checkIn')}</p>
               <p className="text-2xl font-serif text-primary">{lastIn ? fmtTime(lastIn.created_at) : '—'}</p>
             </div>
             <div>
-              <p className="text-xs text-primary/50 font-bold mb-1">Salida</p>
+              <p className="text-xs text-primary/50 font-bold mb-1">{t('empleados.today.checkOut')}</p>
               <p className="text-2xl font-serif text-primary">{lastOut ? fmtTime(lastOut.created_at) : '—'}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-primary/5">
             <div>
-              <p className="text-xs text-primary/50 font-bold mb-1">Inicio pausa</p>
+              <p className="text-xs text-primary/50 font-bold mb-1">{t('empleados.today.breakStart')}</p>
               <p className="text-lg font-serif text-primary">{lastBreakStart ? fmtTime(lastBreakStart.created_at) : '—'}</p>
             </div>
             <div>
-              <p className="text-xs text-primary/50 font-bold mb-1">Fin pausa</p>
+              <p className="text-xs text-primary/50 font-bold mb-1">{t('empleados.today.breakEnd')}</p>
               <p className="text-lg font-serif text-primary">{lastBreakEnd ? fmtTime(lastBreakEnd.created_at) : '—'}</p>
             </div>
           </div>
@@ -304,7 +295,7 @@ const EmpleadosDashboard: React.FC = () => {
             className="bg-green-600 text-white rounded-3xl py-6 font-bold uppercase tracking-widest text-sm shadow-lg hover:bg-green-700 transition flex items-center justify-center gap-3"
           >
             <span className="material-symbols-outlined text-2xl">login</span>
-            Check-in (Entrada)
+            {t('empleados.buttons.checkIn')}
           </button>
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -312,14 +303,14 @@ const EmpleadosDashboard: React.FC = () => {
               className="bg-amber-500 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-600 transition flex items-center justify-center gap-2"
             >
               <span className="text-base">🍽️</span>
-              Inicio pausa
+              {t('empleados.buttons.breakStart')}
             </button>
             <button
               onClick={() => startCapture('break_end')}
               className="bg-amber-600 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-700 transition flex items-center justify-center gap-2"
             >
               <span className="text-base">▶️</span>
-              Fin pausa
+              {t('empleados.buttons.breakEnd')}
             </button>
           </div>
           <button
@@ -327,12 +318,12 @@ const EmpleadosDashboard: React.FC = () => {
             className="bg-primary text-white rounded-3xl py-6 font-bold uppercase tracking-widest text-sm shadow-lg hover:bg-black transition flex items-center justify-center gap-3"
           >
             <span className="material-symbols-outlined text-2xl">logout</span>
-            Check-out (Salida)
+            {t('empleados.buttons.checkOut')}
           </button>
         </div>
 
         <p className="text-center text-xs text-primary/40 mt-5">
-          Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas. Si olvidas marcar algo, puedes ficharlo igualmente cuando quieras.
+          {t('empleados.help')}
         </p>
 
         {/* Calendario de vacaciones del equipo (visible para todos) */}
@@ -355,8 +346,8 @@ const EmpleadosDashboard: React.FC = () => {
             >
               <span className="material-symbols-outlined text-primary">construction</span>
               <span className="flex-1">
-                <span className="block font-bold text-primary text-sm">Reportes de obra</span>
-                <span className="block text-xs text-primary/50">Sube el avance por proyecto</span>
+                <span className="block font-bold text-primary text-sm">{t('empleados.reports.title')}</span>
+                <span className="block text-xs text-primary/50">{t('empleados.reports.subtitle')}</span>
               </span>
               <span className="material-symbols-outlined text-primary/30">chevron_right</span>
             </button>
@@ -369,9 +360,9 @@ const EmpleadosDashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black flex flex-col">
           <div className="flex items-center justify-between p-4 text-white">
             <span className="font-bold uppercase tracking-widest text-xs">
-              {FICHAJE_LABEL[capture]} · Haz la foto
+              {fichajeLabel(capture)} · {t('empleados.camera.takePhotoSuffix')}
             </span>
-            <button onClick={cancelCapture} aria-label="Cerrar" disabled={busy}>
+            <button onClick={cancelCapture} aria-label={t('empleados.camera.close')} disabled={busy}>
               <span className="material-symbols-outlined">close</span>
             </button>
           </div>
@@ -383,12 +374,12 @@ const EmpleadosDashboard: React.FC = () => {
               onClick={captureAndSubmit}
               disabled={busy}
               className="w-20 h-20 rounded-full bg-white border-4 border-white/40 shadow-xl active:scale-95 transition disabled:opacity-60 flex items-center justify-center"
-              aria-label="Hacer foto y fichar"
+              aria-label={t('empleados.camera.takePhotoAria')}
             >
               {busy && <span className="material-symbols-outlined animate-spin text-2xl text-primary">refresh</span>}
             </button>
           </div>
-          {busy && <p className="text-center text-white/80 text-sm pb-6">Guardando fichaje…</p>}
+          {busy && <p className="text-center text-white/80 text-sm pb-6">{t('empleados.camera.saving')}</p>}
         </div>
       )}
 
@@ -397,16 +388,26 @@ const EmpleadosDashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center p-4" onClick={() => setShowInstructions(false)}>
           <div className="bg-white rounded-3xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-serif text-primary">Cómo fichar</h2>
-              <button onClick={() => setShowInstructions(false)} aria-label="Cerrar">
+              <h2 className="text-xl font-serif text-primary">{t('empleados.instructions.title')}</h2>
+              <button onClick={() => setShowInstructions(false)} aria-label={t('empleados.instructions.close')}>
                 <span className="material-symbols-outlined text-primary/50">close</span>
               </button>
             </div>
             <ul className="space-y-3 text-sm text-primary/70">
-              <li className="flex gap-2"><span className="material-symbols-outlined text-green-600 text-base">login</span> Al llegar a tu lugar de trabajo (oficina, obra, proyecto, cliente o primera reunión del día) pulsa <b>Check-in</b> y haz una foto del sitio.</li>
-              <li className="flex gap-2"><span className="material-symbols-outlined text-primary text-base">logout</span> Al terminar (salir de la oficina o de la última obra) pulsa <b>Check-out</b> y haz otra foto.</li>
-              <li className="flex gap-2"><span className="material-symbols-outlined text-base">bolt</span> Es de 2 segundos: pulsas, foto y ya. La hora y la ubicación se guardan automáticamente.</li>
-              <li className="flex gap-2"><span className="text-base">⏰</span> Horario habitual 10:00–18:00. Hazlo cada día que trabajes (también sábados/domingos si vas).</li>
+              {(t('empleados.instructions.items', { returnObjects: true }) as string[]).map((item, i) => {
+                const icons = [
+                  <span key="i" className="material-symbols-outlined text-green-600 text-base">login</span>,
+                  <span key="i" className="material-symbols-outlined text-primary text-base">logout</span>,
+                  <span key="i" className="material-symbols-outlined text-base">bolt</span>,
+                  <span key="i" className="text-base">⏰</span>,
+                ];
+                return (
+                  <li key={i} className="flex gap-2">
+                    {icons[i]}{' '}
+                    <span dangerouslySetInnerHTML={{ __html: item }} />
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

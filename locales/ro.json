@@ -900,5 +900,108 @@
     "s6H": "6. Jurisdicție",
     "s6P": "Orice litigiu care decurge din utilizarea acestui site web va fi supus legilor Spaniei și jurisdicției exclusive a instanțelor din Madrid.",
     "copyright": "Copyright © 2026 Unreal Studio Madrid. Toate drepturile rezervate."
+  },
+  "empleados": {
+    "header": {
+      "subtitleFallback": "Echipă",
+      "instructions": "Instrucțiuni"
+    },
+    "fichaje": {
+      "label": {
+        "check_in": "Intrare",
+        "break_start": "Început pauză",
+        "break_end": "Sfârșit pauză",
+        "check_out": "Ieșire"
+      },
+      "msg": {
+        "check_in": "Intrare înregistrată! Treabă bună 👷",
+        "break_start": "Pauză începută 🍽️ Poftă bună",
+        "break_end": "Pauza s-a terminat, continuăm 💪",
+        "check_out": "Ieșire înregistrată! Pe curând 👋"
+      }
+    },
+    "today": {
+      "title": "Astăzi",
+      "onBreak": "În pauză 🍽️",
+      "checkIn": "Intrare",
+      "checkOut": "Ieșire",
+      "breakStart": "Început pauză",
+      "breakEnd": "Sfârșit pauză"
+    },
+    "buttons": {
+      "checkIn": "Check-in (Intrare)",
+      "breakStart": "Început pauză",
+      "breakEnd": "Sfârșit pauză",
+      "checkOut": "Check-out (Ieșire)"
+    },
+    "help": "Apasă, fă o poză cu locul unde ești și gata. Ora și locația se salvează singure. Dacă uiți să marchezi ceva, poți pontați oricând dorești.",
+    "reports": {
+      "title": "Rapoarte de șantier",
+      "subtitle": "Încarcă progresul pe proiect"
+    },
+    "camera": {
+      "takePhotoSuffix": "Fă poza",
+      "close": "Închide",
+      "takePhotoAria": "Fă poza și pontează",
+      "saving": "Se salvează pontajul…",
+      "errors": {
+        "blockedTitle": "Camera este blocată",
+        "blockedBody": "Browserul tău nu ne lasă să folosim camera. Apasă pe iconița camerei 🎥 (sau pe lacăt 🔒) din stânga barei de adrese → \"Permite camera\", reîncarcă pagina și încearcă din nou. Pe Mac: Setări de sistem → Confidențialitate → Cameră → activează Chrome.",
+        "busyTitle": "Camera este ocupată",
+        "busyBody": "O altă aplicație sau filă folosește camera (Zoom, Meet, FaceTime, altă filă…). Închide-le și apasă Reîncearcă.",
+        "notFoundTitle": "Nu se detectează nicio cameră",
+        "notFoundBody": "Acest dispozitiv nu are cameră disponibilă. Fă pontajul de pe telefon, care are cameră.",
+        "genericTitle": "Camera nu a putut fi deschisă",
+        "genericBody": "Închide alte aplicații care folosesc camera, reîncarcă pagina și încearcă din nou. Dacă persistă, încearcă de pe telefon.",
+        "retry": "Reîncearcă",
+        "close": "Închide"
+      }
+    },
+    "toast": {
+      "photoFailed": "Nu s-a putut captura poza. Încearcă din nou.",
+      "saveFailed": "Nu s-a putut salva pontajul. Încearcă din nou."
+    },
+    "instructions": {
+      "title": "Cum să pontezi",
+      "close": "Închide",
+      "items": [
+        "Când ajungi la locul de muncă (birou, șantier, proiect, client sau prima întâlnire a zilei) apasă <b>Check-in</b> și fă o poză cu locul.",
+        "Când termini (când pleci de la birou sau de la ultimul șantier) apasă <b>Check-out</b> și fă o altă poză.",
+        "Durează 2 secunde: apeși, poză și gata. Ora și locația se salvează automat.",
+        "Program obișnuit 10:00–18:00. Fă-o în fiecare zi în care lucrezi (și sâmbăta/duminica dacă mergi)."
+      ]
+    }
+  },
+  "vacaciones": {
+    "sectionLabel": "Echipă",
+    "title": "Calendar de concedii",
+    "request": "Solicită",
+    "close": "Închide",
+    "types": {
+      "vacaciones": "Concediu",
+      "baja": "Concediu medical",
+      "personal": "Personal"
+    },
+    "status": {
+      "pendiente": "În așteptare",
+      "aprobada": "Aprobat",
+      "rechazada": "Respins"
+    },
+    "form": {
+      "from": "De la",
+      "to": "Până la",
+      "type": "Tip",
+      "note": "Notă (opțional)",
+      "notePlaceholder": "Motiv sau detaliu…",
+      "submit": "Trimite cererea"
+    },
+    "empty": "Încă nu există concedii înregistrate. Fii primul care solicită.",
+    "you": "(TU)",
+    "errors": {
+      "loadFailed": "Nu s-au putut încărca concediile.",
+      "datesRequired": "Indică data de început și de sfârșit.",
+      "endBeforeStart": "Data de sfârșit nu poate fi anterioară celei de început.",
+      "submitFailed": "Nu s-a putut trimite cererea. Încearcă din nou."
+    }
   }
 }
