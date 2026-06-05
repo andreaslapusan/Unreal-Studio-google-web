@@ -65,7 +65,21 @@
     "ctaWhatsapp": "CONTACT PRIN WHATSAPP",
     "blogTitle": "Ultimele Noutăți",
     "blogCta": "Vezi Blog",
-    "profitabilityUnrealPrice": "Preț Unreal (Investiția ta)"
+    "profitabilityUnrealPrice": "Preț Unreal (Investiția ta)",
+    "investFrom": "Investiție de la",
+    "marketValue": "Valoare de piață",
+    "b1Title": "40% sub prețul pieței",
+    "b1Body": "Prețuri directe de dezvoltare, fără marje umflate, optimizând raportul risc-randament de la început.",
+    "b2Title": "Cadru legal clar din Madrid",
+    "b2Body": "Procese structurate, contracte clare și sprijin juridic continuu ca să investești cu mai multă liniște.",
+    "b3Title": "Diversificare internațională eficientă",
+    "b3Body": "Protejează-ți capitalul accesând active imobiliare în destinații cu creștere susținută și cerere reală.",
+    "v1Title": "Dezvoltare proprie",
+    "v1Body": "Costuri controlate prin gestionare directă",
+    "v2Title": "Comercializare eficientă",
+    "v2Body": "Prețuri ajustate față de piață",
+    "v3Title": "Plusvaloare imediată",
+    "v3Body": "Cumperi la prețul dezvoltatorului. Tu câștigi diferența față de piață."
   },
   "projects": {
     "title": "Proiecte | Unreal Studio Madrid",
@@ -195,7 +209,8 @@
     "yes": "Da",
     "no": "Nu",
     "similarTitle": "Active Similare",
-    "ctaWhatsapp": "Vorbește prin WhatsApp"
+    "ctaWhatsapp": "Vorbește prin WhatsApp",
+    "noAccess": "Nu ai acces? Contactează consilierul tău Unreal Studio."
   },
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",

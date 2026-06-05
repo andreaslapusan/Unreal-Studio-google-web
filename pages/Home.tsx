@@ -510,7 +510,7 @@ const Home: React.FC = () => {
                 )}
                 <div className="mt-auto pt-3 md:pt-6 border-t border-gray-100 flex justify-between items-center">
                   <div>
-                    <p className="text-[8px] md:text-[10px] uppercase text-gray-400 font-black mb-0.5 md:mb-1">Inversión desde</p>
+                    <p className="text-[8px] md:text-[10px] uppercase text-gray-400 font-black mb-0.5 md:mb-1">{t('home.investFrom')}</p>
                     <div className="flex items-baseline gap-2">
                       <p className="font-bold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
                       {Number(proj.market_price) > Number(proj.investor_price) && (
@@ -550,8 +550,8 @@ const Home: React.FC = () => {
                   <span className="material-symbols-outlined text-primary text-3xl">trending_down</span>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">40% por debajo del mercado</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">Precios directos de desarrollo, sin márgenes inflados, optimizando la relación riesgo–rentabilidad desde el inicio.</p>
+                  <h4 className="text-xl font-bold text-primary mb-2">{t('home.b1Title')}</h4>
+                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b1Body')}</p>
                 </div>
               </div>
               <div className="flex gap-6 items-start">
@@ -559,8 +559,8 @@ const Home: React.FC = () => {
                   <span className="material-symbols-outlined text-primary text-3xl">security</span>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">Marco legal claro desde Madrid</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">Procesos estructurados, contratos claros y soporte legal continuo para invertir con mayor tranquilidad.</p>
+                  <h4 className="text-xl font-bold text-primary mb-2">{t('home.b2Title')}</h4>
+                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b2Body')}</p>
                 </div>
               </div>
               <div className="flex gap-6 items-start">
@@ -568,8 +568,8 @@ const Home: React.FC = () => {
                   <span className="material-symbols-outlined text-primary text-3xl">public</span>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">Diversificación internacional efectiva</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">Protege tu capital accediendo a activos inmobiliarios en destinos con crecimiento sostenido y demanda real.</p>
+                  <h4 className="text-xl font-bold text-primary mb-2">{t('home.b3Title')}</h4>
+                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b3Body')}</p>
                 </div>
               </div>
             </div>
@@ -610,22 +610,22 @@ const Home: React.FC = () => {
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">construction</span>
                 <div>
-                  <h5 className="font-bold text-primary">Desarrollo propio</h5>
-                  <p className="text-xs text-primary/60">Costes controlados mediante gestión directa</p>
+                  <h5 className="font-bold text-primary">{t('home.v1Title')}</h5>
+                  <p className="text-xs text-primary/60">{t('home.v1Body')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">sell</span>
                 <div>
-                  <h5 className="font-bold text-primary">Comercialización eficiente</h5>
-                  <p className="text-xs text-primary/60">Precios ajustados frente al mercado</p>
+                  <h5 className="font-bold text-primary">{t('home.v2Title')}</h5>
+                  <p className="text-xs text-primary/60">{t('home.v2Body')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">payments</span>
                 <div>
-                  <h5 className="font-bold text-primary">Plusvalía Inmediata</h5>
-                  <p className="text-xs text-primary/60">Compras a precio de promotor. Tú capturas la diferencia sobre mercado.</p>
+                  <h5 className="font-bold text-primary">{t('home.v3Title')}</h5>
+                  <p className="text-xs text-primary/60">{t('home.v3Body')}</p>
                 </div>
               </div>
             </div>
@@ -638,7 +638,7 @@ const Home: React.FC = () => {
                 <div className="space-y-12 text-left">
                   <div className="space-y-5">
                     <div className="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-wider">
-                      <span>Valor de Mercado</span>
+                      <span>{t('home.marketValue')}</span>
                       <span className="text-primary font-black">
                         {formatPrice(profitabilityData.marketPrice, profitabilityData.currency)}
                       </span>

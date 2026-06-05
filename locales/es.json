@@ -65,7 +65,21 @@
     "ctaWhatsapp": "CONTACTAR POR WHATSAPP",
     "blogTitle": "Últimas Novedades",
     "blogCta": "Ver Blog",
-    "profitabilityUnrealPrice": "Precio Unreal (Tu Inversión)"
+    "profitabilityUnrealPrice": "Precio Unreal (Tu Inversión)",
+    "investFrom": "Inversión desde",
+    "marketValue": "Valor de Mercado",
+    "b1Title": "40% por debajo del mercado",
+    "b1Body": "Precios directos de desarrollo, sin márgenes inflados, optimizando la relación riesgo–rentabilidad desde el inicio.",
+    "b2Title": "Marco legal claro desde Madrid",
+    "b2Body": "Procesos estructurados, contratos claros y soporte legal continuo para invertir con mayor tranquilidad.",
+    "b3Title": "Diversificación internacional efectiva",
+    "b3Body": "Protege tu capital accediendo a activos inmobiliarios en destinos con crecimiento sostenido y demanda real.",
+    "v1Title": "Desarrollo propio",
+    "v1Body": "Costes controlados mediante gestión directa",
+    "v2Title": "Comercialización eficiente",
+    "v2Body": "Precios ajustados frente al mercado",
+    "v3Title": "Plusvalía Inmediata",
+    "v3Body": "Compras a precio de promotor. Tú capturas la diferencia sobre mercado."
   },
   "projects": {
     "title": "Proyectos | Unreal Studio Madrid",
@@ -195,7 +209,8 @@
     "yes": "Sí",
     "no": "No",
     "similarTitle": "Activos Similares",
-    "ctaWhatsapp": "Hablar por WhatsApp"
+    "ctaWhatsapp": "Hablar por WhatsApp",
+    "noAccess": "¿No tienes acceso? Contacta con tu asesor de Unreal Studio."
   },
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",

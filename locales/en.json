@@ -65,7 +65,21 @@
     "ctaWhatsapp": "CONTACT US ON WHATSAPP",
     "blogTitle": "Latest news",
     "blogCta": "Visit blog",
-    "profitabilityUnrealPrice": "Unreal Price (Your Investment)"
+    "profitabilityUnrealPrice": "Unreal Price (Your Investment)",
+    "investFrom": "Investment from",
+    "marketValue": "Market Value",
+    "b1Title": "40% below market",
+    "b1Body": "Direct development prices, no inflated margins, optimising the risk-return ratio from the start.",
+    "b2Title": "Clear legal framework from Madrid",
+    "b2Body": "Structured processes, clear contracts and ongoing legal support so you invest with greater peace of mind.",
+    "b3Title": "Effective international diversification",
+    "b3Body": "Protect your capital by accessing real estate in destinations with sustained growth and real demand.",
+    "v1Title": "In-house development",
+    "v1Body": "Controlled costs through direct management",
+    "v2Title": "Efficient sales",
+    "v2Body": "Prices adjusted against the market",
+    "v3Title": "Immediate capital gain",
+    "v3Body": "You buy at developer price. You capture the difference over market value."
   },
   "projects": {
     "title": "Projects | Unreal Studio Madrid",
@@ -195,7 +209,8 @@
     "yes": "Yes",
     "no": "No",
     "similarTitle": "Similar assets",
-    "ctaWhatsapp": "Chat on WhatsApp"
+    "ctaWhatsapp": "Chat on WhatsApp",
+    "noAccess": "No access? Contact your Unreal Studio advisor."
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",

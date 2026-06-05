@@ -647,7 +647,7 @@ const ProjectDetail: React.FC = () => {
                     </button>
 
                     <button onClick={() => setShowClientLogin(false)} className="w-full mt-4 text-primary/40 hover:text-primary text-xs font-bold uppercase tracking-widest py-2 transition">{t('projectDetail.close')}</button>
-                    <p className="text-center text-[10px] text-primary/30 mt-6">¿No tienes acceso? Contacta con tu asesor de Unreal Studio.</p>
+                    <p className="text-center text-[10px] text-primary/30 mt-6">{t('projectDetail.noAccess')}</p>
                 </div>
             </div>
           )}
