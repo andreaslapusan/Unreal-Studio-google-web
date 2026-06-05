@@ -59,28 +59,34 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   }, [user, loading]);
 
   async function routeAfterAuth() {
+    let list: PortalKey[] = [];
     try {
-      const { data } = await supabase.rpc('get_my_portals');
-      const list = ((data as string[]) || []).filter(Boolean) as PortalKey[];
-      if (list.length === 0) {
-        // Sesión huérfana (cuenta borrada / sin perfil) → cerrarla para permitir re-login limpio.
-        try { await supabase.auth.signOut(); } catch { /* ignore */ }
-        setError(t('auth.noPortals'));
-        return;
-      }
-      if (list.includes(portal)) {
-        navigate(PORTAL_DASH[portal], { replace: true });
-        return;
-      }
-      if (list.length === 1) {
-        navigate(PORTAL_DASH[list[0]], { replace: true });
-        return;
-      }
-      setChooser(list);
+      // Timeout anti-cuelgue: si la RPC no responde en 8s, denegamos de forma segura
+      // (evita el spinner eterno cuando get_my_portals queda colgada).
+      const rpcCall = supabase.rpc('get_my_portals');
+      const timeout = new Promise<never>((_, rej) =>
+        setTimeout(() => rej(new Error('get_my_portals timeout')), 8000)
+      );
+      const { data } = (await Promise.race([rpcCall, timeout])) as { data: unknown };
+      list = (((data as string[]) || []).filter(Boolean)) as PortalKey[];
     } catch {
-      // Si la función falla, al menos llevamos al portal pedido.
-      navigate(PORTAL_DASH[portal], { replace: true });
+      // RPC falló o expiró → NUNCA dar acceso: cerrar sesión y mostrar error.
+      try { await supabase.auth.signOut(); } catch { /* ignore */ }
+      setError(t('auth.verifyError', 'No pudimos verificar tu acceso. Inténtalo de nuevo.'));
+      return;
     }
+    // Gating ESTRICTO: solo se entra si la cuenta pertenece a ESTE portal.
+    // Nunca redirigimos a otro portal (un empleado en /admin/login NO debe entrar a /empleados).
+    if (list.includes(portal)) {
+      navigate(PORTAL_DASH[portal], { replace: true });
+      return;
+    }
+    try { await supabase.auth.signOut(); } catch { /* ignore */ }
+    setError(
+      list.length === 0
+        ? t('auth.noPortals')
+        : t('auth.noAccessHere', 'No tienes acceso a este portal con esta cuenta.')
+    );
   }
 
   const handlePassword = async (e: React.FormEvent) => {
