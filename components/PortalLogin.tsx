@@ -63,6 +63,8 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       const { data } = await supabase.rpc('get_my_portals');
       const list = ((data as string[]) || []).filter(Boolean) as PortalKey[];
       if (list.length === 0) {
+        // Sesión huérfana (cuenta borrada / sin perfil) → cerrarla para permitir re-login limpio.
+        try { await supabase.auth.signOut(); } catch { /* ignore */ }
         setError(t('auth.noPortals'));
         return;
       }
