@@ -58,6 +58,8 @@ const EmpleadosDashboard: React.FC = () => {
   const [capture, setCapture] = useState<FichajeType | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<{ ok: boolean; msg: string } | null>(null);
+  // Error de cámara persistente (con instrucciones para re-permitir + reintentar).
+  const [cameraError, setCameraError] = useState<{ type: FichajeType; title: string; body: string } | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -109,6 +111,7 @@ const EmpleadosDashboard: React.FC = () => {
 
   // Pulsar Check-in/out → pide GPS (en paralelo) y abre la cámara.
   const startCapture = async (type: FichajeType) => {
+    setCameraError(null);
     setCapture(type);
     navigator.geolocation?.getCurrentPosition(
       (pos) => {
@@ -133,8 +136,28 @@ const EmpleadosDashboard: React.FC = () => {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
-    } catch {
-      setToast({ ok: false, msg: 'No se pudo abrir la cámara. Da permiso y reintenta.' });
+    } catch (err) {
+      // Mensaje según el motivo: permiso bloqueado vs sin cámara.
+      const name = (err as { name?: string })?.name ?? '';
+      if (name === 'NotAllowedError' || name === 'SecurityError') {
+        setCameraError({
+          type,
+          title: 'La cámara está bloqueada',
+          body: 'Tu navegador no nos deja usar la cámara. Pulsa el icono de cámara 🎥 (o el candado 🔒) a la izquierda de la barra de direcciones → "Permitir cámara", recarga la página y reintenta. En Mac: Ajustes del Sistema → Privacidad → Cámara → activa Chrome.',
+        });
+      } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+        setCameraError({
+          type,
+          title: 'No se detecta cámara',
+          body: 'Este dispositivo no tiene cámara disponible. Haz el fichaje desde tu móvil, que sí tiene cámara.',
+        });
+      } else {
+        setCameraError({
+          type,
+          title: 'No se pudo abrir la cámara',
+          body: 'Cierra otras apps que usen la cámara, recarga la página y reintenta. Si sigue, prueba desde el móvil.',
+        });
+      }
       setCapture(null);
     }
   };
@@ -393,6 +416,31 @@ const EmpleadosDashboard: React.FC = () => {
       {toast && (
         <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl text-white font-bold text-sm shadow-xl ${toast.ok ? 'bg-green-600' : 'bg-red-600'}`}>
           {toast.msg}
+        </div>
+      )}
+
+      {/* Error de cámara: tarjeta persistente con instrucciones + reintentar */}
+      {cameraError && (
+        <div className="fixed inset-0 z-[70] bg-black/60 flex items-center justify-center px-6" onClick={() => setCameraError(null)}>
+          <div className="bg-white rounded-3xl p-7 max-w-sm w-full shadow-2xl text-center" onClick={(e) => e.stopPropagation()}>
+            <div className="text-5xl mb-3">📷</div>
+            <h3 className="text-xl font-serif text-primary mb-2">{cameraError.title}</h3>
+            <p className="text-sm text-primary/70 leading-relaxed mb-6">{cameraError.body}</p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => { const t = cameraError.type; setCameraError(null); void startCapture(t); }}
+                className="bg-primary text-white py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition"
+              >
+                Reintentar
+              </button>
+              <button
+                onClick={() => setCameraError(null)}
+                className="text-primary/50 py-2 text-xs font-bold uppercase tracking-widest hover:text-primary transition"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
