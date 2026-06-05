@@ -690,6 +690,11 @@
     "enterEmailFirst": "Enter your email first.",
     "noPortals": "Your account has no portal access. Contact your manager.",
     "choosePortalTitle": "Choose portal",
-    "choosePortalSub": "Your account has access to several portals."
+    "choosePortalSub": "Your account has access to several portals.",
+    "portal_cliente": "Clients",
+    "portal_agencias": "Agencies",
+    "portal_empleados": "Team",
+    "portal_inversores": "Investors",
+    "portal_admin": "Admin"
   }
 }

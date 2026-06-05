@@ -690,6 +690,11 @@
     "enterEmailFirst": "Scrie mai întâi emailul.",
     "noPortals": "Contul tău nu are acces la niciun portal. Contactează managerul.",
     "choosePortalTitle": "Alege portalul",
-    "choosePortalSub": "Contul tău are acces la mai multe portaluri."
+    "choosePortalSub": "Contul tău are acces la mai multe portaluri.",
+    "portal_cliente": "Clienți",
+    "portal_agencias": "Agenții",
+    "portal_empleados": "Team",
+    "portal_inversores": "Investitori",
+    "portal_admin": "Admin"
   }
 }

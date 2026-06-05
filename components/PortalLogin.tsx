@@ -161,7 +161,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
                 onClick={() => navigate(PORTAL_DASH[p])}
                 className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition"
               >
-                {PORTAL_LABEL[p]}
+                {t(`auth.portal_${p}`)}
               </button>
             ))}
           </div>
@@ -174,7 +174,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     <PortalShell dark={dark}>
       <div className="bg-white w-full max-w-md rounded-3xl p-8 md:p-10 shadow-2xl border border-primary/5">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif text-primary mb-1">{PORTAL_LABEL[portal]}</h1>
+          <h1 className="text-3xl font-serif text-primary mb-1">{t(`auth.portal_${portal}`)}</h1>
           <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">{t('auth.subtitle')}</p>
         </div>
 
