@@ -89,34 +89,25 @@ export default function AuthFinish() {
     // precedence: a team member who is also a profile.admin still wants
     // their /manager/dashboard so they can manage their own time off.
     setTimeout(async () => {
+      // Enrutado UNIFICADO multi-rol: get_my_portals() devuelve los portales del usuario.
+      const DASH: Record<string, string> = {
+        cliente: "/cliente/dashboard",
+        agencias: "/agencias/dashboard",
+        empleados: "/empleados/dashboard",
+        inversores: "/inversores/dashboard",
+        admin: "/admin",
+      };
       try {
-        const { data: m } = await supabase
-          .from("team_members")
-          .select("id,role")
-          .eq("email", user.email)
-          .maybeSingle();
-        if (m) {
-          navigate("/manager/dashboard", { replace: true });
+        const { data } = await supabase.rpc("get_my_portals");
+        const list = ((data as string[]) || []).filter(Boolean);
+        if (list.length > 0) {
+          navigate(DASH[list[0]] ?? "/", { replace: true });
           return;
         }
       } catch {
-        // fall through to legacy role routing
+        // fall through to legacy routing
       }
-      // Empleados (portal de fichaje) — allowlist en tabla `employees`.
-      try {
-        const { data: emp } = await supabase
-          .from("employees")
-          .select("id")
-          .eq("email", user.email)
-          .eq("active", true)
-          .maybeSingle();
-        if (emp) {
-          navigate("/empleados/dashboard", { replace: true });
-          return;
-        }
-      } catch {
-        // fall through
-      }
+      // Fallback legacy si la función no resuelve.
       if (role === "lister") navigate("/agencias/dashboard", { replace: true });
       else if (role === "investor") navigate("/inversores/dashboard", { replace: true });
       else if (role === "admin" || role === "team") navigate("/admin", { replace: true });
