@@ -46,6 +46,7 @@ export function imgSrc(url: string | null | undefined, widthOrOpts: number | Img
   if (!url) return "";
   if (url.startsWith("data:")) return url;
   if (url.includes("wsrv.nl")) return url;
+  if (url.startsWith("/")) return url; // local same-origin asset — serve directly, wsrv.nl can't fetch relative URLs
 
   const opts: ImgOpts =
     typeof widthOrOpts === "number" ? { width: widthOrOpts } : widthOrOpts;
