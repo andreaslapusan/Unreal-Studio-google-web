@@ -9,6 +9,7 @@ import Footer from '../components/Footer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
 import { translateStatus } from '../lib/statusI18n';
+import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 
 type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees';
 const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees'];
@@ -69,11 +70,11 @@ const AMENITIES_LIST = [
   const viewParam = searchParams.get('view') as AdminView | null;
   const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) ? viewParam : 'projects';
   const setActiveView = (v: AdminView) => setSearchParams({ view: v });
-  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null }>>([]);
   const loadEmployees = useCallback(async () => {
     const { data } = await supabase
       .from('employees')
-      .select('id, email, full_name, password, active, can_upload_reports')
+      .select('id, email, full_name, password, active, can_upload_reports, permissions')
       .order('full_name');
     setEmployees((data as typeof employees) ?? []);
   }, []);
@@ -81,8 +82,22 @@ const AMENITIES_LIST = [
     if (activeView !== 'employees') return;
     void loadEmployees();
   }, [activeView, loadEmployees]);
-  const toggleEmployeePermission = async (id: string, field: 'can_upload_reports' | 'active', value: boolean) => {
-    await supabase.from('employees').update({ [field]: value }).eq('id', id);
+  // Toggle del estado activo/inactivo del empleado.
+  const toggleEmployeeActive = async (id: string, value: boolean) => {
+    await supabase.from('employees').update({ active: value }).eq('id', id);
+    await loadEmployees();
+  };
+  // Toggle de un permiso granular: hace merge de la key en employees.permissions.
+  // Para 'upload_reports' sincroniza la columna legacy can_upload_reports.
+  const toggleEmployeePermission = async (
+    emp: { id: string; permissions: Record<string, boolean> | null },
+    key: string,
+    value: boolean
+  ) => {
+    const nextPermissions = { ...(emp.permissions ?? {}), [key]: value };
+    const update: Record<string, unknown> = { permissions: nextPermissions };
+    if (key === 'upload_reports') update.can_upload_reports = value;
+    await supabase.from('employees').update(update).eq('id', emp.id);
     await loadEmployees();
   };
 
@@ -1203,27 +1218,36 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <th className="text-left px-4 py-3">Nombre</th>
                     <th className="text-left px-4 py-3">Email</th>
                     <th className="text-left px-4 py-3">Contraseña</th>
-                    <th className="text-left px-4 py-3">Subir reportes obra</th>
+                    <th className="text-left px-4 py-3">Permisos</th>
                     <th className="text-left px-4 py-3">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
                   {employees.map((e) => (
                     <tr key={e.id} className="border-t border-gray-50">
-                      <td className="px-4 py-3 font-bold text-primary">{e.full_name || '—'}</td>
-                      <td className="px-4 py-3 text-gray-600">{e.email}</td>
-                      <td className="px-4 py-3 font-mono text-gray-600">{e.password || '—'}</td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => toggleEmployeePermission(e.id, 'can_upload_reports', !e.can_upload_reports)}
-                          className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.can_upload_reports ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}
-                        >
-                          {e.can_upload_reports ? '✅ Permitido' : 'No'}
-                        </button>
+                      <td className="px-4 py-3 font-bold text-primary align-top">{e.full_name || '—'}</td>
+                      <td className="px-4 py-3 text-gray-600 align-top">{e.email}</td>
+                      <td className="px-4 py-3 font-mono text-gray-600 align-top">{e.password || '—'}</td>
+                      <td className="px-4 py-3 align-top">
+                        <div className="flex flex-wrap gap-2 max-w-md">
+                          {EMPLOYEE_PERMISSIONS.map((perm) => {
+                            const on = hasPermission(e, perm.key);
+                            return (
+                              <button
+                                key={perm.key}
+                                onClick={() => toggleEmployeePermission(e, perm.key, !on)}
+                                title={perm.description || perm.label}
+                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition ${on ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+                              >
+                                {on ? '✅' : '○'} {perm.label}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 align-top">
                         <button
-                          onClick={() => toggleEmployeePermission(e.id, 'active', !e.active)}
+                          onClick={() => toggleEmployeeActive(e.id, !e.active)}
                           className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}
                         >
                           {e.active ? 'Activo' : 'Inactivo'}

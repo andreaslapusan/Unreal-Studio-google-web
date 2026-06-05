@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
+import { hasPermission } from "../lib/permissions";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 interface PropertySummary {
@@ -54,10 +55,10 @@ export default function EquipoUpload() {
     void (async () => {
       const { data } = await supabase
         .from("employees")
-        .select("can_upload_reports")
+        .select("can_upload_reports, permissions")
         .eq("email", user.email)
         .maybeSingle();
-      setEmpAllowed(Boolean(data?.can_upload_reports));
+      setEmpAllowed(hasPermission(data, "upload_reports"));
     })();
   }, [user]);
 

@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
+import { hasPermission } from '../lib/permissions';
 import VacationCalendar from '../components/VacationCalendar';
 
 type FichajeType = 'check_in' | 'check_out';
@@ -78,10 +79,10 @@ const EmpleadosDashboard: React.FC = () => {
     void (async () => {
       const { data } = await supabase
         .from('employees')
-        .select('id, full_name, can_upload_reports')
+        .select('id, full_name, can_upload_reports, permissions')
         .eq('email', user.email)
         .maybeSingle();
-      setCanUploadReports(Boolean(data?.can_upload_reports));
+      setCanUploadReports(hasPermission(data, 'upload_reports'));
       if (data?.id) setEmployee({ id: data.id as string, full_name: (data.full_name as string) ?? null });
     })();
   }, [user]);
