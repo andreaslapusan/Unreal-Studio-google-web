@@ -239,17 +239,22 @@ const AMENITIES_LIST = [
   }, []);
 
   useEffect(() => {
-    const session = localStorage.getItem('_ust_sh_') || sessionStorage.getItem('_ust_sh_');
-    if (!session) { navigate('/admin/login'); return; }
-
-    loadData();
-    loadDaysOff();
-
-    try {
-        const decoded = atob(session);
-        const userId = decoded.split('_')[1];
-    } catch(e) {}
-    
+    let cancelled = false;
+    const guard = async () => {
+      // Acceso válido por DOS vías: token legacy (_ust_sh_) O sesión Supabase Auth
+      // (nuevo login unificado). El login nuevo NO setea _ust_sh_, así que comprobar
+      // solo el token legacy rebotaba a /admin/login y dejaba el panel en blanco.
+      const legacy = localStorage.getItem('_ust_sh_') || sessionStorage.getItem('_ust_sh_');
+      if (!legacy) {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) { if (!cancelled) navigate('/admin/login'); return; }
+      }
+      if (cancelled) return;
+      loadData();
+      loadDaysOff();
+    };
+    void guard();
+    return () => { cancelled = true; };
   }, [navigate, loadData]);
 
   useEffect(() => {
