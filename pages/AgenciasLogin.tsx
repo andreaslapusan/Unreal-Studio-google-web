@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
+import PortalShell from '../components/PortalShell';
 
 export default function AgenciasLogin() {
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ export default function AgenciasLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-almond px-6 py-16">
+    <PortalShell>
       <div className="w-full max-w-md glass-card rounded-2xl p-8 shadow-xl">
         <h1 className="text-3xl font-serif text-primary mb-2">{t("agenciasLogin.title")}</h1>
         <p className="text-primary/70 mb-8 text-sm">{t("agenciasLogin.subtitle")}</p>
@@ -104,6 +105,6 @@ export default function AgenciasLogin() {
           </a>
         </p>
       </div>
-    </div>
+    </PortalShell>
   );
 }

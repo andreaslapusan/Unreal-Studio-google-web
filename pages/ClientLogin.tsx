@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import PortalShell from '../components/PortalShell';
 
 const ClientLogin: React.FC = () => {
   const { t } = useTranslation();
@@ -51,7 +52,7 @@ const ClientLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-almond flex items-center justify-center px-6">
+    <PortalShell>
       <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl border border-primary/5">
         <div className="flex justify-end mb-2">
           <LanguageSwitcher />
@@ -78,7 +79,7 @@ const ClientLogin: React.FC = () => {
         </form>
         <p className="text-center text-xs text-primary/30 mt-8">{t('admin.clientLogin.noAccess')}</p>
       </div>
-    </div>
+    </PortalShell>
   );
 };
 

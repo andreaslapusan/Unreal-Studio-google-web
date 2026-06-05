@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { gtmLogin } from '../lib/gtm';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import PortalShell from '../components/PortalShell';
 
 const AdminLogin: React.FC = () => {
   const { t } = useTranslation();
@@ -115,7 +116,7 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary flex items-center justify-center p-6">
+    <PortalShell dark>
       <div className="bg-almond p-8 md:p-12 rounded-3xl shadow-2xl max-w-md w-full text-center border border-white/10 animate-in zoom-in-95 duration-500">
         <div className="flex justify-end mb-2">
           <LanguageSwitcher />
@@ -290,7 +291,7 @@ const AdminLogin: React.FC = () => {
           <span className="material-symbols-outlined text-xs">arrow_back</span> {t('admin.login.backHome')}
         </button>
       </div>
-    </div>
+    </PortalShell>
   );
 };
 
