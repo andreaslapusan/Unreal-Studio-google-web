@@ -579,8 +579,8 @@ const Home: React.FC = () => {
               <div className="rounded-3xl overflow-hidden shadow-2xl h-96 md:h-auto md:aspect-square relative group">
                 <img
                   loading="lazy"
-                  src={imgSrc("/img/The%20Nook/1-04.png", 800)}
-                  srcSet={imgSrcSet("/img/The%20Nook/1-04.png", [400, 800, 1200])}
+                  src={imgSrc("/img/The%20Nook/1-04.webp", 800)}
+                  srcSet={imgSrcSet("/img/The%20Nook/1-04.webp", [400, 800, 1200])}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="w-full h-full object-cover"
                   alt="Interior Architecture"
