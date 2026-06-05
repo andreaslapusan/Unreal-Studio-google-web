@@ -94,7 +94,7 @@ export default function AuthFinish() {
         cliente: "/cliente/dashboard",
         agencias: "/agencias/dashboard",
         empleados: "/empleados/dashboard",
-        inversores: "/inversores/dashboard",
+        inversores: "/cliente/dashboard", // Inversores = Cliente (portal unificado)
         admin: "/admin",
       };
       try {
@@ -109,7 +109,7 @@ export default function AuthFinish() {
       }
       // Fallback legacy si la función no resuelve.
       if (role === "lister") navigate("/agencias/dashboard", { replace: true });
-      else if (role === "investor") navigate("/inversores/dashboard", { replace: true });
+      else if (role === "investor") navigate("/cliente/dashboard", { replace: true });
       else if (role === "admin" || role === "team") navigate("/admin", { replace: true });
       else navigate("/", { replace: true });
     }, 800);

@@ -23,7 +23,7 @@ const PORTAL_DASH: Record<PortalKey, string> = {
   cliente: '/cliente/dashboard',
   agencias: '/agencias/dashboard',
   empleados: '/empleados/dashboard',
-  inversores: '/inversores/dashboard',
+  inversores: '/cliente/dashboard',
   admin: '/admin',
 };
 const PORTAL_LABEL: Record<PortalKey, string> = {
