@@ -17,6 +17,7 @@ import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
 import VacationCalendar from '../components/VacationCalendar';
 import Footer from '../components/Footer';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
 
@@ -227,7 +228,8 @@ const EmpleadosDashboard: React.FC = () => {
             <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Team</p>
             <h1 className="text-xl font-serif text-primary leading-tight truncate">{user.email}</h1>
           </div>
-          <div className="flex gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
+            <LanguageSwitcher />
             <button
               onClick={() => setShowInstructions(true)}
               aria-label="Instrucciones"
