@@ -286,14 +286,14 @@ const EmpleadosDashboard: React.FC = () => {
               onClick={() => startCapture('break_start')}
               className="bg-amber-500 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-600 transition flex items-center justify-center gap-2"
             >
-              <span className="material-symbols-outlined text-lg">lunch_dining</span>
+              <span className="text-base">🍽️</span>
               Inicio pausa
             </button>
             <button
               onClick={() => startCapture('break_end')}
               className="bg-amber-600 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-700 transition flex items-center justify-center gap-2"
             >
-              <span className="material-symbols-outlined text-lg">work_history</span>
+              <span className="text-base">▶️</span>
               Fin pausa
             </button>
           </div>
@@ -381,7 +381,7 @@ const EmpleadosDashboard: React.FC = () => {
               <li className="flex gap-2"><span className="material-symbols-outlined text-green-600 text-base">login</span> Al llegar a tu lugar de trabajo (oficina, obra, proyecto, cliente o primera reunión del día) pulsa <b>Check-in</b> y haz una foto del sitio.</li>
               <li className="flex gap-2"><span className="material-symbols-outlined text-primary text-base">logout</span> Al terminar (salir de la oficina o de la última obra) pulsa <b>Check-out</b> y haz otra foto.</li>
               <li className="flex gap-2"><span className="material-symbols-outlined text-base">bolt</span> Es de 2 segundos: pulsas, foto y ya. La hora y la ubicación se guardan automáticamente.</li>
-              <li className="flex gap-2"><span className="material-symbols-outlined text-base">schedule</span> Horario habitual 10:00–18:00. Hazlo cada día que trabajes (también sábados/domingos si vas).</li>
+              <li className="flex gap-2"><span className="text-base">⏰</span> Horario habitual 10:00–18:00. Hazlo cada día que trabajes (también sábados/domingos si vas).</li>
             </ul>
           </div>
         </div>
