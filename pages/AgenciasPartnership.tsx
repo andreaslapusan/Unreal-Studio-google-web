@@ -34,7 +34,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "¿Quién hace el cierre de venta?",
-    a: "Tú llevas la conversación con tu cliente. Cuando esté listo, agendamos llamada con nuestro equipo (Mark / Andreas) para resolver dudas técnicas. Tú estás en copia. La comisión es tuya.",
+    a: "Tú llevas la conversación con tu cliente. Cuando esté listo, agendamos llamada con nuestro equipo para resolver dudas técnicas. Tú estás en copia. La comisión es tuya.",
   },
   {
     q: "¿Puedo listar las propiedades en mi web?",

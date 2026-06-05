@@ -177,7 +177,7 @@
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",
     "heroTitle": "Preguntas frecuentes",
-    "heroSubtitle": "Las preguntas que más nos hacen los inversores antes de cerrar — con la respuesta directa de Andreas, sin rellenos ni corporativismo.",
+    "heroSubtitle": "Las preguntas que más nos hacen los inversores antes de cerrar — con la respuesta directa de nuestro equipo, sin rellenos ni corporativismo.",
     "search": "Buscar pregunta...",
     "noResults": "Sin resultados. Prueba con otra búsqueda o escríbenos directamente.",
     "categories": {
@@ -191,7 +191,7 @@
       "general": "General"
     },
     "ctaTitle": "¿Tu pregunta no está aquí?",
-    "ctaBody": "30 minutos por videollamada con Andreas o Mark. Te respondemos cualquier duda sin compromiso.",
+    "ctaBody": "30 minutos por videollamada con nuestro equipo. Te respondemos cualquier duda sin compromiso.",
     "ctaBtn": "Hablar con un asesor →"
   },
   "blog": {
@@ -507,7 +507,7 @@
     },
     "portal": {
       "title": "Admin Portal Manager",
-      "sessionFallback": "Sesión Andreas",
+      "sessionFallback": "Sesión equipo",
       "accessRestricted": "Acceso restringido",
       "classicAdmin": "Admin clásico",
       "tabActivity": "Actividad",
@@ -643,7 +643,7 @@
       "recoveryMagic": "<strong>Magic link</strong> (más abajo) — entra con tu email si tu perfil en Supabase Auth tiene rol admin.",
       "recoveryGoogle": "<strong>Google</strong> — botón 'Continuar con Google' si tu cuenta Google está vinculada al rol admin.",
       "recoveryManual": "<strong>Reset manual</strong> — pide a otro admin del equipo que entre en Panel → Usuarios y te asigne nueva contraseña.",
-      "recoveryHint": "Tu usuario aparece con mayúscula inicial. Ejemplos activos: Andreas, Marc, Marcelino."
+      "recoveryHint": "Tu usuario aparece con mayúscula inicial."
     }
   }
 }

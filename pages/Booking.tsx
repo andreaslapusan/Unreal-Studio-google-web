@@ -50,7 +50,7 @@ export default function Booking() {
         <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed">
           {t("booking.heroSubtitle", {
             defaultValue:
-              "30 minutos por videollamada con Andreas o Mark. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
+              "30 minutos por videollamada con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
           })}
         </p>
       </header>

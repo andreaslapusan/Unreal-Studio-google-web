@@ -177,7 +177,7 @@
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",
     "heroTitle": "Întrebări frecvente",
-    "heroSubtitle": "Întrebările pe care ni le pun investitorii înainte de a închide — cu răspunsul direct al lui Andreas, fără umpluturi sau corporatism.",
+    "heroSubtitle": "Întrebările pe care ni le pun investitorii înainte de a închide — cu răspunsul direct al echipei noastre, fără umpluturi sau corporatism.",
     "search": "Caută întrebare...",
     "noResults": "Niciun rezultat. Încearcă altă căutare sau scrie-ne direct.",
     "categories": {
@@ -191,7 +191,7 @@
       "general": "General"
     },
     "ctaTitle": "Întrebarea ta nu este aici?",
-    "ctaBody": "30 de minute prin videoconferință cu Andreas sau Mark. Răspundem la orice întrebare fără obligații.",
+    "ctaBody": "30 de minute prin videoconferință cu echipa noastră. Răspundem la orice întrebare fără obligații.",
     "ctaBtn": "Vorbește cu un consultant →"
   },
   "blog": {
@@ -507,7 +507,7 @@
     },
     "portal": {
       "title": "Admin Portal Manager",
-      "sessionFallback": "Sesiune Andreas",
+      "sessionFallback": "Sesiune echipă",
       "accessRestricted": "Acces restricționat",
       "classicAdmin": "Admin clasic",
       "tabActivity": "Activitate",
@@ -643,7 +643,7 @@
       "recoveryMagic": "<strong>Magic link</strong> (mai jos) — intră cu emailul tău dacă profilul tău Supabase Auth are rolul admin.",
       "recoveryGoogle": "<strong>Google</strong> — apasă pe 'Continuă cu Google' dacă contul tău Google e legat de rolul admin.",
       "recoveryManual": "<strong>Resetare manuală</strong> — roagă alt admin să intre și să-ți reseteze parola din Panou → Utilizatori.",
-      "recoveryHint": "Numele de utilizator are inițială majusculă. Exemple active: Andreas, Marc, Marcelino."
+      "recoveryHint": "Numele de utilizator are inițială majusculă."
     }
   }
 }

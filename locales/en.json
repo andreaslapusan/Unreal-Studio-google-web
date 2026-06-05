@@ -177,7 +177,7 @@
   "faq": {
     "title": "FAQ | Unreal Studio Bali",
     "heroTitle": "Frequently asked questions",
-    "heroSubtitle": "The questions investors keep asking before closing — answered directly by Andreas, no fluff.",
+    "heroSubtitle": "The questions investors keep asking before closing — answered directly by our team, no fluff.",
     "search": "Search question...",
     "noResults": "No matches. Try a different search or contact us directly.",
     "categories": {
@@ -191,7 +191,7 @@
       "general": "General"
     },
     "ctaTitle": "Question not here?",
-    "ctaBody": "30-minute video call with Andreas or Mark. Free, no commitment, just clear answers.",
+    "ctaBody": "30-minute video call with our team. Free, no commitment, just clear answers.",
     "ctaBtn": "Talk to an advisor →"
   },
   "blog": {
@@ -507,7 +507,7 @@
     },
     "portal": {
       "title": "Admin Portal Manager",
-      "sessionFallback": "Andreas session",
+      "sessionFallback": "Team session",
       "accessRestricted": "Restricted access",
       "classicAdmin": "Classic admin",
       "tabActivity": "Activity",
@@ -643,7 +643,7 @@
       "recoveryMagic": "<strong>Magic link</strong> (below) — sign in with your email if your Supabase Auth profile has the admin role.",
       "recoveryGoogle": "<strong>Google</strong> — use the 'Continue with Google' button if your Google account is linked to the admin role.",
       "recoveryManual": "<strong>Manual reset</strong> — ask another admin to sign in and reset your password from Panel → Users.",
-      "recoveryHint": "Usernames are capitalised. Active examples: Andreas, Marc, Marcelino."
+      "recoveryHint": "Usernames are capitalised."
     }
   }
 }
