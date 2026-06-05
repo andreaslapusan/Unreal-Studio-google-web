@@ -35,6 +35,7 @@ const EmpleadosDashboard: React.FC = () => {
   const { user, loading, signOut } = useAuth();
 
   const [today, setToday] = useState<TodayRow[]>([]);
+  const [canUploadReports, setCanUploadReports] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [capture, setCapture] = useState<FichajeType | null>(null);
   const [busy, setBusy] = useState(false);
@@ -68,6 +69,19 @@ const EmpleadosDashboard: React.FC = () => {
   useEffect(() => {
     void loadToday();
   }, [loadToday]);
+
+  // Permisos del empleado (p.ej. subir reportes de obra — solo el PM).
+  useEffect(() => {
+    if (!user?.email) return;
+    void (async () => {
+      const { data } = await supabase
+        .from('employees')
+        .select('can_upload_reports')
+        .eq('email', user.email)
+        .maybeSingle();
+      setCanUploadReports(Boolean(data?.can_upload_reports));
+    })();
+  }, [user]);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -240,31 +254,22 @@ const EmpleadosDashboard: React.FC = () => {
           Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas.
         </p>
 
-        {/* Hub Team: otras secciones del portal */}
-        <div className="mt-8 grid grid-cols-1 gap-3">
-          <button
-            onClick={() => navigate('/equipo/upload')}
-            className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
-          >
-            <span className="material-symbols-outlined text-primary">construction</span>
-            <span className="flex-1">
-              <span className="block font-bold text-primary text-sm">Reportes de obra</span>
-              <span className="block text-xs text-primary/50">Sube el avance por proyecto</span>
-            </span>
-            <span className="material-symbols-outlined text-primary/30">chevron_right</span>
-          </button>
-          <button
-            onClick={() => navigate('/manager/dashboard')}
-            className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
-          >
-            <span className="material-symbols-outlined text-primary">beach_access</span>
-            <span className="flex-1">
-              <span className="block font-bold text-primary text-sm">Vacaciones y ausencias</span>
-              <span className="block text-xs text-primary/50">Solicita y consulta tus días</span>
-            </span>
-            <span className="material-symbols-outlined text-primary/30">chevron_right</span>
-          </button>
-        </div>
+        {/* Hub Team: secciones según permisos del empleado */}
+        {canUploadReports && (
+          <div className="mt-8 grid grid-cols-1 gap-3">
+            <button
+              onClick={() => navigate('/equipo/upload')}
+              className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+            >
+              <span className="material-symbols-outlined text-primary">construction</span>
+              <span className="flex-1">
+                <span className="block font-bold text-primary text-sm">Reportes de obra</span>
+                <span className="block text-xs text-primary/50">Sube el avance por proyecto</span>
+              </span>
+              <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Cámara a pantalla completa */}

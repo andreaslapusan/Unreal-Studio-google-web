@@ -60,17 +60,22 @@ const AMENITIES_LIST = [
   
   const { currency, setCurrency, formatPrice } = useCurrency();
   const [activeView, setActiveView] = useState<'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees'>('projects');
-  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean }>>([]);
+  const loadEmployees = useCallback(async () => {
+    const { data } = await supabase
+      .from('employees')
+      .select('id, email, full_name, password, active, can_upload_reports')
+      .order('full_name');
+    setEmployees((data as typeof employees) ?? []);
+  }, []);
   useEffect(() => {
     if (activeView !== 'employees') return;
-    void (async () => {
-      const { data } = await supabase
-        .from('employees')
-        .select('id, email, full_name, password, active')
-        .order('full_name');
-      setEmployees((data as typeof employees) ?? []);
-    })();
-  }, [activeView]);
+    void loadEmployees();
+  }, [activeView, loadEmployees]);
+  const toggleEmployeePermission = async (id: string, field: 'can_upload_reports' | 'active', value: boolean) => {
+    await supabase.from('employees').update({ [field]: value }).eq('id', id);
+    await loadEmployees();
+  };
 
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [daysOff, setDaysOff] = useState<Record<string, string[]>>({});
@@ -1178,6 +1183,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <th className="text-left px-4 py-3">Nombre</th>
                     <th className="text-left px-4 py-3">Email</th>
                     <th className="text-left px-4 py-3">Contraseña</th>
+                    <th className="text-left px-4 py-3">Subir reportes obra</th>
                     <th className="text-left px-4 py-3">Estado</th>
                   </tr>
                 </thead>
@@ -1187,11 +1193,26 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       <td className="px-4 py-3 font-bold text-primary">{e.full_name || '—'}</td>
                       <td className="px-4 py-3 text-gray-600">{e.email}</td>
                       <td className="px-4 py-3 font-mono text-gray-600">{e.password || '—'}</td>
-                      <td className="px-4 py-3">{e.active ? '✅ Activo' : '⛔ Inactivo'}</td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => toggleEmployeePermission(e.id, 'can_upload_reports', !e.can_upload_reports)}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.can_upload_reports ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}
+                        >
+                          {e.can_upload_reports ? '✅ Permitido' : 'No'}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => toggleEmployeePermission(e.id, 'active', !e.active)}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}
+                        >
+                          {e.active ? 'Activo' : 'Inactivo'}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                   {employees.length === 0 && (
-                    <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">Sin empleados todavía.</td></tr>
+                    <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">Sin empleados todavía.</td></tr>
                   )}
                 </tbody>
               </table>
