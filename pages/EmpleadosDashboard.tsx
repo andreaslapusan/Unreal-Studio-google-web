@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
+import VacationCalendar from '../components/VacationCalendar';
 
 type FichajeType = 'check_in' | 'check_out';
 
@@ -36,6 +37,7 @@ const EmpleadosDashboard: React.FC = () => {
 
   const [today, setToday] = useState<TodayRow[]>([]);
   const [canUploadReports, setCanUploadReports] = useState(false);
+  const [employee, setEmployee] = useState<{ id: string; full_name: string | null } | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [capture, setCapture] = useState<FichajeType | null>(null);
   const [busy, setBusy] = useState(false);
@@ -76,10 +78,11 @@ const EmpleadosDashboard: React.FC = () => {
     void (async () => {
       const { data } = await supabase
         .from('employees')
-        .select('can_upload_reports')
+        .select('id, full_name, can_upload_reports')
         .eq('email', user.email)
         .maybeSingle();
       setCanUploadReports(Boolean(data?.can_upload_reports));
+      if (data?.id) setEmployee({ id: data.id as string, full_name: (data.full_name as string) ?? null });
     })();
   }, [user]);
 
@@ -253,6 +256,17 @@ const EmpleadosDashboard: React.FC = () => {
         <p className="text-center text-xs text-primary/40 mt-5">
           Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas.
         </p>
+
+        {/* Calendario de vacaciones del equipo (visible para todos) */}
+        {employee && (
+          <div className="mt-8">
+            <VacationCalendar
+              employeeId={employee.id}
+              employeeEmail={user.email ?? ''}
+              employeeName={employee.full_name ?? user.email ?? ''}
+            />
+          </div>
+        )}
 
         {/* Hub Team: secciones según permisos del empleado */}
         {canUploadReports && (
