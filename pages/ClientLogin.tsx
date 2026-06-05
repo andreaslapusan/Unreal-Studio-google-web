@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 import PortalShell from '../components/PortalShell';
 
 const ClientLogin: React.FC = () => {
@@ -54,9 +53,6 @@ const ClientLogin: React.FC = () => {
   return (
     <PortalShell>
       <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl border border-primary/5">
-        <div className="flex justify-end mb-2">
-          <LanguageSwitcher />
-        </div>
         <div className="text-center mb-10">
           <h1 className="text-3xl font-serif text-primary mb-2">{t('admin.clientLogin.title')}</h1>
           <p className="text-sm text-primary/50">{t('admin.clientLogin.subtitle')}</p>

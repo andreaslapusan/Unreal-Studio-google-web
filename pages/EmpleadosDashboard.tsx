@@ -210,7 +210,7 @@ const EmpleadosDashboard: React.FC = () => {
               <span className="material-symbols-outlined">info</span>
             </button>
             <button
-              onClick={async () => { await signOut(); navigate('/empleados'); }}
+              onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/empleados'; }}
               aria-label="Salir"
               className="w-10 h-10 rounded-full bg-white border border-primary/10 text-primary/60 flex items-center justify-center shadow-sm hover:bg-gray-100 transition"
             >

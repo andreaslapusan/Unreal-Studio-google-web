@@ -4,7 +4,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { gtmLogin } from '../lib/gtm';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 import PortalShell from '../components/PortalShell';
 
 const AdminLogin: React.FC = () => {
@@ -118,9 +117,6 @@ const AdminLogin: React.FC = () => {
   return (
     <PortalShell dark>
       <div className="bg-almond p-8 md:p-12 rounded-3xl shadow-2xl max-w-md w-full text-center border border-white/10 animate-in zoom-in-95 duration-500">
-        <div className="flex justify-end mb-2">
-          <LanguageSwitcher />
-        </div>
         <div className="mb-8 flex flex-col items-center">
           <h1 className="font-serif text-4xl font-bold text-primary mb-4">Unreal Studio</h1>
           <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">{t('admin.login.title')}</p>
