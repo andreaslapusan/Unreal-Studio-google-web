@@ -671,5 +671,25 @@
     "errorInvalid": "Email o contraseña incorrectos.",
     "errorGeneric": "No se pudo iniciar sesión. Inténtalo de nuevo.",
     "noAccess": "¿Sin acceso? Pídele tus datos a tu responsable."
+  },
+  "auth": {
+    "subtitle": "Acceso al portal",
+    "email": "Email",
+    "password": "Contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "remember": "Recordar sesión",
+    "forgot": "¿Olvidaste la contraseña?",
+    "signin": "Entrar",
+    "or": "o",
+    "magicLink": "Enviarme enlace de acceso",
+    "magicSent": "Te enviamos un enlace de acceso a tu email.",
+    "recoverSent": "Te enviamos un email para restablecer la contraseña.",
+    "invalid": "Email o contraseña incorrectos.",
+    "genericError": "No se pudo completar. Inténtalo de nuevo.",
+    "enterEmailFirst": "Escribe primero tu email.",
+    "noPortals": "Tu cuenta no tiene acceso a ningún portal. Contacta con tu responsable.",
+    "choosePortalTitle": "Elige portal",
+    "choosePortalSub": "Tu cuenta tiene acceso a varios portales."
   }
 }

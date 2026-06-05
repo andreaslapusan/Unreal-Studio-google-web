@@ -671,5 +671,25 @@
     "errorInvalid": "Email sau parolă greșite.",
     "errorGeneric": "Conectarea a eșuat. Încearcă din nou.",
     "noAccess": "Fără acces? Cere datele managerului tău."
+  },
+  "auth": {
+    "subtitle": "Acces portal",
+    "email": "Email",
+    "password": "Parolă",
+    "showPassword": "Arată parola",
+    "hidePassword": "Ascunde parola",
+    "remember": "Ține-mă minte",
+    "forgot": "Ai uitat parola?",
+    "signin": "Conectare",
+    "or": "sau",
+    "magicLink": "Trimite-mi un link de acces",
+    "magicSent": "Ți-am trimis un link de acces pe email.",
+    "recoverSent": "Ți-am trimis un email pentru resetarea parolei.",
+    "invalid": "Email sau parolă greșite.",
+    "genericError": "Nu s-a putut finaliza. Încearcă din nou.",
+    "enterEmailFirst": "Scrie mai întâi emailul.",
+    "noPortals": "Contul tău nu are acces la niciun portal. Contactează managerul.",
+    "choosePortalTitle": "Alege portalul",
+    "choosePortalSub": "Contul tău are acces la mai multe portaluri."
   }
 }

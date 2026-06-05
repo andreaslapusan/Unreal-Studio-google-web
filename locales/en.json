@@ -671,5 +671,25 @@
     "errorInvalid": "Wrong email or password.",
     "errorGeneric": "Could not sign in. Please try again.",
     "noAccess": "No access? Ask your manager for your details."
+  },
+  "auth": {
+    "subtitle": "Portal access",
+    "email": "Email",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "remember": "Remember me",
+    "forgot": "Forgot your password?",
+    "signin": "Sign in",
+    "or": "or",
+    "magicLink": "Email me a sign-in link",
+    "magicSent": "We sent a sign-in link to your email.",
+    "recoverSent": "We sent you a password reset email.",
+    "invalid": "Wrong email or password.",
+    "genericError": "Could not complete. Please try again.",
+    "enterEmailFirst": "Enter your email first.",
+    "noPortals": "Your account has no portal access. Contact your manager.",
+    "choosePortalTitle": "Choose portal",
+    "choosePortalSub": "Your account has access to several portals."
   }
 }
