@@ -649,7 +649,7 @@ const Home: React.FC = () => {
                   </div>
                   <div className="space-y-5">
                     <div className="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-wider">
-                      <span>Precio Unreal (Tu Inversión)</span>
+                      <span>{t('home.profitabilityUnrealPrice')}</span>
                       <span className="text-primary font-black">
                         {formatPrice(profitabilityData.investorPrice, profitabilityData.currency)}
                       </span>

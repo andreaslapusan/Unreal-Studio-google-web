@@ -64,7 +64,8 @@
     "ctaSectionBody": "Agenda una reunión de 30 minutos sin compromiso. Evaluamos tu perfil inversor y te mostramos oportunidades reales.",
     "ctaWhatsapp": "CONTACTAR POR WHATSAPP",
     "blogTitle": "Últimas Novedades",
-    "blogCta": "Ver Blog"
+    "blogCta": "Ver Blog",
+    "profitabilityUnrealPrice": "Precio Unreal (Tu Inversión)"
   },
   "projects": {
     "title": "Proyectos | Unreal Studio Madrid",
@@ -323,7 +324,9 @@
     "submitBtn": "Enviar solicitud",
     "successTitle": "Solicitud recibida",
     "successBody": "Hemos guardado tu solicitud. El equipo de Unreal Studio Bali revisará los datos y te contactará en las próximas 24-48h con los siguientes pasos.",
-    "alreadyPartner": "¿Ya eres colaborador? Login aquí."
+    "alreadyPartner": "¿Ya eres colaborador? Login aquí.",
+    "countryPlaceholder": "Indonesia, España, Australia...",
+    "sourcePlaceholder": "Instagram, referido, búsqueda Google, evento..."
   },
   "agenciasDashboard": {
     "headerTitle": "Portal Agencias",

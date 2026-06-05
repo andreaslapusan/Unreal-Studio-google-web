@@ -5,6 +5,7 @@
  */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase";
 import { recordFormSubmit } from "../lib/attribution";
 import { trackLead } from "../lib/fbPixel";
@@ -37,6 +38,7 @@ const PROJECTS = [
 ];
 
 export default function AgenciasRegistrar() {
+  const { t } = useTranslation();
   const [form, setForm] = useState<FormState>({
     agency_name: "",
     manager_name: "",
@@ -196,7 +198,7 @@ export default function AgenciasRegistrar() {
               <input
                 type="text" value={form.country}
                 onChange={(e) => update("country", e.target.value)}
-                placeholder="Indonesia, España, Australia..."
+                placeholder={t('agenciasRegistrar.countryPlaceholder')}
                 className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
               />
             </label>
@@ -266,7 +268,7 @@ export default function AgenciasRegistrar() {
             <input
               type="text" value={form.source}
               onChange={(e) => update("source", e.target.value)}
-              placeholder="Instagram, referido, búsqueda Google, evento..."
+              placeholder={t('agenciasRegistrar.sourcePlaceholder')}
               className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none"
             />
           </label>

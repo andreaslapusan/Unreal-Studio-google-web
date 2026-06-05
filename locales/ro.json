@@ -64,7 +64,8 @@
     "ctaSectionBody": "Programează o întâlnire de 30 de minute fără obligații. Evaluăm profilul tău de investitor și îți arătăm oportunități reale.",
     "ctaWhatsapp": "CONTACT PRIN WHATSAPP",
     "blogTitle": "Ultimele Noutăți",
-    "blogCta": "Vezi Blog"
+    "blogCta": "Vezi Blog",
+    "profitabilityUnrealPrice": "Preț Unreal (Investiția ta)"
   },
   "projects": {
     "title": "Proiecte | Unreal Studio Madrid",
@@ -323,7 +324,9 @@
     "submitBtn": "Trimite cererea",
     "successTitle": "Cerere primită",
     "successBody": "Am salvat cererea ta. Echipa Unreal Studio Bali va revizui datele și te va contacta în următoarele 24-48h cu următorii pași.",
-    "alreadyPartner": "Ești deja colaborator? Login aici."
+    "alreadyPartner": "Ești deja colaborator? Login aici.",
+    "countryPlaceholder": "Indonezia, Spania, Australia...",
+    "sourcePlaceholder": "Instagram, recomandare, căutare Google, eveniment..."
   },
   "agenciasDashboard": {
     "headerTitle": "Portal Agenții",

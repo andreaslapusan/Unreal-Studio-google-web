@@ -64,7 +64,8 @@
     "ctaSectionBody": "Book a 30-minute meeting, no commitment. We assess your investor profile and show you real opportunities.",
     "ctaWhatsapp": "CONTACT US ON WHATSAPP",
     "blogTitle": "Latest news",
-    "blogCta": "Visit blog"
+    "blogCta": "Visit blog",
+    "profitabilityUnrealPrice": "Unreal Price (Your Investment)"
   },
   "projects": {
     "title": "Projects | Unreal Studio Madrid",
@@ -323,7 +324,9 @@
     "submitBtn": "Send application",
     "successTitle": "Application received",
     "successBody": "We saved your application. The Unreal Studio Bali team will review the details and contact you within 24-48h with next steps.",
-    "alreadyPartner": "Already a partner? Log in here."
+    "alreadyPartner": "Already a partner? Log in here.",
+    "countryPlaceholder": "Indonesia, Spain, Australia...",
+    "sourcePlaceholder": "Instagram, referral, Google search, event..."
   },
   "agenciasDashboard": {
     "headerTitle": "Agency Portal",
