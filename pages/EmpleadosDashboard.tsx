@@ -184,7 +184,7 @@ const EmpleadosDashboard: React.FC = () => {
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Portal Empleados</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Team</p>
             <h1 className="text-xl font-serif text-primary leading-tight truncate">{user.email}</h1>
           </div>
           <div className="flex gap-2 shrink-0">

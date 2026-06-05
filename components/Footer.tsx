@@ -75,13 +75,13 @@ const Footer: React.FC = () => {
           <Link className="hover:text-primary transition" to="/privacidad">Privacidad</Link>
           <Link className="hover:text-primary transition" to="/terminos">Términos</Link>
           <Link className="hover:text-primary transition flex items-center gap-1" to="/cliente">
-            <span className="material-symbols-outlined text-xs">person</span> Portal Cliente
+            <span className="material-symbols-outlined text-xs">person</span> Clientes
           </Link>
           <Link className="hover:text-primary transition flex items-center gap-1" to="/empleados">
-            <span className="material-symbols-outlined text-xs">badge</span> Empleados
+            <span className="material-symbols-outlined text-xs">badge</span> Team
           </Link>
           <Link className="hover:text-primary transition flex items-center gap-1" to="/admin/login">
-            <span className="material-symbols-outlined text-xs">settings</span> Development
+            <span className="material-symbols-outlined text-xs">settings</span> Admin
           </Link>
         </div>
       </div>

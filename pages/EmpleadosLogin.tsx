@@ -18,7 +18,7 @@ const EmpleadosLogin: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    document.title = 'Portal Empleados | Unreal Studio';
+    document.title = 'Team | Unreal Studio';
   }, []);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const EmpleadosLogin: React.FC = () => {
       <div className="bg-white w-full max-w-md rounded-3xl p-8 md:p-10 shadow-2xl border border-primary/5">
         <div className="text-center mb-8">
           <span className="material-symbols-outlined text-4xl text-primary mb-3 block">badge</span>
-          <h1 className="text-3xl font-serif text-primary mb-1">Portal Empleados</h1>
+          <h1 className="text-3xl font-serif text-primary mb-1">Team</h1>
           <p className="text-sm text-primary/50">Fichaje, reportes y equipo · Unreal Studio Bali</p>
         </div>
 
