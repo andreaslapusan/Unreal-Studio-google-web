@@ -152,7 +152,7 @@ const AMENITIES_LIST = [
   };
 
   const loadDaysOff = async () => {
-    const { data } = await supabase.from('app_config').select('value').eq('key', 'days_off').single();
+    const { data } = await supabase.from('app_config').select('value').eq('key', 'days_off').maybeSingle();
     if (data?.value) {
       try { setDaysOff(JSON.parse(data.value)); } catch { setDaysOff({}); }
     }
