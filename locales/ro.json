@@ -385,7 +385,8 @@
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agenții",
-      "dashboard": "Panou"
+      "dashboard": "Panou",
+      "employees": "Angajați"
     },
     "clientLogin": {
       "title": "Portal Investitor",

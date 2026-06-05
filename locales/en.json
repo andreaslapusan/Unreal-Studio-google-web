@@ -385,7 +385,8 @@
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agencies",
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "employees": "Employees"
     },
     "clientLogin": {
       "title": "Investor Portal",

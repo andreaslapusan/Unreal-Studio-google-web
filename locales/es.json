@@ -385,7 +385,8 @@
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agencias",
-      "dashboard": "Panel"
+      "dashboard": "Panel",
+      "employees": "Empleados"
     },
     "clientLogin": {
       "title": "Portal Inversor",

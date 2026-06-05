@@ -59,7 +59,18 @@ const AMENITIES_LIST = [
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
   
   const { currency, setCurrency, formatPrice } = useCurrency();
-  const [activeView, setActiveView] = useState<'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar'>('projects');
+  const [activeView, setActiveView] = useState<'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees'>('projects');
+  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean }>>([]);
+  useEffect(() => {
+    if (activeView !== 'employees') return;
+    void (async () => {
+      const { data } = await supabase
+        .from('employees')
+        .select('id, email, full_name, password, active')
+        .order('full_name');
+      setEmployees((data as typeof employees) ?? []);
+    })();
+  }, [activeView]);
 
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [daysOff, setDaysOff] = useState<Record<string, string[]>>({});
@@ -900,7 +911,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
         <div className="flex space-x-6 mb-12 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide">
-          {['projects', 'blogs', 'clients', 'users', 'config', 'calendar'].map((v) => (
+          {['projects', 'blogs', 'clients', 'users', 'employees', 'config', 'calendar'].map((v) => (
             <button 
               key={v}
               onClick={() => setActiveView(v as any)}
@@ -1154,6 +1165,38 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </div>
              </div>
            </div>
+        )}
+
+        {activeView === 'employees' && (
+          <div className="animate-in fade-in duration-500">
+            <h2 className="text-2xl font-serif text-primary mb-2">Perfiles de Empleados</h2>
+            <p className="text-sm text-gray-400 mb-6">Cuentas del portal Team (acceso con email + contraseña).</p>
+            <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase tracking-widest">
+                  <tr>
+                    <th className="text-left px-4 py-3">Nombre</th>
+                    <th className="text-left px-4 py-3">Email</th>
+                    <th className="text-left px-4 py-3">Contraseña</th>
+                    <th className="text-left px-4 py-3">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {employees.map((e) => (
+                    <tr key={e.id} className="border-t border-gray-50">
+                      <td className="px-4 py-3 font-bold text-primary">{e.full_name || '—'}</td>
+                      <td className="px-4 py-3 text-gray-600">{e.email}</td>
+                      <td className="px-4 py-3 font-mono text-gray-600">{e.password || '—'}</td>
+                      <td className="px-4 py-3">{e.active ? '✅ Activo' : '⛔ Inactivo'}</td>
+                    </tr>
+                  ))}
+                  {employees.length === 0 && (
+                    <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">Sin empleados todavía.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
 
         {activeView === 'calendar' && (
