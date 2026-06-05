@@ -3,6 +3,7 @@
  * Renders a horizontal stepper with status (paid / due / pending) and amounts.
  */
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase";
 
 interface Payment {
@@ -26,18 +27,20 @@ const fmt = (n: number, c: string) =>
     maximumFractionDigits: 0,
   }).format(n);
 
-const fmtDate = (s: string | null) => {
-  if (!s) return null;
-  try {
-    return new Date(s).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "2-digit" });
-  } catch {
-    return s;
-  }
-};
-
 export default function PaymentTimeline({ investorUnitId }: Props) {
+  const { t, i18n } = useTranslation();
   const [items, setItems] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const dateLocale = i18n.language === "en" ? "en-GB" : i18n.language === "ro" ? "ro-RO" : "es-ES";
+  const fmtDate = (s: string | null) => {
+    if (!s) return null;
+    try {
+      return new Date(s).toLocaleDateString(dateLocale, { day: "2-digit", month: "short", year: "2-digit" });
+    } catch {
+      return s;
+    }
+  };
 
   useEffect(() => {
     void (async () => {
@@ -51,11 +54,11 @@ export default function PaymentTimeline({ investorUnitId }: Props) {
     })();
   }, [investorUnitId]);
 
-  if (loading) return <div className="text-xs text-primary/60">Cargando plan de pagos…</div>;
+  if (loading) return <div className="text-xs text-primary/60">{t("paymentTimeline.loading")}</div>;
   if (items.length === 0) {
     return (
       <p className="text-xs text-primary/60 italic">
-        Aún no se ha registrado un plan de pagos para esta unidad.
+        {t("paymentTimeline.empty")}
       </p>
     );
   }
@@ -67,8 +70,8 @@ export default function PaymentTimeline({ investorUnitId }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between text-xs text-primary/70">
-        <span>Plan de pagos</span>
-        <span className="font-bold text-primary">{pct}% pagado · {fmt(paid, items[0]?.currency ?? "EUR")} / {fmt(total, items[0]?.currency ?? "EUR")}</span>
+        <span>{t("paymentTimeline.title")}</span>
+        <span className="font-bold text-primary">{t("paymentTimeline.summary", { pct, paid: fmt(paid, items[0]?.currency ?? "EUR"), total: fmt(total, items[0]?.currency ?? "EUR") })}</span>
       </div>
       <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
         <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
@@ -95,15 +98,15 @@ export default function PaymentTimeline({ investorUnitId }: Props) {
                 <div className="min-w-0">
                   <div className="font-medium truncate">{p.label}</div>
                   <div className="text-xs text-primary/60">
-                    {p.due_date && <>vence {fmtDate(p.due_date)}</>}
-                    {isPaid && <> · pagado {fmtDate(p.paid_at)}</>}
+                    {p.due_date && <>{t("paymentTimeline.due", { date: fmtDate(p.due_date) })}</>}
+                    {isPaid && <>{t("paymentTimeline.paidOn", { date: fmtDate(p.paid_at) })}</>}
                   </div>
                 </div>
               </div>
               <div className="text-right shrink-0">
                 <div className="font-bold">{fmt(p.amount, p.currency ?? "EUR")}</div>
                 <div className="text-xs text-primary/60">
-                  {isPaid ? "✓ pagado" : isOverdue ? "vencido" : "pendiente"}
+                  {isPaid ? t("paymentTimeline.statusPaid") : isOverdue ? t("paymentTimeline.statusOverdue") : t("paymentTimeline.statusPending")}
                 </div>
               </div>
             </li>

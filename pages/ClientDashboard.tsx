@@ -8,13 +8,9 @@ import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 
-const CLIENT_GUIDE_STEPS = [
-  { title: "Tu panel de inversiones", text: "Aquí verás un resumen de todas tus inversiones: el total invertido (convertido a tu divisa preferida), número de proyectos activos, estado general y rentabilidad media prevista." },
-  { title: "Selector de divisa", text: "Arriba a la derecha puedes cambiar la divisa. Todos los importes se convertirán automáticamente a la divisa que elijas, usando tasas de cambio actualizadas." },
-  { title: "Tus inversiones", text: "Cada proyecto muestra la unidad asignada, importe invertido, fecha de compra, avance de obra y la rentabilidad prevista (alquiler y reventa). Pulsa 'Ver Proyecto' para ver todos los detalles." },
-  { title: "Documentos", text: "Descarga el brochure del proyecto y el informe de obra actualizado directamente desde cada tarjeta de inversión." },
-  { title: "¡Listo!", text: "Ya conoces tu portal. Si necesitas ayuda, usa el botón de WhatsApp o contacta con tu asesor. Puedes volver a ver esta guía pulsando 'Ver guía' en el header." }
-];
+// Keys for the client onboarding guide. Titles/texts live in i18n
+// (admin.clientDash.guideNTitle / guideNText) so they translate per language.
+const CLIENT_GUIDE_KEYS = ['guide1', 'guide2', 'guide3', 'guide4', 'guide5'];
 
 const InfoTooltip = ({ text }: { text: string }) => {
   const [show, setShow] = React.useState(false);
@@ -103,7 +99,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
         if (i === 0) {
           const ratio = (investmentAmount * 2) / currTotal;
           const months = Math.ceil(ratio * 12);
-          return months < 12 ? `${months} meses` : `1 año`;
+          return months < 12 ? t('admin.clientDash.paybackMonths', { count: months }) : t('admin.clientDash.paybackOneYear');
         }
         const prev = yearlyData[i - 1];
         const prevTotal = prev.cumulativeRentalNet + (includeResale ? prev.resaleValue : 0);
@@ -113,9 +109,12 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
         const totalMonths = Math.round((curr.year - 1 + fraction) * 12);
         const years = Math.floor(totalMonths / 12);
         const months = totalMonths % 12;
-        if (years === 0) return `${months} meses`;
-        if (months === 0) return `${years} años`;
-        return `${years} años y ${months} meses`;
+        if (years === 0) return t('admin.clientDash.paybackMonths', { count: months });
+        if (months === 0) return t('admin.clientDash.paybackYears', { count: years });
+        return t('admin.clientDash.paybackYearsMonths', {
+          years: t('admin.clientDash.paybackYears', { count: years }),
+          months: t('admin.clientDash.paybackMonths', { count: months }),
+        });
       }
     }
     return null;
@@ -170,24 +169,24 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-green-50/50 border border-green-100 p-3 rounded-xl">
-                <p className="text-[9px] font-black uppercase text-green-600/50 tracking-widest">Alquiler neto ({displayYears}a)</p>
+                <p className="text-[9px] font-black uppercase text-green-600/50 tracking-widest">{t('admin.clientDash.calcNetRentalShort', { years: displayYears })}</p>
                 <p className="text-sm font-bold text-green-600">{formatPrice(totalRentalNet, projCurrency)}</p>
-                {isAdvanced && <p className="text-[8px] text-green-600/40 mt-1">Bruto: {formatPrice(totalRentalGross, projCurrency)} | Deduc: {((totalDeductions) * 100).toFixed(0)}%</p>}
+                {isAdvanced && <p className="text-[8px] text-green-600/40 mt-1">{t('admin.clientDash.calcGross', { value: formatPrice(totalRentalGross, projCurrency), pct: ((totalDeductions) * 100).toFixed(0) })}</p>}
               </div>
               <div className="bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
-                <p className="text-[9px] font-black uppercase text-blue-600/50 tracking-widest">Valor reventa año {displayYears}</p>
+                <p className="text-[9px] font-black uppercase text-blue-600/50 tracking-widest">{t('admin.clientDash.calcResaleValueYear', { year: displayYears })}</p>
                 <p className="text-sm font-bold text-blue-600">{formatPrice(resaleEnd, projCurrency)}</p>
-                {paybackDisplay && <p className="text-[8px] text-blue-600/40 mt-1">Payback estimado: {paybackDisplay}</p>}
+                {paybackDisplay && <p className="text-[8px] text-blue-600/40 mt-1">{t('admin.clientDash.calcPaybackEstimated', { value: paybackDisplay })}</p>}
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">Horizonte: {displayYears} años</p>
+                <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">{t('admin.clientDash.calcHorizon', { years: displayYears })}</p>
                 <div className="flex gap-2 text-[8px] font-bold">
-                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Contrato: {baseYears}a</span>
-                  {extensionYears > 0 && <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Ext: +{extensionYears}a</span>}
-                  {extraYears > 0 && <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">Extra: +{extraYears}a</span>}
+                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{t('admin.clientDash.calcChipContract', { years: baseYears })}</span>
+                  {extensionYears > 0 && <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{t('admin.clientDash.calcChipExt', { years: extensionYears })}</span>}
+                  {extraYears > 0 && <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">{t('admin.clientDash.calcChipExtra', { years: extraYears })}</span>}
                 </div>
               </div>
               <div className="relative h-8 flex items-center">
@@ -206,7 +205,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
             </div>
 
             <div>
-              <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">Años extra de lease (opcional)</p>
+              <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.calcExtraLeaseYears')}</p>
               <div className="flex gap-2">
                 {[0, 5, 10, 15, 20].map(y => (
                   <button key={y} onClick={() => setExtraYears(y)} className={`px-3 py-2 rounded-lg text-xs font-bold transition ${extraYears === y ? 'bg-primary text-white' : 'bg-gray-100 text-primary/60 hover:bg-gray-200'}`}>+{y}</button>
@@ -218,30 +217,30 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
               <div className="space-y-3">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">Apreciación terreno max.</p>
+                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">{t('admin.clientDash.calcMaxLandAppreciation')}</p>
                     <input type="range" min={0} max={300} step={10} value={maxAppreciation} onChange={(e) => setMaxAppreciation(parseInt(e.target.value))} className="w-full" />
                     <p className="text-xs font-bold text-primary text-center">{maxAppreciation}%</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">Ocupación</p>
+                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">{t('admin.clientDash.calcOccupancy')}</p>
                     <input type="range" min={0} max={100} step={5} value={occupancyRate} onChange={(e) => setOccupancyRate(parseInt(e.target.value))} className="w-full" />
                     <p className="text-xs font-bold text-primary text-center">{occupancyRate}%</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">Inflación alquiler</p>
+                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">{t('admin.clientDash.calcRentalInflation')}</p>
                     <input type="range" min={0} max={10} step={0.5} value={inflationRate} onChange={(e) => setInflationRate(parseFloat(e.target.value))} className="w-full" />
                     <p className="text-xs font-bold text-primary text-center">{inflationRate}%</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">OPEX (% alquiler)</p>
+                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">{t('admin.clientDash.calcOpex')}</p>
                     <input type="range" min={0} max={50} step={1} value={opexRate} onChange={(e) => setOpexRate(parseInt(e.target.value))} className="w-full" />
                     <p className="text-xs font-bold text-primary text-center">{opexRate}%</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100">
                   <div>
-                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">Incluir venta del inmueble</p>
-                    <p className="text-[8px] text-primary/30">Si se desactiva, el beneficio solo cuenta ingresos por alquiler</p>
+                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">{t('admin.clientDash.calcIncludeResale')}</p>
+                    <p className="text-[8px] text-primary/30">{t('admin.clientDash.calcIncludeResaleHint')}</p>
                   </div>
                   <button onClick={() => setIncludeResale(!includeResale)} className={`relative w-12 h-6 rounded-full transition-colors ${includeResale ? 'bg-primary' : 'bg-gray-300'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${includeResale ? 'left-7' : 'left-1'}`}></span>
@@ -251,7 +250,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
             )}
 
             <div>
-              <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-3">Evolución del retorno</p>
+              <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-3">{t('admin.clientDash.calcReturnEvolution')}</p>
               <div className="flex items-end gap-[2px] h-40 bg-gray-50 rounded-xl p-3">
                 {yearlyData.map((d, i) => {
                   const rentalH = maxChart > 0 ? (d.cumulativeRentalNet / maxChart) * 100 : 0;
@@ -271,7 +270,9 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
                       )}
                       {isAdvanced && (
                         <div className="absolute bottom-full mb-2 bg-primary text-white text-[8px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-30">
-                          A. {d.year}: Neto {formatPrice(d.cumulativeRentalNet, projCurrency)}{includeResale ? ` | Rev. ${formatPrice(d.resaleValue, projCurrency)}` : ''}
+                          {includeResale
+                            ? t('admin.clientDash.calcChartYearTooltipResale', { year: d.year, net: formatPrice(d.cumulativeRentalNet, projCurrency), resale: formatPrice(d.resaleValue, projCurrency) })
+                            : t('admin.clientDash.calcChartYearTooltip', { year: d.year, net: formatPrice(d.cumulativeRentalNet, projCurrency) })}
                         </div>
                       )}
                     </div>
@@ -279,45 +280,45 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
                 })}
               </div>
               <div className="flex gap-4 mt-2 justify-center">
-                <span className="flex items-center gap-1 text-[8px] text-primary/50"><span className="w-3 h-3 bg-green-400 rounded-sm inline-block"></span> Alquiler neto acumulado</span>
-                {includeResale && <span className="flex items-center gap-1 text-[8px] text-primary/50"><span className="w-3 h-3 bg-blue-400 rounded-sm inline-block"></span> Valor reventa</span>}
+                <span className="flex items-center gap-1 text-[8px] text-primary/50"><span className="w-3 h-3 bg-green-400 rounded-sm inline-block"></span> {t('admin.clientDash.calcLegendNetRental')}</span>
+                {includeResale && <span className="flex items-center gap-1 text-[8px] text-primary/50"><span className="w-3 h-3 bg-blue-400 rounded-sm inline-block"></span> {t('admin.clientDash.calcLegendResale')}</span>}
               </div>
             </div>
 
             <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-              <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">Desglose a {displayYears} años</p>
+              <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.calcBreakdownTitle', { years: displayYears })}</p>
               <div className="flex justify-between text-sm">
-                <span className="text-primary/60">Alquiler bruto acumulado</span>
+                <span className="text-primary/60">{t('admin.clientDash.calcGrossRentalAccum')}</span>
                 <span className="font-bold text-primary/70">{formatPrice(totalRentalGross, projCurrency)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-primary/60">- Mantenimiento (2,5%)</span>
+                <span className="text-primary/60">{t('admin.clientDash.calcMaintenance')}</span>
                 <span className="font-bold text-red-400">-{formatPrice(totalRentalGross * MAINTENANCE_PCT, projCurrency)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-primary/60">- OPEX ({opexRate}%)</span>
+                <span className="text-primary/60">{t('admin.clientDash.calcOpexLine', { pct: opexRate })}</span>
                 <span className="font-bold text-red-400">-{formatPrice(totalRentalGross * (opexRate / 100), projCurrency)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-primary/60">= Alquiler neto acumulado</span>
+                <span className="text-primary/60">{t('admin.clientDash.calcNetRentalAccum')}</span>
                 <span className="font-bold text-green-600">{formatPrice(totalRentalNet, projCurrency)}</span>
               </div>
               {includeResale && (
                 <>
                   <div className="border-t border-gray-200 my-2"></div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-primary/60">Valor reventa estimado año {displayYears}</span>
+                    <span className="text-primary/60">{t('admin.clientDash.calcResaleEstimatedYear', { year: displayYears })}</span>
                     <span className="font-bold text-blue-600">{formatPrice(resaleEnd, projCurrency)}</span>
                   </div>
                 </>
               )}
               <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
-                <span className="font-bold text-primary">BENEFICIO NETO ESTIMADO</span>
+                <span className="font-bold text-primary">{t('admin.clientDash.calcNetProfitEstimated')}</span>
                 <span className={`font-black text-lg ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatPrice(totalReturn, projCurrency)}</span>
               </div>
               {paybackDisplay && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-primary/60">Payback estimado</span>
+                  <span className="text-primary/60">{t('admin.clientDash.calcPaybackLine')}</span>
                   <span className="font-bold text-primary">{paybackDisplay}</span>
                 </div>
               )}
@@ -325,21 +326,21 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
                 <>
                   <div className="border-t border-gray-200 my-2"></div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-primary/60">Terreno año {displayYears} (apreciación {(getLandAppreciation(displayYears) * 100).toFixed(0)}% x lease {(last ? (last.leaseFactor * 100).toFixed(0) : 0)}%)</span>
+                    <span className="text-primary/60">{t('admin.clientDash.calcLandYear', { year: displayYears, appr: (getLandAppreciation(displayYears) * 100).toFixed(0), lease: (last ? (last.leaseFactor * 100).toFixed(0) : 0) })}</span>
                     <span className="font-bold text-primary">{formatPrice(last ? last.landVal : 0, projCurrency)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-primary/60">Edificio año {displayYears} (constante)</span>
+                    <span className="text-primary/60">{t('admin.clientDash.calcBuildingYear', { year: displayYears })}</span>
                     <span className="font-bold text-primary">{formatPrice(buildingValue, projCurrency)}</span>
                   </div>
                 </>
               )}
               {!isAdvanced && (
-                <p className="text-[8px] text-primary/30 mt-2 italic">Valores por defecto: ocupación 80%, inflación alquiler 3%, OPEX 15%, apreciación máx. terreno 150%. Cambia al modo Avanzado para ajustarlos.</p>
+                <p className="text-[8px] text-primary/30 mt-2 italic">{t('admin.clientDash.calcDefaultsNote')}</p>
               )}
             </div>
 
-            <p className="text-[8px] text-primary/30 text-center italic leading-relaxed">* Estimaciones orientativas basadas en proyecciones. El alquiler neto incluye deducciones por mantenimiento (2,5%) y gastos operativos (OPEX {opexRate}%). El edificio mantiene su valor pero puede requerir reformas periodicas no incluidas. La apreciación del terreno sigue una curva logaritmica orientativa. La renovacion/extension del lease puede implicar costes adicionales. Unreal Studio no es responsable de las fluctuaciones en los tipos de cambio (FX) ni de variaciones en las condiciones de mercado. Rentabilidades pasadas no garantizan resultados futuros. Consulta con tu asesor.</p>
+            <p className="text-[8px] text-primary/30 text-center italic leading-relaxed">{t('admin.clientDash.calcDisclaimer', { opex: opexRate })}</p>
           </div>
         </div>
       </div>
@@ -348,8 +349,9 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
 };
 
 const ClientDashboard: React.FC = () => {
-  const { t } = useTranslation();
-  useEffect(() => { document.title = 'Mi Portal | Unreal Studio Madrid'; }, []);
+  const { t, i18n } = useTranslation();
+  useEffect(() => { document.title = t('admin.clientDash.pageTitle'); }, [t]);
+  const dateLocale = i18n.language === 'en' ? 'en-GB' : i18n.language === 'ro' ? 'ro-RO' : 'es-ES';
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { currency, setCurrency, formatPrice } = useCurrency();
@@ -367,7 +369,7 @@ const ClientDashboard: React.FC = () => {
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
     try {
-        return new Date(dateString).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return new Date(dateString).toLocaleDateString(dateLocale, { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }
@@ -429,11 +431,11 @@ const ClientDashboard: React.FC = () => {
     setPasswordError('');
     setPasswordSuccess('');
     if (passwords.newPass !== passwords.confirm) {
-      setPasswordError('Las contraseñas no coinciden.');
+      setPasswordError(t('admin.clientDash.passwordsNoMatch'));
       return;
     }
     if (passwords.newPass.length < 6) {
-      setPasswordError('La contraseña debe tener al menos 6 caracteres.');
+      setPasswordError(t('admin.clientDash.passwordTooShort'));
       return;
     }
     const clientId = getClientId();
@@ -445,7 +447,7 @@ const ClientDashboard: React.FC = () => {
         p_new_password: passwords.newPass
       });
       if (error || !data || !data.success) {
-        setPasswordError(data?.error || 'Contraseña actual incorrecta.');
+        setPasswordError(data?.error || t('admin.clientDash.passwordWrong'));
         return;
       }
       
@@ -455,11 +457,11 @@ const ClientDashboard: React.FC = () => {
         password_plain: passwords.newPass 
       }).eq('id', clientId);
 
-      setPasswordSuccess('Contraseña actualizada correctamente.');
+      setPasswordSuccess(t('admin.clientDash.passwordChangeSuccess'));
       setPasswords({ current: '', newPass: '', confirm: '' });
       setTimeout(() => { setShowChangePassword(false); setPasswordSuccess(''); }, 2000);
     } catch (err) {
-      setPasswordError('Error al cambiar contraseña.');
+      setPasswordError(t('admin.clientDash.passwordChangeError'));
     }
   };
 
@@ -478,7 +480,7 @@ const ClientDashboard: React.FC = () => {
   };
 
   const nextGuideStep = () => {
-    if (walkthroughStep !== null && walkthroughStep < CLIENT_GUIDE_STEPS.length - 1) {
+    if (walkthroughStep !== null && walkthroughStep < CLIENT_GUIDE_KEYS.length - 1) {
       setWalkthroughStep(walkthroughStep + 1);
     } else {
       finishWalkthrough();
@@ -530,7 +532,7 @@ const ClientDashboard: React.FC = () => {
       const num = parseFloat(formatted.replace(/[^\d,-]/g, '').replace(/\./g, '').replace(',', '.'));
       if (!isNaN(num)) total += num;
     });
-    return total.toLocaleString('es-ES', {maximumFractionDigits: 0}) + ' ' + (CURRENCIES.find(c => c.code === currency)?.symbol || '€');
+    return total.toLocaleString(dateLocale, {maximumFractionDigits: 0}) + ' ' + (CURRENCIES.find(c => c.code === currency)?.symbol || '€');
   };
 
   const getWeightedRentalROI = () => {
@@ -567,26 +569,26 @@ const ClientDashboard: React.FC = () => {
       {walkthroughStep !== null && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
           <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 mx-4 border border-gray-100">
-            <button onClick={() => finishWalkthrough()} className="absolute top-4 right-4 text-gray-400 hover:text-primary transition" title="Cerrar guía">
+            <button onClick={() => finishWalkthrough()} className="absolute top-4 right-4 text-gray-400 hover:text-primary transition" title={t('admin.clientDash.closeGuide')}>
               <span className="material-symbols-outlined">close</span>
             </button>
             <div className="mb-6">
-              <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest block mb-2">Paso {walkthroughStep + 1} de {CLIENT_GUIDE_STEPS.length}</span>
-              <h2 className="text-2xl font-serif text-primary mb-4 leading-tight">{CLIENT_GUIDE_STEPS[walkthroughStep].title}</h2>
-              <p className="text-primary/70 text-sm font-medium leading-relaxed">{CLIENT_GUIDE_STEPS[walkthroughStep].text}</p>
+              <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest block mb-2">{t('admin.clientDash.stepLabel', { n: walkthroughStep + 1, total: CLIENT_GUIDE_KEYS.length })}</span>
+              <h2 className="text-2xl font-serif text-primary mb-4 leading-tight">{t(`admin.clientDash.${CLIENT_GUIDE_KEYS[walkthroughStep]}Title`)}</h2>
+              <p className="text-primary/70 text-sm font-medium leading-relaxed">{t(`admin.clientDash.${CLIENT_GUIDE_KEYS[walkthroughStep]}Text`)}</p>
             </div>
             <div className="flex justify-between items-center pt-4 border-t border-gray-100">
               <div className="flex gap-2">
-                {CLIENT_GUIDE_STEPS.map((_: any, i: number) => (
+                {CLIENT_GUIDE_KEYS.map((_: any, i: number) => (
                   <div key={i} className={`w-2 h-2 rounded-full transition-colors duration-300 ${i === walkthroughStep ? 'bg-primary' : 'bg-gray-200'}`} />
                 ))}
               </div>
               <div className="flex gap-3">
                 {walkthroughStep > 0 && (
-                  <button onClick={prevGuideStep} className="text-primary font-bold text-xs uppercase tracking-widest hover:text-primary/70 px-2">Anterior</button>
+                  <button onClick={prevGuideStep} className="text-primary font-bold text-xs uppercase tracking-widest hover:text-primary/70 px-2">{t('admin.clientDash.prev')}</button>
                 )}
                 <button onClick={nextGuideStep} className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-black transition-all">
-                  {walkthroughStep < CLIENT_GUIDE_STEPS.length - 1 ? 'Siguiente' : 'Finalizar'}
+                  {walkthroughStep < CLIENT_GUIDE_KEYS.length - 1 ? t('admin.clientDash.next') : t('admin.clientDash.finish')}
                 </button>
               </div>
             </div>
@@ -612,7 +614,7 @@ const ClientDashboard: React.FC = () => {
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiStatus')}</p>
-            <p className="text-3xl font-serif text-primary">{projects.length > 0 ? 'Activo' : 'Sin inversiones'}</p>
+            <p className="text-3xl font-serif text-primary">{projects.length > 0 ? t('admin.clientDash.statusActive') : t('admin.clientDash.statusNoInvestments')}</p>
           </div>
         </div>
 
@@ -621,8 +623,8 @@ const ClientDashboard: React.FC = () => {
         {projects.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center border border-primary/5">
             <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">home_work</span>
-            <p className="text-primary/40 font-bold">Aún no tienes proyectos asignados.</p>
-            <p className="text-primary/30 text-sm mt-2">Tu asesor te asignará proyectos cuando formalices tu inversión.</p>
+            <p className="text-primary/40 font-bold">{t('admin.clientDash.noProjectsTitle')}</p>
+            <p className="text-primary/30 text-sm mt-2">{t('admin.clientDash.noProjectsBody')}</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -647,25 +649,25 @@ const ClientDashboard: React.FC = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                       {proj.unit_number && (
                         <div>
-                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">Unidad</p>
+                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelUnit')}</p>
                           <p className="text-sm font-bold text-primary">{proj.unit_number}</p>
                         </div>
                       )}
                       {proj.investment_amount > 0 && (
                         <div>
-                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">Inversión</p>
+                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelInvestment')}</p>
                           <p className="text-sm font-bold text-primary">{formatPrice(Number(proj.investment_amount), proj.investment_currency || 'EUR')}</p>
                         </div>
                       )}
                       {proj.purchase_date && (
                         <div>
-                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">Fecha compra</p>
+                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelPurchaseDate')}</p>
                           <p className="text-sm font-bold text-primary">{formatDate(proj.purchase_date)}</p>
                         </div>
                       )}
                       {proj.completion_percent !== undefined && (
                         <div>
-                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">Avance obra</p>
+                          <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelConstructionProgress')}</p>
                           <div className="flex items-center gap-2">
                             <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
                               <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
@@ -680,14 +682,14 @@ const ClientDashboard: React.FC = () => {
                       <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
                         {proj.annual_rental_projection && proj.investor_price && (
                           <div>
-                            <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">ROI Alquiler Previsto</p>
-                            <p className="text-sm font-bold text-green-600">{((proj.annual_rental_projection / proj.investor_price) * 100).toFixed(1)}% <span className="text-[9px] text-primary/40">bruto/año</span></p>
+                            <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelRoiRentalProjected')}</p>
+                            <p className="text-sm font-bold text-green-600">{((proj.annual_rental_projection / proj.investor_price) * 100).toFixed(1)}% <span className="text-[9px] text-primary/40">{t('admin.clientDash.grossPerYear')}</span></p>
                           </div>
                         )}
                         {proj.market_price && proj.investor_price && proj.market_price > proj.investor_price && (
                           <div>
-                            <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">ROI Reventa Previsto</p>
-                            <p className="text-sm font-bold text-blue-600">{(((proj.market_price - proj.investor_price) / proj.investor_price) * 100).toFixed(1)}% <span className="text-[9px] text-primary/40">plusvalía</span></p>
+                            <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelRoiResaleProjected')}</p>
+                            <p className="text-sm font-bold text-blue-600">{(((proj.market_price - proj.investor_price) / proj.investor_price) * 100).toFixed(1)}% <span className="text-[9px] text-primary/40">{t('admin.clientDash.capitalGain')}</span></p>
                           </div>
                         )}
                       </div>
@@ -697,22 +699,22 @@ const ClientDashboard: React.FC = () => {
                       <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
                           {proj.brochure_url && (
                               <a href={getImageUrl(proj.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
-                                  <span className="material-symbols-outlined text-sm">download</span> Brochure
+                                  <span className="material-symbols-outlined text-sm">download</span> {t('admin.clientDash.btnBrochure')}
                               </a>
                           )}
                           {proj.construction_update_url && (
                               <a href={getImageUrl(proj.construction_update_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
-                                  <span className="material-symbols-outlined text-sm">construction</span> Informe de Obra
+                                  <span className="material-symbols-outlined text-sm">construction</span> {t('admin.clientDash.btnConstructionReport')}
                                   {proj.construction_update_date && <span className="text-[8px] opacity-70 ml-1">({formatDate(proj.construction_update_date)})</span>}
                               </a>
                           )}
                           {proj.project_slug && (
                               <Link to={`/proyecto/${proj.project_slug}`} className="flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/20 text-primary text-xs font-bold uppercase hover:bg-primary hover:text-white transition">
-                                  <span className="material-symbols-outlined text-sm">visibility</span> Ver Proyecto
+                                  <span className="material-symbols-outlined text-sm">visibility</span> {t('admin.clientDash.btnViewProject')}
                               </Link>
                           )}
                           <button onClick={() => setCalculatorProject(proj)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary/5 text-primary text-xs font-bold uppercase hover:bg-primary hover:text-white transition">
-                            <span className="material-symbols-outlined text-sm">calculate</span> Calculadora ROI
+                            <span className="material-symbols-outlined text-sm">calculate</span> {t('admin.clientDash.btnCalculator')}
                           </button>
                       </div>
                     )}
@@ -725,10 +727,10 @@ const ClientDashboard: React.FC = () => {
 
         {/* Contacto */}
         <div className="mt-16 bg-primary text-white rounded-2xl p-10 text-center">
-          <h3 className="text-2xl font-serif mb-4">¿Necesitas ayuda?</h3>
-          <p className="text-white/70 text-sm mb-6">Nuestro equipo está disponible para resolver cualquier duda sobre tus inversiones.</p>
-          <a href="https://wa.me/34625710770?text=Hola, soy inversor de Unreal Studio y necesito ayuda." target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
-            <span className="material-symbols-outlined">chat</span> Contactar por WhatsApp
+          <h3 className="text-2xl font-serif mb-4">{t('admin.clientDash.helpTitle')}</h3>
+          <p className="text-white/70 text-sm mb-6">{t('admin.clientDash.helpBody')}</p>
+          <a href={`https://wa.me/34625710770?text=${encodeURIComponent(t('admin.clientDash.whatsappMessage'))}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
+            <span className="material-symbols-outlined">chat</span> {t('admin.clientDash.helpWhatsapp')}
           </a>
         </div>
       </main>

@@ -56,7 +56,7 @@ export default function AgenciasDashboard() {
         if (cancelled) return;
         if (partnerErr) throw partnerErr;
         if (!partnerRow) {
-          setError("Tu cuenta aún no está vinculada a una agencia. Contacta soporte.");
+          setError(t('agenciasDashboard.accountNotLinked'));
           setLoading(false);
           return;
         }
