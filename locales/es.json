@@ -645,5 +645,30 @@
       "recoveryManual": "<strong>Reset manual</strong> — pide a otro admin del equipo que entre en Panel → Usuarios y te asigne nueva contraseña.",
       "recoveryHint": "Tu usuario aparece con mayúscula inicial."
     }
+  },
+  "footer": {
+    "tagline": "Inversión inmobiliaria inteligente y arquitectura premium en los destinos más rentables del mundo.",
+    "menu": "Menú",
+    "home": "Inicio",
+    "projects": "Proyectos",
+    "blog": "Blog",
+    "contact": "Contacto",
+    "offices": "Nuestras Sedes",
+    "clients": "Clientes",
+    "team": "Team",
+    "admin": "Admin",
+    "rights": "© 2026 Unreal Studio Madrid. Todos los derechos reservados.",
+    "privacy": "Privacidad",
+    "terms": "Términos"
+  },
+  "team": {
+    "emailLabel": "Email de trabajo",
+    "passwordLabel": "Contraseña",
+    "emailPlaceholder": "nombre@unrealstudiobali.com",
+    "submit": "Entrar",
+    "submitting": "Entrando…",
+    "errorInvalid": "Email o contraseña incorrectos.",
+    "errorGeneric": "No se pudo iniciar sesión. Inténtalo de nuevo.",
+    "noAccess": "¿Sin acceso? Pídele tus datos a tu responsable."
   }
 }

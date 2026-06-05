@@ -645,5 +645,30 @@
       "recoveryManual": "<strong>Resetare manuală</strong> — roagă alt admin să intre și să-ți reseteze parola din Panou → Utilizatori.",
       "recoveryHint": "Numele de utilizator are inițială majusculă."
     }
+  },
+  "footer": {
+    "tagline": "Investiții imobiliare inteligente și arhitectură premium în cele mai profitabile destinații din lume.",
+    "menu": "Meniu",
+    "home": "Acasă",
+    "projects": "Proiecte",
+    "blog": "Blog",
+    "contact": "Contact",
+    "offices": "Birourile noastre",
+    "clients": "Clienți",
+    "team": "Team",
+    "admin": "Admin",
+    "rights": "© 2026 Unreal Studio Madrid. Toate drepturile rezervate.",
+    "privacy": "Confidențialitate",
+    "terms": "Termeni"
+  },
+  "team": {
+    "emailLabel": "Email de serviciu",
+    "passwordLabel": "Parolă",
+    "emailPlaceholder": "nume@unrealstudiobali.com",
+    "submit": "Conectare",
+    "submitting": "Se conectează…",
+    "errorInvalid": "Email sau parolă greșite.",
+    "errorGeneric": "Conectarea a eșuat. Încearcă din nou.",
+    "noAccess": "Fără acces? Cere datele managerului tău."
   }
 }

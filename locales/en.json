@@ -645,5 +645,30 @@
       "recoveryManual": "<strong>Manual reset</strong> — ask another admin to sign in and reset your password from Panel → Users.",
       "recoveryHint": "Usernames are capitalised."
     }
+  },
+  "footer": {
+    "tagline": "Smart real-estate investment and premium architecture in the world’s most profitable destinations.",
+    "menu": "Menu",
+    "home": "Home",
+    "projects": "Projects",
+    "blog": "Blog",
+    "contact": "Contact",
+    "offices": "Our Offices",
+    "clients": "Clients",
+    "team": "Team",
+    "admin": "Admin",
+    "rights": "© 2026 Unreal Studio Madrid. All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "team": {
+    "emailLabel": "Work email",
+    "passwordLabel": "Password",
+    "emailPlaceholder": "name@unrealstudiobali.com",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "errorInvalid": "Wrong email or password.",
+    "errorGeneric": "Could not sign in. Please try again.",
+    "noAccess": "No access? Ask your manager for your details."
   }
 }

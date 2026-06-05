@@ -1,17 +1,17 @@
 /**
  * /empleados — Login del portal Team (email + contraseña).
- *
- * Las cuentas las crea el admin desde el portal Admin (Supabase Auth).
- * Usa PortalShell → mismo header (logo + idioma) y footer que el resto de portales.
+ * i18n: usa el namespace `team` (es/en/ro). Header/footer vía PortalShell.
  */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import PortalShell from '../components/PortalShell';
 
 const EmpleadosLogin: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,13 +36,13 @@ const EmpleadosLogin: React.FC = () => {
         password,
       });
       if (authErr) {
-        setError('Email o contraseña incorrectos.');
+        setError(t('team.errorInvalid'));
         setBusy(false);
         return;
       }
       navigate('/empleados/dashboard', { replace: true });
     } catch {
-      setError('No se pudo iniciar sesión. Inténtalo de nuevo.');
+      setError(t('team.errorGeneric'));
       setBusy(false);
     }
   };
@@ -61,7 +61,7 @@ const EmpleadosLogin: React.FC = () => {
           )}
           <div>
             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
-              Email de trabajo
+              {t('team.emailLabel')}
             </label>
             <input
               type="email"
@@ -70,13 +70,13 @@ const EmpleadosLogin: React.FC = () => {
               inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="nombre@unrealstudiobali.com"
+              placeholder={t('team.emailPlaceholder')}
               className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none"
             />
           </div>
           <div>
             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
-              Contraseña
+              {t('team.passwordLabel')}
             </label>
             <input
               type="password"
@@ -95,15 +95,15 @@ const EmpleadosLogin: React.FC = () => {
             {busy ? (
               <>
                 <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
-                Entrando…
+                {t('team.submitting')}
               </>
             ) : (
-              'Entrar'
+              t('team.submit')
             )}
           </button>
         </form>
         <p className="text-center text-xs text-primary/30 mt-8">
-          ¿Sin acceso? Pídele tus datos a tu responsable.
+          {t('team.noAccess')}
         </p>
       </div>
     </PortalShell>
