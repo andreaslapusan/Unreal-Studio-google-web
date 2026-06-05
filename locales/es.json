@@ -695,6 +695,8 @@
     "portal_agencias": "Agencias",
     "portal_empleados": "Team",
     "portal_inversores": "Inversores",
-    "portal_admin": "Admin"
+    "portal_admin": "Admin",
+    "noAccessHere": "Tu cuenta no tiene acceso a este portal.",
+    "verifyError": "No se pudo verificar tu acceso. Inténtalo de nuevo."
   }
 }

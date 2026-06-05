@@ -695,6 +695,8 @@
     "portal_agencias": "Agenții",
     "portal_empleados": "Team",
     "portal_inversores": "Investitori",
-    "portal_admin": "Admin"
+    "portal_admin": "Admin",
+    "noAccessHere": "Contul tău nu are acces la acest portal.",
+    "verifyError": "Nu s-a putut verifica accesul. Încearcă din nou."
   }
 }

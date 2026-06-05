@@ -58,7 +58,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(sess);
       setUser(sess?.user ?? null);
       if (sess?.user) {
+        // Mantener loading=true mientras se resuelve el rol, para que los guards
+        // (ProtectedRoute) no rebote antes de que `role` esté cargado tras login.
+        setLoading(true);
         await loadRole(sess.user.id);
+        setLoading(false);
       } else {
         setRole(null);
       }
