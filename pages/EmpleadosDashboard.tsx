@@ -239,6 +239,32 @@ const EmpleadosDashboard: React.FC = () => {
         <p className="text-center text-xs text-primary/40 mt-5">
           Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas.
         </p>
+
+        {/* Hub Team: otras secciones del portal */}
+        <div className="mt-8 grid grid-cols-1 gap-3">
+          <button
+            onClick={() => navigate('/equipo/upload')}
+            className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+          >
+            <span className="material-symbols-outlined text-primary">construction</span>
+            <span className="flex-1">
+              <span className="block font-bold text-primary text-sm">Reportes de obra</span>
+              <span className="block text-xs text-primary/50">Sube el avance por proyecto</span>
+            </span>
+            <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+          </button>
+          <button
+            onClick={() => navigate('/manager/dashboard')}
+            className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+          >
+            <span className="material-symbols-outlined text-primary">beach_access</span>
+            <span className="flex-1">
+              <span className="block font-bold text-primary text-sm">Vacaciones y ausencias</span>
+              <span className="block text-xs text-primary/50">Solicita y consulta tus días</span>
+            </span>
+            <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+          </button>
+        </div>
       </div>
 
       {/* Cámara a pantalla completa */}
