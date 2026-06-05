@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
     : role === 'lister'
       ? '/agencias/dashboard'
       : role === 'investor'
-        ? '/inversores/dashboard'
+        ? '/cliente/dashboard'
         : '/admin/login';
 
   useEffect(() => {

@@ -112,6 +112,9 @@ const EmpleadosDashboard: React.FC = () => {
   // Pulsar Check-in/out → pide GPS (en paralelo) y abre la cámara.
   const startCapture = async (type: FichajeType) => {
     setCameraError(null);
+    // Libera cualquier stream que quedara abierto de un intento anterior — si no,
+    // la cámara queda "ocupada" y getUserMedia falla en el 2º intento.
+    stopCamera();
     setCapture(type);
     navigator.geolocation?.getCurrentPosition(
       (pos) => {
@@ -144,6 +147,12 @@ const EmpleadosDashboard: React.FC = () => {
           type,
           title: 'La cámara está bloqueada',
           body: 'Tu navegador no nos deja usar la cámara. Pulsa el icono de cámara 🎥 (o el candado 🔒) a la izquierda de la barra de direcciones → "Permitir cámara", recarga la página y reintenta. En Mac: Ajustes del Sistema → Privacidad → Cámara → activa Chrome.',
+        });
+      } else if (name === 'NotReadableError' || name === 'AbortError') {
+        setCameraError({
+          type,
+          title: 'La cámara está ocupada',
+          body: 'Otra app o pestaña está usando la cámara (Zoom, Meet, FaceTime, otra pestaña…). Ciérralas y pulsa Reintentar.',
         });
       } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
         setCameraError({

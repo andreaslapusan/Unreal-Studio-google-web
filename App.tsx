@@ -28,9 +28,6 @@ const AgenciasPartnership = lazy(() => import('./pages/AgenciasPartnership'));
 const AgenciasRegistrar = lazy(() => import('./pages/AgenciasRegistrar'));
 const AgenciasDashboard = lazy(() => import('./pages/AgenciasDashboard'));
 const AgenciasStats = lazy(() => import('./pages/AgenciasStats'));
-const InversoresLogin = lazy(() => import('./pages/InversoresLogin'));
-const InversoresPartnership = lazy(() => import('./pages/InversoresPartnership'));
-const InversoresDashboard = lazy(() => import('./pages/InversoresDashboard'));
 const AuthFinish = lazy(() => import('./pages/AuthFinish'));
 const EquipoUpload = lazy(() => import('./pages/EquipoUpload'));
 const EquipoLogin = lazy(() => import('./pages/EquipoLogin'));
@@ -209,9 +206,11 @@ const App: React.FC = () => {
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
             <Route path="/agencias/stats" element={<AgenciasStats />} />
-            <Route path="/inversores" element={<InversoresPartnership />} />
-            <Route path="/inversores/login" element={<InversoresLogin />} />
-            <Route path="/inversores/dashboard" element={<InversoresDashboard />} />
+            {/* Inversores NO existe como portal aparte: ES el portal de Cliente.
+                Redirigimos las rutas viejas a /cliente para no romper enlaces. */}
+            <Route path="/inversores" element={<Navigate to="/cliente" replace />} />
+            <Route path="/inversores/login" element={<Navigate to="/cliente" replace />} />
+            <Route path="/inversores/dashboard" element={<Navigate to="/cliente/dashboard" replace />} />
             {/* Manager Portal — para trabajadores (Agun/Adam/Paris/Marc/Luis/Raul).
                 Acceso por magic link al email registrado. NO tienen acceso a /admin.
                 Las rutas legacy /equipo/* redirigen a /manager/* para no romper enlaces
