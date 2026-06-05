@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import PaymentTimeline from "../components/PaymentTimeline";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import Footer from "../components/Footer";
 
 interface InvestorRow {
   id: string;
@@ -187,9 +189,12 @@ export default function InversoresDashboard() {
           <h1 className="font-serif text-2xl">{t('inversoresDashboard.headerTitle')}</h1>
           <p className="text-sm opacity-80">{investor?.full_name ?? user.email}</p>
         </div>
-        <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/inversores/login'; }} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
-          {t('inversoresDashboard.navLogout')}
-        </button>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher inverted />
+          <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/inversores/login'; }} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
+            {t('inversoresDashboard.navLogout')}
+          </button>
+        </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-10">
@@ -270,6 +275,11 @@ export default function InversoresDashboard() {
           </>
         )}
       </main>
+
+      {/* Footer compartido (a lo ancho; el root no tiene padding lateral) */}
+      <div className="mt-12">
+        <Footer />
+      </div>
     </div>
   );
 }

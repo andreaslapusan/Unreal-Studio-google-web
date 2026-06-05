@@ -9,6 +9,8 @@ import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
 import { projectSeoSlug } from "../lib/projectUrl";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import Footer from "../components/Footer";
 
 interface PartnerRow {
   id: string;
@@ -105,8 +107,9 @@ export default function AgenciasDashboard() {
           <h1 className="font-serif text-2xl">{t('agenciasDashboard.headerTitle')}</h1>
           <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
         </div>
-        <nav className="flex gap-2 text-sm">
+        <nav className="flex items-center gap-2 text-sm">
           <Link to="/agencias/stats" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navStats')}</Link>
+          <LanguageSwitcher inverted />
           <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navLogout')}</button>
         </nav>
       </header>
@@ -179,6 +182,11 @@ export default function AgenciasDashboard() {
           ))}
         </div>
       </main>
+
+      {/* Footer compartido (a lo ancho; el root no tiene padding lateral) */}
+      <div className="mt-12">
+        <Footer />
+      </div>
     </div>
   );
 }

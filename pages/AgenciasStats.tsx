@@ -8,6 +8,8 @@ import { Navigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import Footer from "../components/Footer";
 
 interface AttributionRow {
   id: string;
@@ -131,8 +133,9 @@ export default function AgenciasStats() {
           <h1 className="font-serif text-2xl">{t('agenciasStats.headerTitle')}</h1>
           <p className="text-sm opacity-80">{partner?.agency_name ?? user.email}</p>
         </div>
-        <nav className="flex gap-2 text-sm">
+        <nav className="flex items-center gap-2 text-sm">
           <Link to="/agencias/dashboard" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasStats.navProjects')}</Link>
+          <LanguageSwitcher inverted />
           <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasStats.navLogout')}</button>
         </nav>
       </header>
@@ -196,6 +199,11 @@ export default function AgenciasStats() {
           </>
         )}
       </main>
+
+      {/* Footer compartido (a lo ancho; el root no tiene padding lateral) */}
+      <div className="mt-12">
+        <Footer />
+      </div>
     </div>
   );
 }

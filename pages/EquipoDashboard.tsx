@@ -17,6 +17,7 @@ import { useAuth } from "../lib/auth-context";
 import { compressImage } from "../lib/imageCompress";
 import WeatherWidget, { getWeatherSummary } from "../components/WeatherWidget";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import Footer from "../components/Footer";
 
 interface TeamMember {
   id: string;
@@ -167,6 +168,11 @@ export default function EquipoDashboard() {
         {tab === "parte" && member && (
           <ParteTab member={member} projects={projects} reports={reports} reload={loadAll} />
         )}
+      </div>
+
+      {/* Footer compartido (a lo ancho; el root no tiene padding lateral) */}
+      <div className="mt-12">
+        <Footer />
       </div>
     </div>
   );
