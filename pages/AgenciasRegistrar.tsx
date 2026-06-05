@@ -144,10 +144,10 @@ export default function AgenciasRegistrar() {
         <h1 className="text-4xl font-serif text-primary mb-3">Conviértete en Listing Partner</h1>
         <p className="text-primary/70 mb-8">
           ¿Tienes una agencia inmobiliaria en Bali, España, Australia, o donde sea?
-          Lista nuestras propiedades en tu portfolio y gana <strong>5% de comisión</strong>{" "}
-          por unidad cerrada. Acceso a renders, walkthroughs, dossiers actualizados,
-          plan de pagos detallado, y videos drone para que vendas como si fueras parte
-          del equipo.
+          Lista nuestras propiedades en tu portfolio y vende a tus clientes. Acceso a
+          renders, walkthroughs, dossiers actualizados, planos y videos drone para que
+          vendas con todo el material y el soporte de nuestro equipo. Las condiciones del
+          programa te las detallamos tras validarte.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-2xl p-8 shadow-sm">
