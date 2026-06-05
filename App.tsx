@@ -35,6 +35,8 @@ const AuthFinish = lazy(() => import('./pages/AuthFinish'));
 const EquipoUpload = lazy(() => import('./pages/EquipoUpload'));
 const EquipoLogin = lazy(() => import('./pages/EquipoLogin'));
 const EquipoDashboard = lazy(() => import('./pages/EquipoDashboard'));
+const EmpleadosLogin = lazy(() => import('./pages/EmpleadosLogin'));
+const EmpleadosDashboard = lazy(() => import('./pages/EmpleadosDashboard'));
 const AdminPortalManager = lazy(() => import('./pages/AdminPortalManager'));
 const AdminAgencias = lazy(() => import('./pages/AdminAgencias'));
 const AgencyPack = lazy(() => import('./pages/AgencyPack'));
@@ -97,6 +99,8 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
     || location.pathname.startsWith('/agencias')
     || location.pathname.startsWith('/inversores')
     || location.pathname.startsWith('/equipo')
+    || location.pathname.startsWith('/empleados')
+    || location.pathname.startsWith('/manager')
     || location.pathname.startsWith('/auth')
     || location.pathname === '/lofts-globalitae';
   return (
@@ -211,6 +215,9 @@ const App: React.FC = () => {
             <Route path="/equipo" element={<Navigate to="/manager" replace />} />
             <Route path="/equipo/dashboard" element={<Navigate to="/manager/dashboard" replace />} />
             <Route path="/equipo/upload" element={<EquipoUpload />} />
+            {/* Portal Empleados (fichaje check-in/check-out) */}
+            <Route path="/empleados" element={<EmpleadosLogin />} />
+            <Route path="/empleados/dashboard" element={<EmpleadosDashboard />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

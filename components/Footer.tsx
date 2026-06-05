@@ -77,6 +77,9 @@ const Footer: React.FC = () => {
           <Link className="hover:text-primary transition flex items-center gap-1" to="/cliente">
             <span className="material-symbols-outlined text-xs">person</span> Portal Cliente
           </Link>
+          <Link className="hover:text-primary transition flex items-center gap-1" to="/empleados">
+            <span className="material-symbols-outlined text-xs">badge</span> Empleados
+          </Link>
           <Link className="hover:text-primary transition flex items-center gap-1" to="/admin/login">
             <span className="material-symbols-outlined text-xs">settings</span> Development
           </Link>

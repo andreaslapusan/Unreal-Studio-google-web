@@ -102,6 +102,21 @@ export default function AuthFinish() {
       } catch {
         // fall through to legacy role routing
       }
+      // Empleados (portal de fichaje) — allowlist en tabla `employees`.
+      try {
+        const { data: emp } = await supabase
+          .from("employees")
+          .select("id")
+          .eq("email", user.email)
+          .eq("active", true)
+          .maybeSingle();
+        if (emp) {
+          navigate("/empleados/dashboard", { replace: true });
+          return;
+        }
+      } catch {
+        // fall through
+      }
       if (role === "lister") navigate("/agencias/dashboard", { replace: true });
       else if (role === "investor") navigate("/inversores/dashboard", { replace: true });
       else if (role === "admin" || role === "team") navigate("/admin", { replace: true });
