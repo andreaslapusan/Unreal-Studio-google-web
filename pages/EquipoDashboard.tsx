@@ -117,7 +117,7 @@ export default function EquipoDashboard() {
           <p className="text-sm text-primary/70 mb-6">
             Tu email <b>{user.email}</b> no coincide con ningún miembro del equipo. Pídele a Andreas o Marcelino que te añadan.
           </p>
-          <button onClick={() => signOut()} className="bg-primary text-white px-6 py-3 rounded-full text-sm font-bold">
+          <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/manager'; }} className="bg-primary text-white px-6 py-3 rounded-full text-sm font-bold">
             Cerrar sesión
           </button>
         </div>
@@ -134,7 +134,7 @@ export default function EquipoDashboard() {
         </div>
         <div className="flex items-center gap-3">
           <LanguageSwitcher inverted />
-          <button onClick={() => signOut()} className="text-xs uppercase tracking-widest underline">
+          <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/manager'; }} className="text-xs uppercase tracking-widest underline">
             {tt('admin.common.logout')}
           </button>
         </div>

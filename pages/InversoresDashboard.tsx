@@ -187,7 +187,7 @@ export default function InversoresDashboard() {
           <h1 className="font-serif text-2xl">{t('inversoresDashboard.headerTitle')}</h1>
           <p className="text-sm opacity-80">{investor?.full_name ?? user.email}</p>
         </div>
-        <button onClick={() => void signOut()} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
+        <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/inversores/login'; }} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
           {t('inversoresDashboard.navLogout')}
         </button>
       </header>

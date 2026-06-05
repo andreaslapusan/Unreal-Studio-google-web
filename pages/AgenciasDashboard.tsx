@@ -107,7 +107,7 @@ export default function AgenciasDashboard() {
         </div>
         <nav className="flex gap-2 text-sm">
           <Link to="/agencias/stats" className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navStats')}</Link>
-          <button onClick={() => void signOut()} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navLogout')}</button>
+          <button onClick={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">{t('agenciasDashboard.navLogout')}</button>
         </nav>
       </header>
 

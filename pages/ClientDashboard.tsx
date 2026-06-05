@@ -463,9 +463,13 @@ const ClientDashboard: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Cliente usa token propio (_ust_client_); cerramos también sesión Supabase
+    // por si existiera, y redirect DURO para garantizar estado limpio.
     localStorage.removeItem('_ust_client_');
-    navigate('/cliente');
+    sessionStorage.removeItem('_ust_client_');
+    try { await supabase.auth.signOut(); } catch { /* ignore */ }
+    window.location.href = '/cliente';
   };
 
   const finishWalkthrough = () => {
