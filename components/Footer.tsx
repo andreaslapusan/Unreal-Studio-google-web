@@ -78,6 +78,9 @@ const Footer: React.FC = () => {
           <Link className="hover:text-primary transition flex items-center gap-1" to="/cliente">
             <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
           </Link>
+          <Link className="hover:text-primary transition flex items-center gap-1" to="/agencias">
+            <span className="material-symbols-outlined text-xs">person_add</span> {t('footer.agencies')}
+          </Link>
           <Link className="hover:text-primary transition flex items-center gap-1" to="/empleados">
             <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
           </Link>

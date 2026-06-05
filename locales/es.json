@@ -659,7 +659,8 @@
     "admin": "Admin",
     "rights": "© 2026 Unreal Studio Bali. Todos los derechos reservados.",
     "privacy": "Privacidad",
-    "terms": "Términos"
+    "terms": "Términos",
+    "agencies": "Agencias"
   },
   "team": {
     "emailLabel": "Email de trabajo",
