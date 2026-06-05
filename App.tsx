@@ -99,7 +99,9 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
   const location = useLocation();
   const isHiddenPath = location.pathname.startsWith('/admin')
     || location.pathname.startsWith('/cliente')
-    || location.pathname.startsWith('/agencias')
+    || location.pathname.startsWith('/agencias/login')
+    || location.pathname.startsWith('/agencias/dashboard')
+    || location.pathname.startsWith('/agencias/stats')
     || location.pathname.startsWith('/inversores')
     || location.pathname.startsWith('/equipo')
     || location.pathname.startsWith('/empleados')

@@ -60,6 +60,7 @@ const Navbar: React.FC = () => {
     { name: t('nav.faq'), path: '/faq' },
     { name: t('nav.blog'), path: '/blog' },
     { name: t('nav.contact'), path: '/contacto' },
+    { name: t('nav.agencies'), path: '/agencias' },
   ];
 
   return (
