@@ -1,10 +1,8 @@
 /**
- * /empleados — Login del portal de Empleados (fichaje).
+ * /empleados — Login del portal de Empleados (email + contraseña).
  *
- * Flujo: el empleado introduce su email. Se valida contra la allowlist
- * (RPC `is_active_employee`); si está autorizado se le envía un magic-link
- * de Supabase Auth con redirect a /auth/finish, que enruta a
- * /empleados/dashboard. No hay contraseñas.
+ * Las cuentas las crea el admin desde el portal Development (Supabase Auth).
+ * Aquí el empleado entra con su email corporativo y su contraseña.
  */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,48 +13,36 @@ const EmpleadosLogin: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     document.title = 'Portal Empleados | Unreal Studio';
   }, []);
 
-  // Ya autenticado → al dashboard.
   useEffect(() => {
     if (!loading && user) navigate('/empleados/dashboard', { replace: true });
   }, [user, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = email.trim().toLowerCase();
-    if (!clean.includes('@')) {
-      setStatus('error');
-      setMessage('Introduce un email válido.');
-      return;
-    }
-    setStatus('sending');
-    setMessage('');
+    setError('');
+    setBusy(true);
     try {
-      const { data: allowed, error: rpcErr } = await supabase.rpc('is_active_employee', {
-        p_email: clean,
+      const { error: authErr } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
       });
-      if (rpcErr) throw rpcErr;
-      if (!allowed) {
-        setStatus('error');
-        setMessage('Este email no está autorizado. Pide acceso a tu responsable.');
+      if (authErr) {
+        setError('Email o contraseña incorrectos.');
+        setBusy(false);
         return;
       }
-      const redirect = `${window.location.origin}/auth/finish`;
-      const { error } = await supabase.auth.signInWithOtp({
-        email: clean,
-        options: { emailRedirectTo: redirect, shouldCreateUser: true },
-      });
-      if (error) throw error;
-      setStatus('sent');
-    } catch (err) {
-      setStatus('error');
-      setMessage('No se pudo enviar el enlace. Inténtalo de nuevo.');
+      navigate('/empleados/dashboard', { replace: true });
+    } catch {
+      setError('No se pudo iniciar sesión. Inténtalo de nuevo.');
+      setBusy(false);
     }
   };
 
@@ -66,57 +52,59 @@ const EmpleadosLogin: React.FC = () => {
         <div className="text-center mb-8">
           <span className="material-symbols-outlined text-4xl text-primary mb-3 block">badge</span>
           <h1 className="text-3xl font-serif text-primary mb-1">Portal Empleados</h1>
-          <p className="text-sm text-primary/50">Fichaje de entrada y salida · Check-in / Check-out</p>
+          <p className="text-sm text-primary/50">Fichaje, reportes y equipo · Unreal Studio Bali</p>
         </div>
 
-        {status === 'sent' ? (
-          <div className="text-center">
-            <div className="bg-green-50 text-green-700 font-bold p-5 rounded-2xl mb-4">
-              <span className="material-symbols-outlined text-2xl block mb-1">mark_email_read</span>
-              Te enviamos un enlace a <b>{email.trim().toLowerCase()}</b>.
-            </div>
-            <p className="text-sm text-primary/50">
-              Ábrelo en este móvil para entrar. Si no lo ves, revisa spam.
-            </p>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {error && (
+            <div className="bg-red-50 text-red-600 text-sm font-bold p-4 rounded-xl text-center">{error}</div>
+          )}
+          <div>
+            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
+              Email de trabajo
+            </label>
+            <input
+              type="email"
+              required
+              autoComplete="username"
+              inputMode="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="nombre@unrealstudiobali.com"
+              className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none"
+            />
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {status === 'error' && (
-              <div className="bg-red-50 text-red-600 text-sm font-bold p-4 rounded-xl text-center">
-                {message}
-              </div>
+          <div>
+            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              required
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {busy ? (
+              <>
+                <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
+                Entrando…
+              </>
+            ) : (
+              'Entrar'
             )}
-            <div>
-              <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
-                Tu email de trabajo
-              </label>
-              <input
-                type="email"
-                required
-                autoComplete="email"
-                inputMode="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="nombre@unrealstudiobali.com"
-                className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={status === 'sending'}
-              className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {status === 'sending' ? (
-                <>
-                  <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
-                  Enviando…
-                </>
-              ) : (
-                'Enviarme enlace de acceso'
-              )}
-            </button>
-          </form>
-        )}
+          </button>
+        </form>
+        <p className="text-center text-xs text-primary/30 mt-8">
+          ¿Sin acceso? Pídele tus datos a tu responsable.
+        </p>
       </div>
     </div>
   );
