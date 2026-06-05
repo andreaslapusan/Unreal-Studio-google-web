@@ -67,7 +67,7 @@ const AMENITIES_LIST = [
   const [calendarEditMode, setCalendarEditMode] = useState(false);
   const [calendarAuthError, setCalendarAuthError] = useState('');
 
-  const LOGO_URL = "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/logo-06.png";
+  const LOGO_URL = "/img/Logos/logo-06.png";
 
   const [walkthroughStep, setWalkthroughStep] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);

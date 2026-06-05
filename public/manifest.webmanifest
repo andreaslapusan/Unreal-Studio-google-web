@@ -12,13 +12,13 @@
   "categories": ["business", "finance", "real-estate"],
   "icons": [
     {
-      "src": "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/favicon_io/android-chrome-192x192.png",
+      "src": "/img/Logos/favicon_io/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/Logos/favicon_io/android-chrome-512x512.png",
+      "src": "/img/Logos/favicon_io/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

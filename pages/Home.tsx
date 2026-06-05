@@ -271,7 +271,7 @@ const Home: React.FC = () => {
                controls
                preload="none"
                className="w-full h-full object-cover"
-               src="https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/VIDEO/welcome.mp4"
+               src="/img/VIDEO/welcome.mp4"
                onPlay={(e) => {
                  const video = e.currentTarget;
                  if (video.muted) {
@@ -579,8 +579,8 @@ const Home: React.FC = () => {
               <div className="rounded-3xl overflow-hidden shadow-2xl h-96 md:h-auto md:aspect-square relative group">
                 <img
                   loading="lazy"
-                  src={imgSrc("https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/The%20Nook/1-04.png", 800)}
-                  srcSet={imgSrcSet("https://storage.googleapis.com/ai-studio-bucket-343975482095-us-west1/services/unreal-studio-madrid/Images/The%20Nook/1-04.png", [400, 800, 1200])}
+                  src={imgSrc("/img/The%20Nook/1-04.png", 800)}
+                  srcSet={imgSrcSet("/img/The%20Nook/1-04.png", [400, 800, 1200])}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="w-full h-full object-cover"
                   alt="Interior Architecture"
