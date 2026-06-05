@@ -1,126 +1,112 @@
 /**
  * /agencias — Landing PÚBLICA de captación de agencias (Listing Partners).
  *
- * ⚠️ PÚBLICA + se usa en campañas frías a agencias. NO incluir info confidencial:
- * sin comisiones/porcentajes, sin precios de agencia por unidad, sin markup,
- * sin calculadora de ganancias. Todo eso vive SOLO tras el login de partners
- * (/agencias/login → /agencias/dashboard). Objetivo: captar contacto/aplicación.
+ * ⚠️ PÚBLICA + se usa en campañas frías. SIN info confidencial (comisiones,
+ * precios de agencia, markup, calculadora). Las condiciones van tras el login
+ * de partners (/agencias/login). Tono profesional, sin emojis. Los proyectos
+ * salen REALES de la BD (tabla projects), no hardcodeados.
  */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { supabase, getImageUrl } from "../lib/supabase";
+import { imgSrc } from "../lib/imageOptimize";
 
-// Solo nombres/zonas públicas (sin precios). Las cifras van tras el login.
-const projectsAvailable = [
-  { name: "Golf Bay — Balangan", area: "Uluwatu Oeste", progress: "60%+" },
-  { name: "Mambo Villas", area: "Melasti", progress: "Sobre plano" },
-  { name: "Deseo Studios", area: "Melasti", progress: "Sobre plano" },
-  { name: "The Nook", area: "Pererenan", progress: "Sobre plano" },
-  { name: "Venaso", area: "Tabanan / Kaba-Kaba", progress: "En obra" },
+interface ProjectCard {
+  name: string;
+  image: string | null;
+  slug: string | null;
+  zone: string | null;
+  status: string | null;
+}
+
+const benefits: { title: string; body: string }[] = [
+  {
+    title: "Material de venta completo",
+    body: "Dossiers, planos, renders, recorridos virtuales, video aéreo y ubicación. Documentación actualizada y lista para compartir con tus clientes desde tu portal privado.",
+  },
+  {
+    title: "Acompañamiento de nuestro equipo",
+    body: "Resolvemos contigo las dudas legales, financieras y de obra de cada operación. Tú mantienes la relación con el cliente; nosotros aportamos el respaldo técnico.",
+  },
+  {
+    title: "Compra 100% remota",
+    body: "Tus clientes pueden invertir sin desplazarse a Bali: poder notarial y firma digital. Un proceso probado, transparente y seguro de principio a fin.",
+  },
+  {
+    title: "Seguimiento de obra continuo",
+    body: "Acceso a fotografías, vídeos y avance de cada proyecto, para que mantengas a tu cliente informado durante toda la construcción.",
+  },
+  {
+    title: "Producto de alta demanda",
+    body: "Villas y apartamentos en las zonas más solicitadas de Bali —Uluwatu, Pererenan y Tabanan—, con producto seleccionado para inversión.",
+  },
+  {
+    title: "Colaboración a largo plazo",
+    body: "Trabajamos con agencias de varios países bajo un programa serio y estable. Las condiciones del acuerdo se detallan tras la validación.",
+  },
 ];
 
-const faqs: { q: string; a: string }[] = [
-  {
-    q: "¿Qué material recibo para vender?",
-    a: "Acceso a un portal privado con dossiers PDF, planos 2D, renders 3D, video walkthrough, drone, ubicación Google Maps y toda la documentación. Todo descargable y compartible con tus clientes.",
-  },
-  {
-    q: "¿Quién hace el cierre de venta?",
-    a: "Tú llevas la relación con tu cliente. Cuando esté listo, agendamos una llamada con nuestro equipo para resolver dudas técnicas/legales, contigo en copia.",
-  },
-  {
-    q: "¿La compra es remota?",
-    a: "Sí, 100% remota. Tu cliente no necesita venir a Bali: POA notarial + firma digital. Tenemos colaboradores en España, Australia, Indonesia e Italia.",
-  },
-  {
-    q: "¿Cómo empiezo?",
-    a: "Rellena el formulario de contacto. Te validamos en 24-48h y, si encajamos, te damos acceso al portal de partners con todos los detalles del programa.",
-  },
+const steps: { step: string; title: string; body: string }[] = [
+  { step: "01", title: "Contacta o regístrate", body: "Completa el formulario con los datos de tu agencia, tu país y el perfil de tus clientes. Dos minutos." },
+  { step: "02", title: "Validación en 24-48 h", body: "Mantenemos una llamada o conversación para conocer tu canal. Si encajamos, activamos tu acceso." },
+  { step: "03", title: "Acceso al portal de partners", body: "Recibes un panel privado con los proyectos, los materiales descargables y todas las condiciones del programa." },
+  { step: "04", title: "Vendes con respaldo", body: "Acompañamos cada operación con tu cliente hasta la firma y la entrega de la propiedad." },
 ];
 
 export default function AgenciasPartnership() {
-  const { t } = useTranslation();
+  const [projects, setProjects] = useState<ProjectCard[]>([]);
+
+  useEffect(() => {
+    void (async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select("name, image, slug, zone, status, is_hidden, sort_order")
+        .order("sort_order", { ascending: true });
+      const list = (data ?? [])
+        .filter((p: any) => !p.is_hidden)
+        .map((p: any) => ({ name: p.name, image: p.image, slug: p.slug, zone: p.zone, status: p.status }));
+      setProjects(list);
+    })();
+  }, []);
+
   return (
     <div className="bg-almond text-primary">
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 pt-20 pb-16">
-          <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium mb-4">
-            Programa de agencias colaboradoras
+          <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold tracking-wide mb-5">
+            Programa de Agencias Colaboradoras
           </div>
-          <h1 className="font-serif text-5xl md:text-6xl leading-tight mb-4">
-            ¿Tienes una agencia con clientes
+          <h1 className="font-serif text-5xl md:text-6xl leading-tight mb-5">
+            Amplía tu cartera con inversión
             <br />
-            <span className="text-primary/60">interesados en invertir en Bali?</span>
+            <span className="text-primary/60">inmobiliaria premium en Bali</span>
           </h1>
-          <p className="text-lg text-primary/70 max-w-2xl mb-8">
-            Vende nuestras villas y apartamentos en las mejores zonas de Bali. Te damos el material de
-            venta, el soporte de nuestro equipo y un proceso de compra 100% remoto para tus clientes.
+          <p className="text-lg text-primary/70 max-w-2xl mb-8 leading-relaxed">
+            Ofrece a tus clientes villas y apartamentos de inversión en las mejores zonas de Bali.
+            Te proporcionamos el material de venta, el acompañamiento de nuestro equipo y un proceso
+            de compra íntegramente remoto, seguro y transparente.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Link
-              to="/agencias/registrar"
-              className="bg-primary text-white px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-lg"
-            >
-              Apúntate / Contáctanos
+            <Link to="/agencias/registrar" className="bg-primary text-white px-8 py-4 rounded-full font-semibold hover:translate-y-[-2px] transition shadow-lg">
+              Solicitar colaboración
             </Link>
-            <Link
-              to="/agencias/login"
-              className="bg-white border border-primary/20 text-primary px-8 py-4 rounded-full font-medium hover:bg-primary/5 transition"
-            >
-              Ya soy partner — Entrar
+            <Link to="/agencias/login" className="bg-white border border-primary/20 text-primary px-8 py-4 rounded-full font-medium hover:bg-primary/5 transition">
+              Acceso partners
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Why */}
+      {/* Benefits */}
       <section className="bg-white">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-12 text-center">Por qué colaborar con nosotros</h2>
+          <h2 className="font-serif text-3xl mb-12 text-center">Por qué colaborar con Unreal Studio</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                emoji: "📦",
-                title: "Material de venta listo",
-                body:
-                  "Dossiers, planos 2D, renders, walkthrough, video drone y ubicación. Todo descargable y actualizado en tu portal privado.",
-              },
-              {
-                emoji: "🤝",
-                title: "Soporte de nuestro equipo",
-                body:
-                  "Cuando haya que resolver dudas legales, financieras o de obra, nuestro equipo entra al call. Tú llevas la relación con el cliente.",
-              },
-              {
-                emoji: "🌐",
-                title: "Compra 100% remota",
-                body:
-                  "Tu cliente no necesita venir a Bali. POA notarial + escritura digital. Un proceso probado de extremo a extremo.",
-              },
-              {
-                emoji: "🎥",
-                title: "Updates de obra automáticos",
-                body:
-                  "Recibes fotos, video y % de progreso de cada proyecto, para mantener a tu cliente al día sin esfuerzo.",
-              },
-              {
-                emoji: "🏝️",
-                title: "Producto en alza",
-                body:
-                  "Villas y apartamentos premium en Uluwatu, Pererenan y zonas de alta demanda turística en Bali.",
-              },
-              {
-                emoji: "💼",
-                title: "Programa serio y a largo plazo",
-                body:
-                  "Trabajamos con agencias de varios países. Las condiciones del programa te las detallamos tras validarte.",
-              },
-            ].map((b) => (
-              <article key={b.title} className="bg-almond rounded-2xl p-6">
-                <div className="text-4xl mb-3">{b.emoji}</div>
-                <h3 className="font-serif text-xl mb-2">{b.title}</h3>
-                <p className="text-sm text-primary/70">{b.body}</p>
+            {benefits.map((b) => (
+              <article key={b.title} className="bg-almond rounded-2xl p-6 border border-primary/5">
+                <h3 className="font-serif text-xl mb-3">{b.title}</h3>
+                <p className="text-sm text-primary/70 leading-relaxed">{b.body}</p>
               </article>
             ))}
           </div>
@@ -132,33 +118,12 @@ export default function AgenciasPartnership() {
         <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="font-serif text-3xl mb-12 text-center">Cómo funciona</h2>
           <ol className="space-y-6">
-            {[
-              {
-                step: "01",
-                title: "Nos contactas / te apuntas",
-                body: "Rellena el formulario: agencia, contacto, país y a qué clientes llegas. Tarda 2 minutos.",
-              },
-              {
-                step: "02",
-                title: "Te validamos en 24-48h",
-                body: "Llamada o WhatsApp con nuestro equipo para entender tu canal. Si encajamos, te activamos.",
-              },
-              {
-                step: "03",
-                title: "Recibes acceso al portal",
-                body: "Dashboard privado con los proyectos, materiales descargables y todos los detalles del programa.",
-              },
-              {
-                step: "04",
-                title: "Vendes a tus clientes",
-                body: "Acompañamos cada operación con tu cliente hasta el cierre y la entrega.",
-              },
-            ].map((s) => (
-              <li key={s.step} className="flex gap-6 bg-white rounded-2xl p-6">
-                <div className="text-5xl font-serif text-primary/30 shrink-0">{s.step}</div>
+            {steps.map((s) => (
+              <li key={s.step} className="flex gap-6 bg-white rounded-2xl p-6 border border-primary/5">
+                <div className="text-5xl font-serif text-primary/25 shrink-0">{s.step}</div>
                 <div>
                   <h3 className="font-serif text-xl mb-1">{s.title}</h3>
-                  <p className="text-sm text-primary/70">{s.body}</p>
+                  <p className="text-sm text-primary/70 leading-relaxed">{s.body}</p>
                 </div>
               </li>
             ))}
@@ -166,38 +131,28 @@ export default function AgenciasPartnership() {
         </div>
       </section>
 
-      {/* Projects (sin precios) */}
+      {/* Projects (reales de la BD, sin precios) */}
       <section className="bg-white">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-2 text-center">Proyectos disponibles</h2>
-          <p className="text-primary/60 text-center mb-12">
-            Cartera en Bali. Detalles, materiales y condiciones, en el portal de partners.
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <h2 className="font-serif text-3xl mb-2 text-center">Cartera de proyectos</h2>
+          <p className="text-primary/60 text-center mb-12 max-w-2xl mx-auto">
+            Una selección de nuestras promociones en Bali. El detalle completo, los materiales y las
+            condiciones comerciales están disponibles en el portal de partners.
           </p>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {projectsAvailable.map((p) => (
-              <article key={p.name} className="bg-almond rounded-xl p-5">
-                <h3 className="font-serif text-lg">{p.name}</h3>
-                <p className="text-xs text-primary/60 mb-2">{p.area}</p>
-                <p className="text-xs text-primary/60 mt-1">Obra: {p.progress}</p>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {projects.map((p) => (
+              <article key={p.slug ?? p.name} className="bg-almond rounded-2xl overflow-hidden border border-primary/5">
+                {p.image ? (
+                  <img src={imgSrc(getImageUrl(p.image), 600)} alt={p.name} loading="lazy" className="w-full h-48 object-cover" />
+                ) : (
+                  <div className="w-full h-48 bg-primary/5" />
+                )}
+                <div className="p-5">
+                  <h3 className="font-serif text-lg leading-tight">{p.name}</h3>
+                  {p.zone && <p className="text-xs text-primary/60 mt-1">{p.zone}</p>}
+                  {p.status && <p className="text-xs text-primary/50 mt-1">{p.status}</p>}
+                </div>
               </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="bg-almond">
-        <div className="max-w-3xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-8 text-center">Preguntas frecuentes</h2>
-          <div className="space-y-3">
-            {faqs.map((f) => (
-              <details key={f.q} className="bg-white rounded-xl p-5 group">
-                <summary className="cursor-pointer font-medium text-primary list-none flex items-start justify-between gap-4">
-                  <span>{f.q}</span>
-                  <span className="text-primary/40 group-open:rotate-45 transition">+</span>
-                </summary>
-                <p className="text-sm text-primary/70 mt-3">{f.a}</p>
-              </details>
             ))}
           </div>
         </div>
@@ -206,15 +161,13 @@ export default function AgenciasPartnership() {
       {/* CTA */}
       <section className="bg-primary text-white">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
-          <h2 className="font-serif text-4xl mb-4">¿Hablamos?</h2>
-          <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            Apúntate al programa de agencias y empieza a vender propiedad de inversión en Bali a tus clientes.
+          <h2 className="font-serif text-4xl mb-4">Construyamos una colaboración</h2>
+          <p className="text-white/80 mb-8 max-w-xl mx-auto leading-relaxed">
+            Únete a nuestro programa de agencias y empieza a ofrecer inversión inmobiliaria en Bali
+            a tus clientes, con todo el material y el respaldo de nuestro equipo.
           </p>
-          <Link
-            to="/agencias/registrar"
-            className="inline-block bg-white text-primary px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-xl"
-          >
-            Apúntate / Contáctanos
+          <Link to="/agencias/registrar" className="inline-block bg-white text-primary px-8 py-4 rounded-full font-semibold hover:translate-y-[-2px] transition shadow-xl">
+            Solicitar colaboración
           </Link>
         </div>
       </section>
