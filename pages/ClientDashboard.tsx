@@ -7,6 +7,7 @@ import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
+import ClientPaymentsSection from '../components/ClientPaymentsSection';
 
 // Keys for the client onboarding guide. Titles/texts live in i18n
 // (admin.clientDash.guideNTitle / guideNText) so they translate per language.
@@ -598,6 +599,7 @@ const ClientDashboard: React.FC = () => {
 
       <main className="max-w-6xl mx-auto px-6 py-12">
         {client.id && <ClientUnitsSection clientId={client.id} />}
+        {client.id && <ClientPaymentsSection clientId={client.id} />}
         {/* Resumen */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
