@@ -61,6 +61,8 @@ const AdminSidebar: React.FC = () => {
     { key: 'users', icon: 'security', label: t('admin.nav.users'), to: '/admin?view=users', view: 'users' },
     { key: 'employees', icon: 'badge', label: t('admin.nav.employees'), to: '/admin?view=employees', view: 'employees' },
     { key: 'calendar', icon: 'calendar_month', label: t('admin.nav.calendar'), to: '/admin?view=calendar', view: 'calendar' },
+    { key: 'faqs', icon: 'help', label: t('admin.nav.faqs', 'FAQs'), to: '/admin?view=faqs', view: 'faqs' },
+    { key: 'timelines', icon: 'calendar_today', label: t('admin.nav.timelines', 'Timelines'), to: '/admin?view=timelines', view: 'timelines' },
   ];
 
   const pages: NavItem[] = [

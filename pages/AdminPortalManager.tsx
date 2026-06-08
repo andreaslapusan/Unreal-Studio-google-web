@@ -742,7 +742,7 @@ function Toggle({ label, value, onChange }: { label: string; value: boolean; onC
 
 // ─── FAQ admin ────────────────────────────────────────────────────────────
 
-function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promise<void> }) {
+export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promise<void> }) {
   const [editing, setEditing] = useState<Faq | null>(null);
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -1029,7 +1029,7 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
 
 // ─── Timelines admin ──────────────────────────────────────────────────────
 
-function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange: () => Promise<void> }) {
+export function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange: () => Promise<void> }) {
   const [editing, setEditing] = useState<ProjectRow | null>(null);
 
   return (

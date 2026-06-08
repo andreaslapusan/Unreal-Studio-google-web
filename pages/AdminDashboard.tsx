@@ -13,11 +13,12 @@ import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
+import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications';
-const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications'];
+type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'timelines';
+const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'timelines'];
 
 const GUIDE_STEPS = [
   { 
@@ -109,6 +110,21 @@ const AMENITIES_LIST = [
     await supabase.from('employee_vacations').update({ status }).eq('id', id);
     await loadPendingVacations();
   };
+  // FAQs y Timelines (movidos aquí desde el antiguo Portal Manager).
+  const [faqsData, setFaqsData] = useState<any[]>([]);
+  const loadFaqs = useCallback(async () => {
+    const { data } = await supabase.from('faqs').select('id, question, answer, category, tags, project_filter, language, is_published, sort_order, source, updated_at').order('sort_order');
+    setFaqsData(data ?? []);
+  }, []);
+  const [timelineProjects, setTimelineProjects] = useState<any[]>([]);
+  const loadTimelineProjects = useCallback(async () => {
+    const { data } = await supabase.from('projects').select('id, slug, name, status, completion_percent, timeline').order('sort_order');
+    setTimelineProjects(data ?? []);
+  }, []);
+  useEffect(() => {
+    if (activeView === 'faqs') void loadFaqs();
+    if (activeView === 'timelines') void loadTimelineProjects();
+  }, [activeView, loadFaqs, loadTimelineProjects]);
   useEffect(() => {
     if (activeView !== 'employees') return;
     void loadEmployees();
@@ -1037,6 +1053,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
 
         {activeView === 'notifications' && <NotificationsPanel />}
+
+        {activeView === 'faqs' && (
+          <div className="animate-in fade-in duration-500">
+            <h2 className="text-2xl font-serif text-primary mb-6">FAQs</h2>
+            <FaqsTab data={faqsData} onChange={loadFaqs} />
+          </div>
+        )}
+
+        {activeView === 'timelines' && (
+          <div className="animate-in fade-in duration-500">
+            <h2 className="text-2xl font-serif text-primary mb-6">Timelines de proyectos</h2>
+            <TimelinesTab data={timelineProjects} onChange={loadTimelineProjects} />
+          </div>
+        )}
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
