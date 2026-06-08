@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
 import LocaleSeo from './components/LocaleSeo';
-import FloatingWhatsApp from './components/FloatingWhatsApp';
+// FloatingWhatsApp importado bajo demanda (ver Layout); desactivado por defecto.
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
 // Home is eagerly imported because it's the landing route — lazy() would
 // add a needless extra round-trip on first paint. Everything else is split:
@@ -138,7 +138,10 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
       {!isHiddenPath && <Navbar />}
       <main className="flex-grow">{children}</main>
       {!isHiddenPath && <Footer />}
-      {!isHiddenPath && <FloatingWhatsApp />}
+      {/* FloatingWhatsApp listo pero DESACTIVADO: la web ya tiene un CTA flotante
+          (botón "Agendar" del Navbar). Activar solo si Andreas lo aprueba, para no
+          meter 2 botones flotantes en su diseño sin su visto bueno.
+          {!isHiddenPath && <FloatingWhatsApp />} */}
     </div>
   );
 };
