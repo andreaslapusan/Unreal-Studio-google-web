@@ -1082,7 +1082,8 @@
       "uploading": "Uploading…",
       "submit": "Upload report",
       "done": "Report uploaded.",
-      "close": "Close"
+      "close": "Close",
+      "selectProject": "Select a project"
     }
   },
   "vacaciones": {

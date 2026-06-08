@@ -31,7 +31,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
       const { data } = await supabase.from('projects').select('id, name').order('name');
       const rows = (data as ProjectOpt[]) ?? [];
       setProjects(rows);
-      if (rows[0]) setProjectId(rows[0].id);
+      // Sin preselección: el empleado DEBE elegir un proyecto (regla de Andreas).
     })();
   }, []);
 
@@ -80,7 +80,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
         <label className="block mb-4">
           <span className="block text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">{t('empleados.reportModal.project')}</span>
           <select value={projectId} onChange={(e) => setProjectId(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm">
-            {projects.length === 0 && <option value="">{t('empleados.reportModal.noProjects')}</option>}
+            <option value="">{projects.length === 0 ? t('empleados.reportModal.noProjects') : t('empleados.reportModal.selectProject')}</option>
             {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </label>

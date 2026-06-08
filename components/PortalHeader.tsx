@@ -36,7 +36,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
         <Link to="/" className="flex flex-col shrink-0 leading-tight">
           <BrandLogo imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tighter" />
           {subtitle && (
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40 truncate max-w-[200px] md:max-w-none">
+            <span className="text-[11px] font-semibold text-primary/45 break-all leading-tight">
               {subtitle}
             </span>
           )}

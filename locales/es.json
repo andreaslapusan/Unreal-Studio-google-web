@@ -1082,7 +1082,8 @@
       "uploading": "Subiendo…",
       "submit": "Subir reporte",
       "done": "Reporte subido.",
-      "close": "Cerrar"
+      "close": "Cerrar",
+      "selectProject": "Selecciona un proyecto"
     }
   },
   "vacaciones": {

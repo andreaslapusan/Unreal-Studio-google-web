@@ -1082,7 +1082,8 @@
       "uploading": "Se încarcă…",
       "submit": "Încarcă raportul",
       "done": "Raport încărcat.",
-      "close": "Închide"
+      "close": "Închide",
+      "selectProject": "Selectează un proiect"
     }
   },
   "vacaciones": {

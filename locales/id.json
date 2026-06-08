@@ -375,7 +375,8 @@
       "uploading": "Mengunggah…",
       "submit": "Unggah laporan",
       "done": "Laporan diunggah.",
-      "close": "Tutup"
+      "close": "Tutup",
+      "selectProject": "Pilih proyek"
     }
   }
 }
