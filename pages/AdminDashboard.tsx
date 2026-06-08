@@ -23,26 +23,11 @@ type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clie
 const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'agencias'];
 
 const GUIDE_STEPS = [
-  { 
-    title: "Navegación principal", 
-    text: "Desde aquí accedes a las 4 secciones del panel: gestión de propiedades, artículos del blog, usuarios administradores y configuración general." 
-  },
-  { 
-    title: "Crear contenido", 
-    text: "Usa este botón para añadir nuevos proyectos o artículos. Rellena los campos y pulsa Guardar. Las imágenes se suben directamente a la nube." 
-  },
-  { 
-    title: "Editar y eliminar", 
-    text: "Cada elemento tiene botones para editarlo o eliminarlo. Al eliminar, se pedirá confirmación. Los cambios se aplican inmediatamente en la web pública." 
-  },
-  { 
-    title: "Configuración", 
-    text: "Aquí puedes personalizar las etiquetas, tipos de propiedad, zonas, estados y tasas de cambio que se usan en toda la plataforma." 
-  },
-  { 
-    title: "¡Listo!", 
-    text: "Ya conoces lo básico. Todos los cambios que hagas se reflejan en unrealstudio.es en tiempo real. Si necesitas ayuda, contacta con el equipo técnico." 
-  }
+  { titleKey: 'admin.dash.guide1Title', textKey: 'admin.dash.guide1Text' },
+  { titleKey: 'admin.dash.guide2Title', textKey: 'admin.dash.guide2Text' },
+  { titleKey: 'admin.dash.guide3Title', textKey: 'admin.dash.guide3Text' },
+  { titleKey: 'admin.dash.guide4Title', textKey: 'admin.dash.guide4Text' },
+  { titleKey: 'admin.dash.guide5Title', textKey: 'admin.dash.guide5Text' }
 ];
 
 const AdminDashboard: React.FC = () => {
@@ -229,7 +214,7 @@ const AMENITIES_LIST = [
       setCalendarEditMode(true);
       setCalendarAuthError('');
     } else {
-      setCalendarAuthError('Contraseña incorrecta');
+      setCalendarAuthError(t('admin.dash.wrongPassword'));
     }
   };
 
@@ -466,7 +451,7 @@ const AMENITIES_LIST = [
           }
       } catch (error) {
           console.error(error);
-          alert('Error subiendo archivo');
+          alert(t('admin.dash.uploadError'));
       } finally {
           setUploading(false);
           // Reset input value to allow uploading same file again if needed
@@ -557,7 +542,7 @@ const AMENITIES_LIST = [
 
     try {
         const userId = getAdminUserId();
-        if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+        if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
 
         const projectData = isNew ? { ...projectToSave, id: undefined } : projectToSave;
         const { data, error } = await supabase.rpc('admin_save_project', {
@@ -587,23 +572,23 @@ const AMENITIES_LIST = [
         setIsEditing(false);
     } catch (error) {
         console.error('Error saving project:', error);
-        alert('Error al guardar el proyecto.');
+        alert(t('admin.dash.saveProjectError'));
     } finally {
         setUploading(false);
     }
   };
 
   const handleDeleteProject = async (id: string) => {
-    if (window.confirm('¿Eliminar esta propiedad definitivamente?')) {
+    if (window.confirm(t('admin.dash.confirmDeleteProject'))) {
       const userId = getAdminUserId();
-      if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+      if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
       const { data, error } = await supabase.rpc('admin_delete_project', {
         p_user_id: userId,
         p_project_id: id
       });
       if (error || (data && !data.success)) {
           console.error('Error deleting project:', error || data?.error);
-          alert('No se pudo eliminar el proyecto.');
+          alert(t('admin.dash.deleteProjectError'));
           return;
       }
       await loadData();
@@ -652,7 +637,7 @@ const AMENITIES_LIST = [
 
     try {
         const userId = getAdminUserId();
-        if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+        if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
 
         const blogData = isNew ? { ...blogToSave, id: undefined } : blogToSave;
         const { data, error } = await supabase.rpc('admin_save_blog', {
@@ -665,23 +650,23 @@ const AMENITIES_LIST = [
         setIsEditingBlog(false);
     } catch (error) {
         console.error('Error saving blog:', error);
-        alert('Error al guardar el artículo.');
+        alert(t('admin.dash.saveBlogError'));
     } finally {
         setUploading(false);
     }
   };
 
   const handleDeleteBlog = async (id: string) => {
-    if (window.confirm('¿Eliminar este artículo definitivamente?')) {
+    if (window.confirm(t('admin.dash.confirmDeleteBlog'))) {
       const userId = getAdminUserId();
-      if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+      if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
       const { data, error } = await supabase.rpc('admin_delete_blog', {
         p_user_id: userId,
         p_blog_id: id
       });
       if (error || (data && !data.success)) {
           console.error('Error deleting blog:', error || data?.error);
-          alert('No se pudo eliminar el blog.');
+          alert(t('admin.dash.deleteBlogError'));
           return;
       }
       await loadData();
@@ -701,7 +686,7 @@ const AMENITIES_LIST = [
     // El try/catch completo ha sido reemplazado según instrucciones
     try {
         const userId = getAdminUserId();
-        if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+        if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
         
         const { data, error } = await supabase.rpc('admin_save_user', {
             p_user_id: userId,
@@ -715,15 +700,15 @@ const AMENITIES_LIST = [
         setIsEditingUser(false);
     } catch (error) {
         console.error('Error saving user:', error);
-        alert('Error al guardar usuario.');
+        alert(t('admin.dash.saveUserError'));
     }
   };
 
   const handleDeleteUser = async (id: string) => {
-    if (!window.confirm('¿Eliminar este administrador definitivamente?')) return;
+    if (!window.confirm(t('admin.dash.confirmDeleteUser'))) return;
     try {
       const userId = getAdminUserId();
-      if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+      if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
       const { data, error } = await supabase.rpc('admin_delete_user', {
         p_user_id: userId,
         p_target_user_id: id
@@ -731,7 +716,7 @@ const AMENITIES_LIST = [
       if (error || (data && !data.success)) throw new Error(data?.error || 'Error');
       await loadData();
     } catch (error) {
-      alert('No se pudo eliminar el administrador.');
+      alert(t('admin.dash.deleteUserError'));
     }
   };
 
@@ -781,7 +766,7 @@ const handleSaveClient = async (e: React.FormEvent) => {
   try {
     setUploading(true);
     const userId = getAdminUserId();
-    if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+    if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
     const clientData = currentClient.id?.startsWith('client-') ? { ...currentClient, id: undefined } : currentClient;
     const { data, error } = await supabase.rpc('admin_save_client', {
       p_user_id: userId,
@@ -792,21 +777,21 @@ const handleSaveClient = async (e: React.FormEvent) => {
     await loadData();
     setIsEditingClient(false);
     if (data && data.temp_password) {
-      alert(`Cliente creado. Contraseña temporal: ${data.temp_password}`);
+      alert(t('admin.dash.clientCreatedTempPw', { pw: data.temp_password }));
     }
   } catch (error) {
     console.error('Error saving client:', error);
-    alert('Error al guardar cliente.');
+    alert(t('admin.dash.saveClientError'));
   } finally {
     setUploading(false);
   }
 };
 
 const handleDeleteClient = async (id: string) => {
-  if (!window.confirm('¿Eliminar este cliente definitivamente?')) return;
+  if (!window.confirm(t('admin.dash.confirmDeleteClient'))) return;
   try {
     const userId = getAdminUserId();
-    if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+    if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
     const { data, error } = await supabase.rpc('admin_delete_client', {
       p_user_id: userId,
       p_client_id: id
@@ -814,7 +799,7 @@ const handleDeleteClient = async (id: string) => {
     if (error || (data && !data.success)) throw new Error('Error');
     await loadData();
   } catch (error) {
-    alert('No se pudo eliminar el cliente.');
+    alert(t('admin.dash.deleteClientError'));
   }
 };
 
@@ -824,7 +809,7 @@ const handleAssignProject = async (e: React.FormEvent) => {
   try {
     setUploading(true);
     const userId = getAdminUserId();
-    if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+    if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
     const { data, error } = await supabase.rpc('admin_assign_project', {
       p_user_id: userId,
       p_client_id: assigningProject.clientId,
@@ -842,14 +827,14 @@ const handleAssignProject = async (e: React.FormEvent) => {
     setAssignForm({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
   } catch (error) {
     console.error('Error assigning project:', error);
-    alert('Error al asignar proyecto.');
+    alert(t('admin.dash.assignProjectError'));
   } finally {
     setUploading(false);
   }
 };
 
 const handleUnassignProject = async (clientId: string, assignmentId: string) => {
-  if (!window.confirm('¿Desasignar este proyecto del cliente?')) return;
+  if (!window.confirm(t('admin.dash.confirmUnassign'))) return;
   try {
     const userId = getAdminUserId();
     if (!userId) return;
@@ -861,7 +846,7 @@ const handleUnassignProject = async (clientId: string, assignmentId: string) => 
     if (error) throw error;
     await loadData();
   } catch (error) {
-    alert('Error al desasignar proyecto.');
+    alert(t('admin.dash.unassignProjectError'));
   }
 };
 
@@ -871,7 +856,7 @@ const handleEditAssignment = async (e: React.FormEvent) => {
     try {
         setUploading(true);
         const userId = getAdminUserId();
-        if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+        if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
         const { data, error } = await supabase.rpc('admin_update_assignment', {
             p_user_id: userId,
             p_assignment_id: editingAssignment.assignment.id,
@@ -887,20 +872,20 @@ const handleEditAssignment = async (e: React.FormEvent) => {
         setEditingAssignment(null);
     } catch (error) {
         console.error('Error updating assignment:', error);
-        alert('Error al actualizar la asignación.');
+        alert(t('admin.dash.updateAssignmentError'));
     } finally {
         setUploading(false);
     }
 };
 
 const WHATSAPP_TEMPLATES = [
-  { name: 'Bienvenida + credenciales', template: (c: Client) => `¡Hola ${c.name}!\n\nBienvenido/a a Unreal Studio. Tu portal de inversor está listo:\n\nLink: https://unrealstudiobali.com/cliente\nEmail o Teléfono: ${c.email || c.phone}\nPass: ${c.temp_password || '(contraseña enviada previamente)'}\n\nCambia tu contraseña en el primer acceso.\n\n¿Alguna duda? Estamos aquí para ayudarte.` },
-  { name: 'Update semanal', template: (c: Client) => `¡Hola ${c.name}!\n\nTe compartimos la actualización semanal de tu inversión. Entra a tu portal para ver los últimos avances:\n\nLink: https://unrealstudiobali.com/cliente\n\n¿Preguntas? Escríbenos.` },
-  { name: 'Nuevo informe disponible', template: (c: Client) => `¡Hola ${c.name}!\n\n[Doc] Hay un nuevo informe de obra disponible en tu portal de inversor.\n\nLink: https://unrealstudiobali.com/cliente\n\nRevísalo y cuéntanos si tienes dudas.` },
-  { name: 'Hito de obra', template: (c: Client) => `¡Hola ${c.name}!\n\n¡Gran noticia! Tu proyecto ha alcanzado un nuevo hito de construcción.\n\nEntra al portal para ver los detalles y fotos actualizadas:\nLink: https://unrealstudiobali.com/cliente` },
-  { name: 'Finalización', template: (c: Client) => `¡Hola ${c.name}!\n\n¡Enhorabuena! Tu proyecto se ha completado. Es momento de coordinar la entrega.\n\nContáctanos para agendar los próximos pasos.` },
-  { name: 'Aniversario inversión', template: (c: Client) => `¡Hola ${c.name}!\n\n¡Feliz aniversario de inversión! Gracias por confiar en Unreal Studio.\n\nSi te interesa explorar nuevas oportunidades, estamos a tu disposición.` },
-  { name: 'Invitación nuevo proyecto', template: (c: Client) => `¡Hola ${c.name}!\n\nComo inversor de Unreal Studio, tienes acceso prioritario a nuestro nuevo proyecto.\n\n¿Te gustaría recibir información exclusiva antes del lanzamiento público?\n\nEscríbenos para reservar tu plaza.` }
+  { nameKey: 'admin.dash.waTplWelcome', template: (c: Client) => `¡Hola ${c.name}!\n\nBienvenido/a a Unreal Studio. Tu portal de inversor está listo:\n\nLink: https://unrealstudiobali.com/cliente\nEmail o Teléfono: ${c.email || c.phone}\nPass: ${c.temp_password || '(contraseña enviada previamente)'}\n\nCambia tu contraseña en el primer acceso.\n\n¿Alguna duda? Estamos aquí para ayudarte.` },
+  { nameKey: 'admin.dash.waTplWeekly', template: (c: Client) => `¡Hola ${c.name}!\n\nTe compartimos la actualización semanal de tu inversión. Entra a tu portal para ver los últimos avances:\n\nLink: https://unrealstudiobali.com/cliente\n\n¿Preguntas? Escríbenos.` },
+  { nameKey: 'admin.dash.waTplNewReport', template: (c: Client) => `¡Hola ${c.name}!\n\n[Doc] Hay un nuevo informe de obra disponible en tu portal de inversor.\n\nLink: https://unrealstudiobali.com/cliente\n\nRevísalo y cuéntanos si tienes dudas.` },
+  { nameKey: 'admin.dash.waTplMilestone', template: (c: Client) => `¡Hola ${c.name}!\n\n¡Gran noticia! Tu proyecto ha alcanzado un nuevo hito de construcción.\n\nEntra al portal para ver los detalles y fotos actualizadas:\nLink: https://unrealstudiobali.com/cliente` },
+  { nameKey: 'admin.dash.waTplCompletion', template: (c: Client) => `¡Hola ${c.name}!\n\n¡Enhorabuena! Tu proyecto se ha completado. Es momento de coordinar la entrega.\n\nContáctanos para agendar los próximos pasos.` },
+  { nameKey: 'admin.dash.waTplAnniversary', template: (c: Client) => `¡Hola ${c.name}!\n\n¡Feliz aniversario de inversión! Gracias por confiar en Unreal Studio.\n\nSi te interesa explorar nuevas oportunidades, estamos a tu disposición.` },
+  { nameKey: 'admin.dash.waTplNewProject', template: (c: Client) => `¡Hola ${c.name}!\n\nComo inversor de Unreal Studio, tienes acceso prioritario a nuestro nuevo proyecto.\n\n¿Te gustaría recibir información exclusiva antes del lanzamiento público?\n\nEscríbenos para reservar tu plaza.` }
 ];
 
 const openWhatsAppTemplate = (client: Client, message: string) => {
@@ -913,7 +898,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   // Sube una imagen de marca (logo/sello) y guarda su URL pública en config.brand.
   const handleBrandUpload = async (fieldKey: string, file: File) => {
     const path = await uploadImage(file, 'brand');
-    if (!path) { alert('Error subiendo la imagen'); return; }
+    if (!path) { alert(t('admin.dash.imageUploadError')); return; }
     const url = getImageUrl(path);
     setConfig({ ...config, brand: { ...((config as any).brand || {}), [fieldKey]: url } } as any);
   };
@@ -934,24 +919,24 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   // Sube la firma de un admin (en su perfil de Administradores) → currentUser.signature_url.
   const handleUserSignatureUpload = async (file: File) => {
     const path = await uploadImage(file, 'signatures');
-    if (!path) { alert('Error subiendo la firma'); return; }
+    if (!path) { alert(t('admin.dash.signatureUploadError')); return; }
     setCurrentUser({ ...currentUser, signature_url: getImageUrl(path) } as any);
   };
 
   const handleMySignatureUpload = async (file: File) => {
     const userId = getAdminUserId();
-    if (!userId) { alert('Sesión expirada'); return; }
+    if (!userId) { alert(t('admin.dash.sessionExpired')); return; }
     const path = await uploadImage(file, 'signatures');
-    if (!path) { alert('Error subiendo la firma'); return; }
+    if (!path) { alert(t('admin.dash.signatureUploadError')); return; }
     const url = getImageUrl(path);
     const { data } = await supabase.rpc('admin_set_my_signature', { p_user_id: userId, p_url: url });
-    if (data?.success) { setMySignature(url); } else { alert('No se pudo guardar la firma'); }
+    if (data?.success) { setMySignature(url); } else { alert(t('admin.dash.signatureSaveError')); }
   };
 
   const saveConfigToDb = async (newConfig: AppConfig) => {
       try {
         const userId = getAdminUserId();
-        if (!userId) { alert('Sesión expirada'); navigate('/admin/login'); return; }
+        if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
 
         const configEntries = [
           { key: 'labels', value: newConfig.labels },
@@ -970,11 +955,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           if (error) throw error;
         }
         setConfig(newConfig);
-        alert('Configuración guardada');
+        alert(t('admin.dash.configSaved'));
         await loadData();
       } catch (error) {
           console.error('Config save error:', error);
-          alert('Error al guardar configuración.');
+          alert(t('admin.dash.configSaveError'));
       }
   };
 
@@ -1011,20 +996,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <button 
               onClick={() => setWalkthroughStep(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-primary transition"
-              title="Cerrar guía"
+              title={t('admin.dash.closeGuide')}
             >
               <span className="material-symbols-outlined">close</span>
             </button>
 
             <div className="mb-6">
               <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest block mb-2">
-                Paso {walkthroughStep + 1} de {GUIDE_STEPS.length}
+                {t('admin.dash.stepOf', { current: walkthroughStep + 1, total: GUIDE_STEPS.length })}
               </span>
               <h2 className="text-2xl font-serif text-primary mb-4 leading-tight">
-                {GUIDE_STEPS[walkthroughStep].title}
+                {t(GUIDE_STEPS[walkthroughStep].titleKey)}
               </h2>
               <p className="text-primary/70 text-sm font-medium leading-relaxed">
-                {GUIDE_STEPS[walkthroughStep].text}
+                {t(GUIDE_STEPS[walkthroughStep].textKey)}
               </p>
             </div>
 
@@ -1048,7 +1033,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     onClick={prevStep}
                     className="text-primary font-bold text-xs uppercase tracking-widest hover:text-primary/70 px-2"
                   >
-                    Anterior
+                    {t('admin.dash.prev')}
                   </button>
                 )}
                 
@@ -1056,7 +1041,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   onClick={nextStep}
                   className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-black transition-all"
                 >
-                  {walkthroughStep < GUIDE_STEPS.length - 1 ? 'Siguiente' : 'Finalizar'}
+                  {walkthroughStep < GUIDE_STEPS.length - 1 ? t('admin.dash.next') : t('admin.dash.finish')}
                 </button>
               </div>
             </div>
@@ -1260,13 +1245,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               <p className="text-sm text-gray-500">{client.email} {client.phone && `· ${client.phone}`}</p>
               <div className="mt-1 space-y-0.5">
                 {((client as any).password_plain || client.temp_password) && (
-                  <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_plain || client.temp_password); alert('Contraseña copiada');}} title="Click para copiar">
+                  <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_plain || client.temp_password); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>
                     🔑 {(client as any).password_plain || client.temp_password}
-                    {client.must_change_password && <span className="text-red-400 ml-2">(temporal)</span>}
+                    {client.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
                   </p>
                 )}
                 {isSuperAdmin && (client as any).password_hash && (
-                  <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_hash); alert('Hash copiado');}} title="Click para copiar hash">
+                  <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>
                     🔒 {(client as any).password_hash.substring(0, 20)}...
                   </p>
                 )}
@@ -1274,10 +1259,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               {client.notes && <p className="text-xs text-primary/40 mt-2 italic">{client.notes}</p>}
             </div>
             <div className="flex gap-2 shrink-0 ml-4">
-              <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title="Editar datos"><span className="material-symbols-outlined text-sm">edit</span></button>
-              <button onClick={() => setPaymentsClient(client)} className="p-2.5 bg-almond text-primary rounded-xl hover:brightness-95 transition" title="Pagos y kwitansi"><span className="material-symbols-outlined text-sm">payments</span></button>
-              <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title="Enviar WhatsApp"><span className="material-symbols-outlined text-sm">chat</span></button>
-              <button onClick={() => handleDeleteClient(client.id)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title="Eliminar cliente"><span className="material-symbols-outlined text-sm">delete</span></button>
+              <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData')}><span className="material-symbols-outlined text-sm">edit</span></button>
+              <button onClick={() => setPaymentsClient(client)} className="p-2.5 bg-almond text-primary rounded-xl hover:brightness-95 transition" title={t('admin.dash.paymentsKwitansi')}><span className="material-symbols-outlined text-sm">payments</span></button>
+              <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></button>
+              <button onClick={() => handleDeleteClient(client.id)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title={t('admin.dash.deleteClientTitle')}><span className="material-symbols-outlined text-sm">delete</span></button>
             </div>
           </div>
 
@@ -1310,11 +1295,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                       {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
-                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{cp.status}</span>
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
                     </div>
                     <div className="flex gap-1 shrink-0">
-                        <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary hover:text-primary/70 transition p-1" title="Editar asignación"><span className="material-symbols-outlined text-sm">edit</span></button>
-                        <button onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-400 hover:text-red-600 transition p-1" title="Desasignar"><span className="material-symbols-outlined text-sm">close</span></button>
+                        <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary hover:text-primary/70 transition p-1" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-sm">edit</span></button>
+                        <button onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-400 hover:text-red-600 transition p-1" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-sm">close</span></button>
                     </div>
                   </div>
                 ))}
@@ -1336,7 +1321,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              <div className="flex justify-between items-end mb-8 gap-4">
               <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.usersTab.title')}</h1>
               <button onClick={() => openEditUser()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
-                <span className="material-symbols-outlined text-base">person_add</span> Nuevo
+                <span className="material-symbols-outlined text-base">person_add</span> {t('admin.dash.new')}
               </button>
             </div>
              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
@@ -1353,9 +1338,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                           {isSuperAdmin && (
                             <td className="px-6 py-4">
                               {(u as any).password_plain && (
-                                <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((u as any).password_plain); alert('Contraseña copiada');}} title="Click para copiar">🔑 {(u as any).password_plain}</p>
+                                <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((u as any).password_plain); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>🔑 {(u as any).password_plain}</p>
                               )}
-                              <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block mt-0.5" onClick={() => {navigator.clipboard.writeText(u.password_hash); alert('Hash copiado');}} title="Click para copiar hash">🔒 {u.password_hash.substring(0, 25)}...</p>
+                              <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block mt-0.5" onClick={() => {navigator.clipboard.writeText(u.password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>🔒 {u.password_hash.substring(0, 25)}...</p>
                             </td>
                           )}
                           <td className="px-6 py-4 text-right flex justify-end gap-2">
@@ -1395,9 +1380,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    <div key={field} className="bg-white rounded-2xl p-6 border border-gray-100 flex items-center justify-between shadow-sm">
                      <div>
                        <h3 className="text-lg font-serif text-primary capitalize">{field.replace('custom', '')}</h3>
-                       <p className="text-[10px] text-gray-400 font-bold uppercase">{(config as any)[field].length} opciones disponibles</p>
+                       <p className="text-[10px] text-gray-400 font-bold uppercase">{t('admin.dash.optionsAvailable', { n: (config as any)[field].length })}</p>
                      </div>
-                     <button onClick={() => setOptionManager({ field: field as any, title: `Editar ${field.replace('custom', '')}` })} className="p-3 bg-primary text-white rounded-xl"><span className="material-symbols-outlined">edit</span></button>
+                     <button onClick={() => setOptionManager({ field: field as any, title: t('admin.dash.editField', { field: field.replace('custom', '') }) })} className="p-3 bg-primary text-white rounded-xl"><span className="material-symbols-outlined">edit</span></button>
                    </div>
                  ))}
                </div>
@@ -1405,15 +1390,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
              {/* Marca y empresa — fuente única para web, emails y kwitansi */}
              <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-               <h3 className="text-xl font-serif text-primary mb-2">Marca y empresa</h3>
-               <p className="text-xs text-gray-400 mb-6">Logo, sello, firma y datos de contacto. Se usan en la WEB, en los EMAILS y en los recibos (kwitansi). Si cambias el logo aquí, cambia en todos.</p>
+               <h3 className="text-xl font-serif text-primary mb-2">{t('admin.dash.brandCompany')}</h3>
+               <p className="text-xs text-gray-400 mb-6">{t('admin.dash.brandCompanyHint')}</p>
                <div className="grid sm:grid-cols-2 gap-5 mb-6">
-                 {[{ k: 'logo', label: 'Logo' }, { k: 'stamp', label: 'Sello de la empresa' }].map(({ k, label }) => (
+                 {[{ k: 'logo', label: t('admin.dash.logoLabel') }, { k: 'stamp', label: t('admin.dash.stampLabel') }].map(({ k, label }) => (
                    <div key={k}>
                      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{label}</label>
                      <div className="relative border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center">
                        {(config as any).brand?.[k] && (
-                         <button type="button" title="Borrar esta foto"
+                         <button type="button" title={t('admin.dash.deletePhoto')}
                            onClick={() => { const b = { ...((config as any).brand || {}), [k]: '' }; const nc = { ...config, brand: b } as any; setConfig(nc); void saveConfigToDb(nc); }}
                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-base leading-none shadow hover:bg-red-600 transition">×</button>
                        )}
@@ -1421,7 +1406,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                          ? <img src={(config as any).brand[k]} alt={label} className="h-16 mx-auto object-contain mb-1" />
                          : <span className="material-symbols-outlined text-gray-300 text-3xl">image</span>}
                        <label className="block mt-2 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">
-                         {(config as any).brand?.[k] ? 'Cambiar' : 'Subir PNG'}
+                         {(config as any).brand?.[k] ? t('admin.dash.change') : t('admin.dash.uploadPng')}
                          <input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleBrandUpload(k, f); }} />
                        </label>
                      </div>
@@ -1430,29 +1415,29 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </div>
                <div className="grid sm:grid-cols-2 gap-5">
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Email comercial (al que responden los clientes)</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.commercialEmail')}</label>
                    <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" placeholder="hello@unrealstudiobali.com"
                      value={(config as any).brand?.commercial_email || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), commercial_email: e.target.value } } as any)} />
                  </div>
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Teléfono de contacto</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.contactPhone')}</label>
                    <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" placeholder="+62 ..."
                      value={(config as any).brand?.phone || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), phone: e.target.value } } as any)} />
                  </div>
                </div>
-               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar marca y empresa</button>
-               <p className="mt-3 text-[11px] text-gray-400">La firma se configura en cada administrador (Administradores → editar).</p>
+               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveBrandCompany')}</button>
+               <p className="mt-3 text-[11px] text-gray-400">{t('admin.dash.signatureHint')}</p>
              </div>
 
              {/* Datos de empresa — una columna, módulos dinámicos */}
              <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-               <h3 className="text-xl font-serif text-primary mb-2">Datos de empresa</h3>
-               <p className="text-xs text-gray-400 mb-6">Para la web, el footer y las comunicaciones. Fuente única.</p>
+               <h3 className="text-xl font-serif text-primary mb-2">{t('admin.dash.companyData')}</h3>
+               <p className="text-xs text-gray-400 mb-6">{t('admin.dash.companyDataHint')}</p>
                <div className="space-y-7 max-w-xl">
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Direcciones / oficinas</label>
-                   <p className="text-[10px] text-gray-400 mb-2">El enlace de Google Maps hace que la dirección sea clicable y abra la ubicación exacta.</p>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.addresses')}</label>
+                   <p className="text-[10px] text-gray-400 mb-2">{t('admin.dash.addressesHint')}</p>
                    {(((config as any).brand?.addresses) || []).map((addr: any, i: number) => {
                      const text = typeof addr === 'string' ? addr : (addr?.text || '');
                      const maps = typeof addr === 'string' ? '' : (addr?.maps || '');
@@ -1460,21 +1445,21 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                      return (
                        <div key={i} className="flex flex-col sm:flex-row gap-2 mb-3 bg-gray-50/60 p-2 rounded-xl">
                          <div className="flex-1 flex flex-col gap-2">
-                           <input className="px-4 py-3 bg-white border rounded-xl text-sm text-primary" value={text} placeholder="Dirección de la oficina"
+                           <input className="px-4 py-3 bg-white border rounded-xl text-sm text-primary" value={text} placeholder={t('admin.dash.officeAddressPh')}
                              onChange={(e) => writeAddr({ text: e.target.value })} />
-                           <input className="px-4 py-2 bg-white border rounded-xl text-xs text-primary/70" value={maps} placeholder="Enlace Google Maps (https://maps.app.goo.gl/...)"
+                           <input className="px-4 py-2 bg-white border rounded-xl text-xs text-primary/70" value={maps} placeholder={t('admin.dash.mapsLinkPh')}
                              onChange={(e) => writeAddr({ maps: e.target.value })} />
                          </div>
                          <button type="button" onClick={() => setBrandKey('addresses', (((config as any).brand?.addresses) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
                        </div>
                      );
                    })}
-                   <button type="button" onClick={() => setBrandKey('addresses', [...(((config as any).brand?.addresses) || []), { text: '', maps: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir dirección</button>
+                   <button type="button" onClick={() => setBrandKey('addresses', [...(((config as any).brand?.addresses) || []), { text: '', maps: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">{t('admin.dash.addAddress')}</button>
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Redes sociales</label>
-                   <p className="text-[10px] text-gray-400 mb-2">Elige la red de la lista para que la web muestre su icono correcto.</p>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.socials')}</label>
+                   <p className="text-[10px] text-gray-400 mb-2">{t('admin.dash.socialsHint')}</p>
                    {(((config as any).brand?.socials) || []).map((s: any, i: number) => (
                      <div key={i} className="flex gap-2 mb-2">
                        <select className="w-40 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.network || s?.label || 'instagram'}
@@ -1486,12 +1471,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                        <button type="button" onClick={() => setBrandKey('socials', (((config as any).brand?.socials) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
                      </div>
                    ))}
-                   <button type="button" onClick={() => setBrandKey('socials', [...(((config as any).brand?.socials) || []), { network: 'instagram', url: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir red social</button>
+                   <button type="button" onClick={() => setBrandKey('socials', [...(((config as any).brand?.socials) || []), { network: 'instagram', url: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">{t('admin.dash.addSocial')}</button>
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Horario de atención (vacío = cerrado)</label>
-                   {[['mon', 'Lunes'], ['tue', 'Martes'], ['wed', 'Miércoles'], ['thu', 'Jueves'], ['fri', 'Viernes'], ['sat', 'Sábado'], ['sun', 'Domingo']].map(([dk, dl]) => (
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.openingHours')}</label>
+                   {[['mon', t('admin.dash.dayMon')], ['tue', t('admin.dash.dayTue')], ['wed', t('admin.dash.dayWed')], ['thu', t('admin.dash.dayThu')], ['fri', t('admin.dash.dayFri')], ['sat', t('admin.dash.daySat')], ['sun', t('admin.dash.daySun')]].map(([dk, dl]) => (
                      <div key={dk} className="flex items-center gap-3 mb-2">
                        <span className="w-24 text-xs font-bold text-primary/70">{dl}</span>
                        <input className="flex-1 px-3 py-2.5 bg-gray-50 border rounded-xl text-sm text-primary" placeholder="9:00–18:00"
@@ -1501,41 +1486,41 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Enlace de reservas (Calendly)</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.bookingLink')}</label>
                    <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm text-primary" placeholder="https://calendly.com/..."
                      value={(config as any).brand?.booking_url || ''} onChange={(e) => setBrandKey('booking_url', e.target.value)} />
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Moneda por defecto para clientes</label>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.defaultCurrencyClients')}</label>
                    <select className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-sm text-primary"
                      value={(config as any).brand?.default_currency_clients || 'EUR'} onChange={(e) => setBrandKey('default_currency_clients', e.target.value)}>
                      <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
                    </select>
-                   <p className="text-[10px] text-gray-400 mt-1">Se aplica salvo que el cliente tenga otra en su perfil.</p>
+                   <p className="text-[10px] text-gray-400 mt-1">{t('admin.dash.defaultCurrencyHint')}</p>
                  </div>
                </div>
-               <button onClick={() => saveConfigToDb(config)} className="mt-7 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar datos de empresa</button>
+               <button onClick={() => saveConfigToDb(config)} className="mt-7 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveCompanyData')}</button>
              </div>
            </div>
         )}
 
         {activeView === 'employees' && (
           <div className="animate-in fade-in duration-500">
-            <h2 className="text-2xl font-serif text-primary mb-2">Perfiles de Empleados</h2>
-            <p className="text-sm text-gray-400 mb-1">Cuentas del portal Team (acceso con email + contraseña).</p>
-            <p className="text-xs text-green-600 mb-2 flex items-center gap-1"><span className="material-symbols-outlined text-sm">check_circle</span> Permisos y horarios se guardan automáticamente al cambiarlos (no hace falta botón).</p>
-            <p className="text-xs text-primary/50 mb-6">Las vacaciones se aprueban y gestionan en el menú <b>Calendario</b>.</p>
+            <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.dash.employeeProfiles')}</h2>
+            <p className="text-sm text-gray-400 mb-1">{t('admin.dash.employeeProfilesHint')}</p>
+            <p className="text-xs text-green-600 mb-2 flex items-center gap-1"><span className="material-symbols-outlined text-sm">check_circle</span> {t('admin.dash.autoSaveHint')}</p>
+            <p className="text-xs text-primary/50 mb-6">{t('admin.dash.vacationsManagedHint')}</p>
             <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase tracking-widest">
                   <tr>
-                    <th className="text-left px-4 py-3">Nombre</th>
-                    <th className="text-left px-4 py-3">Email</th>
-                    <th className="text-left px-4 py-3">Contraseña</th>
-                    <th className="text-left px-4 py-3">Permisos</th>
-                    <th className="text-left px-4 py-3">Horario</th>
-                    <th className="text-left px-4 py-3">Estado</th>
+                    <th className="text-left px-4 py-3">{t('admin.dash.thName')}</th>
+                    <th className="text-left px-4 py-3">{t('admin.dash.thEmail')}</th>
+                    <th className="text-left px-4 py-3">{t('admin.dash.thPassword')}</th>
+                    <th className="text-left px-4 py-3">{t('admin.dash.thPermissions')}</th>
+                    <th className="text-left px-4 py-3">{t('admin.dash.thSchedule')}</th>
+                    <th className="text-left px-4 py-3">{t('admin.dash.thStatus')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1565,25 +1550,25 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         <div className="flex items-center gap-1.5 mb-2">
                           <input type="time" defaultValue={(e.work_start_time || '').slice(0,5)}
                             onBlur={(ev) => { const v = ev.target.value || null; if (v !== (e.work_start_time||'').slice(0,5)) void saveEmployeeSchedule(e.id, { work_start_time: v }); }}
-                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title="Entrada" />
+                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title={t('admin.dash.clockIn')} />
                           <span className="text-gray-300">→</span>
                           <input type="time" defaultValue={(e.work_end_time || '').slice(0,5)}
                             onBlur={(ev) => { const v = ev.target.value || null; if (v !== (e.work_end_time||'').slice(0,5)) void saveEmployeeSchedule(e.id, { work_end_time: v }); }}
-                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title="Salida" />
+                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title={t('admin.dash.clockOut')} />
                         </div>
                         <div className="flex items-center gap-1.5 mb-2">
-                          <span className="text-[10px] text-gray-400">Margen</span>
+                          <span className="text-[10px] text-gray-400">{t('admin.dash.margin')}</span>
                           <input type="number" min={0} max={120} defaultValue={e.late_margin_min ?? 15}
                             onBlur={(ev) => { const v = parseInt(ev.target.value) || 0; if (v !== (e.late_margin_min ?? 15)) void saveEmployeeSchedule(e.id, { late_margin_min: v }); }}
                             className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-14" />
-                          <span className="text-[10px] text-gray-400">min</span>
+                          <span className="text-[10px] text-gray-400">{t('admin.dash.minutes')}</span>
                         </div>
                         <div className="flex gap-1">
                           {[['L',1],['M',2],['X',3],['J',4],['V',5],['S',6],['D',7]].map(([lbl, dow]) => {
                             const days = e.work_days ?? [1,2,3,4,5];
                             const on = days.includes(dow as number);
                             return (
-                              <button key={dow as number} title="Día laborable"
+                              <button key={dow as number} title={t('admin.dash.workday')}
                                 onClick={() => { const next = on ? days.filter(d => d !== dow) : [...days, dow as number].sort(); void saveEmployeeSchedule(e.id, { work_days: next }); }}
                                 className={`w-6 h-6 rounded text-[10px] font-bold transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
                                 {lbl}
@@ -1597,13 +1582,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                           onClick={() => toggleEmployeeActive(e.id, !e.active)}
                           className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}
                         >
-                          {e.active ? 'Activo' : 'Inactivo'}
+                          {e.active ? t('admin.dash.activeStatus') : t('admin.dash.inactiveStatus')}
                         </button>
                       </td>
                     </tr>
                   ))}
                   {employees.length === 0 && (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">Sin empleados todavía.</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">{t('admin.dash.noEmployees')}</td></tr>
                   )}
                 </tbody>
               </table>
@@ -1764,7 +1749,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </select>
     </div>
     <div className="flex items-center gap-4 pt-6">
-      <span className="text-[10px] font-black uppercase text-gray-400">¿Tiene piscina?</span>
+      <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.hasPool')}</span>
       <button type="button" onClick={() => setCurrentProject({...currentProject, has_pool: !currentProject.has_pool})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.has_pool ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
     </div>
   </div>
@@ -1823,22 +1808,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 <div className="border-t border-gray-100 pt-8 mt-8">
   <h3 className="text-lg font-serif text-primary mb-6">{t('admin.props.profitTitle')}</h3>
   <div className="grid grid-cols-2 gap-6 mb-6">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Proyección alquiler anual ({currentProject.price_currency || 'EUR'})</label><input type="number" value={currentProject.annual_rental_projection || 0} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.annualRentalProjection', { cur: currentProject.price_currency || 'EUR' })}</label><input type="number" value={currentProject.annual_rental_projection || 0} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
     
     <div>
-      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">% Terreno (land ratio)</label>
+      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.landRatio')}</label>
       <div className="flex items-center gap-3">
         <input type="range" min={0} max={100} value={currentProject.land_ratio || 30} onChange={(e) => setCurrentProject({...currentProject, land_ratio: parseInt(e.target.value)})} className="flex-1" />
         <span className="text-lg font-bold text-primary w-16 text-right">{currentProject.land_ratio || 30}%</span>
       </div>
       <div className="flex justify-between text-[9px] text-primary/40 mt-1">
-        <span>Terreno: {formatPrice((currentProject.market_price || 0) * ((currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
-        <span>Edificio: {formatPrice((currentProject.market_price || 0) * (1 - (currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
+        <span>{t('admin.dash.landLabel')}: {formatPrice((currentProject.market_price || 0) * ((currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
+        <span>{t('admin.dash.buildingLabel')}: {formatPrice((currentProject.market_price || 0) * (1 - (currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
       </div>
     </div>
 
     <div className="grid grid-cols-2 gap-6">
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder="3 minutos a Playa Balangan" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder={t('admin.dash.beachDistancePh')} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
       <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
     </div>
     <div className="grid grid-cols-2 gap-6">
@@ -1851,14 +1836,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   </div>
 
   <div className="bg-gray-50 p-6 rounded-2xl mb-6">
-    <p className="text-[10px] font-black uppercase text-gray-400 mb-3">ROI Calculado (solo lectura)</p>
+    <p className="text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.dash.roiCalculated')}</p>
     <div className="grid grid-cols-2 gap-4">
       <div className="bg-white p-4 rounded-xl">
-        <p className="text-[10px] font-black uppercase text-gray-400">ROI Alquiler</p>
+        <p className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.roiRental')}</p>
         <p className="text-2xl font-serif text-primary">{currentProject.investor_price && currentProject.annual_rental_projection ? ((currentProject.annual_rental_projection / currentProject.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
       </div>
       <div className="bg-white p-4 rounded-xl">
-        <p className="text-[10px] font-black uppercase text-gray-400">ROI Reventa</p>
+        <p className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.roiResale')}</p>
         <p className="text-2xl font-serif text-primary">{currentProject.investor_price && currentProject.market_price && currentProject.market_price > currentProject.investor_price ? (((currentProject.market_price - currentProject.investor_price) / currentProject.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
       </div>
     </div>
@@ -1866,10 +1851,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 </div>
 
 <div className="border-t border-gray-100 pt-8 mt-8">
-  <h3 className="text-lg font-serif text-primary mb-6">Enlaces y documentos</h3>
+  <h3 className="text-lg font-serif text-primary mb-6">{t('admin.dash.linksDocs')}</h3>
   <div className="space-y-4">
     <div>
-        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">URL Brochure</label>
+        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.brochureUrl')}</label>
         <div className="flex gap-2">
             <input type="text" value={currentProject.brochure_url || ''} onChange={(e) => setCurrentProject({...currentProject, brochure_url: e.target.value})} placeholder="https://..." className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
             <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -1880,7 +1865,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
     <div className="grid grid-cols-2 gap-6">
       <div>
-         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">URL Informe de obra</label>
+         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.constructionReportUrl')}</label>
          <div className="flex gap-2">
              <input type="text" value={currentProject.construction_update_url || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_url: e.target.value})} placeholder="https://..." className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
              <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -1889,12 +1874,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              </label>
          </div>
       </div>
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fecha informe</label><input type="date" value={currentProject.construction_update_date || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.reportDate')}</label><input type="date" value={currentProject.construction_update_date || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
     </div>
     <div>
-      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">URL Google Maps</label>
-      <input type="text" value={currentProject.google_maps_url || ''} onChange={(e) => setCurrentProject({...currentProject, google_maps_url: e.target.value})} placeholder="https://www.google.com/maps/embed?pb=... o enlace de Google Maps" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
-      <p className="text-[8px] text-primary/30 mt-1">Pega la URL de Google Maps (cualquier formato) o la URL de "Insertar mapa" (embed). Se convertirá automáticamente.</p>
+      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.googleMapsUrl')}</label>
+      <input type="text" value={currentProject.google_maps_url || ''} onChange={(e) => setCurrentProject({...currentProject, google_maps_url: e.target.value})} placeholder={t('admin.dash.googleMapsPh')} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
+      <p className="text-[8px] text-primary/30 mt-1">{t('admin.dash.googleMapsHint')}</p>
     </div>
   </div>
 </div>
@@ -1902,21 +1887,21 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               </div>
               {/* Ficha extendida: datos de agencia / legal / drive / vídeo (los usan los packs de agencia). */}
               <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-serif text-primary mb-1">Ficha de agencia / legal / extra</h3>
-                <p className="text-xs text-gray-400 mb-4">Datos que usan los packs de agencia y la ficha completa.</p>
+                <h3 className="text-lg font-serif text-primary mb-1">{t('admin.dash.agencyLegalExtra')}</h3>
+                <p className="text-xs text-gray-400 mb-4">{t('admin.dash.agencyLegalHint')}</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {([
-                    ['zone','Zona','text'],['owner_name','Propietario','text'],['lease_end_date','Fin leasehold','text'],
-                    ['lease_years_paid','Años pagados','number'],['extension_cost_usd','Coste extensión (USD)','number'],
-                    ['payment_plan_off_plan','Plan de pago','text'],['zoning_type','Zonificación','text'],
-                    ['building_permit_status','Permiso de obra','text'],['structural_warranty','Garantía estructural','text'],
-                    ['water_supply','Suministro de agua','text'],['land_size_m2','Terreno (m2)','number'],
-                    ['pool_size_m2','Piscina (m2)','number'],['parking','Parking','text'],['view','Vistas','text'],
-                    ['living_room_style','Estilo salon','text'],['furnishing_pack_cost_usd','Pack mobiliario (USD)','number'],
-                    ['timeline','Timeline','text'],['booking_widget_url','Widget reservas (URL)','text'],
-                    ['video_url','Video (URL)','text'],['drive_renders_url','Drive renders','text'],
-                    ['drive_2d_plans_url','Drive planos 2D','text'],['drive_permits_url','Drive permisos','text'],
-                    ['drive_legal_url','Drive legal','text'],['drive_brochure_folder_url','Drive brochure','text'],
+                    ['zone',t('admin.dash.fldZone'),'text'],['owner_name',t('admin.dash.fldOwner'),'text'],['lease_end_date',t('admin.dash.fldLeaseEnd'),'text'],
+                    ['lease_years_paid',t('admin.dash.fldYearsPaid'),'number'],['extension_cost_usd',t('admin.dash.fldExtensionCost'),'number'],
+                    ['payment_plan_off_plan',t('admin.dash.fldPaymentPlan'),'text'],['zoning_type',t('admin.dash.fldZoning'),'text'],
+                    ['building_permit_status',t('admin.dash.fldBuildingPermit'),'text'],['structural_warranty',t('admin.dash.fldStructuralWarranty'),'text'],
+                    ['water_supply',t('admin.dash.fldWaterSupply'),'text'],['land_size_m2',t('admin.dash.fldLandSize'),'number'],
+                    ['pool_size_m2',t('admin.dash.fldPoolSize'),'number'],['parking',t('admin.dash.fldParking'),'text'],['view',t('admin.dash.fldView'),'text'],
+                    ['living_room_style',t('admin.dash.fldLivingStyle'),'text'],['furnishing_pack_cost_usd',t('admin.dash.fldFurnishPack'),'number'],
+                    ['timeline',t('admin.dash.fldTimeline'),'text'],['booking_widget_url',t('admin.dash.fldBookingWidget'),'text'],
+                    ['video_url',t('admin.dash.fldVideoUrl'),'text'],['drive_renders_url',t('admin.dash.fldDriveRenders'),'text'],
+                    ['drive_2d_plans_url',t('admin.dash.fldDrive2dPlans'),'text'],['drive_permits_url',t('admin.dash.fldDrivePermits'),'text'],
+                    ['drive_legal_url',t('admin.dash.fldDriveLegal'),'text'],['drive_brochure_folder_url',t('admin.dash.fldDriveBrochure'),'text'],
                   ] as [string,string,string][]).map(([k,label,type]) => (
                     <div key={k}>
                       <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5">{label}</label>
@@ -1927,7 +1912,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   ))}
                 </div>
                 <div className="flex gap-6 mt-4">
-                  {([['has_powder_room','Aseo de cortesia'],['has_rooftop','Azotea']] as [string,string][]).map(([k,label]) => (
+                  {([['has_powder_room',t('admin.dash.fldPowderRoom')],['has_rooftop',t('admin.dash.fldRooftop')]] as [string,string][]).map(([k,label]) => (
                     <label key={k} className="flex items-center gap-2 text-xs font-bold text-primary/70 cursor-pointer">
                       <input type="checkbox" checked={!!(currentProject as any)[k]} onChange={(e) => setCurrentProject({ ...currentProject, [k]: e.target.checked } as any)} /> {label}
                     </label>
@@ -1936,16 +1921,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               </div>
               {/* Traducciones (EN/ID) de los campos que aparecen en los packs de agencia. */}
               <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-serif text-primary mb-1">Traducciones para packs (inglés / indonesio)</h3>
-                <p className="text-xs text-gray-400 mb-4">Opcional. Si están vacías, el pack usa el texto en español.</p>
+                <h3 className="text-lg font-serif text-primary mb-1">{t('admin.dash.packTranslations')}</h3>
+                <p className="text-xs text-gray-400 mb-4">{t('admin.dash.packTranslationsHint')}</p>
                 <div className="space-y-3">
                   {([
-                    ['description','Descripción'],['status','Estado'],['completion_date','Fecha de entrega'],
-                    ['distance_beach','Distancia playa'],['view','Vistas'],['parking','Parking'],
-                    ['living_room_style','Estilo salón'],['furnishing','Mobiliario'],['water_supply','Agua'],
-                    ['structural_warranty','Garantía estructural'],['zoning_type','Zonificación'],
-                    ['building_permit_status','Permiso de obra'],['payment_plan_off_plan','Plan de pago'],
-                    ['lease_end_date','Fin leasehold'],
+                    ['description',t('admin.dash.trDescription')],['status',t('admin.dash.trStatus')],['completion_date',t('admin.dash.trCompletionDate')],
+                    ['distance_beach',t('admin.dash.trDistanceBeach')],['view',t('admin.dash.trView')],['parking',t('admin.dash.trParking')],
+                    ['living_room_style',t('admin.dash.trLivingStyle')],['furnishing',t('admin.dash.trFurnishing')],['water_supply',t('admin.dash.trWater')],
+                    ['structural_warranty',t('admin.dash.trStructuralWarranty')],['zoning_type',t('admin.dash.trZoning')],
+                    ['building_permit_status',t('admin.dash.trBuildingPermit')],['payment_plan_off_plan',t('admin.dash.trPaymentPlan')],
+                    ['lease_end_date',t('admin.dash.trLeaseEnd')],
                   ] as [string,string][]).map(([k,label]) => (
                     <div key={k} className="grid grid-cols-1 md:grid-cols-[140px_1fr_1fr] gap-2 items-center">
                       <span className="text-[10px] font-black uppercase text-gray-400">{label}</span>
@@ -1957,8 +1942,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               </div>
               {/* Hitos / Desarrollo del proyecto — OCULTO en la web pública; gestión interna */}
               <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-serif text-primary mb-1">Hitos / Desarrollo del proyecto</h3>
-                <p className="text-xs text-gray-400 mb-4">Fases con fecha y % de pago. <b>Oculto en la web pública</b> (solo gestión interna; no se enseña a clientes).</p>
+                <h3 className="text-lg font-serif text-primary mb-1">{t('admin.dash.milestonesTitle')}</h3>
+                <p className="text-xs text-gray-400 mb-4">{t('admin.dash.milestonesHint')}</p>
                 <div className="space-y-3">
                   {(((currentProject as any).timeline as any[]) || []).map((ph: any, i: number) => {
                     const tl = (((currentProject as any).timeline as any[]) || []);
@@ -1967,20 +1952,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     return (
                       <div key={i} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-black uppercase text-gray-400">Fase {i + 1}</span>
-                          <button type="button" onClick={() => setTl(tl.filter((_, j) => j !== i))} className="text-[11px] font-bold text-red-600 hover:underline">Quitar</button>
+                          <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.phase', { n: i + 1 })}</span>
+                          <button type="button" onClick={() => setTl(tl.filter((_, j) => j !== i))} className="text-[11px] font-bold text-red-600 hover:underline">{t('admin.dash.remove')}</button>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-2">
-                          <input placeholder="Título" value={ph.title || ''} onChange={(e) => upd('title', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
-                          <input placeholder="Fecha (YYYY-MM)" value={ph.date || ''} onChange={(e) => upd('date', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
-                          <input type="number" placeholder="% pago" value={ph.payment_pct ?? ''} onChange={(e) => upd('payment_pct', e.target.value ? Number(e.target.value) : 0)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
+                          <input placeholder={t('admin.dash.phTitle')} value={ph.title || ''} onChange={(e) => upd('title', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
+                          <input placeholder={t('admin.dash.phDateYm')} value={ph.date || ''} onChange={(e) => upd('date', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
+                          <input type="number" placeholder={t('admin.dash.phPaymentPct')} value={ph.payment_pct ?? ''} onChange={(e) => upd('payment_pct', e.target.value ? Number(e.target.value) : 0)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
                         </div>
-                        <textarea placeholder="Descripción de la fase" value={ph.description || ''} onChange={(e) => upd('description', e.target.value)} rows={2} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm resize-none" />
+                        <textarea placeholder={t('admin.dash.phPhaseDesc')} value={ph.description || ''} onChange={(e) => upd('description', e.target.value)} rows={2} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm resize-none" />
                       </div>
                     );
                   })}
                 </div>
-                <button type="button" onClick={() => setCurrentProject({ ...(currentProject as any), timeline: [ ...(((currentProject as any).timeline as any[]) || []), { title: '', date: '', payment_pct: 0, description: '' } ] })} className="mt-3 text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir fase</button>
+                <button type="button" onClick={() => setCurrentProject({ ...(currentProject as any), timeline: [ ...(((currentProject as any).timeline as any[]) || []), { title: '', date: '', payment_pct: 0, description: '' } ] })} className="mt-3 text-[10px] font-black uppercase tracking-widest text-primary">{t('admin.dash.addPhase')}</button>
               </div>
 
               <div className="flex gap-4 pt-6"><button type="submit" className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black">{t('admin.adminDash.saveProperty')}</button><button type="button" onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-400 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-200">{t('admin.common.cancel')}</button></div>
@@ -1993,19 +1978,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {isEditingBlog && (
   <div className="fixed inset-0 z-[150] flex items-start justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingBlog(false); }}>
     <div className="bg-white w-full max-w-3xl rounded-3xl p-6 md:p-10 shadow-2xl my-8">
-      <h2 className="text-2xl font-serif text-primary mb-6">{currentBlog.id && !String(currentBlog.id).startsWith('blog-') ? 'Editar artículo' : 'Nuevo artículo'}</h2>
+      <h2 className="text-2xl font-serif text-primary mb-6">{currentBlog.id && !String(currentBlog.id).startsWith('blog-') ? t('admin.dash.editArticle') : t('admin.dash.newArticle')}</h2>
       <form onSubmit={handleSaveBlog} className="space-y-5">
         <div className="grid grid-cols-2 gap-5">
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Título</label><input required value={currentBlog.title || ''} onChange={(e) => setCurrentBlog({...currentBlog, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Etiqueta</label><input value={currentBlog.tag || ''} onChange={(e) => setCurrentBlog({...currentBlog, tag: e.target.value})} placeholder="MERCADO" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.titleLabel')}</label><input required value={currentBlog.title || ''} onChange={(e) => setCurrentBlog({...currentBlog, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.tagLabel')}</label><input value={currentBlog.tag || ''} onChange={(e) => setCurrentBlog({...currentBlog, tag: e.target.value})} placeholder="MERCADO" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
         </div>
         <div className="grid grid-cols-2 gap-5">
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fecha de publicación</label><input type="date" value={currentBlog.published_date || ''} onChange={(e) => setCurrentBlog({...currentBlog, published_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Imagen (URL o ruta)</label><input value={currentBlog.image || ''} onChange={(e) => setCurrentBlog({...currentBlog, image: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.publishDate')}</label><input type="date" value={currentBlog.published_date || ''} onChange={(e) => setCurrentBlog({...currentBlog, published_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.imageUrlPath')}</label><input value={currentBlog.image || ''} onChange={(e) => setCurrentBlog({...currentBlog, image: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
         </div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Descripción / extracto</label><textarea value={currentBlog.description || ''} onChange={(e) => setCurrentBlog({...currentBlog, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium resize-none h-20" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.descExcerpt')}</label><textarea value={currentBlog.description || ''} onChange={(e) => setCurrentBlog({...currentBlog, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium resize-none h-20" /></div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Contenido (HTML)</label>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.contentHtml')}</label>
           <div className="flex gap-2 mb-2">
             <button type="button" onClick={() => wrapSelection('b')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-black hover:bg-gray-200">B</button>
             <button type="button" onClick={() => wrapSelection('p')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-bold hover:bg-gray-200">P</button>
@@ -2014,8 +1999,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <textarea ref={blogContentRef} value={currentBlog.content || ''} onChange={(e) => setCurrentBlog({...currentBlog, content: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-mono text-sm resize-none h-48" />
         </div>
         <div className="flex gap-4 pt-2">
-          <button type="button" onClick={() => setIsEditingBlog(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">Cancelar</button>
-          <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? 'Guardando…' : 'Guardar'}</button>
+          <button type="button" onClick={() => setIsEditingBlog(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
+          <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? t('admin.dash.savingEllipsis') : t('admin.common.save')}</button>
         </div>
       </form>
     </div>
@@ -2026,23 +2011,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {isEditingUser && (
   <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingUser(false); }}>
     <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
-      <h2 className="text-2xl font-serif text-primary mb-6">{currentUser.id && !String(currentUser.id).startsWith('user-') ? 'Editar administrador' : 'Nuevo administrador'}</h2>
+      <h2 className="text-2xl font-serif text-primary mb-6">{currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.editAdmin') : t('admin.dash.newAdmin')}</h2>
       <form onSubmit={handleSaveUser} className="space-y-5">
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Nombre</label><input required value={currentUser.name || ''} onChange={(e) => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Usuario (email)</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Contraseña {currentUser.id && !String(currentUser.id).startsWith('user-') ? '(vacío = no cambiar)' : ''}</label><input type="text" required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Rol</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.nameLabel')}</label><input required value={currentUser.name || ''} onChange={(e) => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.usernameEmail')}</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.passwordLabel')} {currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.emptyNoChange') : ''}</label><input type="text" required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.roleLabel')}</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Firma (para firmar kwitansis)</label>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.signatureLabel')}</label>
           <div className="relative inline-block border-2 border-dashed border-gray-200 rounded-2xl p-3 w-52 text-center">
-            {(currentUser as any).signature_url && <button type="button" title="Borrar firma" onClick={() => setCurrentUser({ ...currentUser, signature_url: '' } as any)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-base leading-none shadow hover:bg-red-600">×</button>}
-            {(currentUser as any).signature_url ? <img src={(currentUser as any).signature_url} alt="Firma" className="h-12 mx-auto object-contain" /> : <span className="material-symbols-outlined text-gray-300 text-2xl">edit</span>}
-            <label className="block mt-1 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">{(currentUser as any).signature_url ? 'Cambiar' : 'Subir PNG'}<input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleUserSignatureUpload(f); }} /></label>
+            {(currentUser as any).signature_url && <button type="button" title={t('admin.dash.deleteSignature')} onClick={() => setCurrentUser({ ...currentUser, signature_url: '' } as any)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-base leading-none shadow hover:bg-red-600">×</button>}
+            {(currentUser as any).signature_url ? <img src={(currentUser as any).signature_url} alt={t('admin.dash.signatureLabel')} className="h-12 mx-auto object-contain" /> : <span className="material-symbols-outlined text-gray-300 text-2xl">edit</span>}
+            <label className="block mt-1 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">{(currentUser as any).signature_url ? t('admin.dash.change') : t('admin.dash.uploadPng')}<input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleUserSignatureUpload(f); }} /></label>
           </div>
         </div>
         <div className="flex gap-4 pt-2">
-          <button type="button" onClick={() => setIsEditingUser(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">Cancelar</button>
-          <button type="submit" className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition">Guardar</button>
+          <button type="button" onClick={() => setIsEditingUser(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
+          <button type="submit" className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition">{t('admin.common.save')}</button>
         </div>
       </form>
     </div>
@@ -2054,48 +2039,48 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
     <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
       <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
-      <p className="text-sm text-gray-400 mb-8">Completa los datos del cliente</p>
+      <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
       <form onSubmit={handleSaveClient} className="space-y-5">
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Nombre completo *</label>
-          <input type="text" required value={currentClient.name || ''} onChange={(e) => setCurrentClient({...currentClient, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="Nombre del cliente" />
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.fullName')}</label>
+          <input type="text" required value={currentClient.name || ''} onChange={(e) => setCurrentClient({...currentClient, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder={t('admin.dash.clientNamePh')} />
         </div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Email *</label>
-          <input type="email" required value={currentClient.email || ''} onChange={(e) => setCurrentClient({...currentClient, email: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="email@ejemplo.com" />
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.emailRequired')}</label>
+          <input type="email" required value={currentClient.email || ''} onChange={(e) => setCurrentClient({...currentClient, email: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder={t('admin.dash.emailPh')} />
         </div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Telefono</label>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.phoneLabel')}</label>
           <input type="text" value={currentClient.phone || ''} onChange={(e) => setCurrentClient({...currentClient, phone: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="+34 625 710 770" />
         </div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Notas</label>
-          <textarea value={currentClient.notes || ''} onChange={(e) => setCurrentClient({...currentClient, notes: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none resize-none h-24" placeholder="Notas internas sobre el cliente..." />
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.notesLabel')}</label>
+          <textarea value={currentClient.notes || ''} onChange={(e) => setCurrentClient({...currentClient, notes: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none resize-none h-24" placeholder={t('admin.dash.notesPh')} />
         </div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Carpeta Drive del cliente (contratos, docs)</label>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.clientDriveFolder')}</label>
           <input type="url" value={(currentClient as any).drive_folder_url || ''} onChange={(e) => setCurrentClient({...currentClient, drive_folder_url: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="https://drive.google.com/drive/folders/..." />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Idioma preferido</label>
+            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.preferredLanguage')}</label>
             <select value={(currentClient as any).preferred_language || 'es'} onChange={(e) => setCurrentClient({...currentClient, preferred_language: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
               <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
             </select>
           </div>
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Divisa preferida</label>
+            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.preferredCurrency')}</label>
             <select value={(currentClient as any).preferred_currency || (((config as any).brand?.default_currency_clients) || 'EUR')} onChange={(e) => setCurrentClient({...currentClient, preferred_currency: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
               <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
             </select>
           </div>
         </div>
         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
-          <span className="text-[10px] font-black uppercase text-primary/60">Cliente activo</span>
+          <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.dash.clientActive')}</span>
           <button type="button" onClick={() => setCurrentClient({...currentClient, is_active: !currentClient.is_active})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentClient.is_active ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
         </div>
         <div className="flex gap-4 pt-4">
-          <button type="button" onClick={() => setIsEditingClient(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">Cancelar</button>
+          <button type="button" onClick={() => setIsEditingClient(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
           <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? t('admin.adminDash.savingEllipsis') : t('admin.adminDash.save')}</button>
         </div>
       </form>
@@ -2107,13 +2092,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditingAssignment(null); }}>
         <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
             <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.adminDash.editAssignment')}</h2>
-            <p className="text-sm text-gray-400 mb-2">Cliente: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
-            <p className="text-sm text-gray-400 mb-8">Proyecto: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
+            <p className="text-sm text-gray-400 mb-2">{t('admin.dash.clientLabel')}: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
+            <p className="text-sm text-gray-400 mb-8">{t('admin.dash.projectLabel')}: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
             <form onSubmit={handleEditAssignment} className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Unidad / Referencia</label><input value={editingAssignment.assignment.unit_number || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, unit_number: e.target.value}})} placeholder="Ej: A-101, Villa 3" className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.unitReference')}</label><input value={editingAssignment.assignment.unit_number || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, unit_number: e.target.value}})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Importe invertido</label>
+                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
                         <div className="flex gap-2">
                             <input type="number" value={editingAssignment.assignment.investment_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_amount: parseFloat(e.target.value) || 0}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
                             <select value={editingAssignment.assignment.currency || 'EUR'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, currency: e.target.value}})} className="px-3 py-4 bg-gray-100 border border-gray-200 rounded-2xl font-bold w-24">
@@ -2123,19 +2108,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fecha de compra</label><input type="date" value={editingAssignment.assignment.purchase_date || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, purchase_date: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Estado de la inversión</label>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={editingAssignment.assignment.purchase_date || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, purchase_date: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentStatus')}</label>
                         <select value={editingAssignment.assignment.status || 'Reserva'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, status: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
-                            <option value="Reserva">Reserva</option>
-                            <option value="Pagado">Pagado</option>
-                            <option value="En proceso">En proceso</option>
-                            <option value="Completado">Completado</option>
+                            <option value="Reserva">{translateStatus('Reserva', t)}</option>
+                            <option value="Pagado">{translateStatus('Pagado', t)}</option>
+                            <option value="En proceso">{translateStatus('En proceso', t)}</option>
+                            <option value="Completado">{translateStatus('Completado', t)}</option>
                         </select>
                     </div>
                 </div>
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
-                    <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">Cerrar</button>
+                    <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.dash.close')}</button>
                 </div>
             </form>
         </div>
@@ -2146,20 +2131,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {assigningProject && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setAssigningProject(null); }}>
         <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
-            <h2 className="text-2xl font-serif text-primary mb-2">Asignar proyecto</h2>
-            <p className="text-sm text-gray-400 mb-8">Cliente: <strong className="text-primary">{assigningProject.clientName}</strong></p>
+            <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.dash.assignProjectTitle')}</h2>
+            <p className="text-sm text-gray-400 mb-8">{t('admin.dash.clientLabel')}: <strong className="text-primary">{assigningProject.clientName}</strong></p>
             <form onSubmit={handleAssignProject} className="space-y-6">
                 <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Proyecto</label>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.projectLabel')}</label>
                     <select value={assignForm.project_id} onChange={(e) => setAssignForm({...assignForm, project_id: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
-                        {projects.length === 0 && <option value="">No hay proyectos</option>}
+                        {projects.length === 0 && <option value="">{t('admin.dash.noProjectsOption')}</option>}
                         {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Unidad / Referencia</label><input value={assignForm.unit_number} onChange={(e) => setAssignForm({...assignForm, unit_number: e.target.value})} placeholder="Ej: A-101, Villa 3" className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.unitReference')}</label><input value={assignForm.unit_number} onChange={(e) => setAssignForm({...assignForm, unit_number: e.target.value})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Importe invertido</label>
+                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
                         <div className="flex gap-2">
                             <input type="number" value={assignForm.investment_amount || ''} onChange={(e) => setAssignForm({...assignForm, investment_amount: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
                             <select value={assignForm.currency} onChange={(e) => setAssignForm({...assignForm, currency: e.target.value})} className="px-3 py-4 bg-gray-100 border border-gray-200 rounded-2xl font-bold w-24">
@@ -2169,19 +2154,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fecha de compra</label><input type="date" value={assignForm.purchase_date} onChange={(e) => setAssignForm({...assignForm, purchase_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Estado de la inversión</label>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={assignForm.purchase_date} onChange={(e) => setAssignForm({...assignForm, purchase_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentStatus')}</label>
                         <select value={assignForm.status} onChange={(e) => setAssignForm({...assignForm, status: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
-                            <option value="Reserva">Reserva</option>
-                            <option value="Pagado">Pagado</option>
-                            <option value="En proceso">En proceso</option>
-                            <option value="Completado">Completado</option>
+                            <option value="Reserva">{translateStatus('Reserva', t)}</option>
+                            <option value="Pagado">{translateStatus('Pagado', t)}</option>
+                            <option value="En proceso">{translateStatus('En proceso', t)}</option>
+                            <option value="Completado">{translateStatus('Completado', t)}</option>
                         </select>
                     </div>
                 </div>
                 <div className="flex gap-4 pt-4">
-                    <button type="submit" disabled={uploading || !assignForm.project_id} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : 'Asignar'}</button>
-                    <button type="button" onClick={() => setAssigningProject(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">Cancelar</button>
+                    <button type="submit" disabled={uploading || !assignForm.project_id} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.dash.assignBtn')}</button>
+                    <button type="button" onClick={() => setAssigningProject(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.common.cancel')}</button>
                 </div>
             </form>
         </div>
@@ -2206,7 +2191,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </div>
       <div className="flex gap-2">
         <input type="text" value={newOptionValue} onChange={(e) => setNewOptionValue(e.target.value)} placeholder={t('admin.adminDash.newOptionPlaceholder')} className="flex-1 px-4 py-3 bg-gray-50 rounded-xl font-medium border border-gray-200 focus:border-primary focus:outline-none" onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddOption(); } }} />
-        <button onClick={handleAddOption} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">Añadir</button>
+        <button onClick={handleAddOption} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">{t('admin.dash.add')}</button>
       </div>
     </div>
   </div>
@@ -2231,16 +2216,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[85vh] overflow-y-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-serif text-primary">Plantillas WhatsApp</h2>
-          <p className="text-sm text-gray-400 mt-1">Enviar a <strong className="text-primary">{whatsappClient.name}</strong></p>
+          <h2 className="text-2xl font-serif text-primary">{t('admin.dash.whatsappTemplates')}</h2>
+          <p className="text-sm text-gray-400 mt-1">{t('admin.dash.sendTo')} <strong className="text-primary">{whatsappClient.name}</strong></p>
         </div>
         <button onClick={() => setWhatsappClient(null)} className="p-2 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="space-y-3">
-        {WHATSAPP_TEMPLATES.map((t, idx) => (
-          <button key={idx} onClick={() => openWhatsAppTemplate(whatsappClient, t.template(whatsappClient))} className="w-full text-left bg-gray-50 hover:bg-green-50 rounded-xl px-6 py-5 transition border border-gray-100 hover:border-green-200">
-            <p className="font-bold text-primary text-sm mb-1">{t.name}</p>
-            <p className="text-xs text-gray-400 line-clamp-2">{t.template(whatsappClient).substring(0, 100)}...</p>
+        {WHATSAPP_TEMPLATES.map((tpl, idx) => (
+          <button key={idx} onClick={() => openWhatsAppTemplate(whatsappClient, tpl.template(whatsappClient))} className="w-full text-left bg-gray-50 hover:bg-green-50 rounded-xl px-6 py-5 transition border border-gray-100 hover:border-green-200">
+            <p className="font-bold text-primary text-sm mb-1">{t(tpl.nameKey)}</p>
+            <p className="text-xs text-gray-400 line-clamp-2">{tpl.template(whatsappClient).substring(0, 100)}...</p>
           </button>
         ))}
       </div>
