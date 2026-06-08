@@ -1,6 +1,14 @@
-/* Material Symbols COMPLETO (todos los iconos) se carga desde Google Fonts en
-   index.html — ya no usamos un subset self-hosted (rompía al añadir iconos
-   nuevos). Así CUALQUIER icono funciona siempre. */
+/* Material Symbols: subset self-hosted (rápido, ~110KB) con TODOS los iconos en
+   uso. Se regenera con scripts/generate-icons.mjs (lo corro al desplegar cuando
+   añado iconos), así nunca falta uno. La fuente completa (4MB) daba lag, por eso
+   no la usamos. */
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("/fonts/material-symbols-outlined.woff2?v=df61e7d8") format("woff2");
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

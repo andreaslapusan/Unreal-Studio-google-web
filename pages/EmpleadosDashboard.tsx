@@ -19,6 +19,7 @@ import { hasPermission } from '../lib/permissions';
 import VacationCalendar from '../components/VacationCalendar';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
+import ConstructionReportModal from '../components/ConstructionReportModal';
 
 type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
 
@@ -47,6 +48,7 @@ const EmpleadosDashboard: React.FC = () => {
   const [canEditProperties, setCanEditProperties] = useState(false);
   const [employee, setEmployee] = useState<{ id: string; full_name: string | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null } | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [capture, setCapture] = useState<FichajeType | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<{ ok: boolean; msg: string } | null>(null);
@@ -356,35 +358,20 @@ const EmpleadosDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Hub Team: secciones según permisos del empleado */}
-        {(canUploadReports || canEditProperties) && (
+        {/* Hub Team: solo subir reportes de obra (editar fichas se quitó: mala idea) */}
+        {canUploadReports && (
           <div className="mt-8 grid grid-cols-1 gap-3">
-            {canUploadReports && (
-              <button
-                onClick={() => navigate('/empleados/upload')}
-                className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
-              >
-                <span className="material-symbols-outlined text-primary">construction</span>
-                <span className="flex-1">
-                  <span className="block font-bold text-primary text-sm">{t('empleados.reports.title')}</span>
-                  <span className="block text-xs text-primary/50">{t('empleados.reports.subtitle')}</span>
-                </span>
-                <span className="material-symbols-outlined text-primary/30">chevron_right</span>
-              </button>
-            )}
-            {canEditProperties && (
-              <button
-                onClick={() => navigate('/empleados/propiedades')}
-                className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
-              >
-                <span className="material-symbols-outlined text-primary">home_work</span>
-                <span className="flex-1">
-                  <span className="block font-bold text-primary text-sm">{t('empleados.editProps.title', 'Editar propiedades')}</span>
-                  <span className="block text-xs text-primary/50">{t('empleados.editProps.subtitle', 'Avance de obra, datos, galería y más')}</span>
-                </span>
-                <span className="material-symbols-outlined text-primary/30">chevron_right</span>
-              </button>
-            )}
+            <button
+              onClick={() => setShowReportModal(true)}
+              className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+            >
+              <span className="material-symbols-outlined text-primary">construction</span>
+              <span className="flex-1">
+                <span className="block font-bold text-primary text-sm">{t('empleados.reports.title')}</span>
+                <span className="block text-xs text-primary/50">{t('empleados.reports.subtitle')}</span>
+              </span>
+              <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+            </button>
           </div>
         )}
       </div>
@@ -445,6 +432,10 @@ const EmpleadosDashboard: React.FC = () => {
             </ul>
           </div>
         </div>
+      )}
+
+      {showReportModal && (
+        <ConstructionReportModal postedBy={user.email ?? user.id} onClose={() => setShowReportModal(false)} />
       )}
 
       {toast && (
