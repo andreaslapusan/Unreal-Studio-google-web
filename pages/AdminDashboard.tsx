@@ -194,7 +194,7 @@ const AMENITIES_LIST = [
     } catch { return null; }
   };
 
-  const isSuperAdmin = getAdminUsername() === 'andreas';
+  const isSuperAdmin = ['andreas', 'andreas@unrealstudiobali.com'].includes((getAdminUsername() || '').toLowerCase());
 
   // --- DATA LOADING ---
   const loadData = useCallback(async () => {
