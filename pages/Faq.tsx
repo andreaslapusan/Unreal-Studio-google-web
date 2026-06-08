@@ -127,6 +127,25 @@ export default function Faq() {
     return [ALL, ...CATEGORY_ORDER.filter((c) => present.has(c))];
   }, [faqs]);
 
+  // JSON-LD FAQPage: habilita resultados enriquecidos (acordeón) en Google.
+  useEffect(() => {
+    if (!faqs.length) return;
+    const strip = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const schema = {
+      '@context': 'https://schema.org', '@type': 'FAQPage',
+      mainEntity: faqs.slice(0, 50).map((f) => ({
+        '@type': 'Question', name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: strip(f.answer) },
+      })),
+    };
+    const el = document.createElement('script');
+    el.type = 'application/ld+json';
+    el.setAttribute('data-faq-ld', '1');
+    el.textContent = JSON.stringify(schema);
+    document.head.appendChild(el);
+    return () => { el.remove(); };
+  }, [faqs]);
+
   const filtered = useMemo(() => {
     let result = faqs;
     if (category !== ALL) result = result.filter((f) => f.category === category);
