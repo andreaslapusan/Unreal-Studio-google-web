@@ -52,6 +52,7 @@ const AuthFinish = lazyWithReload(() => import('./pages/AuthFinish'));
 const EquipoUpload = lazyWithReload(() => import('./pages/EquipoUpload'));
 const EquipoLogin = lazyWithReload(() => import('./pages/EquipoLogin'));
 const EquipoDashboard = lazyWithReload(() => import('./pages/EquipoDashboard'));
+const EquipoProperties = lazyWithReload(() => import('./pages/EquipoProperties'));
 const EmpleadosLogin = lazyWithReload(() => import('./pages/EmpleadosLogin'));
 const EmpleadosDashboard = lazyWithReload(() => import('./pages/EmpleadosDashboard'));
 const AdminPortalManager = lazyWithReload(() => import('./pages/AdminPortalManager'));
@@ -232,6 +233,7 @@ const App: React.FC = () => {
                 viejos en correos enviados o documentos. */}
             <Route path="/manager" element={<EquipoLogin />} />
             <Route path="/manager/dashboard" element={<EquipoDashboard />} />
+            <Route path="/manager/propiedades" element={<EquipoProperties />} />
             <Route path="/equipo" element={<Navigate to="/manager" replace />} />
             <Route path="/equipo/dashboard" element={<Navigate to="/manager/dashboard" replace />} />
             <Route path="/equipo/upload" element={<EquipoUpload />} />

@@ -44,6 +44,7 @@ const EmpleadosDashboard: React.FC = () => {
 
   const [today, setToday] = useState<TodayRow[]>([]);
   const [canUploadReports, setCanUploadReports] = useState(false);
+  const [canEditProperties, setCanEditProperties] = useState(false);
   const [employee, setEmployee] = useState<{ id: string; full_name: string | null } | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [capture, setCapture] = useState<FichajeType | null>(null);
@@ -91,6 +92,7 @@ const EmpleadosDashboard: React.FC = () => {
         .eq('email', user.email)
         .maybeSingle();
       setCanUploadReports(hasPermission(data, 'upload_reports'));
+      setCanEditProperties(hasPermission(data, 'edit_properties'));
       if (data?.id) setEmployee({ id: data.id as string, full_name: (data.full_name as string) ?? null });
     })();
   }, [user]);
@@ -338,19 +340,34 @@ const EmpleadosDashboard: React.FC = () => {
         )}
 
         {/* Hub Team: secciones según permisos del empleado */}
-        {canUploadReports && (
+        {(canUploadReports || canEditProperties) && (
           <div className="mt-8 grid grid-cols-1 gap-3">
-            <button
-              onClick={() => navigate('/equipo/upload')}
-              className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
-            >
-              <span className="material-symbols-outlined text-primary">construction</span>
-              <span className="flex-1">
-                <span className="block font-bold text-primary text-sm">{t('empleados.reports.title')}</span>
-                <span className="block text-xs text-primary/50">{t('empleados.reports.subtitle')}</span>
-              </span>
-              <span className="material-symbols-outlined text-primary/30">chevron_right</span>
-            </button>
+            {canUploadReports && (
+              <button
+                onClick={() => navigate('/equipo/upload')}
+                className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+              >
+                <span className="material-symbols-outlined text-primary">construction</span>
+                <span className="flex-1">
+                  <span className="block font-bold text-primary text-sm">{t('empleados.reports.title')}</span>
+                  <span className="block text-xs text-primary/50">{t('empleados.reports.subtitle')}</span>
+                </span>
+                <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+              </button>
+            )}
+            {canEditProperties && (
+              <button
+                onClick={() => navigate('/manager/propiedades')}
+                className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+              >
+                <span className="material-symbols-outlined text-primary">home_work</span>
+                <span className="flex-1">
+                  <span className="block font-bold text-primary text-sm">Editar propiedades</span>
+                  <span className="block text-xs text-primary/50">Avance de obra, datos, galería y más</span>
+                </span>
+                <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+              </button>
+            )}
           </div>
         )}
       </div>

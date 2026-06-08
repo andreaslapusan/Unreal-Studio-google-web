@@ -18,6 +18,7 @@ export const EMPLOYEE_PERMISSIONS: EmployeePermission[] = [
   { key: 'upload_reports', label: 'Subir reportes de obra' },
   { key: 'request_vacation', label: 'Solicitar vacaciones', defaultOn: true },
   { key: 'view_team_calendar', label: 'Ver calendario del equipo', defaultOn: true },
+  { key: 'edit_properties', label: 'Editar fichas de propiedades (avance de obra, datos, galería…)' },
 ];
 
 // Forma mínima del empleado necesaria para evaluar permisos.
