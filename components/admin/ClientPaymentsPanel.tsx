@@ -155,6 +155,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const createAndSend = async () => {
     if (!kw) return;
     if (!clientEmail) { alert('El cliente no tiene email. Añádelo antes de enviar.'); return; }
+    // Fase extra de seguridad: el kwitansi NO se firma/envía/muestra al cliente
+    // hasta que el admin confirma explícitamente aquí.
+    if (!window.confirm(`Vas a FIRMAR y enviar el kwitansi ${kw.displayNo} a ${clientEmail}.\nUna vez firmado, el cliente podrá verlo en su portal. ¿Continuar?`)) return;
     setKw({ ...kw, sending: true });
     // El nº visible es el amistoso por proyecto (DS-01); no_seq queda interno.
     const html = kwitansiHtml(kw.displayNo) || '';
@@ -167,6 +170,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       },
     });
     if (cErr || !created?.success) { setKw({ ...kw, sending: false }); alert('No se pudo crear el kwitansi.'); return; }
+    // Firma del admin: marca signed_at → recién entonces es visible para el cliente.
+    await supabase.rpc('admin_sign_kwitansi', { p_user_id: adminUserId, p_id: created.id, p_html: html });
     const no = kw.displayNo;
     // 2) Send it from hello@unrealstudiobali.com via the edge function
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
@@ -311,7 +316,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <div className="flex gap-2">
               <button onClick={downloadKwitansi} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-primary">Descargar / Imprimir</button>
               <button disabled={kw.sending} onClick={createAndSend} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">
-                {kw.sending ? 'Enviando…' : 'Crear y enviar al cliente'}
+                {kw.sending ? 'Enviando…' : 'Firmar y enviar al cliente'}
               </button>
             </div>
           </div>
