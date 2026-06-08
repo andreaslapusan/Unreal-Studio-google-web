@@ -35,11 +35,12 @@ export default function AgenciasPartnership() {
     void (async () => {
       const { data } = await supabase
         .from("projects")
-        .select("name, image, slug, zone, status, is_hidden, sort_order")
+        .select("name, image, slug, zone, location, status, is_hidden, sort_order")
         .order("sort_order", { ascending: true });
       const list = (data ?? [])
         .filter((p: any) => !p.is_hidden)
-        .map((p: any) => ({ name: p.name, image: p.image, slug: p.slug, zone: p.zone, status: p.status }));
+        // `zone` está a medio rellenar; `location` (lo que edita admin) está completo.
+        .map((p: any) => ({ name: p.name, image: p.image, slug: p.slug, zone: p.zone || p.location, status: p.status }));
       setProjects(list);
     })();
   }, []);

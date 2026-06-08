@@ -8,35 +8,55 @@ import Footer from './components/Footer';
 // there. Keeps the initial bundle tight and offloads admin/dashboard code
 // from public-facing first paint.
 import Home from './pages/Home';
-const Projects = lazy(() => import('./pages/Projects'));
-const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
-const Contact = lazy(() => import('./pages/Contact'));
-const AdminLogin = lazy(() => import('./pages/AdminLogin'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const AdminMarketing = lazy(() => import('./pages/AdminMarketing'));
-const ClientLogin = lazy(() => import('./pages/ClientLogin'));
-const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
-const Privacy = lazy(() => import('./pages/Privacy'));
-const Terms = lazy(() => import('./pages/Terms'));
-const Blog = lazy(() => import('./pages/Blog'));
-const BlogDetail = lazy(() => import('./pages/BlogDetail'));
-const Faq = lazy(() => import('./pages/Faq'));
-const Booking = lazy(() => import('./pages/Booking'));
-const LandingGlobalitae = lazy(() => import('./pages/LandingGlobalitae'));
-const AgenciasLogin = lazy(() => import('./pages/AgenciasLogin'));
-const AgenciasPartnership = lazy(() => import('./pages/AgenciasPartnership'));
-const AgenciasRegistrar = lazy(() => import('./pages/AgenciasRegistrar'));
-const AgenciasDashboard = lazy(() => import('./pages/AgenciasDashboard'));
-const AgenciasStats = lazy(() => import('./pages/AgenciasStats'));
-const AuthFinish = lazy(() => import('./pages/AuthFinish'));
-const EquipoUpload = lazy(() => import('./pages/EquipoUpload'));
-const EquipoLogin = lazy(() => import('./pages/EquipoLogin'));
-const EquipoDashboard = lazy(() => import('./pages/EquipoDashboard'));
-const EmpleadosLogin = lazy(() => import('./pages/EmpleadosLogin'));
-const EmpleadosDashboard = lazy(() => import('./pages/EmpleadosDashboard'));
-const AdminPortalManager = lazy(() => import('./pages/AdminPortalManager'));
-const AdminAgencias = lazy(() => import('./pages/AdminAgencias'));
-const AgencyPack = lazy(() => import('./pages/AgencyPack'));
+
+// Tras un deploy, los chunks con hash viejo dejan de existir (404/502). Si una
+// importación dinámica falla por eso, recargamos UNA vez para traer el index
+// nuevo en lugar de mostrar la pantalla de error. Evita romper sesiones abiertas.
+function lazyWithReload<T extends React.ComponentType<any>>(factory: () => Promise<{ default: T }>) {
+  return lazy(() =>
+    factory().catch((err: any) => {
+      const msg = String((err && err.message) || '');
+      const isChunkError = /dynamically imported module|Importing a module script failed|error loading dynamically imported|Failed to fetch/i.test(msg);
+      const last = Number(sessionStorage.getItem('chunk_reload_ts') || 0);
+      if (isChunkError && Date.now() - last > 10000) {
+        sessionStorage.setItem('chunk_reload_ts', String(Date.now()));
+        window.location.reload();
+        return new Promise<{ default: T }>(() => {}); // nunca resuelve; la página se recarga
+      }
+      throw err;
+    })
+  );
+}
+
+const Projects = lazyWithReload(() => import('./pages/Projects'));
+const ProjectDetail = lazyWithReload(() => import('./pages/ProjectDetail'));
+const Contact = lazyWithReload(() => import('./pages/Contact'));
+const AdminLogin = lazyWithReload(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazyWithReload(() => import('./pages/AdminDashboard'));
+const AdminMarketing = lazyWithReload(() => import('./pages/AdminMarketing'));
+const ClientLogin = lazyWithReload(() => import('./pages/ClientLogin'));
+const ClientDashboard = lazyWithReload(() => import('./pages/ClientDashboard'));
+const Privacy = lazyWithReload(() => import('./pages/Privacy'));
+const Terms = lazyWithReload(() => import('./pages/Terms'));
+const Blog = lazyWithReload(() => import('./pages/Blog'));
+const BlogDetail = lazyWithReload(() => import('./pages/BlogDetail'));
+const Faq = lazyWithReload(() => import('./pages/Faq'));
+const Booking = lazyWithReload(() => import('./pages/Booking'));
+const LandingGlobalitae = lazyWithReload(() => import('./pages/LandingGlobalitae'));
+const AgenciasLogin = lazyWithReload(() => import('./pages/AgenciasLogin'));
+const AgenciasPartnership = lazyWithReload(() => import('./pages/AgenciasPartnership'));
+const AgenciasRegistrar = lazyWithReload(() => import('./pages/AgenciasRegistrar'));
+const AgenciasDashboard = lazyWithReload(() => import('./pages/AgenciasDashboard'));
+const AgenciasStats = lazyWithReload(() => import('./pages/AgenciasStats'));
+const AuthFinish = lazyWithReload(() => import('./pages/AuthFinish'));
+const EquipoUpload = lazyWithReload(() => import('./pages/EquipoUpload'));
+const EquipoLogin = lazyWithReload(() => import('./pages/EquipoLogin'));
+const EquipoDashboard = lazyWithReload(() => import('./pages/EquipoDashboard'));
+const EmpleadosLogin = lazyWithReload(() => import('./pages/EmpleadosLogin'));
+const EmpleadosDashboard = lazyWithReload(() => import('./pages/EmpleadosDashboard'));
+const AdminPortalManager = lazyWithReload(() => import('./pages/AdminPortalManager'));
+const AdminAgencias = lazyWithReload(() => import('./pages/AdminAgencias'));
+const AgencyPack = lazyWithReload(() => import('./pages/AgencyPack'));
 import AdminShell from './components/AdminShell';
 import { AuthProvider, useAuth } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
