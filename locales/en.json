@@ -498,7 +498,11 @@
       "agencias": "Agencies",
       "dashboard": "Dashboard",
       "employees": "Employees",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "sections": "Sections",
+      "tools": "Tools",
+      "viewSite": "View public site",
+      "panel": "Admin panel"
     },
     "clientLogin": {
       "title": "Investor Portal",
@@ -582,7 +586,22 @@
     },
     "clientsTab": {
       "title": "Clients Management",
-      "noProjects": "No projects assigned"
+      "noProjects": "No projects assigned",
+      "allProjects": "All projects",
+      "allCurrencies": "All currencies",
+      "sortName": "Name (A–Z)",
+      "sortAmountDesc": "Investment: high → low",
+      "sortAmountAsc": "Investment: low → high",
+      "sortRecent": "Most recent purchase",
+      "clear": "Clear",
+      "clientCount": "{{n}} client(s)",
+      "assignedProjects": "Assigned projects",
+      "total": "Total",
+      "assign": "Assign",
+      "active": "Active",
+      "inactive": "Inactive",
+      "unit": "Unit",
+      "newClient": "New client"
     },
     "usersTab": {
       "title": "Administrators",

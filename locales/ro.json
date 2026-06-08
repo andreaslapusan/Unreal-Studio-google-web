@@ -498,7 +498,11 @@
       "agencias": "Agenții",
       "dashboard": "Panou",
       "employees": "Angajați",
-      "notifications": "Notificări"
+      "notifications": "Notificări",
+      "sections": "Secțiuni",
+      "tools": "Instrumente",
+      "viewSite": "Vezi site-ul public",
+      "panel": "Panou de administrare"
     },
     "clientLogin": {
       "title": "Portal Investitor",
@@ -582,7 +586,22 @@
     },
     "clientsTab": {
       "title": "Gestionare Clienți",
-      "noProjects": "Fără proiecte atribuite"
+      "noProjects": "Fără proiecte atribuite",
+      "allProjects": "Toate proiectele",
+      "allCurrencies": "Toate valutele",
+      "sortName": "Nume (A–Z)",
+      "sortAmountDesc": "Investiție: mare → mică",
+      "sortAmountAsc": "Investiție: mică → mare",
+      "sortRecent": "Cea mai recentă achiziție",
+      "clear": "Șterge",
+      "clientCount": "{{n}} client(i)",
+      "assignedProjects": "Proiecte alocate",
+      "total": "Total",
+      "assign": "Alocă",
+      "active": "Activ",
+      "inactive": "Inactiv",
+      "unit": "Unitate",
+      "newClient": "Client nou"
     },
     "usersTab": {
       "title": "Administratori",

@@ -67,7 +67,8 @@ const AMENITIES_LIST = [
   const [currentClient, setCurrentClient] = useState<Partial<Client>>({});
   const [clientSearch, setClientSearch] = useState('');
   // Herramientas de filtro/orden del listado de clientes.
-  const [clientFilterProject, setClientFilterProject] = useState('');   // por unidad/proyecto
+  const [clientFilterProjects, setClientFilterProjects] = useState<string[]>([]); // multi-selección por proyecto
+  const [projectFilterOpen, setProjectFilterOpen] = useState(false);
   const [clientFilterCurrency, setClientFilterCurrency] = useState(''); // por divisa cerrada en contrato
   const [clientSort, setClientSort] = useState<'name' | 'amount_desc' | 'amount_asc' | 'recent'>('name');
   const [assigningProject, setAssigningProject] = useState<{ clientId: string, clientName: string } | null>(null);
@@ -751,7 +752,7 @@ const filteredClients = clients
       const q = clientSearch.toLowerCase();
       if (!(c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.phone?.toLowerCase().includes(q))) return false;
     }
-    if (clientFilterProject && !(c.projects || []).some((cp: any) => (cp.project_name || cp.project_id) === clientFilterProject)) return false;
+    if (clientFilterProjects.length && !(c.projects || []).some((cp: any) => clientFilterProjects.includes(cp.project_name || cp.project_id))) return false;
     if (clientFilterCurrency && !(c.projects || []).some((cp: any) => cp.currency === clientFilterCurrency)) return false;
     return true;
   })
@@ -1196,7 +1197,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="flex justify-between items-end mb-8 gap-4">
       <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.clientsTab.title')}</h1>
       <button onClick={() => openEditClient()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
-        <span className="material-symbols-outlined text-base">person_add</span> Nuevo Cliente
+        <span className="material-symbols-outlined text-base">person_add</span> {t('admin.clientsTab.newClient')}
       </button>
     </div>
 
@@ -1205,24 +1206,42 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
         <input type="text" placeholder={t('admin.adminDash.searchClients')} value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
       </div>
-      <select value={clientFilterProject} onChange={(e) => setClientFilterProject(e.target.value)} className="bg-white border border-gray-100 rounded-xl px-3 py-2 text-xs font-bold text-primary">
-        <option value="">Todos los proyectos</option>
-        {clientProjectOptions.map((p) => <option key={p as string} value={p as string}>{p as string}</option>)}
-      </select>
-      <select value={clientFilterCurrency} onChange={(e) => setClientFilterCurrency(e.target.value)} className="bg-white border border-gray-100 rounded-xl px-3 py-2 text-xs font-bold text-primary">
-        <option value="">Todas las divisas</option>
+      {/* Filtro por proyecto: multi-selección con checkboxes */}
+      <div className="relative">
+        <button type="button" onClick={() => setProjectFilterOpen(o => !o)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary flex items-center gap-2 relative">
+          {clientFilterProjects.length ? `${clientFilterProjects.length} ${t('admin.nav.projects')}` : t('admin.clientsTab.allProjects')}
+          <span className="material-symbols-outlined text-sm absolute right-2 top-1/2 -translate-y-1/2 text-primary/40">{projectFilterOpen ? 'expand_less' : 'expand_more'}</span>
+        </button>
+        {projectFilterOpen && (
+          <div className="absolute z-30 mt-1 w-64 max-h-64 overflow-auto bg-white border border-gray-100 rounded-xl shadow-xl p-2">
+            {clientProjectOptions.length === 0 && <p className="text-[11px] text-gray-400 px-2 py-1">{t('admin.clientsTab.noProjects')}</p>}
+            {clientProjectOptions.map((p) => {
+              const val = p as string;
+              const checked = clientFilterProjects.includes(val);
+              return (
+                <label key={val} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer text-xs font-bold text-primary">
+                  <input type="checkbox" checked={checked} onChange={() => setClientFilterProjects(prev => checked ? prev.filter(x => x !== val) : [...prev, val])} className="accent-primary" />
+                  <span className="truncate">{val}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      <select value={clientFilterCurrency} onChange={(e) => setClientFilterCurrency(e.target.value)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
+        <option value="">{t('admin.clientsTab.allCurrencies')}</option>
         {clientCurrencyOptions.map((c) => <option key={c as string} value={c as string}>{c as string}</option>)}
       </select>
-      <select value={clientSort} onChange={(e) => setClientSort(e.target.value as any)} className="bg-white border border-gray-100 rounded-xl px-3 py-2 text-xs font-bold text-primary">
-        <option value="name">Nombre (A–Z)</option>
-        <option value="amount_desc">Inversión: mayor → menor</option>
-        <option value="amount_asc">Inversión: menor → mayor</option>
-        <option value="recent">Compra más reciente</option>
+      <select value={clientSort} onChange={(e) => setClientSort(e.target.value as any)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
+        <option value="name">{t('admin.clientsTab.sortName')}</option>
+        <option value="amount_desc">{t('admin.clientsTab.sortAmountDesc')}</option>
+        <option value="amount_asc">{t('admin.clientsTab.sortAmountAsc')}</option>
+        <option value="recent">{t('admin.clientsTab.sortRecent')}</option>
       </select>
-      {(clientFilterProject || clientFilterCurrency || clientSearch) && (
-        <button onClick={() => { setClientFilterProject(''); setClientFilterCurrency(''); setClientSearch(''); }} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary px-2">Limpiar</button>
+      {(clientFilterProjects.length || clientFilterCurrency || clientSearch) && (
+        <button onClick={() => { setClientFilterProjects([]); setClientFilterCurrency(''); setClientSearch(''); }} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary px-2">{t('admin.clientsTab.clear')}</button>
       )}
-      <span className="text-[10px] font-black uppercase tracking-widest text-primary/30 ml-auto">{filteredClients.length} cliente(s)</span>
+      <span className="text-[10px] font-black uppercase tracking-widest text-primary/30 ml-auto">{t('admin.clientsTab.clientCount', { n: filteredClients.length })}</span>
     </div>
 
     <div className="space-y-4">
@@ -1233,7 +1252,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-1">
                 <h3 className="text-lg font-bold text-primary">{client.name}</h3>
-                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${client.is_active ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{client.is_active ? 'Activo' : 'Inactivo'}</span>
+                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${client.is_active ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{client.is_active ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
               </div>
               <p className="text-sm text-gray-500">{client.email} {client.phone && `· ${client.phone}`}</p>
               <div className="mt-1 space-y-0.5">
@@ -1263,20 +1282,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="border-t border-gray-50 bg-gray-50/50 px-6 py-4">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Proyectos asignados ({(client.projects || []).length})</p>
+                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{t('admin.clientsTab.assignedProjects')} ({(client.projects || []).length})</p>
                 {(() => {
                   const byCur: Record<string, number> = {};
                   (client.projects || []).forEach((cp: any) => { const cur = cp.currency || 'EUR'; byCur[cur] = (byCur[cur] || 0) + (Number(cp.investment_amount) || 0); });
                   const parts = Object.entries(byCur).filter(([, v]) => v > 0);
                   return parts.length ? (
                     <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">
-                      Total: {parts.map(([cur, v]) => formatMoney(v, cur)).join(' + ')}
+                      {t('admin.clientsTab.total')}: {parts.map(([cur, v]) => formatMoney(v, cur)).join(' + ')}
                     </span>
                   ) : null;
                 })()}
               </div>
               <button onClick={() => { setAssigningProject({ clientId: client.id, clientName: client.name }); setAssignForm({ project_id: projects[0]?.id || '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' }); }} className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-black transition">
-                <span className="material-symbols-outlined text-xs">add</span> Asignar
+                <span className="material-symbols-outlined text-xs">add</span> {t('admin.clientsTab.assign')}
               </button>
             </div>
             {client.projects && client.projects.length > 0 ? (
@@ -1285,7 +1304,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <div key={cp.id || cpIdx} className="flex justify-between items-center bg-white rounded-xl px-4 py-3 border border-gray-100">
                     <div className="flex items-center gap-4 flex-wrap">
                       <span className="font-bold text-primary text-sm">{cp.project_name || cp.project_id}</span>
-                      {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">Unidad: {cp.unit_number}</span>}
+                      {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                       {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{cp.status}</span>

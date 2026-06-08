@@ -498,7 +498,11 @@
       "agencias": "Agencias",
       "dashboard": "Panel",
       "employees": "Empleados",
-      "notifications": "Notificaciones"
+      "notifications": "Notificaciones",
+      "sections": "Secciones",
+      "tools": "Herramientas",
+      "viewSite": "Ver web pública",
+      "panel": "Panel de administración"
     },
     "clientLogin": {
       "title": "Portal Inversor",
@@ -582,7 +586,22 @@
     },
     "clientsTab": {
       "title": "Gestión de Clientes",
-      "noProjects": "Sin proyectos asignados"
+      "noProjects": "Sin proyectos asignados",
+      "allProjects": "Todos los proyectos",
+      "allCurrencies": "Todas las divisas",
+      "sortName": "Nombre (A–Z)",
+      "sortAmountDesc": "Inversión: mayor → menor",
+      "sortAmountAsc": "Inversión: menor → mayor",
+      "sortRecent": "Compra más reciente",
+      "clear": "Limpiar",
+      "clientCount": "{{n}} cliente(s)",
+      "assignedProjects": "Proyectos asignados",
+      "total": "Total",
+      "assign": "Asignar",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "unit": "Unidad",
+      "newClient": "Nuevo Cliente"
     },
     "usersTab": {
       "title": "Administradores",

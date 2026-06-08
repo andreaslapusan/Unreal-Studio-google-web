@@ -378,5 +378,32 @@
       "close": "Tutup",
       "selectProject": "Pilih proyek"
     }
+  },
+  "admin": {
+    "clientsTab": {
+      "title": "Manajemen Klien",
+      "noProjects": "Tidak ada proyek",
+      "allProjects": "Semua proyek",
+      "allCurrencies": "Semua mata uang",
+      "sortName": "Nama (A–Z)",
+      "sortAmountDesc": "Investasi: tinggi → rendah",
+      "sortAmountAsc": "Investasi: rendah → tinggi",
+      "sortRecent": "Pembelian terbaru",
+      "clear": "Hapus",
+      "clientCount": "{{n}} klien",
+      "assignedProjects": "Proyek yang dialokasikan",
+      "total": "Total",
+      "assign": "Tetapkan",
+      "active": "Aktif",
+      "inactive": "Tidak aktif",
+      "unit": "Unit",
+      "newClient": "Klien baru"
+    },
+    "nav": {
+      "sections": "Bagian",
+      "tools": "Alat",
+      "viewSite": "Lihat situs publik",
+      "panel": "Panel admin"
+    }
   }
 }
