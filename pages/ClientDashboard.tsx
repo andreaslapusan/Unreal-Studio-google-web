@@ -597,6 +597,17 @@ const ClientDashboard: React.FC = () => {
       )}
 
       <main className="max-w-6xl mx-auto px-6 py-12">
+        {client.drive_folder_url && (
+          <a href={client.drive_folder_url} target="_blank" rel="noopener noreferrer"
+             className="mb-8 flex items-center gap-3 bg-white border border-primary/10 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition group">
+            <span className="material-symbols-outlined text-primary text-3xl">folder_shared</span>
+            <div className="flex-1">
+              <p className="font-serif text-lg text-primary leading-tight">{t('admin.clientDash.documentsTitle', 'Tus documentos y contratos')}</p>
+              <p className="text-xs text-primary/50">{t('admin.clientDash.documentsBody', 'Accede a tu carpeta privada de Drive (contratos, recibos, planos).')}</p>
+            </div>
+            <span className="material-symbols-outlined text-primary/40 group-hover:translate-x-1 transition">arrow_forward</span>
+          </a>
+        )}
         {clientId && <ClientUnitsSection clientId={clientId} />}
         {clientId && <ClientPaymentsSection clientId={clientId} />}
         {/* Resumen */}

@@ -1754,6 +1754,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Notas</label>
           <textarea value={currentClient.notes || ''} onChange={(e) => setCurrentClient({...currentClient, notes: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none resize-none h-24" placeholder="Notas internas sobre el cliente..." />
         </div>
+        <div>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Carpeta Drive del cliente (contratos, docs)</label>
+          <input type="url" value={(currentClient as any).drive_folder_url || ''} onChange={(e) => setCurrentClient({...currentClient, drive_folder_url: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="https://drive.google.com/drive/folders/..." />
+        </div>
         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
           <span className="text-[10px] font-black uppercase text-primary/60">Cliente activo</span>
           <button type="button" onClick={() => setCurrentClient({...currentClient, is_active: !currentClient.is_active})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentClient.is_active ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
