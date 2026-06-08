@@ -83,12 +83,12 @@ const Footer: React.FC = () => {
               const net = s.network || s.label || 'website';
               return (
                 <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={net}
-                   className={`w-10 h-10 rounded-full flex items-center justify-center hover:text-white transition duration-300 ${networkClass(net)}`}>
+                   className={`w-11 h-11 rounded-full flex items-center justify-center hover:text-white transition duration-300 ${networkClass(net)}`}>
                   <SocialIcon network={net} />
                 </a>
               );
             })}
-            <Link to="/contacto" className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300" aria-label="Agendar Videollamada">
+            <Link to="/contacto" className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300" aria-label="Agendar Videollamada">
               <span className="material-symbols-outlined text-xl">videocam</span>
             </Link>
           </div>
