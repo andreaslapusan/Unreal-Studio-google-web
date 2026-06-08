@@ -17,6 +17,9 @@ const Contact: React.FC = () => {
     timeframe: 'Lo antes posible',
     message: ''
   });
+  // Tras enviar: guardamos la URL de WhatsApp para (a) confirmar al usuario y
+  // (b) ofrecer un enlace manual si el navegador bloqueó la pestaña emergente.
+  const [sent, setSent] = useState<{ url: string; blocked: boolean } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +53,9 @@ const Contact: React.FC = () => {
 
     const url = `https://wa.me/34625710770?text=${text}`;
 
-    window.open(url, '_blank');
+    const win = window.open(url, '_blank');
+    // Si el navegador bloquea el popup, win es null → mostramos enlace manual.
+    setSent({ url, blocked: !win });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -91,6 +96,23 @@ const Contact: React.FC = () => {
                 <p className="text-sm text-gray-500 font-medium mb-8">
                   {t('contact.formIntro')}
                 </p>
+
+                {sent && (
+                  <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-5">
+                    <p className="font-bold text-green-700 flex items-center gap-2">
+                      <span className="material-symbols-outlined">check_circle</span>
+                      {t('contact.successTitle', '¡Perfecto! Hemos recibido tus datos.')}
+                    </p>
+                    <p className="text-sm text-green-700/80 mt-1">
+                      {sent.blocked
+                        ? t('contact.successBlocked', 'Tu navegador bloqueó WhatsApp. Toca el botón para abrir la conversación:')
+                        : t('contact.successBody', 'Te hemos abierto WhatsApp para terminar. Si no se abrió, usa el botón:')}
+                    </p>
+                    <a href={sent.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-3 bg-green-600 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-green-700 transition">
+                      <span className="material-symbols-outlined text-base">chat</span>{t('contact.openWhatsapp', 'Abrir WhatsApp')}
+                    </a>
+                  </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

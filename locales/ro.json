@@ -164,7 +164,11 @@
       "m3": "În 3 luni",
       "exploring": "Doar explorez"
     },
-    "metaDescription": "Contactează Unreal Studio. Răspundem întrebărilor tale despre investiții în Bali și programăm un apel fără obligații."
+    "metaDescription": "Contactează Unreal Studio. Răspundem întrebărilor tale despre investiții în Bali și programăm un apel fără obligații.",
+    "successTitle": "Perfect! Ți-am primit datele.",
+    "successBody": "Am deschis WhatsApp pentru a finaliza. Dacă nu s-a deschis, folosește butonul:",
+    "successBlocked": "Browserul tău a blocat WhatsApp. Apasă butonul pentru a deschide conversația:",
+    "openWhatsapp": "Deschide WhatsApp"
   },
   "bookingWidget": {
     "tag": "PROGRAMEAZĂ APEL",
