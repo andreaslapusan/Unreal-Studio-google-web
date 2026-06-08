@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
 import LocaleSeo from './components/LocaleSeo';
+import FloatingWhatsApp from './components/FloatingWhatsApp';
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
 // Home is eagerly imported because it's the landing route — lazy() would
 // add a needless extra round-trip on first paint. Everything else is split:
@@ -137,6 +138,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
       {!isHiddenPath && <Navbar />}
       <main className="flex-grow">{children}</main>
       {!isHiddenPath && <Footer />}
+      {!isHiddenPath && <FloatingWhatsApp />}
     </div>
   );
 };
