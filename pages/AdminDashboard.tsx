@@ -15,11 +15,12 @@ import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
 import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
+import DashboardOverview from '../components/admin/DashboardOverview';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'timelines' | 'agencias';
-const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'timelines', 'agencias'];
+type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'timelines' | 'agencias';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'timelines', 'agencias'];
 
 const GUIDE_STEPS = [
   { 
@@ -78,7 +79,7 @@ const AMENITIES_LIST = [
   // en todas las páginas admin) navegue entre secciones de forma consistente.
   const [searchParams, setSearchParams] = useSearchParams();
   const viewParam = searchParams.get('view') as AdminView | null;
-  const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) ? viewParam : 'projects';
+  const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) ? viewParam : 'dashboard';
   const setActiveView = (v: AdminView) => setSearchParams({ view: v });
   const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null }>>([]);
   const loadEmployees = useCallback(async () => {
@@ -1042,7 +1043,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
         <div className="md:hidden flex space-x-6 mb-12 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide">
-          {['projects', 'blogs', 'clients', 'users', 'employees', 'notifications', 'config', 'calendar'].map((v) => (
+          {['dashboard', 'projects', 'blogs', 'clients', 'users', 'employees', 'notifications', 'config', 'calendar'].map((v) => (
             <button 
               key={v}
               onClick={() => setActiveView(v as any)}
@@ -1052,6 +1053,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </button>
           ))}
         </div>
+
+        {activeView === 'dashboard' && <DashboardOverview />}
 
         {activeView === 'notifications' && <NotificationsPanel />}
 

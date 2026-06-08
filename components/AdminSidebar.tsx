@@ -37,7 +37,7 @@ const AdminSidebar: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const currentView = searchParams.get('view') || 'projects';
+  const currentView = searchParams.get('view') || 'dashboard';
   const onDashboard = location.pathname === '/admin';
 
   // Contador de notificaciones sin leer (badge). Refresca cada 60s.
@@ -54,6 +54,7 @@ const AdminSidebar: React.FC = () => {
   }, [currentView]);
 
   const sections: NavItem[] = [
+    { key: 'dashboard', icon: 'dashboard', label: t('admin.nav.dashboard', 'Inicio'), to: '/admin?view=dashboard', view: 'dashboard' },
     { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
@@ -107,7 +108,7 @@ const AdminSidebar: React.FC = () => {
 
   return (
     <aside className="hidden md:flex flex-col w-60 shrink-0 bg-[#1f2430] text-white h-screen sticky top-0 self-start overflow-y-auto">
-      <Link to="/admin?view=projects" className="px-5 py-6 border-b border-white/10 block">
+      <Link to="/admin?view=dashboard" className="px-5 py-6 border-b border-white/10 block">
         <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="font-serif text-xl tracking-tight text-white" />
         <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{t('admin.nav.panel', 'Panel de administración')}</span>
       </Link>
