@@ -19,8 +19,8 @@ import DashboardOverview from '../components/admin/DashboardOverview';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'timelines' | 'agencias';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'timelines', 'agencias'];
+type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'agencias'];
 
 const GUIDE_STEPS = [
   { 
@@ -1062,13 +1062,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="animate-in fade-in duration-500">
             <h2 className="text-2xl font-serif text-primary mb-6">FAQs</h2>
             <FaqsTab data={faqsData} onChange={loadFaqs} />
-          </div>
-        )}
-
-        {activeView === 'timelines' && (
-          <div className="animate-in fade-in duration-500">
-            <h2 className="text-2xl font-serif text-primary mb-6">Timelines de proyectos</h2>
-            <TimelinesTab data={timelineProjects} onChange={loadTimelineProjects} />
           </div>
         )}
 
