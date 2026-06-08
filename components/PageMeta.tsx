@@ -41,6 +41,11 @@ function apply({ title, description, image, type = 'website' }: PageMetaOpts) {
   }
   setMeta('meta[property="og:type"]', 'property', 'og:type', type);
   setMeta('meta[property="og:url"]', 'property', 'og:url', ORIGIN + window.location.pathname);
+  // Tarjeta grande en X/Twitter + locale OG según el prefijo de idioma de la URL.
+  setMeta('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image');
+  const LOCALES: Record<string, string> = { es: 'es_ES', en: 'en_US', ro: 'ro_RO', id: 'id_ID' };
+  const seg = window.location.pathname.split('/').filter(Boolean)[0];
+  setMeta('meta[property="og:locale"]', 'property', 'og:locale', LOCALES[seg] || 'es_ES');
   if (image) {
     const abs = image.startsWith('http') ? image : ORIGIN + image;
     setMeta('meta[property="og:image"]', 'property', 'og:image', abs);
