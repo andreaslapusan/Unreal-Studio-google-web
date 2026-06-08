@@ -50,12 +50,8 @@ function fmtMoney(n: number, c: string): string {
   catch { return `${c} ${n}`; }
 }
 
-// Selects con flecha propia (la nativa tapaba el texto en algunos navegadores).
-const SELECT_CLS = "appearance-none rounded-lg border border-gray-200 pl-3 pr-9 py-1.5 text-sm bg-white bg-no-repeat";
-const SELECT_STYLE: React.CSSProperties = {
-  backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233F2305' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>\")",
-  backgroundPosition: 'right 0.5rem center',
-};
+// La flecha + padding de los <select> los pone una regla global en index.css.
+const SELECT_CLS = "rounded-lg border border-gray-200 py-1.5 text-sm bg-white";
 
 const NotificationsPanel: React.FC = () => {
   const navigate = useNavigate();
@@ -120,11 +116,11 @@ const NotificationsPanel: React.FC = () => {
 
       {/* Filtros — ARRIBA, antes de la lista */}
       <div className="flex flex-wrap items-center gap-2 mb-6">
-        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={SELECT_CLS} style={SELECT_STYLE}>
+        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={SELECT_CLS}>
           <option value="all">Todos los tipos</option>
           {Object.entries(TYPE_META).map(([k, m]) => <option key={k} value={k}>{m.label}</option>)}
         </select>
-        <select value={order} onChange={(e) => setOrder(e.target.value as any)} className={SELECT_CLS} style={SELECT_STYLE}>
+        <select value={order} onChange={(e) => setOrder(e.target.value as any)} className={SELECT_CLS}>
           <option value="recent">Más recientes</option>
           <option value="old">Más antiguas</option>
         </select>

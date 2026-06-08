@@ -21,6 +21,26 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "DM Serif Display", serif;
 }
 
+/* Las cabeceras EN MAYÚSCULAS (etiquetas tipo "NUESTRAS SEDES", "REQUIERE TU
+   ATENCIÓN") deben ir en Manrope, no en la serif de display: con DM Serif +
+   uppercase + tracking quedaban mal. Las cabeceras de caja normal siguen serif. */
+h1.uppercase, h2.uppercase, h3.uppercase, h4.uppercase, h5.uppercase, h6.uppercase {
+  font-family: "Manrope", sans-serif;
+}
+
+/* Todos los <select>: flecha propia + padding-right para que NUNCA tape el texto
+   (regla global; antes había que arreglarlo desplegable por desplegable). */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233F2305' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 1rem;
+  padding-right: 2.1rem;
+}
+
 .material-symbols-outlined {
   font-family: "Material Symbols Outlined";
   font-weight: normal;

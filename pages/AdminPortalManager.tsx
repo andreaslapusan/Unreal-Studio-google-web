@@ -619,7 +619,7 @@ function UnitEditor({
   );
 }
 
-function PartnersTab({
+export function PartnersTab({
   data,
   properties,
   onAssign,
@@ -653,7 +653,7 @@ function PartnersTab({
   );
 }
 
-function ApplicationsTab({
+export function ApplicationsTab({
   data,
   onApprove,
   onReject,

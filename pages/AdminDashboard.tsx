@@ -14,11 +14,12 @@ import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
 import { FaqsTab, TimelinesTab } from './AdminPortalManager';
+import AgencyApplications from '../components/admin/AgencyApplications';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'timelines';
-const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'timelines'];
+type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'timelines' | 'agencias';
+const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'timelines', 'agencias'];
 
 const GUIDE_STEPS = [
   { 
@@ -1067,6 +1068,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <TimelinesTab data={timelineProjects} onChange={loadTimelineProjects} />
           </div>
         )}
+
+        {activeView === 'agencias' && <AgencyApplications />}
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
