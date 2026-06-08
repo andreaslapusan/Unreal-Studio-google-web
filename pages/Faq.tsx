@@ -11,6 +11,7 @@
  */
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "../components/PageMeta";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase";
 import { readSWR, writeSWR } from "../lib/swrCache";
@@ -77,6 +78,7 @@ function renderAnswer(text: string): React.ReactNode {
 
 export default function Faq() {
   const { t, i18n } = useTranslation();
+  usePageMeta({ title: t('faq.title'), description: t('faq.metaDescription') });
   const [faqs, setFaqs] = useState<FaqRow[]>(() => readSWR<FaqRow[]>("faqs_published") ?? []);
   const [loading, setLoading] = useState<boolean>(() => (readSWR<FaqRow[]>("faqs_published") ?? []).length === 0);
   const [category, setCategory] = useState<string>(ALL);

@@ -9,13 +9,14 @@ import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { translateStatus } from '../lib/statusI18n';
+import { usePageMeta } from '../components/PageMeta';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
 
 const Projects: React.FC = () => {
   const { t } = useTranslation();
-  useEffect(() => { document.title = t('projects.title'); }, [t]);
+  usePageMeta({ title: t('projects.title'), description: t('projects.metaDescription') });
   const [searchParams, setSearchParams] = useSearchParams();
   // SWR — repeat visitors see the catalogue instantly from localStorage; we
   // refresh in the background. Same pattern as Home.tsx.

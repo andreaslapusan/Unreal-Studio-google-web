@@ -81,7 +81,8 @@
     "v2Title": "Pemasaran yang efisien",
     "v2Body": "Harga yang disesuaikan dengan pasar",
     "v3Title": "Plusvalía Langsung",
-    "v3Body": "Membeli dengan harga promotor. Anda mendapatkan perbedaan di pasar."
+    "v3Body": "Membeli dengan harga promotor. Anda mendapatkan perbedaan di pasar.",
+    "metaDescription": "Pengembang properti di Bali untuk investor. Vila, loft, dan studio mulai €75.000, ROI 15-28% per tahun. Pembelian langsung tanpa perantara."
   },
   "projects": {
     "title": "Proyek | Unreal Studio Madrid",
@@ -111,7 +112,8 @@
     "noResults": "Tidak ada hasil",
     "clearFilters": "Hapus filter",
     "soldTitle": "Proyek Terjual",
-    "statusSold": "TERJUAL"
+    "statusSold": "TERJUAL",
+    "metaDescription": "Katalog properti investasi di Bali: vila, loft, dan studio di Uluwatu, Canggu, dan Tabanan. Harga, ROI, dan ketersediaan terkini."
   },
   "contact": {
     "title": "Kontak | Unreal Studio Madrid",
@@ -161,7 +163,8 @@
       "m1": "Dalam 1 bulan",
       "m3": "Dalam 3 bulan",
       "exploring": "Hanya sedang menjelajahi"
-    }
+    },
+    "metaDescription": "Hubungi Unreal Studio. Kami menjawab pertanyaan Anda tentang investasi properti di Bali dan menjadwalkan panggilan tanpa komitmen."
   },
   "bookingWidget": {
     "tag": "JADWALKAN PANGGILAN",
@@ -243,7 +246,8 @@
     },
     "ctaTitle": "Pertanyaan Anda tidak ada di sini?",
     "ctaBody": "Panggilan video 30 menit dengan tim kami. Gratis, tanpa komitmen.",
-    "ctaBtn": "Bicara dengan penasihat →"
+    "ctaBtn": "Bicara dengan penasihat →",
+    "metaDescription": "Pertanyaan umum tentang investasi di Bali bersama Unreal Studio: leasehold, pembayaran, kepemilikan, imbal hasil, dan proses pembelian."
   },
   "blog": {
     "title": "Blog | Unreal Studio Madrid",
@@ -260,7 +264,8 @@
     "loadingArticle": "Memuat artikel...",
     "articleNotFound": "Artikel tidak ditemukan",
     "shareTitle": "Suka artikel ini?",
-    "shareBody": "Bagikan dengan investor lain yang tertarik pada real estate internasional."
+    "shareBody": "Bagikan dengan investor lain yang tertarik pada real estate internasional.",
+    "metaDescription": "Panduan dan berita tentang investasi properti di Bali: leasehold, imbal hasil, area, dan proses pembelian untuk investor."
   },
   "agenciasPartnership": {
     "tag": "Program Mitra Listing",
@@ -320,7 +325,8 @@
         "title": "Anda Menjual dengan Dukungan",
         "body": "Kami mendampingi setiap operasi dengan klien Anda hingga tanda tangan dan penyerahan properti."
       }
-    ]
+    ],
+    "metaDescription": "Program mitra & agensi Unreal Studio. Dapatkan komisi dengan mereferensikan investor ke proyek properti di Bali."
   },
   "inversoresPartnership": {
     "tag": "Program Investor",
@@ -593,7 +599,8 @@
       "agencias": "Agen",
       "dashboard": "Panel",
       "employees": "Karyawan",
-      "notifications": "Pemberitahuan"
+      "notifications": "Pemberitahuan",
+      "agencies": "Agensi"
     },
     "common": {
       "save": "Simpan",
@@ -686,7 +693,8 @@
       "availableUnits": "Unit Tersedia",
       "contractYears": "Tahun Kontrak",
       "extensionYears": "Tahun Perpanjangan",
-      "progressPct": "Proses Pembangunan (%)"
+      "progressPct": "Proses Pembangunan (%)",
+      "type": "Tipe"
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -902,7 +910,12 @@
       "paybackOneYear": "1 tahun",
       "paybackYears_one": "{{count}} tahun",
       "paybackYears_other": "{{count}} tahun",
-      "paybackYearsMonths": "{{years}} dan {{months}}"
+      "paybackYearsMonths": "{{years}} dan {{months}}",
+      "documentsTitle": "Dokumen dan kontrak Anda",
+      "documentsBody": "Akses folder Drive pribadi Anda (kontrak, kwitansi, denah).",
+      "languageLabel": "Bahasa",
+      "receiptsTitle": "Kwitansi Anda",
+      "receiptsView": "Lihat / Unduh"
     },
     "agencias": {
       "title": "Paket untuk Agen",

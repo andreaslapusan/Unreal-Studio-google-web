@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { recordFormSubmit } from '../lib/attribution';
 import { trackLead } from '../lib/fbPixel';
 import { gtmGenerateLead, gtmWhatsappClick } from '../lib/gtm';
+import { usePageMeta } from '../components/PageMeta';
 
 const Contact: React.FC = () => {
   const { t } = useTranslation();
-  useEffect(() => { document.title = t('contact.title'); }, [t]);
+  usePageMeta({ title: t('contact.title'), description: t('contact.metaDescription') });
   const [formData, setFormData] = useState({
     name: '',
     email: '',

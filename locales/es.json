@@ -81,7 +81,8 @@
     "v2Title": "Comercialización eficiente",
     "v2Body": "Precios ajustados frente al mercado",
     "v3Title": "Plusvalía Inmediata",
-    "v3Body": "Compras a precio de promotor. Tú capturas la diferencia sobre mercado."
+    "v3Body": "Compras a precio de promotor. Tú capturas la diferencia sobre mercado.",
+    "metaDescription": "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y estudios desde 75.000€, ROI 15-28% anual. Compra directa, sin intermediarios."
   },
   "projects": {
     "title": "Proyectos | Unreal Studio Madrid",
@@ -111,7 +112,8 @@
     "noResults": "No se encontraron resultados",
     "clearFilters": "Limpiar filtros",
     "soldTitle": "Proyectos Vendidos",
-    "statusSold": "VENDIDO"
+    "statusSold": "VENDIDO",
+    "metaDescription": "Catálogo de propiedades de inversión en Bali: villas, lofts y estudios en Uluwatu, Canggu y Tabanan. Precios, ROI y disponibilidad actualizada."
   },
   "contact": {
     "title": "Contacto | Unreal Studio Madrid",
@@ -161,7 +163,8 @@
       "m1": "En 1 mes",
       "m3": "En 3 meses",
       "exploring": "Solo estoy explorando"
-    }
+    },
+    "metaDescription": "Contacta con Unreal Studio. Resolvemos tus dudas sobre invertir en propiedades en Bali y agendamos una llamada sin compromiso."
   },
   "bookingWidget": {
     "tag": "AGENDAR LLAMADA",
@@ -243,7 +246,8 @@
     },
     "ctaTitle": "¿Tu pregunta no está aquí?",
     "ctaBody": "30 minutos por videollamada con nuestro equipo. Te respondemos cualquier duda sin compromiso.",
-    "ctaBtn": "Hablar con un asesor →"
+    "ctaBtn": "Hablar con un asesor →",
+    "metaDescription": "Preguntas frecuentes sobre invertir en Bali con Unreal Studio: leasehold, pagos, propiedad, rentabilidad y proceso de compra."
   },
   "blog": {
     "title": "Blog | Unreal Studio Madrid",
@@ -260,7 +264,8 @@
     "loadingArticle": "Cargando artículo...",
     "articleNotFound": "Artículo no encontrado",
     "shareTitle": "¿Te ha gustado este artículo?",
-    "shareBody": "Compártelo con otros inversores interesados en el mercado internacional."
+    "shareBody": "Compártelo con otros inversores interesados en el mercado internacional.",
+    "metaDescription": "Guías y novedades sobre invertir en propiedades en Bali: leasehold, rentabilidad, zonas y proceso de compra para inversores."
   },
   "agenciasPartnership": {
     "tag": "Programa de Agencias Colaboradoras",
@@ -319,7 +324,8 @@
         "title": "Vendes con respaldo",
         "body": "Acompañamos cada operación con tu cliente hasta la firma y la entrega de la propiedad."
       }
-    ]
+    ],
+    "metaDescription": "Programa de partners y agencias de Unreal Studio. Gana comisiones refiriendo inversores a proyectos inmobiliarios en Bali."
   },
   "inversoresPartnership": {
     "tag": "Programa Inversor",
@@ -502,7 +508,8 @@
       "sections": "Secciones",
       "tools": "Herramientas",
       "viewSite": "Ver web pública",
-      "panel": "Panel de administración"
+      "panel": "Panel de administración",
+      "agencies": "Agencias"
     },
     "clientLogin": {
       "title": "Portal Inversor",
@@ -575,7 +582,8 @@
       "availableUnits": "Unidades disponibles",
       "contractYears": "Años contrato",
       "extensionYears": "Años extensión",
-      "progressPct": "Progreso de obra (%)"
+      "progressPct": "Progreso de obra (%)",
+      "type": "Tipo"
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -810,7 +818,12 @@
       "paybackOneYear": "1 año",
       "paybackYears_one": "{{count}} año",
       "paybackYears_other": "{{count}} años",
-      "paybackYearsMonths": "{{years}} y {{months}}"
+      "paybackYearsMonths": "{{years}} y {{months}}",
+      "documentsTitle": "Tus documentos y contratos",
+      "documentsBody": "Accede a tu carpeta privada de Drive (contratos, recibos, planos).",
+      "languageLabel": "Idioma",
+      "receiptsTitle": "Tus recibos (kwitansi)",
+      "receiptsView": "Ver / Descargar"
     },
     "agencias": {
       "title": "Pack para Agencias",

@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { usePageMeta } from "../components/PageMeta";
 import { readSWR, writeSWR } from "../lib/swrCache";
 import BookingWidget from "../components/BookingWidget";
 
@@ -17,6 +18,7 @@ const FALLBACK_URL = "https://api.neo.software/widget/booking/KdAikEYhZVPgMylze6
 
 export default function Booking() {
   const { t } = useTranslation();
+  usePageMeta({ title: t('booking.title', { defaultValue: 'Agendar llamada | Unreal Studio Bali' }), description: t('contact.metaDescription') });
   // Re-use the catalog cache to discover whichever booking_widget_url is
   // configured. We use Golf Bay Lofts as the canonical source-of-truth so
   // when Marcelino swaps the GHL calendar in the admin, this page picks it

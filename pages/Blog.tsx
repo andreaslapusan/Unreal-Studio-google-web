@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { usePageMeta } from '../components/PageMeta';
 
 const ALL_TAG = '__all__'; // sentinel — preserved across language switches
 
 const Blog: React.FC = () => {
   const { t } = useTranslation();
-  useEffect(() => { document.title = t('blog.title'); }, [t]);
+  usePageMeta({ title: t('blog.title'), description: t('blog.metaDescription') });
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState(ALL_TAG);

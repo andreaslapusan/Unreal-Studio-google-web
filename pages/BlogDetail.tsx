@@ -4,13 +4,22 @@ import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { usePageMeta } from '../components/PageMeta';
 
 const BlogDetail: React.FC = () => {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
+  // Meta + Open Graph por ARTÍCULO (antes se compartía la imagen/texto de la home).
+  usePageMeta({
+    title: post ? `${post.title} | Unreal Studio` : '',
+    description: post ? ((post as any).excerpt || (post as any).summary || (post as any).description || post.title) : undefined,
+    image: post?.image ? getImageUrl(post.image) : undefined,
+    type: 'article',
+  });
+
   // Helper date formatter
   const formatDate = (dateString: string) => {
     if (!dateString) return '';

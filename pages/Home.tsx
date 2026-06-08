@@ -9,13 +9,14 @@ import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { projectPath } from '../lib/projectUrl';
 import { translateStatus } from '../lib/statusI18n';
+import { usePageMeta } from '../components/PageMeta';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
-  useEffect(() => { document.title = t('home.title'); }, [t]);
+  usePageMeta({ title: t('home.title'), description: t('home.metaDescription'), image: '/img/og-image.webp' });
   // SWR: hydrate from localStorage cache so the first paint already has the
   // featured project + grid + blog teasers. Background fetch refreshes.
   const [projects, setProjects] = useState<Project[]>(() => readSWR<Project[]>('home_projects') ?? []);
