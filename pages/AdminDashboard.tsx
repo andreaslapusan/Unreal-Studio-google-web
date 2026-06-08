@@ -518,8 +518,10 @@ const AMENITIES_LIST = [
         if (data && !data.success) throw new Error(data.error);
         if (data && data.id) savedId = data.id;
 
-        // Force update is_hidden directly to ensure it saves if RPC doesn't handle it
-        await supabase.from('projects').update({ is_hidden: projectToSave.is_hidden || false }).eq('id', savedId);
+        // Campos extra (agencia / legal / drive / vídeo) que admin_save_project no
+        // cubre, vía RPC additiva. (Se quita el viejo raw update de is_hidden: la RLS
+        // lo denegaba y admin_save_project ya persiste is_hidden.)
+        await supabase.rpc('admin_save_project_extra', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
 
         await loadData();
         setIsEditing(false);
@@ -1811,6 +1813,40 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   </div>
 </div>
 
+              </div>
+              {/* Ficha extendida: datos de agencia / legal / drive / vídeo (los usan los packs de agencia). */}
+              <div className="border-t border-gray-100 pt-6">
+                <h3 className="text-lg font-serif text-primary mb-1">Ficha de agencia / legal / extra</h3>
+                <p className="text-xs text-gray-400 mb-4">Datos que usan los packs de agencia y la ficha completa.</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {([
+                    ['zone','Zona','text'],['owner_name','Propietario','text'],['lease_end_date','Fin leasehold','text'],
+                    ['lease_years_paid','Años pagados','number'],['extension_cost_usd','Coste extensión (USD)','number'],
+                    ['payment_plan_off_plan','Plan de pago','text'],['zoning_type','Zonificación','text'],
+                    ['building_permit_status','Permiso de obra','text'],['structural_warranty','Garantía estructural','text'],
+                    ['water_supply','Suministro de agua','text'],['land_size_m2','Terreno (m2)','number'],
+                    ['pool_size_m2','Piscina (m2)','number'],['parking','Parking','text'],['view','Vistas','text'],
+                    ['living_room_style','Estilo salon','text'],['furnishing_pack_cost_usd','Pack mobiliario (USD)','number'],
+                    ['timeline','Timeline','text'],['booking_widget_url','Widget reservas (URL)','text'],
+                    ['video_url','Video (URL)','text'],['drive_renders_url','Drive renders','text'],
+                    ['drive_2d_plans_url','Drive planos 2D','text'],['drive_permits_url','Drive permisos','text'],
+                    ['drive_legal_url','Drive legal','text'],['drive_brochure_folder_url','Drive brochure','text'],
+                  ] as [string,string,string][]).map(([k,label,type]) => (
+                    <div key={k}>
+                      <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5">{label}</label>
+                      <input type={type==='number'?'number':'text'} value={(currentProject as any)[k] ?? ''}
+                        onChange={(e) => setCurrentProject({ ...currentProject, [k]: type==='number' ? (parseFloat(e.target.value) || 0) : e.target.value } as any)}
+                        className="w-full px-3 py-2.5 bg-gray-50 rounded-xl text-sm font-medium" />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-6 mt-4">
+                  {([['has_powder_room','Aseo de cortesia'],['has_rooftop','Azotea']] as [string,string][]).map(([k,label]) => (
+                    <label key={k} className="flex items-center gap-2 text-xs font-bold text-primary/70 cursor-pointer">
+                      <input type="checkbox" checked={!!(currentProject as any)[k]} onChange={(e) => setCurrentProject({ ...currentProject, [k]: e.target.checked } as any)} /> {label}
+                    </label>
+                  ))}
+                </div>
               </div>
               <div className="flex gap-4 pt-6"><button type="submit" className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black">{t('admin.adminDash.saveProperty')}</button><button type="button" onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-400 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-200">{t('admin.common.cancel')}</button></div>
             </form>
