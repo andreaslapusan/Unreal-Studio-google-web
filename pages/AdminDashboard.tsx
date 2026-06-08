@@ -11,9 +11,10 @@ import AdminSidebar from '../components/AdminSidebar';
 import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
+import NotificationsPanel from '../components/admin/NotificationsPanel';
 
-type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees';
-const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees'];
+type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications';
+const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications'];
 
 const GUIDE_STEPS = [
   { 
@@ -74,14 +75,19 @@ const AMENITIES_LIST = [
   const viewParam = searchParams.get('view') as AdminView | null;
   const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) ? viewParam : 'projects';
   const setActiveView = (v: AdminView) => setSearchParams({ view: v });
-  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null }>>([]);
   const loadEmployees = useCallback(async () => {
     const { data } = await supabase
       .from('employees')
-      .select('id, email, full_name, password, active, can_upload_reports, permissions')
+      .select('id, email, full_name, password, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days, late_margin_min')
       .order('full_name');
     setEmployees((data as typeof employees) ?? []);
   }, []);
+  // Guarda el horario laboral del empleado (entrada/salida/margen/días).
+  const saveEmployeeSchedule = async (id: string, patch: Record<string, unknown>) => {
+    await supabase.from('employees').update(patch).eq('id', id);
+    await loadEmployees();
+  };
   useEffect(() => {
     if (activeView !== 'employees') return;
     void loadEmployees();
@@ -1008,7 +1014,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
         <div className="md:hidden flex space-x-6 mb-12 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide">
-          {['projects', 'blogs', 'clients', 'users', 'employees', 'config', 'calendar'].map((v) => (
+          {['projects', 'blogs', 'clients', 'users', 'employees', 'notifications', 'config', 'calendar'].map((v) => (
             <button 
               key={v}
               onClick={() => setActiveView(v as any)}
@@ -1018,6 +1024,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </button>
           ))}
         </div>
+
+        {activeView === 'notifications' && <NotificationsPanel />}
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
@@ -1379,6 +1387,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <th className="text-left px-4 py-3">Email</th>
                     <th className="text-left px-4 py-3">Contraseña</th>
                     <th className="text-left px-4 py-3">Permisos</th>
+                    <th className="text-left px-4 py-3">Horario</th>
                     <th className="text-left px-4 py-3">Estado</th>
                   </tr>
                 </thead>
@@ -1406,6 +1415,37 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         </div>
                       </td>
                       <td className="px-4 py-3 align-top">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <input type="time" defaultValue={(e.work_start_time || '').slice(0,5)}
+                            onBlur={(ev) => { const v = ev.target.value || null; if (v !== (e.work_start_time||'').slice(0,5)) void saveEmployeeSchedule(e.id, { work_start_time: v }); }}
+                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title="Entrada" />
+                          <span className="text-gray-300">→</span>
+                          <input type="time" defaultValue={(e.work_end_time || '').slice(0,5)}
+                            onBlur={(ev) => { const v = ev.target.value || null; if (v !== (e.work_end_time||'').slice(0,5)) void saveEmployeeSchedule(e.id, { work_end_time: v }); }}
+                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title="Salida" />
+                        </div>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <span className="text-[10px] text-gray-400">Margen</span>
+                          <input type="number" min={0} max={120} defaultValue={e.late_margin_min ?? 15}
+                            onBlur={(ev) => { const v = parseInt(ev.target.value) || 0; if (v !== (e.late_margin_min ?? 15)) void saveEmployeeSchedule(e.id, { late_margin_min: v }); }}
+                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-14" />
+                          <span className="text-[10px] text-gray-400">min</span>
+                        </div>
+                        <div className="flex gap-1">
+                          {[['L',1],['M',2],['X',3],['J',4],['V',5],['S',6],['D',7]].map(([lbl, dow]) => {
+                            const days = e.work_days ?? [1,2,3,4,5];
+                            const on = days.includes(dow as number);
+                            return (
+                              <button key={dow as number} title="Día laborable"
+                                onClick={() => { const next = on ? days.filter(d => d !== dow) : [...days, dow as number].sort(); void saveEmployeeSchedule(e.id, { work_days: next }); }}
+                                className={`w-6 h-6 rounded text-[10px] font-bold transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                                {lbl}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 align-top">
                         <button
                           onClick={() => toggleEmployeeActive(e.id, !e.active)}
                           className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}
@@ -1416,7 +1456,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </tr>
                   ))}
                   {employees.length === 0 && (
-                    <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">Sin empleados todavía.</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">Sin empleados todavía.</td></tr>
                   )}
                 </tbody>
               </table>

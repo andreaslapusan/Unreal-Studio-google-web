@@ -13,7 +13,7 @@
  *
  * Móvil: el sidebar se oculta (md:flex) y cada página mantiene su nav superior.
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -39,7 +39,21 @@ const AdminSidebar: React.FC = () => {
   const currentView = searchParams.get('view') || 'projects';
   const onDashboard = location.pathname === '/admin';
 
+  // Contador de notificaciones sin leer (badge). Refresca cada 60s.
+  const [unread, setUnread] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    const fetchUnread = async () => {
+      const { data } = await supabase.rpc('admin_unread_count');
+      if (alive && typeof data === 'number') setUnread(data);
+    };
+    void fetchUnread();
+    const iv = setInterval(fetchUnread, 60000);
+    return () => { alive = false; clearInterval(iv); };
+  }, [currentView]);
+
   const sections: NavItem[] = [
+    { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
     { key: 'clients', icon: 'person', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
@@ -78,6 +92,11 @@ const AdminSidebar: React.FC = () => {
     <Link key={it.key} to={it.to} className={itemClass(active)}>
       <span className="material-symbols-outlined text-[20px] leading-none">{it.icon}</span>
       {it.label}
+      {it.key === 'notifications' && unread > 0 && (
+        <span className="ml-auto bg-red-500 text-white text-[10px] font-black rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+          {unread > 99 ? '99+' : unread}
+        </span>
+      )}
     </Link>
   );
 

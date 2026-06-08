@@ -45,7 +45,7 @@ const EmpleadosDashboard: React.FC = () => {
   const [today, setToday] = useState<TodayRow[]>([]);
   const [canUploadReports, setCanUploadReports] = useState(false);
   const [canEditProperties, setCanEditProperties] = useState(false);
-  const [employee, setEmployee] = useState<{ id: string; full_name: string | null } | null>(null);
+  const [employee, setEmployee] = useState<{ id: string; full_name: string | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null } | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [capture, setCapture] = useState<FichajeType | null>(null);
   const [busy, setBusy] = useState(false);
@@ -88,12 +88,18 @@ const EmpleadosDashboard: React.FC = () => {
     void (async () => {
       const { data } = await supabase
         .from('employees')
-        .select('id, full_name, can_upload_reports, permissions')
+        .select('id, full_name, can_upload_reports, permissions, work_start_time, work_end_time, work_days')
         .eq('email', user.email)
         .maybeSingle();
       setCanUploadReports(hasPermission(data, 'upload_reports'));
       setCanEditProperties(hasPermission(data, 'edit_properties'));
-      if (data?.id) setEmployee({ id: data.id as string, full_name: (data.full_name as string) ?? null });
+      if (data?.id) setEmployee({
+        id: data.id as string,
+        full_name: (data.full_name as string) ?? null,
+        work_start_time: (data.work_start_time as string) ?? null,
+        work_end_time: (data.work_end_time as string) ?? null,
+        work_days: (data.work_days as number[]) ?? null,
+      });
     })();
   }, [user]);
 
@@ -269,6 +275,17 @@ const EmpleadosDashboard: React.FC = () => {
               <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-1 rounded-full">{t('empleados.today.onBreak')}</span>
             )}
           </div>
+          {employee?.work_start_time && (
+            <div className="mb-3 flex items-center gap-2 text-[11px] text-primary/50">
+              <span className="material-symbols-outlined text-[14px]">schedule</span>
+              <span>
+                Tu horario: <b className="text-primary/70">{(employee.work_start_time || '').slice(0,5)}{employee.work_end_time ? `–${(employee.work_end_time||'').slice(0,5)}` : ''}</b>
+                {employee.work_days && employee.work_days.length > 0 && (
+                  <> · {employee.work_days.map((d) => ['','L','M','X','J','V','S','D'][d]).join(' ')}</>
+                )}
+              </span>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-primary/50 font-bold mb-1">{t('empleados.today.checkIn')}</p>

@@ -497,7 +497,8 @@
       "portalManager": "Portal Manager",
       "agencias": "Agencies",
       "dashboard": "Dashboard",
-      "employees": "Employees"
+      "employees": "Employees",
+      "notifications": "Notifications"
     },
     "clientLogin": {
       "title": "Investor Portal",

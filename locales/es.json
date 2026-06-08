@@ -497,7 +497,8 @@
       "portalManager": "Portal Manager",
       "agencias": "Agencias",
       "dashboard": "Panel",
-      "employees": "Empleados"
+      "employees": "Empleados",
+      "notifications": "Notificaciones"
     },
     "clientLogin": {
       "title": "Portal Inversor",
