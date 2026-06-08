@@ -71,7 +71,7 @@ const AdminSidebar: React.FC = () => {
     }`;
 
   return (
-    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-[#1f2430] text-white min-h-screen sticky top-0 self-start">
+    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-[#1f2430] text-white h-screen sticky top-0 self-start overflow-y-auto">
       <Link to="/admin?view=projects" className="px-5 py-6 border-b border-white/10 block">
         <span className="font-serif text-xl tracking-tight">Unreal Studio</span>
         <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{t('admin.nav.panel', 'Panel de administración')}</span>

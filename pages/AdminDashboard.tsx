@@ -873,9 +873,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans text-left overflow-x-hidden relative">
+    <div className="min-h-screen bg-gray-50 flex font-sans text-left relative">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
 
       {/* 5-STEP CENTERED GUIDE OVERLAY */}
       {walkthroughStep !== null && (
@@ -1496,7 +1496,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <div>
                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.status')}</label>
                     <select value={currentProject.status || config.customStatuses[0] || ''} onChange={(e) => setCurrentProject({...currentProject, status: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">
-                        {config.customStatuses.map(s => <option key={s} value={s}>{s}</option>)}
+                        {/* Incluye el estado actual del proyecto aunque no esté en la lista de
+                            estados configurados, para no mostrar uno equivocado ni sobreescribirlo. */}
+                        {(currentProject.status && !config.customStatuses.includes(currentProject.status)
+                          ? [currentProject.status, ...config.customStatuses]
+                          : config.customStatuses
+                        ).map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                 </div>
