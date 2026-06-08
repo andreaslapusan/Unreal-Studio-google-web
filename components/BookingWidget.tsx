@@ -9,7 +9,7 @@
  * Auto-resize: GHL ships a `form_embed.js` companion script that
  * postMessages height changes. We load it once per page on mount.
  */
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readStoredAttribution } from "../lib/utm-tracking";
 
@@ -58,13 +58,29 @@ function withAttributionParams(rawUrl: string, propertySlug?: string): string {
 export default function BookingWidget({ url, propertySlug, widgetId }: Props) {
   const { t } = useTranslation();
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  // Lazy de verdad: no cargamos el iframe ni el script externo hasta que el
+  // widget se acerca al viewport. Antes el form_embed.js se descargaba siempre,
+  // aunque el usuario no bajara hasta él (hallazgo de rendimiento de la auditoría).
+  const [visible, setVisible] = useState(false);
 
   const finalUrl = useMemo(() => withAttributionParams(url, propertySlug), [url, propertySlug]);
 
-  // Pull in GHL's form_embed.js once per page; it handles iframe height
-  // postMessages so the widget doesn't show a scroll bar.
   useEffect(() => {
-    if (typeof document === "undefined") return;
+    const el = sectionRef.current;
+    if (!el || visible) return;
+    if (typeof IntersectionObserver === "undefined") { setVisible(true); return; }
+    const obs = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { setVisible(true); obs.disconnect(); }
+    }, { rootMargin: "300px" });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [visible]);
+
+  // Carga GHL's form_embed.js (auto-resize del iframe) SOLO cuando el widget es
+  // visible, una vez por página.
+  useEffect(() => {
+    if (!visible || typeof document === "undefined") return;
     const existing = document.querySelector<HTMLScriptElement>(`script[src="${FORM_EMBED_SRC}"]`);
     if (existing) return;
     const s = document.createElement("script");
@@ -72,14 +88,14 @@ export default function BookingWidget({ url, propertySlug, widgetId }: Props) {
     s.async = true;
     s.type = "text/javascript";
     document.body.appendChild(s);
-  }, []);
+  }, [visible]);
 
   // Stable iframe id so GHL's form_embed.js can match it. Includes a
   // timestamp suffix to match GHL's own example markup.
   const id = useMemo(() => widgetId ?? `unreal-booking-${Date.now()}`, [widgetId]);
 
   return (
-    <section className="py-12 md:py-16 px-6 md:px-12 bg-almond">
+    <section ref={sectionRef} className="py-12 md:py-16 px-6 md:px-12 bg-almond">
       <div className="max-w-4xl mx-auto">
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-3">
           {t("bookingWidget.tag", { defaultValue: "AGENDAR LLAMADA" })}
@@ -93,17 +109,23 @@ export default function BookingWidget({ url, propertySlug, widgetId }: Props) {
           })}
         </p>
 
-        <div className="bg-white rounded-3xl shadow-xl border border-primary/5 overflow-hidden">
-          <iframe
-            ref={iframeRef}
-            id={id}
-            src={finalUrl}
-            title="Booking calendar"
-            style={{ width: "100%", border: 0, overflow: "hidden", minHeight: 720 }}
-            scrolling="no"
-            loading="lazy"
-            allow="payment *; geolocation *"
-          />
+        <div className="bg-white rounded-3xl shadow-xl border border-primary/5 overflow-hidden" style={{ minHeight: 720 }}>
+          {visible ? (
+            <iframe
+              ref={iframeRef}
+              id={id}
+              src={finalUrl}
+              title="Booking calendar"
+              style={{ width: "100%", border: 0, overflow: "hidden", minHeight: 720 }}
+              scrolling="no"
+              loading="lazy"
+              allow="payment *; geolocation *"
+            />
+          ) : (
+            <div className="flex items-center justify-center" style={{ minHeight: 720 }}>
+              <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+            </div>
+          )}
         </div>
       </div>
     </section>
