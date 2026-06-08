@@ -9,6 +9,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
+import { useEscapeKey } from '../../lib/useEscapeKey';
 
 interface Employee { id: string; full_name: string | null; email: string; }
 interface Vacation {
@@ -78,6 +79,7 @@ const VacationManager: React.FC = () => {
 
   // Tooltip flotante al pasar el ratón por un día con vacaciones.
   const [hoverDay, setHoverDay] = useState<{ date: string; x: number; y: number } | null>(null);
+  useEscapeKey(() => setEditing(null), !!editing);
   const dayCount = (start: string, end: string) => { let n = 0; for (const _ of eachDay(start, end)) n++; return n; };
   const weekTotal = (dateStr: string) => {
     const d = new Date(dateStr + 'T00:00:00');

@@ -14,6 +14,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { useEscapeKey } from '../lib/useEscapeKey';
 
 interface ProjectOpt { id: string; name: string; }
 
@@ -25,6 +26,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
   const [file, setFile] = useState<File | null>(null);
   const [state, setState] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [error, setError] = useState('');
+  useEscapeKey(onClose);
 
   useEffect(() => {
     void (async () => {
