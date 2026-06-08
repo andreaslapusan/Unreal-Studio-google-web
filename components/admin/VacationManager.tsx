@@ -7,6 +7,7 @@
  * modificar / borrar cada solicitud. Datos en `employees` + `employee_vacations`.
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 
 interface Employee { id: string; full_name: string | null; email: string; }
@@ -35,6 +36,7 @@ function eachDay(start: string, end: string): string[] {
 }
 
 const VacationManager: React.FC = () => {
+  const { t } = useTranslation();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [vacations, setVacations] = useState<Vacation[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -79,13 +81,13 @@ const VacationManager: React.FC = () => {
     await load();
   };
   const remove = async (id: string) => {
-    if (!confirm('¿Eliminar esta solicitud de vacaciones?')) return;
+    if (!confirm(t('admin.vac.confirmDelete'))) return;
     await supabase.from('employee_vacations').delete().eq('id', id);
     await load();
   };
   const saveEdit = async () => {
     if (!editing) return;
-    if (editing.end_date < editing.start_date) { alert('La fecha fin no puede ser anterior a la inicial.'); return; }
+    if (editing.end_date < editing.start_date) { alert(t('admin.vac.endBeforeStart')); return; }
     await supabase.from('employee_vacations').update({
       start_date: editing.start_date, end_date: editing.end_date, type: editing.type, note: editing.note,
     }).eq('id', editing.id);
@@ -98,11 +100,11 @@ const VacationManager: React.FC = () => {
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h2 className="text-3xl font-serif text-primary">Vacaciones del equipo</h2>
+        <h2 className="text-3xl font-serif text-primary">{t('admin.vac.title')}</h2>
         <div className="flex items-center gap-3">
           {/* Selector de empleado */}
           <select value={selected} onChange={(e) => setSelected(e.target.value)} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
-            <option value="all">Todos los empleados</option>
+            <option value="all">{t('admin.vac.allEmployees')}</option>
             {employees.map((e) => <option key={e.id} value={e.email}>{e.full_name || e.email}</option>)}
           </select>
           <div className="flex items-center gap-2">
@@ -127,7 +129,7 @@ const VacationManager: React.FC = () => {
       {/* Solicitudes pendientes de aprobar */}
       {pending.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8">
-          <h3 className="text-sm font-black uppercase tracking-widest text-amber-700 mb-3">Pendientes de aprobar ({pending.length})</h3>
+          <h3 className="text-sm font-black uppercase tracking-widest text-amber-700 mb-3">{t('admin.vac.pendingApproval', { count: pending.length })}</h3>
           <ul className="space-y-2">
             {pending.map((v) => (
               <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-xl px-4 py-3 border border-amber-100">
@@ -136,9 +138,9 @@ const VacationManager: React.FC = () => {
                   <p className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}{v.note ? ` · ${v.note}` : ''}</p>
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">Aprobar</button>
-                  <button onClick={() => void setStatus(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">Rechazar</button>
-                  <button onClick={() => setEditing(v)} className="text-[11px] font-black uppercase tracking-widest bg-gray-100 text-primary px-3 py-2 rounded-lg hover:bg-gray-200 transition">Modificar</button>
+                  <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">{t('admin.vac.approve')}</button>
+                  <button onClick={() => void setStatus(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">{t('admin.vac.reject')}</button>
+                  <button onClick={() => setEditing(v)} className="text-[11px] font-black uppercase tracking-widest bg-gray-100 text-primary px-3 py-2 rounded-lg hover:bg-gray-200 transition">{t('admin.vac.modify')}</button>
                 </div>
               </li>
             ))}
@@ -167,7 +169,7 @@ const VacationManager: React.FC = () => {
                     const offs = dayMap.get(dateStr) ?? [];
                     const isToday = dateStr === new Date().toISOString().slice(0, 10);
                     return (
-                      <div key={day} title={offs.map((v) => `${nameFor(v)} (${isApproved(v.status) ? 'aprobada' : 'pendiente'})`).join(', ')}
+                      <div key={day} title={offs.map((v) => `${nameFor(v)} (${isApproved(v.status) ? t('admin.vac.statusApproved') : t('admin.vac.statusPending')})`).join(', ')}
                         className={`relative text-[10px] rounded-lg p-1 min-h-[28px] flex flex-col items-center justify-center ${isToday ? 'ring-2 ring-primary' : ''} ${offs.length ? 'bg-primary/5' : ''}`}>
                         <span className="font-bold text-primary/80">{day}</span>
                         {offs.length > 0 && (
@@ -189,9 +191,9 @@ const VacationManager: React.FC = () => {
 
       {/* Listado de todas las solicitudes (del filtro) con estado y acciones */}
       <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-primary/5">
-        <h3 className="text-lg font-serif text-primary mb-4">Solicitudes {selected === 'all' ? 'de todo el equipo' : ''} {year}</h3>
+        <h3 className="text-lg font-serif text-primary mb-4">{selected === 'all' ? t('admin.vac.requestsAllTeam', { year }) : t('admin.vac.requests', { year })}</h3>
         {filtered.filter((v) => v.start_date.startsWith(String(year)) || v.end_date.startsWith(String(year))).length === 0 ? (
-          <p className="text-sm text-primary/50">No hay vacaciones registradas este año.</p>
+          <p className="text-sm text-primary/50">{t('admin.vac.noneThisYear')}</p>
         ) : (
           <ul className="space-y-2">
             {filtered.filter((v) => v.start_date.startsWith(String(year)) || v.end_date.startsWith(String(year))).map((v) => (
@@ -203,9 +205,9 @@ const VacationManager: React.FC = () => {
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{v.status}</span>
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  {!isApproved(v.status) && <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[10px] font-bold text-green-700 hover:underline">Aprobar</button>}
-                  <button onClick={() => setEditing(v)} className="text-[10px] font-bold text-primary/60 hover:underline">Modificar</button>
-                  <button onClick={() => void remove(v.id)} className="text-[10px] font-bold text-red-600 hover:underline">Eliminar</button>
+                  {!isApproved(v.status) && <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[10px] font-bold text-green-700 hover:underline">{t('admin.vac.approve')}</button>}
+                  <button onClick={() => setEditing(v)} className="text-[10px] font-bold text-primary/60 hover:underline">{t('admin.vac.modify')}</button>
+                  <button onClick={() => void remove(v.id)} className="text-[10px] font-bold text-red-600 hover:underline">{t('admin.common.delete')}</button>
                 </div>
               </li>
             ))}
@@ -217,22 +219,22 @@ const VacationManager: React.FC = () => {
       {editing && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-            <h3 className="text-xl font-serif text-primary mb-4">Modificar vacaciones · {nameFor(editing)}</h3>
+            <h3 className="text-xl font-serif text-primary mb-4">{t('admin.vac.modifyTitle', { name: nameFor(editing) })}</h3>
             <div className="space-y-3">
-              <label className="block"><span className="text-xs font-bold text-gray-500">Desde</span>
+              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.from')}</span>
                 <input type="date" value={editing.start_date} onChange={(e) => setEditing({ ...editing, start_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
-              <label className="block"><span className="text-xs font-bold text-gray-500">Hasta</span>
+              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.to')}</span>
                 <input type="date" value={editing.end_date} min={editing.start_date} onChange={(e) => setEditing({ ...editing, end_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
-              <label className="block"><span className="text-xs font-bold text-gray-500">Tipo</span>
+              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.type')}</span>
                 <select value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1 bg-white">
-                  <option value="vacaciones">Vacaciones</option><option value="baja">Baja</option><option value="personal">Personal</option>
+                  <option value="vacaciones">{t('admin.vac.typeVacation')}</option><option value="baja">{t('admin.vac.typeSickLeave')}</option><option value="personal">{t('admin.vac.typePersonal')}</option>
                 </select></label>
-              <label className="block"><span className="text-xs font-bold text-gray-500">Nota</span>
+              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.note')}</span>
                 <input type="text" value={editing.note ?? ''} onChange={(e) => setEditing({ ...editing, note: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
             </div>
             <div className="flex gap-2 mt-5">
-              <button onClick={() => void saveEdit()} className="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-sm">Guardar</button>
-              <button onClick={() => setEditing(null)} className="flex-1 bg-gray-100 text-primary py-2.5 rounded-xl font-bold text-sm">Cancelar</button>
+              <button onClick={() => void saveEdit()} className="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-sm">{t('admin.common.save')}</button>
+              <button onClick={() => setEditing(null)} className="flex-1 bg-gray-100 text-primary py-2.5 rounded-xl font-bold text-sm">{t('admin.common.cancel')}</button>
             </div>
           </div>
         </div>

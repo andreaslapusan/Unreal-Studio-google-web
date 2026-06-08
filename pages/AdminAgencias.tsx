@@ -63,67 +63,67 @@ const ok = (v: any): boolean => {
   return false;
 };
 
-const buildChecklist = (p: ProjectAgencyRow): ChecklistGroup[] => [
+const buildChecklist = (p: ProjectAgencyRow, t: (k: string) => string): ChecklistGroup[] => [
   {
     title: 'groupIdentification',
     items: [
-      { label: 'Owner / titular', value: p.owner_name },
-      { label: 'Location', value: p.location },
-      { label: 'Google Pin', value: p.google_maps_url, href: p.google_maps_url },
-      { label: 'Status', value: p.status },
+      { label: t('admin.agc.labelOwner'), value: p.owner_name },
+      { label: t('admin.agc.labelLocation'), value: p.location },
+      { label: t('admin.agc.labelGooglePin'), value: p.google_maps_url, href: p.google_maps_url },
+      { label: t('admin.agc.labelStatus'), value: p.status },
     ],
   },
   {
     title: 'groupLeasehold',
     items: [
-      { label: 'Lease end date', value: p.lease_end_date },
-      { label: 'Años de contrato', value: p.years_contract },
-      { label: 'Años de extensión', value: p.years_extension },
-      { label: 'Coste extensión (USD)', value: p.extension_cost_usd },
-      { label: 'Lease years pagados', value: p.lease_years_paid },
-      { label: 'Zoning type', value: p.zoning_type },
-      { label: 'Building permit (IMB/PBG/SLF)', value: p.building_permit_status },
-      { label: 'Structural warranty', value: p.structural_warranty },
+      { label: t('admin.agc.labelLeaseEndDate'), value: p.lease_end_date },
+      { label: t('admin.agc.labelYearsContract'), value: p.years_contract },
+      { label: t('admin.agc.labelYearsExtension'), value: p.years_extension },
+      { label: t('admin.agc.labelExtensionCost'), value: p.extension_cost_usd },
+      { label: t('admin.agc.labelLeaseYearsPaid'), value: p.lease_years_paid },
+      { label: t('admin.agc.labelZoningType'), value: p.zoning_type },
+      { label: t('admin.agc.labelBuildingPermit'), value: p.building_permit_status },
+      { label: t('admin.agc.labelStructuralWarranty'), value: p.structural_warranty },
     ],
   },
   {
     title: 'groupProduct',
     items: [
-      { label: 'Bedrooms', value: p.bedrooms },
-      { label: 'Bathrooms', value: p.bathrooms },
-      { label: 'Powder room / guest', value: p.has_powder_room },
-      { label: 'Rooftop', value: p.has_rooftop },
-      { label: 'Building size (m²)', value: p.area_m2 },
-      { label: 'Land size (m²)', value: p.land_size_m2 },
-      { label: 'Pool size (m²)', value: p.pool_size_m2 },
-      { label: 'Parking', value: p.parking },
-      { label: 'View', value: p.view },
-      { label: 'Living room style', value: p.living_room_style },
-      { label: 'Water supply', value: p.water_supply },
+      { label: t('admin.agc.labelBedrooms'), value: p.bedrooms },
+      { label: t('admin.agc.labelBathrooms'), value: p.bathrooms },
+      { label: t('admin.agc.labelPowderRoom'), value: p.has_powder_room },
+      { label: t('admin.agc.labelRooftop'), value: p.has_rooftop },
+      { label: t('admin.agc.labelBuildingSize'), value: p.area_m2 },
+      { label: t('admin.agc.labelLandSize'), value: p.land_size_m2 },
+      { label: t('admin.agc.labelPoolSize'), value: p.pool_size_m2 },
+      { label: t('admin.agc.labelParking'), value: p.parking },
+      { label: t('admin.agc.labelView'), value: p.view },
+      { label: t('admin.agc.labelLivingRoomStyle'), value: p.living_room_style },
+      { label: t('admin.agc.labelWaterSupply'), value: p.water_supply },
     ],
   },
   {
     title: 'groupPricing',
     items: [
-      { label: 'Net sale price', value: p.investor_price ? `${p.investor_price} ${p.price_currency || 'USD'}` : null },
-      { label: 'Furnishing', value: p.furnishing },
-      { label: 'Fully-furnishing pack (USD)', value: p.furnishing_pack_cost_usd },
-      { label: 'Payment plan (off-plan)', value: p.payment_plan_off_plan },
-      { label: 'Estimated delivery', value: p.completion_date },
+      { label: t('admin.agc.labelNetSalePrice'), value: p.investor_price ? `${p.investor_price} ${p.price_currency || 'USD'}` : null },
+      { label: t('admin.agc.labelFurnishing'), value: p.furnishing },
+      { label: t('admin.agc.labelFurnishingPack'), value: p.furnishing_pack_cost_usd },
+      { label: t('admin.agc.labelPaymentPlan'), value: p.payment_plan_off_plan },
+      { label: t('admin.agc.labelEstimatedDelivery'), value: p.completion_date },
     ],
   },
   {
     title: 'groupMedia',
     items: [
-      { label: 'Galería fotos', value: p.gallery, href: null },
-      { label: '2D plans (web)', value: p.floor_plans, href: null },
-      { label: 'Brochure URL (web)', value: p.brochure_url, href: p.brochure_url },
-      { label: 'Drive folder principal', value: p.drive_brochure_folder_url, href: p.drive_brochure_folder_url },
-      { label: 'Drive 3D Renders folder', value: p.drive_renders_url, href: p.drive_renders_url },
-      { label: 'Drive 2D Plans folder', value: p.drive_2d_plans_url, href: p.drive_2d_plans_url },
-      { label: 'Drive Permits folder', value: p.drive_permits_url, href: p.drive_permits_url },
-      { label: 'Drive Land Legal Docs folder', value: p.drive_legal_url, href: p.drive_legal_url },
-      { label: 'Video URL', value: p.video_url, href: p.video_url },
+      { label: t('admin.agc.labelPhotoGallery'), value: p.gallery, href: null },
+      { label: t('admin.agc.label2dPlansWeb'), value: p.floor_plans, href: null },
+      { label: t('admin.agc.labelBrochureUrlWeb'), value: p.brochure_url, href: p.brochure_url },
+      { label: t('admin.agc.labelDriveMainFolder'), value: p.drive_brochure_folder_url, href: p.drive_brochure_folder_url },
+      { label: t('admin.agc.labelDriveRendersFolder'), value: p.drive_renders_url, href: p.drive_renders_url },
+      { label: t('admin.agc.labelDrive2dPlansFolder'), value: p.drive_2d_plans_url, href: p.drive_2d_plans_url },
+      { label: t('admin.agc.labelDrivePermitsFolder'), value: p.drive_permits_url, href: p.drive_permits_url },
+      { label: t('admin.agc.labelDriveLegalFolder'), value: p.drive_legal_url, href: p.drive_legal_url },
+      { label: t('admin.agc.labelVideoUrl'), value: p.video_url, href: p.video_url },
     ],
   },
 ];
@@ -152,7 +152,7 @@ const AdminAgencias: React.FC = () => {
   }, []);
 
   const totalsFor = (p: ProjectAgencyRow) => {
-    const groups = buildChecklist(p);
+    const groups = buildChecklist(p, t);
     const total = groups.reduce((s, g) => s + g.items.length, 0);
     const done = groups.reduce(
       (s, g) => s + g.items.filter((it) => ok(it.value)).length,
@@ -189,7 +189,7 @@ const AdminAgencias: React.FC = () => {
           {projects.map((p) => {
             const totals = totalsFor(p);
             const isOpen = !!expanded[p.id];
-            const groups = buildChecklist(p);
+            const groups = buildChecklist(p, t);
             return (
               <div
                 key={p.id}

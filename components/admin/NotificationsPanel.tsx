@@ -9,6 +9,7 @@
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 
 interface Notif {
@@ -29,13 +30,13 @@ interface Notif {
 interface OverduePayment { id: string; label: string; amount: number; currency: string; due_date: string; client_name: string; client_id: string; }
 interface ClientLite { id: string; name: string; email: string | null; }
 
-interface TypeMeta { icon: string; label: string; color: string; actionLabel?: string; actionTo?: string; }
+interface TypeMeta { icon: string; labelKey: string; color: string; actionLabelKey?: string; actionTo?: string; }
 const TYPE_META: Record<string, TypeMeta> = {
-  vacation_request: { icon: 'beach_access', label: 'Vacaciones', color: 'text-amber-600 bg-amber-50', actionLabel: 'Resolver en Empleados', actionTo: '/admin?view=employees' },
-  late_checkin:     { icon: 'schedule',     label: 'Fichaje tarde', color: 'text-orange-600 bg-orange-50', actionLabel: 'Ver empleados', actionTo: '/admin?view=employees' },
-  client_login:     { icon: 'login',        label: 'Login cliente', color: 'text-blue-600 bg-blue-50', actionLabel: 'Ir al cliente', actionTo: '/admin?view=clients' },
-  payment_claim:    { icon: 'payments',     label: 'Aviso de pago', color: 'text-green-700 bg-green-50', actionLabel: 'Ir al cliente', actionTo: '/admin?view=clients' },
-  generic:          { icon: 'notifications', label: 'General', color: 'text-gray-600 bg-gray-100' },
+  vacation_request: { icon: 'beach_access', labelKey: 'admin.notif.typeVacation', color: 'text-amber-600 bg-amber-50', actionLabelKey: 'admin.notif.resolveInEmployees', actionTo: '/admin?view=employees' },
+  late_checkin:     { icon: 'schedule',     labelKey: 'admin.notif.typeLateCheckin', color: 'text-orange-600 bg-orange-50', actionLabelKey: 'admin.notif.viewEmployees', actionTo: '/admin?view=employees' },
+  client_login:     { icon: 'login',        labelKey: 'admin.notif.typeClientLogin', color: 'text-blue-600 bg-blue-50', actionLabelKey: 'admin.notif.goToClient', actionTo: '/admin?view=clients' },
+  payment_claim:    { icon: 'payments',     labelKey: 'admin.notif.typePaymentClaim', color: 'text-green-700 bg-green-50', actionLabelKey: 'admin.notif.goToClient', actionTo: '/admin?view=clients' },
+  generic:          { icon: 'notifications', labelKey: 'admin.notif.typeGeneric', color: 'text-gray-600 bg-gray-100' },
 };
 const metaFor = (t: string) => TYPE_META[t] ?? TYPE_META.generic;
 
@@ -54,6 +55,7 @@ function fmtMoney(n: number, c: string): string {
 const SELECT_CLS = "rounded-lg border border-gray-200 py-1.5 text-sm bg-white";
 
 const NotificationsPanel: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [items, setItems] = useState<Notif[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,44 +108,44 @@ const NotificationsPanel: React.FC = () => {
     <div className="animate-in fade-in duration-500">
       <div className="flex flex-wrap justify-between items-end mb-5 gap-4">
         <div>
-          <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">Notificaciones</h1>
-          {unreadCount > 0 && <p className="text-xs text-primary/50 mt-1">{unreadCount} sin leer</p>}
+          <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.notif.title')}</h1>
+          {unreadCount > 0 && <p className="text-xs text-primary/50 mt-1">{t('admin.notif.unreadCount', { count: unreadCount })}</p>}
         </div>
         <button onClick={markAll} className="text-[10px] font-black uppercase tracking-widest text-primary/50 hover:text-primary transition flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm">done_all</span> Marcar todo leído
+          <span className="material-symbols-outlined text-sm">done_all</span> {t('admin.notif.markAllRead')}
         </button>
       </div>
 
       {/* Filtros — ARRIBA, antes de la lista */}
       <div className="flex flex-wrap items-center gap-2 mb-6">
         <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={SELECT_CLS}>
-          <option value="all">Todos los tipos</option>
-          {Object.entries(TYPE_META).map(([k, m]) => <option key={k} value={k}>{m.label}</option>)}
+          <option value="all">{t('admin.notif.allTypes')}</option>
+          {Object.entries(TYPE_META).map(([k, m]) => <option key={k} value={k}>{t(m.labelKey)}</option>)}
         </select>
         <select value={order} onChange={(e) => setOrder(e.target.value as any)} className={SELECT_CLS}>
-          <option value="recent">Más recientes</option>
-          <option value="old">Más antiguas</option>
+          <option value="recent">{t('admin.notif.orderRecent')}</option>
+          <option value="old">{t('admin.notif.orderOld')}</option>
         </select>
         <label className="flex items-center gap-2 text-sm text-primary/70 px-2 cursor-pointer">
-          <input type="checkbox" checked={onlyUnread} onChange={(e) => setOnlyUnread(e.target.checked)} /> Solo sin leer
+          <input type="checkbox" checked={onlyUnread} onChange={(e) => setOnlyUnread(e.target.checked)} /> {t('admin.notif.onlyUnread')}
         </label>
-        <span className="text-xs text-primary/40 ml-auto">{items.length} notificaciones</span>
+        <span className="text-xs text-primary/40 ml-auto">{t('admin.notif.notifCount', { count: items.length })}</span>
       </div>
 
       {/* Requiere tu atención */}
       {attentionCount > 0 && (
         <div className="bg-white rounded-3xl border border-amber-200 p-5 mb-8 shadow-sm">
           <h2 className="text-sm font-black uppercase tracking-widest text-amber-700 mb-4 flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">priority_high</span> Requiere tu atención
+            <span className="material-symbols-outlined text-base">priority_high</span> {t('admin.notif.requiresAttention')}
           </h2>
           {overdue.length > 0 && (
             <div className="mb-4">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-primary/40 mb-2">Pagos vencidos ({overdue.length})</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-primary/40 mb-2">{t('admin.notif.overduePayments', { count: overdue.length })}</p>
               <ul className="space-y-1.5">
                 {overdue.map((o) => (
                   <li key={o.id} className="flex items-center justify-between text-sm border-b border-gray-50 pb-1.5 gap-3">
                     <span className="min-w-0"><b className="text-primary">{o.client_name}</b> · {o.label} · <span className="text-red-600 font-bold">{fmtMoney(Number(o.amount), o.currency)}</span></span>
-                    <button onClick={() => navigate('/admin?view=clients')} className="text-xs text-primary/60 hover:text-primary underline shrink-0">venció {new Date(o.due_date).toLocaleDateString('es-ES')} →</button>
+                    <button onClick={() => navigate('/admin?view=clients')} className="text-xs text-primary/60 hover:text-primary underline shrink-0">{t('admin.notif.expiredOn', { date: new Date(o.due_date).toLocaleDateString('es-ES') })} →</button>
                   </li>
                 ))}
               </ul>
@@ -151,7 +153,7 @@ const NotificationsPanel: React.FC = () => {
           )}
           {noProp.length > 0 && (
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-primary/40 mb-2">Clientes sin propiedad ({noProp.length})</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-primary/40 mb-2">{t('admin.notif.clientsNoProperty', { count: noProp.length })}</p>
               <div className="flex flex-wrap gap-2">
                 {noProp.map((c) => (
                   <button key={c.id} onClick={() => navigate('/admin?view=clients')} className="text-xs bg-gray-50 text-primary/70 px-3 py-1 rounded-full hover:bg-primary/10">{c.name}</button>
@@ -166,7 +168,7 @@ const NotificationsPanel: React.FC = () => {
       {loading ? (
         <div className="flex justify-center py-12"><span className="material-symbols-outlined animate-spin text-3xl text-primary/30">refresh</span></div>
       ) : sorted.length === 0 ? (
-        <p className="text-center text-primary/40 py-12">No hay notificaciones con estos filtros.</p>
+        <p className="text-center text-primary/40 py-12">{t('admin.notif.emptyFiltered')}</p>
       ) : (
         <ul className="space-y-2">
           {sorted.map((n) => {
@@ -179,7 +181,7 @@ const NotificationsPanel: React.FC = () => {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-bold text-primary text-sm">{n.title}</span>
-                    <span className="text-[10px] uppercase tracking-widest text-primary/30">{m.label}</span>
+                    <span className="text-[10px] uppercase tracking-widest text-primary/30">{t(m.labelKey)}</span>
                     {!n.is_read && <span className="w-2 h-2 rounded-full bg-amber-500" />}
                   </div>
                   {n.body && <p className="text-sm text-primary/70 mt-0.5">{n.body}</p>}
@@ -188,11 +190,11 @@ const NotificationsPanel: React.FC = () => {
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   {m.actionTo && (
                     <button onClick={() => act(n, m.actionTo!)} className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-primary rounded-full px-3 py-1.5 hover:bg-black transition whitespace-nowrap">
-                      {m.actionLabel} <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      {m.actionLabelKey && t(m.actionLabelKey)} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </button>
                   )}
                   <button onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">
-                    {n.is_read ? 'No leído' : 'Leído'}
+                    {n.is_read ? t('admin.notif.markUnread') : t('admin.notif.markRead')}
                   </button>
                 </div>
               </li>

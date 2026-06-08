@@ -113,7 +113,7 @@ export default function AdminMarketing() {
         const { data: sess } = await supabase.auth.getSession();
         token = sess.session?.access_token;
       }
-      if (!token) throw new Error("Sesión expirada. Inicia sesión de nuevo.");
+      if (!token) throw new Error(t('admin.mkt.sessionExpired'));
 
       const url = `${SUPABASE_URL}/functions/v1/ghl-dashboard`;
       const res = await fetch(url, {
@@ -134,7 +134,7 @@ export default function AdminMarketing() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   // Trust the edge function as the source of truth for role: it verifies the
   // Supabase session + admin role server-side. The useAuth role flag can be
@@ -182,7 +182,7 @@ export default function AdminMarketing() {
   if (authLoading && !authTimedOut) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
-        Cargando…
+        {t('admin.mkt.loading')}
       </div>
     );
   }
@@ -197,16 +197,16 @@ export default function AdminMarketing() {
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center max-w-md">
-          <h1 className="text-2xl font-semibold mb-2">Acceso restringido</h1>
+          <h1 className="text-2xl font-semibold mb-2">{t('admin.mkt.restrictedTitle')}</h1>
           <p className="text-gray-600 mb-6">
-            Esta sección solo está disponible para usuarios con rol{" "}
+            {t('admin.mkt.restrictedBody')}{" "}
             <span className="font-semibold">admin</span>.
           </p>
           <Link
             to="/"
             className="inline-block px-5 py-2 bg-gray-900 text-white rounded"
           >
-            Volver al inicio
+            {t('admin.mkt.backHome')}
           </Link>
         </div>
       </div>
@@ -270,7 +270,7 @@ export default function AdminMarketing() {
                     : "bg-white border border-gray-300 text-gray-700"
                 }`}
               >
-                Todos los pipelines
+                {t('admin.mkt.allPipelines')}
               </button>
               {data.pipelines.map((p) => (
                 <button
@@ -292,13 +292,13 @@ export default function AdminMarketing() {
             <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg border border-gray-200 p-5">
                 <p className="text-xs uppercase text-gray-500">
-                  Total leads en embudo
+                  {t('admin.mkt.totalLeadsFunnel')}
                 </p>
                 <p className="text-3xl font-semibold mt-2">{totals.count}</p>
               </div>
               <div className="bg-white rounded-lg border border-gray-200 p-5">
                 <p className="text-xs uppercase text-gray-500">
-                  Valor potencial
+                  {t('admin.mkt.potentialValue')}
                 </p>
                 <p className="text-3xl font-semibold mt-2">
                   {formatMoney(totals.value)}
@@ -306,7 +306,7 @@ export default function AdminMarketing() {
               </div>
               <div className="bg-white rounded-lg border border-gray-200 p-5">
                 <p className="text-xs uppercase text-gray-500">
-                  Conversaciones recientes
+                  {t('admin.mkt.recentConversations')}
                 </p>
                 <p className="text-3xl font-semibold mt-2">
                   {data.counts.conversationsReturned}
@@ -316,15 +316,15 @@ export default function AdminMarketing() {
 
             {/* Pipeline stages */}
             <section>
-              <h2 className="text-lg font-semibold mb-3">Embudo por etapas</h2>
+              <h2 className="text-lg font-semibold mb-3">{t('admin.mkt.funnelByStage')}</h2>
               <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
                 <table className="min-w-full text-sm">
                   <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
                     <tr>
-                      <th className="px-4 py-3">Pipeline</th>
-                      <th className="px-4 py-3">Etapa</th>
-                      <th className="px-4 py-3 text-right">Leads</th>
-                      <th className="px-4 py-3 text-right">Valor</th>
+                      <th className="px-4 py-3">{t('admin.mkt.pipeline')}</th>
+                      <th className="px-4 py-3">{t('admin.mkt.stage')}</th>
+                      <th className="px-4 py-3 text-right">{t('admin.mkt.leads')}</th>
+                      <th className="px-4 py-3 text-right">{t('admin.mkt.value')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -349,7 +349,7 @@ export default function AdminMarketing() {
                           colSpan={4}
                           className="px-4 py-6 text-center text-gray-500"
                         >
-                          Sin datos.
+                          {t('admin.mkt.noData')}
                         </td>
                       </tr>
                     )}
@@ -361,25 +361,25 @@ export default function AdminMarketing() {
             {/* Leads list */}
             <section>
               <h2 className="text-lg font-semibold mb-3">
-                Leads recientes ({filteredLeads.length})
+                {t('admin.mkt.recentLeads', { count: filteredLeads.length })}
               </h2>
               <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
                 <table className="min-w-full text-sm">
                   <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
                     <tr>
-                      <th className="px-4 py-3">Nombre</th>
-                      <th className="px-4 py-3">Pipeline</th>
-                      <th className="px-4 py-3">Etapa</th>
-                      <th className="px-4 py-3">Origen</th>
-                      <th className="px-4 py-3 text-right">Valor</th>
-                      <th className="px-4 py-3">Última actividad</th>
+                      <th className="px-4 py-3">{t('admin.mkt.name')}</th>
+                      <th className="px-4 py-3">{t('admin.mkt.pipeline')}</th>
+                      <th className="px-4 py-3">{t('admin.mkt.stage')}</th>
+                      <th className="px-4 py-3">{t('admin.mkt.source')}</th>
+                      <th className="px-4 py-3 text-right">{t('admin.mkt.value')}</th>
+                      <th className="px-4 py-3">{t('admin.mkt.lastActivity')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredLeads.map((l) => (
                       <tr key={l.id} className="border-t border-gray-100">
                         <td className="px-4 py-2 font-medium">
-                          {l.name || "(sin nombre)"}
+                          {l.name || t('admin.mkt.noName')}
                         </td>
                         <td className="px-4 py-2 text-gray-600">
                           {l.pipelineName}
@@ -402,7 +402,7 @@ export default function AdminMarketing() {
                           colSpan={6}
                           className="px-4 py-6 text-center text-gray-500"
                         >
-                          Sin leads.
+                          {t('admin.mkt.noLeads')}
                         </td>
                       </tr>
                     )}
@@ -414,7 +414,7 @@ export default function AdminMarketing() {
             {/* Conversations */}
             <section>
               <h2 className="text-lg font-semibold mb-3">
-                Conversaciones recientes
+                {t('admin.mkt.recentConversations')}
               </h2>
               <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
                 {data.conversations.map((c) => (
@@ -427,7 +427,7 @@ export default function AdminMarketing() {
                         {c.contactName}
                         {c.unreadCount > 0 && (
                           <span className="ml-2 inline-block px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700">
-                            {c.unreadCount} sin leer
+                            {t('admin.mkt.unread', { count: c.unreadCount })}
                           </span>
                         )}
                       </p>
@@ -436,14 +436,14 @@ export default function AdminMarketing() {
                         {formatDate(c.lastMessageDate)}
                       </p>
                       <p className="text-sm text-gray-700 mt-1 line-clamp-2">
-                        {c.lastMessageBody || "(sin contenido)"}
+                        {c.lastMessageBody || t('admin.mkt.noContent')}
                       </p>
                     </div>
                   </article>
                 ))}
                 {data.conversations.length === 0 && (
                   <p className="px-4 py-6 text-center text-gray-500">
-                    Sin conversaciones recientes.
+                    {t('admin.mkt.noConversations')}
                   </p>
                 )}
               </div>
@@ -452,7 +452,7 @@ export default function AdminMarketing() {
         )}
 
         {!data && !error && loading && (
-          <p className="text-gray-500">Cargando snapshot inicial…</p>
+          <p className="text-gray-500">{t('admin.mkt.loadingSnapshot')}</p>
         )}
       </main>
     </div>

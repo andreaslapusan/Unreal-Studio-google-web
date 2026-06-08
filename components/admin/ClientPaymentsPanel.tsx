@@ -11,6 +11,7 @@
  * is manual from here, exactly as Andreas asked: he presses "Enviar kwitansi".
  */
 import React, { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { renderKwitansiHtml, formatFigure } from '../../lib/kwitansi';
 
@@ -74,6 +75,7 @@ const KW_GREETING: Record<string, (n: string) => string> = {
 };
 
 const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, adminSignature, clientLang, onClose }) => {
+  const { t } = useTranslation();
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<{ cp: string; cur: string; pay: Partial<Payment> } | null>(null);
@@ -98,13 +100,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     const payload: any = { ...editing.pay, client_project_id: editing.cp };
     const { data, error } = await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: payload });
     setSaving(false);
-    if (error || !data?.success) { alert('Error al guardar el pago.'); return; }
+    if (error || !data?.success) { alert(t('admin.pay.errorSavePayment')); return; }
     setEditing(null);
     await load();
   };
 
   const deletePayment = async (id: string) => {
-    if (!window.confirm('¿Eliminar este pago?')) return;
+    if (!window.confirm(t('admin.pay.confirmDeletePayment'))) return;
     await supabase.rpc('admin_delete_client_payment', { p_user_id: adminUserId, p_payment_id: id });
     await load();
   };
@@ -128,7 +130,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       received_from: clientName,
       amount: p?.amount ?? 0,
       currency: p?.currency ?? u.currency ?? 'IDR',
-      for_payment: `${u.project_name}${u.unit_number ? ' · Unidad ' + u.unit_number : ''}${p?.label ? ' — ' + p.label : ''}`,
+      for_payment: `${u.project_name}${u.unit_number ? ' · ' + t('admin.pay.unit') + ' ' + u.unit_number : ''}${p?.label ? ' — ' + p.label : ''}`,
       place: 'Bali',
       date: p?.paid_at ? p.paid_at.slice(0, 10) : todayISO(),
       sending: false,
@@ -164,10 +166,10 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
   const createAndSend = async () => {
     if (!kw) return;
-    if (!clientEmail) { alert('El cliente no tiene email. Añádelo antes de enviar.'); return; }
+    if (!clientEmail) { alert(t('admin.pay.clientNoEmail')); return; }
     // Fase extra de seguridad: el kwitansi NO se firma/envía/muestra al cliente
     // hasta que el admin confirma explícitamente aquí.
-    if (!window.confirm(`Vas a FIRMAR y enviar el kwitansi ${kw.displayNo} a ${clientEmail}.\nUna vez firmado, el cliente podrá verlo en su portal. ¿Continuar?`)) return;
+    if (!window.confirm(t('admin.pay.confirmSign', { no: kw.displayNo, email: clientEmail }))) return;
     setKw({ ...kw, sending: true });
     // El nº visible es el amistoso por proyecto (DS-01); no_seq queda interno.
     const html = kwitansiHtml(kw.displayNo) || '';
@@ -179,7 +181,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
         for_payment: kw.for_payment, place: kw.place, kwitansi_date: kw.date, html,
       },
     });
-    if (cErr || !created?.success) { setKw({ ...kw, sending: false }); alert('No se pudo crear el kwitansi.'); return; }
+    if (cErr || !created?.success) { setKw({ ...kw, sending: false }); alert(t('admin.pay.errorCreateKwitansi')); return; }
     // Firma del admin: marca signed_at → recién entonces es visible para el cliente.
     await supabase.rpc('admin_sign_kwitansi', { p_user_id: adminUserId, p_id: created.id, p_html: html });
     const no = kw.displayNo;
@@ -194,13 +196,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     setKw({ ...kw, sending: false });
     if (sErr || !sent?.success) {
       const msg = sent?.error === 'transport_not_configured'
-        ? 'Kwitansi #' + no + ' creado, pero el buzón hello@ aún no tiene SMTP configurado. Avísale a Andreas para meter la contraseña.'
-        : 'Kwitansi creado pero el envío falló: ' + (sent?.error || sErr?.message || 'error');
+        ? t('admin.pay.errorTransport', { no })
+        : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
       alert(msg);
       setKw(null); await load();
       return;
     }
-    alert(`Kwitansi #${no} enviado a ${clientEmail} ✅`);
+    alert(t('admin.pay.kwitansiSent', { no, email: clientEmail }));
     setKw(null); await load();
   };
 
@@ -209,15 +211,15 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       <div className="bg-white rounded-3xl w-full max-w-3xl shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white rounded-t-3xl">
           <div>
-            <h2 className="text-xl font-black text-primary">Pagos · {clientName}</h2>
-            <p className="text-xs text-gray-400">{clientEmail || 'sin email'}</p>
+            <h2 className="text-xl font-black text-primary">{t('admin.pay.title')} · {clientName}</h2>
+            <p className="text-xs text-gray-400">{clientEmail || t('admin.pay.noEmail')}</p>
           </div>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
         </div>
 
         <div className="p-6 space-y-6">
-          {loading && <p className="text-sm text-gray-400">Cargando…</p>}
-          {!loading && units.length === 0 && <p className="text-sm text-gray-400 italic">Este cliente no tiene unidades asignadas todavía.</p>}
+          {loading && <p className="text-sm text-gray-400">{t('admin.pay.loading')}</p>}
+          {!loading && units.length === 0 && <p className="text-sm text-gray-400 italic">{t('admin.pay.noUnits')}</p>}
 
           {units.map((u) => {
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
@@ -227,35 +229,35 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                 <div className="bg-gray-50 px-5 py-3 flex justify-between items-center">
                   <div>
                     <p className="font-bold text-primary">{u.project_name}{u.unit_number && <span className="text-gray-400 font-normal"> · {u.unit_number}</span>}</p>
-                    <p className="text-[11px] text-gray-400">Recibido {fmt(recv, u.currency)} / {fmt(total, u.currency)}</p>
+                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedOfTotal', { recv: fmt(recv, u.currency), total: fmt(total, u.currency) })}</p>
                   </div>
                   <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...emptyPayment(u.currency), position: u.payments.length } })}
                     className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-lg flex items-center gap-1 hover:bg-black">
-                    <span className="material-symbols-outlined text-xs">add</span> Pago
+                    <span className="material-symbols-outlined text-xs">add</span> {t('admin.pay.payment')}
                   </button>
                 </div>
 
                 <div className="divide-y divide-gray-50">
-                  {u.payments.length === 0 && <p className="px-5 py-4 text-xs text-gray-300 italic">Sin pagos. Añade el calendario.</p>}
+                  {u.payments.length === 0 && <p className="px-5 py-4 text-xs text-gray-300 italic">{t('admin.pay.noPayments')}</p>}
                   {u.payments.map((p) => {
                     const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
                     return (
                       <div key={p.id} className="px-5 py-3 flex items-center gap-3 flex-wrap">
-                        <button onClick={() => toggleReceived(p)} title="Marcar recibido"
+                        <button onClick={() => toggleReceived(p)} title={t('admin.pay.markReceived')}
                           className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold transition ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500 hover:bg-green-600 hover:text-white' : 'border-2 border-gray-300 text-gray-300 hover:border-green-600 hover:text-green-600'}`}>✓</button>
                         <div className="flex-1 min-w-[140px]">
-                          <p className="font-semibold text-sm text-primary">{p.label || '(sin etiqueta)'}</p>
+                          <p className="font-semibold text-sm text-primary">{p.label || t('admin.pay.noLabel')}</p>
                           <p className="text-[11px] text-gray-400">
-                            {p.due_date ? `Límite: ${new Date(p.due_date).toLocaleDateString('es-ES')}` : 'sin fecha'}
-                            {p.received && p.paid_at && ` · pagado ${new Date(p.paid_at).toLocaleDateString('es-ES')}`}
+                            {p.due_date ? t('admin.pay.deadline', { date: new Date(p.due_date).toLocaleDateString('es-ES') }) : t('admin.pay.noDate')}
+                            {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(p.paid_at).toLocaleDateString('es-ES') })}`}
                           </p>
                         </div>
                         <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
                         <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
-                          {p.received ? 'Recibido' : overdue ? 'Vencido' : 'Pendiente'}
+                          {p.received ? t('admin.pay.statusReceived') : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
                         </span>
                         <div className="flex gap-1">
-                          <button onClick={() => openKwitansi(u, p)} title="Generar y enviar kwitansi"
+                          <button onClick={() => openKwitansi(u, p)} title={t('admin.pay.generateSendKwitansi')}
                             className="p-1.5 text-primary bg-almond rounded-lg hover:brightness-95"><span className="material-symbols-outlined text-sm">receipt_long</span></button>
                           <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p } })}
                             className="p-1.5 text-primary bg-gray-50 rounded-lg hover:bg-gray-100"><span className="material-symbols-outlined text-sm">edit</span></button>
@@ -276,25 +278,25 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       {editing && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-[60]">
           <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-3">
-            <h3 className="font-black text-primary">{editing.pay.id ? 'Editar pago' : 'Nuevo pago'}</h3>
-            <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Etiqueta (ej. 2º plazo / Reserva)"
+            <h3 className="font-black text-primary">{editing.pay.id ? t('admin.pay.editPayment') : t('admin.pay.newPayment')}</h3>
+            <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.labelPlaceholder')}
               value={editing.pay.label || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, label: e.target.value } })} />
             <div className="flex gap-2">
-              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Importe"
+              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.amountPlaceholder')}
                 value={grp(editing.pay.amount || 0)} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, amount: parseNum(e.target.value) } })} />
               <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg text-sm" value={editing.pay.currency || 'IDR'}
                 onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, currency: e.target.value } })}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
             </div>
-            <label className="block text-[10px] font-black uppercase text-gray-400">Fecha límite (recibir)</label>
+            <label className="block text-[10px] font-black uppercase text-gray-400">{t('admin.pay.dueDateLabel')}</label>
             <input type="date" className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm"
               value={editing.pay.due_date || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, due_date: e.target.value } })} />
-            <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Notas (opcional)"
+            <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
               value={editing.pay.notes || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, notes: e.target.value } })} />
             <div className="flex gap-2 pt-2">
-              <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-gray-500">Cancelar</button>
-              <button disabled={saving} onClick={savePayment} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">{saving ? 'Guardando…' : 'Guardar'}</button>
+              <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-gray-500">{t('admin.common.cancel')}</button>
+              <button disabled={saving} onClick={savePayment} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">{saving ? t('admin.common.saving') : t('admin.common.save')}</button>
             </div>
           </div>
         </div>
@@ -305,28 +307,28 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
         <div className="fixed inset-0 bg-black/50 flex items-start justify-center overflow-y-auto py-6 px-4 z-[60]">
           <div className="bg-white rounded-2xl w-full max-w-xl p-6 space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="font-black text-primary">Kwitansi</h3>
+              <h3 className="font-black text-primary">{t('admin.pay.kwitansi')}</h3>
               <button onClick={() => setKw(null)} className="text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder="Telah terima dari (recibido de)"
+              <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.receivedFromPlaceholder')}
                 value={kw.received_from} onChange={(e) => setKw({ ...kw, received_from: e.target.value })} />
-              <input type="text" inputMode="numeric" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder="Importe"
+              <input type="text" inputMode="numeric" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.amountPlaceholder')}
                 value={grp(kw.amount || 0)} onChange={(e) => setKw({ ...kw, amount: parseNum(e.target.value) })} />
               <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw({ ...kw, currency: e.target.value })}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
-              <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder="Untuk pembayaran (concepto)"
+              <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.forPaymentPlaceholder')}
                 value={kw.for_payment} onChange={(e) => setKw({ ...kw, for_payment: e.target.value })} />
-              <input className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder="Lugar" value={kw.place} onChange={(e) => setKw({ ...kw, place: e.target.value })} />
+              <input className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.placePlaceholder')} value={kw.place} onChange={(e) => setKw({ ...kw, place: e.target.value })} />
               <input type="date" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw({ ...kw, date: e.target.value })} />
             </div>
-            <div className="text-[11px] text-gray-400">Importe en cifras: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
+            <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
             <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo) || '' }} />
             <div className="flex gap-2">
-              <button onClick={downloadKwitansi} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-primary">Descargar / Imprimir</button>
+              <button onClick={downloadKwitansi} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-primary">{t('admin.pay.downloadPrint')}</button>
               <button disabled={kw.sending} onClick={createAndSend} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">
-                {kw.sending ? 'Enviando…' : 'Firmar y enviar al cliente'}
+                {kw.sending ? t('admin.pay.sending') : t('admin.pay.signAndSend')}
               </button>
             </div>
           </div>
