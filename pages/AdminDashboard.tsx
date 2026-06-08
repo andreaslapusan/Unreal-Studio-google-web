@@ -655,6 +655,7 @@ const AMENITIES_LIST = [
         if (data && !data.success) throw new Error(data.error);
         
         await loadData();
+        void loadMySignature();
         setIsEditingUser(false);
     } catch (error) {
         console.error('Error saving user:', error);
@@ -843,6 +844,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     if (data?.success) setMySignature(data.signature_url || '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Sube la firma de un admin (en su perfil de Administradores) → currentUser.signature_url.
+  const handleUserSignatureUpload = async (file: File) => {
+    const path = await uploadImage(file, 'signatures');
+    if (!path) { alert('Error subiendo la firma'); return; }
+    setCurrentUser({ ...currentUser, signature_url: getImageUrl(path) } as any);
+  };
 
   const handleMySignatureUpload = async (file: File) => {
     const userId = getAdminUserId();
@@ -1261,12 +1269,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  {[{ k: 'logo', label: 'Logo' }, { k: 'stamp', label: 'Sello de la empresa' }].map(({ k, label }) => (
                    <div key={k}>
                      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{label}</label>
-                     <div className="border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center">
+                     <div className="relative border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center">
+                       {(config as any).brand?.[k] && (
+                         <button type="button" title="Borrar esta foto"
+                           onClick={() => { const b = { ...((config as any).brand || {}), [k]: '' }; const nc = { ...config, brand: b } as any; setConfig(nc); void saveConfigToDb(nc); }}
+                           className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-base leading-none shadow hover:bg-red-600 transition">×</button>
+                       )}
                        {(config as any).brand?.[k]
                          ? <img src={(config as any).brand[k]} alt={label} className="h-16 mx-auto object-contain mb-1" />
                          : <span className="material-symbols-outlined text-gray-300 text-3xl">image</span>}
                        <label className="block mt-2 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">
-                         Subir PNG
+                         {(config as any).brand?.[k] ? 'Cambiar' : 'Subir PNG'}
                          <input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleBrandUpload(k, f); }} />
                        </label>
                      </div>
@@ -1286,25 +1299,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  </div>
                </div>
                <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar marca y empresa</button>
-               <button onClick={() => { const b = { ...((config as any).brand || {}), logo: '', stamp: '' }; const nc = { ...config, brand: b } as any; setConfig(nc); void saveConfigToDb(nc); }} className="mt-3 w-full border border-red-200 text-red-500 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-red-50 transition">Borrar todas las fotos (volver al texto marrón)</button>
-             </div>
-
-             {/* Mi firma — PERSONAL del admin logueado, no de la empresa */}
-             <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-               <h3 className="text-xl font-serif text-primary mb-2">Mi firma</h3>
-               <p className="text-xs text-gray-400 mb-6">Tu firma personal: solo TÚ la usas al firmar kwitansis. Cada administrador tiene la suya. Sube un PNG con fondo transparente.</p>
-               <div className="flex items-center gap-6 flex-wrap">
-                 <div className="border-2 border-dashed border-gray-200 rounded-2xl p-4 w-48 text-center">
-                   {mySignature ? <img src={mySignature} alt="Mi firma" className="h-16 mx-auto object-contain" /> : <span className="material-symbols-outlined text-gray-300 text-3xl">edit</span>}
-                 </div>
-                 <div className="flex flex-col gap-2">
-                   <label className="cursor-pointer bg-primary text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest text-center">
-                     Subir mi firma
-                     <input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleMySignatureUpload(f); }} />
-                   </label>
-                   {mySignature && <button onClick={async () => { const u = getAdminUserId(); if (u) { await supabase.rpc('admin_set_my_signature', { p_user_id: u, p_url: '' }); setMySignature(''); } }} className="text-red-500 text-[10px] font-black uppercase tracking-widest">Borrar mi firma</button>}
-                 </div>
-               </div>
+               <p className="mt-3 text-[11px] text-gray-400">La firma se configura en cada administrador (Administradores → editar).</p>
              </div>
            </div>
         )}
@@ -1807,6 +1802,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Usuario (email)</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Contraseña {currentUser.id && !String(currentUser.id).startsWith('user-') ? '(vacío = no cambiar)' : ''}</label><input type="text" required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Rol</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
+        <div>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Firma (para firmar kwitansis)</label>
+          <div className="relative inline-block border-2 border-dashed border-gray-200 rounded-2xl p-3 w-52 text-center">
+            {(currentUser as any).signature_url && <button type="button" title="Borrar firma" onClick={() => setCurrentUser({ ...currentUser, signature_url: '' } as any)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-base leading-none shadow hover:bg-red-600">×</button>}
+            {(currentUser as any).signature_url ? <img src={(currentUser as any).signature_url} alt="Firma" className="h-12 mx-auto object-contain" /> : <span className="material-symbols-outlined text-gray-300 text-2xl">edit</span>}
+            <label className="block mt-1 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">{(currentUser as any).signature_url ? 'Cambiar' : 'Subir PNG'}<input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleUserSignatureUpload(f); }} /></label>
+          </div>
+        </div>
         <div className="flex gap-4 pt-2">
           <button type="button" onClick={() => setIsEditingUser(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">Cancelar</button>
           <button type="submit" className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition">Guardar</button>
