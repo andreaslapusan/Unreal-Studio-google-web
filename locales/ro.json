@@ -107,7 +107,8 @@
     "card": {
       "from": "De la",
       "work": "Construcție",
-      "finalPrice": "Preț Final"
+      "finalPrice": "Preț Final",
+      "viewDetails": "Vezi detalii"
     },
     "noResults": "Nu s-au găsit rezultate",
     "clearFilters": "Șterge filtrele",

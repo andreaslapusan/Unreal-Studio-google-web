@@ -107,7 +107,8 @@
     "card": {
       "from": "Desde",
       "work": "Obra",
-      "finalPrice": "Precio Final"
+      "finalPrice": "Precio Final",
+      "viewDetails": "Ver detalles"
     },
     "noResults": "No se encontraron resultados",
     "clearFilters": "Limpiar filtros",

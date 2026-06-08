@@ -107,7 +107,8 @@
     "card": {
       "from": "Mulai",
       "work": "Konstruksi",
-      "finalPrice": "Harga Final"
+      "finalPrice": "Harga Final",
+      "viewDetails": "Lihat detail"
     },
     "noResults": "Tidak ada hasil",
     "clearFilters": "Hapus filter",

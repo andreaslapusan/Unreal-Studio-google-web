@@ -306,7 +306,10 @@ const Projects: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      <span className="material-symbols-outlined text-primary text-sm md:text-2xl">arrow_forward</span>
+                      <span className="flex items-center gap-1 text-[9px] md:text-xs font-black uppercase tracking-widest text-primary group-hover:gap-2 transition-all whitespace-nowrap">
+                        {t('projects.card.viewDetails', 'Ver detalles')}
+                        <span className="material-symbols-outlined text-sm md:text-xl">arrow_forward</span>
+                      </span>
                     </div>
                   </div>
                 </div>

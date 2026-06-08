@@ -107,7 +107,8 @@
     "card": {
       "from": "From",
       "work": "Build",
-      "finalPrice": "Final price"
+      "finalPrice": "Final price",
+      "viewDetails": "View details"
     },
     "noResults": "No results found",
     "clearFilters": "Clear filters",
