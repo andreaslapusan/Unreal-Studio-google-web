@@ -17,7 +17,18 @@ import { translateStatus } from '../lib/statusI18n';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Descripción localizada: usa la traducción del idioma activo (auto-traducida
+  // del español), con respaldo al español si falta.
+  const localizedDescription = (): string => {
+    const p = project as any;
+    if (!p) return '';
+    const lang = (i18n.language || 'es').slice(0, 2);
+    if (lang === 'en') return p.description_en || p.description || '';
+    if (lang === 'ro') return p.description_ro || p.description || '';
+    if (lang === 'id') return p.description_id || p.description || '';
+    return p.description || '';
+  };
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [similarProjects, setSimilarProjects] = useState<Project[]>([]);
@@ -427,7 +438,7 @@ const ProjectDetail: React.FC = () => {
           <section>
             <h2 className="text-4xl text-primary mb-8">{t('projectDetail.sectionProject')}</h2>
             <div className="prose prose-lg text-primary/80 font-light space-y-6 mb-12">
-              <p>{project.description}</p>
+              <p>{localizedDescription()}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[

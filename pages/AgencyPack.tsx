@@ -122,6 +122,7 @@ const AgencyPack: React.FC = () => {
     if (!p) return null;
     const lang = (i18n.language || 'es').slice(0, 2);
     if (lang === 'en') return ((p as any)[`${String(base)}_en`] as string) || (p[base] as any) || null;
+    if (lang === 'ro') return ((p as any)[`${String(base)}_ro`] as string) || (p[base] as any) || null;
     if (lang === 'id') return ((p as any)[`${String(base)}_id`] as string) || (p[base] as any) || null;
     return (p[base] as any) || null;
   };
