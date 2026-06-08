@@ -1069,6 +1069,20 @@
     "editProps": {
       "title": "Editar propiedades",
       "subtitle": "Avance de obra, datos, galería y más"
+    },
+    "reportModal": {
+      "title": "Reporte de obra",
+      "project": "Proyecto",
+      "noProjects": "No hay proyectos",
+      "reportDate": "Fecha del informe",
+      "pdf": "PDF del reporte",
+      "pickPdf": "Toca para elegir el PDF",
+      "onlyPdf": "Solo se admite PDF.",
+      "pickBoth": "Elige proyecto y un PDF.",
+      "uploading": "Subiendo…",
+      "submit": "Subir reporte",
+      "done": "Reporte subido.",
+      "close": "Cerrar"
     }
   },
   "vacaciones": {

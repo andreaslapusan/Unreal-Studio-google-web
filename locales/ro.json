@@ -1069,6 +1069,20 @@
     "editProps": {
       "title": "Editează proprietăți",
       "subtitle": "Progres construcție, date, galerie și altele"
+    },
+    "reportModal": {
+      "title": "Raport de șantier",
+      "project": "Proiect",
+      "noProjects": "Niciun proiect",
+      "reportDate": "Data raportului",
+      "pdf": "PDF-ul raportului",
+      "pickPdf": "Atinge pentru a alege PDF-ul",
+      "onlyPdf": "Doar PDF.",
+      "pickBoth": "Alege un proiect și un PDF.",
+      "uploading": "Se încarcă…",
+      "submit": "Încarcă raportul",
+      "done": "Raport încărcat.",
+      "close": "Închide"
     }
   },
   "vacaciones": {

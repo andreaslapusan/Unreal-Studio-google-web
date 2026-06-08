@@ -362,6 +362,20 @@
     },
     "reports": {
       "title": "Laporan konstruksi"
+    },
+    "reportModal": {
+      "title": "Laporan konstruksi",
+      "project": "Proyek",
+      "noProjects": "Tidak ada proyek",
+      "reportDate": "Tanggal laporan",
+      "pdf": "PDF laporan",
+      "pickPdf": "Ketuk untuk memilih PDF",
+      "onlyPdf": "Hanya PDF.",
+      "pickBoth": "Pilih proyek dan PDF.",
+      "uploading": "Mengunggah…",
+      "submit": "Unggah laporan",
+      "done": "Laporan diunggah.",
+      "close": "Tutup"
     }
   }
 }

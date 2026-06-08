@@ -1069,6 +1069,20 @@
     "editProps": {
       "title": "Edit properties",
       "subtitle": "Construction progress, data, gallery & more"
+    },
+    "reportModal": {
+      "title": "Construction report",
+      "project": "Project",
+      "noProjects": "No projects",
+      "reportDate": "Report date",
+      "pdf": "Report PDF",
+      "pickPdf": "Tap to choose the PDF",
+      "onlyPdf": "PDF only.",
+      "pickBoth": "Choose a project and a PDF.",
+      "uploading": "Uploading…",
+      "submit": "Upload report",
+      "done": "Report uploaded.",
+      "close": "Close"
     }
   },
   "vacaciones": {
