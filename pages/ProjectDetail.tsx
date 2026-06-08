@@ -777,13 +777,10 @@ const ProjectDetail: React.FC = () => {
             </div>
           </section>
 
-          {Array.isArray((project as { timeline?: TimelinePhase[] }).timeline) &&
-           ((project as { timeline?: TimelinePhase[] }).timeline?.length ?? 0) > 0 && (
-            <ProjectTimeline
-              phases={(project as { timeline?: TimelinePhase[] }).timeline as TimelinePhase[]}
-              completionPercent={project.completion_percent}
-            />
-          )}
+          {/* Timeline/hitos del proyecto OCULTOS en la web pública (decisión de
+              Andreas: las fechas de entrega podían dar a entender compromisos que
+              cambian por delays y preocupaban a clientes). Se gestiona/visualiza
+              solo en el admin, dentro de la ficha de la propiedad. */}
         </div>
 
         <div className="lg:col-span-4 relative">
