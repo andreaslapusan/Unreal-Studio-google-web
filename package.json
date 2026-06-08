@@ -7,9 +7,21 @@
     "dev": "vite",
     "prebuild": "node scripts/generate-version.mjs && node scripts/generate-sitemap.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "app:sync": "npm run build && npx cap sync",
+    "app:icons": "npx @capacitor/assets generate --iconBackgroundColor #2b1a05 --iconBackgroundColorDark #2b1a05 --splashBackgroundColor #f3e5d8 --splashBackgroundColorDark #f3e5d8",
+    "app:android": "npm run app:sync && npx cap open android",
+    "app:ios": "npm run app:sync && npx cap open ios"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/camera": "^8.2.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/geolocation": "^8.2.0",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/push-notifications": "^8.1.1",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.2",
     "@supabase/supabase-js": "2",
     "@vitejs/plugin-react": "^5.1.4",
     "i18next": "^26.0.8",
@@ -22,6 +34,9 @@
     "web-vitals": "^5.2.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/ios": "^8.4.0",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.10",

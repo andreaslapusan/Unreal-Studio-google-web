@@ -26,3 +26,17 @@ functions/node_modules/
 functions/lib/
 .claude-flow/
 supabase/.temp/
+
+# Capacitor / apps nativas — artefactos de build (el código fuente de ios/ y android/ SÍ se versiona)
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/captures/
+/android/.idea/
+/android/local.properties
+/ios/App/Pods/
+/ios/App/build/
+/ios/DerivedData/
+/ios/App/output/
+*.xcuserstate
+.DS_Store
