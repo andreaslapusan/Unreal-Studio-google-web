@@ -31,7 +31,7 @@ const InfoTooltip = ({ text }: { text: string }) => {
 
 const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => void }) => {
   const { t } = useTranslation();
-  const { formatPrice } = useCurrency();
+  const { formatMoney } = useCurrency();
   const investmentAmount = Number(project.investment_amount) || 0;
   const annualRental = Number(project.annual_rental_projection) || 0;
   const marketPrice = Number(project.market_price) || 0;
@@ -147,11 +147,11 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
             <div className={`grid ${isAdvanced ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5' : 'grid-cols-2 md:grid-cols-4'} gap-3`}>
               <div className="bg-primary/5 p-4 rounded-xl">
                 <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest">{t('admin.clientDash.calcYourInvestment')}</p>
-                <p className="text-lg font-serif text-primary">{formatPrice(investmentAmount, projCurrency)}</p>
+                <p className="text-lg font-serif text-primary">{formatMoney(investmentAmount, projCurrency)}</p>
               </div>
               <div className={`p-4 rounded-xl ${totalReturn >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
                 <p className={`text-[9px] font-black uppercase tracking-widest ${totalReturn >= 0 ? 'text-green-600/60' : 'text-red-600/60'}`}>{t('admin.clientDash.calcNetProfit')} <InfoTooltip text={t('admin.clientDash.tooltipNetProfit')} /></p>
-                <p className={`text-lg font-serif ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatPrice(totalReturn, projCurrency)}</p>
+                <p className={`text-lg font-serif ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatMoney(totalReturn, projCurrency)}</p>
               </div>
               <div className="bg-green-50 p-4 rounded-xl">
                 <p className="text-[9px] font-black uppercase text-green-600/60 tracking-widest">{t('admin.clientDash.calcRoiRental')} <InfoTooltip text={t('admin.clientDash.tooltipRoiRental')} /></p>
@@ -172,12 +172,12 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-green-50/50 border border-green-100 p-3 rounded-xl">
                 <p className="text-[9px] font-black uppercase text-green-600/50 tracking-widest">{t('admin.clientDash.calcNetRentalShort', { years: displayYears })}</p>
-                <p className="text-sm font-bold text-green-600">{formatPrice(totalRentalNet, projCurrency)}</p>
-                {isAdvanced && <p className="text-[8px] text-green-600/40 mt-1">{t('admin.clientDash.calcGross', { value: formatPrice(totalRentalGross, projCurrency), pct: ((totalDeductions) * 100).toFixed(0) })}</p>}
+                <p className="text-sm font-bold text-green-600">{formatMoney(totalRentalNet, projCurrency)}</p>
+                {isAdvanced && <p className="text-[8px] text-green-600/40 mt-1">{t('admin.clientDash.calcGross', { value: formatMoney(totalRentalGross, projCurrency), pct: ((totalDeductions) * 100).toFixed(0) })}</p>}
               </div>
               <div className="bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
                 <p className="text-[9px] font-black uppercase text-blue-600/50 tracking-widest">{t('admin.clientDash.calcResaleValueYear', { year: displayYears })}</p>
-                <p className="text-sm font-bold text-blue-600">{formatPrice(resaleEnd, projCurrency)}</p>
+                <p className="text-sm font-bold text-blue-600">{formatMoney(resaleEnd, projCurrency)}</p>
                 {paybackDisplay && <p className="text-[8px] text-blue-600/40 mt-1">{t('admin.clientDash.calcPaybackEstimated', { value: paybackDisplay })}</p>}
               </div>
             </div>
@@ -273,8 +273,8 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
                       {isAdvanced && (
                         <div className="absolute bottom-full mb-2 bg-primary text-white text-[8px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-30">
                           {includeResale
-                            ? t('admin.clientDash.calcChartYearTooltipResale', { year: d.year, net: formatPrice(d.cumulativeRentalNet, projCurrency), resale: formatPrice(d.resaleValue, projCurrency) })
-                            : t('admin.clientDash.calcChartYearTooltip', { year: d.year, net: formatPrice(d.cumulativeRentalNet, projCurrency) })}
+                            ? t('admin.clientDash.calcChartYearTooltipResale', { year: d.year, net: formatMoney(d.cumulativeRentalNet, projCurrency), resale: formatMoney(d.resaleValue, projCurrency) })
+                            : t('admin.clientDash.calcChartYearTooltip', { year: d.year, net: formatMoney(d.cumulativeRentalNet, projCurrency) })}
                         </div>
                       )}
                     </div>
@@ -291,32 +291,32 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
               <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.calcBreakdownTitle', { years: displayYears })}</p>
               <div className="flex justify-between text-sm">
                 <span className="text-primary/60">{t('admin.clientDash.calcGrossRentalAccum')}</span>
-                <span className="font-bold text-primary/70">{formatPrice(totalRentalGross, projCurrency)}</span>
+                <span className="font-bold text-primary/70">{formatMoney(totalRentalGross, projCurrency)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-primary/60">{t('admin.clientDash.calcMaintenance')}</span>
-                <span className="font-bold text-red-400">-{formatPrice(totalRentalGross * MAINTENANCE_PCT, projCurrency)}</span>
+                <span className="font-bold text-red-400">-{formatMoney(totalRentalGross * MAINTENANCE_PCT, projCurrency)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-primary/60">{t('admin.clientDash.calcOpexLine', { pct: opexRate })}</span>
-                <span className="font-bold text-red-400">-{formatPrice(totalRentalGross * (opexRate / 100), projCurrency)}</span>
+                <span className="font-bold text-red-400">-{formatMoney(totalRentalGross * (opexRate / 100), projCurrency)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-primary/60">{t('admin.clientDash.calcNetRentalAccum')}</span>
-                <span className="font-bold text-green-600">{formatPrice(totalRentalNet, projCurrency)}</span>
+                <span className="font-bold text-green-600">{formatMoney(totalRentalNet, projCurrency)}</span>
               </div>
               {includeResale && (
                 <>
                   <div className="border-t border-gray-200 my-2"></div>
                   <div className="flex justify-between text-sm">
                     <span className="text-primary/60">{t('admin.clientDash.calcResaleEstimatedYear', { year: displayYears })}</span>
-                    <span className="font-bold text-blue-600">{formatPrice(resaleEnd, projCurrency)}</span>
+                    <span className="font-bold text-blue-600">{formatMoney(resaleEnd, projCurrency)}</span>
                   </div>
                 </>
               )}
               <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
                 <span className="font-bold text-primary">{t('admin.clientDash.calcNetProfitEstimated')}</span>
-                <span className={`font-black text-lg ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatPrice(totalReturn, projCurrency)}</span>
+                <span className={`font-black text-lg ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatMoney(totalReturn, projCurrency)}</span>
               </div>
               {paybackDisplay && (
                 <div className="flex justify-between text-sm">
@@ -329,11 +329,11 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
                   <div className="border-t border-gray-200 my-2"></div>
                   <div className="flex justify-between text-sm">
                     <span className="text-primary/60">{t('admin.clientDash.calcLandYear', { year: displayYears, appr: (getLandAppreciation(displayYears) * 100).toFixed(0), lease: (last ? (last.leaseFactor * 100).toFixed(0) : 0) })}</span>
-                    <span className="font-bold text-primary">{formatPrice(last ? last.landVal : 0, projCurrency)}</span>
+                    <span className="font-bold text-primary">{formatMoney(last ? last.landVal : 0, projCurrency)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-primary/60">{t('admin.clientDash.calcBuildingYear', { year: displayYears })}</span>
-                    <span className="font-bold text-primary">{formatPrice(buildingValue, projCurrency)}</span>
+                    <span className="font-bold text-primary">{formatMoney(buildingValue, projCurrency)}</span>
                   </div>
                 </>
               )}
@@ -356,7 +356,7 @@ const ClientDashboard: React.FC = () => {
   const dateLocale = i18n.language === 'en' ? 'en-GB' : i18n.language === 'ro' ? 'ro-RO' : 'es-ES';
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { currency, setCurrency, formatPrice } = useCurrency();
+  const { formatMoney } = useCurrency();
 
   const [clientData, setClientData] = useState<any>(null);
   const [clientId, setClientId] = useState<string | null>(null);
@@ -534,15 +534,18 @@ const ClientDashboard: React.FC = () => {
   });
   
   const getTotalConverted = () => {
-    let total = 0;
+    // Suma por divisa, SIN convertir: cada inversión se queda en su moneda.
+    // Si el cliente invirtió en varias divisas, se muestran sumadas por separado
+    // (p.ej. "85.000 € + 138.889 $"), nunca reconvertidas a una sola.
+    const byCurrency: Record<string, number> = {};
     projects.forEach((p: any) => {
       const amt = Number(p.investment_amount) || 0;
-      const from = p.investment_currency || 'EUR';
-      const formatted = formatPrice(amt, from);
-      const num = parseFloat(formatted.replace(/[^\d,-]/g, '').replace(/\./g, '').replace(',', '.'));
-      if (!isNaN(num)) total += num;
+      if (!amt) return;
+      const cur = p.investment_currency || 'EUR';
+      byCurrency[cur] = (byCurrency[cur] || 0) + amt;
     });
-    return total.toLocaleString(dateLocale, {maximumFractionDigits: 0}) + ' ' + (CURRENCIES.find(c => c.code === currency)?.symbol || '€');
+    const parts = Object.entries(byCurrency).map(([cur, amt]) => formatMoney(amt, cur as any));
+    return parts.length ? parts.join(' + ') : formatMoney(0, 'EUR');
   };
 
   const getWeightedRentalROI = () => {
@@ -563,9 +566,6 @@ const ClientDashboard: React.FC = () => {
         onLogout={handleLogout}
         extra={
           <>
-            <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="bg-white border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-primary/5 transition">
-              {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
-            </select>
             <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition hidden md:flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
             </button>
@@ -688,7 +688,7 @@ const ClientDashboard: React.FC = () => {
                       {proj.investment_amount > 0 && (
                         <div>
                           <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelInvestment')}</p>
-                          <p className="text-sm font-bold text-primary">{formatPrice(Number(proj.investment_amount), proj.investment_currency || 'EUR')}</p>
+                          <p className="text-sm font-bold text-primary">{formatMoney(Number(proj.investment_amount), proj.investment_currency || 'EUR')}</p>
                         </div>
                       )}
                       {proj.purchase_date && (

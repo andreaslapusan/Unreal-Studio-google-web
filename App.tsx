@@ -68,7 +68,13 @@ import { gtmPageView } from './lib/gtm';
 interface CurrencyContextType {
   currency: CurrencyCode;
   setCurrency: (code: CurrencyCode) => void;
+  // Convierte de fromCurrency a la divisa de visualización seleccionada (SOLO
+  // para el catálogo público de Proyectos, donde tiene sentido comparar).
   formatPrice: (amount: number, fromCurrency: CurrencyCode) => string;
+  // Formatea en la divisa indicada SIN convertir. Para importes "fijos" como
+  // la inversión del cliente y el calendario de pagos: se muestran siempre en
+  // la divisa con la que se guardaron, nunca se reconvierten.
+  formatMoney: (amount: number, currency: CurrencyCode) => string;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
@@ -191,8 +197,18 @@ const App: React.FC = () => {
     } as any).format(convertedAmount);
   };
 
+  // Sin conversión: respeta la divisa con la que se guardó el importe.
+  const formatMoney = (amount: number, currency: CurrencyCode) => {
+    return new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: currency || 'EUR',
+      maximumFractionDigits: 0,
+      useGrouping: 'always',
+    } as any).format(Number(amount) || 0);
+  };
+
   return (
-    <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice }}>
+    <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice, formatMoney }}>
       <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />

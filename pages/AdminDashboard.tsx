@@ -67,7 +67,7 @@ const AMENITIES_LIST = [
 
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
   
-  const { currency, setCurrency, formatPrice } = useCurrency();
+  const { currency, setCurrency, formatPrice, formatMoney } = useCurrency();
   // La vista activa vive en la URL (?view=) para que el menú lateral (presente
   // en todas las páginas admin) navegue entre secciones de forma consistente.
   const [searchParams, setSearchParams] = useSearchParams();
@@ -1168,7 +1168,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="flex items-center gap-4 flex-wrap">
                       <span className="font-bold text-primary text-sm">{cp.project_name || cp.project_id}</span>
                       {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">Unidad: {cp.unit_number}</span>}
-                      {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatPrice(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
+                      {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                       {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{cp.status}</span>
                     </div>
