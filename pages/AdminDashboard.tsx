@@ -14,6 +14,7 @@ import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
 import AttendancePanel from '../components/admin/AttendancePanel';
+import { useEscapeKey } from '../lib/useEscapeKey';
 import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import DashboardOverview from '../components/admin/DashboardOverview';
@@ -62,6 +63,12 @@ const AMENITIES_LIST = [
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
+  // Cerrar con Escape los modales (accesibilidad — auditoría).
+  useEscapeKey(() => setIsEditingClient(false), isEditingClient);
+  useEscapeKey(() => setEditingAssignment(null), !!editingAssignment);
+  useEscapeKey(() => setAssigningProject(null), !!assigningProject);
+  useEscapeKey(() => setWhatsappClient(null), !!whatsappClient);
+  useEscapeKey(() => setPaymentsClient(null), !!paymentsClient);
 
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
   
