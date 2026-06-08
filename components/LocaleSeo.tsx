@@ -43,6 +43,12 @@ export default function LocaleSeo() {
     for (const l of SUPPORTED_LANGS) add('alternate', `${ORIGIN}/${l}${tail}`, l);
     add('alternate', `${ORIGIN}/es${tail}`, 'x-default');
 
+    // Actualiza el content-language al idioma de la URL (en index.html es estático
+    // "es" y quedaba mal en /en /ro /id). También el atributo lang del <html>.
+    const cl = document.head.querySelector('meta[http-equiv="content-language"]');
+    if (cl) cl.setAttribute('content', first);
+    document.documentElement.lang = first;
+
     return clear;
   }, [pathname]);
 
