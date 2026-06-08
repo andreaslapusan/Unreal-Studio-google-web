@@ -21,6 +21,27 @@ const BlogDetail: React.FC = () => {
     type: 'article',
   });
 
+  // JSON-LD Article: resultados enriquecidos del artículo en Google.
+  useEffect(() => {
+    if (!post) return;
+    const schema = {
+      '@context': 'https://schema.org', '@type': 'Article',
+      headline: post.title,
+      image: post.image ? [getImageUrl(post.image)] : undefined,
+      datePublished: (post as any).published_date || undefined,
+      dateModified: (post as any).updated_at || (post as any).published_date || undefined,
+      author: { '@type': 'Organization', name: 'Unreal Studio' },
+      publisher: { '@type': 'Organization', name: 'Unreal Studio', logo: { '@type': 'ImageObject', url: 'https://unrealstudiobali.com/img/Logos/favicon_io/android-chrome-512x512.png' } },
+      mainEntityOfPage: 'https://unrealstudiobali.com' + window.location.pathname,
+    };
+    const el = document.createElement('script');
+    el.type = 'application/ld+json';
+    el.setAttribute('data-article-ld', '1');
+    el.textContent = JSON.stringify(schema);
+    document.head.appendChild(el);
+    return () => { el.remove(); };
+  }, [post]);
+
   // Helper date formatter
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
