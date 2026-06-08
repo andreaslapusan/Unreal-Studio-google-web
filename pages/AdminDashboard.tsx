@@ -89,6 +89,24 @@ const AMENITIES_LIST = [
     await supabase.from('employees').update(patch).eq('id', id);
     await loadEmployees();
   };
+  // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
+  const [pendingVacations, setPendingVacations] = useState<Array<{ id: string; employee_name: string | null; employee_email: string; start_date: string; end_date: string; type: string; note: string | null }>>([]);
+  const loadPendingVacations = useCallback(async () => {
+    const { data } = await supabase
+      .from('employee_vacations')
+      .select('id, employee_name, employee_email, start_date, end_date, type, note')
+      .in('status', ['pendiente', 'pending'])
+      .order('start_date');
+    setPendingVacations((data as typeof pendingVacations) ?? []);
+  }, []);
+  useEffect(() => {
+    if (activeView !== 'employees') return;
+    void loadPendingVacations();
+  }, [activeView, loadPendingVacations]);
+  const resolveVacation = async (id: string, status: 'aprobada' | 'rechazada') => {
+    await supabase.from('employee_vacations').update({ status }).eq('id', id);
+    await loadPendingVacations();
+  };
   useEffect(() => {
     if (activeView !== 'employees') return;
     void loadEmployees();
@@ -1385,6 +1403,29 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="animate-in fade-in duration-500">
             <h2 className="text-2xl font-serif text-primary mb-2">Perfiles de Empleados</h2>
             <p className="text-sm text-gray-400 mb-6">Cuentas del portal Team (acceso con email + contraseña).</p>
+
+            {/* Solicitudes de vacaciones pendientes de aprobar */}
+            {pendingVacations.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
+                <h3 className="text-sm font-black uppercase tracking-widest text-amber-700 mb-3 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base">beach_access</span> Vacaciones pendientes ({pendingVacations.length})
+                </h3>
+                <ul className="space-y-2">
+                  {pendingVacations.map((v) => (
+                    <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-xl px-4 py-3 border border-amber-100">
+                      <div className="min-w-0">
+                        <p className="font-bold text-primary text-sm">{v.employee_name || v.employee_email}</p>
+                        <p className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}{v.note ? ` · ${v.note}` : ''}</p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <button onClick={() => void resolveVacation(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">Aprobar</button>
+                        <button onClick={() => void resolveVacation(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">Rechazar</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase tracking-widest">
