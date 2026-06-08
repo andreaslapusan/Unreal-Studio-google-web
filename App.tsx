@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, lazy, Suspense }
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ManifestSwitcher from './components/ManifestSwitcher';
 // Home is eagerly imported because it's the landing route — lazy() would
 // add a needless extra round-trip on first paint. Everything else is split:
 // each page becomes its own JS chunk, only fetched when the user navigates
@@ -212,6 +213,7 @@ const App: React.FC = () => {
       <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <ManifestSwitcher />
         <AttributionTracker />
         <Layout>
           <Suspense

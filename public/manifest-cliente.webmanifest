@@ -1,0 +1,16 @@
+{
+  "name": "Unreal · Cliente",
+  "short_name": "Mi Portal",
+  "description": "Unreal Studio Bali",
+  "start_url": "/cliente",
+  "scope": "/cliente",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3E5D8",
+  "theme_color": "#3F2305",
+  "lang": "es",
+  "icons": [
+    {"src":"/img/Logos/favicon_io/android-chrome-192x192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"/img/Logos/favicon_io/android-chrome-512x512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
