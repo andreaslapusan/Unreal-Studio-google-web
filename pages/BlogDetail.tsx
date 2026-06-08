@@ -110,10 +110,22 @@ const BlogDetail: React.FC = () => {
                         <p className="text-sm text-primary/50 font-medium">{t('blog.shareBody')}</p>
                     </div>
                     <div className="flex gap-4">
-                        <button className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
+                        <button
+                            type="button"
+                            title={t('blog.copyLink', 'Copiar enlace')}
+                            onClick={() => { try { navigator.clipboard?.writeText(window.location.href); } catch { /* ignore */ } }}
+                            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
                             <span className="material-symbols-outlined text-base group-hover:scale-110 transition">link</span>
                         </button>
-                        <button className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
+                        <button
+                            type="button"
+                            title={t('blog.share', 'Compartir')}
+                            onClick={() => {
+                                const data = { title: document.title, url: window.location.href };
+                                if (navigator.share) { void navigator.share(data).catch(() => {}); }
+                                else { try { navigator.clipboard?.writeText(window.location.href); } catch { /* ignore */ } }
+                            }}
+                            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
                             <span className="material-symbols-outlined text-base group-hover:scale-110 transition">share</span>
                         </button>
                     </div>
