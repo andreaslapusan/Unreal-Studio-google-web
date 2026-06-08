@@ -23,3 +23,11 @@ root.render(
 
 // Boot real-user metrics after first paint so we don't compete with hydration.
 initWebVitals();
+
+// PWA: registra el service worker (instalable + offline + auto-update). Se hace
+// tras 'load' para no competir con el primer render.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => { /* sin PWA si falla */ });
+  });
+}
