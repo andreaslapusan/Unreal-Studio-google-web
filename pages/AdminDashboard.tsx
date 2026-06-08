@@ -836,6 +836,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     setConfig({ ...config, brand: { ...((config as any).brand || {}), [fieldKey]: url } } as any);
   };
 
+  // Atajo para fijar una clave dentro de config.brand.
+  const setBrandKey = (key: string, value: any) =>
+    setConfig({ ...config, brand: { ...((config as any).brand || {}), [key]: value } } as any);
+
   // Carga / guarda la firma PERSONAL del admin actual (admin_users.signature_url).
   const loadMySignature = useCallback(async () => {
     const userId = getAdminUserId();
@@ -1302,43 +1306,65 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                <p className="mt-3 text-[11px] text-gray-400">La firma se configura en cada administrador (Administradores → editar).</p>
              </div>
 
-             {/* Datos de empresa — extras (redes, sedes, horario, reservas, SEO, bienvenida) */}
+             {/* Datos de empresa — una columna, módulos dinámicos */}
              <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
                <h3 className="text-xl font-serif text-primary mb-2">Datos de empresa</h3>
-               <p className="text-xs text-gray-400 mb-6">Información para la web, el footer y las comunicaciones. Se guarda como fuente única.</p>
-               <div className="grid sm:grid-cols-2 gap-4">
-                 {[
-                   { k: 'address', label: 'Dirección / sede', ph: 'Jl. Pratu Rai Madra No.15, Cemagi, Bali' },
-                   { k: 'hours', label: 'Horario de atención', ph: 'L-V 9:00-18:00 (WITA)' },
-                   { k: 'booking_url', label: 'Enlace de reservas (Calendly)', ph: 'https://calendly.com/...' },
-                   { k: 'instagram', label: 'Instagram (URL)', ph: 'https://instagram.com/...' },
-                   { k: 'whatsapp', label: 'WhatsApp (número o link)', ph: '+62 ...' },
-                   { k: 'facebook', label: 'Facebook (URL)', ph: 'https://facebook.com/...' },
-                   { k: 'tiktok', label: 'TikTok (URL)', ph: 'https://tiktok.com/@...' },
-                   { k: 'youtube', label: 'YouTube (URL)', ph: 'https://youtube.com/@...' },
-                   { k: 'seo_title', label: 'SEO — título de la web', ph: 'Unreal Studio Bali | ...' },
-                   { k: 'seo_description', label: 'SEO — descripción', ph: 'Inversión inmobiliaria...' },
-                 ].map(({ k, label, ph }) => (
-                   <div key={k}>
-                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{label}</label>
-                     <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-medium text-primary text-sm" placeholder={ph}
-                       value={(config as any).brand?.[k] || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), [k]: e.target.value } } as any)} />
-                   </div>
-                 ))}
+               <p className="text-xs text-gray-400 mb-6">Para la web, el footer y las comunicaciones. Fuente única.</p>
+               <div className="space-y-7 max-w-xl">
+
+                 <div>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Direcciones / oficinas</label>
+                   {(((config as any).brand?.addresses) || []).map((addr: string, i: number) => (
+                     <div key={i} className="flex gap-2 mb-2">
+                       <input className="flex-1 px-4 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={addr} placeholder="Dirección de la oficina"
+                         onChange={(e) => { const arr = [...(((config as any).brand?.addresses) || [])]; arr[i] = e.target.value; setBrandKey('addresses', arr); }} />
+                       <button type="button" onClick={() => setBrandKey('addresses', (((config as any).brand?.addresses) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
+                     </div>
+                   ))}
+                   <button type="button" onClick={() => setBrandKey('addresses', [...(((config as any).brand?.addresses) || []), ''])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir dirección</button>
+                 </div>
+
+                 <div>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Redes sociales</label>
+                   {(((config as any).brand?.socials) || []).map((s: any, i: number) => (
+                     <div key={i} className="flex gap-2 mb-2">
+                       <input className="w-36 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.label || ''} placeholder="Instagram"
+                         onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], label: e.target.value }; setBrandKey('socials', arr); }} />
+                       <input className="flex-1 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.url || ''} placeholder="https://..."
+                         onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], url: e.target.value }; setBrandKey('socials', arr); }} />
+                       <button type="button" onClick={() => setBrandKey('socials', (((config as any).brand?.socials) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
+                     </div>
+                   ))}
+                   <button type="button" onClick={() => setBrandKey('socials', [...(((config as any).brand?.socials) || []), { label: '', url: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir red social</button>
+                 </div>
+
+                 <div>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Horario de atención (vacío = cerrado)</label>
+                   {[['mon', 'Lunes'], ['tue', 'Martes'], ['wed', 'Miércoles'], ['thu', 'Jueves'], ['fri', 'Viernes'], ['sat', 'Sábado'], ['sun', 'Domingo']].map(([dk, dl]) => (
+                     <div key={dk} className="flex items-center gap-3 mb-2">
+                       <span className="w-24 text-xs font-bold text-primary/70">{dl}</span>
+                       <input className="flex-1 px-3 py-2.5 bg-gray-50 border rounded-xl text-sm text-primary" placeholder="9:00–18:00"
+                         value={(((config as any).brand?.hours) || {})[dk] || ''} onChange={(e) => setBrandKey('hours', { ...(((config as any).brand?.hours) || {}), [dk]: e.target.value })} />
+                     </div>
+                   ))}
+                 </div>
+
+                 <div>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Enlace de reservas (Calendly)</label>
+                   <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm text-primary" placeholder="https://calendly.com/..."
+                     value={(config as any).brand?.booking_url || ''} onChange={(e) => setBrandKey('booking_url', e.target.value)} />
+                 </div>
+
+                 <div>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Moneda por defecto para clientes</label>
+                   <select className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-sm text-primary"
+                     value={(config as any).brand?.default_currency_clients || 'EUR'} onChange={(e) => setBrandKey('default_currency_clients', e.target.value)}>
+                     <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
+                   </select>
+                   <p className="text-[10px] text-gray-400 mt-1">Se aplica salvo que el cliente tenga otra en su perfil.</p>
+                 </div>
                </div>
-               <div className="mt-4">
-                 <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Mensaje de bienvenida del portal cliente</label>
-                 <textarea className="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm h-20 resize-none text-primary"
-                   value={(config as any).brand?.client_welcome || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), client_welcome: e.target.value } } as any)} />
-               </div>
-               <div className="mt-4">
-                 <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Moneda por defecto</label>
-                 <select className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm"
-                   value={(config as any).brand?.default_currency || 'EUR'} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), default_currency: e.target.value } } as any)}>
-                   <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
-                 </select>
-               </div>
-               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar datos de empresa</button>
+               <button onClick={() => saveConfigToDb(config)} className="mt-7 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar datos de empresa</button>
              </div>
            </div>
         )}
@@ -1884,6 +1910,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Carpeta Drive del cliente (contratos, docs)</label>
           <input type="url" value={(currentClient as any).drive_folder_url || ''} onChange={(e) => setCurrentClient({...currentClient, drive_folder_url: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="https://drive.google.com/drive/folders/..." />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Idioma preferido</label>
+            <select value={(currentClient as any).preferred_language || 'es'} onChange={(e) => setCurrentClient({...currentClient, preferred_language: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
+              <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Divisa preferida</label>
+            <select value={(currentClient as any).preferred_currency || (((config as any).brand?.default_currency_clients) || 'EUR')} onChange={(e) => setCurrentClient({...currentClient, preferred_currency: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
+              <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
+            </select>
+          </div>
         </div>
         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
           <span className="text-[10px] font-black uppercase text-primary/60">Cliente activo</span>
