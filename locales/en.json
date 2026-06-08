@@ -514,7 +514,7 @@
     },
     "equipoLogin": {
       "title": "Manager Portal",
-      "subtitle": "Internal team access · Time off · Site reports",
+      "subtitle": "Internal team access · Time off · Construction reports",
       "emailPlaceholder": "you@unrealstudiobali.com",
       "submitting": "Sending…",
       "submit": "Send magic link",
@@ -644,7 +644,7 @@
       "holidaysLoaded": "Holidays loaded ({{count}})"
     },
     "equipoUpload": {
-      "title": "Upload site update",
+      "title": "Upload construction report",
       "accessRestrictedTitle": "Restricted access",
       "accessRestrictedBody": "Internal team only.",
       "labelProject": "Project *",
@@ -671,7 +671,7 @@
       "greeting": "Hi, {{name}}",
       "subtitle": "Portal Manager · {{year}}",
       "tabVacaciones": "Time off",
-      "tabParte": "Site report",
+      "tabParte": "Construction report",
       "statTotalDays": "Total days",
       "statTakenDays": "Days taken",
       "statAvailable": "Available"
@@ -1030,7 +1030,7 @@
     },
     "help": "Tap, take a photo of where you are and you're done. The time and location are saved automatically. If you forget to log something, you can still clock it in whenever you want.",
     "reports": {
-      "title": "Site reports",
+      "title": "Construction reports",
       "subtitle": "Upload progress by project"
     },
     "camera": {

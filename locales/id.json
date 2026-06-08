@@ -359,6 +359,9 @@
     "editProps": {
       "title": "Edit properti",
       "subtitle": "Progres konstruksi, data, galeri & lainnya"
+    },
+    "reports": {
+      "title": "Laporan konstruksi"
     }
   }
 }
