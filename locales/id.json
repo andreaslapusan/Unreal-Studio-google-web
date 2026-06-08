@@ -1420,7 +1420,8 @@
     "portal_inversores": "Investor",
     "portal_admin": "Admin",
     "noAccessHere": "Akun Anda tidak memiliki akses ke portal ini.",
-    "verifyError": "Tidak dapat memverifikasi akses Anda. Coba lagi."
+    "verifyError": "Tidak dapat memverifikasi akses Anda. Coba lagi.",
+    "noAccessPortal": "Akun ini tidak memiliki akses ke portal {{portal}}."
   },
   "privacy": {
     "collectList1": [

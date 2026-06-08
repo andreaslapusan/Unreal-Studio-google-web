@@ -1328,7 +1328,8 @@
     "portal_inversores": "Investitori",
     "portal_admin": "Admin",
     "noAccessHere": "Contul tău nu are acces la acest portal.",
-    "verifyError": "Nu s-a putut verifica accesul. Încearcă din nou."
+    "verifyError": "Nu s-a putut verifica accesul. Încearcă din nou.",
+    "noAccessPortal": "Acest cont nu are acces la portalul {{portal}}."
   },
   "privacy": {
     "docTitle": "Politica de Confidențialitate | Unreal Studio Madrid",
