@@ -358,6 +358,7 @@ const ClientDashboard: React.FC = () => {
   const { currency, setCurrency, formatPrice } = useCurrency();
 
   const [clientData, setClientData] = useState<any>(null);
+  const [clientId, setClientId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [allProjects, setAllProjects] = useState<Record<string, any>>({});
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -376,22 +377,19 @@ const ClientDashboard: React.FC = () => {
     }
   };
 
-  const getClientId = (): string | null => {
-    const session = localStorage.getItem('_ust_client_');
+  // Resuelve el id de cliente desde la sesión Supabase Auth (no del token
+  // legacy _ust_client_). null si no hay sesión o la cuenta no es cliente.
+  const resolveClientId = async (): Promise<string | null> => {
+    const { data: { session } } = await supabase.auth.getSession();
     if (!session) return null;
-    try {
-      const decoded = atob(session);
-      return decoded.split('_')[1] || null;
-    } catch { return null; }
+    const { data } = await supabase.rpc('client_my_id');
+    return (data && data.success) ? (data.client_id as string) : null;
   };
 
-  const loadDashboard = useCallback(async () => {
-    const clientId = getClientId();
-    if (!clientId) { navigate('/cliente'); return; }
+  const loadDashboard = useCallback(async (cid: string) => {
     try {
-      const { data, error } = await supabase.rpc('client_get_dashboard', { p_client_id: clientId });
+      const { data, error } = await supabase.rpc('client_get_dashboard', { p_client_id: cid });
       if (error || !data || !data.success) {
-        localStorage.removeItem('_ust_client_');
         navigate('/cliente');
         return;
       }
@@ -413,12 +411,16 @@ const ClientDashboard: React.FC = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const session = localStorage.getItem('_ust_client_');
-    if (!session) { navigate('/cliente'); return; }
-    loadDashboard();
-    if (searchParams.get('change_password') === 'true') {
-      setShowChangePassword(true);
-    }
+    (async () => {
+      const id = await resolveClientId();
+      if (!id) { navigate('/cliente'); return; }
+      setClientId(id);
+      await loadDashboard(id);
+      if (searchParams.get('change_password') === 'true') {
+        setShowChangePassword(true);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, loadDashboard, searchParams]);
 
   useEffect(() => {
@@ -439,23 +441,20 @@ const ClientDashboard: React.FC = () => {
       setPasswordError(t('admin.clientDash.passwordTooShort'));
       return;
     }
-    const clientId = getClientId();
     if (!clientId) return;
     try {
-      const { data, error } = await supabase.rpc('client_change_password', {
-        p_client_id: clientId,
-        p_old_password: passwords.current,
-        p_new_password: passwords.newPass
-      });
-      if (error || !data || !data.success) {
-        setPasswordError(data?.error || t('admin.clientDash.passwordWrong'));
+      // La contraseña real vive en Supabase Auth → la cambiamos ahí.
+      const { error: authErr } = await supabase.auth.updateUser({ password: passwords.newPass });
+      if (authErr) {
+        setPasswordError(t('admin.clientDash.passwordChangeError'));
         return;
       }
-      
-      // Actualizar temp_password y password_plain para que el admin pueda ver la última contraseña
-      await supabase.from('clients').update({ 
+
+      // Reflejamos en clients para que el admin siga viendo la última contraseña.
+      await supabase.from('clients').update({
         temp_password: passwords.newPass,
-        password_plain: passwords.newPass 
+        password_plain: passwords.newPass,
+        must_change_password: false,
       }).eq('id', clientId);
 
       setPasswordSuccess(t('admin.clientDash.passwordChangeSuccess'));
@@ -598,8 +597,8 @@ const ClientDashboard: React.FC = () => {
       )}
 
       <main className="max-w-6xl mx-auto px-6 py-12">
-        {client.id && <ClientUnitsSection clientId={client.id} />}
-        {client.id && <ClientPaymentsSection clientId={client.id} />}
+        {clientId && <ClientUnitsSection clientId={clientId} />}
+        {clientId && <ClientPaymentsSection clientId={clientId} />}
         {/* Resumen */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
