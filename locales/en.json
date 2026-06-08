@@ -1064,6 +1064,11 @@
         "It takes 2 seconds: tap, photo, done. The time and location are saved automatically.",
         "Usual hours 10:00–18:00. Do it every day you work (also Saturdays/Sundays if you go in)."
       ]
+    },
+    "yourSchedule": "Your schedule",
+    "editProps": {
+      "title": "Edit properties",
+      "subtitle": "Construction progress, data, gallery & more"
     }
   },
   "vacaciones": {

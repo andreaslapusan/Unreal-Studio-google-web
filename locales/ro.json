@@ -1064,6 +1064,11 @@
         "Durează 2 secunde: apeși, poză și gata. Ora și locația se salvează automat.",
         "Program obișnuit 10:00–18:00. Fă-o în fiecare zi în care lucrezi (și sâmbăta/duminica dacă mergi)."
       ]
+    },
+    "yourSchedule": "Programul tău",
+    "editProps": {
+      "title": "Editează proprietăți",
+      "subtitle": "Progres construcție, date, galerie și altele"
     }
   },
   "vacaciones": {

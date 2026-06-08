@@ -279,7 +279,7 @@ const EmpleadosDashboard: React.FC = () => {
             <div className="mb-3 flex items-center gap-2 text-[11px] text-primary/50">
               <span className="material-symbols-outlined text-[14px]">schedule</span>
               <span>
-                Tu horario: <b className="text-primary/70">{(employee.work_start_time || '').slice(0,5)}{employee.work_end_time ? `–${(employee.work_end_time||'').slice(0,5)}` : ''}</b>
+                {t('empleados.yourSchedule', 'Tu horario')}: <b className="text-primary/70">{(employee.work_start_time || '').slice(0,5)}{employee.work_end_time ? `–${(employee.work_end_time||'').slice(0,5)}` : ''}</b>
                 {employee.work_days && employee.work_days.length > 0 && (
                   <> · {employee.work_days.map((d) => ['','L','M','X','J','V','S','D'][d]).join(' ')}</>
                 )}
@@ -321,14 +321,14 @@ const EmpleadosDashboard: React.FC = () => {
               onClick={() => startCapture('break_start')}
               className="bg-amber-500 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-600 transition flex items-center justify-center gap-2"
             >
-              <span className="text-base">🍽️</span>
+              <span className="material-symbols-outlined text-[20px]">lunch_dining</span>
               {t('empleados.buttons.breakStart')}
             </button>
             <button
               onClick={() => startCapture('break_end')}
               className="bg-amber-600 text-white rounded-2xl py-4 font-bold uppercase tracking-widest text-xs shadow hover:bg-amber-700 transition flex items-center justify-center gap-2"
             >
-              <span className="text-base">▶️</span>
+              <span className="material-symbols-outlined text-[20px]">play_arrow</span>
               {t('empleados.buttons.breakEnd')}
             </button>
           </div>
@@ -379,8 +379,8 @@ const EmpleadosDashboard: React.FC = () => {
               >
                 <span className="material-symbols-outlined text-primary">home_work</span>
                 <span className="flex-1">
-                  <span className="block font-bold text-primary text-sm">Editar propiedades</span>
-                  <span className="block text-xs text-primary/50">Avance de obra, datos, galería y más</span>
+                  <span className="block font-bold text-primary text-sm">{t('empleados.editProps.title', 'Editar propiedades')}</span>
+                  <span className="block text-xs text-primary/50">{t('empleados.editProps.subtitle', 'Avance de obra, datos, galería y más')}</span>
                 </span>
                 <span className="material-symbols-outlined text-primary/30">chevron_right</span>
               </button>

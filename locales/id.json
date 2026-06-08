@@ -353,5 +353,12 @@
     "btnGoogle": "Lanjutkan dengan Google",
     "sentTitle": "📧 Email terkirim",
     "sentBody": "Cek <strong>{{email}}</strong> untuk masuk."
+  },
+  "empleados": {
+    "yourSchedule": "Jadwalmu",
+    "editProps": {
+      "title": "Edit properti",
+      "subtitle": "Progres konstruksi, data, galeri & lainnya"
+    }
   }
 }

@@ -1064,6 +1064,11 @@
         "Es de 2 segundos: pulsas, foto y ya. La hora y la ubicación se guardan automáticamente.",
         "Horario habitual 10:00–18:00. Hazlo cada día que trabajes (también sábados/domingos si vas)."
       ]
+    },
+    "yourSchedule": "Tu horario",
+    "editProps": {
+      "title": "Editar propiedades",
+      "subtitle": "Avance de obra, datos, galería y más"
     }
   },
   "vacaciones": {
