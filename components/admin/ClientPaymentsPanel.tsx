@@ -47,6 +47,14 @@ const emptyPayment = (cur: string): Partial<Payment> => ({
   received: false, payment_method: '', reference: '', notes: '', position: 0,
 });
 const todayISO = () => new Date().toISOString().slice(0, 10);
+
+// Prefijo del nº de kwitansi a partir del nombre de proyecto: iniciales de las
+// palabras antes de "(" o "-". "Deseo Studio (Tipo B) - 1bd" → "DS".
+const projectPrefix = (name: string) => {
+  const base = (name || '').split(/[(\-]/)[0].trim();
+  const ini = base.split(/\s+/).filter(Boolean).map((w) => w[0]).join('').toUpperCase();
+  return ini.slice(0, 4) || 'US';
+};
 const fmt = (n: number, c: string) => {
   try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
   catch { return `${c} ${n}`; }
@@ -59,7 +67,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const [saving, setSaving] = useState(false);
   const [kw, setKw] = useState<null | {
     cp: string; payId?: string; received_from: string; amount: number; currency: string;
-    for_payment: string; place: string; date: string; sending: boolean;
+    for_payment: string; place: string; date: string; sending: boolean; displayNo: string;
   }>(null);
 
   const load = useCallback(async () => {
@@ -97,6 +105,10 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   };
 
   const openKwitansi = (u: Unit, p?: Payment) => {
+    // Nº por proyecto y ordenado por fecha: la posición del pago dentro de la
+    // unidad (ya viene ordenada por position/fecha) → reserva = 01. Ej: "DS-01".
+    const idx = p ? Math.max(0, u.payments.findIndex((x) => x.id === p.id)) : u.payments.length;
+    const displayNo = `${projectPrefix(u.project_name)}-${String(idx + 1).padStart(2, '0')}`;
     setKw({
       cp: u.client_project_id,
       payId: p?.id,
@@ -107,6 +119,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       place: 'Bali',
       date: p?.paid_at ? p.paid_at.slice(0, 10) : todayISO(),
       sending: false,
+      displayNo,
     });
   };
 
@@ -114,38 +127,49 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     no, receivedFrom: kw.received_from, amount: kw.amount, currency: kw.currency,
     forPayment: kw.for_payment, place: kw.place, date: kw.date,
     logoUrl: `${window.location.origin}/img/Logos/logo-06.png`,
+    signatureUrl: `${window.location.origin}/img/kwitansi/firma.png`,
+    stampUrl: `${window.location.origin}/img/kwitansi/sello.png`,
   });
 
+  // Imprime/descarga SIN abrir otra pestaña (iframe oculto).
   const downloadKwitansi = () => {
     if (!kw) return;
-    const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.write(`<html><head><title>Kwitansi</title></head><body style="margin:0;padding:24px;background:#fff">${kwitansiHtml('—')}</body></html>`);
-    w.document.close(); w.focus(); w.print();
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    document.body.appendChild(iframe);
+    const doc = iframe.contentWindow?.document;
+    if (!doc) { document.body.removeChild(iframe); return; }
+    doc.open();
+    doc.write(`<html><head><title>Kwitansi ${kw.displayNo}</title></head><body style="margin:0;padding:24px;background:#fff">${kwitansiHtml(kw.displayNo)}</body></html>`);
+    doc.close();
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      setTimeout(() => { try { document.body.removeChild(iframe); } catch { /* ignore */ } }, 1500);
+    }, 300);
   };
 
   const createAndSend = async () => {
     if (!kw) return;
     if (!clientEmail) { alert('El cliente no tiene email. Añádelo antes de enviar.'); return; }
     setKw({ ...kw, sending: true });
-    // 1) Create the kwitansi record (assigns the sequential No.)
-    const html0 = kwitansiHtml('…') || '';
+    // El nº visible es el amistoso por proyecto (DS-01); no_seq queda interno.
+    const html = kwitansiHtml(kw.displayNo) || '';
     const { data: created, error: cErr } = await supabase.rpc('admin_create_kwitansi', {
       p_user_id: adminUserId,
       p_kwitansi: {
         client_project_id: kw.cp, client_payment_id: kw.payId ?? '',
         received_from: kw.received_from, amount: String(kw.amount), currency: kw.currency,
-        for_payment: kw.for_payment, place: kw.place, kwitansi_date: kw.date, html: html0,
+        for_payment: kw.for_payment, place: kw.place, kwitansi_date: kw.date, html,
       },
     });
     if (cErr || !created?.success) { setKw({ ...kw, sending: false }); alert('No se pudo crear el kwitansi.'); return; }
-    const no = created.no_seq;
-    const html = kwitansiHtml(no) || html0;
+    const no = kw.displayNo;
     // 2) Send it from hello@unrealstudiobali.com via the edge function
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
       body: {
         adminUserId, to: clientEmail, kwitansiId: created.id,
-        subject: `Kwitansi #${no} · Unreal Studio`,
+        subject: `Kwitansi ${no} · Unreal Studio`,
         html: `<p style="font-family:Manrope,Arial,sans-serif;color:#3F2305">Hola ${clientName}, adjuntamos tu recibo de pago. ¡Gracias!</p>${html}`,
       },
     });
@@ -280,7 +304,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               <input type="date" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw({ ...kw, date: e.target.value })} />
             </div>
             <div className="text-[11px] text-gray-400">Importe en cifras: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
-            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml('—') || '' }} />
+            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo) || '' }} />
             <div className="flex gap-2">
               <button onClick={downloadKwitansi} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-primary">Descargar / Imprimir</button>
               <button disabled={kw.sending} onClick={createAndSend} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">

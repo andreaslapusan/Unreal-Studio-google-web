@@ -19,6 +19,8 @@ export interface KwitansiData {
   place?: string;                 // default Bali
   date?: string;                  // ISO yyyy-mm-dd; default today (caller passes)
   logoUrl?: string;               // absolute URL to the Unreal logo for emails
+  signatureUrl?: string;          // absolute URL to Andreas's signature PNG (optional)
+  stampUrl?: string;              // absolute URL to the company stamp/seal PNG (optional)
 }
 
 const SATUAN = [
@@ -56,7 +58,8 @@ const SYMBOL: Record<string, string> = { IDR: 'Rp', EUR: '€', USD: '$' };
 
 /** Figure with thousands separators, e.g. "Rp 54.000.000,-". */
 export function formatFigure(amount: number, currency = 'IDR'): string {
-  const sep = currency === 'IDR' ? new Intl.NumberFormat('id-ID') : new Intl.NumberFormat('es-ES');
+  const loc = currency === 'IDR' ? 'id-ID' : 'es-ES';
+  const sep = new Intl.NumberFormat(loc, { useGrouping: 'always' } as any);
   return `${SYMBOL[currency] ?? currency} ${sep.format(Math.round(amount))},-`;
 }
 
@@ -116,7 +119,10 @@ export function renderKwitansiHtml(d: KwitansiData): string {
       </td>
       <td style="text-align:center;vertical-align:bottom">
         <div style="font-size:13px;color:rgba(63,35,5,.7)">${esc(place)}${dateStr ? ', ' + esc(dateStr) : ''}</div>
-        <div style="height:54px"></div>
+        <div style="position:relative;height:64px">
+          ${d.stampUrl ? `<img src="${esc(d.stampUrl)}" alt="" style="position:absolute;left:50%;top:0;transform:translateX(-50%);height:74px;opacity:.85" />` : ''}
+          ${d.signatureUrl ? `<img src="${esc(d.signatureUrl)}" alt="" style="position:absolute;left:50%;top:8px;transform:translateX(-50%);height:54px" />` : ''}
+        </div>
         <div style="border-top:1px solid rgba(63,35,5,.4);padding-top:6px;font-size:12px;font-weight:700">Unreal Studio</div>
       </td>
     </tr></table>
