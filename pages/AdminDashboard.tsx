@@ -1301,6 +1301,45 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar marca y empresa</button>
                <p className="mt-3 text-[11px] text-gray-400">La firma se configura en cada administrador (Administradores → editar).</p>
              </div>
+
+             {/* Datos de empresa — extras (redes, sedes, horario, reservas, SEO, bienvenida) */}
+             <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+               <h3 className="text-xl font-serif text-primary mb-2">Datos de empresa</h3>
+               <p className="text-xs text-gray-400 mb-6">Información para la web, el footer y las comunicaciones. Se guarda como fuente única.</p>
+               <div className="grid sm:grid-cols-2 gap-4">
+                 {[
+                   { k: 'address', label: 'Dirección / sede', ph: 'Jl. Pratu Rai Madra No.15, Cemagi, Bali' },
+                   { k: 'hours', label: 'Horario de atención', ph: 'L-V 9:00-18:00 (WITA)' },
+                   { k: 'booking_url', label: 'Enlace de reservas (Calendly)', ph: 'https://calendly.com/...' },
+                   { k: 'instagram', label: 'Instagram (URL)', ph: 'https://instagram.com/...' },
+                   { k: 'whatsapp', label: 'WhatsApp (número o link)', ph: '+62 ...' },
+                   { k: 'facebook', label: 'Facebook (URL)', ph: 'https://facebook.com/...' },
+                   { k: 'tiktok', label: 'TikTok (URL)', ph: 'https://tiktok.com/@...' },
+                   { k: 'youtube', label: 'YouTube (URL)', ph: 'https://youtube.com/@...' },
+                   { k: 'seo_title', label: 'SEO — título de la web', ph: 'Unreal Studio Bali | ...' },
+                   { k: 'seo_description', label: 'SEO — descripción', ph: 'Inversión inmobiliaria...' },
+                 ].map(({ k, label, ph }) => (
+                   <div key={k}>
+                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{label}</label>
+                     <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-medium text-primary text-sm" placeholder={ph}
+                       value={(config as any).brand?.[k] || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), [k]: e.target.value } } as any)} />
+                   </div>
+                 ))}
+               </div>
+               <div className="mt-4">
+                 <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Mensaje de bienvenida del portal cliente</label>
+                 <textarea className="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm h-20 resize-none text-primary"
+                   value={(config as any).brand?.client_welcome || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), client_welcome: e.target.value } } as any)} />
+               </div>
+               <div className="mt-4">
+                 <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Moneda por defecto</label>
+                 <select className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm"
+                   value={(config as any).brand?.default_currency || 'EUR'} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), default_currency: e.target.value } } as any)}>
+                   <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
+                 </select>
+               </div>
+               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar datos de empresa</button>
+             </div>
            </div>
         )}
 
