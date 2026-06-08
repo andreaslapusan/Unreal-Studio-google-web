@@ -34,7 +34,9 @@
     "faq": "FAQ",
     "contact": "Contacto",
     "agencies": "Agencias",
-    "investors": "Inversores"
+    "investors": "Inversores",
+    "scheduleCall": "Agendar llamada",
+    "scheduleShort": "Agendar"
   },
   "home": {
     "title": "Unreal Studio Madrid | Inversiones Inmobiliarias en Bali",
@@ -210,7 +212,18 @@
     "no": "No",
     "similarTitle": "Activos Similares",
     "ctaWhatsapp": "Hablar por WhatsApp",
-    "noAccess": "¿No tienes acceso? Contacta con tu asesor de Unreal Studio."
+    "noAccess": "¿No tienes acceso? Contacta con tu asesor de Unreal Studio.",
+    "kpiInvestorPrice": "Precio Inversor",
+    "kpiMarketPrice": "Precio Mercado",
+    "labelDistanceBeach": "Distancia Playa",
+    "labelYearsContract": "Contrato Leasehold",
+    "labelAvailableUnits": "Unidades Disponibles",
+    "labelConstructionProgress": "Progreso de Obra",
+    "yearsExtValue": "{{base}} años + {{ext}} ext.",
+    "unitsValue": "{{count}} Unidades",
+    "completedValue": "{{pct}}% Completado",
+    "downloadBrochure": "Descargar Brochure",
+    "constructionProgressTitle": "Avance de Obra"
   },
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",

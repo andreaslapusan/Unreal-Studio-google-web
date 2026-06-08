@@ -151,11 +151,10 @@ const Navbar: React.FC = () => {
           >
             {/* Versión Móvil: Texto apilado y más pequeño */}
             <div className="flex flex-col items-center leading-[0.9] md:hidden">
-              <span className="text-[9px]">Agendar</span>
-              <span className="text-[9px]">Llamada</span>
+              <span className="text-[9px]">{t('nav.scheduleShort')}</span>
             </div>
             {/* Versión Desktop: Texto normal (Visible desde md en adelante) */}
-            <span className="hidden md:inline text-[10px] md:text-xs">Agendar llamada</span>
+            <span className="hidden md:inline text-[10px] md:text-xs">{t('nav.scheduleCall')}</span>
           </a>
 
           {/* Hamburger Menu - Visible on Mobile AND Tablet (Hidden on LG+) */}
@@ -220,7 +219,7 @@ const Navbar: React.FC = () => {
               onClick={() => setIsMenuOpen(false)}
               className="bg-primary text-white px-8 py-3.5 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl flex items-center gap-2.5 mt-6 whitespace-nowrap w-full justify-center max-w-xs"
             >
-              <span>Agendar llamada</span>
+              <span>{t('nav.scheduleCall')}</span>
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </a>
           </div>
@@ -244,7 +243,7 @@ const Navbar: React.FC = () => {
           rel="noopener noreferrer"
           className="bg-primary text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest shadow-2xl flex items-center gap-3 border border-almond/20 hover:scale-105 transition-transform whitespace-nowrap"
         >
-          <span>Agendar Llamada</span>
+          <span>{t('nav.scheduleCall')}</span>
           <span className="material-symbols-outlined text-sm">calendar_month</span>
         </a>
       </div>
