@@ -1679,6 +1679,58 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
       )}
       
+{/* Modal Editar/Crear Artículo de Blog */}
+{isEditingBlog && (
+  <div className="fixed inset-0 z-[150] flex items-start justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingBlog(false); }}>
+    <div className="bg-white w-full max-w-3xl rounded-3xl p-6 md:p-10 shadow-2xl my-8">
+      <h2 className="text-2xl font-serif text-primary mb-6">{currentBlog.id && !String(currentBlog.id).startsWith('blog-') ? 'Editar artículo' : 'Nuevo artículo'}</h2>
+      <form onSubmit={handleSaveBlog} className="space-y-5">
+        <div className="grid grid-cols-2 gap-5">
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Título</label><input required value={currentBlog.title || ''} onChange={(e) => setCurrentBlog({...currentBlog, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Etiqueta</label><input value={currentBlog.tag || ''} onChange={(e) => setCurrentBlog({...currentBlog, tag: e.target.value})} placeholder="MERCADO" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        </div>
+        <div className="grid grid-cols-2 gap-5">
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fecha de publicación</label><input type="date" value={currentBlog.published_date || ''} onChange={(e) => setCurrentBlog({...currentBlog, published_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Imagen (URL o ruta)</label><input value={currentBlog.image || ''} onChange={(e) => setCurrentBlog({...currentBlog, image: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        </div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Descripción / extracto</label><textarea value={currentBlog.description || ''} onChange={(e) => setCurrentBlog({...currentBlog, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium resize-none h-20" /></div>
+        <div>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Contenido (HTML)</label>
+          <div className="flex gap-2 mb-2">
+            <button type="button" onClick={() => wrapSelection('b')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-black hover:bg-gray-200">B</button>
+            <button type="button" onClick={() => wrapSelection('p')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-bold hover:bg-gray-200">P</button>
+            <button type="button" onClick={() => wrapSelection('h2')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-bold hover:bg-gray-200">H2</button>
+          </div>
+          <textarea ref={blogContentRef} value={currentBlog.content || ''} onChange={(e) => setCurrentBlog({...currentBlog, content: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-mono text-sm resize-none h-48" />
+        </div>
+        <div className="flex gap-4 pt-2">
+          <button type="button" onClick={() => setIsEditingBlog(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">Cancelar</button>
+          <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? 'Guardando…' : 'Guardar'}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+{/* Modal Editar/Crear Administrador */}
+{isEditingUser && (
+  <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingUser(false); }}>
+    <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
+      <h2 className="text-2xl font-serif text-primary mb-6">{currentUser.id && !String(currentUser.id).startsWith('user-') ? 'Editar administrador' : 'Nuevo administrador'}</h2>
+      <form onSubmit={handleSaveUser} className="space-y-5">
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Nombre</label><input required value={currentUser.name || ''} onChange={(e) => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Usuario (email)</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Contraseña {currentUser.id && !String(currentUser.id).startsWith('user-') ? '(vacío = no cambiar)' : ''}</label><input type="text" required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Rol</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
+        <div className="flex gap-4 pt-2">
+          <button type="button" onClick={() => setIsEditingUser(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">Cancelar</button>
+          <button type="submit" className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
 {/* Modal Editar/Crear Cliente */}
 {isEditingClient && (
   <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
