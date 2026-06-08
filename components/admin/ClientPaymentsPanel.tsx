@@ -41,6 +41,7 @@ interface Props {
   adminUserId: string;
   brand?: { logo?: string; stamp?: string; commercial_email?: string; phone?: string };
   adminSignature?: string;
+  clientLang?: string;
   onClose: () => void;
 }
 
@@ -65,7 +66,14 @@ const fmt = (n: number, c: string) => {
 const grp = (n: number) => (n ? n.toLocaleString('es-ES', { useGrouping: 'always' } as any) : '');
 const parseNum = (s: string) => Number(String(s).replace(/\D/g, '')) || 0;
 
-const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, adminSignature, onClose }) => {
+const KW_GREETING: Record<string, (n: string) => string> = {
+  es: (n) => `Hola ${n}, adjuntamos tu recibo de pago (kwitansi). ¡Gracias!`,
+  en: (n) => `Hi ${n}, please find your payment receipt (kwitansi) attached. Thank you!`,
+  ro: (n) => `Bună ${n}, atașăm chitanța ta de plată (kwitansi). Mulțumim!`,
+  id: (n) => `Halo ${n}, terlampir kwitansi pembayaran Anda. Terima kasih!`,
+};
+
+const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, adminSignature, clientLang, onClose }) => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<{ cp: string; cur: string; pay: Partial<Payment> } | null>(null);
@@ -180,7 +188,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       body: {
         adminUserId, to: clientEmail, kwitansiId: created.id,
         subject: `Kwitansi ${no} · Unreal Studio`,
-        html: `<p style="font-family:Manrope,Arial,sans-serif;color:#3F2305">Hola ${clientName}, adjuntamos tu recibo de pago. ¡Gracias!</p>${html}`,
+        html: `<p style="font-family:Manrope,Arial,sans-serif;color:#3F2305;font-size:14px;margin:0 0 14px">${(KW_GREETING[clientLang || 'es'] || KW_GREETING.es)(clientName)}</p>${html}`,
       },
     });
     setKw({ ...kw, sending: false });

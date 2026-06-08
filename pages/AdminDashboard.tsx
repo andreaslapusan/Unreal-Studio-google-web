@@ -2056,6 +2056,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     adminUserId={getAdminUserId() as string}
     brand={(config as any).brand || {}}
     adminSignature={mySignature}
+    clientLang={(paymentsClient as any).preferred_language || 'es'}
     onClose={() => setPaymentsClient(null)}
   />
 )}

@@ -395,6 +395,9 @@ const ClientDashboard: React.FC = () => {
         return;
       }
       setClientData(data);
+      // Mostrar el portal en la divisa preferida del cliente (si la tiene).
+      const pref = data?.client?.preferred_currency;
+      if (pref && ['EUR', 'USD', 'IDR'].includes(pref)) setCurrency(pref);
 
       // Fetch all projects to ensure we have all fields (like URLs)
       const { data: projectsData } = await supabase.from('projects').select('*');
