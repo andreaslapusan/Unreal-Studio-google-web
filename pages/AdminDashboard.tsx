@@ -10,6 +10,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
 import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
+import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 
 type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees';
 const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees'];
@@ -60,6 +61,7 @@ const AMENITIES_LIST = [
   const [editingAssignment, setEditingAssignment] = useState<{ clientId: string, clientName: string, assignment: any } | null>(null);
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
+  const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
 
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
   
@@ -1090,6 +1092,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
             <div className="flex gap-2 shrink-0 ml-4">
               <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title="Editar datos"><span className="material-symbols-outlined text-sm">edit</span></button>
+              <button onClick={() => setPaymentsClient(client)} className="p-2.5 bg-almond text-primary rounded-xl hover:brightness-95 transition" title="Pagos y kwitansi"><span className="material-symbols-outlined text-sm">payments</span></button>
               <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title="Enviar WhatsApp"><span className="material-symbols-outlined text-sm">chat</span></button>
               <button onClick={() => handleDeleteClient(client.id)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title="Eliminar cliente"><span className="material-symbols-outlined text-sm">delete</span></button>
             </div>
@@ -1756,6 +1759,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 )}
 
 {/* Modal Plantillas WhatsApp */}
+{paymentsClient && getAdminUserId() && (
+  <ClientPaymentsPanel
+    clientId={paymentsClient.id}
+    clientName={paymentsClient.name}
+    clientEmail={paymentsClient.email || null}
+    adminUserId={getAdminUserId() as string}
+    onClose={() => setPaymentsClient(null)}
+  />
+)}
+
 {whatsappClient && (
   <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setWhatsappClient(null); }}>
     <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[85vh] overflow-y-auto">
