@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-route
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
+import LocaleSeo from './components/LocaleSeo';
+import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
 // Home is eagerly imported because it's the landing route — lazy() would
 // add a needless extra round-trip on first paint. Everything else is split:
 // each page becomes its own JS chunk, only fetched when the user navigates
@@ -208,12 +210,33 @@ const App: React.FC = () => {
     } as any).format(Number(amount) || 0);
   };
 
+  // Páginas de marketing públicas que se sirven con prefijo de idioma
+  // (/es/proyectos, /en/proyectos…). Las versiones sin prefijo redirigen al
+  // idioma actual. Los portales (admin/cliente/empleados/agencias-login) NO
+  // llevan prefijo y se definen aparte más abajo.
+  const PUBLIC: { path: string; element: React.ReactNode }[] = [
+    { path: '', element: <Home /> },
+    { path: 'proyectos', element: <Projects /> },
+    { path: 'proyecto/:slug', element: <ProjectDetail /> },
+    { path: 'blog', element: <Blog /> },
+    { path: 'blog/:slug', element: <BlogDetail /> },
+    { path: 'faq', element: <Faq /> },
+    { path: 'preguntas-frecuentes', element: <Faq /> },
+    { path: 'agendar', element: <Booking /> },
+    { path: 'booking', element: <Booking /> },
+    { path: 'contacto', element: <Contact /> },
+    { path: 'privacidad', element: <Privacy /> },
+    { path: 'terminos', element: <Terms /> },
+    { path: 'agencias', element: <AgenciasPartnership /> },
+  ];
+
   return (
     <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice, formatMoney }}>
       <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
         <ManifestSwitcher />
+        <LocaleSeo />
         <AttributionTracker />
         <Layout>
           <Suspense
@@ -224,20 +247,21 @@ const App: React.FC = () => {
             }
           >
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/proyectos" element={<Projects />} />
-            <Route path="/proyecto/:slug" element={<ProjectDetail />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogDetail />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/preguntas-frecuentes" element={<Faq />} />
-            <Route path="/agendar" element={<Booking />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/contacto" element={<Contact />} />
-            <Route path="/privacidad" element={<Privacy />} />
-            <Route path="/terminos" element={<Terms />} />
+            {/* Marketing público con prefijo de idioma: /es/…, /en/…, /ro/…, /id/… */}
+            {SUPPORTED_LANGS.map((l) =>
+              PUBLIC.map((r) => (
+                <Route
+                  key={`${l}/${r.path}`}
+                  path={`/${l}${r.path ? '/' + r.path : ''}`}
+                  element={<LangSetter lang={l}>{r.element}</LangSetter>}
+                />
+              ))
+            )}
+            {/* URLs sin prefijo (enlaces antiguos / <Link> internos) → al idioma actual. */}
+            {PUBLIC.map((r) => (
+              <Route key={`bare/${r.path}`} path={`/${r.path}`} element={<BareRedirect />} />
+            ))}
             <Route path="/lofts-globalitae" element={<LandingGlobalitae />} />
-            <Route path="/agencias" element={<AgenciasPartnership />} />
             <Route path="/agencias/login" element={<AgenciasLogin />} />
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />

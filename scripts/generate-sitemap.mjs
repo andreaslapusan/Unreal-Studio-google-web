@@ -28,10 +28,12 @@ const ANON_KEY =
 
 const sb = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
 
+// Idiomas con URL propia (prefijo en la ruta). 'es' es el x-default.
+const LANGS = ["es", "en", "ro", "id"];
+
 const STATIC_ROUTES = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/proyectos", priority: "0.9", changefreq: "weekly" },
-  { path: "/inversores", priority: "0.85", changefreq: "weekly" },
   { path: "/agencias", priority: "0.8", changefreq: "weekly" },
   { path: "/blog", priority: "0.7", changefreq: "weekly" },
   { path: "/faq", priority: "0.7", changefreq: "weekly" },
@@ -61,13 +63,24 @@ function seoSlug(project) {
   return `${project.slug}-${parts.join("-")}`;
 }
 
+// Cada ruta lógica se expande a una URL por idioma (/es/…, /en/…, /ro/…, /id/…),
+// y cada una declara sus alternativas hreflang (incl. x-default = es). Así Google
+// indexa la versión correcta por idioma sin contenido duplicado.
 function urlEntry({ path, priority, changefreq, lastmod }) {
+  const tail = path === "/" ? "" : path; // "/" → raíz del idioma (/es, no /es/)
+  const alts = [
+    ...LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${ORIGIN}/${l}${tail}"/>`),
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${ORIGIN}/es${tail}"/>`,
+  ].join("\n");
   const lm = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : "";
-  return `  <url>
-    <loc>${ORIGIN}${path}</loc>${lm}
+  return LANGS.map(
+    (l) => `  <url>
+    <loc>${ORIGIN}/${l}${tail}</loc>${lm}
+${alts}
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-  </url>`;
+  </url>`
+  ).join("\n");
 }
 
 async function main() {
@@ -124,7 +137,7 @@ async function main() {
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${entries.join("\n")}
 </urlset>
 `;
