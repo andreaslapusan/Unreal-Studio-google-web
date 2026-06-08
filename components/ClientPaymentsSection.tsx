@@ -27,6 +27,11 @@ const fmtDate = (s: string | null) => {
 const ClientPaymentsSection: React.FC<{ clientId: string }> = ({ clientId }) => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
+  // "Ya he pagado": id del pago que se está avisando, nota opcional y avisados.
+  const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [claimNote, setClaimNote] = useState('');
+  const [claimedIds, setClaimedIds] = useState<Set<string>>(new Set());
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (!clientId) return;
@@ -37,6 +42,16 @@ const ClientPaymentsSection: React.FC<{ clientId: string }> = ({ clientId }) => 
       } finally { setLoading(false); }
     })();
   }, [clientId]);
+
+  const submitClaim = async (paymentId: string) => {
+    setSending(true);
+    try {
+      await supabase.rpc('client_claim_payment', { p_client_id: clientId, p_payment_id: paymentId, p_note: claimNote.trim() || null });
+      setClaimedIds((prev) => new Set(prev).add(paymentId));
+      setClaimingId(null);
+      setClaimNote('');
+    } finally { setSending(false); }
+  };
 
   if (loading || units.length === 0) return null;
 
@@ -62,21 +77,54 @@ const ClientPaymentsSection: React.FC<{ clientId: string }> = ({ clientId }) => 
               <ul className="space-y-2">
                 {u.payments.map((p) => {
                   const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
+                  const claimed = claimedIds.has(p.id);
                   return (
-                    <li key={p.id} className={`flex items-center justify-between gap-3 rounded-lg p-3 text-sm ${p.received ? 'bg-green-50 border border-green-200' : overdue ? 'bg-red-50 border border-red-200' : 'bg-almond/40 border border-primary/10'}`}>
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-xl">{p.received ? '✅' : overdue ? '⚠️' : '⏳'}</span>
-                        <div className="min-w-0">
-                          <div className="font-medium truncate text-primary">{p.label}</div>
-                          <div className="text-xs text-primary/60">
-                            {p.received && p.paid_at ? `Recibido el ${fmtDate(p.paid_at)}` : p.due_date ? `Fecha límite: ${fmtDate(p.due_date)}` : ''}
+                    <li key={p.id} className={`rounded-lg p-3 text-sm ${p.received ? 'bg-green-50 border border-green-200' : overdue ? 'bg-red-50 border border-red-200' : 'bg-almond/40 border border-primary/10'}`}>
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="text-xl">{p.received ? '✅' : overdue ? '⚠️' : '⏳'}</span>
+                          <div className="min-w-0">
+                            <div className="font-medium truncate text-primary">{p.label}</div>
+                            <div className="text-xs text-primary/60">
+                              {p.received && p.paid_at ? `Recibido el ${fmtDate(p.paid_at)}` : p.due_date ? `Fecha límite: ${fmtDate(p.due_date)}` : ''}
+                            </div>
                           </div>
                         </div>
+                        <div className="text-right shrink-0">
+                          <div className="font-bold text-primary">{fmt(Number(p.amount), p.currency)}</div>
+                          <div className="text-xs text-primary/60">{p.received ? 'Recibido' : overdue ? 'Vencido' : 'Pendiente'}</div>
+                        </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <div className="font-bold text-primary">{fmt(Number(p.amount), p.currency)}</div>
-                        <div className="text-xs text-primary/60">{p.received ? 'Recibido' : overdue ? 'Vencido' : 'Pendiente'}</div>
-                      </div>
+                      {/* Botón "Ya he pagado" para pagos aún no recibidos */}
+                      {!p.received && (
+                        <div className="mt-2 pl-9">
+                          {claimed ? (
+                            <span className="text-xs font-bold text-green-700">✓ Aviso enviado. Lo verificaremos y te confirmaremos.</span>
+                          ) : claimingId === p.id ? (
+                            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                              <input
+                                type="text"
+                                value={claimNote}
+                                onChange={(e) => setClaimNote(e.target.value)}
+                                placeholder="Referencia / nota (opcional)"
+                                className="flex-1 rounded-lg border border-primary/15 px-3 py-1.5 text-xs bg-white focus:outline-none focus:border-primary"
+                              />
+                              <div className="flex gap-2">
+                                <button onClick={() => void submitClaim(p.id)} disabled={sending}
+                                  className="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-lg disabled:opacity-50">
+                                  {sending ? 'Enviando…' : 'Confirmar aviso'}
+                                </button>
+                                <button onClick={() => { setClaimingId(null); setClaimNote(''); }} className="text-xs text-primary/50 px-2">Cancelar</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <button onClick={() => { setClaimingId(p.id); setClaimNote(''); }}
+                              className="text-xs font-bold text-primary border border-primary/20 rounded-full px-3 py-1.5 hover:bg-primary hover:text-white transition">
+                              Ya he pagado
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </li>
                   );
                 })}

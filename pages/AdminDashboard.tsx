@@ -12,6 +12,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
+import { SOCIAL_NETWORKS } from '../lib/socials';
 
 type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications';
 const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications'];
@@ -988,8 +989,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       <header className="bg-white border-b border-gray-200 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center gap-2">
         <div className="flex items-center flex-shrink-0">
-          <Link to="/">
-            <img src={LOGO_URL} alt="Unreal Studio" className="h-8 md:h-10 w-auto object-contain" />
+          <Link to="/" className="font-serif text-primary text-lg md:text-2xl tracking-tight">
+            UNREAL <span className="opacity-50">Studio</span>
           </Link>
         </div>
         <div className="flex items-center gap-2 md:gap-3 flex-wrap justify-end">
@@ -1320,28 +1321,41 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
                  <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Direcciones / oficinas</label>
-                   {(((config as any).brand?.addresses) || []).map((addr: string, i: number) => (
-                     <div key={i} className="flex gap-2 mb-2">
-                       <input className="flex-1 px-4 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={addr} placeholder="Dirección de la oficina"
-                         onChange={(e) => { const arr = [...(((config as any).brand?.addresses) || [])]; arr[i] = e.target.value; setBrandKey('addresses', arr); }} />
-                       <button type="button" onClick={() => setBrandKey('addresses', (((config as any).brand?.addresses) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
-                     </div>
-                   ))}
-                   <button type="button" onClick={() => setBrandKey('addresses', [...(((config as any).brand?.addresses) || []), ''])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir dirección</button>
+                   <p className="text-[10px] text-gray-400 mb-2">El enlace de Google Maps hace que la dirección sea clicable y abra la ubicación exacta.</p>
+                   {(((config as any).brand?.addresses) || []).map((addr: any, i: number) => {
+                     const text = typeof addr === 'string' ? addr : (addr?.text || '');
+                     const maps = typeof addr === 'string' ? '' : (addr?.maps || '');
+                     const writeAddr = (patch: any) => { const arr = [...(((config as any).brand?.addresses) || [])]; arr[i] = { text, maps, ...patch }; setBrandKey('addresses', arr); };
+                     return (
+                       <div key={i} className="flex flex-col sm:flex-row gap-2 mb-3 bg-gray-50/60 p-2 rounded-xl">
+                         <div className="flex-1 flex flex-col gap-2">
+                           <input className="px-4 py-3 bg-white border rounded-xl text-sm text-primary" value={text} placeholder="Dirección de la oficina"
+                             onChange={(e) => writeAddr({ text: e.target.value })} />
+                           <input className="px-4 py-2 bg-white border rounded-xl text-xs text-primary/70" value={maps} placeholder="Enlace Google Maps (https://maps.app.goo.gl/...)"
+                             onChange={(e) => writeAddr({ maps: e.target.value })} />
+                         </div>
+                         <button type="button" onClick={() => setBrandKey('addresses', (((config as any).brand?.addresses) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
+                       </div>
+                     );
+                   })}
+                   <button type="button" onClick={() => setBrandKey('addresses', [...(((config as any).brand?.addresses) || []), { text: '', maps: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir dirección</button>
                  </div>
 
                  <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Redes sociales</label>
+                   <p className="text-[10px] text-gray-400 mb-2">Elige la red de la lista para que la web muestre su icono correcto.</p>
                    {(((config as any).brand?.socials) || []).map((s: any, i: number) => (
                      <div key={i} className="flex gap-2 mb-2">
-                       <input className="w-36 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.label || ''} placeholder="Instagram"
-                         onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], label: e.target.value }; setBrandKey('socials', arr); }} />
+                       <select className="w-40 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.network || s?.label || 'instagram'}
+                         onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], network: e.target.value, label: undefined }; setBrandKey('socials', arr); }}>
+                         {SOCIAL_NETWORKS.map((n) => <option key={n.key} value={n.key}>{n.label}</option>)}
+                       </select>
                        <input className="flex-1 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.url || ''} placeholder="https://..."
                          onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], url: e.target.value }; setBrandKey('socials', arr); }} />
                        <button type="button" onClick={() => setBrandKey('socials', (((config as any).brand?.socials) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
                      </div>
                    ))}
-                   <button type="button" onClick={() => setBrandKey('socials', [...(((config as any).brand?.socials) || []), { label: '', url: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir red social</button>
+                   <button type="button" onClick={() => setBrandKey('socials', [...(((config as any).brand?.socials) || []), { network: 'instagram', url: '' }])} className="text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir red social</button>
                  </div>
 
                  <div>
