@@ -15,6 +15,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import BrandLogo from './BrandLogo';
 
 interface PortalHeaderProps {
   /** Logout propio de la página (se conecta al botón "Cerrar sesión"). */
@@ -33,7 +34,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 flex-wrap">
         {/* IZQUIERDA: logo de marca como link a "/" */}
         <Link to="/" className="flex flex-col shrink-0 leading-tight">
-          <span className="font-serif text-2xl font-bold text-primary tracking-tighter">Unreal Studio</span>
+          <BrandLogo imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tighter" />
           {subtitle && (
             <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40 truncate max-w-[200px] md:max-w-none">
               {subtitle}

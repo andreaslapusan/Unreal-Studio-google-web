@@ -6,6 +6,7 @@ import { CURRENCIES } from '../constants';
 import { bookingLink } from '../lib/bookingLink';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useAuth } from '../lib/auth-context';
+import BrandLogo from './BrandLogo';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -88,7 +89,7 @@ const Navbar: React.FC = () => {
         }`}
       >
         <Link to="/" className="flex items-center shrink-0">
-          <span className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter">Unreal Studio</span>
+          <BrandLogo imgClassName="h-9 md:h-11 w-auto object-contain" textClassName="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter" />
         </Link>
 
         {/* Menu Links - Hidden on Mobile AND Tablet, Visible on Large Screens */}
@@ -173,7 +174,7 @@ const Navbar: React.FC = () => {
           {/* Cabecera del Menú Móvil - Alineada exactamente con el Navbar */}
           <div className="flex justify-between items-center px-4 py-4 md:px-12 border-b border-primary/5 shrink-0">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center shrink-0">
-                <span className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter">Unreal Studio</span>
+                <BrandLogo imgClassName="h-9 md:h-11 w-auto object-contain" textClassName="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter" />
               </Link>
               <button onClick={() => setIsMenuOpen(false)} className="text-primary p-2 flex items-center justify-center bg-primary/5 rounded-full">
                 <span className="material-symbols-outlined text-3xl">close</span>

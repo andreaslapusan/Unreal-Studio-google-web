@@ -13,6 +13,7 @@ import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { hasPermission } from "../lib/permissions";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import BrandLogo from "../components/BrandLogo";
 
 type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs" | "timelines" | "equipo";
 
@@ -275,7 +276,7 @@ export default function AdminPortalManager() {
       <div className="bg-white border-b border-primary/10" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-2">
-            <span className="font-serif text-primary text-base md:text-xl tracking-wide">UNREAL <span className="opacity-50">Studio</span></span>
+            <BrandLogo imgClassName="h-7 md:h-8 w-auto object-contain" textClassName="font-serif text-primary text-base md:text-xl tracking-wide" />
           </Link>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />

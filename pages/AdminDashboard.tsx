@@ -13,6 +13,7 @@ import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import { SOCIAL_NETWORKS } from '../lib/socials';
+import BrandLogo from '../components/BrandLogo';
 
 type AdminView = 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications';
 const ADMIN_VIEWS: AdminView[] = ['projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications'];
@@ -1007,9 +1008,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       <header className="bg-white border-b border-gray-200 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center gap-2">
         <div className="flex items-center flex-shrink-0">
-          <Link to="/" className="font-serif text-primary text-lg md:text-2xl tracking-tight">
-            UNREAL <span className="opacity-50">Studio</span>
-          </Link>
+          <Link to="/"><BrandLogo imgClassName="h-8 md:h-10 w-auto object-contain" textClassName="font-serif text-primary text-lg md:text-2xl tracking-tight" /></Link>
         </div>
         <div className="flex items-center gap-2 md:gap-3 flex-wrap justify-end">
           <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="hidden md:block bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
@@ -1402,7 +1401,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'employees' && (
           <div className="animate-in fade-in duration-500">
             <h2 className="text-2xl font-serif text-primary mb-2">Perfiles de Empleados</h2>
-            <p className="text-sm text-gray-400 mb-6">Cuentas del portal Team (acceso con email + contraseña).</p>
+            <p className="text-sm text-gray-400 mb-1">Cuentas del portal Team (acceso con email + contraseña).</p>
+            <p className="text-xs text-green-600 mb-6 flex items-center gap-1"><span className="material-symbols-outlined text-sm">check_circle</span> Permisos y horarios se guardan automáticamente al cambiarlos (no hace falta botón).</p>
 
             {/* Solicitudes de vacaciones pendientes de aprobar */}
             {pendingVacations.length > 0 && (

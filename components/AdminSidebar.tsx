@@ -17,6 +17,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import BrandLogo from './BrandLogo';
 
 interface NavItem {
   key: string;
@@ -53,7 +54,7 @@ const AdminSidebar: React.FC = () => {
   }, [currentView]);
 
   const sections: NavItem[] = [
-    { key: 'notifications', icon: '🔔', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
+    { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
     { key: 'clients', icon: 'person', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
@@ -104,7 +105,7 @@ const AdminSidebar: React.FC = () => {
   return (
     <aside className="hidden md:flex flex-col w-60 shrink-0 bg-[#1f2430] text-white h-screen sticky top-0 self-start overflow-y-auto">
       <Link to="/admin?view=projects" className="px-5 py-6 border-b border-white/10 block">
-        <span className="font-serif text-xl tracking-tight">Unreal Studio</span>
+        <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="font-serif text-xl tracking-tight text-white" />
         <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{t('admin.nav.panel', 'Panel de administración')}</span>
       </Link>
 

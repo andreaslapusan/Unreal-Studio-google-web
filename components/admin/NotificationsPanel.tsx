@@ -188,15 +188,17 @@ const NotificationsPanel: React.FC = () => {
                   </div>
                   {n.body && <p className="text-sm text-primary/70 mt-0.5">{n.body}</p>}
                   <p className="text-[11px] text-primary/40 mt-1">{fmtWhen(n.created_at)}</p>
+                </div>
+                <div className="flex flex-col items-end gap-2 shrink-0">
                   {m.actionTo && (
-                    <button onClick={() => act(n, m.actionTo!)} className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-primary border border-primary/20 rounded-full px-3 py-1.5 hover:bg-primary hover:text-white transition">
+                    <button onClick={() => act(n, m.actionTo!)} className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-primary rounded-full px-3 py-1.5 hover:bg-black transition whitespace-nowrap">
                       {m.actionLabel} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </button>
                   )}
+                  <button onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">
+                    {n.is_read ? 'No leído' : 'Leído'}
+                  </button>
                 </div>
-                <button onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition shrink-0">
-                  {n.is_read ? 'No leído' : 'Leído'}
-                </button>
               </li>
             );
           })}

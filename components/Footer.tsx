@@ -5,6 +5,7 @@ import { WHATSAPP_URL } from '../constants';
 import { APP_VERSION } from '../lib/version';
 import { supabase } from '../lib/supabase';
 import { SocialIcon, networkClass } from '../lib/socials';
+import BrandLogo from './BrandLogo';
 
 const DAY_LABEL: Record<string, string> = { mon: 'Lun', tue: 'Mar', wed: 'Mié', thu: 'Jue', fri: 'Vie', sat: 'Sáb', sun: 'Dom' };
 
@@ -38,7 +39,7 @@ const Footer: React.FC = () => {
         {/* Brand Column */}
         <div className="col-span-1">
           <Link to="/" className="block mb-6 md:mb-8">
-            <span className="font-serif text-2xl font-bold text-primary tracking-tight">Unreal Studio</span>
+            <BrandLogo imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tight" />
           </Link>
           <p className="text-primary/60 text-sm leading-relaxed max-w-xs font-medium">
             {t('footer.tagline')}

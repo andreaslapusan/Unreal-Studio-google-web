@@ -1,12 +1,13 @@
 /**
  * PortalShell — marco compartido para todos los portales (Cliente, Admin,
- * Agencias, Inversores, Team). Header idéntico (logo + selector de idioma) +
- * contenido centrado + footer común, para que todos los portales se vean igual.
+ * Agencias, Team). Header idéntico (logo + selector de idioma) + contenido
+ * centrado + footer común, para que todos los portales se vean igual.
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
 import Footer from './Footer';
+import BrandLogo from './BrandLogo';
 
 interface PortalShellProps {
   children: React.ReactNode;
@@ -22,11 +23,8 @@ const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => 
           dark ? 'border-white/10' : 'border-primary/5'
         }`}
       >
-        <Link
-          to="/"
-          className={`font-serif text-xl font-bold tracking-tight ${dark ? 'text-white' : 'text-primary'}`}
-        >
-          Unreal Studio
+        <Link to="/">
+          <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName={`font-serif text-xl font-bold tracking-tight ${dark ? 'text-white' : 'text-primary'}`} />
         </Link>
         <LanguageSwitcher />
       </header>
