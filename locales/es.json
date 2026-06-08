@@ -1203,8 +1203,8 @@
       "expiredOn": "venció {{date}}",
       "clientsNoProperty": "Clientes sin propiedad ({{count}})",
       "emptyFiltered": "No hay notificaciones con estos filtros.",
-      "markUnread": "No leído",
-      "markRead": "Leído",
+      "markUnread": "Marcar no leída",
+      "markRead": "Marcar leída",
       "typeVacation": "Vacaciones",
       "typeLateCheckin": "Fichaje tarde",
       "typeClientLogin": "Login cliente",
@@ -1212,7 +1212,10 @@
       "typeGeneric": "General",
       "resolveInEmployees": "Resolver en Empleados",
       "viewEmployees": "Ver empleados",
-      "goToClient": "Ir al cliente"
+      "goToClient": "Ir al cliente",
+      "goToCalendar": "Ir a calendario",
+      "viewAttendance": "Ver fichajes",
+      "delete": "Borrar"
     },
     "vac": {
       "confirmDelete": "¿Eliminar esta solicitud de vacaciones?",
@@ -1235,7 +1238,25 @@
       "typeVacation": "Vacaciones",
       "typeSickLeave": "Baja",
       "typePersonal": "Personal",
-      "note": "Nota"
+      "note": "Nota",
+      "daysTotal": "{{n}} días",
+      "weekTotal": "Total esta semana: {{n}} días",
+      "reason": "Motivo"
+    },
+    "att": {
+      "title": "Fichajes",
+      "subtitle": "Entradas, salidas y pausas del equipo. Filtra por empleado y fechas.",
+      "allEmployees": "Todos los empleados",
+      "from": "Desde",
+      "to": "Hasta",
+      "records": "{{n}} fichajes",
+      "loading": "Cargando…",
+      "empty": "No hay fichajes en este rango.",
+      "checkIn": "Entrada",
+      "checkOut": "Salida",
+      "breakStart": "Inicio pausa",
+      "breakEnd": "Fin pausa",
+      "location": "Ver ubicación"
     }
   },
   "footer": {

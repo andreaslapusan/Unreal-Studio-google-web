@@ -13,6 +13,7 @@ import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
+import AttendancePanel from '../components/admin/AttendancePanel';
 import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import DashboardOverview from '../components/admin/DashboardOverview';
@@ -1593,6 +1594,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </tbody>
               </table>
             </div>
+            <AttendancePanel />
           </div>
         )}
 

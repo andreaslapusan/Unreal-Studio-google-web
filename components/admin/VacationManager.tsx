@@ -76,6 +76,17 @@ const VacationManager: React.FC = () => {
     return map;
   }, [filtered]);
 
+  // Tooltip flotante al pasar el ratón por un día con vacaciones.
+  const [hoverDay, setHoverDay] = useState<{ date: string; x: number; y: number } | null>(null);
+  const dayCount = (start: string, end: string) => { let n = 0; for (const _ of eachDay(start, end)) n++; return n; };
+  const weekTotal = (dateStr: string) => {
+    const d = new Date(dateStr + 'T00:00:00');
+    const monday = new Date(d); monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    let total = 0;
+    for (let i = 0; i < 7; i++) { const dd = new Date(monday); dd.setDate(monday.getDate() + i); total += (dayMap.get(dd.toISOString().slice(0, 10))?.length ?? 0); }
+    return total;
+  };
+
   const setStatus = async (id: string, status: string) => {
     await supabase.from('employee_vacations').update({ status }).eq('id', id);
     await load();
@@ -103,7 +114,7 @@ const VacationManager: React.FC = () => {
         <h2 className="text-3xl font-serif text-primary">{t('admin.vac.title')}</h2>
         <div className="flex items-center gap-3">
           {/* Selector de empleado */}
-          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
+          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="pl-4 pr-8 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
             <option value="all">{t('admin.vac.allEmployees')}</option>
             {employees.map((e) => <option key={e.id} value={e.email}>{e.full_name || e.email}</option>)}
           </select>
@@ -169,8 +180,10 @@ const VacationManager: React.FC = () => {
                     const offs = dayMap.get(dateStr) ?? [];
                     const isToday = dateStr === new Date().toISOString().slice(0, 10);
                     return (
-                      <div key={day} title={offs.map((v) => `${nameFor(v)} (${isApproved(v.status) ? t('admin.vac.statusApproved') : t('admin.vac.statusPending')})`).join(', ')}
-                        className={`relative text-[10px] rounded-lg p-1 min-h-[28px] flex flex-col items-center justify-center ${isToday ? 'ring-2 ring-primary' : ''} ${offs.length ? 'bg-primary/5' : ''}`}>
+                      <div key={day}
+                        onMouseEnter={offs.length ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
+                        onMouseLeave={offs.length ? () => setHoverDay(null) : undefined}
+                        className={`relative text-[10px] rounded-lg p-1 min-h-[28px] flex flex-col items-center justify-center ${offs.length ? 'cursor-help' : ''} ${isToday ? 'ring-2 ring-primary' : ''} ${offs.length ? 'bg-primary/5' : ''}`}>
                         <span className="font-bold text-primary/80">{day}</span>
                         {offs.length > 0 && (
                           <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
@@ -237,6 +250,29 @@ const VacationManager: React.FC = () => {
               <button onClick={() => setEditing(null)} className="flex-1 bg-gray-100 text-primary py-2.5 rounded-xl font-bold text-sm">{t('admin.common.cancel')}</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Tooltip flotante al pasar el ratón sobre un día con vacaciones */}
+      {hoverDay && (dayMap.get(hoverDay.date)?.length ?? 0) > 0 && (
+        <div className="fixed z-[200] pointer-events-none w-72 bg-white rounded-2xl shadow-2xl border border-primary/10 p-4 text-xs"
+          style={{ top: Math.min(hoverDay.y + 14, window.innerHeight - 220), left: Math.min(hoverDay.x + 14, window.innerWidth - 300) }}>
+          <p className="font-black uppercase tracking-widest text-primary/40 text-[10px] mb-2 capitalize">
+            {new Date(hoverDay.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long' })}
+          </p>
+          <ul className="space-y-2">
+            {(dayMap.get(hoverDay.date) ?? []).map((v, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <span className="w-2.5 h-2.5 rounded-full mt-0.5 shrink-0" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
+                <div className="min-w-0">
+                  <p className="font-bold text-primary">{nameFor(v)} <span className="font-normal text-primary/40">· {isApproved(v.status) ? t('admin.vac.statusApproved') : t('admin.vac.statusPending')}</span></p>
+                  <p className="text-primary/60">{v.start_date} → {v.end_date} · {t('admin.vac.daysTotal', { n: dayCount(v.start_date, v.end_date) })}</p>
+                  <p className="text-primary/50 capitalize">{v.type}{v.note ? ` · ${t('admin.vac.reason')}: ${v.note}` : ''}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 pt-2 border-t border-gray-100 font-bold text-primary/70">{t('admin.vac.weekTotal', { n: weekTotal(hoverDay.date) })}</p>
         </div>
       )}
     </div>

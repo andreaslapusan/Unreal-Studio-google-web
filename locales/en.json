@@ -1203,8 +1203,8 @@
       "expiredOn": "expired on {{date}}",
       "clientsNoProperty": "Clients without property ({{count}})",
       "emptyFiltered": "No notifications with these filters.",
-      "markUnread": "Unread",
-      "markRead": "Read",
+      "markUnread": "Mark as unread",
+      "markRead": "Mark as read",
       "typeVacation": "Vacation",
       "typeLateCheckin": "Late check-in",
       "typeClientLogin": "Client login",
@@ -1212,7 +1212,10 @@
       "typeGeneric": "General",
       "resolveInEmployees": "Resolve in Employees",
       "viewEmployees": "View Employees",
-      "goToClient": "Go to Client"
+      "goToClient": "Go to Client",
+      "goToCalendar": "Go to calendar",
+      "viewAttendance": "View attendance",
+      "delete": "Delete"
     },
     "vac": {
       "confirmDelete": "Delete this vacation request?",
@@ -1235,7 +1238,25 @@
       "typeVacation": "Vacation",
       "typeSickLeave": "Sick Leave",
       "typePersonal": "Personal",
-      "note": "Note"
+      "note": "Note",
+      "daysTotal": "{{n}} days",
+      "weekTotal": "This week total: {{n}} days",
+      "reason": "Reason"
+    },
+    "att": {
+      "title": "Attendance",
+      "subtitle": "Team clock-ins, clock-outs and breaks. Filter by employee and dates.",
+      "allEmployees": "All employees",
+      "from": "From",
+      "to": "To",
+      "records": "{{n}} records",
+      "loading": "Loading…",
+      "empty": "No records in this range.",
+      "checkIn": "Clock-in",
+      "checkOut": "Clock-out",
+      "breakStart": "Break start",
+      "breakEnd": "Break end",
+      "location": "View location"
     }
   },
   "footer": {

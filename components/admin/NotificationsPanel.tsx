@@ -32,13 +32,15 @@ interface ClientLite { id: string; name: string; email: string | null; }
 
 interface TypeMeta { icon: string; labelKey: string; color: string; actionLabelKey?: string; actionTo?: string; }
 const TYPE_META: Record<string, TypeMeta> = {
-  vacation_request: { icon: 'beach_access', labelKey: 'admin.notif.typeVacation', color: 'text-amber-600 bg-amber-50', actionLabelKey: 'admin.notif.resolveInEmployees', actionTo: '/admin?view=employees' },
-  late_checkin:     { icon: 'schedule',     labelKey: 'admin.notif.typeLateCheckin', color: 'text-orange-600 bg-orange-50', actionLabelKey: 'admin.notif.viewEmployees', actionTo: '/admin?view=employees' },
+  vacation_request: { icon: 'beach_access', labelKey: 'admin.notif.typeVacation', color: 'text-amber-600 bg-amber-50', actionLabelKey: 'admin.notif.goToCalendar', actionTo: '/admin?view=calendar' },
+  late_checkin:     { icon: 'schedule',     labelKey: 'admin.notif.typeLateCheckin', color: 'text-orange-600 bg-orange-50', actionLabelKey: 'admin.notif.viewAttendance', actionTo: '/admin?view=employees' },
   client_login:     { icon: 'login',        labelKey: 'admin.notif.typeClientLogin', color: 'text-blue-600 bg-blue-50', actionLabelKey: 'admin.notif.goToClient', actionTo: '/admin?view=clients' },
   payment_claim:    { icon: 'payments',     labelKey: 'admin.notif.typePaymentClaim', color: 'text-green-700 bg-green-50', actionLabelKey: 'admin.notif.goToClient', actionTo: '/admin?view=clients' },
   generic:          { icon: 'notifications', labelKey: 'admin.notif.typeGeneric', color: 'text-gray-600 bg-gray-100' },
 };
 const metaFor = (t: string) => TYPE_META[t] ?? TYPE_META.generic;
+// Tipos que REQUIEREN ATENCIÓN: permanentes (no se borran a mano ni se auto-eliminan).
+const PROTECTED = new Set(['vacation_request', 'payment_claim']);
 
 function fmtWhen(iso: string): string {
   try {
@@ -67,6 +69,9 @@ const NotificationsPanel: React.FC = () => {
 
   const load = useCallback(async () => {
     setLoading(true);
+    // Auto-limpieza: borra notificaciones NO-atención de más de 7 días (ficho tarde,
+    // login cliente, genéricas). Las de atención (vacaciones, pagos) son permanentes.
+    await supabase.rpc('admin_notifications_cleanup');
     const [{ data: notifs }, { data: panel }] = await Promise.all([
       supabase.rpc('admin_notifications_list', {
         p_type: typeFilter === 'all' ? null : typeFilter,
@@ -94,6 +99,11 @@ const NotificationsPanel: React.FC = () => {
   };
   // Acción de una notificación: marca leída y navega a donde se resuelve.
   const act = (n: Notif, to: string) => { void markRead(n.id, true); navigate(to); };
+  // Borrado manual (solo tipos NO-atención; las protegidas no muestran el botón).
+  const del = async (id: string) => {
+    setItems((prev) => prev.filter((n) => n.id !== id));
+    await supabase.rpc('admin_notifications_delete', { p_id: id });
+  };
 
   const sorted = useMemo(() => {
     const arr = [...items];
@@ -193,9 +203,16 @@ const NotificationsPanel: React.FC = () => {
                       {m.actionLabelKey && t(m.actionLabelKey)} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </button>
                   )}
-                  <button onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">
-                    {n.is_read ? t('admin.notif.markUnread') : t('admin.notif.markRead')}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">
+                      {n.is_read ? t('admin.notif.markUnread') : t('admin.notif.markRead')}
+                    </button>
+                    {!PROTECTED.has(n.type) && (
+                      <button onClick={() => del(n.id)} title={t('admin.notif.delete')} className="text-primary/30 hover:text-red-500 transition">
+                        <span className="material-symbols-outlined text-base">delete</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </li>
             );

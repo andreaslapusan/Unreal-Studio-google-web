@@ -1295,8 +1295,8 @@
       "expiredOn": "jatuh tempo {{date}}",
       "clientsNoProperty": "Klien tanpa properti ({{count}})",
       "emptyFiltered": "Tidak ada pemberitahuan dengan filter ini.",
-      "markUnread": "Belum dibaca",
-      "markRead": "Sudah dibaca",
+      "markUnread": "Tandai belum dibaca",
+      "markRead": "Tandai dibaca",
       "typeVacation": "Liburan",
       "typeLateCheckin": "Check-in terlambat",
       "typeClientLogin": "Login klien",
@@ -1304,7 +1304,10 @@
       "typeGeneric": "Umum",
       "resolveInEmployees": "Selesaikan di Karyawan",
       "viewEmployees": "Lihat karyawan",
-      "goToClient": "Ke klien"
+      "goToClient": "Ke klien",
+      "goToCalendar": "Ke kalender",
+      "viewAttendance": "Lihat absensi",
+      "delete": "Hapus"
     },
     "vac": {
       "confirmDelete": "Hapus permintaan cuti ini?",
@@ -1327,7 +1330,25 @@
       "typeVacation": "Cuti",
       "typeSickLeave": "Izin sakit",
       "typePersonal": "Pribadi",
-      "note": "Catatan"
+      "note": "Catatan",
+      "daysTotal": "{{n}} hari",
+      "weekTotal": "Total minggu ini: {{n}} hari",
+      "reason": "Alasan"
+    },
+    "att": {
+      "title": "Absensi",
+      "subtitle": "Masuk, keluar, dan istirahat tim. Filter berdasarkan karyawan dan tanggal.",
+      "allEmployees": "Semua karyawan",
+      "from": "Dari",
+      "to": "Sampai",
+      "records": "{{n}} catatan",
+      "loading": "Memuat…",
+      "empty": "Tidak ada catatan dalam rentang ini.",
+      "checkIn": "Masuk",
+      "checkOut": "Keluar",
+      "breakStart": "Mulai istirahat",
+      "breakEnd": "Selesai istirahat",
+      "location": "Lihat lokasi"
     }
   },
   "footer": {

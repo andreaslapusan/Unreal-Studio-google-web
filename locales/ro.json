@@ -1203,8 +1203,8 @@
       "expiredOn": "a expirat {{date}}",
       "clientsNoProperty": "Clienți fără proprietate ({{count}})",
       "emptyFiltered": "Nu există notificări cu acești filtre.",
-      "markUnread": "Necitit",
-      "markRead": "Citit",
+      "markUnread": "Marchează necitită",
+      "markRead": "Marchează citită",
       "typeVacation": "Vacanță",
       "typeLateCheckin": "Înregistrare întârziată",
       "typeClientLogin": "Conectare client",
@@ -1212,7 +1212,10 @@
       "typeGeneric": "General",
       "resolveInEmployees": "Rezolva în Angajați",
       "viewEmployees": "Vizualizați angajații",
-      "goToClient": "Mergeți la client"
+      "goToClient": "Mergeți la client",
+      "goToCalendar": "Mergi la calendar",
+      "viewAttendance": "Vezi pontaje",
+      "delete": "Șterge"
     },
     "vac": {
       "confirmDelete": "Ștergeți această solicitare de vacanță?",
@@ -1235,7 +1238,25 @@
       "typeVacation": "Vacanță",
       "typeSickLeave": "Concediu medical",
       "typePersonal": "Personal",
-      "note": "Notă"
+      "note": "Notă",
+      "daysTotal": "{{n}} zile",
+      "weekTotal": "Total această săptămână: {{n}} zile",
+      "reason": "Motiv"
+    },
+    "att": {
+      "title": "Pontaje",
+      "subtitle": "Intrări, ieșiri și pauze ale echipei. Filtrează după angajat și date.",
+      "allEmployees": "Toți angajații",
+      "from": "De la",
+      "to": "Până la",
+      "records": "{{n}} pontaje",
+      "loading": "Se încarcă…",
+      "empty": "Niciun pontaj în acest interval.",
+      "checkIn": "Intrare",
+      "checkOut": "Ieșire",
+      "breakStart": "Început pauză",
+      "breakEnd": "Sfârșit pauză",
+      "location": "Vezi locația"
     }
   },
   "footer": {
