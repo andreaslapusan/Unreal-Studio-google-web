@@ -66,6 +66,10 @@ const AMENITIES_LIST = [
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [currentClient, setCurrentClient] = useState<Partial<Client>>({});
   const [clientSearch, setClientSearch] = useState('');
+  // Herramientas de filtro/orden del listado de clientes.
+  const [clientFilterProject, setClientFilterProject] = useState('');   // por unidad/proyecto
+  const [clientFilterCurrency, setClientFilterCurrency] = useState(''); // por divisa cerrada en contrato
+  const [clientSort, setClientSort] = useState<'name' | 'amount_desc' | 'amount_asc' | 'recent'>('name');
   const [assigningProject, setAssigningProject] = useState<{ clientId: string, clientName: string } | null>(null);
   const [editingAssignment, setEditingAssignment] = useState<{ clientId: string, clientName: string, assignment: any } | null>(null);
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
@@ -731,11 +735,37 @@ const AMENITIES_LIST = [
   };
 
 // --- LOGICA DE CLIENTES ---
-const filteredClients = clients.filter(c => {
-  if (!clientSearch.trim()) return true;
-  const q = clientSearch.toLowerCase();
-  return c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.phone?.toLowerCase().includes(q);
-});
+// Para ordenar por "más caro" sumando proyectos en distintas divisas, normalizamos
+// a EUR con tasas aproximadas (solo para ordenar; los importes se MUESTRAN sin convertir).
+const EUR_RATE: Record<string, number> = { EUR: 1, USD: 1.08, GBP: 0.83, AUD: 1.65, IDR: 17200 };
+const toEur = (amount: number, currency?: string) => (Number(amount) || 0) / (EUR_RATE[currency || 'EUR'] || 1);
+const clientTotalEur = (c: any) => (c.projects || []).reduce((s: number, cp: any) => s + toEur(cp.investment_amount, cp.currency), 0);
+
+// Opciones para los desplegables (proyectos y divisas presentes en los contratos).
+const clientProjectOptions = Array.from(new Set(clients.flatMap((c: any) => (c.projects || []).map((cp: any) => cp.project_name || cp.project_id)).filter(Boolean))).sort();
+const clientCurrencyOptions = Array.from(new Set(clients.flatMap((c: any) => (c.projects || []).map((cp: any) => cp.currency).filter(Boolean)))).sort();
+
+const filteredClients = clients
+  .filter((c: any) => {
+    if (clientSearch.trim()) {
+      const q = clientSearch.toLowerCase();
+      if (!(c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.phone?.toLowerCase().includes(q))) return false;
+    }
+    if (clientFilterProject && !(c.projects || []).some((cp: any) => (cp.project_name || cp.project_id) === clientFilterProject)) return false;
+    if (clientFilterCurrency && !(c.projects || []).some((cp: any) => cp.currency === clientFilterCurrency)) return false;
+    return true;
+  })
+  .sort((a: any, b: any) => {
+    if (clientSort === 'name') return a.name.localeCompare(b.name);
+    if (clientSort === 'amount_desc') return clientTotalEur(b) - clientTotalEur(a);
+    if (clientSort === 'amount_asc') return clientTotalEur(a) - clientTotalEur(b);
+    if (clientSort === 'recent') {
+      const la = (a.projects || []).map((cp: any) => cp.purchase_date).sort().pop() || '';
+      const lb = (b.projects || []).map((cp: any) => cp.purchase_date).sort().pop() || '';
+      return lb.localeCompare(la);
+    }
+    return 0;
+  });
 
 const openEditClient = (client?: Client) => {
   setCurrentClient(client ? { ...client } : {
@@ -1170,9 +1200,29 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </button>
     </div>
 
-    <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 mb-6 border border-gray-100 max-w-md">
-      <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
-      <input type="text" placeholder={t('admin.adminDash.searchClients')} value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
+    <div className="flex flex-wrap items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 border border-gray-100 flex-grow min-w-[220px] max-w-md">
+        <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
+        <input type="text" placeholder={t('admin.adminDash.searchClients')} value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
+      </div>
+      <select value={clientFilterProject} onChange={(e) => setClientFilterProject(e.target.value)} className="bg-white border border-gray-100 rounded-xl px-3 py-2 text-xs font-bold text-primary">
+        <option value="">Todos los proyectos</option>
+        {clientProjectOptions.map((p) => <option key={p as string} value={p as string}>{p as string}</option>)}
+      </select>
+      <select value={clientFilterCurrency} onChange={(e) => setClientFilterCurrency(e.target.value)} className="bg-white border border-gray-100 rounded-xl px-3 py-2 text-xs font-bold text-primary">
+        <option value="">Todas las divisas</option>
+        {clientCurrencyOptions.map((c) => <option key={c as string} value={c as string}>{c as string}</option>)}
+      </select>
+      <select value={clientSort} onChange={(e) => setClientSort(e.target.value as any)} className="bg-white border border-gray-100 rounded-xl px-3 py-2 text-xs font-bold text-primary">
+        <option value="name">Nombre (A–Z)</option>
+        <option value="amount_desc">Inversión: mayor → menor</option>
+        <option value="amount_asc">Inversión: menor → mayor</option>
+        <option value="recent">Compra más reciente</option>
+      </select>
+      {(clientFilterProject || clientFilterCurrency || clientSearch) && (
+        <button onClick={() => { setClientFilterProject(''); setClientFilterCurrency(''); setClientSearch(''); }} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary px-2">Limpiar</button>
+      )}
+      <span className="text-[10px] font-black uppercase tracking-widest text-primary/30 ml-auto">{filteredClients.length} cliente(s)</span>
     </div>
 
     <div className="space-y-4">
@@ -1212,7 +1262,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           {/* Proyectos asignados */}
           <div className="border-t border-gray-50 bg-gray-50/50 px-6 py-4">
             <div className="flex justify-between items-center mb-3">
-              <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Proyectos asignados ({(client.projects || []).length})</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Proyectos asignados ({(client.projects || []).length})</p>
+                {(() => {
+                  const byCur: Record<string, number> = {};
+                  (client.projects || []).forEach((cp: any) => { const cur = cp.currency || 'EUR'; byCur[cur] = (byCur[cur] || 0) + (Number(cp.investment_amount) || 0); });
+                  const parts = Object.entries(byCur).filter(([, v]) => v > 0);
+                  return parts.length ? (
+                    <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">
+                      Total: {parts.map(([cur, v]) => formatMoney(v, cur)).join(' + ')}
+                    </span>
+                  ) : null;
+                })()}
+              </div>
               <button onClick={() => { setAssigningProject({ clientId: client.id, clientName: client.name }); setAssignForm({ project_id: projects[0]?.id || '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' }); }} className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-black transition">
                 <span className="material-symbols-outlined text-xs">add</span> Asignar
               </button>
