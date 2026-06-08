@@ -17,20 +17,18 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import PortalShell from './PortalShell';
 
-export type PortalKey = 'cliente' | 'agencias' | 'empleados' | 'inversores' | 'admin';
+export type PortalKey = 'cliente' | 'agencias' | 'empleados' | 'admin';
 
 const PORTAL_DASH: Record<PortalKey, string> = {
   cliente: '/cliente/dashboard',
   agencias: '/agencias/dashboard',
   empleados: '/empleados/dashboard',
-  inversores: '/cliente/dashboard',
   admin: '/admin',
 };
 const PORTAL_LABEL: Record<PortalKey, string> = {
   cliente: 'Clientes',
   agencias: 'Agencias',
   empleados: 'Team',
-  inversores: 'Inversores',
   admin: 'Admin',
 };
 

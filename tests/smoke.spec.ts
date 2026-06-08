@@ -49,17 +49,6 @@ test.describe("public pages render", () => {
     await expect(page.getByRole("button", { name: /enlace mágico|magic link|tautan/i })).toBeVisible();
   });
 
-  test("inversores landing — investor program", async ({ page }) => {
-    await open(page, "/inversores");
-    // Hero "Hablar con un asesor" + footer "Agendar llamada con un asesor →"
-    // both match — assert the first.
-    await expect(page.getByRole("link", { name: /asesor|advisor|penasihat/i }).first()).toBeVisible();
-  });
-
-  test("inversores login", async ({ page }) => {
-    await open(page, "/inversores/login");
-    await expect(page.getByLabel(/email/i)).toBeVisible();
-  });
 });
 
 test.describe("static SEO assets", () => {
