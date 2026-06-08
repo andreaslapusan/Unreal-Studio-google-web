@@ -123,11 +123,10 @@
 
     <!-- Fonts: media print swap-on-load trick keeps it non-render-blocking -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@200;300;400;500;600;700;800;900&family=Montserrat:wght@200;900&display=swap" media="print" onload="this.media='all'">
-    <!-- Material Symbols subset: covers code icons + project amenities + KPI icons.
-         Subset URL keeps the font tiny (~30KB) instead of the 3.8MB full variable
-         font. When you add a new icon name in code or to the `amenities` data,
-         add it here too — AND keep the icon_names list SORTED ALPHABETICALLY,
-         otherwise Google Fonts returns HTTP 400 and NO icons load site-wide. -->
+    <!-- Material Symbols Outlined COMPLETO (TODOS los iconos) desde Google Fonts.
+         Antes era un subset self-hosted que rompía al usar un icono nuevo; ahora
+         cualquier icono funciona siempre, sin mantenimiento. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@200;300;400;500;600;700;800;900&family=Montserrat:wght@200;900&display=swap">
     </noscript>

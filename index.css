@@ -1,10 +1,6 @@
-@font-face {
-  font-family: "Material Symbols Outlined";
-  font-style: normal;
-  font-weight: 400;
-  font-display: block;
-  src: url("/fonts/material-symbols-outlined.woff2?v=5") format("woff2");
-}
+/* Material Symbols COMPLETO (todos los iconos) se carga desde Google Fonts en
+   index.html — ya no usamos un subset self-hosted (rompía al añadir iconos
+   nuevos). Así CUALQUIER icono funciona siempre. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
