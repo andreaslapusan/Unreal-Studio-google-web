@@ -28,7 +28,7 @@ const DashboardOverview: React.FC = () => {
         return count ?? 0;
       };
       const [properties, clients, employees, agencies, pendingApplications, pendingVacations, unreadRes, panelRes] = await Promise.all([
-        countOf('properties'),
+        countOf('projects'),
         countOf('clients', (q) => q.eq('is_active', true)),
         countOf('employees', (q) => q.eq('active', true)),
         countOf('listing_partners'),
@@ -52,7 +52,7 @@ const DashboardOverview: React.FC = () => {
     <button onClick={() => navigate(to)} className={card}>
       <div className="flex items-center justify-between">
         <span className={`material-symbols-outlined text-2xl ${alert && value > 0 ? 'text-red-500' : 'text-primary/40'}`}>{icon}</span>
-        <span className={`text-3xl font-serif ${alert && value > 0 ? 'text-red-600' : 'text-primary'}`}>{s ? value : '—'}</span>
+        <span className={`text-3xl font-black ${alert && value > 0 ? 'text-red-600' : 'text-primary'}`}>{s ? value : '—'}</span>
       </div>
       <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mt-3">{label}</p>
     </button>
