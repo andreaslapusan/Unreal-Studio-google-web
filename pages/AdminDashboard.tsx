@@ -1753,6 +1753,52 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
 )}
 
+{/* Modal Asignar Proyecto a un cliente */}
+{assigningProject && (
+    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setAssigningProject(null); }}>
+        <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
+            <h2 className="text-2xl font-serif text-primary mb-2">Asignar proyecto</h2>
+            <p className="text-sm text-gray-400 mb-8">Cliente: <strong className="text-primary">{assigningProject.clientName}</strong></p>
+            <form onSubmit={handleAssignProject} className="space-y-6">
+                <div>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Proyecto</label>
+                    <select value={assignForm.project_id} onChange={(e) => setAssignForm({...assignForm, project_id: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                        {projects.length === 0 && <option value="">No hay proyectos</option>}
+                        {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    </select>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Unidad / Referencia</label><input value={assignForm.unit_number} onChange={(e) => setAssignForm({...assignForm, unit_number: e.target.value})} placeholder="Ej: A-101, Villa 3" className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div>
+                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Importe invertido</label>
+                        <div className="flex gap-2">
+                            <input type="number" value={assignForm.investment_amount || ''} onChange={(e) => setAssignForm({...assignForm, investment_amount: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
+                            <select value={assignForm.currency} onChange={(e) => setAssignForm({...assignForm, currency: e.target.value})} className="px-3 py-4 bg-gray-100 border border-gray-200 rounded-2xl font-bold w-24">
+                                {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Fecha de compra</label><input type="date" value={assignForm.purchase_date} onChange={(e) => setAssignForm({...assignForm, purchase_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Estado de la inversión</label>
+                        <select value={assignForm.status} onChange={(e) => setAssignForm({...assignForm, status: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                            <option value="Reserva">Reserva</option>
+                            <option value="Pagado">Pagado</option>
+                            <option value="En proceso">En proceso</option>
+                            <option value="Completado">Completado</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="flex gap-4 pt-4">
+                    <button type="submit" disabled={uploading || !assignForm.project_id} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : 'Asignar'}</button>
+                    <button type="button" onClick={() => setAssigningProject(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+)}
+
 {/* Modal Option Manager */}
 {optionManager && optionManager.field && (
   <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setOptionManager(null); }}>

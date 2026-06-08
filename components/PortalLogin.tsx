@@ -102,39 +102,30 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     return null;
   }
 
+  // Tras un login EXPLÍCITO en este portal. Requisito del dueño: cada login es
+  // SOLO para su portal. Si la cuenta no pertenece a ESTE portal, NO la mandamos
+  // a otro ni ofrecemos elegir: cerramos sesión y avisamos.
   async function routeAfterAuth() {
     if (routingRef.current) return;
     routingRef.current = true;
     try {
       const list = await getPortalsWithRetry();
 
-      // No se pudo verificar (RPC lenta/caída en conexiones lentas). NUNCA
-      // cerramos sesión por esto — sería echar a un empleado legítimo por una
-      // verificación lenta. Llevamos al portal pedido; el dashboard + las RLS
-      // de la base de datos son la barrera de seguridad real.
-      if (list === null) {
+      // Pertenece a ESTE portal → entra. Si no se pudo verificar (RPC lenta/caída)
+      // tiramos al dashboard de ESTE portal (su auth + RLS son la barrera real);
+      // nunca lo enviamos a OTRO portal.
+      if (list === null || list.includes(portal)) {
         navigate(PORTAL_DASH[portal], { replace: true });
         return;
       }
-      // Pertenece a ESTE portal → entra.
-      if (list.includes(portal)) {
-        navigate(PORTAL_DASH[portal], { replace: true });
-        return;
-      }
-      // Tiene exactamente UN portal (otro) → lo llevamos al suyo (no lo echamos).
-      if (list.length === 1) {
-        navigate(PORTAL_DASH[list[0]], { replace: true });
-        return;
-      }
-      // Varios portales → que elija.
-      if (list.length > 1) {
-        setChooser(list);
-        return;
-      }
-      // Lista VACÍA y verificada → de verdad no tiene ningún portal: aquí sí
-      // cerramos la sesión huérfana.
+
+      // Verificado y NO pertenece a este portal: no cruzamos de portal. Cerramos
+      // la sesión recién creada y avisamos de que no tiene acceso aquí.
       try { await supabase.auth.signOut(); } catch { /* ignore */ }
-      setError(t('auth.noPortals'));
+      setError(t('auth.noAccessPortal', {
+        portal: PORTAL_LABEL[portal],
+        defaultValue: 'Esta cuenta no tiene acceso al portal de {{portal}}.',
+      }));
     } finally {
       routingRef.current = false;
     }
