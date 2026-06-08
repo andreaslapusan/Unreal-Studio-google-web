@@ -82,10 +82,9 @@ export const useCurrency = () => {
 };
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
-  // Acceso admin: token legacy (_ust_sh_) O sesión Supabase Auth con rol admin/team.
+  // Acceso admin SOLO con sesión Supabase Auth y rol admin/team. Se elimina el
+  // atajo por token localStorage `_ust_sh_` (era base64 sin firmar y falsificable).
   const { user, role, loading } = useAuth();
-  const legacy = !!localStorage.getItem('_ust_sh_') || !!sessionStorage.getItem('_ust_sh_');
-  if (legacy) return <>{children}</>;
   if (loading) return null;
   if (user && (role === 'admin' || role === 'team')) return <>{children}</>;
   return <Navigate to="/admin/login" replace />;
@@ -243,8 +242,8 @@ const App: React.FC = () => {
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/marketing" element={<AdminShell><AdminMarketing /></AdminShell>} />
-            <Route path="/admin/portal" element={<AdminShell><AdminPortalManager /></AdminShell>} />
+            <Route path="/admin/marketing" element={<ProtectedRoute><AdminShell><AdminMarketing /></AdminShell></ProtectedRoute>} />
+            <Route path="/admin/portal" element={<ProtectedRoute><AdminShell><AdminPortalManager /></AdminShell></ProtectedRoute>} />
             <Route path="/admin/agencias" element={<ProtectedRoute><AdminShell><AdminAgencias /></AdminShell></ProtectedRoute>} />
             <Route path="/agencias/:slug" element={<AgencyPack />} />
             <Route path="/cliente" element={<ClientLogin />} />

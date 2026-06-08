@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../lib/supabase';
+import { supabase, getImageUrl } from '../lib/supabase';
 
 interface ProjectAgencyRow {
   id: string;
@@ -193,7 +193,7 @@ const AgencyPack: React.FC = () => {
               {project.gallery.slice(0, 8).map((src, i) => (
                 <img
                   key={i}
-                  src={src}
+                  src={getImageUrl(src)}
                   alt={`${project.name} ${i + 1}`}
                   className="w-full h-32 md:h-40 object-cover rounded-xl"
                   loading="lazy"
@@ -308,7 +308,7 @@ const AgencyPack: React.FC = () => {
                     title={`Floor plan ${i + 1}`}
                   />
                 ) : (
-                  <img key={i} src={src} alt={`Floor plan ${i + 1}`} className="w-full rounded-2xl" loading="lazy" />
+                  <img key={i} src={getImageUrl(src)} alt={`Floor plan ${i + 1}`} className="w-full rounded-2xl" loading="lazy" />
                 ),
               )}
             </div>

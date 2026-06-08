@@ -148,15 +148,9 @@ const AMENITIES_LIST = [
 
   const adminIdRef = useRef<string | null>(null);
   const adminUsernameRef = useRef<string | null>(null);
-  const getAdminUserId = (): string | null => {
-    if (adminIdRef.current) return adminIdRef.current;
-    const session = localStorage.getItem('_ust_sh_') || sessionStorage.getItem('_ust_sh_');
-    if (!session) return null;
-    try {
-      const decoded = atob(session);
-      return decoded.split('_')[1] || null;
-    } catch { return null; }
-  };
+  // Id del admin SIEMPRE desde la sesión Supabase Auth (admin_self()), nunca desde
+  // un token localStorage falsificable.
+  const getAdminUserId = (): string | null => adminIdRef.current;
 
   const loadDaysOff = async () => {
     const { data } = await supabase.from('app_config').select('value').eq('key', 'days_off').maybeSingle();

@@ -226,13 +226,13 @@ const Contact: React.FC = () => {
                 <span className="material-symbols-outlined text-orange-600">bolt</span> {t('contact.directChannels')}
               </h3>
               <div className="space-y-4">
-                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="mailto:hola@unrealstudio.com">
+                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="mailto:hello@unrealstudiobali.com">
                   <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary group-hover:text-white transition text-primary">
                     <span className="material-symbols-outlined text-xl">mail</span>
                   </div>
                   <div>
                     <p className="text-[10px] uppercase font-bold text-gray-500">{t('contact.emailLabel')}</p>
-                    <span className="font-medium text-primary">hola@unrealstudio.com</span>
+                    <span className="font-medium text-primary">hello@unrealstudiobali.com</span>
                   </div>
                 </a>
                 <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="https://wa.me/34625710770" target="_blank" rel="noopener noreferrer">
