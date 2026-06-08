@@ -569,6 +569,9 @@ const AMENITIES_LIST = [
         await supabase.rpc('admin_save_project_extra', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
         // Traducciones EN/ID de los campos de ficha (para packs de agencia multilingües).
         await supabase.rpc('admin_save_project_i18n', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
+        // Auto-traducción del contenido (es→en/ro/id) SIEMPRE, sin trabajo manual.
+        // Fire-and-forget: no bloquea el guardado; la edge fn traduce en segundo plano.
+        if (savedId) void supabase.functions.invoke('translate-project', { body: { project_id: savedId } }).catch(() => {});
 
         await loadData();
         setIsEditing(false);
