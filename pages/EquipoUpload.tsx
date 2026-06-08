@@ -16,7 +16,7 @@ interface PropertySummary {
   name: string;
 }
 
-type Visibility = "all" | "investors-only" | "listers-only";
+type Visibility = "all" | "listers-only";
 
 interface QueuedFile {
   file: File;
@@ -63,7 +63,7 @@ export default function EquipoUpload() {
   }, [user]);
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('admin.common.loading')}</div>;
-  if (!user) return <Navigate to="/admin/login" replace />;
+  if (!user) return <Navigate to="/empleados" replace />;
   // Acceso: roles admin/team (team_members) O empleado con permiso de reportes.
   const isStaff = role === "admin" || role === "team";
   if (!isStaff) {
@@ -191,7 +191,7 @@ export default function EquipoUpload() {
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher inverted />
-          <button onClick={() => navigate("/admin")} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
+          <button onClick={() => navigate("/empleados/dashboard")} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
             {t('admin.equipoUpload.btnAdmin')}
           </button>
           <button onClick={() => void signOut()} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full">
@@ -259,11 +259,11 @@ export default function EquipoUpload() {
           <div>
             <label className="block text-sm font-medium text-primary mb-1">{t('admin.equipoUpload.labelVisibility')}</label>
             <div className="flex gap-3">
-              {(["all", "investors-only", "listers-only"] as Visibility[]).map((v) => (
+              {(["all", "listers-only"] as Visibility[]).map((v) => (
                 <label key={v} className="flex items-center gap-2 px-4 py-2 border border-primary/20 rounded-lg cursor-pointer">
                   <input type="radio" name="visibility" value={v} checked={visibility === v} onChange={() => setVisibility(v)} />
                   <span className="text-sm">
-                    {v === "all" ? t('admin.equipoUpload.visAll') : v === "investors-only" ? t('admin.equipoUpload.visInvestors') : t('admin.equipoUpload.visListers')}
+                    {v === "all" ? t('admin.equipoUpload.visAll') : t('admin.equipoUpload.visListers')}
                   </span>
                 </label>
               ))}

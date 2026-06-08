@@ -50,8 +50,6 @@ const AgenciasDashboard = lazyWithReload(() => import('./pages/AgenciasDashboard
 const AgenciasStats = lazyWithReload(() => import('./pages/AgenciasStats'));
 const AuthFinish = lazyWithReload(() => import('./pages/AuthFinish'));
 const EquipoUpload = lazyWithReload(() => import('./pages/EquipoUpload'));
-const EquipoLogin = lazyWithReload(() => import('./pages/EquipoLogin'));
-const EquipoDashboard = lazyWithReload(() => import('./pages/EquipoDashboard'));
 const EquipoProperties = lazyWithReload(() => import('./pages/EquipoProperties'));
 const EmpleadosLogin = lazyWithReload(() => import('./pages/EmpleadosLogin'));
 const EmpleadosDashboard = lazyWithReload(() => import('./pages/EmpleadosDashboard'));
@@ -226,19 +224,20 @@ const App: React.FC = () => {
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
             <Route path="/agencias/stats" element={<AgenciasStats />} />
-            {/* Manager Portal — para trabajadores (Agun/Adam/Paris/Marc/Luis/Raul).
-                Acceso por magic link al email registrado. NO tienen acceso a /admin.
-                Las rutas legacy /equipo/* redirigen a /manager/* para no romper enlaces
-                viejos en correos enviados o documentos. */}
-            <Route path="/manager" element={<EquipoLogin />} />
-            <Route path="/manager/dashboard" element={<EquipoDashboard />} />
-            <Route path="/manager/propiedades" element={<EquipoProperties />} />
-            <Route path="/equipo" element={<Navigate to="/manager" replace />} />
-            <Route path="/equipo/dashboard" element={<Navigate to="/manager/dashboard" replace />} />
-            <Route path="/equipo/upload" element={<EquipoUpload />} />
-            {/* Portal Empleados (fichaje check-in/check-out) */}
+            {/* Portal Empleados (ÚNICO portal de equipo). Roster único = tabla
+                `employees`. Fichaje + vacaciones + edición de propiedades + subir
+                partes. Las rutas legacy /manager/* y /equipo/* redirigen aquí para
+                no romper enlaces viejos en correos o documentos. */}
             <Route path="/empleados" element={<EmpleadosLogin />} />
             <Route path="/empleados/dashboard" element={<EmpleadosDashboard />} />
+            <Route path="/empleados/propiedades" element={<EquipoProperties />} />
+            <Route path="/empleados/upload" element={<EquipoUpload />} />
+            <Route path="/manager" element={<Navigate to="/empleados" replace />} />
+            <Route path="/manager/dashboard" element={<Navigate to="/empleados/dashboard" replace />} />
+            <Route path="/manager/propiedades" element={<EquipoProperties />} />
+            <Route path="/equipo" element={<Navigate to="/empleados" replace />} />
+            <Route path="/equipo/dashboard" element={<Navigate to="/empleados/dashboard" replace />} />
+            <Route path="/equipo/upload" element={<EquipoUpload />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

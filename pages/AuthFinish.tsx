@@ -94,7 +94,6 @@ export default function AuthFinish() {
         cliente: "/cliente/dashboard",
         agencias: "/agencias/dashboard",
         empleados: "/empleados/dashboard",
-        inversores: "/cliente/dashboard", // Inversores = Cliente (portal unificado)
         admin: "/admin",
       };
       try {

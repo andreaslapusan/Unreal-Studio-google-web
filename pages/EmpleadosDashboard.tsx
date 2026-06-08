@@ -344,7 +344,7 @@ const EmpleadosDashboard: React.FC = () => {
           <div className="mt-8 grid grid-cols-1 gap-3">
             {canUploadReports && (
               <button
-                onClick={() => navigate('/equipo/upload')}
+                onClick={() => navigate('/empleados/upload')}
                 className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
               >
                 <span className="material-symbols-outlined text-primary">construction</span>
@@ -357,7 +357,7 @@ const EmpleadosDashboard: React.FC = () => {
             )}
             {canEditProperties && (
               <button
-                onClick={() => navigate('/manager/propiedades')}
+                onClick={() => navigate('/empleados/propiedades')}
                 className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
               >
                 <span className="material-symbols-outlined text-primary">home_work</span>

@@ -90,7 +90,7 @@ const EquipoProperties: React.FC = () => {
     <div className="min-h-screen bg-almond">
       <header className="flex items-center justify-between px-6 md:px-10 py-5 border-b border-primary/10 bg-white">
         <h1 className="font-serif text-xl text-primary">Propiedades · Equipo</h1>
-        <button onClick={() => navigate('/manager/dashboard')} className="text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary">Volver</button>
+        <button onClick={() => navigate('/empleados/dashboard')} className="text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary">Volver</button>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-10">

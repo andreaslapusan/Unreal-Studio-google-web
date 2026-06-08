@@ -10,7 +10,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
-import { supabase, getImageUrl } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
+import { hasPermission } from "../lib/permissions";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 type Tab = "activity" | "metrics" | "properties" | "units" | "partners" | "applications" | "faqs" | "timelines" | "equipo";
@@ -1233,91 +1234,92 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
 }
 
 /* ──────────────────────────────────────────────────────────────────────── */
-/* Equipo tab — admin overview of team time-off                              */
+/* Equipo tab — vista admin del equipo (tabla `employees`) + aprobación de    */
+/* vacaciones (employee_vacations). Roster ÚNICO = employees. Los perfiles y   */
+/* permisos se editan en Admin clásico → Empleados; aquí se aprueban/rechazan  */
+/* las solicitudes de vacaciones y se ve quién está fuera.                     */
 /* ──────────────────────────────────────────────────────────────────────── */
 
-interface TeamMemberRow {
+interface EmployeeRow {
   id: string;
-  full_name: string;
-  email: string | null;
-  role: string;
-  total_days_per_year: number;
+  email: string;
+  full_name: string | null;
+  office: string | null;
   active: boolean;
+  can_upload_reports: boolean;
+  permissions: Record<string, boolean> | null;
 }
 
-interface TimeOffRow {
+interface VacationRow {
   id: string;
-  member_id: string;
+  employee_id: string | null;
+  employee_email: string;
+  employee_name: string | null;
   start_date: string;
   end_date: string;
-  days: number;
-  reason: string | null;
-  status: string;
+  type: string;
+  status: string; // pendiente | aprobada | rechazada
+  note: string | null;
   created_at: string;
 }
 
-interface HolidayRow {
-  id: string;
-  date: string;
-  name: string;
-  country: string;
-}
+const VAC_TYPE_LABEL: Record<string, string> = {
+  vacaciones: "Vacaciones",
+  baja: "Baja",
+  personal: "Personal",
+};
 
-interface FieldReportRow {
-  id: string;
-  member_id: string;
-  project_slug: string | null;
-  comment: string;
-  photo_path: string | null;
-  weather: string | null;
-  created_at: string;
+function vacName(v: VacationRow): string {
+  return v.employee_name || v.employee_email;
+}
+function isApprovedStatus(s: string): boolean {
+  return s === "aprobada" || s === "approved";
+}
+function isPendingStatus(s: string): boolean {
+  return s === "pendiente" || s === "pending";
 }
 
 function EquipoTab() {
   const { t } = useTranslation();
-  const [members, setMembers] = useState<TeamMemberRow[]>([]);
-  const [requests, setRequests] = useState<TimeOffRow[]>([]);
-  const [holidays, setHolidays] = useState<HolidayRow[]>([]);
-  const [reports, setReports] = useState<FieldReportRow[]>([]);
+  const [employees, setEmployees] = useState<EmployeeRow[]>([]);
+  const [vacations, setVacations] = useState<VacationRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   const reload = async () => {
     setLoading(true);
-    const [m, r, h, fr] = await Promise.all([
-      supabase.from("team_members").select("*").order("full_name"),
-      supabase.from("time_off_requests").select("*").order("start_date", { ascending: false }),
-      supabase.from("holidays").select("*").order("date"),
-      supabase.from("field_reports").select("*").order("created_at", { ascending: false }).limit(50),
+    const [e, v] = await Promise.all([
+      supabase
+        .from("employees")
+        .select("id, email, full_name, office, active, can_upload_reports, permissions")
+        .order("full_name"),
+      supabase
+        .from("employee_vacations")
+        .select("*")
+        .order("start_date", { ascending: false }),
     ]);
-    setMembers((m.data ?? []) as TeamMemberRow[]);
-    setRequests((r.data ?? []) as TimeOffRow[]);
-    setHolidays((h.data ?? []) as HolidayRow[]);
-    setReports((fr.data ?? []) as FieldReportRow[]);
+    setEmployees((e.data ?? []) as EmployeeRow[]);
+    setVacations((v.data ?? []) as VacationRow[]);
     setLoading(false);
   };
 
-  useEffect(() => { void reload(); }, []);
+  useEffect(() => {
+    void reload();
+  }, []);
 
   const today = new Date().toISOString().slice(0, 10);
-  const onLeaveNow = requests.filter((r) => r.start_date <= today && r.end_date >= today && r.status === "approved");
-  const upcoming = requests.filter((r) => r.start_date > today && r.status === "approved");
+  const pending = vacations.filter((v) => isPendingStatus(v.status));
+  const onLeaveNow = vacations.filter(
+    (v) => isApprovedStatus(v.status) && v.start_date <= today && v.end_date >= today
+  );
+  const upcoming = vacations.filter((v) => isApprovedStatus(v.status) && v.start_date > today);
 
-  const memberById = new Map<string, TeamMemberRow>(members.map((m) => [m.id, m]));
-  const daysTakenByMember = (mid: string, year: number) =>
-    requests
-      .filter((r) => r.member_id === mid && r.status === "approved" && r.start_date.slice(0, 4) === String(year))
-      .reduce((s, r) => s + r.days, 0);
-
-  const updateMember = async (id: string, patch: Partial<TeamMemberRow>) => {
-    await supabase.from("team_members").update({ ...patch, updated_at: new Date().toISOString() }).eq("id", id);
+  const setStatus = async (id: string, status: string) => {
+    await supabase.from("employee_vacations").update({ status }).eq("id", id);
     await reload();
   };
-
-  const addMember = async () => {
-    const name = prompt("Nombre completo:");
-    if (!name) return;
-    const email = prompt("Email (opcional):") || null;
-    await supabase.from("team_members").insert({ full_name: name, email, role: "employee", total_days_per_year: 60 });
+  const removeVacation = async (id: string) => {
+    if (!confirm("¿Eliminar esta solicitud de vacaciones?")) return;
+    await supabase.from("employee_vacations").delete().eq("id", id);
     await reload();
   };
 
@@ -1326,124 +1328,136 @@ function EquipoTab() {
   }
 
   const year = new Date().getFullYear();
+  const activeCount = employees.filter((e) => e.active).length;
 
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white rounded-xl p-5 border border-primary/5">
           <p className="text-xs uppercase tracking-widest text-primary/50">Empleados activos</p>
-          <p className="text-3xl font-serif text-primary mt-1">{members.filter((m) => m.active).length}</p>
+          <p className="text-3xl font-serif text-primary mt-1">{activeCount}</p>
         </div>
         <div className="bg-white rounded-xl p-5 border border-primary/5">
           <p className="text-xs uppercase tracking-widest text-primary/50">Fuera hoy</p>
           <p className="text-3xl font-serif text-primary mt-1">{onLeaveNow.length}</p>
         </div>
         <div className="bg-white rounded-xl p-5 border border-primary/5">
-          <p className="text-xs uppercase tracking-widest text-primary/50">Festivos {year}</p>
-          <p className="text-3xl font-serif text-primary mt-1">{holidays.filter((h) => h.date.startsWith(String(year))).length}</p>
+          <p className="text-xs uppercase tracking-widest text-primary/50">Pendientes de aprobar</p>
+          <p className={`text-3xl font-serif mt-1 ${pending.length > 0 ? "text-amber-600" : "text-primary"}`}>
+            {pending.length}
+          </p>
         </div>
       </div>
+
+      {/* Solicitudes pendientes de aprobación */}
+      <section className="bg-white rounded-xl border border-primary/5 p-5">
+        <h3 className="font-bold text-primary mb-4">Solicitudes de vacaciones pendientes</h3>
+        {pending.length === 0 ? (
+          <p className="text-sm text-primary/50">No hay solicitudes pendientes.</p>
+        ) : (
+          <ul className="space-y-3">
+            {pending.map((v) => (
+              <li
+                key={v.id}
+                className="flex flex-wrap items-center justify-between gap-3 border border-amber-200 bg-amber-50 rounded-xl p-4"
+              >
+                <div className="min-w-0">
+                  <p className="font-bold text-primary">{vacName(v)}</p>
+                  <p className="text-xs text-primary/60">
+                    {v.start_date} → {v.end_date} · {VAC_TYPE_LABEL[v.type] ?? v.type}
+                    {v.note ? ` · ${v.note}` : ""}
+                  </p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => void setStatus(v.id, "aprobada")}
+                    className="text-xs bg-green-600 text-white px-3 py-2 rounded-full font-bold"
+                  >
+                    Aprobar
+                  </button>
+                  <button
+                    onClick={() => void setStatus(v.id, "rechazada")}
+                    className="text-xs bg-red-600 text-white px-3 py-2 rounded-full font-bold"
+                  >
+                    Rechazar
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {onLeaveNow.length > 0 && (
         <section className="bg-amber-50 border border-amber-200 rounded-xl p-5">
           <h3 className="text-sm font-bold text-amber-900 mb-2">{t('admin.portal.onVacationToday')}</h3>
           <ul className="text-sm text-amber-900 space-y-1">
-            {onLeaveNow.map((r) => (
-              <li key={r.id}>
-                <b>{memberById.get(r.member_id)?.full_name ?? "?"}</b> · vuelve el {r.end_date}
-                {r.reason && <span className="text-amber-700"> · {r.reason}</span>}
+            {onLeaveNow.map((v) => (
+              <li key={v.id}>
+                <b>{vacName(v)}</b> · vuelve el {v.end_date}
+                {v.note && <span className="text-amber-700"> · {v.note}</span>}
               </li>
             ))}
           </ul>
         </section>
       )}
 
+      {/* Roster (solo lectura — perfiles/permisos se editan en Admin → Empleados) */}
       <section className="bg-white rounded-xl border border-primary/5">
         <div className="flex justify-between items-center px-5 py-4 border-b border-primary/5">
           <h3 className="font-bold text-primary">{t('admin.portal.team')}</h3>
-          <button onClick={addMember} className="text-xs bg-primary text-white px-3 py-1.5 rounded-full">+ Añadir</button>
+          <Link to="/admin" className="text-xs bg-primary/5 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-full font-bold">
+            Editar perfiles y permisos →
+          </Link>
         </div>
         <table className="w-full text-sm">
           <thead className="text-xs uppercase tracking-widest text-primary/50">
             <tr>
               <th className="text-left p-3">Nombre</th>
               <th className="text-left p-3">Email</th>
-              <th className="text-left p-3">Rol</th>
-              <th className="text-left p-3">Días/año</th>
-              <th className="text-left p-3">Tomados {year}</th>
-              <th className="text-left p-3">Restantes</th>
+              <th className="text-left p-3">Oficina</th>
+              <th className="text-left p-3">Reportes obra</th>
+              <th className="text-left p-3">Edita fichas</th>
               <th className="text-left p-3">Activo</th>
             </tr>
           </thead>
           <tbody>
-            {members.map((m) => {
-              const taken = daysTakenByMember(m.id, year);
-              return (
-                <tr key={m.id} className="border-t border-primary/5">
-                  <td className="p-3">{m.full_name}</td>
-                  <td className="p-3 text-primary/60">
-                    <input
-                      type="email"
-                      defaultValue={m.email ?? ""}
-                      onBlur={(e) => e.target.value !== (m.email ?? "") && void updateMember(m.id, { email: e.target.value || null })}
-                      className="w-full bg-transparent border-b border-transparent hover:border-primary/20 focus:border-primary outline-none text-sm"
-                      placeholder="(sin email)"
-                    />
-                  </td>
-                  <td className="p-3">
-                    <select
-                      value={m.role}
-                      onChange={(e) => void updateMember(m.id, { role: e.target.value })}
-                      className="text-xs bg-gray-50 rounded px-2 py-1"
-                    >
-                      <option value="employee">employee</option>
-                      <option value="admin">admin</option>
-                    </select>
-                  </td>
-                  <td className="p-3">
-                    <input
-                      type="number"
-                      defaultValue={m.total_days_per_year}
-                      onBlur={(e) => Number(e.target.value) !== m.total_days_per_year && void updateMember(m.id, { total_days_per_year: Number(e.target.value) })}
-                      className="w-16 bg-gray-50 rounded px-2 py-1 text-sm"
-                    />
-                  </td>
-                  <td className="p-3">{taken}</td>
-                  <td className={`p-3 font-bold ${m.total_days_per_year - taken < 0 ? "text-red-600" : "text-green-700"}`}>
-                    {m.total_days_per_year - taken}
-                  </td>
-                  <td className="p-3">
-                    <input
-                      type="checkbox"
-                      checked={m.active}
-                      onChange={(e) => void updateMember(m.id, { active: e.target.checked })}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
+            {employees.map((e) => (
+              <tr key={e.id} className="border-t border-primary/5">
+                <td className="p-3">{e.full_name ?? "—"}</td>
+                <td className="p-3 text-primary/60">{e.email}</td>
+                <td className="p-3 text-primary/60 capitalize">{e.office ?? "—"}</td>
+                <td className="p-3">{hasPermission(e, "upload_reports") ? "✅" : "—"}</td>
+                <td className="p-3">{hasPermission(e, "edit_properties") ? "✅" : "—"}</td>
+                <td className="p-3">
+                  <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${e.active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"}`}>
+                    {e.active ? "activo" : "inactivo"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+            {employees.length === 0 && (
+              <tr><td colSpan={6} className="p-6 text-center text-primary/50">Sin empleados en el roster.</td></tr>
+            )}
           </tbody>
         </table>
       </section>
 
+      {/* Próximas vacaciones aprobadas */}
       <section className="bg-white rounded-xl border border-primary/5 p-5">
         <h3 className="font-bold text-primary mb-4">{t('admin.portal.upcomingVacations')}</h3>
         {upcoming.length === 0 ? (
-          <p className="text-sm text-primary/50">Nadie tiene vacaciones programadas próximamente.</p>
+          <p className="text-sm text-primary/50">Nadie tiene vacaciones aprobadas próximamente.</p>
         ) : (
           <ul className="text-sm space-y-2">
-            {upcoming.slice(0, 30).map((r) => (
-              <li key={r.id} className="flex items-center justify-between border-b border-primary/5 pb-2">
+            {upcoming.slice(0, 30).map((v) => (
+              <li key={v.id} className="flex items-center justify-between border-b border-primary/5 pb-2">
                 <span>
-                  <b>{memberById.get(r.member_id)?.full_name ?? "?"}</b> · {r.start_date} → {r.end_date} · {r.days} días
-                  {r.reason && <span className="text-primary/50"> · {r.reason}</span>}
+                  <b>{vacName(v)}</b> · {v.start_date} → {v.end_date} · {VAC_TYPE_LABEL[v.type] ?? v.type}
+                  {v.note && <span className="text-primary/50"> · {v.note}</span>}
                 </span>
                 <button
-                  onClick={async () => {
-                    if (!confirm("¿Eliminar esta solicitud?")) return;
-                    await supabase.from("time_off_requests").delete().eq("id", r.id);
-                    await reload();
-                  }}
+                  onClick={() => void removeVacation(v.id)}
                   className="text-xs text-red-600 underline"
                 >
                   Eliminar
@@ -1452,47 +1466,6 @@ function EquipoTab() {
             ))}
           </ul>
         )}
-      </section>
-
-      <section className="bg-white rounded-xl border border-primary/5 p-5">
-        <h3 className="font-bold text-primary mb-4">{t('admin.portal.recentSiteReports', { count: reports.length })}</h3>
-        {reports.length === 0 ? (
-          <p className="text-sm text-primary/50">Aún no hay partes enviados.</p>
-        ) : (
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {reports.map((r) => (
-              <article key={r.id} className="border border-primary/5 rounded-lg p-3 flex gap-3 text-sm">
-                {r.photo_path && (
-                  <img src={getImageUrl(r.photo_path)} alt="" className="w-20 h-20 object-cover rounded flex-shrink-0" loading="lazy" />
-                )}
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-primary/60">
-                      <b>{memberById.get(r.member_id)?.full_name ?? "?"}</b>
-                      {" · "}
-                      {new Date(r.created_at).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}
-                    </span>
-                    {r.project_slug && <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">{r.project_slug}</span>}
-                  </div>
-                  <p className="text-primary whitespace-pre-line">{r.comment}</p>
-                  {r.weather && <p className="text-[10px] text-primary/40 mt-1">Tiempo: {r.weather}</p>}
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="bg-white rounded-xl border border-primary/5 p-5">
-        <h3 className="font-bold text-primary mb-4">{t('admin.portal.holidaysLoaded', { count: holidays.length })}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm max-h-64 overflow-y-auto">
-          {holidays.map((h) => (
-            <div key={h.id} className="flex justify-between border-b border-primary/5 pb-1">
-              <span>{h.date}</span>
-              <span className="text-primary/70">{h.name}</span>
-            </div>
-          ))}
-        </div>
       </section>
     </div>
   );
