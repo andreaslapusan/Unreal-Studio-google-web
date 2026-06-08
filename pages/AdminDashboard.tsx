@@ -144,7 +144,10 @@ const AMENITIES_LIST = [
     }
   };
 
+  const adminIdRef = useRef<string | null>(null);
+  const adminUsernameRef = useRef<string | null>(null);
   const getAdminUserId = (): string | null => {
+    if (adminIdRef.current) return adminIdRef.current;
     const session = localStorage.getItem('_ust_sh_') || sessionStorage.getItem('_ust_sh_');
     if (!session) return null;
     try {
@@ -185,6 +188,7 @@ const AMENITIES_LIST = [
   };
 
   const getAdminUsername = (): string | null => {
+    if (adminUsernameRef.current) return adminUsernameRef.current;
     const session = localStorage.getItem('_ust_sh_') || sessionStorage.getItem('_ust_sh_');
     if (!session) return null;
     try {
@@ -274,6 +278,16 @@ const AMENITIES_LIST = [
       if (!legacy) {
         const { data } = await supabase.auth.getSession();
         if (!data.session) { if (!cancelled) navigate('/admin/login'); return; }
+        // El login nuevo (Supabase Auth) NO setea _ust_sh_. Resolvemos el id de
+        // admin (sistema admin_users) desde la sesión vía admin_self(), si no las
+        // RPC admin_* reciben id null y todo sale vacío.
+        try {
+          const { data: self } = await supabase.rpc('admin_self');
+          if (!cancelled && self?.success) {
+            adminIdRef.current = self.user_id;
+            adminUsernameRef.current = self.username;
+          }
+        } catch { /* ignore */ }
       }
       if (cancelled) return;
       loadData();
