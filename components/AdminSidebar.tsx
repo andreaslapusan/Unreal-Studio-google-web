@@ -22,6 +22,8 @@ interface NavItem {
   key: string;
   label: string;
   to: string;
+  /** icono Material Symbols representativo (gris, hereda el color del texto) */
+  icon: string;
   /** view del dashboard que marca este item como activo (si aplica) */
   view?: string;
   /** ruta cuyo pathname marca este item como activo (si aplica) */
@@ -38,20 +40,22 @@ const AdminSidebar: React.FC = () => {
   const onDashboard = location.pathname === '/admin';
 
   const sections: NavItem[] = [
-    { key: 'projects', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
-    { key: 'blogs', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
-    { key: 'clients', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
-    { key: 'users', label: t('admin.nav.users'), to: '/admin?view=users', view: 'users' },
-    { key: 'employees', label: t('admin.nav.employees'), to: '/admin?view=employees', view: 'employees' },
-    { key: 'config', label: t('admin.nav.config'), to: '/admin?view=config', view: 'config' },
-    { key: 'calendar', label: t('admin.nav.calendar'), to: '/admin?view=calendar', view: 'calendar' },
+    { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
+    { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
+    { key: 'clients', icon: 'person', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
+    { key: 'users', icon: 'security', label: t('admin.nav.users'), to: '/admin?view=users', view: 'users' },
+    { key: 'employees', icon: 'badge', label: t('admin.nav.employees'), to: '/admin?view=employees', view: 'employees' },
+    { key: 'calendar', icon: 'calendar_month', label: t('admin.nav.calendar'), to: '/admin?view=calendar', view: 'calendar' },
   ];
 
   const pages: NavItem[] = [
-    { key: 'marketing', label: t('admin.nav.marketing'), to: '/admin/marketing', path: '/admin/marketing' },
-    { key: 'portal', label: t('admin.nav.portalManager'), to: '/admin/portal', path: '/admin/portal' },
-    { key: 'agencias', label: t('admin.nav.agencies', 'Agencias'), to: '/admin/agencias', path: '/admin/agencias' },
+    { key: 'marketing', icon: 'campaign', label: t('admin.nav.marketing'), to: '/admin/marketing', path: '/admin/marketing' },
+    { key: 'portal', icon: 'dashboard', label: t('admin.nav.portalManager'), to: '/admin/portal', path: '/admin/portal' },
+    { key: 'agencias', icon: 'public', label: t('admin.nav.agencies', 'Agencias'), to: '/admin/agencias', path: '/admin/agencias' },
   ];
+
+  // Configuración siempre al fondo del todo.
+  const configItem: NavItem = { key: 'config', icon: 'settings', label: t('admin.nav.config'), to: '/admin?view=config', view: 'config' };
 
   const isSectionActive = (it: NavItem) => onDashboard && it.view === currentView;
   const isPageActive = (it: NavItem) => it.path && location.pathname.startsWith(it.path);
@@ -64,11 +68,18 @@ const AdminSidebar: React.FC = () => {
   };
 
   const itemClass = (active: boolean) =>
-    `relative block px-5 py-2.5 text-sm font-medium transition-colors ${
+    `relative flex items-center gap-3 px-5 py-2.5 text-sm font-medium transition-colors ${
       active
         ? 'bg-white/10 text-white before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-amber-400'
         : 'text-white/55 hover:text-white hover:bg-white/5'
     }`;
+
+  const renderItem = (it: NavItem, active: boolean) => (
+    <Link key={it.key} to={it.to} className={itemClass(active)}>
+      <span className="material-symbols-outlined text-[20px] leading-none">{it.icon}</span>
+      {it.label}
+    </Link>
+  );
 
   return (
     <aside className="hidden md:flex flex-col w-60 shrink-0 bg-[#1f2430] text-white h-screen sticky top-0 self-start overflow-y-auto">
@@ -79,19 +90,16 @@ const AdminSidebar: React.FC = () => {
 
       <nav className="flex-1 overflow-y-auto py-3">
         <p className="px-5 pt-2 pb-1 text-[10px] font-black uppercase tracking-widest text-white/30">{t('admin.nav.sections', 'Secciones')}</p>
-        {sections.map((it) => (
-          <Link key={it.key} to={it.to} className={itemClass(isSectionActive(it))}>
-            {it.label}
-          </Link>
-        ))}
+        {sections.map((it) => renderItem(it, isSectionActive(it)))}
 
         <p className="px-5 pt-5 pb-1 text-[10px] font-black uppercase tracking-widest text-white/30">{t('admin.nav.tools', 'Herramientas')}</p>
-        {pages.map((it) => (
-          <Link key={it.key} to={it.to} className={itemClass(!!isPageActive(it))}>
-            {it.label}
-          </Link>
-        ))}
+        {pages.map((it) => renderItem(it, !!isPageActive(it)))}
       </nav>
+
+      {/* Configuración: siempre al fondo del todo, justo encima del logout. */}
+      <div className="border-t border-white/10 pt-2">
+        {renderItem(configItem, isSectionActive(configItem))}
+      </div>
 
       <div className="border-t border-white/10 p-3">
         <button

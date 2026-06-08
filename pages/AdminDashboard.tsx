@@ -51,6 +51,8 @@ const AMENITIES_LIST = [
   const [projects, setProjects] = useState<Project[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
+  // Firma PERSONAL del admin logueado (cada admin tiene la suya; no es de empresa).
+  const [mySignature, setMySignature] = useState<string>('');
   const [users, setUsers] = useState<User[]>([]);
   
   const [clients, setClients] = useState<Client[]>([]);
@@ -292,6 +294,7 @@ const AMENITIES_LIST = [
       if (cancelled) return;
       loadData();
       loadDaysOff();
+      void loadMySignature();
     };
     void guard();
     return () => { cancelled = true; };
@@ -824,12 +827,31 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
   // --- OPCIONES DE CONFIGURACION ---
   
-  // Sube una imagen de marca (logo/sello/firma) y guarda su URL pública en config.brand.
+  // Sube una imagen de marca (logo/sello) y guarda su URL pública en config.brand.
   const handleBrandUpload = async (fieldKey: string, file: File) => {
     const path = await uploadImage(file, 'brand');
     if (!path) { alert('Error subiendo la imagen'); return; }
     const url = getImageUrl(path);
     setConfig({ ...config, brand: { ...((config as any).brand || {}), [fieldKey]: url } } as any);
+  };
+
+  // Carga / guarda la firma PERSONAL del admin actual (admin_users.signature_url).
+  const loadMySignature = useCallback(async () => {
+    const userId = getAdminUserId();
+    if (!userId) return;
+    const { data } = await supabase.rpc('admin_my_signature', { p_user_id: userId });
+    if (data?.success) setMySignature(data.signature_url || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleMySignatureUpload = async (file: File) => {
+    const userId = getAdminUserId();
+    if (!userId) { alert('Sesión expirada'); return; }
+    const path = await uploadImage(file, 'signatures');
+    if (!path) { alert('Error subiendo la firma'); return; }
+    const url = getImageUrl(path);
+    const { data } = await supabase.rpc('admin_set_my_signature', { p_user_id: userId, p_url: url });
+    if (data?.success) { setMySignature(url); } else { alert('No se pudo guardar la firma'); }
   };
 
   const saveConfigToDb = async (newConfig: AppConfig) => {
@@ -1235,8 +1257,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
                <h3 className="text-xl font-serif text-primary mb-2">Marca y empresa</h3>
                <p className="text-xs text-gray-400 mb-6">Logo, sello, firma y datos de contacto. Se usan en la WEB, en los EMAILS y en los recibos (kwitansi). Si cambias el logo aquí, cambia en todos.</p>
-               <div className="grid sm:grid-cols-3 gap-5 mb-6">
-                 {[{ k: 'logo', label: 'Logo' }, { k: 'stamp', label: 'Sello' }, { k: 'signature', label: 'Firma (Andreas)' }].map(({ k, label }) => (
+               <div className="grid sm:grid-cols-2 gap-5 mb-6">
+                 {[{ k: 'logo', label: 'Logo' }, { k: 'stamp', label: 'Sello de la empresa' }].map(({ k, label }) => (
                    <div key={k}>
                      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{label}</label>
                      <div className="border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center">
@@ -1264,6 +1286,25 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  </div>
                </div>
                <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar marca y empresa</button>
+               <button onClick={() => { const b = { ...((config as any).brand || {}), logo: '', stamp: '' }; const nc = { ...config, brand: b } as any; setConfig(nc); void saveConfigToDb(nc); }} className="mt-3 w-full border border-red-200 text-red-500 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-red-50 transition">Borrar todas las fotos (volver al texto marrón)</button>
+             </div>
+
+             {/* Mi firma — PERSONAL del admin logueado, no de la empresa */}
+             <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+               <h3 className="text-xl font-serif text-primary mb-2">Mi firma</h3>
+               <p className="text-xs text-gray-400 mb-6">Tu firma personal: solo TÚ la usas al firmar kwitansis. Cada administrador tiene la suya. Sube un PNG con fondo transparente.</p>
+               <div className="flex items-center gap-6 flex-wrap">
+                 <div className="border-2 border-dashed border-gray-200 rounded-2xl p-4 w-48 text-center">
+                   {mySignature ? <img src={mySignature} alt="Mi firma" className="h-16 mx-auto object-contain" /> : <span className="material-symbols-outlined text-gray-300 text-3xl">edit</span>}
+                 </div>
+                 <div className="flex flex-col gap-2">
+                   <label className="cursor-pointer bg-primary text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest text-center">
+                     Subir mi firma
+                     <input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleMySignatureUpload(f); }} />
+                   </label>
+                   {mySignature && <button onClick={async () => { const u = getAdminUserId(); if (u) { await supabase.rpc('admin_set_my_signature', { p_user_id: u, p_url: '' }); setMySignature(''); } }} className="text-red-500 text-[10px] font-black uppercase tracking-widest">Borrar mi firma</button>}
+                 </div>
+               </div>
              </div>
            </div>
         )}
@@ -1932,6 +1973,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     clientEmail={paymentsClient.email || null}
     adminUserId={getAdminUserId() as string}
     brand={(config as any).brand || {}}
+    adminSignature={mySignature}
     onClose={() => setPaymentsClient(null)}
   />
 )}
