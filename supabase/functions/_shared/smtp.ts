@@ -15,7 +15,8 @@
 // @ts-nocheck — Deno runtime types not in the Vite tsconfig
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
-export const FROM_DEFAULT = "Unreal Studio <hello@unrealstudiobali.com>";
+// Envío desde el buzón de SOLO ENVÍO (IONOS). Las respuestas se enrutan a hello@.
+export const FROM_DEFAULT = "Unreal Studio <no.reply@unrealstudiobali.com>";
 
 export function smtpConfigured(): boolean {
   return Boolean(Deno.env.get("SMTP_HOST") && Deno.env.get("SMTP_USER") && Deno.env.get("SMTP_PASS"));

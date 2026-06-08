@@ -59,6 +59,9 @@ const fmt = (n: number, c: string) => {
   try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
   catch { return `${c} ${n}`; }
 };
+// Para inputs de importe: muestra con puntos de miles y parsea de vuelta a número.
+const grp = (n: number) => (n ? n.toLocaleString('es-ES', { useGrouping: 'always' } as any) : '');
+const parseNum = (s: string) => Number(String(s).replace(/\D/g, '')) || 0;
 
 const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, onClose }) => {
   const [units, setUnits] = useState<Unit[]>([]);
@@ -262,8 +265,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Etiqueta (ej. 2º plazo / Reserva)"
               value={editing.pay.label || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, label: e.target.value } })} />
             <div className="flex gap-2">
-              <input type="number" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Importe"
-                value={editing.pay.amount || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, amount: Number(e.target.value) } })} />
+              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Importe"
+                value={grp(editing.pay.amount || 0)} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, amount: parseNum(e.target.value) } })} />
               <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg text-sm" value={editing.pay.currency || 'IDR'}
                 onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, currency: e.target.value } })}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
@@ -293,8 +296,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <div className="grid grid-cols-2 gap-2 text-sm">
               <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder="Telah terima dari (recibido de)"
                 value={kw.received_from} onChange={(e) => setKw({ ...kw, received_from: e.target.value })} />
-              <input type="number" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder="Importe"
-                value={kw.amount || ''} onChange={(e) => setKw({ ...kw, amount: Number(e.target.value) })} />
+              <input type="text" inputMode="numeric" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder="Importe"
+                value={grp(kw.amount || 0)} onChange={(e) => setKw({ ...kw, amount: parseNum(e.target.value) })} />
               <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw({ ...kw, currency: e.target.value })}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
