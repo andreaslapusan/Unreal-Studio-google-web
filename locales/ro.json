@@ -34,7 +34,9 @@
     "faq": "Întrebări",
     "contact": "Contact",
     "agencies": "Agenții",
-    "investors": "Investitori"
+    "investors": "Investitori",
+    "scheduleCall": "Programează un apel",
+    "scheduleShort": "Programează"
   },
   "home": {
     "title": "Unreal Studio Madrid | Investiții Imobiliare în Bali",
@@ -210,7 +212,18 @@
     "no": "Nu",
     "similarTitle": "Active Similare",
     "ctaWhatsapp": "Vorbește prin WhatsApp",
-    "noAccess": "Nu ai acces? Contactează consilierul tău Unreal Studio."
+    "noAccess": "Nu ai acces? Contactează consilierul tău Unreal Studio.",
+    "kpiInvestorPrice": "Preț Investitor",
+    "kpiMarketPrice": "Preț Piață",
+    "labelDistanceBeach": "Distanță până la Plajă",
+    "labelYearsContract": "Contract Leasehold",
+    "labelAvailableUnits": "Unități Disponibile",
+    "labelConstructionProgress": "Progres Construcție",
+    "yearsExtValue": "{{base}} ani + {{ext}} ext.",
+    "unitsValue": "{{count}} Unități",
+    "completedValue": "{{pct}}% Finalizat",
+    "downloadBrochure": "Descarcă Broșura",
+    "constructionProgressTitle": "Progres Construcție"
   },
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",

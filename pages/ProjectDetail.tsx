@@ -402,14 +402,14 @@ const ProjectDetail: React.FC = () => {
           </div>
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
-            <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : 'Consultar'}</p>
+            <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
           </div>
           <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{config.labels.price}</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
             <p className="text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
           </div>
           <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{config.labels.market_price}</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiMarketPrice')}</p>
             <p className="text-3xl font-serif line-through opacity-40">{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
           <div className="px-4 border-r-0 text-center md:text-left">
@@ -431,10 +431,10 @@ const ProjectDetail: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
-                { icon: 'beach_access', label: config.labels.distance_beach, value: project.distance_beach },
-                { icon: 'history', label: config.labels.years_contract, value: `${project.years_contract} años + ${project.years_extension} ext.` },
-                { icon: 'inventory_2', label: config.labels.available_units, value: `${project.available_units} Unidades` },
-                { icon: 'construction', label: config.labels.completion_percent, value: `${project.completion_percent}% Completado` }
+                { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
+                { icon: 'history', label: t('projectDetail.labelYearsContract'), value: t('projectDetail.yearsExtValue', { base: project.years_contract, ext: project.years_extension }) },
+                { icon: 'inventory_2', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
+                { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) }
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-primary/5">
                   <div className="bg-almond p-3 rounded-xl"><span className="material-symbols-outlined text-primary">{item.icon}</span></div>
@@ -722,7 +722,7 @@ const ProjectDetail: React.FC = () => {
             <section>
               <h3 className="text-3xl text-primary mb-8 text-left flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary/40 text-4xl">construction</span>
-                Avance de Obra
+                {t('projectDetail.constructionProgressTitle')}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {project.construction_gallery.map((img, idx) => {
@@ -797,7 +797,7 @@ const ProjectDetail: React.FC = () => {
               <div className="space-y-8 mb-10">
                 <div>
                   <div className="flex justify-between text-[11px] font-bold text-gray-500 mb-3 uppercase tracking-wider">
-                    <span>{config.labels.completion_percent}</span>
+                    <span>{t('projectDetail.labelConstructionProgress')}</span>
                     <span className="text-primary">{project.completion_percent}%</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
@@ -817,11 +817,11 @@ const ProjectDetail: React.FC = () => {
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                    <span>ROI Alquiler</span>
+                    <span>{t('projectDetail.kpiRoiRental')}</span>
                     <span className="text-primary">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
                   </div>
                   <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                    <span>ROI Reventa</span>
+                    <span>{t('projectDetail.kpiRoiResale')}</span>
                     <span className="text-primary">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
                   </div>
                 </div>
@@ -831,7 +831,7 @@ const ProjectDetail: React.FC = () => {
                   <div className="pt-6 border-t border-gray-100 space-y-3">
                     {project.brochure_url && (
                       <a href={getImageUrl(project.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
-                        <span className="material-symbols-outlined text-sm">download</span> Descargar Brochure
+                        <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}
                     {project.construction_update_url && (
@@ -844,7 +844,7 @@ const ProjectDetail: React.FC = () => {
                       }} className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-green-600 hover:text-white text-green-700 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
                           <span className="material-symbols-outlined text-sm">construction</span>
                           <span className="material-symbols-outlined text-xs opacity-50">lock</span>
-                          Informe Obra {project.construction_update_date && <span className="opacity-70 ml-1">({formatDate(project.construction_update_date)})</span>}
+                          {t('projectDetail.constructionReport')} {project.construction_update_date && <span className="opacity-70 ml-1">({formatDate(project.construction_update_date)})</span>}
                       </button>
                     )}
                   </div>
