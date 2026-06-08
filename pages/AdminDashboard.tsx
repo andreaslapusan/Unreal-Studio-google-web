@@ -522,6 +522,8 @@ const AMENITIES_LIST = [
         // cubre, vía RPC additiva. (Se quita el viejo raw update de is_hidden: la RLS
         // lo denegaba y admin_save_project ya persiste is_hidden.)
         await supabase.rpc('admin_save_project_extra', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
+        // Traducciones EN/ID de los campos de ficha (para packs de agencia multilingües).
+        await supabase.rpc('admin_save_project_i18n', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
 
         await loadData();
         setIsEditing(false);
@@ -1845,6 +1847,27 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <label key={k} className="flex items-center gap-2 text-xs font-bold text-primary/70 cursor-pointer">
                       <input type="checkbox" checked={!!(currentProject as any)[k]} onChange={(e) => setCurrentProject({ ...currentProject, [k]: e.target.checked } as any)} /> {label}
                     </label>
+                  ))}
+                </div>
+              </div>
+              {/* Traducciones (EN/ID) de los campos que aparecen en los packs de agencia. */}
+              <div className="border-t border-gray-100 pt-6">
+                <h3 className="text-lg font-serif text-primary mb-1">Traducciones para packs (inglés / indonesio)</h3>
+                <p className="text-xs text-gray-400 mb-4">Opcional. Si están vacías, el pack usa el texto en español.</p>
+                <div className="space-y-3">
+                  {([
+                    ['description','Descripción'],['status','Estado'],['completion_date','Fecha de entrega'],
+                    ['distance_beach','Distancia playa'],['view','Vistas'],['parking','Parking'],
+                    ['living_room_style','Estilo salón'],['furnishing','Mobiliario'],['water_supply','Agua'],
+                    ['structural_warranty','Garantía estructural'],['zoning_type','Zonificación'],
+                    ['building_permit_status','Permiso de obra'],['payment_plan_off_plan','Plan de pago'],
+                    ['lease_end_date','Fin leasehold'],
+                  ] as [string,string][]).map(([k,label]) => (
+                    <div key={k} className="grid grid-cols-1 md:grid-cols-[140px_1fr_1fr] gap-2 items-center">
+                      <span className="text-[10px] font-black uppercase text-gray-400">{label}</span>
+                      <input placeholder="EN" value={(currentProject as any)[`${k}_en`] ?? ''} onChange={(e) => setCurrentProject({ ...currentProject, [`${k}_en`]: e.target.value } as any)} className="w-full px-3 py-2 bg-gray-50 rounded-xl text-sm" />
+                      <input placeholder="ID" value={(currentProject as any)[`${k}_id`] ?? ''} onChange={(e) => setCurrentProject({ ...currentProject, [`${k}_id`]: e.target.value } as any)} className="w-full px-3 py-2 bg-gray-50 rounded-xl text-sm" />
+                    </div>
                   ))}
                 </div>
               </div>
