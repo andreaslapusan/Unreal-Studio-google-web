@@ -1,0 +1,244 @@
+/**
+ * VacationManager — gestión de vacaciones del equipo (Admin → Calendario).
+ *
+ * Sustituye al viejo calendario de "días libres" (que iba por admin_users y pedía
+ * contraseña). Ahora: SIN contraseña (si eres admin ya entras), selector de
+ * empleado (todos / uno), calendario anual con sus fechas, y aprobar / rechazar /
+ * modificar / borrar cada solicitud. Datos en `employees` + `employee_vacations`.
+ */
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { supabase } from '../../lib/supabase';
+
+interface Employee { id: string; full_name: string | null; email: string; }
+interface Vacation {
+  id: string; employee_id: string | null; employee_email: string; employee_name: string | null;
+  start_date: string; end_date: string; type: string; status: string; note: string | null;
+}
+
+const STATUS_CLS: Record<string, string> = {
+  aprobada: 'bg-green-100 text-green-700', approved: 'bg-green-100 text-green-700',
+  pendiente: 'bg-amber-100 text-amber-700', pending: 'bg-amber-100 text-amber-700',
+  rechazada: 'bg-red-100 text-red-600', rejected: 'bg-red-100 text-red-600',
+};
+const isApproved = (s: string) => s === 'aprobada' || s === 'approved';
+const isPending = (s: string) => s === 'pendiente' || s === 'pending';
+
+// Paleta por empleado (color estable por índice) para distinguirlos en el grid.
+const PALETTE = ['#3F2305', '#1d4ed8', '#15803d', '#b45309', '#7c3aed', '#be185d', '#0e7490', '#4d7c0f'];
+
+function eachDay(start: string, end: string): string[] {
+  const out: string[] = [];
+  let d = new Date(`${start}T00:00:00`);
+  const e = new Date(`${end}T00:00:00`);
+  while (d <= e) { out.push(d.toISOString().slice(0, 10)); d = new Date(d.getTime() + 86400000); }
+  return out;
+}
+
+const VacationManager: React.FC = () => {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [vacations, setVacations] = useState<Vacation[]>([]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [selected, setSelected] = useState<string>('all');
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<Vacation | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [emp, vac] = await Promise.all([
+      supabase.from('employees').select('id, full_name, email').eq('active', true).order('full_name'),
+      supabase.from('employee_vacations').select('id, employee_id, employee_email, employee_name, start_date, end_date, type, status, note').order('start_date'),
+    ]);
+    setEmployees((emp.data as Employee[]) ?? []);
+    setVacations((vac.data as Vacation[]) ?? []);
+    setLoading(false);
+  }, []);
+  useEffect(() => { void load(); }, [load]);
+
+  const colorOf = useCallback((email: string) => {
+    const idx = employees.findIndex((e) => e.email === email);
+    return PALETTE[(idx < 0 ? 0 : idx) % PALETTE.length];
+  }, [employees]);
+
+  const filtered = useMemo(() => vacations.filter((v) => selected === 'all' || v.employee_email === selected), [vacations, selected]);
+  const pending = useMemo(() => filtered.filter((v) => isPending(v.status)), [filtered]);
+
+  // Mapa fecha → vacaciones (solo aprobadas/pendientes) para pintar el calendario.
+  const dayMap = useMemo(() => {
+    const map = new Map<string, Vacation[]>();
+    for (const v of filtered) {
+      if (v.status === 'rechazada' || v.status === 'rejected') continue;
+      for (const d of eachDay(v.start_date, v.end_date)) {
+        const arr = map.get(d) ?? []; arr.push(v); map.set(d, arr);
+      }
+    }
+    return map;
+  }, [filtered]);
+
+  const setStatus = async (id: string, status: string) => {
+    await supabase.from('employee_vacations').update({ status }).eq('id', id);
+    await load();
+  };
+  const remove = async (id: string) => {
+    if (!confirm('¿Eliminar esta solicitud de vacaciones?')) return;
+    await supabase.from('employee_vacations').delete().eq('id', id);
+    await load();
+  };
+  const saveEdit = async () => {
+    if (!editing) return;
+    if (editing.end_date < editing.start_date) { alert('La fecha fin no puede ser anterior a la inicial.'); return; }
+    await supabase.from('employee_vacations').update({
+      start_date: editing.start_date, end_date: editing.end_date, type: editing.type, note: editing.note,
+    }).eq('id', editing.id);
+    setEditing(null);
+    await load();
+  };
+
+  const nameFor = (v: Vacation) => v.employee_name || v.employee_email;
+
+  return (
+    <div>
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
+        <h2 className="text-3xl font-serif text-primary">Vacaciones del equipo</h2>
+        <div className="flex items-center gap-3">
+          {/* Selector de empleado */}
+          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
+            <option value="all">Todos los empleados</option>
+            {employees.map((e) => <option key={e.id} value={e.email}>{e.full_name || e.email}</option>)}
+          </select>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setYear((y) => y - 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_left</span></button>
+            <span className="text-xl font-bold text-primary">{year}</span>
+            <button onClick={() => setYear((y) => y + 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_right</span></button>
+          </div>
+        </div>
+      </div>
+
+      {/* Leyenda de empleados (colores) */}
+      {selected === 'all' && employees.length > 0 && (
+        <div className="flex flex-wrap gap-3 mb-5">
+          {employees.map((e) => (
+            <span key={e.id} className="flex items-center gap-1.5 text-xs text-primary/60">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ background: colorOf(e.email) }} /> {e.full_name || e.email}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Solicitudes pendientes de aprobar */}
+      {pending.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8">
+          <h3 className="text-sm font-black uppercase tracking-widest text-amber-700 mb-3">Pendientes de aprobar ({pending.length})</h3>
+          <ul className="space-y-2">
+            {pending.map((v) => (
+              <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-xl px-4 py-3 border border-amber-100">
+                <div className="min-w-0">
+                  <p className="font-bold text-primary text-sm">{nameFor(v)}</p>
+                  <p className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}{v.note ? ` · ${v.note}` : ''}</p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">Aprobar</button>
+                  <button onClick={() => void setStatus(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">Rechazar</button>
+                  <button onClick={() => setEditing(v)} className="text-[11px] font-black uppercase tracking-widest bg-gray-100 text-primary px-3 py-2 rounded-lg hover:bg-gray-200 transition">Modificar</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex justify-center py-12"><span className="material-symbols-outlined animate-spin text-3xl text-primary/30">refresh</span></div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {Array.from({ length: 12 }, (_, monthIdx) => {
+            const monthDate = new Date(year, monthIdx, 1);
+            const monthName = monthDate.toLocaleDateString('es-ES', { month: 'long' });
+            const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+            const firstDayOfWeek = (monthDate.getDay() + 6) % 7;
+            return (
+              <div key={monthIdx} className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5">
+                <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3 text-center capitalize">{monthName}</h3>
+                <div className="grid grid-cols-7 gap-1 text-center">
+                  {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d) => <span key={d} className="text-[8px] font-bold text-primary/30">{d}</span>)}
+                  {Array.from({ length: firstDayOfWeek }, (_, i) => <span key={`e${i}`} />)}
+                  {Array.from({ length: daysInMonth }, (_, dayIdx) => {
+                    const day = dayIdx + 1;
+                    const dateStr = `${year}-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const offs = dayMap.get(dateStr) ?? [];
+                    const isToday = dateStr === new Date().toISOString().slice(0, 10);
+                    return (
+                      <div key={day} title={offs.map((v) => `${nameFor(v)} (${isApproved(v.status) ? 'aprobada' : 'pendiente'})`).join(', ')}
+                        className={`relative text-[10px] rounded-lg p-1 min-h-[28px] flex flex-col items-center justify-center ${isToday ? 'ring-2 ring-primary' : ''} ${offs.length ? 'bg-primary/5' : ''}`}>
+                        <span className="font-bold text-primary/80">{day}</span>
+                        {offs.length > 0 && (
+                          <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
+                            {offs.slice(0, 4).map((v, i) => (
+                              <span key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Listado de todas las solicitudes (del filtro) con estado y acciones */}
+      <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-primary/5">
+        <h3 className="text-lg font-serif text-primary mb-4">Solicitudes {selected === 'all' ? 'de todo el equipo' : ''} {year}</h3>
+        {filtered.filter((v) => v.start_date.startsWith(String(year)) || v.end_date.startsWith(String(year))).length === 0 ? (
+          <p className="text-sm text-primary/50">No hay vacaciones registradas este año.</p>
+        ) : (
+          <ul className="space-y-2">
+            {filtered.filter((v) => v.start_date.startsWith(String(year)) || v.end_date.startsWith(String(year))).map((v) => (
+              <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-gray-50">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: colorOf(v.employee_email) }} />
+                  <span className="font-medium text-primary text-sm">{nameFor(v)}</span>
+                  <span className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{v.status}</span>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  {!isApproved(v.status) && <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[10px] font-bold text-green-700 hover:underline">Aprobar</button>}
+                  <button onClick={() => setEditing(v)} className="text-[10px] font-bold text-primary/60 hover:underline">Modificar</button>
+                  <button onClick={() => void remove(v.id)} className="text-[10px] font-bold text-red-600 hover:underline">Eliminar</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Modal modificar */}
+      {editing && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <h3 className="text-xl font-serif text-primary mb-4">Modificar vacaciones · {nameFor(editing)}</h3>
+            <div className="space-y-3">
+              <label className="block"><span className="text-xs font-bold text-gray-500">Desde</span>
+                <input type="date" value={editing.start_date} onChange={(e) => setEditing({ ...editing, start_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
+              <label className="block"><span className="text-xs font-bold text-gray-500">Hasta</span>
+                <input type="date" value={editing.end_date} min={editing.start_date} onChange={(e) => setEditing({ ...editing, end_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
+              <label className="block"><span className="text-xs font-bold text-gray-500">Tipo</span>
+                <select value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1 bg-white">
+                  <option value="vacaciones">Vacaciones</option><option value="baja">Baja</option><option value="personal">Personal</option>
+                </select></label>
+              <label className="block"><span className="text-xs font-bold text-gray-500">Nota</span>
+                <input type="text" value={editing.note ?? ''} onChange={(e) => setEditing({ ...editing, note: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
+            </div>
+            <div className="flex gap-2 mt-5">
+              <button onClick={() => void saveEdit()} className="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-sm">Guardar</button>
+              <button onClick={() => setEditing(null)} className="flex-1 bg-gray-100 text-primary py-2.5 rounded-xl font-bold text-sm">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default VacationManager;

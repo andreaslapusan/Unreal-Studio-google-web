@@ -12,6 +12,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
+import VacationManager from '../components/admin/VacationManager';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import BrandLogo from '../components/BrandLogo';
 
@@ -1402,30 +1403,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="animate-in fade-in duration-500">
             <h2 className="text-2xl font-serif text-primary mb-2">Perfiles de Empleados</h2>
             <p className="text-sm text-gray-400 mb-1">Cuentas del portal Team (acceso con email + contraseña).</p>
-            <p className="text-xs text-green-600 mb-6 flex items-center gap-1"><span className="material-symbols-outlined text-sm">check_circle</span> Permisos y horarios se guardan automáticamente al cambiarlos (no hace falta botón).</p>
-
-            {/* Solicitudes de vacaciones pendientes de aprobar */}
-            {pendingVacations.length > 0 && (
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
-                <h3 className="text-sm font-black uppercase tracking-widest text-amber-700 mb-3 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-base">beach_access</span> Vacaciones pendientes ({pendingVacations.length})
-                </h3>
-                <ul className="space-y-2">
-                  {pendingVacations.map((v) => (
-                    <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-xl px-4 py-3 border border-amber-100">
-                      <div className="min-w-0">
-                        <p className="font-bold text-primary text-sm">{v.employee_name || v.employee_email}</p>
-                        <p className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}{v.note ? ` · ${v.note}` : ''}</p>
-                      </div>
-                      <div className="flex gap-2 shrink-0">
-                        <button onClick={() => void resolveVacation(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">Aprobar</button>
-                        <button onClick={() => void resolveVacation(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">Rechazar</button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <p className="text-xs text-green-600 mb-2 flex items-center gap-1"><span className="material-symbols-outlined text-sm">check_circle</span> Permisos y horarios se guardan automáticamente al cambiarlos (no hace falta botón).</p>
+            <p className="text-xs text-primary/50 mb-6">Las vacaciones se aprueban y gestionan en el menú <b>Calendario</b>.</p>
             <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase tracking-widest">
@@ -1511,110 +1490,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </div>
         )}
 
-        {activeView === 'calendar' && (
-          <div>
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-serif text-primary">{t('admin.adminDash.calendarTitle')}</h2>
-              <div className="flex items-center gap-3">
-                <button onClick={() => setCalendarYear(y => y - 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_left</span></button>
-                <span className="text-xl font-bold text-primary">{calendarYear}</span>
-                <button onClick={() => setCalendarYear(y => y + 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_right</span></button>
-              </div>
-            </div>
-
-            {!calendarEditMode && (
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-primary/5 mb-8 max-w-md">
-                <p className="text-sm text-primary/60 mb-3">{t('admin.calendarTab.passwordPrompt')}</p>
-                <div className="flex gap-2">
-                  <input type="password" value={calendarAdminPassword} onChange={(e) => setCalendarAdminPassword(e.target.value)} placeholder={t('admin.adminDash.adminPassword')} className="flex-1 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 font-medium" onKeyDown={(e) => e.key === 'Enter' && handleCalendarAuth()} />
-                  <button onClick={handleCalendarAuth} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">{t('admin.calendarTab.unlock')}</button>
-                </div>
-                {calendarAuthError && <p className="text-red-500 text-xs mt-2">{calendarAuthError}</p>}
-              </div>
-            )}
-
-            {calendarEditMode && (
-              <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 mb-6 flex items-center gap-2">
-                <span className="material-symbols-outlined text-green-600 text-sm">lock_open</span>
-                <span className="text-xs font-bold text-green-700">{t('admin.calendarTab.editActive')}</span>
-                <button onClick={() => setCalendarEditMode(false)} className="ml-auto text-xs text-green-600 hover:text-green-800 font-bold">{t('admin.calendarTab.lock')}</button>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {Array.from({ length: 12 }, (_, monthIdx) => {
-                const monthDate = new Date(calendarYear, monthIdx, 1);
-                const monthName = monthDate.toLocaleDateString('es-ES', { month: 'long' });
-                const daysInMonth = new Date(calendarYear, monthIdx + 1, 0).getDate();
-                const firstDayOfWeek = (monthDate.getDay() + 6) % 7;
-                
-                return (
-                  <div key={monthIdx} className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5">
-                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3 text-center capitalize">{monthName}</h3>
-                    <div className="grid grid-cols-7 gap-1 text-center">
-                      {['L','M','X','J','V','S','D'].map(d => (
-                        <span key={d} className="text-[8px] font-bold text-primary/30">{d}</span>
-                      ))}
-                      {Array.from({ length: firstDayOfWeek }, (_, i) => (
-                        <span key={`empty-${i}`} />
-                      ))}
-                      {Array.from({ length: daysInMonth }, (_, dayIdx) => {
-                        const day = dayIdx + 1;
-                        const dateStr = `${calendarYear}-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                        const usersOff = users.filter(u => (daysOff[u.id] || []).includes(dateStr));
-                        const isWeekend = new Date(calendarYear, monthIdx, day).getDay() === 0 || new Date(calendarYear, monthIdx, day).getDay() === 6;
-                        const isToday = dateStr === new Date().toISOString().split('T')[0];
-                        
-                        return (
-                          <div 
-                            key={day}
-                            className={`relative text-[10px] rounded-lg p-1 min-h-[28px] flex flex-col items-center justify-center cursor-pointer transition
-                              ${isToday ? 'ring-2 ring-primary' : ''}
-                              ${isWeekend ? 'bg-gray-50 text-gray-300' : 'hover:bg-primary/5'}
-                              ${usersOff.length > 0 ? 'bg-red-50' : ''}
-                            `}
-                            onClick={() => {
-                              if (!calendarEditMode) return;
-                              const userId = getAdminUserId();
-                              if (userId) toggleDayOff(userId, dateStr);
-                            }}
-                            title={usersOff.length > 0 ? usersOff.map(u => u.username).join(', ') : ''}
-                          >
-                            <span className={`font-bold ${usersOff.length > 0 ? 'text-red-600' : ''}`}>{day}</span>
-                            {usersOff.length > 0 && (
-                              <div className="flex gap-0.5 mt-0.5">
-                                {usersOff.slice(0, 3).map((u, i) => (
-                                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-red-400" title={u.username} />
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {users.length > 0 && (
-              <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-primary/5">
-                <h3 className="text-lg font-serif text-primary mb-4">{t('admin.calendarTab.summaryByEmployee')}</h3>
-                <div className="space-y-3">
-                  {users.map(u => {
-                    const userDays = (daysOff[u.id] || []).filter(d => d.startsWith(String(calendarYear)));
-                    return (
-                      <div key={u.id} className="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span className="font-medium text-primary">{u.username}</span>
-                        <span className="text-sm text-primary/50">{userDays.length} días libres en {calendarYear}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        {activeView === 'calendar' && <VacationManager />}
       </main>
 
       {/* MODALS */}
