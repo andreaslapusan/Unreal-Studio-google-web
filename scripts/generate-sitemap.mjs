@@ -84,7 +84,10 @@ ${alts}
 }
 
 async function main() {
-  const entries = STATIC_ROUTES.map(urlEntry);
+  // lastmod en las rutas estáticas = fecha de build (ayuda a Google a saber que
+  // el sitio se mantiene fresco). Las dinámicas ya llevan su updated_at real.
+  const today = new Date().toISOString().slice(0, 10);
+  const entries = STATIC_ROUTES.map((r) => urlEntry({ ...r, lastmod: today }));
 
   try {
     const { data: projects, error: pErr } = await sb

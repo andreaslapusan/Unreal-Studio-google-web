@@ -5,6 +5,7 @@ import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
 import { usePageMeta } from '../components/PageMeta';
+import DOMPurify from 'dompurify';
 
 const BlogDetail: React.FC = () => {
   const { t } = useTranslation();
@@ -107,10 +108,11 @@ const BlogDetail: React.FC = () => {
                     </Link>
                 </div>
                 
-                {/* Renderizado de HTML enriquecido para SEO */}
-                <div 
+                {/* Renderizado de HTML enriquecido para SEO. Saneado con DOMPurify:
+                    permite formato del blog pero elimina scripts/eventos (anti-XSS). */}
+                <div
                   className="prose prose-lg md:prose-xl max-w-none prose-p:text-primary/70 prose-p:font-light prose-headings:text-primary prose-headings:font-serif prose-strong:text-primary prose-strong:font-bold prose-img:rounded-3xl"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content, { ADD_ATTR: ['target'] }) }}
                 />
 
                 <div className="mt-20 pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-8">
