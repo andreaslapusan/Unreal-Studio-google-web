@@ -56,11 +56,32 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   // useEffect de cambio de `user` podrían dispararlo en paralelo → carrera).
   const routingRef = useRef(false);
 
-  // Ya autenticado → resolver portales.
+  // Ya autenticado AL ENTRAR → solo redirigimos si la sesión actual YA
+  // pertenece a ESTE portal (atajo cómodo: cliente logueado que pulsa
+  // "Cliente" va directo a su dashboard).
+  //
+  // Si la sesión es de OTRO portal (p.ej. admin pulsando "Cliente" en el
+  // footer) NO lo echamos a su portal: dejamos el formulario visible para que
+  // entre como cliente sin tener que cerrar sesión a mano primero.
   useEffect(() => {
-    if (!loading && user) void routeAfterAuth();
+    if (loading || !user) return;
+    void routeIfMember();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading]);
+
+  async function routeIfMember() {
+    if (routingRef.current) return;
+    routingRef.current = true;
+    try {
+      const list = await getPortalsWithRetry();
+      if (list && list.includes(portal)) {
+        navigate(PORTAL_DASH[portal], { replace: true });
+      }
+      // No pertenece a este portal → se queda en el formulario de login.
+    } finally {
+      routingRef.current = false;
+    }
+  }
 
   // Pide los portales con timeout generoso (15s) + 1 reintento. Devuelve la
   // lista, o `null` si NO se pudo verificar (sin tirar la sesión).
