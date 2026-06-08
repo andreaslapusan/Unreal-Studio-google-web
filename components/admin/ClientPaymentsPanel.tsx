@@ -186,7 +186,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     // 2) Send it from hello@unrealstudiobali.com via the edge function
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
       body: {
-        adminUserId, to: clientEmail, kwitansiId: created.id,
+        adminUserId, to: clientEmail, kwitansiId: created.id, lang: clientLang || 'es',
         subject: `Kwitansi ${no} · Unreal Studio`,
         html: `<p style="font-family:Manrope,Arial,sans-serif;color:#3F2305;font-size:14px;margin:0 0 14px">${(KW_GREETING[clientLang || 'es'] || KW_GREETING.es)(clientName)}</p>${html}`,
       },

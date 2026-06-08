@@ -395,9 +395,9 @@ const ClientDashboard: React.FC = () => {
         return;
       }
       setClientData(data);
-      // Mostrar el portal en la divisa preferida del cliente (si la tiene).
-      const pref = data?.client?.preferred_currency;
-      if (pref && ['EUR', 'USD', 'IDR'].includes(pref)) setCurrency(pref);
+      // Idioma del portal = el preferido del cliente (el mismo de sus emails).
+      const lang = data?.client?.preferred_language;
+      if (lang && ['es', 'en', 'ro', 'id'].includes(lang) && i18n.language !== lang) void i18n.changeLanguage(lang);
 
       // Fetch all projects to ensure we have all fields (like URLs)
       const { data: projectsData } = await supabase.from('projects').select('*');
@@ -467,6 +467,12 @@ const ClientDashboard: React.FC = () => {
     } catch (err) {
       setPasswordError(t('admin.clientDash.passwordChangeError'));
     }
+  };
+
+  // El cliente cambia el idioma de su portal Y de sus comunicaciones (persistido).
+  const changeMyLanguage = async (lang: string) => {
+    try { await i18n.changeLanguage(lang); } catch { /* ignore */ }
+    try { await supabase.rpc('client_set_my_language', { p_lang: lang }); } catch { /* ignore */ }
   };
 
   const handleLogout = async () => {
@@ -601,6 +607,15 @@ const ClientDashboard: React.FC = () => {
       )}
 
       <main className="max-w-6xl mx-auto px-6 py-12">
+        <div className="flex justify-end mb-6">
+          <label className="flex items-center gap-2 text-xs text-primary/60 bg-white border border-primary/10 rounded-xl px-3 py-2">
+            <span className="material-symbols-outlined text-base">language</span>
+            <span>{t('admin.clientDash.languageLabel', 'Idioma')}</span>
+            <select value={i18n.language} onChange={(e) => changeMyLanguage(e.target.value)} className="bg-transparent font-bold text-primary outline-none cursor-pointer">
+              <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
+            </select>
+          </label>
+        </div>
         {client.drive_folder_url && (
           <a href={client.drive_folder_url} target="_blank" rel="noopener noreferrer"
              className="mb-8 flex items-center gap-3 bg-white border border-primary/10 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition group">
