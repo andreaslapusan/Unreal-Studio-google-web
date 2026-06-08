@@ -39,6 +39,7 @@ interface Props {
   clientName: string;
   clientEmail: string | null;
   adminUserId: string;
+  brand?: { logo?: string; stamp?: string; signature?: string; commercial_email?: string; phone?: string };
   onClose: () => void;
 }
 
@@ -63,7 +64,7 @@ const fmt = (n: number, c: string) => {
 const grp = (n: number) => (n ? n.toLocaleString('es-ES', { useGrouping: 'always' } as any) : '');
 const parseNum = (s: string) => Number(String(s).replace(/\D/g, '')) || 0;
 
-const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, onClose }) => {
+const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, onClose }) => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<{ cp: string; cur: string; pay: Partial<Payment> } | null>(null);
@@ -129,9 +130,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const kwitansiHtml = (no: string | number) => kw && renderKwitansiHtml({
     no, receivedFrom: kw.received_from, amount: kw.amount, currency: kw.currency,
     forPayment: kw.for_payment, place: kw.place, date: kw.date,
-    logoUrl: `${window.location.origin}/img/Logos/logo-06.png`,
-    signatureUrl: `${window.location.origin}/img/kwitansi/firma.png`,
-    stampUrl: `${window.location.origin}/img/kwitansi/sello.png`,
+    logoUrl: brand?.logo || `${window.location.origin}/img/Logos/logo-06.png`,
+    signatureUrl: brand?.signature || undefined,
+    stampUrl: brand?.stamp || undefined,
   });
 
   // Imprime/descarga SIN abrir otra pestaña (iframe oculto).

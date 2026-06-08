@@ -824,6 +824,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
   // --- OPCIONES DE CONFIGURACION ---
   
+  // Sube una imagen de marca (logo/sello/firma) y guarda su URL pública en config.brand.
+  const handleBrandUpload = async (fieldKey: string, file: File) => {
+    const path = await uploadImage(file, 'brand');
+    if (!path) { alert('Error subiendo la imagen'); return; }
+    const url = getImageUrl(path);
+    setConfig({ ...config, brand: { ...((config as any).brand || {}), [fieldKey]: url } } as any);
+  };
+
   const saveConfigToDb = async (newConfig: AppConfig) => {
       try {
         const userId = getAdminUserId();
@@ -835,6 +843,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           { key: 'customZones', value: newConfig.customZones },
           { key: 'customStatuses', value: newConfig.customStatuses },
           { key: 'exchangeRates', value: newConfig.exchangeRates },
+          { key: 'brand', value: (newConfig as any).brand || {} },
         ];
         for (const entry of configEntries) {
           const { error } = await supabase.rpc('admin_save_config', {
@@ -1220,6 +1229,41 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    </div>
                  ))}
                </div>
+             </div>
+
+             {/* Marca y empresa — fuente única para web, emails y kwitansi */}
+             <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+               <h3 className="text-xl font-serif text-primary mb-2">Marca y empresa</h3>
+               <p className="text-xs text-gray-400 mb-6">Logo, sello, firma y datos de contacto. Se usan en la WEB, en los EMAILS y en los recibos (kwitansi). Si cambias el logo aquí, cambia en todos.</p>
+               <div className="grid sm:grid-cols-3 gap-5 mb-6">
+                 {[{ k: 'logo', label: 'Logo' }, { k: 'stamp', label: 'Sello' }, { k: 'signature', label: 'Firma (Andreas)' }].map(({ k, label }) => (
+                   <div key={k}>
+                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{label}</label>
+                     <div className="border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center">
+                       {(config as any).brand?.[k]
+                         ? <img src={(config as any).brand[k]} alt={label} className="h-16 mx-auto object-contain mb-1" />
+                         : <span className="material-symbols-outlined text-gray-300 text-3xl">image</span>}
+                       <label className="block mt-2 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">
+                         Subir PNG
+                         <input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleBrandUpload(k, f); }} />
+                       </label>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+               <div className="grid sm:grid-cols-2 gap-5">
+                 <div>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Email comercial (al que responden los clientes)</label>
+                   <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" placeholder="hello@unrealstudiobali.com"
+                     value={(config as any).brand?.commercial_email || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), commercial_email: e.target.value } } as any)} />
+                 </div>
+                 <div>
+                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">Teléfono de contacto</label>
+                   <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" placeholder="+62 ..."
+                     value={(config as any).brand?.phone || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), phone: e.target.value } } as any)} />
+                 </div>
+               </div>
+               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar marca y empresa</button>
              </div>
            </div>
         )}
@@ -1887,6 +1931,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     clientName={paymentsClient.name}
     clientEmail={paymentsClient.email || null}
     adminUserId={getAdminUserId() as string}
+    brand={(config as any).brand || {}}
     onClose={() => setPaymentsClient(null)}
   />
 )}
