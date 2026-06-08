@@ -1213,6 +1213,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <span className="material-symbols-outlined text-sm absolute right-2 top-1/2 -translate-y-1/2 text-primary/40">{projectFilterOpen ? 'expand_less' : 'expand_more'}</span>
         </button>
         {projectFilterOpen && (
+          <>
+          <div className="fixed inset-0 z-20" onClick={() => setProjectFilterOpen(false)} />
           <div className="absolute z-30 mt-1 w-64 max-h-64 overflow-auto bg-white border border-gray-100 rounded-xl shadow-xl p-2">
             {clientProjectOptions.length === 0 && <p className="text-[11px] text-gray-400 px-2 py-1">{t('admin.clientsTab.noProjects')}</p>}
             {clientProjectOptions.map((p) => {
@@ -1226,6 +1228,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               );
             })}
           </div>
+          </>
         )}
       </div>
       <select value={clientFilterCurrency} onChange={(e) => setClientFilterCurrency(e.target.value)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">

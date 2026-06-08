@@ -11,10 +11,11 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SUPPORTED_LANGS } from "./LocaleRoute";
 
-const LANGS: { code: "es" | "en" | "ro"; label: string }[] = [
+const LANGS: { code: "es" | "en" | "ro" | "id"; label: string }[] = [
   { code: "es", label: "ES" },
   { code: "en", label: "EN" },
   { code: "ro", label: "RO" },
+  { code: "id", label: "ID" },
 ];
 
 export default function LanguageSwitcher({ inverted = false }: { inverted?: boolean }) {

@@ -22,7 +22,14 @@ for (const m of grep('material-symbols-outlined[^>]*>[a-z_0-9]+').matchAll(/>([a
 for (const m of grep("icon:\\s*'[a-z_0-9]+'").matchAll(/'([a-z_0-9]+)'/g)) names.add(m[1]);
 for (const m of grep('icon="[a-z_0-9]+"').matchAll(/"([a-z_0-9]+)"/g)) names.add(m[1]);
 for (const m of grep("'[^']+':\\s*'[a-z][a-z_0-9]+'").matchAll(/:\s*'([a-z][a-z_0-9]+)'/g)) names.add(m[1]);
-names.delete('text');
+// Iconos DINÁMICOS dentro del span: <span className="material-symbols-outlined">{cond ? 'a' : 'b'}</span>
+// (el patrón de arriba solo capta el nombre literal pegado al '>'; los ternarios/variables se escapaban
+//  y salían como TEXTO. Le pasó a Andreas con expand_more/less, visibility…). Captamos las comillas del {...}.
+for (const m of grep('material-symbols-outlined[^>]*>\\{[^}]*\\}').matchAll(/['"]([a-z][a-z_0-9]{2,})['"]/g)) names.add(m[1]);
+// Lista curada de iconos que se usan de forma dinámica (variables/mapas) y conviene garantizar.
+['expand_more','expand_less','visibility','visibility_off','check_circle','unfold_more','filter_list','sort','tune'].forEach((n) => names.add(n));
+// Falsos positivos conocidos (NO son iconos válidos → Google daría 400 y tumbaría toda la fuente).
+['text','name','password','property','aprobada','pendiente','all','active','inactive'].forEach((n) => names.delete(n));
 const list = [...names].sort();
 if (!list.length) { console.log('icons: no se encontraron, no se toca nada'); process.exit(0); }
 
