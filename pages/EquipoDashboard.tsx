@@ -217,7 +217,7 @@ function VacacionesTab({
     try {
       const { error } = await supabase.from("time_off_requests").insert({
         member_id: member.id, start_date: startDate, end_date: endDate, days,
-        reason: reason || null, status: "approved",
+        reason: reason || null, status: "pending",
       });
       if (error) throw error;
       setReason("");
