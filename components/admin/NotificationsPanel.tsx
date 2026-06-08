@@ -27,12 +27,14 @@ interface Notif {
 interface OverduePayment { id: string; label: string; amount: number; currency: string; due_date: string; client_name: string; client_id: string; }
 interface ClientLite { id: string; name: string; email: string | null; }
 
+// Emoji en vez de iconos de fuente: el subset de Material Symbols no incluye
+// 'notifications'/'beach_access' y se rompían; los emoji siempre renderizan.
 const TYPE_META: Record<string, { icon: string; label: string; color: string }> = {
-  vacation_request: { icon: 'beach_access', label: 'Vacaciones', color: 'text-amber-600 bg-amber-50' },
-  late_checkin:     { icon: 'schedule',     label: 'Fichaje tarde', color: 'text-orange-600 bg-orange-50' },
-  client_login:     { icon: 'login',        label: 'Login cliente', color: 'text-blue-600 bg-blue-50' },
-  payment_claim:    { icon: 'payments',     label: 'Aviso de pago', color: 'text-green-700 bg-green-50' },
-  generic:          { icon: 'notifications', label: 'General', color: 'text-gray-600 bg-gray-100' },
+  vacation_request: { icon: '🏖️', label: 'Vacaciones', color: 'bg-amber-50' },
+  late_checkin:     { icon: '⏰', label: 'Fichaje tarde', color: 'bg-orange-50' },
+  client_login:     { icon: '👤', label: 'Login cliente', color: 'bg-blue-50' },
+  payment_claim:    { icon: '💰', label: 'Aviso de pago', color: 'bg-green-50' },
+  generic:          { icon: '🔔', label: 'General', color: 'bg-gray-100' },
 };
 const metaFor = (t: string) => TYPE_META[t] ?? TYPE_META.generic;
 
@@ -55,6 +57,7 @@ const NotificationsPanel: React.FC = () => {
   const [order, setOrder] = useState<'recent' | 'old'>('recent');
   const [overdue, setOverdue] = useState<OverduePayment[]>([]);
   const [noProp, setNoProp] = useState<ClientLite[]>([]);
+  const [vacActions, setVacActions] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -82,6 +85,12 @@ const NotificationsPanel: React.FC = () => {
   const markAll = async () => {
     setItems((prev) => prev.map((n) => ({ ...n, is_read: true })));
     await supabase.rpc('admin_notifications_mark_all_read');
+  };
+  // Aprobar/rechazar una solicitud de vacaciones desde su notificación.
+  const resolveVacation = async (vacationId: string, status: string, notifId: string) => {
+    setVacActions((prev) => ({ ...prev, [vacationId]: status }));
+    await supabase.from('employee_vacations').update({ status }).eq('id', vacationId);
+    await markRead(notifId, true);
   };
 
   const sorted = useMemo(() => {
@@ -164,8 +173,8 @@ const NotificationsPanel: React.FC = () => {
             const m = metaFor(n.type);
             return (
               <li key={n.id} className={`flex items-start gap-3 rounded-2xl border p-4 transition ${n.is_read ? 'bg-white border-gray-100' : 'bg-amber-50/40 border-amber-200'}`}>
-                <span className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${m.color}`}>
-                  <span className="material-symbols-outlined text-[20px]">{m.icon}</span>
+                <span className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-lg ${m.color}`}>
+                  {m.icon}
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -175,6 +184,19 @@ const NotificationsPanel: React.FC = () => {
                   </div>
                   {n.body && <p className="text-sm text-primary/70 mt-0.5">{n.body}</p>}
                   <p className="text-[11px] text-primary/40 mt-1">{fmtWhen(n.created_at)}</p>
+                  {/* Aprobar/rechazar vacaciones directamente desde la notificación */}
+                  {n.type === 'vacation_request' && n.entity_id && (
+                    vacActions[n.entity_id] ? (
+                      <p className="text-xs font-bold mt-2" style={{ color: vacActions[n.entity_id] === 'aprobada' ? '#15803d' : '#b91c1c' }}>
+                        {vacActions[n.entity_id] === 'aprobada' ? '✓ Aprobada' : '✗ Rechazada'}
+                      </p>
+                    ) : (
+                      <div className="flex gap-2 mt-2">
+                        <button onClick={() => void resolveVacation(n.entity_id!, 'aprobada', n.id)} className="text-[11px] font-bold bg-green-600 text-white px-3 py-1.5 rounded-full">Aprobar</button>
+                        <button onClick={() => void resolveVacation(n.entity_id!, 'rechazada', n.id)} className="text-[11px] font-bold bg-red-600 text-white px-3 py-1.5 rounded-full">Rechazar</button>
+                      </div>
+                    )
+                  )}
                 </div>
                 <button onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition shrink-0">
                   {n.is_read ? 'No leído' : 'Leído'}

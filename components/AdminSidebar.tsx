@@ -53,7 +53,7 @@ const AdminSidebar: React.FC = () => {
   }, [currentView]);
 
   const sections: NavItem[] = [
-    { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
+    { key: 'notifications', icon: '🔔', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
     { key: 'clients', icon: 'person', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
@@ -64,7 +64,6 @@ const AdminSidebar: React.FC = () => {
 
   const pages: NavItem[] = [
     { key: 'marketing', icon: 'campaign', label: t('admin.nav.marketing'), to: '/admin/marketing', path: '/admin/marketing' },
-    { key: 'portal', icon: 'dashboard', label: t('admin.nav.portalManager'), to: '/admin/portal', path: '/admin/portal' },
     { key: 'agencias', icon: 'public', label: t('admin.nav.agencies', 'Agencias'), to: '/admin/agencias', path: '/admin/agencias' },
   ];
 
@@ -90,7 +89,9 @@ const AdminSidebar: React.FC = () => {
 
   const renderItem = (it: NavItem, active: boolean) => (
     <Link key={it.key} to={it.to} className={itemClass(active)}>
-      <span className="material-symbols-outlined text-[20px] leading-none">{it.icon}</span>
+      {/^[a-z_]+$/.test(it.icon)
+        ? <span className="material-symbols-outlined text-[20px] leading-none">{it.icon}</span>
+        : <span className="text-[18px] leading-none w-5 text-center">{it.icon}</span>}
       {it.label}
       {it.key === 'notifications' && unread > 0 && (
         <span className="ml-auto bg-red-500 text-white text-[10px] font-black rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
