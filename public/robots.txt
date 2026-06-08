@@ -1,12 +1,15 @@
 User-agent: *
 Allow: /
 
-# Block admin and internal team areas from search indexing
+# Bloquea las áreas privadas/internas de la indexación (siguen accesibles con login).
 Disallow: /admin
+Disallow: /cliente
+Disallow: /empleados
 Disallow: /equipo/
-
-# Block search engines from crawling private dashboards (still accessible via login)
+Disallow: /manager/
+Disallow: /agencias/login
 Disallow: /agencias/dashboard
-Disallow: /inversores/dashboard
+Disallow: /agencias/stats
+Disallow: /auth/
 
 Sitemap: https://unrealstudiobali.com/sitemap.xml
