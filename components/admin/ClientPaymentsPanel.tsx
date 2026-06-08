@@ -200,7 +200,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                     return (
                       <div key={p.id} className="px-5 py-3 flex items-center gap-3 flex-wrap">
                         <button onClick={() => toggleReceived(p)} title="Marcar recibido"
-                          className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500' : 'border-2 border-gray-200 text-transparent'}`}>✓</button>
+                          className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold transition ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500 hover:bg-green-600 hover:text-white' : 'border-2 border-gray-300 text-gray-300 hover:border-green-600 hover:text-green-600'}`}>✓</button>
                         <div className="flex-1 min-w-[140px]">
                           <p className="font-semibold text-sm text-primary">{p.label || '(sin etiqueta)'}</p>
                           <p className="text-[11px] text-gray-400">

@@ -42,13 +42,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // getSession) provoca un DEADLOCK: la query espera el lock que retiene el
     // propio callback → nunca resuelve → `loading` se queda en true para siempre
     // → ProtectedRoute devuelve null → pantalla en blanco al RECARGAR /admin.
+    // Recuerda el último usuario resuelto. Si Supabase refresca el token al
+    // volver a la pestaña (TOKEN_REFRESHED, mismo usuario), NO tocamos `loading`
+    // ni recargamos el rol: eso provocaba que el admin "se saliera" de los
+    // modales y recargara los clientes cada vez que cambiabas de ventana.
+    let lastUid: string | null = null;
+
     const applySession = (sess: Session | null) => {
       if (!active) return;
+      const uid = sess?.user?.id ?? null;
       setSession(sess);
       setUser(sess?.user ?? null);
-      if (sess?.user) {
+
+      // Mismo usuario que ya teníamos (refresco de token / re-foco) → sin churn.
+      if (uid && uid === lastUid) return;
+      lastUid = uid;
+
+      if (uid) {
         setLoading(true);
-        const uid = sess.user.id;
         setTimeout(() => {
           if (!active) return;
           void loadRole(uid).finally(() => {
