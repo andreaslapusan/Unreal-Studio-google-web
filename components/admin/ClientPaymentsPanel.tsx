@@ -48,7 +48,7 @@ const emptyPayment = (cur: string): Partial<Payment> => ({
 });
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const fmt = (n: number, c: string) => {
-  try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0 }).format(n); }
+  try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
   catch { return `${c} ${n}`; }
 };
 
@@ -239,8 +239,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               value={editing.pay.label || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, label: e.target.value } })} />
             <div className="flex gap-2">
               <input type="number" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Importe"
-                value={editing.pay.amount ?? ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, amount: Number(e.target.value) } })} />
-              <select className="px-3 py-2 bg-gray-50 border rounded-lg text-sm" value={editing.pay.currency || 'IDR'}
+                value={editing.pay.amount || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, amount: Number(e.target.value) } })} />
+              <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg text-sm" value={editing.pay.currency || 'IDR'}
                 onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, currency: e.target.value } })}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
@@ -270,8 +270,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder="Telah terima dari (recibido de)"
                 value={kw.received_from} onChange={(e) => setKw({ ...kw, received_from: e.target.value })} />
               <input type="number" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder="Importe"
-                value={kw.amount} onChange={(e) => setKw({ ...kw, amount: Number(e.target.value) })} />
-              <select className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw({ ...kw, currency: e.target.value })}>
+                value={kw.amount || ''} onChange={(e) => setKw({ ...kw, amount: Number(e.target.value) })} />
+              <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw({ ...kw, currency: e.target.value })}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
               <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder="Untuk pembayaran (concepto)"

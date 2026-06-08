@@ -188,8 +188,9 @@ const App: React.FC = () => {
     return new Intl.NumberFormat('es-ES', {
       style: 'currency',
       currency: currentCurrency,
-      maximumFractionDigits: 0
-    }).format(convertedAmount);
+      maximumFractionDigits: 0,
+      useGrouping: 'always',
+    } as any).format(convertedAmount);
   };
 
   return (
