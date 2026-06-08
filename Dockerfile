@@ -4,7 +4,9 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+# npm install (no `ci`) para tolerar la limpieza de dependencias muertas sin
+# tener que regenerar el lockfile fuera del contenedor.
+RUN npm install --no-audit --no-fund
 COPY . .
 RUN npm run build
 
