@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { WHATSAPP_URL } from '../constants';
+import { APP_VERSION } from '../lib/version';
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
@@ -78,7 +79,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-10">
-        <p>{t('footer.rights')}</p>
+        <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
           <Link className="hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
           <Link className="hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
