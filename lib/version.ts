@@ -1,5 +1,5 @@
 /**
- * Versión visible del build (se muestra en el footer como "v1.01").
- * Bump manual en cada cambio + deploy para verificar qué build está en vivo.
+ * Versión visible del build (footer). Generada automáticamente por
+ * scripts/generate-version.mjs = 3.<nº de commits>. NO editar a mano.
  */
-export const APP_VERSION = "1.03";
+export const APP_VERSION = "3.57";
