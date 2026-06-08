@@ -61,7 +61,11 @@ function brandWrap(subject: string, inner: string): string {
      <div style="font-size:12px;color:rgba(63,35,5,.55);">
        Bali, Indonesia &nbsp;·&nbsp; <a href="mailto:hello@unrealstudiobali.com" style="color:${BROWN};text-decoration:none;font-weight:600;">hello@unrealstudiobali.com</a>
      </div>
-     <div style="font-size:10px;color:rgba(63,35,5,.35);margin-top:8px;">© ${year} Unreal Studio · Bali</div>
+     <div style="font-size:10px;color:rgba(63,35,5,.4);line-height:1.8;margin-top:10px;">
+       Correo de solo envío · no respondas a este mensaje.<br>
+       Para cambiar el idioma, entra en tu portal de cliente.<br>
+       © ${year} Unreal Studio · Bali
+     </div>
    </td></tr>
   </table>
  </td></tr>

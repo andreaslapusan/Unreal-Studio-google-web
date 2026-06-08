@@ -569,6 +569,11 @@ const AMENITIES_LIST = [
         await supabase.rpc('admin_save_project_extra', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
         // Traducciones EN/ID de los campos de ficha (para packs de agencia multilingües).
         await supabase.rpc('admin_save_project_i18n', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
+        // Hitos/timeline del proyecto (gestión interna, oculto en web).
+        if (savedId) {
+          const tl = (projectData as any).timeline;
+          await supabase.from('projects').update({ timeline: Array.isArray(tl) && tl.length ? tl : null }).eq('id', savedId);
+        }
         // Auto-traducción del contenido (es→en/ro/id) SIEMPRE, sin trabajo manual.
         // Fire-and-forget: no bloquea el guardado; la edge fn traduce en segundo plano.
         if (savedId) void supabase.functions.invoke('translate-project', { body: { project_id: savedId } }).catch(() => {});
@@ -1866,6 +1871,34 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   ))}
                 </div>
               </div>
+              {/* Hitos / Desarrollo del proyecto — OCULTO en la web pública; gestión interna */}
+              <div className="border-t border-gray-100 pt-6">
+                <h3 className="text-lg font-serif text-primary mb-1">Hitos / Desarrollo del proyecto</h3>
+                <p className="text-xs text-gray-400 mb-4">Fases con fecha y % de pago. <b>Oculto en la web pública</b> (solo gestión interna; no se enseña a clientes).</p>
+                <div className="space-y-3">
+                  {(((currentProject as any).timeline as any[]) || []).map((ph: any, i: number) => {
+                    const tl = (((currentProject as any).timeline as any[]) || []);
+                    const setTl = (next: any[]) => setCurrentProject({ ...(currentProject as any), timeline: next });
+                    const upd = (k: string, v: any) => setTl(tl.map((x, j) => j === i ? { ...x, [k]: v } : x));
+                    return (
+                      <div key={i} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-black uppercase text-gray-400">Fase {i + 1}</span>
+                          <button type="button" onClick={() => setTl(tl.filter((_, j) => j !== i))} className="text-[11px] font-bold text-red-600 hover:underline">Quitar</button>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-2">
+                          <input placeholder="Título" value={ph.title || ''} onChange={(e) => upd('title', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
+                          <input placeholder="Fecha (YYYY-MM)" value={ph.date || ''} onChange={(e) => upd('date', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
+                          <input type="number" placeholder="% pago" value={ph.payment_pct ?? ''} onChange={(e) => upd('payment_pct', e.target.value ? Number(e.target.value) : 0)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
+                        </div>
+                        <textarea placeholder="Descripción de la fase" value={ph.description || ''} onChange={(e) => upd('description', e.target.value)} rows={2} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm resize-none" />
+                      </div>
+                    );
+                  })}
+                </div>
+                <button type="button" onClick={() => setCurrentProject({ ...(currentProject as any), timeline: [ ...(((currentProject as any).timeline as any[]) || []), { title: '', date: '', payment_pct: 0, description: '' } ] })} className="mt-3 text-[10px] font-black uppercase tracking-widest text-primary">+ Añadir fase</button>
+              </div>
+
               <div className="flex gap-4 pt-6"><button type="submit" className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black">{t('admin.adminDash.saveProperty')}</button><button type="button" onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-400 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-200">{t('admin.common.cancel')}</button></div>
             </form>
           </div>
