@@ -67,7 +67,22 @@ export const geoLanguageDetector: LanguageDetectorAsyncModule = {
     /* no-op */
   },
   detect: async (callback: (lng: string | readonly string[]) => void) => {
-    // 1. localStorage override always wins
+    // 0. ?lang= en la URL gana sobre todo (los emails al cliente enlazan con su
+    //    idioma preferido, p.ej. /cliente?lang=es). Se persiste para que mantenga
+    //    el idioma al navegar dentro del portal.
+    try {
+      const urlLang = new URLSearchParams(window.location.search).get('lang');
+      const allowed = ['es', 'en', 'ro', 'id'];
+      if (urlLang && allowed.includes(urlLang)) {
+        try { localStorage.setItem(STORAGE_KEY, urlLang); } catch { /* ignore */ }
+        callback(urlLang);
+        return urlLang;
+      }
+    } catch {
+      /* ignore */
+    }
+
+    // 1. localStorage override
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {

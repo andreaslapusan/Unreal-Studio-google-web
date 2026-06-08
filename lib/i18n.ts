@@ -15,6 +15,7 @@ import { initReactI18next } from "react-i18next";
 import es from "../locales/es.json";
 import en from "../locales/en.json";
 import ro from "../locales/ro.json";
+import id from "../locales/id.json";
 
 import { geoLanguageDetector } from "./geoLanguageDetector";
 
@@ -26,9 +27,10 @@ void i18n
       es: { translation: es },
       en: { translation: en },
       ro: { translation: ro },
+      id: { translation: id },
     },
     fallbackLng: "es",
-    supportedLngs: ["es", "en", "ro"],
+    supportedLngs: ["es", "en", "ro", "id"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
   });
