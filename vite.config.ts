@@ -35,6 +35,9 @@ export default defineConfig(({ mode }) => {
       },
       build: {
         chunkSizeWarningLimit: 700,
-      }
+      },
+      // Quita console.log/debug/info del bundle de producción (ruido en consola,
+      // hallazgo de la auditoría). Mantiene console.error/warn para diagnóstico.
+      esbuild: mode === 'production' ? { pure: ['console.log', 'console.debug', 'console.info'] } : {},
     };
 });

@@ -75,3 +75,11 @@ select {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Accesibilidad (auditoría): indicador de foco visible SOLO con teclado
+   (:focus-visible no se dispara al hacer click con ratón, así no molesta). */
+:focus-visible {
+  outline: 2px solid #3f2305;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
