@@ -48,6 +48,12 @@ export function imgSrc(url: string | null | undefined, widthOrOpts: number | Img
   if (url.includes("wsrv.nl")) return url;
   if (url.startsWith("/")) return url; // local same-origin asset — serve directly, wsrv.nl can't fetch relative URLs
 
+  // ⚠️ Proxy wsrv.nl DESHABILITADO (2026-06-09): fallaba en móvil/Safari de algunos
+  // usuarios (red/rate-limit) → fotos rotas. Servimos la imagen DIRECTA de Supabase
+  // (siempre carga). Las del catálogo son WebP ~250KB; pendiente re-procesar a menor
+  // tamaño en storage para recuperar la optimización sin depender de un proxy externo.
+  return url;
+
   const opts: ImgOpts =
     typeof widthOrOpts === "number" ? { width: widthOrOpts } : widthOrOpts;
 
