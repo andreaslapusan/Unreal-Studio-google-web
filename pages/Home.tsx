@@ -111,26 +111,15 @@ const Home: React.FC = () => {
     return visibleProjects.find(p => p.is_featured) || visibleProjects[0];
   }, [projects]);
 
-  // El "caso de uso" usa SIEMPRE el proyecto MÁS RENTABLE (mayor plusvalía
-  // market vs precio Unreal), no el destacado. El % es un ratio, no depende de divisa.
-  const mostProfitableProject = useMemo(() => {
-    const visible = projects.filter(p => !p.is_hidden && p.investor_price > 0);
-    if (visible.length === 0) return null;
-    const gain = (p: typeof visible[number]) => {
-      const mp = p.market_price && p.market_price > 0 ? p.market_price : p.investor_price * 1.59;
-      return (mp - p.investor_price) / p.investor_price;
-    };
-    return visible.reduce((best, p) => (gain(p) > gain(best) ? p : best), visible[0]);
-  }, [projects]);
-
-  // Cálculos del Desglose de Rentabilidad sobre el proyecto más rentable.
+  // Desglose de Rentabilidad sobre la PROPIEDAD DESTACADA (decisión de Andreas:
+  // mantenerlo en el destacado, no en el más rentable).
   const profitabilityData = useMemo(() => {
-    if (!mostProfitableProject) return null;
+    if (!featuredProject) return null;
 
-    const investorPrice = mostProfitableProject.investor_price;
+    const investorPrice = featuredProject.investor_price;
     // Si market_price es 0 o null, simulamos un 59% de plusvalía como respaldo
-    const marketPrice = mostProfitableProject.market_price && mostProfitableProject.market_price > 0
-      ? mostProfitableProject.market_price
+    const marketPrice = featuredProject.market_price && featuredProject.market_price > 0
+      ? featuredProject.market_price
       : investorPrice * 1.59;
 
     const capitalGain = marketPrice - investorPrice;
@@ -143,10 +132,9 @@ const Home: React.FC = () => {
       capitalGain,
       gainPercent: gainPercent.toFixed(1),
       barWidth: Math.min(barWidth, 100),
-      currency: mostProfitableProject.price_currency,
-      name: mostProfitableProject.name,
+      currency: featuredProject.price_currency,
     };
-  }, [mostProfitableProject]);
+  }, [featuredProject]);
 
   // Cálculo del precio mínimo dinámico
   const minPriceDisplay = useMemo(() => {
@@ -695,9 +683,9 @@ const Home: React.FC = () => {
                     <p className="text-[10px] text-gray-400 font-medium italic">Calculado sobre modelo de venta sobre plano en zona de alta demanda.</p>
                     <div className="space-y-4 text-center">
                       <p className="text-primary font-bold text-sm">¿Quieres invertir en una unidad con esta rentabilidad?</p>
-                      {mostProfitableProject && (
+                      {featuredProject && (
                         <Link
-                          to={projectPath(mostProfitableProject)}
+                          to={projectPath(featuredProject)}
                           className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2 mx-auto w-fit"
                         >
                           Ver propiedad destacada <span className="material-symbols-outlined">arrow_forward</span>
