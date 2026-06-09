@@ -92,16 +92,17 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
           <input type="date" value={reportDate} onChange={(e) => setReportDate(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm" />
         </label>
 
-        <label className="block mb-2">
+        {/* iOS: el selector de archivos solo se abre de forma fiable con un <label
+            htmlFor> nativo (no con .click() por JS sobre un input display:none). */}
+        <div className="block mb-2">
           <span className="block text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">{t('empleados.reportModal.pdf')}</span>
-          <div className="border-2 border-dashed border-primary/25 rounded-2xl p-6 text-center cursor-pointer hover:bg-primary/5 transition"
-            onClick={() => document.getElementById('cr-file')?.click()}>
+          <label htmlFor="cr-file" className="block border-2 border-dashed border-primary/25 rounded-2xl p-6 text-center cursor-pointer hover:bg-primary/5 transition">
             <span className="material-symbols-outlined text-3xl text-primary/40">upload_file</span>
             <p className="text-sm text-primary/70 mt-1">{file ? file.name : t('empleados.reportModal.pickPdf')}</p>
             {file && <p className="text-[11px] text-primary/40">{(file.size / 1024 / 1024).toFixed(1)} MB</p>}
-            <input id="cr-file" type="file" accept="application/pdf,.pdf" className="hidden" onChange={(e) => pickFile(e.target.files?.[0] ?? null)} />
-          </div>
-        </label>
+          </label>
+          <input id="cr-file" type="file" accept="application/pdf,.pdf" className="sr-only" onChange={(e) => pickFile(e.target.files?.[0] ?? null)} />
+        </div>
 
         {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
         {state === 'ok' && <p className="text-green-700 text-sm mt-2 font-bold">✓ {t('empleados.reportModal.done')}</p>}
