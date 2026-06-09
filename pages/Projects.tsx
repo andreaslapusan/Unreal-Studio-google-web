@@ -6,7 +6,7 @@ import { projectPath } from '../lib/projectUrl';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
-import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { translateStatus } from '../lib/statusI18n';
 import { usePageMeta } from '../components/PageMeta';
@@ -279,6 +279,7 @@ const Projects: React.FC = () => {
                     src={imgSrc(getImageUrl(proj.image), 600)}
                     srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    onError={imgFallback(getImageUrl(proj.image))}
                   />
                   <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
                     <span className="bg-primary/90 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{translateStatus(proj.status, t)}</span>
@@ -337,6 +338,7 @@ const Projects: React.FC = () => {
                       src={imgSrc(getImageUrl(proj.image), 600)}
                       srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      onError={imgFallback(getImageUrl(proj.image))}
                     />
                     <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
                       <span className="bg-red-600 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{t('projects.statusSold')}</span>

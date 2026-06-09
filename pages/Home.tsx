@@ -5,7 +5,7 @@ import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig, BlogPost } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
-import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { projectPath } from '../lib/projectUrl';
 import { translateStatus } from '../lib/statusI18n';
@@ -343,6 +343,7 @@ const Home: React.FC = () => {
                     sizes="(max-width: 768px) 40vw, 50vw"
                     className="absolute inset-0 md:relative w-full h-full object-cover group-hover:scale-105 transition duration-1000"
                     alt={featuredProject.name}
+                    onError={imgFallback(getImageUrl(featuredProject.image))}
                     loading="eager"
                     fetchPriority="high"
                   />
@@ -496,6 +497,7 @@ const Home: React.FC = () => {
                   srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                  onError={imgFallback(getImageUrl(proj.image))}
                   alt={proj.name}
                 />
                 <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-lg shadow-xl">{translateStatus(proj.status, t)}</span>
@@ -750,6 +752,7 @@ const Home: React.FC = () => {
                       srcSet={imgSrcSet(getImageUrl(post.image), [320, 600, 900])}
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-105"
+                      onError={imgFallback(getImageUrl(post.image))}
                       alt={post.title}
                     />
                  </div>

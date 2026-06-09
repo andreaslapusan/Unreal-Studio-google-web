@@ -86,3 +86,20 @@ export function imgSrcSet(url: string | null | undefined, widths: number[], opts
   if (!url) return "";
   return widths.map((w) => `${imgSrc(url, { ...opts, width: w })} ${w}w`).join(", ");
 }
+
+/**
+ * onError para <img>: si el proxy de imágenes (wsrv.nl) falla —pasa en algunos
+ * móviles/Safari por rate-limit o cold-cache—, cae a la imagen DIRECTA de
+ * Supabase (que siempre carga). Un guard evita bucles si la directa también falla.
+ *
+ *   <img ... onError={imgFallback(getImageUrl(p.image))} />
+ */
+export function imgFallback(directUrl: string | null | undefined) {
+  return (e: { currentTarget: HTMLImageElement }) => {
+    const t = e.currentTarget;
+    if (t.dataset.fb || !directUrl) return;
+    t.dataset.fb = "1";
+    t.removeAttribute("srcset");
+    t.src = directUrl;
+  };
+}
