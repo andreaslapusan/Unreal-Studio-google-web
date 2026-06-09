@@ -143,7 +143,7 @@ const Blog: React.FC = () => {
             <p className="text-primary/40 font-bold uppercase tracking-widest text-xs">{t('blog.noResults')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {filteredBlogs.map(post => (
               <Link key={post.id} to={`/blog/${post.slug || post.id}`} className="group block h-full">
                 <div className="aspect-[16/10] rounded-[2rem] overflow-hidden mb-6 relative shadow-lg">

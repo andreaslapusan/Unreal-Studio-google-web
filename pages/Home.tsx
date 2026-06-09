@@ -111,16 +111,28 @@ const Home: React.FC = () => {
     return visibleProjects.find(p => p.is_featured) || visibleProjects[0];
   }, [projects]);
 
-  // Cálculos dinámicos para el Desglose de Rentabilidad basados en el proyecto destacado
+  // El "caso de uso" usa SIEMPRE el proyecto MÁS RENTABLE (mayor plusvalía
+  // market vs precio Unreal), no el destacado. El % es un ratio, no depende de divisa.
+  const mostProfitableProject = useMemo(() => {
+    const visible = projects.filter(p => !p.is_hidden && p.investor_price > 0);
+    if (visible.length === 0) return null;
+    const gain = (p: typeof visible[number]) => {
+      const mp = p.market_price && p.market_price > 0 ? p.market_price : p.investor_price * 1.59;
+      return (mp - p.investor_price) / p.investor_price;
+    };
+    return visible.reduce((best, p) => (gain(p) > gain(best) ? p : best), visible[0]);
+  }, [projects]);
+
+  // Cálculos del Desglose de Rentabilidad sobre el proyecto más rentable.
   const profitabilityData = useMemo(() => {
-    if (!featuredProject) return null;
-    
-    const investorPrice = featuredProject.investor_price;
+    if (!mostProfitableProject) return null;
+
+    const investorPrice = mostProfitableProject.investor_price;
     // Si market_price es 0 o null, simulamos un 59% de plusvalía como respaldo
-    const marketPrice = featuredProject.market_price && featuredProject.market_price > 0 
-      ? featuredProject.market_price 
+    const marketPrice = mostProfitableProject.market_price && mostProfitableProject.market_price > 0
+      ? mostProfitableProject.market_price
       : investorPrice * 1.59;
-    
+
     const capitalGain = marketPrice - investorPrice;
     const gainPercent = ((marketPrice - investorPrice) / investorPrice) * 100;
     const barWidth = (investorPrice / marketPrice) * 100;
@@ -131,9 +143,10 @@ const Home: React.FC = () => {
       capitalGain,
       gainPercent: gainPercent.toFixed(1),
       barWidth: Math.min(barWidth, 100),
-      currency: featuredProject.price_currency
+      currency: mostProfitableProject.price_currency,
+      name: mostProfitableProject.name,
     };
-  }, [featuredProject]);
+  }, [mostProfitableProject]);
 
   // Cálculo del precio mínimo dinámico
   const minPriceDisplay = useMemo(() => {
@@ -272,7 +285,7 @@ const Home: React.FC = () => {
                controls
                preload="none"
                className="w-full h-full object-cover"
-               src="/img/VIDEO/welcome.mp4"
+               src={(config as any).brand?.intro_video_url || ''}
                onPlay={(e) => {
                  const video = e.currentTarget;
                  if (video.muted) {
@@ -309,12 +322,14 @@ const Home: React.FC = () => {
               >
                 {t('home.ctaMeeting')} <span className="material-symbols-outlined">arrow_forward</span>
               </a>
-              <button 
-                onClick={() => setIsVideoOpen(true)}
-                className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border border-primary/20 font-bold text-primary hover:bg-white transition text-sm cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-primary">play_circle</span> {t('home.ctaVideo')}
-              </button>
+              {(config as any).brand?.intro_video_url && (
+                <button
+                  onClick={() => setIsVideoOpen(true)}
+                  className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border border-primary/20 font-bold text-primary hover:bg-white transition text-sm cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-primary">play_circle</span> {t('home.ctaVideo')}
+                </button>
+              )}
             </div>
           </div>
           
@@ -418,7 +433,7 @@ const Home: React.FC = () => {
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
-                <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
+                <div className="flex items-center gap-2 bg-primary/5 rounded-full px-4 py-2.5 border border-primary/10 hover:border-primary/30 focus-within:border-primary/40 transition-all">
                   <input
                     type="text"
                     placeholder={t('projects.filters.min')}
@@ -537,16 +552,16 @@ const Home: React.FC = () => {
       </section>
 
       {/* Sección 1: Por qué salir de Europa */}
-      <section className="py-24 md:py-32 bg-white px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
-          <div className="lg:w-1/2 space-y-10 text-left">
+      <section className="py-12 md:py-24 bg-white px-6 md:px-12">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-20 items-center">
+          <div className="lg:w-1/2 space-y-5 md:space-y-8 text-left">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section1Tag')}</p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl text-primary leading-tight">{t('home.section1Title')}</h2>
-            <p className="text-lg text-primary/60 font-light leading-relaxed max-w-xl">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl text-primary leading-tight">{t('home.section1Title')}</h2>
+            <p className="text-base md:text-lg text-primary/60 font-light leading-relaxed max-w-xl">
               {t('home.section1Body')}
             </p>
-            <div className="space-y-10">
-              <div className="flex gap-6 items-start">
+            <div className="space-y-5 md:space-y-8">
+              <div className="flex gap-4 items-start">
                 <div className="shrink-0">
                   <span className="material-symbols-outlined text-primary text-3xl">trending_down</span>
                 </div>
@@ -555,7 +570,7 @@ const Home: React.FC = () => {
                   <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b1Body')}</p>
                 </div>
               </div>
-              <div className="flex gap-6 items-start">
+              <div className="flex gap-4 items-start">
                 <div className="shrink-0">
                   <span className="material-symbols-outlined text-primary text-3xl">security</span>
                 </div>
@@ -564,7 +579,7 @@ const Home: React.FC = () => {
                   <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b2Body')}</p>
                 </div>
               </div>
-              <div className="flex gap-6 items-start">
+              <div className="flex gap-4 items-start">
                 <div className="shrink-0">
                   <span className="material-symbols-outlined text-primary text-3xl">public</span>
                 </div>
@@ -577,7 +592,7 @@ const Home: React.FC = () => {
           </div>
           <div className="lg:w-1/2 relative">
             <div className="relative w-full">
-              <div className="rounded-3xl overflow-hidden shadow-2xl h-96 md:h-auto md:aspect-square relative group">
+              <div className="rounded-3xl overflow-hidden shadow-2xl h-56 sm:h-72 md:h-auto md:aspect-square relative group">
                 <img
                   loading="lazy"
                   src={imgSrc("/img/The%20Nook/1-04.webp", 800)}
@@ -599,15 +614,15 @@ const Home: React.FC = () => {
       </section>
 
       {/* Sección 2: Cómo creamos valor */}
-      <section className="py-24 md:py-32 bg-[#F3E5D8] px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
-          <div className="lg:w-1/2 text-left space-y-10">
+      <section className="py-12 md:py-24 bg-[#F3E5D8] px-6 md:px-12">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
+          <div className="lg:w-1/2 text-left space-y-5 md:space-y-8">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section2Tag')}</p>
-            <h2 className="text-4xl md:text-5xl text-primary leading-tight">{t('home.section2Title')}</h2>
-            <p className="text-lg text-primary/70 font-light leading-relaxed max-w-lg">
+            <h2 className="text-3xl md:text-5xl text-primary leading-tight">{t('home.section2Title')}</h2>
+            <p className="text-base md:text-lg text-primary/70 font-light leading-relaxed max-w-lg">
               {t('home.section2Body')}
             </p>
-            <div className="space-y-6">
+            <div className="space-y-3 md:space-y-4">
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">construction</span>
                 <div>
@@ -632,11 +647,11 @@ const Home: React.FC = () => {
             </div>
           </div>
           <div className="lg:w-1/2 w-full">
-            <div className="bg-white p-10 md:p-14 rounded-[3rem] shadow-2xl border border-primary/5 text-center space-y-12">
+            <div className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-primary/5 text-center space-y-6 md:space-y-10">
               <h3 className="text-2xl text-primary font-serif">{t('home.profitTitle')}</h3>
-              
+
               {profitabilityData ? (
-                <div className="space-y-12 text-left">
+                <div className="space-y-6 md:space-y-10 text-left">
                   <div className="space-y-5">
                     <div className="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-wider">
                       <span>{t('home.marketValue')}</span>
@@ -663,7 +678,7 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-8 pt-10 border-t border-gray-50">
+                  <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-50">
                     <div className="text-left">
                       <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">Plusvalía Inmediata</p>
                       <p className="text-4xl font-serif text-green-600 font-bold">+{profitabilityData.gainPercent}%</p>
@@ -676,16 +691,18 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="space-y-6 pt-4">
+                  <div className="space-y-4 pt-2">
                     <p className="text-[10px] text-gray-400 font-medium italic">Calculado sobre modelo de venta sobre plano en zona de alta demanda.</p>
-                    <div className="space-y-6 text-center">
+                    <div className="space-y-4 text-center">
                       <p className="text-primary font-bold text-sm">¿Quieres invertir en una unidad con esta rentabilidad?</p>
-                      <Link 
-                        to={projectPath(featuredProject)}
-                        className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2 mx-auto w-fit"
-                      >
-                        Ver propiedad destacada <span className="material-symbols-outlined">arrow_forward</span>
-                      </Link>
+                      {mostProfitableProject && (
+                        <Link
+                          to={projectPath(mostProfitableProject)}
+                          className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2 mx-auto w-fit"
+                        >
+                          Ver propiedad destacada <span className="material-symbols-outlined">arrow_forward</span>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -723,8 +740,8 @@ const Home: React.FC = () => {
       </section>
 
       {/* Sección 4: Últimas Novedades - Most Recent Blogs */}
-      <section className="py-24 md:py-32 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-16 border-b border-primary/5 pb-8">
+      <section className="py-12 md:py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="flex justify-between items-end mb-8 md:mb-12 border-b border-primary/5 pb-5 md:pb-8">
           <div className="text-left">
             <h2 className="text-4xl md:text-5xl text-primary font-serif">{t('home.blogTitle')}</h2>
           </div>
@@ -733,7 +750,7 @@ const Home: React.FC = () => {
           </Link>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
           {blogs.map((post) => (
             <Link key={post.id} to={`/blog/${post.slug}`} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
               {/* Imagen */}
@@ -751,8 +768,8 @@ const Home: React.FC = () => {
               </div>
 
               {/* Texto */}
-              <div className="order-2 md:order-1 mb-8 flex flex-col flex-grow">
-                  <div className="flex justify-between items-center mb-4">
+              <div className="order-2 md:order-1 mt-4 md:mt-0 mb-4 md:mb-8 flex flex-col flex-grow">
+                  <div className="flex justify-between items-center mb-3">
                     <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{post.tag}</p>
                     <p className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">{formatDate(post.published_date)}</p>
                   </div>

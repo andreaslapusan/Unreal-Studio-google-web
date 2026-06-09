@@ -34,11 +34,11 @@ const Footer: React.FC = () => {
   const hoursEntries = Object.entries(hours).filter(([, v]) => v);
 
   return (
-    <footer className="bg-white border-t border-gray-100 pt-16 md:pt-24 pb-28 md:pb-12 px-6 md:px-12 text-sm">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 mb-16 md:mb-20 text-left">
+    <footer className="bg-white border-t border-gray-100 pt-10 md:pt-20 pb-24 md:pb-12 px-6 md:px-12 text-sm">
+      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 md:gap-16 mb-8 md:mb-16 text-left">
         {/* Brand Column */}
-        <div className="col-span-1">
-          <Link to="/" className="block mb-6 md:mb-8">
+        <div className="col-span-2 md:col-span-1">
+          <Link to="/" className="block mb-4 md:mb-8">
             <BrandLogo imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tight" />
           </Link>
           <p className="text-primary/60 text-sm leading-relaxed max-w-xs font-medium">
@@ -48,8 +48,8 @@ const Footer: React.FC = () => {
 
         {/* Menu Column */}
         <div>
-          <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-6">{t('footer.menu')}</h5>
-          <ul className="space-y-4 text-primary/50 text-xs font-bold uppercase tracking-wider">
+          <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-3">{t('footer.menu')}</h5>
+          <ul className="space-y-2 text-primary/50 text-xs font-bold uppercase tracking-wider">
             <li><Link className="hover:text-primary transition" to="/">{t('footer.home')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/blog">{t('footer.blog')}</Link></li>
@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
 
         {/* Offices, hours & social (desde Configuración → Datos de empresa) */}
         <div>
-          <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-6">{t('footer.offices')}</h5>
+          <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-3">{t('footer.offices')}</h5>
           <ul className="space-y-3 text-primary/50 text-xs font-bold tracking-wider mb-6">
             {addresses.map((addr, i) => (
               <li key={i}>
@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-10">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-6">
         <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
           <Link className="hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
