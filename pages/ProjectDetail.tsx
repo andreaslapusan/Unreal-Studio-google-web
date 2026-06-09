@@ -35,7 +35,7 @@ const ProjectDetail: React.FC = () => {
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
   const [matchedUnitId, setMatchedUnitId] = useState<string | null>(null);
   const { formatPrice } = useCurrency();
-  const { role, signInWithGoogle } = useAuth();
+  const { role } = useAuth();
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ open: boolean, index: number }>({ open: false, index: 0 });
 
@@ -623,12 +623,12 @@ const ProjectDetail: React.FC = () => {
                     <form onSubmit={handleClientLoginForDoc} className="space-y-4">
                         <div>
                             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
-                            <input type="text" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="tu@email.com o +34 625 710 770" className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="tu@email.com o +34 625 710 770" className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.password')}</label>
                             <div className="relative">
-                              <input type={showLoginPw ? 'text' : 'password'} required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                               <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? 'Ocultar contraseña' : 'Ver contraseña'} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
                                 <span className="material-symbols-outlined text-xl">{showLoginPw ? 'visibility_off' : 'visibility'}</span>
                               </button>
@@ -638,30 +638,6 @@ const ProjectDetail: React.FC = () => {
                             {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> Verificando...</> : 'Acceder al informe'}
                         </button>
                     </form>
-
-                    <div className="flex items-center gap-3 my-4">
-                      <span className="flex-1 h-px bg-primary/15" />
-                      <span className="text-[10px] uppercase tracking-widest text-primary/40">o</span>
-                      <span className="flex-1 h-px bg-primary/15" />
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        setLoginError('');
-                        try { await signInWithGoogle(); }
-                        catch (err) { setLoginError(err instanceof Error ? err.message : String(err)); }
-                      }}
-                      className="w-full flex items-center justify-center gap-3 bg-white border border-primary/20 text-primary py-3 rounded-xl font-medium hover:bg-primary/5 transition"
-                    >
-                      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" fill="#4285F4"/>
-                        <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.331C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
-                        <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.962H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.331z" fill="#FBBC05"/>
-                        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.962L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
-                      </svg>
-                      Continuar con Google
-                    </button>
 
                     <button onClick={() => setShowClientLogin(false)} className="w-full mt-4 text-primary/40 hover:text-primary text-xs font-bold uppercase tracking-widest py-2 transition">{t('projectDetail.close')}</button>
                     <p className="text-center text-[10px] text-primary/30 mt-6">{t('projectDetail.noAccess')}</p>

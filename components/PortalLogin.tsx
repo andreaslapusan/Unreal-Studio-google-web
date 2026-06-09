@@ -237,6 +237,8 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
             <input
               type="email"
               required
+              name="email"
+              id="login-email"
               autoComplete="username"
               inputMode="email"
               value={email}
@@ -254,6 +256,8 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
+                name="password"
+                id="login-password"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
