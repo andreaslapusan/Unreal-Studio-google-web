@@ -42,6 +42,7 @@ const ProjectDetail: React.FC = () => {
   const [showClientLogin, setShowClientLogin] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [showLoginPw, setShowLoginPw] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -626,7 +627,12 @@ const ProjectDetail: React.FC = () => {
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.password')}</label>
-                            <input type="password" required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                            <div className="relative">
+                              <input type={showLoginPw ? 'text' : 'password'} required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                              <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? 'Ocultar contraseña' : 'Ver contraseña'} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
+                                <span className="material-symbols-outlined text-xl">{showLoginPw ? 'visibility_off' : 'visibility'}</span>
+                              </button>
+                            </div>
                         </div>
                         <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">
                             {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> Verificando...</> : 'Acceder al informe'}
