@@ -64,7 +64,7 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 const projectPrefix = (name: string) => {
   const base = (name || '').split(/[(\-]/)[0].trim();
   const ini = base.split(/\s+/).filter(Boolean).map((w) => w[0]).join('').toUpperCase();
-  return ini.slice(0, 4) || 'US';
+  return ini.slice(0, 2) || 'US'; // 2 letras del proyecto (Deseo Studio → DS)
 };
 const fmt = (n: number, c: string) => {
   try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
@@ -137,7 +137,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       cp: u.client_project_id,
       payId: p?.id,
       received_from: clientName,
-      amount: p?.amount ?? 0,
+      // Importe y fecha del recibí = lo que el admin marcó como RECIBIDO
+      // (received_amount/paid_at); si no, el importe del pago como referencia.
+      amount: (p?.received_amount ?? p?.amount) ?? 0,
       currency: p?.currency ?? u.currency ?? 'IDR',
       for_payment: `${u.project_name}${u.unit_number ? ' · ' + t('admin.pay.unit') + ' ' + u.unit_number : ''}${p?.label ? ' — ' + p.label : ''}`,
       place: 'Bali',
@@ -213,9 +215,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
         ${dueStr ? `<tr><td style="color:rgba(63,35,5,.55)">Vencía el</td><td>${dueStr}</td></tr>` : ''}
         <tr><td style="color:rgba(63,35,5,.55)">Recibí Nº</td><td>${no}</td></tr>
       </table>
-      <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">A continuación tienes tu <strong>recibí de pago</strong>. También puedes verlo y descargarlo en PDF desde tu portal de cliente.</p>
-      <p style="text-align:center;margin:0 0 18px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">Ver y descargar mi recibí</a></p>
-      ${recibiHtml}`;
+      <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">Puedes descargar tu <strong>recibí oficial</strong> desde tu portal de cliente, en el calendario de pagos, en la fila del pago correspondiente.</p>
+      <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">Ver mi portal</a></p>`;
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
       body: {
         adminUserId, to: clientEmail, kwitansiId: kw.kwitansiId, lang: clientLang || 'es',
