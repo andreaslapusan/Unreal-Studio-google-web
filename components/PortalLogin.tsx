@@ -12,6 +12,7 @@
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { synthEmail } from '../lib/portalAuth';
+import { startLoading, stopLoading } from '../lib/loading';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -153,6 +154,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     setError('');
     setInfo('');
     setBusy(true);
+    startLoading();
     try {
       const real = email.trim().toLowerCase();
       // Fase B: intenta primero el usuario SINTÉTICO de ESTE portal (contraseña
@@ -173,6 +175,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       setError(t('auth.genericError'));
     } finally {
       setBusy(false);
+      stopLoading();
     }
   };
 

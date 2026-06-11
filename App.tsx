@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
 import PullToRefresh from './components/PullToRefresh';
+import GlobalLoading from './components/GlobalLoading';
 import LocaleSeo from './components/LocaleSeo';
 // FloatingWhatsApp importado bajo demanda (ver Layout); desactivado por defecto.
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
@@ -244,6 +245,7 @@ const App: React.FC = () => {
         <ScrollToTop />
         <ManifestSwitcher />
         <PullToRefresh />
+        <GlobalLoading />
         <LocaleSeo />
         <AttributionTracker />
         <Layout>

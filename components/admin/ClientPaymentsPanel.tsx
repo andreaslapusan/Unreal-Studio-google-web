@@ -14,6 +14,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { renderKwitansiHtml, formatFigure } from '../../lib/kwitansi';
+import { withLoading } from '../../lib/loading';
 
 interface Payment {
   id: string;
@@ -23,6 +24,7 @@ interface Payment {
   due_date: string | null;
   paid_at: string | null;
   received: boolean;
+  received_amount?: number | null;
   payment_method: string | null;
   reference: string | null;
   notes: string | null;
@@ -98,7 +100,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     if (!editing) return;
     setSaving(true);
     const payload: any = { ...editing.pay, client_project_id: editing.cp };
-    const { data, error } = await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: payload });
+    const { data, error } = await withLoading(supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: payload }));
     setSaving(false);
     if (error || !data?.success) { alert(t('admin.pay.errorSavePayment')); return; }
     setEditing(null);
@@ -112,10 +114,10 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   };
 
   const toggleReceived = async (p: Payment) => {
-    await supabase.rpc('admin_save_client_payment', {
+    await withLoading(supabase.rpc('admin_save_client_payment', {
       p_user_id: adminUserId,
       p_payment: { id: p.id, client_project_id: '', received: !p.received, paid_at: !p.received ? (p.paid_at || todayISO()) : p.paid_at },
-    });
+    }));
     await load();
   };
 
@@ -329,6 +331,16 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               value={editing.pay.due_date || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, due_date: e.target.value } })} />
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
               value={editing.pay.notes || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, notes: e.target.value } })} />
+            {/* Importe REAL recibido + fecha de cobro (si llega de menos por comisiones, el cliente ve el balance en rojo). */}
+            <label className="block text-[10px] font-black uppercase text-gray-400">Recibido (importe real) y fecha de cobro</label>
+            <div className="flex gap-2">
+              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Importe recibido"
+                value={editing.pay.received_amount != null ? grp(editing.pay.received_amount) : ''}
+                onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, received_amount: e.target.value ? parseNum(e.target.value) : null } })} />
+              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg text-sm" title="Fecha de cobro"
+                value={(editing.pay.paid_at || '').slice(0, 10)}
+                onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, paid_at: e.target.value ? new Date(e.target.value + 'T00:00:00+08:00').toISOString() : null } })} />
+            </div>
             <div className="flex gap-2 pt-2">
               <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-gray-500">{t('admin.common.cancel')}</button>
               <button disabled={saving} onClick={savePayment} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">{saving ? t('admin.common.saving') : t('admin.common.save')}</button>
