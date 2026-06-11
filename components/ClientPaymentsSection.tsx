@@ -15,8 +15,14 @@ import { supabase } from '../lib/supabase';
 
 interface Payment {
   id: string; label: string; amount: number; currency: string;
-  due_date: string | null; paid_at: string | null; received: boolean; position: number;
+  due_date: string | null; paid_at: string | null; received: boolean; received_amount?: number | null; position: number;
 }
+// Importe efectivamente recibido: el real (received_amount) si está, si no el
+// total cuando está marcado como recibido, si no 0.
+const recvOf = (p: Payment): number => {
+  if (p.received_amount != null) return Number(p.received_amount);
+  return p.received ? Number(p.amount) : 0;
+};
 interface Unit { client_project_id: string; project_name: string; unit_number: string | null; currency: string; payments: Payment[]; }
 
 interface Props {
@@ -111,13 +117,14 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                 <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
               </div>
               <div className="overflow-x-auto rounded-xl border border-primary/10">
-                <table className="w-full text-sm min-w-[640px]">
+                <table className="w-full text-sm min-w-[760px]">
                   <thead className="bg-almond/50 text-[10px] uppercase tracking-widest text-primary/50">
                     <tr>
                       <th className="text-left px-4 py-3">Concepto</th>
                       <th className="text-left px-4 py-3">Fecha límite</th>
                       <th className="text-right px-4 py-3">Cantidad</th>
                       <th className="text-right px-4 py-3">Recibida</th>
+                      <th className="text-left px-4 py-3">Fecha cobro</th>
                       <th className="text-right px-4 py-3">Balance</th>
                       <th className="text-left px-4 py-3">Estado</th>
                       <th className="text-right px-4 py-3">Recibí</th>
@@ -126,16 +133,19 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                   <tbody>
                     {pays.map((p) => {
                       const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
-                      const received = p.received ? Number(p.amount) : 0;
+                      const received = recvOf(p);
                       const balance = Number(p.amount) - received;
+                      // Rojo cuando llegó algo pero falta (p.ej. comisiones): 4.995 de 5.000 → balance 5.
+                      const shortfall = received > 0 && balance > 0;
                       const claimed = claimedIds.has(p.id);
                       return (
                         <tr key={p.id} className="border-t border-primary/5">
                           <td className="px-4 py-3 font-medium text-primary">{p.label}</td>
                           <td className="px-4 py-3 text-primary/70 whitespace-nowrap">{fmtDate(p.due_date)}</td>
                           <td className="px-4 py-3 text-right font-bold text-primary whitespace-nowrap">{fmt(Number(p.amount), p.currency)}</td>
-                          <td className="px-4 py-3 text-right text-green-700 whitespace-nowrap">{fmt(received, p.currency)}</td>
-                          <td className="px-4 py-3 text-right text-primary/70 whitespace-nowrap">{fmt(balance, p.currency)}</td>
+                          <td className="px-4 py-3 text-right text-green-700 whitespace-nowrap">{received > 0 ? fmt(received, p.currency) : '—'}</td>
+                          <td className="px-4 py-3 text-primary/60 whitespace-nowrap">{received > 0 ? fmtDate(p.paid_at) : '—'}</td>
+                          <td className={`px-4 py-3 text-right whitespace-nowrap ${shortfall ? 'text-red-600 font-bold' : 'text-primary/70'}`}>{fmt(balance, p.currency)}</td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-500' : 'bg-almond text-primary/50'}`}>
                               <span className="material-symbols-outlined text-sm">{p.received ? 'check_circle' : overdue ? 'warning' : 'schedule'}</span>
@@ -168,6 +178,22 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                       );
                     })}
                   </tbody>
+                  <tfoot>
+                    {(() => {
+                      const tRecv = pays.reduce((s, p) => s + recvOf(p), 0);
+                      const tBal = total - tRecv;
+                      return (
+                        <tr className="border-t-2 border-primary/20 bg-almond/40 font-bold text-primary">
+                          <td className="px-4 py-3" colSpan={2}>TOTAL</td>
+                          <td className="px-4 py-3 text-right whitespace-nowrap">{fmt(total, u.currency)}</td>
+                          <td className="px-4 py-3 text-right text-green-700 whitespace-nowrap">{fmt(tRecv, u.currency)}</td>
+                          <td className="px-4 py-3" />
+                          <td className={`px-4 py-3 text-right whitespace-nowrap ${tBal > 0 ? 'text-red-600' : ''}`}>{fmt(tBal, u.currency)}</td>
+                          <td className="px-4 py-3" colSpan={2} />
+                        </tr>
+                      );
+                    })()}
+                  </tfoot>
                 </table>
               </div>
             </div>

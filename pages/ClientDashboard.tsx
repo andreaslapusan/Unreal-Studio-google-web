@@ -11,7 +11,8 @@ import ClientPaymentsSection from '../components/ClientPaymentsSection';
 
 // Keys for the client onboarding guide. Titles/texts live in i18n
 // (admin.clientDash.guideNTitle / guideNText) so they translate per language.
-const CLIENT_GUIDE_KEYS = ['guide1', 'guide2', 'guide3', 'guide4', 'guide5'];
+// Sin "guide2" (Selector de divisa): los clientes no cambian de divisa.
+const CLIENT_GUIDE_KEYS = ['guide1', 'guide3', 'guide4', 'guide5'];
 
 const InfoTooltip = ({ text }: { text: string }) => {
   const [show, setShow] = React.useState(false);
@@ -622,7 +623,7 @@ const ClientDashboard: React.FC = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
         <p className="text-sm text-primary/60 font-medium mb-5">
-          {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(client.name || '').trim().split(' ')[0]}</span>
+          {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(client.name || '').trim()}</span>
         </p>
         {client.drive_folder_url && feat('drive') && (
           <a href={client.drive_folder_url} target="_blank" rel="noopener noreferrer"
