@@ -99,18 +99,21 @@ const Footer: React.FC = () => {
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
           <Link className="hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
           <Link className="hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
-          <Link className="hover:text-primary transition flex items-center gap-1" to="/cliente">
+          {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
+              para que al entrar quede fijado el manifest del portal y se pueda instalar
+              cada uno como su propia app desde aquí. Ver index.html (script de manifest). */}
+          <a className="hover:text-primary transition flex items-center gap-1" href="/cliente">
             <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
-          </Link>
-          <Link className="hover:text-primary transition flex items-center gap-1" to="/agencias/login">
+          </a>
+          <a className="hover:text-primary transition flex items-center gap-1" href="/agencias/login">
             <span className="material-symbols-outlined text-xs">person_add</span> {t('footer.agencies')}
-          </Link>
-          <Link className="hover:text-primary transition flex items-center gap-1" to="/empleados">
+          </a>
+          <a className="hover:text-primary transition flex items-center gap-1" href="/empleados">
             <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
-          </Link>
-          <Link className="hover:text-primary transition flex items-center gap-1" to="/admin/login">
+          </a>
+          <a className="hover:text-primary transition flex items-center gap-1" href="/admin/login">
             <span className="material-symbols-outlined text-xs">settings</span> {t('footer.admin')}
-          </Link>
+          </a>
         </div>
       </div>
     </footer>
