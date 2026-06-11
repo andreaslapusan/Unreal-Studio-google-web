@@ -469,11 +469,16 @@ const ClientDashboard: React.FC = () => {
     }
   };
 
-  // El cliente cambia el idioma de su portal Y de sus comunicaciones (persistido).
-  const changeMyLanguage = async (lang: string) => {
-    try { await i18n.changeLanguage(lang); } catch { /* ignore */ }
-    try { await supabase.rpc('client_set_my_language', { p_lang: lang }); } catch { /* ignore */ }
-  };
+  // El selector de idioma vive SOLO en la cabecera (pastillas ES/EN/RO/ID). Aquí
+  // persistimos el idioma elegido en la preferencia del cliente (sus emails/kwitansi
+  // van en ese idioma), que es lo que hacía el selector duplicado ya retirado del cuerpo.
+  useEffect(() => {
+    if (!client) return;
+    const lang = i18n.language;
+    if (['es', 'en', 'ro', 'id'].includes(lang) && lang !== client.preferred_language) {
+      void supabase.rpc('client_set_my_language', { p_lang: lang });
+    }
+  }, [i18n.language, client]);
 
   const handleLogout = async () => {
     // Cliente usa token propio (_ust_client_); cerramos también sesión Supabase
@@ -607,15 +612,6 @@ const ClientDashboard: React.FC = () => {
       )}
 
       <main className="max-w-6xl mx-auto px-6 py-12">
-        <div className="flex justify-end mb-6">
-          <label className="flex items-center gap-2 text-xs text-primary/60 bg-white border border-primary/10 rounded-xl px-3 py-2">
-            <span className="material-symbols-outlined text-base">language</span>
-            <span>{t('admin.clientDash.languageLabel', 'Idioma')}</span>
-            <select value={i18n.language} onChange={(e) => changeMyLanguage(e.target.value)} className="bg-transparent font-bold text-primary outline-none cursor-pointer">
-              <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
-            </select>
-          </label>
-        </div>
         {client.drive_folder_url && (
           <a href={client.drive_folder_url} target="_blank" rel="noopener noreferrer"
              className="mb-8 flex items-center gap-3 bg-white border border-primary/10 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition group">
