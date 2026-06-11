@@ -62,7 +62,7 @@ const ResetPassword: React.FC = () => {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-sm p-8 md:p-10">
         <div className="text-center mb-6">
           <span className="font-serif text-3xl font-bold text-primary tracking-tight">Unreal Studio</span>
-          <p className="font-serif italic text-primary/50 text-xs mt-1">Beyond the Ordinary, Inside the Unreal</p>
+          <p className="brand-lema text-primary/50 text-sm mt-1">Beyond the Ordinary, Inside the Unreal</p>
         </div>
 
         {fatal ? (

@@ -83,3 +83,10 @@ select {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* Lema de marca: serif fino en cursiva (Cormorant Garamond 300 italic), no DM Serif grueso. */
+.brand-lema {
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-weight: 300;
+  font-style: italic;
+}

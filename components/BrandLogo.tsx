@@ -51,7 +51,7 @@ const BrandLogo: React.FC<Props> = ({ imgClassName, textClassName, tagline, tagl
   return (
     <span className="inline-flex flex-col">
       {mark}
-      <span className={taglineClassName || 'font-serif italic text-primary/50 text-[11px] tracking-wide mt-1 whitespace-nowrap'}>
+      <span className={taglineClassName || 'brand-lema text-primary/50 text-[13px] tracking-wide mt-1 whitespace-nowrap'}>
         {BRAND_LEMA}
       </span>
     </span>

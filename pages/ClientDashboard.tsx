@@ -368,6 +368,7 @@ const ClientDashboard: React.FC = () => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [walkthroughStep, setWalkthroughStep] = useState<number | null>(null);
   const [calculatorProject, setCalculatorProject] = useState<any>(null);
+  const [paymentsProj, setPaymentsProj] = useState<any>(null);
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
@@ -748,7 +749,13 @@ const ClientDashboard: React.FC = () => {
                           </button>
                       </div>
                     )}
-                    {clientId && <ClientPaymentsSection clientId={clientId} filterName={proj.project_name} filterUnit={proj.unit_number ?? null} compact />}
+                    {clientId && (
+                      <div className="mt-5 pt-5 border-t border-gray-100">
+                        <button onClick={() => setPaymentsProj(proj)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition">
+                          <span className="material-symbols-outlined text-sm">event</span> Calendario de pagos
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -769,6 +776,22 @@ const ClientDashboard: React.FC = () => {
       <Footer />
 
       {calculatorProject && <CalculatorModal project={calculatorProject} onClose={() => setCalculatorProject(null)} />}
+
+      {paymentsProj && clientId && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setPaymentsProj(null); }}>
+          <div className="bg-white w-full max-w-3xl rounded-3xl p-6 md:p-8 shadow-2xl max-h-[88vh] overflow-y-auto">
+            <div className="flex items-start justify-between mb-1">
+              <div>
+                <h2 className="text-xl font-serif text-primary">Calendario de pagos</h2>
+                <p className="text-sm text-primary/50">{paymentsProj.project_name}{paymentsProj.unit_number ? ` · ${paymentsProj.unit_number}` : ''}</p>
+              </div>
+              <button onClick={() => setPaymentsProj(null)} className="text-primary/40 hover:text-primary" title="Cerrar"><span className="material-symbols-outlined">close</span></button>
+            </div>
+            <p className="text-xs text-primary/50 mb-4">La fecha límite es el día en que el importe debe estar recibido por Unreal Studio. Inicia las transferencias con margen.</p>
+            <ClientPaymentsSection clientId={clientId} filterName={paymentsProj.project_name} filterUnit={paymentsProj.unit_number ?? null} variant="table" />
+          </div>
+        </div>
+      )}
 
       {/* Modal Cambiar Contraseña */}
       {showChangePassword && (

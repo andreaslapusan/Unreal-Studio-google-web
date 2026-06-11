@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
         {/* Brand Column */}
         <div className="col-span-2 md:col-span-1">
           <Link to="/" className="block mb-4 md:mb-8">
-            <BrandLogo tagline imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tight" taglineClassName="font-serif italic text-primary/50 text-xs tracking-wide mt-1.5" />
+            <BrandLogo tagline imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tight" taglineClassName="brand-lema text-primary/50 text-sm tracking-wide mt-1.5" />
           </Link>
           <p className="text-primary/60 text-sm leading-relaxed max-w-xs font-medium">
             {t('footer.tagline')}
