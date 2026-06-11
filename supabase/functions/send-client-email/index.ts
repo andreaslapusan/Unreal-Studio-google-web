@@ -35,15 +35,18 @@ function brandWrap(subject: string, inner: string): string {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>${subject}</title></head>
 <body style="margin:0;padding:0;background:${ALMOND};">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${ALMOND};padding:28px 16px;">
  <tr><td align="center">
   <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-   <!-- Cabecera: marca -->
-   <tr><td align="center" style="padding:8px 0 22px;">
+   <!-- Cabecera: marca + lema -->
+   <tr><td align="center" style="padding:8px 0 2px;">
      <span style="font-family:'DM Serif Display',Georgia,serif;font-size:26px;font-weight:700;color:${BROWN};letter-spacing:.3px;">Unreal Studio</span>
+   </td></tr>
+   <tr><td align="center" style="padding:0 0 22px;">
+     <span style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:14px;color:rgba(63,35,5,.55);">Beyond the Ordinary, Inside the Unreal</span>
    </td></tr>
    <!-- Tarjeta de contenido -->
    <tr><td style="background:#ffffff;border-radius:18px;padding:34px 32px;font-family:Manrope,Arial,sans-serif;color:${BROWN};">

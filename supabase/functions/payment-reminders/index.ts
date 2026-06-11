@@ -16,7 +16,22 @@
  */
 // @ts-nocheck — Deno runtime types not in the Vite tsconfig
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { sendMail, smtpConfigured } from "../_shared/smtp.ts";
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+
+const FROM_DEFAULT = "Unreal Studio <no.reply@unrealstudiobali.com>";
+function smtpConfigured(): boolean {
+  return Boolean(Deno.env.get("SMTP_HOST") && Deno.env.get("SMTP_USER") && Deno.env.get("SMTP_PASS"));
+}
+async function sendMail(msg: { to: string; subject: string; html: string; replyTo?: string }): Promise<void> {
+  const host = Deno.env.get("SMTP_HOST"); const user = Deno.env.get("SMTP_USER"); const pass = Deno.env.get("SMTP_PASS");
+  if (!host || !user || !pass) throw new Error("SMTP not configured");
+  const port = Number(Deno.env.get("SMTP_PORT") ?? "465");
+  const from = Deno.env.get("MAIL_FROM") ?? FROM_DEFAULT;
+  const client = new SMTPClient({ connection: { hostname: host, port, tls: port === 465, auth: { username: user, password: pass } } });
+  try {
+    await client.send({ from, to: msg.to, replyTo: msg.replyTo ?? "hello@unrealstudiobali.com", subject: msg.subject, html: msg.html });
+  } finally { await client.close(); }
+}
 
 const PORTAL_BASE = Deno.env.get("PORTAL_BASE") ?? "https://unrealstudiobali.com";
 const DAYS_BEFORE = Number(Deno.env.get("REMINDER_DAYS_BEFORE") ?? "7");
@@ -50,7 +65,10 @@ function reminderHtml(r: any): string {
 
   return `
 <div style="max-width:600px;margin:0 auto;background:#F3E5D8;padding:30px;font-family:Manrope,Arial,sans-serif;color:#3F2305">
-  <div style="text-align:center;margin-bottom:22px"><img src="${logo}" alt="Unreal Studio" style="height:38px" /></div>
+  <div style="text-align:center;margin-bottom:22px">
+    <div style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;color:#3F2305;letter-spacing:.3px">Unreal Studio</div>
+    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:13px;color:rgba(63,35,5,.55);margin-top:2px">Beyond the Ordinary, Inside the Unreal</div>
+  </div>
   <div style="background:#fff;border-radius:16px;padding:32px 30px">
     <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;margin:0 0 6px">Hola ${esc(r.client_name || "")},</h1>
     <p style="font-size:15px;line-height:1.7;color:rgba(63,35,5,.85);margin:0 0 4px">
