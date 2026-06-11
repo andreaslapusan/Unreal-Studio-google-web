@@ -183,8 +183,11 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     }
     setBusy(true);
     try {
-      const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-        redirectTo: `${window.location.origin}/auth/finish`,
+      // Reset con plantilla de marca: la edge fn send-password-reset genera el
+      // enlace de recovery y manda el email branded desde no.reply@ (el reset
+      // nativo de Supabase no entrega: Auth no tiene SMTP propio configurado).
+      const { error: err } = await supabase.functions.invoke('send-password-reset', {
+        body: { email: email.trim().toLowerCase(), redirectTo: `${window.location.origin}/auth/reset` },
       });
       if (err) throw err;
       setInfo(t('auth.recoverSent'));
