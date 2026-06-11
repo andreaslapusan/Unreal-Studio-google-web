@@ -86,6 +86,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const [kw, setKw] = useState<null | {
     cp: string; payId?: string; received_from: string; amount: number; currency: string;
     for_payment: string; place: string; date: string; sending: boolean; displayNo: string;
+    signed?: boolean; kwitansiId?: string;
   }>(null);
 
   const load = useCallback(async () => {
@@ -141,11 +142,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     });
   };
 
-  const kwitansiHtml = (no: string | number) => kw && renderKwitansiHtml({
+  const kwitansiHtml = (no: string | number, withSignature = true) => kw && renderKwitansiHtml({
     no, receivedFrom: kw.received_from, amount: kw.amount, currency: kw.currency,
-    forPayment: kw.for_payment, place: kw.place, date: kw.date,
+    forPayment: kw.for_payment, place: kw.place, date: kw.date, lang: clientLang || 'es',
     logoUrl: brand?.logo || undefined,
-    signatureUrl: adminSignature || undefined,
+    signatureUrl: withSignature ? (adminSignature || undefined) : undefined,
     stampUrl: brand?.stamp || undefined,
   });
 
@@ -167,15 +168,22 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     }, 300);
   };
 
-  const createAndSend = async () => {
-    if (!kw) return;
-    if (!clientEmail) { alert(t('admin.pay.clientNoEmail')); return; }
-    // Fase extra de seguridad: el kwitansi NO se firma/envía/muestra al cliente
-    // hasta que el admin confirma explícitamente aquí.
-    if (!window.confirm(t('admin.pay.confirmSign', { no: kw.displayNo, email: clientEmail }))) return;
+  // Flujo en 3 pasos OBLIGATORIOS y en orden: recibido → firmar → enviar.
+  // Paso 1: marcar el pago como RECIBIDO (requisito para poder firmar).
+  const markReceived = async () => {
+    if (!kw?.payId) return;
     setKw({ ...kw, sending: true });
-    // El nº visible es el amistoso por proyecto (DS-01); no_seq queda interno.
-    const html = kwitansiHtml(kw.displayNo) || '';
+    await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: { id: kw.payId, client_project_id: '', received: true, paid_at: kw.date || todayISO() } });
+    await load();
+    setKw((cur) => cur ? { ...cur, sending: false } : cur);
+  };
+
+  // Paso 2: FIRMAR — crea el recibí y lo firma (añade la firma del admin). El
+  // preview muestra ya la firma para verificarla antes de enviar.
+  const signKwitansi = async () => {
+    if (!kw) return;
+    setKw({ ...kw, sending: true });
+    const html = kwitansiHtml(kw.displayNo, true) || '';
     const { data: created, error: cErr } = await supabase.rpc('admin_create_kwitansi', {
       p_user_id: adminUserId,
       p_kwitansi: {
@@ -185,25 +193,28 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       },
     });
     if (cErr || !created?.success) { setKw({ ...kw, sending: false }); alert(t('admin.pay.errorCreateKwitansi')); return; }
-    // Firma del admin: marca signed_at → recién entonces es visible para el cliente.
     await supabase.rpc('admin_sign_kwitansi', { p_user_id: adminUserId, p_id: created.id, p_html: html });
+    setKw({ ...kw, sending: false, signed: true, kwitansiId: created.id });
+  };
+
+  // Paso 3: ENVIAR al cliente por email (solo si ya está firmado).
+  const sendKwitansi = async () => {
+    if (!kw?.kwitansiId) return;
+    if (!clientEmail) { alert(t('admin.pay.clientNoEmail')); return; }
+    setKw({ ...kw, sending: true });
     const no = kw.displayNo;
-    // 2) Send it from hello@unrealstudiobali.com via the edge function
+    const html = kwitansiHtml(no, true) || '';
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
       body: {
-        adminUserId, to: clientEmail, kwitansiId: created.id, lang: clientLang || 'es',
+        adminUserId, to: clientEmail, kwitansiId: kw.kwitansiId, lang: clientLang || 'es',
         subject: `Recibí de pago Nº ${no} · Unreal Studio`,
         html: `<p style="font-family:Manrope,Arial,sans-serif;color:#3F2305;font-size:14px;margin:0 0 14px">${(KW_GREETING[clientLang || 'es'] || KW_GREETING.es)(clientName)}</p>${html}`,
       },
     });
-    setKw({ ...kw, sending: false });
+    setKw((cur) => cur ? { ...cur, sending: false } : cur);
     if (sErr || !sent?.success) {
-      const msg = sent?.error === 'transport_not_configured'
-        ? t('admin.pay.errorTransport', { no })
-        : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
-      alert(msg);
-      setKw(null); await load();
-      return;
+      const msg = sent?.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no }) : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
+      alert(msg); return;
     }
     alert(t('admin.pay.kwitansiSent', { no, email: clientEmail }));
     setKw(null); await load();
@@ -334,13 +345,30 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw({ ...kw, date: e.target.value })} />
             </div>
             <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
-            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo) || '' }} />
-            <div className="flex gap-2">
-              <button onClick={downloadKwitansi} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-primary">{t('admin.pay.downloadPrint')}</button>
-              <button disabled={kw.sending} onClick={createAndSend} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">
-                {kw.sending ? t('admin.pay.sending') : t('admin.pay.signAndSend')}
-              </button>
-            </div>
+            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo, !!kw.signed) || '' }} />
+            {(() => {
+              const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;
+              return (
+                <div className="space-y-2">
+                  <button onClick={downloadKwitansi} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> Descargar / Imprimir (PDF)</button>
+                  <p className="text-[11px] text-gray-400 text-center">Pasos en orden: marcar recibido → firmar → enviar.</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button disabled={kw.sending || kwReceived} onClick={markReceived}
+                      className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-60 ${kwReceived ? 'bg-green-100 text-green-700' : 'bg-primary text-white hover:bg-black'}`}>
+                      {kwReceived ? '1 · Recibido' : '1 · Marcar recibido'}
+                    </button>
+                    <button disabled={kw.sending || !kwReceived || kw.signed} onClick={signKwitansi}
+                      className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-40 ${kw.signed ? 'bg-green-100 text-green-700' : 'bg-primary text-white hover:bg-black'}`}>
+                      {kw.signed ? '2 · Firmado' : '2 · Firmar'}
+                    </button>
+                    <button disabled={kw.sending || !kw.signed} onClick={sendKwitansi}
+                      className="py-2.5 rounded-lg text-xs font-bold bg-primary text-white hover:bg-black transition disabled:opacity-40">
+                      {kw.sending ? '…' : '3 · Enviar al cliente'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
