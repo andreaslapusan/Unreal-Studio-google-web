@@ -777,6 +777,7 @@ const handleSaveClient = async (e: React.FormEvent) => {
     setUploading(true);
     const userId = getAdminUserId();
     if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+    const isNewClient = !currentClient.id || currentClient.id.startsWith('client-');
     const clientData = currentClient.id?.startsWith('client-') ? { ...currentClient, id: undefined } : currentClient;
     const { data, error } = await supabase.rpc('admin_save_client', {
       p_user_id: userId,
@@ -786,7 +787,8 @@ const handleSaveClient = async (e: React.FormEvent) => {
     if (data && !data.success) throw new Error(data.error);
     await loadData();
     setIsEditingClient(false);
-    if (data && data.temp_password) {
+    // El aviso de "cliente creado + contraseña temporal" SOLO al crear, no al editar.
+    if (isNewClient && data && data.temp_password) {
       alert(t('admin.dash.clientCreatedTempPw', { pw: data.temp_password }));
     }
   } catch (error) {
@@ -1256,7 +1258,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               <div className="mt-1 space-y-0.5">
                 {((client as any).password_plain || client.temp_password) && (
                   <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_plain || client.temp_password); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>
-                    🔑 {(client as any).password_plain || client.temp_password}
+                    <span className="material-symbols-outlined text-xs align-middle">key</span> {(client as any).password_plain || client.temp_password}
                     {client.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
                   </p>
                 )}
