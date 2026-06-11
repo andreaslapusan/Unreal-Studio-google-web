@@ -14,7 +14,6 @@ import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
 import AttendancePanel from '../components/admin/AttendancePanel';
-import AttendanceReportsPanel from '../components/admin/AttendanceReportsPanel';
 import { useEscapeKey } from '../lib/useEscapeKey';
 import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
@@ -1622,7 +1621,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               </table>
             </div>
             <AttendancePanel />
-            <AttendanceReportsPanel />
           </div>
         )}
 
