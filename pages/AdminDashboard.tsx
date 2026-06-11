@@ -91,6 +91,8 @@ const AMENITIES_LIST = [
   }, []);
   // Modal de alta/edición de empleado: null = cerrado, {emp:null} = nuevo, {emp:row} = editar.
   const [empModal, setEmpModal] = useState<{ emp: EmployeeRow | null } | null>(null);
+  // Submenú de Configuración (orden lógico): Etiquetas · Permisos · Marca y datos.
+  const [configTab, setConfigTab] = useState<'etiquetas' | 'permisos' | 'marca'>('etiquetas');
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
   const [pendingVacations, setPendingVacations] = useState<Array<{ id: string; employee_name: string | null; employee_email: string; start_date: string; end_date: string; type: string; note: string | null }>>([]);
   const loadPendingVacations = useCallback(async () => {
@@ -1366,7 +1368,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         )}
 
         {activeView === 'config' && (
-           <div className="animate-in fade-in duration-500">
+           <div className="animate-in fade-in duration-500 flex flex-col md:flex-row gap-6">
+             {/* Submenú lateral ordenado */}
+             <nav className="md:w-48 shrink-0 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible">
+               {([['etiquetas','Etiquetas','sell'],['permisos','Permisos','tune'],['marca','Marca y datos','storefront']] as [typeof configTab,string,string][]).map(([k,label,icon]) => (
+                 <button key={k} onClick={() => setConfigTab(k)}
+                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition ${configTab === k ? 'bg-primary text-white shadow-sm' : 'text-primary/60 hover:bg-gray-100'}`}>
+                   <span className="material-symbols-outlined text-[18px]">{icon}</span>{label}
+                 </button>
+               ))}
+             </nav>
+
+             <div className="flex-1 min-w-0">
+             {configTab === 'etiquetas' && (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
                  <h3 className="text-xl font-serif text-primary mb-6">{t('admin.configTab.labels')}</h3>
@@ -1374,10 +1388,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    {Object.keys(config.labels).map((key) => (
                      <div key={key}>
                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{key}</label>
-                       <input 
-                         value={(config.labels as any)[key]} 
-                         onChange={(e) => setConfig({ ...config, labels: { ...config.labels, [key]: e.target.value } })} 
-                         className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" 
+                       <input
+                         value={(config.labels as any)[key]}
+                         onChange={(e) => setConfig({ ...config, labels: { ...config.labels, [key]: e.target.value } })}
+                         className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm"
                        />
                      </div>
                    ))}
@@ -1396,9 +1410,33 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  ))}
                </div>
              </div>
+             )}
 
+             {configTab === 'permisos' && (
+             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+               <h3 className="text-xl font-serif text-primary mb-2">Funciones visibles en el portal de clientes</h3>
+               <p className="text-xs text-gray-400 mb-6">Activa o desactiva qué módulos ve el cliente en su portal.</p>
+               <div className="grid sm:grid-cols-2 gap-2">
+                 {([['calculator','Calculadora ROI'],['construction','Reportes de obra'],['brochure','Brochure'],['viewProject','Ver proyecto'],['drive','Carpeta Google Drive']] as [string,string][]).map(([k,label]) => {
+                   const feats = ((config as any).brand?.client_features) || {};
+                   const on = feats[k] !== false;
+                   return (
+                     <button key={k} type="button" onClick={() => setBrandKey('client_features', { ...feats, [k]: !on })}
+                       className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition ${on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                       {label}
+                       <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+                     </button>
+                   );
+                 })}
+               </div>
+               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar permisos</button>
+             </div>
+             )}
+
+             {configTab === 'marca' && (
+             <>
              {/* Marca y empresa — fuente única para web, emails y kwitansi */}
-             <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
                <h3 className="text-xl font-serif text-primary mb-2">{t('admin.dash.brandCompany')}</h3>
                <p className="text-xs text-gray-400 mb-6">{t('admin.dash.brandCompanyHint')}</p>
                <div className="grid sm:grid-cols-2 gap-5 mb-6">
@@ -1432,22 +1470,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.contactPhone')}</label>
                    <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" placeholder="+62 ..."
                      value={(config as any).brand?.phone || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), phone: e.target.value } } as any)} />
-                 </div>
-               </div>
-               <div className="mt-6 border-t border-gray-100 pt-5">
-                 <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">Funciones visibles en el portal de clientes</label>
-                 <div className="grid sm:grid-cols-2 gap-2">
-                   {([['calculator','Calculadora ROI'],['construction','Reportes de obra'],['brochure','Brochure'],['viewProject','Ver proyecto'],['drive','Carpeta Google Drive']] as [string,string][]).map(([k,label]) => {
-                     const feats = ((config as any).brand?.client_features) || {};
-                     const on = feats[k] !== false;
-                     return (
-                       <button key={k} type="button" onClick={() => setBrandKey('client_features', { ...feats, [k]: !on })}
-                         className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition ${on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
-                         {label}
-                         <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
-                       </button>
-                     );
-                   })}
                  </div>
                </div>
                <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveBrandCompany')}</button>
@@ -1526,6 +1548,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  </div>
                </div>
                <button onClick={() => saveConfigToDb(config)} className="mt-7 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveCompanyData')}</button>
+             </div>
+             </>
+             )}
              </div>
            </div>
         )}
