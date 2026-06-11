@@ -41,6 +41,7 @@ export default function AgenciasDashboard() {
   const [projects, setProjects] = useState<PropertyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -106,11 +107,37 @@ export default function AgenciasDashboard() {
         subtitle={partner?.agency_name ?? user.email ?? undefined}
         onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; }}
         extra={
-          <Link to="/agencias/stats" className="bg-white border border-primary/10 text-primary/70 hover:bg-primary hover:text-white px-3 md:px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition shadow-sm">
-            {t('agenciasDashboard.navStats')}
-          </Link>
+          <>
+            <button
+              onClick={() => setShowInfo(true)}
+              aria-label={t('agenciasDashboard.instructions', 'Instrucciones')}
+              className="w-9 h-9 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition"
+            >
+              <span className="material-symbols-outlined text-[20px]">info</span>
+            </button>
+            <Link to="/agencias/stats" className="bg-white border border-primary/10 text-primary/70 hover:bg-primary hover:text-white px-3 md:px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition shadow-sm">
+              {t('agenciasDashboard.navStats')}
+            </Link>
+          </>
         }
       />
+
+      {showInfo && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setShowInfo(false)}>
+          <div className="ust-modal bg-white rounded-2xl shadow-2xl p-7 relative" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setShowInfo(false)} className="absolute top-4 right-4 text-gray-400 hover:text-primary transition">
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <h2 className="text-2xl font-serif text-primary mb-4">{t('agenciasDashboard.infoTitle', 'Cómo usar tu portal de agencia')}</h2>
+            <ul className="space-y-3 text-sm text-primary/70 leading-relaxed list-disc pl-5">
+              <li>{t('agenciasDashboard.infoStep1', 'Consulta los proyectos que tienes asignados y su material de marca (PDF, recorrido virtual).')}</li>
+              <li>{t('agenciasDashboard.infoStep2', 'Personaliza tu marca (logo y enlace personal) en el panel superior para compartir con tus clientes.')}</li>
+              <li>{t('agenciasDashboard.infoStep3', 'Usa tu enlace personal para que las visitas y reservas queden atribuidas a tu agencia.')}</li>
+              <li>{t('agenciasDashboard.infoStep4', 'Revisa tus estadísticas desde el botón de estadísticas del menú superior.')}</li>
+            </ul>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-5xl mx-auto px-6 py-10 space-y-8">
         {partner && (

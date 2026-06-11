@@ -93,10 +93,17 @@ const AttendancePanel: React.FC = () => {
 
   const toggle = (email: string) => setSelected((prev) => { const n = new Set(prev); n.has(email) ? n.delete(email) : n.add(email); return n; });
 
+  // Estructura de altura FIJA para que las fotos queden alineadas en toda la fila,
+  // haya o no coordenadas/lugar identificado.
   const cellHtml = (ev?: Ev) => {
-    if (!ev) return '<span style="color:#cbb">—</span>';
+    if (!ev) return '<div style="height:108px;display:flex;align-items:flex-start;color:#cbb">—</div>';
     const url = ev.photo ? photoUrls[ev.photo] : '';
-    return `<div style="line-height:1.5"><b>${fmtTime(ev.ts)}</b>` + (ev.lat != null ? `<br><span style="font-size:10px;color:#8a7">${locLabel(ev.lat, ev.lng)}</span>` : '') + (url ? `<br><img src="${url}" style="width:70px;height:70px;object-fit:cover;border-radius:6px;margin-top:3px" />` : '') + `</div>`;
+    const loc = ev.lat != null ? locLabel(ev.lat, ev.lng) : '';
+    return `<div style="line-height:1.4">`
+      + `<div style="height:16px;font-weight:700">${fmtTime(ev.ts)}</div>`
+      + `<div style="height:14px;font-size:10px;color:#8a7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px">${loc}</div>`
+      + (url ? `<img src="${url}" style="width:70px;height:70px;object-fit:cover;border-radius:6px;margin-top:4px;display:block" />` : `<div style="width:70px;height:70px;margin-top:4px"></div>`)
+      + `</div>`;
   };
 
   const downloadPdf = () => {
@@ -114,18 +121,24 @@ const AttendancePanel: React.FC = () => {
     setTimeout(() => { iframe.contentWindow?.focus(); iframe.contentWindow?.print(); setTimeout(() => { try { document.body.removeChild(iframe); } catch { /* ignore */ } }, 1500); }, 400);
   };
 
+  // Altura fija por bloque (hora / lugar / foto) → todas las fotos de la fila
+  // quedan alineadas independientemente de si hay coordenadas o lugar.
   const Cell: React.FC<{ ev?: Ev }> = ({ ev }) => {
-    if (!ev) return <span className="text-gray-300">—</span>;
+    if (!ev) return <div className="h-[108px] flex items-start text-gray-300">—</div>;
     const url = ev.photo ? photoUrls[ev.photo] : '';
     return (
       <div className="text-xs leading-tight">
-        <div className="font-bold text-primary">{fmtTime(ev.ts)}</div>
-        {ev.lat != null && (
-          <a href={`https://maps.google.com/?q=${ev.lat},${ev.lng}`} target="_blank" rel="noreferrer" className="text-[10px] text-primary/50 hover:text-primary inline-flex items-center gap-0.5">
-            <span className="material-symbols-outlined text-[12px]">location_on</span>{locLabel(ev.lat, ev.lng)}
-          </a>
-        )}
-        {url && <a href={url} target="_blank" rel="noreferrer" className="block mt-1"><img src={url} alt="" className="w-[70px] h-[70px] object-cover rounded-md border border-gray-100" /></a>}
+        <div className="font-bold text-primary h-4">{fmtTime(ev.ts)}</div>
+        <div className="h-3.5 overflow-hidden">
+          {ev.lat != null && (
+            <a href={`https://maps.google.com/?q=${ev.lat},${ev.lng}`} target="_blank" rel="noreferrer" className="text-[10px] text-primary/50 hover:text-primary inline-flex items-center gap-0.5 max-w-[92px] truncate">
+              <span className="material-symbols-outlined text-[12px]">location_on</span>{locLabel(ev.lat, ev.lng)}
+            </a>
+          )}
+        </div>
+        {url
+          ? <a href={url} target="_blank" rel="noreferrer" className="block mt-1"><img src={url} alt="" className="w-[70px] h-[70px] object-cover rounded-md border border-gray-100" /></a>
+          : <div className="w-[70px] h-[70px] mt-1" />}
       </div>
     );
   };
@@ -143,7 +156,7 @@ const AttendancePanel: React.FC = () => {
           <input type="date" value={to} max="2099-12-31" onChange={(e) => setTo(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
         </label>
         <button onClick={downloadPdf} disabled={loading || dayRows.length === 0} className="ml-auto bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition disabled:opacity-40">
-          <span className="material-symbols-outlined text-sm">download</span> Descargar reporte (PDF)
+          <span className="material-symbols-outlined text-sm">print</span> Imprimir / Guardar PDF
         </button>
       </div>
       {/* Multiselección de empleados (chips). Vacío = todos. */}

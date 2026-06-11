@@ -580,10 +580,10 @@ const ClientDashboard: React.FC = () => {
         onLogout={handleLogout}
         extra={
           <>
-            <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition hidden md:flex items-center gap-1">
+            <button onClick={() => setWalkthroughStep(0)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
             </button>
-            <button onClick={() => setShowChangePassword(true)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition hidden md:flex items-center gap-1">
+            <button onClick={() => setShowChangePassword(true)} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">lock</span> {t('admin.clientDash.passwordLabel')}
             </button>
           </>

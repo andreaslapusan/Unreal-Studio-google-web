@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-route
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
+import PullToRefresh from './components/PullToRefresh';
 import LocaleSeo from './components/LocaleSeo';
 // FloatingWhatsApp importado bajo demanda (ver Layout); desactivado por defecto.
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
@@ -242,6 +243,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <ScrollToTop />
         <ManifestSwitcher />
+        <PullToRefresh />
         <LocaleSeo />
         <AttributionTracker />
         <Layout>

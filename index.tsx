@@ -26,8 +26,33 @@ initWebVitals();
 
 // PWA: registra el service worker (instalable + offline + auto-update). Se hace
 // tras 'load' para no competir con el primer render.
+//
+// AUTO-UPDATE: cuando un SW nuevo toma el control (tras desplegar) recargamos la
+// página UNA vez para que la app guardada en pantalla de inicio (iOS standalone)
+// nunca se quede con un shell viejo → evita la "pantalla negra que nunca carga".
 if ('serviceWorker' in navigator) {
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => { /* sin PWA si falla */ });
+    navigator.serviceWorker
+      .register('/sw.js', { updateViaCache: 'none' })
+      .then((reg) => {
+        reg.update().catch(() => {});
+        if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
+        reg.addEventListener('updatefound', () => {
+          const sw = reg.installing;
+          if (!sw) return;
+          sw.addEventListener('statechange', () => {
+            if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+              sw.postMessage('SKIP_WAITING');
+            }
+          });
+        });
+      })
+      .catch(() => { /* sin PWA si falla */ });
   });
 }
