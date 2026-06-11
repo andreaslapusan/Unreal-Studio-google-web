@@ -64,6 +64,7 @@ const AMENITIES_LIST = [
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
+  const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Cerrar con Escape los modales (accesibilidad — auditoría).
   useEscapeKey(() => setIsEditingClient(false), isEditingClient);
   useEscapeKey(() => setEditingAssignment(null), !!editingAssignment);
@@ -1269,7 +1270,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
             <div className="flex gap-2 shrink-0 ml-4">
               <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData')}><span className="material-symbols-outlined text-sm">edit</span></button>
-              <button onClick={() => setPaymentsClient(client)} className="p-2.5 bg-almond text-primary rounded-xl hover:brightness-95 transition" title={t('admin.dash.paymentsKwitansi')}><span className="material-symbols-outlined text-sm">payments</span></button>
               <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></button>
               <button onClick={() => handleDeleteClient(client.id)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title={t('admin.dash.deleteClientTitle')}><span className="material-symbols-outlined text-sm">delete</span></button>
             </div>
@@ -1307,6 +1307,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
                     </div>
                     <div className="flex gap-1 shrink-0">
+                        <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary hover:text-primary/70 transition p-1" title="Calendario de pagos"><span className="material-symbols-outlined text-sm">event</span></button>
                         <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary hover:text-primary/70 transition p-1" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-sm">edit</span></button>
                         <button onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-400 hover:text-red-600 transition p-1" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-sm">close</span></button>
                     </div>
@@ -2218,7 +2219,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     brand={(config as any).brand || {}}
     adminSignature={mySignature}
     clientLang={(paymentsClient as any).preferred_language || 'es'}
-    onClose={() => setPaymentsClient(null)}
+    filterName={paymentsFilter?.name}
+    filterUnit={paymentsFilter?.unit ?? undefined}
+    onClose={() => { setPaymentsClient(null); setPaymentsFilter(null); }}
   />
 )}
 

@@ -44,6 +44,8 @@ interface Props {
   brand?: { logo?: string; stamp?: string; commercial_email?: string; phone?: string };
   adminSignature?: string;
   clientLang?: string;
+  filterName?: string;
+  filterUnit?: string | null;
   onClose: () => void;
 }
 
@@ -75,7 +77,7 @@ const KW_GREETING: Record<string, (n: string) => string> = {
   id: (n) => `Halo ${n}, terlampir tanda terima pembayaran Anda. Terima kasih!`,
 };
 
-const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, adminSignature, clientLang, onClose }) => {
+const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, adminSignature, clientLang, filterName, filterUnit, onClose }) => {
   const { t } = useTranslation();
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -209,7 +211,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto py-8 px-4">
-      <div className="bg-white rounded-3xl w-full max-w-3xl shadow-2xl">
+      <div className="bg-white rounded-3xl ust-modal shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white rounded-t-3xl">
           <div>
             <h2 className="text-xl font-black text-primary">{t('admin.pay.title')} · {clientName}</h2>
@@ -222,7 +224,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           {loading && <p className="text-sm text-gray-400">{t('admin.pay.loading')}</p>}
           {!loading && units.length === 0 && <p className="text-sm text-gray-400 italic">{t('admin.pay.noUnits')}</p>}
 
-          {units.map((u) => {
+          {units.filter((u) => filterName === undefined || ((u.project_name || '').trim().toLowerCase() === (filterName || '').trim().toLowerCase() && (filterUnit === undefined || (u.unit_number || '').trim().toLowerCase() === (filterUnit || '').trim().toLowerCase()))).map((u) => {
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
             const recv = u.payments.filter((p) => p.received).reduce((s, p) => s + Number(p.amount), 0);
             return (
@@ -313,7 +315,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       {/* Kwitansi preview + send */}
       {kw && (
         <div className="fixed inset-0 bg-black/50 flex items-start justify-center overflow-y-auto py-6 px-4 z-[60]">
-          <div className="bg-white rounded-2xl w-full max-w-xl p-6 space-y-4">
+          <div className="bg-white rounded-2xl ust-modal p-6 space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="font-black text-primary">{t('admin.pay.kwitansi')}</h3>
               <button onClick={() => setKw(null)} className="text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
