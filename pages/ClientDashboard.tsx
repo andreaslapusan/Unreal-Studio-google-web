@@ -628,7 +628,6 @@ const ClientDashboard: React.FC = () => {
           </a>
         )}
         {clientId && <ClientUnitsSection clientId={clientId} />}
-        {clientId && <ClientKwitansisSection clientId={clientId} />}
         {/* Resumen */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
@@ -789,6 +788,7 @@ const ClientDashboard: React.FC = () => {
             </div>
             <p className="text-xs text-primary/50 mb-4">La fecha límite es el día en que el importe debe estar recibido por Unreal Studio. Inicia las transferencias con margen.</p>
             <ClientPaymentsSection clientId={clientId} filterName={paymentsProj.project_name} filterUnit={paymentsProj.unit_number ?? null} variant="table" />
+            <ClientKwitansisSection clientId={clientId} embedded />
           </div>
         </div>
       )}

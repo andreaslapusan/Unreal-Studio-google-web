@@ -20,7 +20,7 @@ const fmt = (n: number, c: string) => {
   catch { return `${c} ${n}`; }
 };
 
-const ClientKwitansisSection: React.FC<{ clientId: string }> = () => {
+const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }> = ({ embedded }) => {
   const { t } = useTranslation();
   const [rows, setRows] = useState<Kwitansi[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,15 +36,15 @@ const ClientKwitansisSection: React.FC<{ clientId: string }> = () => {
   const view = (k: Kwitansi) => {
     const w = window.open('', '_blank');
     if (!w) return;
-    w.document.write(`<html><head><title>Kwitansi ${k.no_seq}</title></head><body style="margin:0;padding:24px;background:#fff">${k.html}</body></html>`);
+    w.document.write(`<html><head><title>Recibo Nº ${k.no_seq}</title></head><body style="margin:0;padding:24px;background:#fff">${k.html}</body></html>`);
     w.document.close();
   };
 
   if (loading || rows.length === 0) return null;
 
   return (
-    <section className="mt-10">
-      <h2 className="font-serif text-2xl text-primary mb-4">{t('admin.clientDash.receiptsTitle', 'Tus recibos (kwitansi)')}</h2>
+    <section className={embedded ? 'mt-8 pt-6 border-t border-gray-100' : 'mt-10'}>
+      <h2 className={embedded ? 'text-[10px] font-black uppercase tracking-widest text-primary/40 mb-3' : 'font-serif text-2xl text-primary mb-4'}>{t('admin.clientDash.receiptsTitle', 'Recibos de pago generados')}</h2>
       <div className="space-y-3">
         {rows.map((k) => (
           <div key={k.id} className="bg-white rounded-2xl p-4 border border-primary/5 shadow-sm flex items-center gap-4">

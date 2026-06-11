@@ -95,8 +95,7 @@ export function renderKwitansiHtml(d: KwitansiData): string {
     <table style="width:100%;border-collapse:collapse"><tr>
       <td style="text-align:left;vertical-align:middle">${logo}</td>
       <td style="text-align:right;vertical-align:middle">
-        <div style="font-family:'DM Serif Display',Georgia,serif;font-size:26px;letter-spacing:6px;color:#3F2305">KWITANSI</div>
-        <div style="font-size:11px;color:rgba(63,35,5,.55);letter-spacing:1px">PAYMENT RECEIPT</div>
+        <div style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;letter-spacing:2px;color:#3F2305">RECIBÍ DE PAGO</div>
       </td>
     </tr></table>
 
