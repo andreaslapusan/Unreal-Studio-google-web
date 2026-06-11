@@ -163,11 +163,13 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     try {
       // Magic link branded por nuestro transporte (el signInWithOtp nativo no
       // entrega: Auth sin SMTP propio). Igual que el reset.
-      const { error: err } = await supabase.functions.invoke('send-magic-link', {
-        body: { email: email.trim().toLowerCase(), redirectTo: `${window.location.origin}/auth/finish` },
+      const { data, error: err } = await supabase.functions.invoke('send-magic-link', {
+        body: { email: email.trim().toLowerCase(), portal, redirectTo: `${window.location.origin}/auth/finish?portal=${portal}` },
       });
       if (err) throw err;
-      setInfo(t('auth.magicSent'));
+      if (!data?.success) {
+        setError(data?.error === 'no_account' ? `No existe una cuenta de ${PORTAL_LABEL[portal]} con ese email.` : t('auth.genericError'));
+      } else setInfo(t('auth.magicSent'));
     } catch {
       setError(t('auth.genericError'));
     } finally {
@@ -187,11 +189,13 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       // Reset con plantilla de marca: la edge fn send-password-reset genera el
       // enlace de recovery y manda el email branded desde no.reply@ (el reset
       // nativo de Supabase no entrega: Auth no tiene SMTP propio configurado).
-      const { error: err } = await supabase.functions.invoke('send-password-reset', {
-        body: { email: email.trim().toLowerCase(), redirectTo: `${window.location.origin}/auth/reset` },
+      const { data, error: err } = await supabase.functions.invoke('send-password-reset', {
+        body: { email: email.trim().toLowerCase(), portal, redirectTo: `${window.location.origin}/auth/reset?portal=${portal}` },
       });
       if (err) throw err;
-      setInfo(t('auth.recoverSent'));
+      if (!data?.success) {
+        setError(data?.error === 'no_account' ? `No existe una cuenta de ${PORTAL_LABEL[portal]} con ese email.` : t('auth.genericError'));
+      } else setInfo(t('auth.recoverSent'));
     } catch {
       setError(t('auth.genericError'));
     } finally {

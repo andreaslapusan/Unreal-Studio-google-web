@@ -28,6 +28,9 @@ export default function AuthFinish() {
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
   const [errored, setErrored] = useState(false);
+  // Portal desde el que se pidió el enlace (?portal=) — para enrutar al portal
+  // correcto y no cruzar (p.ej. magic link de cliente abriendo empleados).
+  const [preferredPortal] = useState(() => { try { return new URLSearchParams(window.location.search).get("portal"); } catch { return null; } });
 
   // Auth handshake — covers both flows:
   //   1) Implicit/OAuth: Supabase appends #access_token=... in the fragment
@@ -100,7 +103,9 @@ export default function AuthFinish() {
         const { data } = await supabase.rpc("get_my_portals");
         const list = ((data as string[]) || []).filter(Boolean);
         if (list.length > 0) {
-          navigate(DASH[list[0]] ?? "/", { replace: true });
+          // Prioriza el portal del enlace si el usuario pertenece a él.
+          const target = (preferredPortal && list.includes(preferredPortal)) ? preferredPortal : list[0];
+          navigate(DASH[target] ?? "/", { replace: true });
           return;
         }
       } catch {
