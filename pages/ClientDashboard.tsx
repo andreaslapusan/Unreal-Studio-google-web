@@ -473,12 +473,13 @@ const ClientDashboard: React.FC = () => {
   // persistimos el idioma elegido en la preferencia del cliente (sus emails/kwitansi
   // van en ese idioma), que es lo que hacía el selector duplicado ya retirado del cuerpo.
   useEffect(() => {
-    if (!client) return;
+    if (!clientData) return;
+    const pref = clientData?.client?.preferred_language;
     const lang = i18n.language;
-    if (['es', 'en', 'ro', 'id'].includes(lang) && lang !== client.preferred_language) {
+    if (['es', 'en', 'ro', 'id'].includes(lang) && lang !== pref) {
       void supabase.rpc('client_set_my_language', { p_lang: lang });
     }
-  }, [i18n.language, client]);
+  }, [i18n.language, clientData]);
 
   const handleLogout = async () => {
     // Cliente usa token propio (_ust_client_); cerramos también sesión Supabase
