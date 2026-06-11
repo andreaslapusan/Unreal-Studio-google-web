@@ -7,7 +7,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("/fonts/material-symbols-outlined.woff2?v=3576414d") format("woff2");
+  src: url("/fonts/material-symbols-outlined.woff2?v=b34e546d") format("woff2");
 }
 @tailwind base;
 @tailwind components;
