@@ -106,19 +106,25 @@ const AttendancePanel: React.FC = () => {
       + `</div>`;
   };
 
-  const downloadPdf = () => {
-    const head = `<tr style="background:#3F2305;color:#fff"><th>Empleado</th><th>Fecha</th>${COLS.map(([, l]) => `<th>${l}</th>`).join('')}<th>Total</th><th>Dif.</th></tr>`;
-    const body = dayRows.map((d) => {
-      const w = worked(d); const asg = schedule[d.email]; const diff = (w != null && asg != null) ? w - asg : null;
-      return `<tr><td><b>${d.name}</b><br><span style="font-size:10px;color:#888">${d.email}</span></td><td>${fmtDay(d.day)}</td>` +
-        COLS.map(([k]) => `<td style="text-align:center">${cellHtml(d[k] as Ev | undefined)}</td>`).join('') +
-        `<td style="text-align:center"><b>${w != null ? hm(w) : '—'}</b></td><td style="text-align:center;color:${diff != null && diff < 0 ? '#c00' : '#070'}">${diff != null ? hm(diff) : '—'}</td></tr>`;
-    }).join('');
-    const html = `<html><head><title>Reporte de asistencia ${from} a ${to}</title><style>body{font-family:Arial,sans-serif;color:#3F2305;padding:24px}h1{font-size:18px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #e4d9cc;padding:6px;text-align:left;vertical-align:top}</style></head><body><h1>Reporte de asistencia · ${from} a ${to}</h1><table>${head}${body}</table></body></html>`;
-    const iframe = document.createElement('iframe'); iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0'; document.body.appendChild(iframe);
-    const doc = iframe.contentWindow?.document; if (!doc) { document.body.removeChild(iframe); return; }
-    doc.open(); doc.write(html); doc.close();
-    setTimeout(() => { iframe.contentWindow?.focus(); iframe.contentWindow?.print(); setTimeout(() => { try { document.body.removeChild(iframe); } catch { /* ignore */ } }, 1500); }, 400);
+  const [downloading, setDownloading] = useState(false);
+  // Descarga DIRECTA del PDF (sin diálogo de imprimir).
+  const downloadPdf = async () => {
+    setDownloading(true);
+    try {
+      const head = `<tr style="background:#3F2305;color:#fff"><th>Empleado</th><th>Fecha</th>${COLS.map(([, l]) => `<th>${l}</th>`).join('')}<th>Total</th><th>Dif.</th></tr>`;
+      const body = dayRows.map((d) => {
+        const w = worked(d); const asg = schedule[d.email]; const diff = (w != null && asg != null) ? w - asg : null;
+        return `<tr><td><b>${d.name}</b><br><span style="font-size:10px;color:#888">${d.email}</span></td><td>${fmtDay(d.day)}</td>` +
+          COLS.map(([k]) => `<td style="text-align:center">${cellHtml(d[k] as Ev | undefined)}</td>`).join('') +
+          `<td style="text-align:center"><b>${w != null ? hm(w) : '—'}</b></td><td style="text-align:center;color:${diff != null && diff < 0 ? '#c00' : '#070'}">${diff != null ? hm(diff) : '—'}</td></tr>`;
+      }).join('');
+      const inner = `<style>h1{font-size:18px;margin:0 0 12px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #e4d9cc;padding:5px;text-align:left;vertical-align:top}</style>`
+        + `<h1>Reporte de asistencia · ${from} a ${to}</h1><table>${head}${body}</table>`;
+      const { downloadPdfFromHtml } = await import('../../lib/pdf');
+      await downloadPdfFromHtml(inner, `reporte-asistencia_${from}_a_${to}.pdf`);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   // Altura fija por bloque (hora / lugar / foto) → todas las fotos de la fila
@@ -155,8 +161,8 @@ const AttendancePanel: React.FC = () => {
         <label className="text-xs text-primary/50 font-bold">Hasta
           <input type="date" value={to} max="2099-12-31" onChange={(e) => setTo(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
         </label>
-        <button onClick={downloadPdf} disabled={loading || dayRows.length === 0} className="ml-auto bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition disabled:opacity-40">
-          <span className="material-symbols-outlined text-sm">print</span> Imprimir / Guardar PDF
+        <button onClick={() => void downloadPdf()} disabled={loading || downloading || dayRows.length === 0} className="ml-auto bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition disabled:opacity-40">
+          <span className={`material-symbols-outlined text-sm ${downloading ? 'animate-spin' : ''}`}>{downloading ? 'progress_activity' : 'download'}</span> {downloading ? 'Generando…' : 'Descargar PDF'}
         </button>
       </div>
       {/* Multiselección de empleados (chips). Vacío = todos. */}

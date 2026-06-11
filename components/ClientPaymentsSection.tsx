@@ -68,11 +68,10 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
     })();
   }, [clientId]);
 
-  const viewReceipt = (html: string, no: number) => {
-    const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.write(`<html><head><title>Recibí de pago Nº ${no}</title></head><body style="margin:0;padding:24px;background:#fff">${html}</body></html>`);
-    w.document.close();
+  // Descarga DIRECTA del recibí en PDF (sin abrir pestaña ni diálogo de imprimir).
+  const viewReceipt = async (html: string, no: number) => {
+    const { downloadPdfFromHtml } = await import('../lib/pdf');
+    await downloadPdfFromHtml(html, `recibi_${no}.pdf`);
   };
 
   const submitClaim = async (paymentId: string) => {
@@ -160,7 +159,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           </td>
                           <td className="px-4 py-3 text-right whitespace-nowrap">
                             {receipts[p.id] ? (
-                              <button onClick={() => viewReceipt(receipts[p.id].html, receipts[p.id].no_seq)} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
+                              <button onClick={() => void viewReceipt(receipts[p.id].html, receipts[p.id].no_seq)} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
                                 <span className="material-symbols-outlined text-sm">download</span>Recibí
                               </button>
                             ) : <span className="text-[11px] text-primary/30">—</span>}

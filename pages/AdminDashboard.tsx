@@ -10,6 +10,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
 import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
+import EmployeeEditModal, { EmployeeRow } from '../components/admin/EmployeeEditModal';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
@@ -88,11 +89,8 @@ const AMENITIES_LIST = [
       .order('full_name');
     setEmployees((data as typeof employees) ?? []);
   }, []);
-  // Guarda el horario laboral del empleado (entrada/salida/margen/días).
-  const saveEmployeeSchedule = async (id: string, patch: Record<string, unknown>) => {
-    await supabase.from('employees').update(patch).eq('id', id);
-    await loadEmployees();
-  };
+  // Modal de alta/edición de empleado: null = cerrado, {emp:null} = nuevo, {emp:row} = editar.
+  const [empModal, setEmpModal] = useState<{ emp: EmployeeRow | null } | null>(null);
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
   const [pendingVacations, setPendingVacations] = useState<Array<{ id: string; employee_name: string | null; employee_email: string; start_date: string; end_date: string; type: string; note: string | null }>>([]);
   const loadPendingVacations = useCallback(async () => {
@@ -1534,92 +1532,61 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
         {activeView === 'employees' && (
           <div className="animate-in fade-in duration-500">
-            <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.dash.employeeProfiles')}</h2>
-            <p className="text-sm text-gray-400 mb-1">{t('admin.dash.employeeProfilesHint')}</p>
-            <p className="text-xs text-green-600 mb-2 flex items-center gap-1"><span className="material-symbols-outlined text-sm">check_circle</span> {t('admin.dash.autoSaveHint')}</p>
-            <p className="text-xs text-primary/50 mb-6">{t('admin.dash.vacationsManagedHint')}</p>
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h2 className="text-2xl font-serif text-primary mb-1">{t('admin.dash.employeeProfiles')}</h2>
+                <p className="text-sm text-gray-400">{t('admin.dash.employeeProfilesHint')}</p>
+                <p className="text-xs text-primary/50 mt-1">{t('admin.dash.vacationsManagedHint')}</p>
+              </div>
+              <button onClick={() => setEmpModal({ emp: null })} className="shrink-0 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition">
+                <span className="material-symbols-outlined text-sm">person_add</span> Crear empleado
+              </button>
+            </div>
             <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase tracking-widest">
                   <tr>
                     <th className="text-left px-4 py-3">{t('admin.dash.thName')}</th>
                     <th className="text-left px-4 py-3">{t('admin.dash.thEmail')}</th>
-                    <th className="text-left px-4 py-3">{t('admin.dash.thPassword')}</th>
-                    <th className="text-left px-4 py-3">{t('admin.dash.thPermissions')}</th>
+                    <th className="text-left px-4 py-3">Permisos</th>
                     <th className="text-left px-4 py-3">{t('admin.dash.thSchedule')}</th>
                     <th className="text-left px-4 py-3">{t('admin.dash.thStatus')}</th>
+                    <th className="text-right px-4 py-3">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {employees.map((e) => (
-                    <tr key={e.id} className="border-t border-gray-50">
-                      <td className="px-4 py-3 font-bold text-primary align-top">{e.full_name || '—'}</td>
-                      <td className="px-4 py-3 text-gray-600 align-top">{e.email}</td>
-                      <td className="px-4 py-3 font-mono text-gray-600 align-top">{e.password || '—'}</td>
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex flex-wrap gap-2 max-w-md">
-                          {EMPLOYEE_PERMISSIONS.map((perm) => {
-                            const on = hasPermission(e, perm.key);
-                            return (
-                              <button
-                                key={perm.key}
-                                onClick={() => toggleEmployeePermission(e, perm.key, !on)}
-                                title={perm.description || perm.label}
-                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition ${on ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
-                              >
-                                {on ? '✅' : '○'} {perm.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex items-center gap-1.5 mb-2">
-                          <input type="time" defaultValue={(e.work_start_time || '').slice(0,5)}
-                            onBlur={(ev) => { const v = ev.target.value || null; if (v !== (e.work_start_time||'').slice(0,5)) void saveEmployeeSchedule(e.id, { work_start_time: v }); }}
-                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title={t('admin.dash.clockIn')} />
-                          <span className="text-gray-300">→</span>
-                          <input type="time" defaultValue={(e.work_end_time || '').slice(0,5)}
-                            onBlur={(ev) => { const v = ev.target.value || null; if (v !== (e.work_end_time||'').slice(0,5)) void saveEmployeeSchedule(e.id, { work_end_time: v }); }}
-                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-[88px]" title={t('admin.dash.clockOut')} />
-                        </div>
-                        <div className="flex items-center gap-1.5 mb-2">
-                          <span className="text-[10px] text-gray-400">{t('admin.dash.margin')}</span>
-                          <input type="number" min={0} max={120} defaultValue={e.late_margin_min ?? 15}
-                            onBlur={(ev) => { const v = parseInt(ev.target.value) || 0; if (v !== (e.late_margin_min ?? 15)) void saveEmployeeSchedule(e.id, { late_margin_min: v }); }}
-                            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs w-14" />
-                          <span className="text-[10px] text-gray-400">{t('admin.dash.minutes')}</span>
-                        </div>
-                        <div className="flex gap-1">
-                          {[['L',1],['M',2],['X',3],['J',4],['V',5],['S',6],['D',7]].map(([lbl, dow]) => {
-                            const days = e.work_days ?? [1,2,3,4,5];
-                            const on = days.includes(dow as number);
-                            return (
-                              <button key={dow as number} title={t('admin.dash.workday')}
-                                onClick={() => { const next = on ? days.filter(d => d !== dow) : [...days, dow as number].sort(); void saveEmployeeSchedule(e.id, { work_days: next }); }}
-                                className={`w-6 h-6 rounded text-[10px] font-bold transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
-                                {lbl}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 align-top">
-                        <button
-                          onClick={() => toggleEmployeeActive(e.id, !e.active)}
-                          className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}
-                        >
-                          {e.active ? t('admin.dash.activeStatus') : t('admin.dash.inactiveStatus')}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {employees.map((e) => {
+                    const nPerms = EMPLOYEE_PERMISSIONS.filter((p) => hasPermission(e, p.key)).length;
+                    const sched = (e.work_start_time && e.work_end_time) ? `${e.work_start_time.slice(0,5)}–${e.work_end_time.slice(0,5)}` : '—';
+                    return (
+                      <tr key={e.id} className="border-t border-gray-50">
+                        <td className="px-4 py-3 font-bold text-primary">{e.full_name || '—'}</td>
+                        <td className="px-4 py-3 text-gray-600">{e.email}</td>
+                        <td className="px-4 py-3 text-gray-500 text-xs">{nPerms} / {EMPLOYEE_PERMISSIONS.length}</td>
+                        <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{sched}</td>
+                        <td className="px-4 py-3">
+                          <button onClick={() => toggleEmployeeActive(e.id, !e.active)}
+                            className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                            {e.active ? t('admin.dash.activeStatus') : t('admin.dash.inactiveStatus')}
+                          </button>
+                        </td>
+                        <td className="px-4 py-3 text-right whitespace-nowrap">
+                          <button onClick={() => setEmpModal({ emp: e as EmployeeRow })} className="text-primary/60 hover:text-primary text-xs font-bold uppercase tracking-widest inline-flex items-center gap-1">
+                            <span className="material-symbols-outlined text-sm">edit</span> Editar
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                   {employees.length === 0 && (
                     <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">{t('admin.dash.noEmployees')}</td></tr>
                   )}
                 </tbody>
               </table>
             </div>
+            {empModal && (
+              <EmployeeEditModal emp={empModal.emp} onClose={() => setEmpModal(null)} onSaved={() => void loadEmployees()} />
+            )}
             <AttendancePanel />
           </div>
         )}

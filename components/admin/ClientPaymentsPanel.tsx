@@ -153,22 +153,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     stampUrl: brand?.stamp || undefined,
   });
 
-  // Imprime/descarga SIN abrir otra pestaña (iframe oculto).
-  const downloadKwitansi = () => {
+  // Descarga DIRECTA del recibí en PDF (sin abrir el diálogo de imprimir).
+  const downloadKwitansi = async () => {
     if (!kw) return;
-    const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
-    document.body.appendChild(iframe);
-    const doc = iframe.contentWindow?.document;
-    if (!doc) { document.body.removeChild(iframe); return; }
-    doc.open();
-    doc.write(`<html><head><title>Kwitansi ${kw.displayNo}</title></head><body style="margin:0;padding:24px;background:#fff">${kwitansiHtml(kw.displayNo)}</body></html>`);
-    doc.close();
-    setTimeout(() => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-      setTimeout(() => { try { document.body.removeChild(iframe); } catch { /* ignore */ } }, 1500);
-    }, 300);
+    const { downloadPdfFromHtml } = await import('../../lib/pdf');
+    await downloadPdfFromHtml(kwitansiHtml(kw.displayNo), `recibi_${kw.displayNo}.pdf`);
   };
 
   // Flujo en 3 pasos OBLIGATORIOS y en orden: recibido → firmar → enviar.
@@ -375,7 +364,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;
               return (
                 <div className="space-y-2">
-                  <button onClick={downloadKwitansi} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> Descargar / Imprimir (PDF)</button>
+                  <button onClick={() => void downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> Descargar PDF</button>
                   <p className="text-[11px] text-gray-400 text-center">Pasos en orden: marcar recibido → firmar → enviar.</p>
                   <div className="grid grid-cols-3 gap-2">
                     <button disabled={kw.sending || kwReceived} onClick={markReceived}
