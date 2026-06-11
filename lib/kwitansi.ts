@@ -170,10 +170,11 @@ export function renderKwitansiHtml(d: KwitansiData): string {
       </td>
       <td style="text-align:center;vertical-align:bottom">
         <div style="font-size:13px;color:rgba(63,35,5,.7);margin-bottom:6px">${esc(place)}${dateStr ? ', ' + esc(dateStr) : ''}</div>
-        <!-- Zona sello + firma: 90px de alto, todo POR ENCIMA de la línea -->
-        <div style="position:relative;height:90px;margin-bottom:6px">
-          ${d.stampUrl ? `<img src="${esc(d.stampUrl)}" alt="" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);max-height:84px;max-width:150px;opacity:.85" />` : ''}
-          ${d.signatureUrl ? `<img src="${esc(d.signatureUrl)}" alt="" style="position:absolute;left:50%;bottom:6px;transform:translateX(-50%);max-height:56px;max-width:170px" />` : ''}
+        <!-- Sello a la IZQUIERDA + firma GRANDE a la derecha, pisándolo un poco
+             por su parte izquierda. Todo POR ENCIMA de la línea (no se corta). -->
+        <div style="position:relative;height:118px;margin-bottom:6px;text-align:left">
+          ${d.stampUrl ? `<img src="${esc(d.stampUrl)}" alt="" style="position:absolute;left:4px;top:10px;max-height:98px;max-width:118px;opacity:.88" />` : ''}
+          ${d.signatureUrl ? `<img src="${esc(d.signatureUrl)}" alt="" style="position:absolute;left:86px;top:16px;max-height:96px;max-width:190px" />` : ''}
         </div>
         <div style="border-top:1px solid rgba(63,35,5,.4);padding-top:8px;font-size:12px;font-weight:700">Unreal Studio</div>
       </td>
