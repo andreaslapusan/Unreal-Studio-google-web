@@ -33,6 +33,7 @@ interface Unit {
   project_name: string;
   unit_number: string | null;
   currency: string;
+  sale_total?: number | null;
   payments: Payment[];
 }
 interface Props {
@@ -289,8 +290,15 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
             </div>
+            {(() => {
+              const eu = units.find((x) => x.client_project_id === editing.cp);
+              if (!eu || eu.sale_total == null) return null;
+              const assigned = eu.payments.filter((p) => p.id !== editing.pay.id).reduce((s, p) => s + Number(p.amount), 0);
+              const pending = Number(eu.sale_total) - assigned;
+              return <p className="text-[11px] italic text-primary/50 -mt-1">Pendiente de asignar: {fmt(pending, eu.currency)}</p>;
+            })()}
             <label className="block text-[10px] font-black uppercase text-gray-400">{t('admin.pay.dueDateLabel')}</label>
-            <input type="date" className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm"
+            <input type="date" min="2000-01-01" max="2099-12-31" className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm"
               value={editing.pay.due_date || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, due_date: e.target.value } })} />
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
               value={editing.pay.notes || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, notes: e.target.value } })} />
@@ -321,7 +329,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.forPaymentPlaceholder')}
                 value={kw.for_payment} onChange={(e) => setKw({ ...kw, for_payment: e.target.value })} />
               <input className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.placePlaceholder')} value={kw.place} onChange={(e) => setKw({ ...kw, place: e.target.value })} />
-              <input type="date" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw({ ...kw, date: e.target.value })} />
+              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw({ ...kw, date: e.target.value })} />
             </div>
             <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
             <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo) || '' }} />
