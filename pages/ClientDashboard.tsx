@@ -124,7 +124,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+      <div className="bg-white ust-modal rounded-3xl shadow-2xl overflow-hidden flex flex-col">
         <div className="px-6 py-4 md:px-8 md:py-5 border-b border-gray-100 flex justify-between items-center bg-white z-10 shrink-0">
           <div>
             <h2 className="text-lg md:text-xl font-serif text-primary">{t('admin.clientDash.calcTitle')}</h2>
