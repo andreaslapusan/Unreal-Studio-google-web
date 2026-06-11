@@ -719,23 +719,6 @@ const ClientDashboard: React.FC = () => {
                       )}
                     </div>
 
-                    {(proj.annual_rental_projection || proj.market_price) && (
-                      <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
-                        {proj.annual_rental_projection && proj.investor_price && (
-                          <div>
-                            <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelRoiRentalProjected')}</p>
-                            <p className="text-sm font-bold text-green-600">{((proj.annual_rental_projection / proj.investor_price) * 100).toFixed(1)}% <span className="text-[9px] text-primary/40">{t('admin.clientDash.grossPerYear')}</span></p>
-                          </div>
-                        )}
-                        {proj.market_price && proj.investor_price && proj.market_price > proj.investor_price && (
-                          <div>
-                            <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelRoiResaleProjected')}</p>
-                            <p className="text-sm font-bold text-blue-600">{(((proj.market_price - proj.investor_price) / proj.investor_price) * 100).toFixed(1)}% <span className="text-[9px] text-primary/40">{t('admin.clientDash.capitalGain')}</span></p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
                     {(proj.brochure_url || proj.construction_update_url || proj.project_slug) && (
                       <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
                           {proj.brochure_url && feat('brochure') && (
