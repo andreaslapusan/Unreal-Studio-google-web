@@ -27,7 +27,29 @@
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
     <meta name="apple-mobile-web-app-title" content="Unreal Bali"/>
-    <link rel="manifest" href="/manifest.webmanifest"/>
+    <!-- Manifest por PORTAL elegido EN EL PARSEO (no en React): iOS lee el manifest
+         al cargar la página, así que el <link> debe apuntar ya al portal correcto
+         ANTES de que se parsee. Sin esto, "Añadir a pantalla de inicio" guardaba
+         siempre la home ("Unreal Bali" → "/"). ManifestSwitcher (React) mantiene
+         el swap en navegación cliente; este script lo fija en carga directa/recarga. -->
+    <script>
+      (function () {
+        var seg = (location.pathname.split('/')[1] || '');
+        var P = {
+          empleados: ['/manifest-empleados.webmanifest', 'Unreal · Empleados'],
+          cliente:   ['/manifest-cliente.webmanifest',   'Unreal · Cliente'],
+          agencias:  ['/manifest-agencias.webmanifest',  'Unreal · Agencias'],
+          admin:     ['/manifest-admin.webmanifest',     'Unreal · Admin'],
+          manager:   ['/manifest-empleados.webmanifest', 'Unreal · Empleados'],
+          equipo:    ['/manifest-empleados.webmanifest', 'Unreal · Empleados']
+        };
+        var p = P[seg] || ['/manifest.webmanifest', 'Unreal Bali'];
+        var l = document.createElement('link'); l.rel = 'manifest'; l.href = p[0];
+        document.head.appendChild(l);
+        var m = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+        if (m) m.setAttribute('content', p[1]);
+      })();
+    </script>
 
     <!-- Performance: preconnect to critical 3rd-party origins (saves 100-300ms first paint) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
