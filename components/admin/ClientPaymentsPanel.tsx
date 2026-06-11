@@ -27,6 +27,8 @@ interface Payment {
   reference: string | null;
   notes: string | null;
   position: number;
+  kw_signed?: boolean;
+  kw_sent?: boolean;
 }
 interface Unit {
   client_project_id: string;
@@ -120,6 +122,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       p_user_id: adminUserId,
       p_payment: { id: p.id, client_project_id: '', received: !p.received, paid_at: !p.received ? (p.paid_at || todayISO()) : p.paid_at },
     });
+    await load();
+  };
+
+  // Resetea el proceso de un pago: borra el recibí generado y vuelve a "Pendiente".
+  const resetPayment = async (p: Payment) => {
+    if (!window.confirm('Esto BORRARÁ el recibí generado de este pago y lo volverá a "Pendiente" para regenerarlo desde cero. ¿Continuar?')) return;
+    await supabase.rpc('admin_reset_payment', { p_payment_id: p.id });
     await load();
   };
 
@@ -267,14 +276,18 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                           </p>
                         </div>
                         <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
-                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
-                          {p.received ? t('admin.pay.statusReceived') : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.kw_sent ? 'bg-blue-50 text-blue-600' : p.kw_signed ? 'bg-indigo-50 text-indigo-600' : p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
+                          {p.kw_sent ? 'Enviado' : p.kw_signed ? 'Firmado' : p.received ? 'Recibido' : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
                         </span>
                         <div className="flex gap-1">
                           <button onClick={() => openKwitansi(u, p)} title={t('admin.pay.generateSendKwitansi')}
                             className="p-1.5 text-primary bg-almond rounded-lg hover:brightness-95"><span className="material-symbols-outlined text-sm">receipt_long</span></button>
                           <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p } })}
                             className="p-1.5 text-primary bg-gray-50 rounded-lg hover:bg-gray-100"><span className="material-symbols-outlined text-sm">edit</span></button>
+                          {(p.received || p.kw_signed || p.kw_sent) && (
+                            <button onClick={() => resetPayment(p)} title="Resetear proceso (borra el recibí y vuelve a Pendiente)"
+                              className="p-1.5 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100"><span className="material-symbols-outlined text-sm">restart_alt</span></button>
+                          )}
                           <button onClick={() => deletePayment(p.id)}
                             className="p-1.5 text-red-500 bg-red-50 rounded-lg hover:bg-red-100"><span className="material-symbols-outlined text-sm">delete</span></button>
                         </div>
