@@ -50,6 +50,24 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     document.title = `${PORTAL_LABEL[portal]} | Unreal Studio`;
   }, [portal]);
 
+  // "Recordarme": prerrellena el email guardado de ESTE portal. La contraseña
+  // NO se guarda en claro (riesgo de seguridad); el gestor de contraseñas del
+  // navegador/Safari la recuerda vía autoComplete="current-password".
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`ust_email_${portal}`);
+      if (saved) { setEmail(saved); setRemember(true); }
+      else setRemember(localStorage.getItem(`ust_remember_${portal}`) !== '0');
+    } catch { /* ignore */ }
+  }, [portal]);
+
+  const persistRemember = () => {
+    try {
+      if (remember) { localStorage.setItem(`ust_email_${portal}`, email.trim().toLowerCase()); localStorage.removeItem(`ust_remember_${portal}`); }
+      else { localStorage.removeItem(`ust_email_${portal}`); localStorage.setItem(`ust_remember_${portal}`, '0'); }
+    } catch { /* ignore */ }
+  };
+
   // Evita que routeAfterAuth corra dos veces a la vez (handlePassword + el
   // useEffect de cambio de `user` podrían dispararlo en paralelo → carrera).
   const routingRef = useRef(false);
@@ -144,6 +162,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
         setBusy(false);
         return;
       }
+      persistRemember();
       await routeAfterAuth();
     } catch {
       setError(t('auth.genericError'));

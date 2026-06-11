@@ -8,7 +8,7 @@
  * Datos en la tabla `employee_vacations`. Se muestra como lista agrupada por mes
  * con chips por empleado, coloreados por `type` y con indicador de `status`.
  */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 
@@ -60,6 +60,49 @@ function typeMetaKey(type: string): VacationType {
   return (type as VacationType) in TYPE_META ? (type as VacationType) : 'vacaciones';
 }
 
+const WEEKDAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const iso = (y: number, m: number, d: number) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+// Rejilla de un mes (lunes primero). Pinta un punto por cada vacación que cubre
+// el día; al pasar el ratón muestra los nombres.
+const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail: string; compact?: boolean }> = ({ y, m, vacations, myEmail, compact }) => {
+  const first = new Date(y, m, 1);
+  const lead = (first.getDay() + 6) % 7; // 0 = lunes
+  const days = new Date(y, m + 1, 0).getDate();
+  const cells: (number | null)[] = [...Array(lead).fill(null), ...Array.from({ length: days }, (_, i) => i + 1)];
+  while (cells.length % 7 !== 0) cells.push(null);
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const dayVacs = (d: number) => { const k = iso(y, m, d); return vacations.filter((v) => v.start_date <= k && k <= v.end_date); };
+  return (
+    <div>
+      <div className="grid grid-cols-7 mb-1">
+        {WEEKDAYS.map((w) => <div key={w} className={`text-center font-black text-primary/40 ${compact ? 'text-[8px]' : 'text-[10px]'}`}>{w}</div>)}
+      </div>
+      <div className="grid grid-cols-7 gap-0.5">
+        {cells.map((d, i) => {
+          if (d === null) return <div key={i} />;
+          const vs = dayVacs(d);
+          const k = iso(y, m, d);
+          const isToday = k === todayIso;
+          return (
+            <div key={i} title={vs.map((v) => `${v.employee_name || v.employee_email} — ${typeMetaKey(v.type)} (${v.status})`).join('\n')}
+              className={`rounded ${compact ? 'min-h-[26px] p-0.5' : 'min-h-[46px] p-1'} border ${isToday ? 'border-primary' : 'border-gray-100'} ${vs.length ? 'bg-almond/40' : 'bg-white'}`}>
+              <div className={`text-right ${compact ? 'text-[8px]' : 'text-[10px]'} font-bold ${isToday ? 'text-primary' : 'text-primary/40'}`}>{d}</div>
+              <div className="flex flex-wrap gap-0.5 mt-0.5">
+                {vs.slice(0, compact ? 3 : 5).map((v) => (
+                  <span key={v.id} className={`w-1.5 h-1.5 rounded-full ${TYPE_META[typeMetaKey(v.type)].dot} ${v.employee_email === myEmail ? 'ring-1 ring-primary/50' : ''}`} />
+                ))}
+                {vs.length > (compact ? 3 : 5) && <span className="text-[7px] text-primary/40">+{vs.length - (compact ? 3 : 5)}</span>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employeeEmail, employeeName }) => {
   const { t, i18n } = useTranslation();
   const typeLabel = (type: string) => t(`vacaciones.types.${typeMetaKey(type)}`);
@@ -73,6 +116,9 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
   };
   const [vacations, setVacations] = useState<Vacation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'mes' | 'anio'>('mes');
+  const [cursor, setCursor] = useState(() => { const d = new Date(); return { y: d.getFullYear(), m: d.getMonth() }; });
+  const calRef = useRef<HTMLDivElement | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -146,6 +192,28 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
     } finally {
       setSaving(false);
     }
+  };
+
+  const step = (dir: number) => setCursor((c) => {
+    if (view === 'anio') return { ...c, y: c.y + dir };
+    const total = c.y * 12 + c.m + dir;
+    return { y: Math.floor(total / 12), m: ((total % 12) + 12) % 12 };
+  });
+
+  // Imprimir el calendario actual (abre el diálogo de impresión del navegador).
+  const printCalendar = () => {
+    const node = calRef.current;
+    if (!node) return;
+    const title = view === 'anio' ? `Calendario de vacaciones ${cursor.y}` : `Vacaciones · ${MONTHS_ES[cursor.m]} ${cursor.y}`;
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    document.body.appendChild(iframe);
+    const doc = iframe.contentWindow?.document;
+    if (!doc) { document.body.removeChild(iframe); return; }
+    doc.open();
+    doc.write(`<html><head><title>${title}</title><style>body{font-family:Arial,sans-serif;color:#3F2305;padding:20px}h1{font-size:18px;margin:0 0 14px}.grid{display:grid}*{box-sizing:border-box}</style></head><body><h1>${title}</h1>${node.innerHTML}</body></html>`);
+    doc.close();
+    setTimeout(() => { iframe.contentWindow?.focus(); iframe.contentWindow?.print(); setTimeout(() => { try { document.body.removeChild(iframe); } catch { /* ignore */ } }, 1500); }, 350);
   };
 
   return (
@@ -233,54 +301,39 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
 
       {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
 
-      {/* Lista agrupada por mes */}
+      {/* Controles: Mes/Año · navegación · imprimir */}
+      <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+        <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+          {(['mes', 'anio'] as const).map((v) => (
+            <button key={v} onClick={() => setView(v)} className={`px-3 py-1 rounded-full text-[11px] font-bold transition ${view === v ? 'bg-primary text-white' : 'text-primary/50'}`}>{v === 'mes' ? 'Mes' : 'Año'}</button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => step(-1)} className="w-8 h-8 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"><span className="material-symbols-outlined text-[18px]">chevron_left</span></button>
+          <span className="text-sm font-bold text-primary min-w-[120px] text-center">{view === 'anio' ? cursor.y : `${MONTHS_ES[cursor.m]} ${cursor.y}`}</span>
+          <button onClick={() => step(1)} className="w-8 h-8 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"><span className="material-symbols-outlined text-[18px]">chevron_right</span></button>
+          <button onClick={printCalendar} title="Imprimir" className="w-8 h-8 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"><span className="material-symbols-outlined text-[18px]">print</span></button>
+        </div>
+      </div>
+
       {loading ? (
         <div className="flex justify-center py-6">
           <span className="material-symbols-outlined animate-spin text-2xl text-primary/40">refresh</span>
         </div>
-      ) : grouped.length === 0 ? (
-        <p className="text-sm text-primary/50 py-4 text-center">
-          {t('vacaciones.empty')}
-        </p>
       ) : (
-        <div className="space-y-5">
-          {grouped.map(([key, items]) => (
-            <div key={key}>
-              <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">
-                {monthLabel(key)}
-              </p>
-              <ul className="space-y-2">
-                {items.map((v) => {
-                  const tm = TYPE_META[typeMetaKey(v.type)];
-                  const statusCls = STATUS_CLS[v.status] ?? STATUS_CLS.pendiente;
-                  const isMine = v.employee_email === employeeEmail;
-                  return (
-                    <li
-                      key={v.id}
-                      className={`flex items-center gap-3 rounded-2xl border px-3 py-2.5 ${tm.chip} ${
-                        isMine ? 'ring-1 ring-primary/30' : ''
-                      }`}
-                    >
-                      <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${tm.dot}`} />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-bold text-primary truncate">
-                          {v.employee_name || v.employee_email}
-                          {isMine && <span className="ml-1 text-[10px] font-black text-primary/40">{t('vacaciones.you')}</span>}
-                        </p>
-                        <p className="text-xs text-primary/60">
-                          {fmtRange(v.start_date, v.end_date)} · {typeLabel(v.type)}
-                          {v.note ? ` · ${v.note}` : ''}
-                        </p>
-                      </div>
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-full shrink-0 ${statusCls}`}>
-                        {statusLabel(v.status)}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
+        <div ref={calRef}>
+          {view === 'mes' ? (
+            <MonthGrid y={cursor.y} m={cursor.m} vacations={vacations} myEmail={employeeEmail} />
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {Array.from({ length: 12 }, (_, m) => (
+                <div key={m}>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-1">{MONTHS_ES[m]}</p>
+                  <MonthGrid y={cursor.y} m={m} vacations={vacations} myEmail={employeeEmail} compact />
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
     </section>

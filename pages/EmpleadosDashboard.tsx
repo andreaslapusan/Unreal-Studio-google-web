@@ -48,6 +48,11 @@ const EmpleadosDashboard: React.FC = () => {
   const [canEditProperties, setCanEditProperties] = useState(false);
   const [employee, setEmployee] = useState<{ id: string; full_name: string | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null } | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [pw, setPw] = useState({ newPass: '', confirm: '' });
+  const [pwErr, setPwErr] = useState('');
+  const [pwOk, setPwOk] = useState('');
+  const [pwBusy, setPwBusy] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [capture, setCapture] = useState<FichajeType | null>(null);
   const [busy, setBusy] = useState(false);
@@ -90,9 +95,16 @@ const EmpleadosDashboard: React.FC = () => {
     void (async () => {
       const { data } = await supabase
         .from('employees')
-        .select('id, full_name, can_upload_reports, permissions, work_start_time, work_end_time, work_days')
+        .select('id, full_name, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days')
         .eq('email', user.email)
         .maybeSingle();
+      // SEGURIDAD: si el empleado ha sido marcado inactivo (o ya no existe),
+      // cerramos su sesión en el acto — no debe seguir dentro al refrescar.
+      if (!data || data.active === false) {
+        try { await signOut(); } catch { /* ignore */ }
+        navigate('/empleados', { replace: true });
+        return;
+      }
       setCanUploadReports(hasPermission(data, 'upload_reports'));
       setCanEditProperties(hasPermission(data, 'edit_properties'));
       if (data?.id) setEmployee({
@@ -109,6 +121,22 @@ const EmpleadosDashboard: React.FC = () => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
   }, []);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwErr(''); setPwOk('');
+    if (pw.newPass !== pw.confirm) { setPwErr('Las contraseñas no coinciden.'); return; }
+    if (pw.newPass.length < 6) { setPwErr('Mínimo 6 caracteres.'); return; }
+    setPwBusy(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: pw.newPass });
+      if (error) { setPwErr('No se pudo cambiar la contraseña.'); return; }
+      if (employee?.id) await supabase.from('employees').update({ password: pw.newPass }).eq('id', employee.id);
+      setPwOk('Contraseña actualizada.');
+      setPw({ newPass: '', confirm: '' });
+      setTimeout(() => { setShowChangePassword(false); setPwOk(''); }, 1800);
+    } finally { setPwBusy(false); }
+  };
 
   // Pulsar Check-in/out → pide GPS (en paralelo) y abre la cámara.
   const startCapture = async (type: FichajeType) => {
@@ -259,15 +287,45 @@ const EmpleadosDashboard: React.FC = () => {
         subtitle={user.email ?? t('empleados.header.subtitleFallback')}
         onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/empleados'; }}
         extra={
-          <button
-            onClick={() => setShowInstructions(true)}
-            aria-label={t('empleados.header.instructions')}
-            className="w-9 h-9 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition"
-          >
-            <span className="material-symbols-outlined text-[20px]">info</span>
-          </button>
+          <>
+            <button
+              onClick={() => setShowInstructions(true)}
+              aria-label={t('empleados.header.instructions')}
+              className="w-9 h-9 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition"
+            >
+              <span className="material-symbols-outlined text-[20px]">info</span>
+            </button>
+            <button
+              onClick={() => setShowChangePassword(true)}
+              className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-xs">lock</span> Contraseña
+            </button>
+          </>
         }
       />
+
+      {showChangePassword && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowChangePassword(false); }}>
+          <div className="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl">
+            <h2 className="text-xl font-serif text-primary mb-6">Cambiar contraseña</h2>
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <input type="password" autoComplete="new-password" required placeholder="Nueva contraseña" value={pw.newPass}
+                onChange={(e) => setPw({ ...pw, newPass: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
+              <input type="password" autoComplete="new-password" required placeholder="Repite la contraseña" value={pw.confirm}
+                onChange={(e) => setPw({ ...pw, confirm: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
+              {pwErr && <p className="text-red-600 text-sm">{pwErr}</p>}
+              {pwOk && <p className="text-green-600 text-sm">{pwOk}</p>}
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-400 text-xs font-black uppercase tracking-widest hover:bg-gray-50">Cancelar</button>
+                <button type="submit" disabled={pwBusy} className="flex-1 py-3 rounded-xl bg-primary text-white text-xs font-black uppercase tracking-widest hover:bg-black transition disabled:opacity-50 inline-flex items-center justify-center gap-1.5">
+                  {pwBusy && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}{pwBusy ? 'Guardando…' : 'Guardar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       <div className="px-5 py-6 md:py-10">
       <div className="max-w-md mx-auto">
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-primary/5 mb-6">
