@@ -11,6 +11,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { baliToday } from '../lib/timezone';
 
 interface Vacation {
   id: string;
@@ -72,7 +73,7 @@ const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail
   const days = new Date(y, m + 1, 0).getDate();
   const cells: (number | null)[] = [...Array(lead).fill(null), ...Array.from({ length: days }, (_, i) => i + 1)];
   while (cells.length % 7 !== 0) cells.push(null);
-  const todayIso = new Date().toISOString().slice(0, 10);
+  const todayIso = baliToday();
   const dayVacs = (d: number) => { const k = iso(y, m, d); return vacations.filter((v) => v.start_date <= k && k <= v.end_date); };
   return (
     <div>
@@ -123,7 +124,7 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = baliToday();
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
   const [type, setType] = useState<VacationType>('vacaciones');

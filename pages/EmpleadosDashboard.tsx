@@ -17,6 +17,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
 import { realEmailOf } from '../lib/portalAuth';
+import { baliTime, baliToday, baliDayStartISO } from '../lib/timezone';
 import VacationCalendar from '../components/VacationCalendar';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
@@ -30,11 +31,7 @@ interface TodayRow {
 }
 
 function fmtTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-  } catch {
-    return '--:--';
-  }
+  return baliTime(iso) || '--:--';
 }
 
 const EmpleadosDashboard: React.FC = () => {
@@ -75,13 +72,13 @@ const EmpleadosDashboard: React.FC = () => {
 
   const loadToday = useCallback(async () => {
     if (!user) return;
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
+    // "Hoy" = día de Bali (UTC+8), no del dispositivo/servidor.
+    const startISO = baliDayStartISO(baliToday());
     const { data } = await supabase
       .from('attendance')
       .select('type, created_at')
       .eq('user_id', user.id)
-      .gte('created_at', start.toISOString())
+      .gte('created_at', startISO)
       .order('created_at', { ascending: true });
     setToday((data as TodayRow[]) ?? []);
   }, [user]);

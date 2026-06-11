@@ -9,6 +9,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
+import { baliDate, baliTime, baliToday } from '../../lib/timezone';
 
 interface Row { id: string; employee_email: string; employee_name: string; type: string; ts: string; latitude: number | null; longitude: number | null; photo_path: string | null; }
 interface Emp { email: string; name: string; work_start_time: string | null; work_end_time: string | null; }
@@ -24,8 +25,8 @@ function locLabel(lat: number | null, lng: number | null): string {
   for (const [alat, alng, lbl] of ANCHORS) { const dd = distM(lat, lng, alat, alng); if (dd <= 60 && (!best || dd < best[0])) best = [dd, lbl]; }
   return best ? best[1] : `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 }
-function isoDaysAgo(n: number): string { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); }
-const fmtTime = (iso: string) => { try { return new Date(iso).toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' }); } catch { return ''; } };
+function isoDaysAgo(n: number): string { const d = new Date(`${baliToday()}T12:00:00Z`); d.setUTCDate(d.getUTCDate() - n); return d.toISOString().slice(0, 10); }
+const fmtTime = (iso: string) => baliTime(iso);
 const fmtDay = (s: string) => { try { return new Date(s + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short' }); } catch { return s; } };
 const hm = (min: number) => { const s = min < 0 ? '-' : ''; const a = Math.abs(Math.round(min)); return `${s}${Math.floor(a / 60)}:${String(a % 60).padStart(2, '0')}`; };
 const schedMin = (t: string | null) => { if (!t) return null; const [h, m] = t.split(':'); return Number(h) * 60 + Number(m); };
@@ -74,7 +75,7 @@ const AttendancePanel: React.FC = () => {
     const map: Record<string, DayRow> = {};
     for (const r of rows) {
       if (selected.size && !selected.has(r.employee_email)) continue;
-      const day = (r.ts || '').slice(0, 10);
+      const day = baliDate(r.ts);
       const key = `${r.employee_email}|${day}`;
       if (!map[key]) map[key] = { key, name: r.employee_name || r.employee_email.split('@')[0], email: r.employee_email, day };
       const ev: Ev = { ts: r.ts, lat: r.latitude, lng: r.longitude, photo: r.photo_path };
