@@ -445,7 +445,7 @@ const ProjectDetail: React.FC = () => {
               {[
                 { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
                 { icon: 'history', label: t('projectDetail.labelYearsContract'), value: t('projectDetail.yearsExtValue', { base: project.years_contract, ext: project.years_extension }) },
-                { icon: 'inventory_2', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
+                { icon: 'apartment', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
                 { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) }
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-primary/5">

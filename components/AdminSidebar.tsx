@@ -68,7 +68,7 @@ const AdminSidebar: React.FC = () => {
 
   const pages: NavItem[] = [
     { key: 'marketing', icon: 'campaign', label: t('admin.nav.marketing'), to: '/admin/marketing', path: '/admin/marketing' },
-    { key: 'agencyPacks', icon: 'inventory_2', label: t('admin.nav.agencyPacks', 'Packs Agencia'), to: '/admin/agencias', path: '/admin/agencias' },
+    { key: 'agencyPacks', icon: 'handshake', label: t('admin.nav.agencyPacks', 'Packs Agencia'), to: '/admin/agencias', path: '/admin/agencias' },
   ];
 
   // Configuración siempre al fondo del todo.
