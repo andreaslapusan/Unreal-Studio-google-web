@@ -111,7 +111,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
       return (
         <div className="min-h-screen bg-almond flex flex-col items-center justify-center px-6 text-center">
           <div className="max-w-md">
-            <div className="text-6xl mb-4">😕</div>
+            <div className="mb-4"><span className="material-symbols-outlined text-5xl text-primary/30">sentiment_dissatisfied</span></div>
             <h1 className="font-serif text-3xl text-primary mb-4">
               Algo no fue como esperábamos.
             </h1>

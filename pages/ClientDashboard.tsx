@@ -568,7 +568,6 @@ const ClientDashboard: React.FC = () => {
     <div className="min-h-screen bg-almond">
       {/* Header unificado del sitio */}
       <PortalHeader
-        subtitle={client.name}
         onLogout={handleLogout}
         extra={
           <>
@@ -612,7 +611,10 @@ const ClientDashboard: React.FC = () => {
         </div>
       )}
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
+      <main className="max-w-6xl mx-auto px-6 py-8">
+        <p className="text-sm text-primary/60 font-medium mb-6">
+          {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(client.name || '').trim().split(' ')[0]}</span>
+        </p>
         {client.drive_folder_url && (
           <a href={client.drive_folder_url} target="_blank" rel="noopener noreferrer"
              className="mb-8 flex items-center gap-3 bg-white border border-primary/10 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition group">
@@ -625,7 +627,6 @@ const ClientDashboard: React.FC = () => {
           </a>
         )}
         {clientId && <ClientUnitsSection clientId={clientId} />}
-        {clientId && <ClientPaymentsSection clientId={clientId} />}
         {clientId && <ClientKwitansisSection clientId={clientId} />}
         {/* Resumen */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -747,6 +748,7 @@ const ClientDashboard: React.FC = () => {
                           </button>
                       </div>
                     )}
+                    {clientId && <ClientPaymentsSection clientId={clientId} filterName={proj.project_name} filterUnit={proj.unit_number ?? null} compact />}
                   </div>
                 </div>
               </div>
