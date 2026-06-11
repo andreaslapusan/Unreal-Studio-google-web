@@ -239,7 +239,10 @@ const EmpleadosDashboard: React.FC = () => {
       if (up.error) throw up.error;
       const { error } = await supabase.from('attendance').insert({
         user_id: user.id,
-        employee_email: user.email,
+        // Email REAL (no el sintético del portal) para que el reporte de admin
+        // lo agrupe bajo el empleado correcto (Fase B).
+        employee_email: realEmailOf(user),
+        employee_name: employee?.full_name ?? realEmailOf(user),
         type: capture,
         photo_path: path,
         latitude: geoRef.current.latitude,
@@ -494,7 +497,7 @@ const EmpleadosDashboard: React.FC = () => {
       )}
 
       {showReportModal && (
-        <ConstructionReportModal postedBy={user.email ?? user.id} onClose={() => setShowReportModal(false)} />
+        <ConstructionReportModal postedBy={realEmailOf(user) || user.id} onClose={() => setShowReportModal(false)} />
       )}
 
       {toast && (
