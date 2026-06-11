@@ -368,6 +368,15 @@ const ClientDashboard: React.FC = () => {
   const [walkthroughStep, setWalkthroughStep] = useState<number | null>(null);
   const [calculatorProject, setCalculatorProject] = useState<any>(null);
   const [paymentsProj, setPaymentsProj] = useState<any>(null);
+  // Funciones visibles del portal (admin las activa/desactiva en Configuración).
+  const [features, setFeatures] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    void (async () => {
+      const { data } = await supabase.from('app_config').select('value').eq('key', 'brand').maybeSingle();
+      setFeatures(((data?.value as any)?.client_features) || {});
+    })();
+  }, []);
+  const feat = (k: string) => features[k] !== false; // por defecto visible
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
@@ -615,7 +624,7 @@ const ClientDashboard: React.FC = () => {
         <p className="text-sm text-primary/60 font-medium mb-6">
           {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(client.name || '').trim().split(' ')[0]}</span>
         </p>
-        {client.drive_folder_url && (
+        {client.drive_folder_url && feat('drive') && (
           <a href={client.drive_folder_url} target="_blank" rel="noopener noreferrer"
              className="mb-8 flex items-center gap-3 bg-white border border-primary/10 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition group">
             <svg width="34" height="34" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
@@ -733,25 +742,27 @@ const ClientDashboard: React.FC = () => {
 
                     {(proj.brochure_url || proj.construction_update_url || proj.project_slug) && (
                       <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
-                          {proj.brochure_url && (
+                          {proj.brochure_url && feat('brochure') && (
                               <a href={getImageUrl(proj.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">download</span> {t('admin.clientDash.btnBrochure')}
                               </a>
                           )}
-                          {proj.construction_update_url && (
+                          {proj.construction_update_url && feat('construction') && (
                               <a href={getImageUrl(proj.construction_update_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">construction</span> {t('admin.clientDash.btnConstructionReport')}
                                   {proj.construction_update_date && <span className="text-[8px] opacity-70 ml-1">({formatDate(proj.construction_update_date)})</span>}
                               </a>
                           )}
-                          {proj.project_slug && (
+                          {proj.project_slug && feat('viewProject') && (
                               <Link to={`/proyecto/${proj.project_slug}`} className="flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/20 text-primary text-xs font-bold uppercase hover:bg-primary hover:text-white transition">
                                   <span className="material-symbols-outlined text-sm">visibility</span> {t('admin.clientDash.btnViewProject')}
                               </Link>
                           )}
+                          {feat('calculator') && (
                           <button onClick={() => setCalculatorProject(proj)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary/5 text-primary text-xs font-bold uppercase hover:bg-primary hover:text-white transition">
                             <span className="material-symbols-outlined text-sm">calculate</span> {t('admin.clientDash.btnCalculator')}
                           </button>
+                          )}
                       </div>
                     )}
                     {clientId && (

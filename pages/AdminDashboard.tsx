@@ -1437,6 +1437,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                      value={(config as any).brand?.phone || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), phone: e.target.value } } as any)} />
                  </div>
                </div>
+               <div className="mt-6 border-t border-gray-100 pt-5">
+                 <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">Funciones visibles en el portal de clientes</label>
+                 <div className="grid sm:grid-cols-2 gap-2">
+                   {([['calculator','Calculadora ROI'],['construction','Reportes de obra'],['brochure','Brochure'],['viewProject','Ver proyecto'],['drive','Carpeta Google Drive']] as [string,string][]).map(([k,label]) => {
+                     const feats = ((config as any).brand?.client_features) || {};
+                     const on = feats[k] !== false;
+                     return (
+                       <button key={k} type="button" onClick={() => setBrandKey('client_features', { ...feats, [k]: !on })}
+                         className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition ${on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                         {label}
+                         <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+                       </button>
+                     );
+                   })}
+                 </div>
+               </div>
                <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveBrandCompany')}</button>
                <p className="mt-3 text-[11px] text-gray-400">{t('admin.dash.signatureHint')}</p>
              </div>
