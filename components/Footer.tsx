@@ -27,9 +27,15 @@ const Footer: React.FC = () => {
 
   const addresses: AddressN[] = ((brand?.addresses && brand.addresses.length) ? brand.addresses : ['Jl. Pratu Rai Madra No.15, Cemagi, Bali'])
     .map(normAddress).filter((a: AddressN) => a.text);
-  const socials: { network?: string; label?: string; url: string }[] = (brand?.socials && brand.socials.length)
+  const socials: { network?: string; label?: string; url: string }[] = ((brand?.socials && brand.socials.length)
     ? brand.socials.filter((s: any) => s?.url)
-    : [{ network: 'instagram', url: 'https://instagram.com/unrealstudiobali' }, { network: 'whatsapp', url: WHATSAPP_URL }];
+    : [{ network: 'instagram', url: 'https://instagram.com/unrealstudiobali' }])
+    // WhatsApp retirado de TODO el sitio (Andreas): nunca mostrarlo aunque esté en config.
+    .filter((s: any) => {
+      const id = String(s?.network || s?.label || '').toLowerCase();
+      const u = String(s?.url || '').toLowerCase();
+      return id !== 'whatsapp' && !u.includes('wa.me') && !u.includes('whatsapp');
+    });
   const hours: Record<string, string> = brand?.hours || {};
   const hoursEntries = Object.entries(hours).filter(([, v]) => v);
 

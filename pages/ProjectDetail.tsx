@@ -840,10 +840,8 @@ const ProjectDetail: React.FC = () => {
                   </div>
                 )}
               </div>
-              <a 
-                href={`https://wa.me/34625710770?text=${encodeURIComponent(`¡Hola! Me interesa el proyecto "${project.name}" en ${project.location}. Me gustaría recibir más información y agendar una reunión.`)}`}
-                target="_blank" 
-                rel="noopener noreferrer"
+              <a
+                href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(`Información: ${project.name}`)}&body=${encodeURIComponent(`Hola, me interesa el proyecto "${project.name}" en ${project.location}. Me gustaría recibir más información y agendar una reunión.`)}`}
                 className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"
               >
                 Solicitar info de este proyecto

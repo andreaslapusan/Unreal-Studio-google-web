@@ -37,24 +37,22 @@ const Contact: React.FC = () => {
 
     // Meta Pixel: form submit = Lead conversion event.
     trackLead({ content_name: 'Contact form', content_category: 'web_form_contacto' });
-    // GTM dataLayer: GA4 generate_lead + whatsapp_click (the form redirects
-    // to WhatsApp, so both events are fired in sequence).
-    gtmGenerateLead({ form_id: 'contact', form_destination: 'whatsapp' });
-    gtmWhatsappClick({ source: 'contact_form', phone: '34625710770' });
+    // El formulario ahora redirige por EMAIL (hello@unrealstudiobali.com), no WhatsApp.
+    gtmGenerateLead({ form_id: 'contact', form_destination: 'email' });
 
-    const text = `*SOLICITUD DE REUNIÓN - UNREAL STUDIO*%0A%0A` +
-      `👤 *Nombre:* ${formData.name}%0A` +
-      `📧 *Email:* ${formData.email || '—'}%0A` +
-      `📞 *Teléfono:* ${formData.phone || '—'}%0A` +
-      `🎯 *Motivo:* ${formData.reason}%0A` +
-      `💰 *Presupuesto:* ${formData.budget}%0A` +
-      `⏳ *Plazo:* ${formData.timeframe}%0A` +
-      `📝 *Mensaje:* ${formData.message || 'Sin mensaje adicional'}`;
+    const subject = 'Solicitud de reunión - Unreal Studio';
+    const body =
+      `Nombre: ${formData.name}\n` +
+      `Email: ${formData.email || '—'}\n` +
+      `Teléfono: ${formData.phone || '—'}\n` +
+      `Motivo: ${formData.reason}\n` +
+      `Presupuesto: ${formData.budget}\n` +
+      `Plazo: ${formData.timeframe}\n` +
+      `Mensaje: ${formData.message || 'Sin mensaje adicional'}`;
 
-    const url = `https://wa.me/34625710770?text=${text}`;
+    const url = `mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     const win = window.open(url, '_blank');
-    // Si el navegador bloquea el popup, win es null → mostramos enlace manual.
     setSent({ url, blocked: !win });
   };
 
@@ -256,15 +254,6 @@ const Contact: React.FC = () => {
                   <div>
                     <p className="text-[10px] uppercase font-bold text-gray-500">{t('contact.emailLabel')}</p>
                     <span className="font-medium text-primary">hello@unrealstudiobali.com</span>
-                  </div>
-                </a>
-                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="https://wa.me/34625710770" target="_blank" rel="noopener noreferrer">
-                  <div className="bg-green-100 text-green-700 p-3 rounded-full group-hover:bg-green-600 group-hover:text-white transition">
-                    <span className="material-symbols-outlined text-xl">chat</span>
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-500">{t('contact.generalSupport')}</p>
-                    <span className="font-medium text-primary">{t('contact.directChat')}</span>
                   </div>
                 </a>
               </div>

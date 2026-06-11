@@ -763,8 +763,8 @@ const ClientDashboard: React.FC = () => {
         <div className="mt-12 md:mt-16 bg-primary text-white rounded-2xl p-7 md:p-10 text-center">
           <h3 className="text-xl md:text-2xl font-serif mb-3">{t('admin.clientDash.helpTitle')}</h3>
           <p className="text-white/70 text-sm mb-6">{t('admin.clientDash.helpBody')}</p>
-          <a href={`https://wa.me/34625710770?text=${encodeURIComponent(t('admin.clientDash.whatsappMessage'))}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
-            <span className="material-symbols-outlined">chat</span> {t('admin.clientDash.helpWhatsapp')}
+          <a href="mailto:hello@unrealstudiobali.com" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
+            <span className="material-symbols-outlined">mail</span> hello@unrealstudiobali.com
           </a>
         </div>
       </main>

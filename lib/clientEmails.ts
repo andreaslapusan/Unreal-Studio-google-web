@@ -27,15 +27,13 @@ export function welcomeEmailHtml(d: WelcomeEmailData): string {
   return `
     <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;margin:0 0 14px;color:${BROWN}">${hi}</h1>
     <p style="font-size:15px;line-height:1.7;margin:0 0 10px;color:${BROWN}">
-      Tu portal de cliente ya está activo. Es tu espacio privado para seguir tu inversión de principio a fin, desde donde estés y cuando quieras:
+      Tu portal de cliente ya está activo. Es tu espacio privado para seguir tu inversión de principio a fin:
     </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 14px">
-      ${li('El <b>avance de tu obra</b>, con fotos y porcentaje actualizado.')}
-      ${li('Tu <b>calendario de pagos</b>: importes, fechas límite y lo ya recibido.')}
-      ${li('La <b>descarga de tus recibís</b> oficiales.')}
-      ${li('Tu <b>documentación privada</b> (contratos, planos) en Google Drive.')}
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 16px">
+      ${li('El avance de la obra.')}
+      ${li('Tu calendario de pagos.')}
+      ${li('Toda tu documentación privada.')}
     </table>
-    <p style="font-size:15px;line-height:1.7;margin:0 0 4px;color:${BROWN}">Todo en un único sitio, siempre a tu alcance — y seguiremos añadiendo más.</p>
     ${creds}
     <p style="text-align:center;margin:26px 0 8px">
       <a href="${d.portalUrl}" style="background:${BROWN};color:#ffffff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-size:14px">Entrar a mi portal</a>

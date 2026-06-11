@@ -55,7 +55,7 @@ function stageFor(daysUntil: number): { key: string; subject: string; lead: stri
   const plural = (n: number, s: string, p: string) => (Math.abs(n) === 1 ? s : p);
   if (daysUntil === 7) return { key: "b7", subject: "Tu próximo pago vence en 7 días", lead: "Te recordamos que se acerca la fecha límite de tu próximo pago.", when: "Quedan 7 días para la fecha límite.", tone: "calm" };
   if (daysUntil === 2) return { key: "b2", subject: "Tu próximo pago vence en 2 días", lead: "Tu próximo pago está muy próximo a su fecha límite.", when: "Quedan 2 días para la fecha límite.", tone: "calm" };
-  if (daysUntil === 0) return { key: "due", subject: "Tu pago vence hoy", lead: "Hoy es la fecha límite para que el importe quede recibido por Unreal Studio.", when: "La fecha límite es hoy.", tone: "alert" };
+  if (daysUntil === 0) return { key: "due", subject: "Tu pago vence hoy", lead: "Hoy es la fecha límite para que el importe quede recibido por Unreal Studio. Si tienes cualquier dificultad para completarlo, ponte en contacto con nuestro equipo cuanto antes para que podamos ayudarte y evitar posibles penalizaciones por demora.", when: "La fecha límite es hoy.", tone: "alert" };
   if (daysUntil === -3) return { key: "a3", subject: "Tu pago ha vencido — estamos para ayudarte", lead: "Tu pago venció hace 3 días y aún no nos consta recibido. Si tienes cualquier dificultad o duda, por favor ponte en contacto con nuestro equipo cuanto antes; te ayudaremos a regularizarlo y a evitar posibles penalizaciones por demora.", when: "Lleva 3 días de retraso.", tone: "alert" };
   if (daysUntil <= -7 && Math.abs(daysUntil) % 7 === 0) {
     const n = Math.abs(daysUntil);

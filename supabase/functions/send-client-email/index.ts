@@ -59,7 +59,6 @@ function brandWrap(subject: string, inner: string): string {
      </table>
      <div style="margin:16px 0 12px;">
        <a href="https://instagram.com/unrealstudiobali" style="text-decoration:none;display:inline-block;margin:0 6px;">${IG_ICON}</a>
-       <a href="https://wa.me/34625710770" style="text-decoration:none;display:inline-block;margin:0 6px;">${WA_ICON}</a>
      </div>
      <div style="font-size:12px;color:rgba(63,35,5,.55);">
        Bali, Indonesia &nbsp;·&nbsp; <a href="mailto:hello@unrealstudiobali.com" style="color:${BROWN};text-decoration:none;font-weight:600;">hello@unrealstudiobali.com</a>
