@@ -8,7 +8,6 @@ import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 import ClientPaymentsSection from '../components/ClientPaymentsSection';
-import ClientKwitansisSection from '../components/ClientKwitansisSection';
 
 // Keys for the client onboarding guide. Titles/texts live in i18n
 // (admin.clientDash.guideNTitle / guideNText) so they translate per language.
@@ -778,7 +777,7 @@ const ClientDashboard: React.FC = () => {
 
       {paymentsProj && clientId && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setPaymentsProj(null); }}>
-          <div className="bg-white w-full max-w-3xl rounded-3xl p-6 md:p-8 shadow-2xl max-h-[88vh] overflow-y-auto">
+          <div className="bg-white ust-modal rounded-3xl p-6 md:p-8 shadow-2xl">
             <div className="flex items-start justify-between mb-1">
               <div>
                 <h2 className="text-xl font-serif text-primary">Calendario de pagos</h2>
@@ -788,7 +787,6 @@ const ClientDashboard: React.FC = () => {
             </div>
             <p className="text-xs text-primary/50 mb-4">La fecha límite es el día en que el importe debe estar recibido por Unreal Studio. Inicia las transferencias con margen.</p>
             <ClientPaymentsSection clientId={clientId} filterName={paymentsProj.project_name} filterUnit={paymentsProj.unit_number ?? null} variant="table" />
-            <ClientKwitansisSection clientId={clientId} embedded />
           </div>
         </div>
       )}

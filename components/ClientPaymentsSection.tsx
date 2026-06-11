@@ -48,6 +48,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
   const [claimNote, setClaimNote] = useState('');
   const [claimedIds, setClaimedIds] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
+  const [receipts, setReceipts] = useState<Record<string, { id: string; html: string; no_seq: number }>>({});
 
   useEffect(() => {
     if (!clientId) return;
@@ -57,7 +58,22 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
         setUnits(data?.success ? (data.units || []) : []);
       } finally { setLoading(false); }
     })();
+    void (async () => {
+      const { data } = await supabase.rpc('client_get_kwitansis');
+      if (data?.success) {
+        const m: Record<string, { id: string; html: string; no_seq: number }> = {};
+        for (const k of (data.kwitansis || [])) if (k.client_payment_id) m[k.client_payment_id] = k;
+        setReceipts(m);
+      }
+    })();
   }, [clientId]);
+
+  const viewReceipt = (html: string, no: number) => {
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(`<html><head><title>Recibí de pago Nº ${no}</title></head><body style="margin:0;padding:24px;background:#fff">${html}</body></html>`);
+    w.document.close();
+  };
 
   const submitClaim = async (paymentId: string) => {
     setSending(true);
@@ -105,6 +121,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                       <th className="text-right px-4 py-3">Recibida</th>
                       <th className="text-right px-4 py-3">Balance</th>
                       <th className="text-left px-4 py-3">Estado</th>
+                      <th className="text-right px-4 py-3">Recibí</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -140,6 +157,13 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                                 )}
                               </div>
                             )}
+                          </td>
+                          <td className="px-4 py-3 text-right whitespace-nowrap">
+                            {receipts[p.id] ? (
+                              <button onClick={() => viewReceipt(receipts[p.id].html, receipts[p.id].no_seq)} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
+                                <span className="material-symbols-outlined text-sm">download</span>Recibí
+                              </button>
+                            ) : <span className="text-[11px] text-primary/30">—</span>}
                           </td>
                         </tr>
                       );

@@ -293,9 +293,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             {(() => {
               const eu = units.find((x) => x.client_project_id === editing.cp);
               if (!eu || eu.sale_total == null) return null;
-              const assigned = eu.payments.filter((p) => p.id !== editing.pay.id).reduce((s, p) => s + Number(p.amount), 0);
+              const assigned = eu.payments.filter((p) => p.id !== editing.pay.id).reduce((s, p) => s + Number(p.amount), 0) + Number(editing.pay.amount || 0);
               const pending = Number(eu.sale_total) - assigned;
-              return <p className="text-[11px] italic text-primary/50 -mt-1">Pendiente de asignar: {fmt(pending, eu.currency)}</p>;
+              return <p className={`text-[11px] italic -mt-1 ${pending < 0 ? 'text-red-600 font-bold' : 'text-primary/50'}`}>Pendiente de asignar: {fmt(pending, eu.currency)}</p>;
             })()}
             <label className="block text-[10px] font-black uppercase text-gray-400">{t('admin.pay.dueDateLabel')}</label>
             <input type="date" min="2000-01-01" max="2099-12-31" className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm"

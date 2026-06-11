@@ -5,6 +5,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Modal/pop-up ESTÁNDAR: mismo tamaño en TODOS los portales y menús. ~70% del
+   ancho en escritorio (decisión de Andreas), casi completo en móvil. */
+.ust-modal {
+  width: 92vw;
+  max-height: 86vh;
+  overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .ust-modal { width: 70vw; max-width: 70vw; }
+}
+
 /* Custom site styles formerly inlined in index.html. Kept here so that
    PostCSS picks them up at build time and ships a single CSS file. */
 body {
