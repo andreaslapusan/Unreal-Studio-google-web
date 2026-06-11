@@ -39,7 +39,7 @@ const DAYS_BEFORE = Number(Deno.env.get("REMINDER_DAYS_BEFORE") ?? "7");
 const fmtMoney = (n: number, c: string) => {
   try {
     return new Intl.NumberFormat(c === "IDR" ? "id-ID" : "es-ES",
-      { style: "currency", currency: c || "IDR", maximumFractionDigits: 0 }).format(n);
+      { style: "currency", currency: c || "IDR", maximumFractionDigits: 0, useGrouping: "always" }).format(n);
   } catch { return `${c} ${n}`; }
 };
 const fmtDate = (s: string) => {
