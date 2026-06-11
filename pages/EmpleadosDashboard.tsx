@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
+import { realEmailOf } from '../lib/portalAuth';
 import VacationCalendar from '../components/VacationCalendar';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
@@ -96,7 +97,7 @@ const EmpleadosDashboard: React.FC = () => {
       const { data } = await supabase
         .from('employees')
         .select('id, full_name, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days')
-        .eq('email', user.email)
+        .eq('email', realEmailOf(user))
         .maybeSingle();
       // SEGURIDAD: si el empleado ha sido marcado inactivo (o ya no existe),
       // cerramos su sesión en el acto — no debe seguir dentro al refrescar.
@@ -410,8 +411,8 @@ const EmpleadosDashboard: React.FC = () => {
           <div className="mt-8">
             <VacationCalendar
               employeeId={employee.id}
-              employeeEmail={user.email ?? ''}
-              employeeName={employee.full_name ?? user.email ?? ''}
+              employeeEmail={realEmailOf(user)}
+              employeeName={employee.full_name ?? realEmailOf(user)}
             />
           </div>
         )}

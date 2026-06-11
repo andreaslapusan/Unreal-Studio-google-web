@@ -11,6 +11,7 @@
  * Cada portal solo cambia el prop `portal` (destino por defecto + título).
  */
 import React, { useEffect, useRef, useState } from 'react';
+import { synthEmail } from '../lib/portalAuth';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -153,10 +154,14 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     setInfo('');
     setBusy(true);
     try {
-      const { error: authErr } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      const real = email.trim().toLowerCase();
+      // Fase B: intenta primero el usuario SINTÉTICO de ESTE portal (contraseña
+      // propia por portal); si no existe (cuenta sin migrar), reintenta con el
+      // email real → ningún usuario existente pierde acceso.
+      let authErr = (await supabase.auth.signInWithPassword({ email: synthEmail(portal, real), password })).error;
+      if (authErr) {
+        authErr = (await supabase.auth.signInWithPassword({ email: real, password })).error;
+      }
       if (authErr) {
         setError(t('auth.invalid'));
         setBusy(false);
