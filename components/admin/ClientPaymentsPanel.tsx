@@ -72,12 +72,6 @@ const fmt = (n: number, c: string) => {
 const grp = (n: number) => (n ? n.toLocaleString('es-ES', { useGrouping: 'always' } as any) : '');
 const parseNum = (s: string) => Number(String(s).replace(/\D/g, '')) || 0;
 
-const KW_GREETING: Record<string, (n: string) => string> = {
-  es: (n) => `Hola ${n}, adjuntamos tu recibo de pago. ¡Gracias!`,
-  en: (n) => `Hi ${n}, please find your payment receipt attached. Thank you!`,
-  ro: (n) => `Bună ${n}, atașăm chitanța ta de plată. Mulțumim!`,
-  id: (n) => `Halo ${n}, terlampir tanda terima pembayaran Anda. Terima kasih!`,
-};
 
 const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, adminSignature, clientLang, filterName, filterUnit, onClose }) => {
   const { t } = useTranslation();
@@ -212,12 +206,30 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     if (!clientEmail) { alert(t('admin.pay.clientNoEmail')); return; }
     setKw({ ...kw, sending: true });
     const no = kw.displayNo;
-    const html = kwitansiHtml(no, true) || '';
+    const recibiHtml = kwitansiHtml(no, true) || '';
+    const kwPay = units.flatMap((u) => u.payments).find((p) => p.id === kw.payId);
+    const dueStr = kwPay?.due_date ? new Date(kwPay.due_date).toLocaleDateString('es-ES') : '';
+    const paidStr = kw.date ? new Date(kw.date).toLocaleDateString('es-ES') : '';
+    const fig = formatFigure(kw.amount, kw.currency);
+    const firstName = (clientName || '').trim().split(' ')[0];
+    const body = `
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:#3F2305">Hemos recibido tu pago</h1>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#3F2305">Hola ${firstName}, te confirmamos que hemos recibido tu pago. Este es el detalle:</p>
+      <table style="width:100%;font-size:14px;line-height:1.9;color:#3F2305;margin:0 0 16px">
+        <tr><td style="color:rgba(63,35,5,.55);width:160px">Concepto</td><td style="font-weight:700">${kw.for_payment}</td></tr>
+        <tr><td style="color:rgba(63,35,5,.55)">Importe recibido</td><td style="font-weight:700">${fig}</td></tr>
+        ${paidStr ? `<tr><td style="color:rgba(63,35,5,.55)">Fecha de pago</td><td>${paidStr}</td></tr>` : ''}
+        ${dueStr ? `<tr><td style="color:rgba(63,35,5,.55)">Vencía el</td><td>${dueStr}</td></tr>` : ''}
+        <tr><td style="color:rgba(63,35,5,.55)">Recibí Nº</td><td>${no}</td></tr>
+      </table>
+      <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">A continuación tienes tu <strong>recibí de pago</strong>. También puedes verlo y descargarlo en PDF desde tu portal de cliente.</p>
+      <p style="text-align:center;margin:0 0 18px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">Ver y descargar mi recibí</a></p>
+      ${recibiHtml}`;
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
       body: {
         adminUserId, to: clientEmail, kwitansiId: kw.kwitansiId, lang: clientLang || 'es',
         subject: `Recibí de pago Nº ${no} · Unreal Studio`,
-        html: `<p style="font-family:Manrope,Arial,sans-serif;color:#3F2305;font-size:14px;margin:0 0 14px">${(KW_GREETING[clientLang || 'es'] || KW_GREETING.es)(clientName)}</p>${html}`,
+        html: body,
       },
     });
     setKw((cur) => cur ? { ...cur, sending: false } : cur);
