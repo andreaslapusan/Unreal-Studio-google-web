@@ -2,7 +2,7 @@
    intenta la red (para que la app se auto-actualice al desplegar), y cae a la
    caché solo si no hay conexión (offline). No toca peticiones cross-origin
    (Supabase, Google Fonts, etc.). */
-const CACHE = 'unreal-pwa-v1';
+const CACHE = 'unreal-pwa-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 
