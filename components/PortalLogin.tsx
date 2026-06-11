@@ -161,9 +161,10 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     }
     setBusy(true);
     try {
-      const { error: err } = await supabase.auth.signInWithOtp({
-        email: email.trim().toLowerCase(),
-        options: { emailRedirectTo: `${window.location.origin}/auth/finish` },
+      // Magic link branded por nuestro transporte (el signInWithOtp nativo no
+      // entrega: Auth sin SMTP propio). Igual que el reset.
+      const { error: err } = await supabase.functions.invoke('send-magic-link', {
+        body: { email: email.trim().toLowerCase(), redirectTo: `${window.location.origin}/auth/finish` },
       });
       if (err) throw err;
       setInfo(t('auth.magicSent'));
