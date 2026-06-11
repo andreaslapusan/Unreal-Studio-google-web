@@ -620,8 +620,8 @@ const ClientDashboard: React.FC = () => {
         </div>
       )}
 
-      <main className="max-w-6xl mx-auto px-6 py-8">
-        <p className="text-sm text-primary/60 font-medium mb-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
+        <p className="text-sm text-primary/60 font-medium mb-5">
           {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(client.name || '').trim().split(' ')[0]}</span>
         </p>
         {client.drive_folder_url && feat('drive') && (
@@ -644,23 +644,23 @@ const ClientDashboard: React.FC = () => {
         )}
         {clientId && <ClientUnitsSection clientId={clientId} />}
         {/* Resumen */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12">
+          <div className="bg-white p-5 md:p-8 rounded-2xl shadow-sm border border-primary/5">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiInvested')}</p>
             <p className="text-3xl font-serif text-primary">{getTotalConverted()}</p>
           </div>
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
+          <div className="bg-white p-5 md:p-8 rounded-2xl shadow-sm border border-primary/5">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiProjects')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length}</p>
           </div>
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
+          <div className="bg-white p-5 md:p-8 rounded-2xl shadow-sm border border-primary/5">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiStatus')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length > 0 ? t('admin.clientDash.statusActive') : t('admin.clientDash.statusNoInvestments')}</p>
           </div>
         </div>
 
         {/* Proyectos */}
-        <h2 className="text-2xl font-serif text-primary mb-8">{t('admin.clientDash.myInvestments')}</h2>
+        <h2 className="text-xl md:text-2xl font-serif text-primary mb-5 md:mb-8">{t('admin.clientDash.myInvestments')}</h2>
         {projects.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center border border-primary/5">
             <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">home_work</span>
@@ -776,8 +776,8 @@ const ClientDashboard: React.FC = () => {
         )}
 
         {/* Contacto */}
-        <div className="mt-16 bg-primary text-white rounded-2xl p-10 text-center">
-          <h3 className="text-2xl font-serif mb-4">{t('admin.clientDash.helpTitle')}</h3>
+        <div className="mt-12 md:mt-16 bg-primary text-white rounded-2xl p-7 md:p-10 text-center">
+          <h3 className="text-xl md:text-2xl font-serif mb-3">{t('admin.clientDash.helpTitle')}</h3>
           <p className="text-white/70 text-sm mb-6">{t('admin.clientDash.helpBody')}</p>
           <a href={`https://wa.me/34625710770?text=${encodeURIComponent(t('admin.clientDash.whatsappMessage'))}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
             <span className="material-symbols-outlined">chat</span> {t('admin.clientDash.helpWhatsapp')}
