@@ -644,7 +644,7 @@ const ClientDashboard: React.FC = () => {
         )}
         {clientId && <ClientUnitsSection clientId={clientId} />}
         {/* Resumen */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiInvested')}</p>
             <p className="text-3xl font-serif text-primary">{getTotalConverted()}</p>
@@ -652,10 +652,6 @@ const ClientDashboard: React.FC = () => {
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiProjects')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length}</p>
-          </div>
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
-            <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiRoiAvg')}</p>
-            <p className="text-3xl font-serif text-green-600">{getWeightedRentalROI()}</p>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiStatus')}</p>
