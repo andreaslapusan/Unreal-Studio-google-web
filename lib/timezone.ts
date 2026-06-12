@@ -1,4 +1,5 @@
 /**
+import { uiLocale } from './dateLocale';
  * Zona horaria del negocio: Bali = WITA = UTC+8 (sin horario de verano).
  *
  * Todo lo de fichajes/asistencia/calendario se interpreta y muestra en hora de
@@ -28,7 +29,7 @@ export function baliDayStartISO(baliYmd: string): string {
 /** Hora HH:MM en Bali de un instante. */
 export function baliTime(iso: string): string {
   try {
-    return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: BALI_TZ });
+    return new Date(iso).toLocaleTimeString(uiLocale(), { hour: '2-digit', minute: '2-digit', timeZone: BALI_TZ });
   } catch {
     return '';
   }

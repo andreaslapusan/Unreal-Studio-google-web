@@ -11,6 +11,7 @@
  * is manual from here, exactly as Andreas asked: he presses "Enviar kwitansi".
  */
 import React, { useEffect, useState, useCallback } from 'react';
+import { uiLocale } from '../../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { renderKwitansiHtml, formatFigure } from '../../lib/kwitansi';
@@ -277,8 +278,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                         <div className="flex-1 min-w-[140px]">
                           <p className="font-semibold text-sm text-primary">{p.label || t('admin.pay.noLabel')}</p>
                           <p className="text-[11px] text-gray-400">
-                            {p.due_date ? t('admin.pay.deadline', { date: new Date(p.due_date).toLocaleDateString('es-ES') }) : t('admin.pay.noDate')}
-                            {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(p.paid_at).toLocaleDateString('es-ES') })}`}
+                            {p.due_date ? t('admin.pay.deadline', { date: new Date(p.due_date).toLocaleDateString(uiLocale()) }) : t('admin.pay.noDate')}
+                            {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(p.paid_at).toLocaleDateString(uiLocale()) })}`}
                           </p>
                         </div>
                         <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>

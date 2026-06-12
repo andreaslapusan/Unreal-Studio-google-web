@@ -6,6 +6,7 @@
  * últimas conversaciones. Solo accesible para usuarios con rol `admin`.
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { uiLocale } from '../lib/dateLocale';
 import { Link, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
@@ -62,7 +63,7 @@ function formatDate(value?: string | number) {
   if (!value) return "—";
   const d = typeof value === "number" ? new Date(value) : new Date(value);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString("es-ES", {
+  return d.toLocaleString(uiLocale(), {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",

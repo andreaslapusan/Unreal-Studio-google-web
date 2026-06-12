@@ -7,6 +7,7 @@
  * Acceso: rol admin o team. Si no, redirige a /agencias.
  */
 import React, { useEffect, useMemo, useState } from "react";
+import { uiLocale } from '../lib/dateLocale';
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
@@ -360,7 +361,7 @@ function ActivityTab({ events }: { events: ActivityEvent[] }) {
         <li key={e.id} className="bg-white/60 rounded-lg p-3 flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="text-xs text-primary/60">
-              {e.kind} · {new Date(e.ts).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}
+              {e.kind} · {new Date(e.ts).toLocaleString(uiLocale(), { dateStyle: "short", timeStyle: "short" })}
             </div>
             <div className="font-medium truncate">{e.title}</div>
             <div className="text-xs text-primary/60 truncate">{e.detail}</div>

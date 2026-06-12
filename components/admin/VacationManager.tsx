@@ -7,6 +7,7 @@
  * modificar / borrar cada solicitud. Datos en `employees` + `employee_vacations`.
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { uiLocale } from '../../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { useEscapeKey } from '../../lib/useEscapeKey';
@@ -167,7 +168,7 @@ const VacationManager: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Array.from({ length: 12 }, (_, monthIdx) => {
             const monthDate = new Date(year, monthIdx, 1);
-            const monthName = monthDate.toLocaleDateString('es-ES', { month: 'long' });
+            const monthName = monthDate.toLocaleDateString(uiLocale(), { month: 'long' });
             const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
             const firstDayOfWeek = (monthDate.getDay() + 6) % 7;
             return (
@@ -260,7 +261,7 @@ const VacationManager: React.FC = () => {
         <div className="fixed z-[200] pointer-events-none w-72 bg-white rounded-2xl shadow-2xl border border-primary/10 p-4 text-xs"
           style={{ top: Math.min(hoverDay.y + 14, window.innerHeight - 220), left: Math.min(hoverDay.x + 14, window.innerWidth - 300) }}>
           <p className="font-black uppercase tracking-widest text-primary/40 text-[10px] mb-2 capitalize">
-            {new Date(hoverDay.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long' })}
+            {new Date(hoverDay.date + 'T00:00:00').toLocaleDateString(uiLocale(), { weekday: 'long', day: '2-digit', month: 'long' })}
           </p>
           <ul className="space-y-2">
             {(dayMap.get(hoverDay.date) ?? []).map((v, i) => (

@@ -9,6 +9,7 @@
  * con chips por empleado, coloreados por `type` y con indicador de `status`.
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { baliToday } from '../lib/timezone';
@@ -48,7 +49,7 @@ const STATUS_CLS: Record<string, string> = {
 
 function fmtRange(start: string, end: string): string {
   const fmt = (d: string) =>
-    new Date(`${d}T00:00:00`).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+    new Date(`${d}T00:00:00`).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short' });
   return start === end ? fmt(start) : `${fmt(start)} – ${fmt(end)}`;
 }
 

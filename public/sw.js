@@ -11,7 +11,7 @@
  * NO usamos clients.claim() ni recargas automáticas: provocaban una doble carga
  * (negro → blanco → recarga) en cada arranque en iOS standalone.
  */
-const CACHE = 'unreal-pwa-v4';
+const CACHE = 'unreal-pwa-v5';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -27,6 +27,14 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // cross-origin (Supabase, fonts) sin tocar
+
+  // version.json: SIEMPRE de red, NUNCA cache → el guard de versión detecta
+  // deploys nuevos y fuerza una recarga (clave para que las apps PWA instaladas
+  // del equipo reciban los arreglos sin quedarse con el bundle viejo).
+  if (url.pathname === '/version.json') {
+    event.respondWith(fetch(req, { cache: 'no-store' }).catch(() => caches.match(req)));
+    return;
+  }
 
   // NAVEGACIONES (HTML): siempre red; offline → shell cacheado.
   if (req.mode === 'navigate') {

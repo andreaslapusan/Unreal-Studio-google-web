@@ -4,6 +4,7 @@
  * y earnings esperados (5% × precio agencia × ventas).
  */
 import React, { useEffect, useState } from "react";
+import { uiLocale } from '../lib/dateLocale';
 import { Navigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
@@ -186,7 +187,7 @@ export default function AgenciasStats() {
               <ul className="space-y-1 text-sm">
                 {recent.map((r) => (
                   <li key={r.id} className="flex items-center justify-between border-b border-primary/10 py-2">
-                    <span className="text-xs text-primary/60">{new Date(r.created_at).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}</span>
+                    <span className="text-xs text-primary/60">{new Date(r.created_at).toLocaleString(uiLocale(), { dateStyle: "short", timeStyle: "short" })}</span>
                     <span className="font-medium">{r.event_type}</span>
                     <span className="text-primary/70 truncate max-w-[40%]">{r.property_slug ?? "—"}</span>
                     <span className="text-xs text-primary/50 truncate">{r.contact_email ?? t('agenciasStats.anon')}</span>

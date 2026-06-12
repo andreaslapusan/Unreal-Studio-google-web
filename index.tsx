@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { initWebVitals } from './lib/webVitals';
+import { initVersionGuard } from './lib/versionGuard';
 import './index.css';
 import './lib/i18n';
 
@@ -23,6 +24,10 @@ root.render(
 
 // Boot real-user metrics after first paint so we don't compete with hydration.
 initWebVitals();
+
+// Detecta deploys nuevos y fuerza una recarga (clave para que las PWA instaladas
+// del equipo reciban los arreglos —traducciones, etc.— sin quedarse en viejo).
+initVersionGuard();
 
 // PWA: registra el service worker (instalable + offline + carga rápida). Se hace
 // tras 'load' para no competir con el primer render. SIN recargas automáticas:

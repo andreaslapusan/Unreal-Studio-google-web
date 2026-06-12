@@ -18,6 +18,9 @@ try {
 if (version) {
   const body = `/**\n * Versión visible del build (footer). Generada automáticamente por\n * scripts/generate-version.mjs = 3.<nº de commits>. NO editar a mano.\n */\nexport const APP_VERSION = "${version}";\n`;
   writeFileSync('lib/version.ts', body);
+  // version.json estático (servido sin caché por el SW) → el guard de versión lo
+  // compara con APP_VERSION embebido y fuerza recarga cuando hay deploy nuevo.
+  writeFileSync('public/version.json', `{"version":"${version}"}\n`);
   console.log('version →', version);
 } else {
   console.log('version: sin git, se mantiene el valor commiteado');

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { uiLocale } from '../lib/dateLocale';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, CURRENCIES } from '../constants';
@@ -192,7 +193,7 @@ const AMENITIES_LIST = [
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
     try {
-        return new Date(dateString).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return new Date(dateString).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }

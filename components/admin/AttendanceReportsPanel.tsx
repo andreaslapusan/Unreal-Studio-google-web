@@ -8,6 +8,7 @@
  * Filtrado por rango de fechas + ordenación (fecha / asistencia).
  */
 import React, { useEffect, useMemo, useState } from 'react';
+import { uiLocale } from '../../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 
@@ -69,11 +70,11 @@ const AttendanceReportsPanel: React.FC = () => {
   };
 
   const fmtDay = (d: string) => {
-    try { return new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }); }
+    try { return new Date(d + 'T00:00:00').toLocaleDateString(uiLocale(), { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }); }
     catch { return d; }
   };
   const fmtGen = (iso: string) => {
-    try { return new Date(iso).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+    try { return new Date(iso).toLocaleString(uiLocale(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
     catch { return ''; }
   };
 

@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../types';
 import { useCurrency } from '../App';
@@ -18,7 +19,7 @@ const LandingGlobalitae: React.FC = () => {
     if (!dateString) return '';
     try {
         if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) return dateString;
-        return new Date(dateString).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return new Date(dateString).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }

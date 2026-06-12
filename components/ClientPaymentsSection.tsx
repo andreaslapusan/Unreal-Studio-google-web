@@ -11,6 +11,7 @@
  * Sin emojis (regla de marca): estados con iconos Material Symbols.
  */
 import React, { useEffect, useState } from 'react';
+import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 
@@ -39,7 +40,7 @@ const fmt = (n: number, c: string) => {
 };
 const fmtDate = (s: string | null) => {
   if (!s) return '—';
-  try { return new Date(s).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }); } catch { return s; }
+  try { return new Date(s).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric' }); } catch { return s; }
 };
 const byDate = (a: Payment, b: Payment) => {
   const da = a.due_date ? new Date(a.due_date).getTime() : Infinity;

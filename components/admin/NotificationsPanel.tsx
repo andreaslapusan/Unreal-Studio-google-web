@@ -8,6 +8,7 @@
  * Las vacaciones se APRUEBAN en la sección Empleados; aquí solo se notifican.
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { uiLocale } from '../../lib/dateLocale';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
@@ -45,7 +46,7 @@ const PROTECTED = new Set(['vacation_request', 'payment_claim']);
 function fmtWhen(iso: string): string {
   try {
     const d = new Date(iso);
-    return d.toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   } catch { return iso; }
 }
 function fmtMoney(n: number, c: string): string {
@@ -155,7 +156,7 @@ const NotificationsPanel: React.FC = () => {
                 {overdue.map((o) => (
                   <li key={o.id} className="flex items-center justify-between text-sm border-b border-gray-50 pb-1.5 gap-3">
                     <span className="min-w-0"><b className="text-primary">{o.client_name}</b> · {o.label} · <span className="text-red-600 font-bold">{fmtMoney(Number(o.amount), o.currency)}</span></span>
-                    <button onClick={() => navigate('/admin?view=clients')} className="text-xs text-primary/60 hover:text-primary underline shrink-0">{t('admin.notif.expiredOn', { date: new Date(o.due_date).toLocaleDateString('es-ES') })} →</button>
+                    <button onClick={() => navigate('/admin?view=clients')} className="text-xs text-primary/60 hover:text-primary underline shrink-0">{t('admin.notif.expiredOn', { date: new Date(o.due_date).toLocaleDateString(uiLocale()) })} →</button>
                   </li>
                 ))}
               </ul>

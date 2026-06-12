@@ -7,6 +7,7 @@
  * la sesión Supabase Auth).
  */
 import React, { useEffect, useState } from 'react';
+import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 
@@ -51,7 +52,7 @@ const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }>
             <span className="material-symbols-outlined text-primary text-2xl">receipt_long</span>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm text-primary truncate">{k.for_payment}</p>
-              <p className="text-[11px] text-primary/50">{new Date(k.kwitansi_date).toLocaleDateString('es-ES')} · {fmt(Number(k.amount), k.currency)}</p>
+              <p className="text-[11px] text-primary/50">{new Date(k.kwitansi_date).toLocaleDateString(uiLocale())} · {fmt(Number(k.amount), k.currency)}</p>
             </div>
             <button onClick={() => view(k)} className="shrink-0 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg hover:bg-black transition flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">download</span>{t('admin.clientDash.receiptsView', 'Ver / Descargar')}

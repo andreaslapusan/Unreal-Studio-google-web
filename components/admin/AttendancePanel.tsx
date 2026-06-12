@@ -7,6 +7,7 @@
  * Datos: RPC admin_attendance_list. Fotos del bucket privado `attendance` (firmadas).
  */
 import React, { useEffect, useMemo, useState } from 'react';
+import { uiLocale } from '../../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { baliDate, baliTime, baliToday } from '../../lib/timezone';
@@ -27,7 +28,7 @@ function locLabel(lat: number | null, lng: number | null): string {
 }
 function isoDaysAgo(n: number): string { const d = new Date(`${baliToday()}T12:00:00Z`); d.setUTCDate(d.getUTCDate() - n); return d.toISOString().slice(0, 10); }
 const fmtTime = (iso: string) => baliTime(iso);
-const fmtDay = (s: string) => { try { return new Date(s + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short' }); } catch { return s; } };
+const fmtDay = (s: string) => { try { return new Date(s + 'T00:00:00').toLocaleDateString(uiLocale(), { weekday: 'short', day: '2-digit', month: 'short' }); } catch { return s; } };
 const hm = (min: number) => { const s = min < 0 ? '-' : ''; const a = Math.abs(Math.round(min)); return `${s}${Math.floor(a / 60)}:${String(a % 60).padStart(2, '0')}`; };
 const schedMin = (t: string | null) => { if (!t) return null; const [h, m] = t.split(':'); return Number(h) * 60 + Number(m); };
 
