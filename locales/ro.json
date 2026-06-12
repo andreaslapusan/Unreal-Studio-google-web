@@ -2059,5 +2059,32 @@
       "galleryImageAlt": "{{name}} - Imaginea {{n}}",
       "requestProjectInfo": "Cereți informații despre acest proiect"
     }
+  },
+  "emails": {
+    "welcome": {
+      "greetingName": "Bun venit la Unreal Studio, {{name}}!",
+      "greeting": "Bun venit la Unreal Studio!",
+      "intro": "Portalul dvs. de client este acum activ. Acesta este spațiul dvs. privat pentru a urmări investiția dvs. de la început până la sfârșit:",
+      "b1": "Stadiul lucrărilor.",
+      "b2": "Calendarul dvs. de plăți.",
+      "b3": "Toată documentația dvs. privată.",
+      "access": "Acces",
+      "emailLabel": "Adresă de e-mail",
+      "tempPassword": "Parolă temporară",
+      "cta": "Intră în portalul meu",
+      "security": "Pentru siguranța dvs., schimbați parola temporară la prima intrare. Dacă aveți întrebări, suntem la un mesaj distanță."
+    },
+    "recibi": {
+      "subject": "Dovadă de plată Nº {{no}} · Unreal Studio",
+      "title": "Am primit plata dvs.",
+      "hi": "Salut {{name}}, vă confirmăm că am primit plata dvs. Iată detaliile:",
+      "concept": "Concept",
+      "amountReceived": "Sumă primită",
+      "paymentDate": "Data plății",
+      "dueDate": "Scadea la",
+      "number": "Dovadă de plată Nº",
+      "downloadInstruction": "Puteți descărca dovada de plată din portalul dvs. de client, în calendarul de plăți, în rândul plății corespunzătoare.",
+      "cta": "Vizualizați portalul meu"
+    }
   }
 }

@@ -2059,5 +2059,32 @@
       "galleryImageAlt": "{{name}} - Imagen {{n}}",
       "requestProjectInfo": "Solicitar info de este proyecto"
     }
+  },
+  "emails": {
+    "welcome": {
+      "greetingName": "¡Bienvenido a Unreal Studio, {{name}}!",
+      "greeting": "¡Bienvenido a Unreal Studio!",
+      "intro": "Tu portal de cliente ya está activo. Es tu espacio privado para seguir tu inversión de principio a fin:",
+      "b1": "El avance de la obra.",
+      "b2": "Tu calendario de pagos.",
+      "b3": "Toda tu documentación privada.",
+      "access": "Acceso",
+      "emailLabel": "Email",
+      "tempPassword": "Contraseña temporal",
+      "cta": "Entrar a mi portal",
+      "security": "Por tu seguridad, cambia la contraseña temporal la primera vez que entres. Si tienes cualquier duda, estamos a un mensaje de distancia."
+    },
+    "recibi": {
+      "subject": "Comprobante de pago Nº {{no}} · Unreal Studio",
+      "title": "Hemos recibido tu pago",
+      "hi": "Hola {{name}}, te confirmamos que hemos recibido tu pago. Este es el detalle:",
+      "concept": "Concepto",
+      "amountReceived": "Importe recibido",
+      "paymentDate": "Fecha de pago",
+      "dueDate": "Vencía el",
+      "number": "Comprobante Nº",
+      "downloadInstruction": "Puedes descargar tu comprobante de pago desde tu portal de cliente, en el calendario de pagos, en la fila del pago correspondiente.",
+      "cta": "Ver mi portal"
+    }
   }
 }

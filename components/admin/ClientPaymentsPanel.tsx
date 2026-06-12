@@ -14,6 +14,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { renderKwitansiHtml, formatFigure } from '../../lib/kwitansi';
+import i18n from '../../lib/i18n';
 import { withLoading } from '../../lib/loading';
 
 interface Payment {
@@ -199,28 +200,29 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     if (!clientEmail) { alert(t('admin.pay.clientNoEmail')); return; }
     setKw({ ...kw, sending: true });
     const no = kw.displayNo;
-    const recibiHtml = kwitansiHtml(no, true) || '';
+    const loc = clientLang || 'es';
+    const et = i18n.getFixedT(loc); // email en el idioma del CLIENTE
     const kwPay = units.flatMap((u) => u.payments).find((p) => p.id === kw.payId);
-    const dueStr = kwPay?.due_date ? new Date(kwPay.due_date).toLocaleDateString('es-ES') : '';
-    const paidStr = kw.date ? new Date(kw.date).toLocaleDateString('es-ES') : '';
+    const dueStr = kwPay?.due_date ? new Date(kwPay.due_date).toLocaleDateString(loc) : '';
+    const paidStr = kw.date ? new Date(kw.date).toLocaleDateString(loc) : '';
     const fig = formatFigure(kw.amount, kw.currency);
     const firstName = (clientName || '').trim().split(' ')[0];
     const body = `
-      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:#3F2305">Hemos recibido tu pago</h1>
-      <p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#3F2305">Hola ${firstName}, te confirmamos que hemos recibido tu pago. Este es el detalle:</p>
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:#3F2305">${et('emails.recibi.title')}</h1>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#3F2305">${et('emails.recibi.hi', { name: firstName })}</p>
       <table style="width:100%;font-size:14px;line-height:1.9;color:#3F2305;margin:0 0 16px">
-        <tr><td style="color:rgba(63,35,5,.55);width:160px">Concepto</td><td style="font-weight:700">${kw.for_payment}</td></tr>
-        <tr><td style="color:rgba(63,35,5,.55)">Importe recibido</td><td style="font-weight:700">${fig}</td></tr>
-        ${paidStr ? `<tr><td style="color:rgba(63,35,5,.55)">Fecha de pago</td><td>${paidStr}</td></tr>` : ''}
-        ${dueStr ? `<tr><td style="color:rgba(63,35,5,.55)">Vencía el</td><td>${dueStr}</td></tr>` : ''}
-        <tr><td style="color:rgba(63,35,5,.55)">Recibí Nº</td><td>${no}</td></tr>
+        <tr><td style="color:rgba(63,35,5,.55);width:160px">${et('emails.recibi.concept')}</td><td style="font-weight:700">${kw.for_payment}</td></tr>
+        <tr><td style="color:rgba(63,35,5,.55)">${et('emails.recibi.amountReceived')}</td><td style="font-weight:700">${fig}</td></tr>
+        ${paidStr ? `<tr><td style="color:rgba(63,35,5,.55)">${et('emails.recibi.paymentDate')}</td><td>${paidStr}</td></tr>` : ''}
+        ${dueStr ? `<tr><td style="color:rgba(63,35,5,.55)">${et('emails.recibi.dueDate')}</td><td>${dueStr}</td></tr>` : ''}
+        <tr><td style="color:rgba(63,35,5,.55)">${et('emails.recibi.number')}</td><td>${no}</td></tr>
       </table>
-      <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">Puedes descargar tu <strong>comprobante de pago</strong> desde tu portal de cliente, en el calendario de pagos, en la fila del pago correspondiente.</p>
-      <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">Ver mi portal</a></p>`;
+      <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">${et('emails.recibi.downloadInstruction')}</p>
+      <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.recibi.cta')}</a></p>`;
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
       body: {
-        adminUserId, to: clientEmail, kwitansiId: kw.kwitansiId, lang: clientLang || 'es',
-        subject: `Recibí de pago Nº ${no} · Unreal Studio`,
+        adminUserId, to: clientEmail, kwitansiId: kw.kwitansiId, lang: loc,
+        subject: et('emails.recibi.subject', { no }),
         html: body,
       },
     });

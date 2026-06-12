@@ -2060,5 +2060,32 @@
       "baliAddressLine1": "Jl. Pratu Rai Madra No.15, Cemagi, Kec. Mengwi",
       "baliAddressLine2": "Kabupaten Badung, Bali, Indonesia"
     }
+  },
+  "emails": {
+    "welcome": {
+      "greetingName": "Selamat datang di Unreal Studio, {{name}}!",
+      "greeting": "Selamat datang di Unreal Studio!",
+      "intro": "Portal pelanggan Anda sudah aktif. Ini adalah ruang pribadi Anda untuk mengikuti investasi dari awal hingga akhir:",
+      "b1": "Perkembangan proyek.",
+      "b2": "Kalender pembayaran Anda.",
+      "b3": "Semua dokumen pribadi Anda.",
+      "access": "Akses",
+      "emailLabel": "Email",
+      "tempPassword": "Kata sandi sementara",
+      "cta": "Masuk ke portal saya",
+      "security": "Untuk keamanan Anda, ganti kata sandi sementara saat pertama kali masuk. Jika Anda memiliki pertanyaan, kami hanya satu pesan jauhnya."
+    },
+    "recibi": {
+      "subject": "Bukti pembayaran Nº {{no}} · Unreal Studio",
+      "title": "Kami telah menerima pembayaran Anda",
+      "hi": "Halo {{name}}, kami konfirmasi bahwa kami telah menerima pembayaran Anda. Berikut adalah rincian:",
+      "concept": "Konsep",
+      "amountReceived": "Jumlah yang diterima",
+      "paymentDate": "Tanggal pembayaran",
+      "dueDate": "Jatuh tempo pada",
+      "number": "Bukti Nº",
+      "downloadInstruction": "Anda dapat mengunduh bukti pembayaran Anda dari portal pelanggan, di kalender pembayaran, di baris pembayaran yang sesuai.",
+      "cta": "Lihat portal saya"
+    }
   }
 }

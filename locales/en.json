@@ -2059,5 +2059,32 @@
       "galleryImageAlt": "{{name}} - Image {{n}}",
       "requestProjectInfo": "Request project info"
     }
+  },
+  "emails": {
+    "welcome": {
+      "greetingName": "Welcome to Unreal Studio, {{name}}!",
+      "greeting": "Welcome to Unreal Studio!",
+      "intro": "Your client portal is now active. It's your private space to track your investment from start to finish:",
+      "b1": "Construction progress.",
+      "b2": "Your payment calendar.",
+      "b3": "All your private documentation.",
+      "access": "Access",
+      "emailLabel": "Email",
+      "tempPassword": "Temporary password",
+      "cta": "Enter my portal",
+      "security": "For your security, change the temporary password the first time you log in. If you have any questions, we're just a message away."
+    },
+    "recibi": {
+      "subject": "Payment receipt Nº {{no}} · Unreal Studio",
+      "title": "We have received your payment",
+      "hi": "Hello {{name}}, we confirm that we have received your payment. Here are the details:",
+      "concept": "Concept",
+      "amountReceived": "Amount received",
+      "paymentDate": "Payment date",
+      "dueDate": "Due date",
+      "number": "Receipt Nº",
+      "downloadInstruction": "You can download your payment receipt from your client portal, in the payment calendar, in the corresponding payment row.",
+      "cta": "View my portal"
+    }
   }
 }
