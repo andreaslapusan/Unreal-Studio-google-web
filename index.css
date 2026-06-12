@@ -45,7 +45,7 @@ select {
   background-repeat: no-repeat;
   background-position: right 0.6rem center;
   background-size: 1rem;
-  /* !important: gana siempre sobre utilidades Tailwind px-*/pr-* en cada <select>,
+  /* !important: gana siempre sobre utilidades Tailwind de padding en cada select,
      para que la flecha NUNCA tape el texto (p.ej. "EUR" en selects estrechos). */
   padding-right: 2.1rem !important;
 }
