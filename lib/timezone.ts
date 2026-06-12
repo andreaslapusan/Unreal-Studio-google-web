@@ -1,5 +1,5 @@
-/**
 import { uiLocale } from './dateLocale';
+/**
  * Zona horaria del negocio: Bali = WITA = UTC+8 (sin horario de verano).
  *
  * Todo lo de fichajes/asistencia/calendario se interpreta y muestra en hora de
