@@ -162,7 +162,7 @@ export default function AdminPortalManager() {
       for (const a of (app.data ?? []).slice(0, 8)) {
         events.push({
           id: `app-${a.id}`,
-          kind: "📨 Solicitud agencia",
+          kind: t('fix.apm.activityAgencyRequest'),
           title: a.agency_name,
           detail: `${a.email} · ${a.country ?? "—"} · ${a.status}`,
           ts: a.created_at,
@@ -171,7 +171,7 @@ export default function AdminPortalManager() {
       for (const up of (updates.data ?? []).slice(0, 10)) {
         events.push({
           id: `upd-${up.id}`,
-          kind: "🏗️ Update obra",
+          kind: t('fix.apm.activityWorkUpdate'),
           title: up.title,
           detail: `${up.posted_by} · ${up.visibility}`,
           ts: up.posted_at,
@@ -180,9 +180,9 @@ export default function AdminPortalManager() {
       for (const at of (attribs.data ?? []).slice(0, 10)) {
         events.push({
           id: `at-${at.id}`,
-          kind: "🔗 Atribución lister",
+          kind: t('fix.apm.activityListerAttribution'),
           title: at.event_type,
-          detail: `${at.contact_email ?? "anónimo"} · property: ${at.property_slug ?? "—"}`,
+          detail: `${at.contact_email ?? t('fix.apm.anonymous')} · property: ${at.property_slug ?? "—"}`,
           ts: at.created_at,
         });
       }
@@ -203,21 +203,21 @@ export default function AdminPortalManager() {
     typeof window !== "undefined" &&
     (!!localStorage.getItem("_ust_sh_") || !!sessionStorage.getItem("_ust_sh_"));
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center">Cargando…</div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('fix.apm.loading')}</div>;
   if (!user && !hasLegacySession) return <Navigate to="/admin/login" replace />;
   if (user && role && role !== "admin" && role !== "team") {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 text-center">
         <div>
           <h1 className="text-3xl font-serif mb-4">{t('admin.portal.accessRestricted')}</h1>
-          <p>Solo equipo interno.</p>
+          <p>{t('fix.apm.internalTeamOnly')}</p>
         </div>
       </div>
     );
   }
 
   const handleApproveApplication = async (app: Application) => {
-    if (!confirm(`¿Aprobar a ${app.agency_name}? Crea row en listing_partners y se le manda magic link.`)) return;
+    if (!confirm(t('fix.apm.confirmApprove', { name: app.agency_name }))) return;
     try {
       const { error: insErr } = await supabase.from("listing_partners").insert({
         agency_name: app.agency_name,
@@ -239,14 +239,14 @@ export default function AdminPortalManager() {
       const redirect = `${window.location.origin}/auth/finish`;
       await supabase.auth.signInWithOtp({ email: app.email, options: { emailRedirectTo: redirect, shouldCreateUser: true } });
       await reloadAll();
-      alert("Aprobada + magic link enviado");
+      alert(t('fix.apm.approvedMagicLinkSent'));
     } catch (err) {
-      alert("Error: " + (err instanceof Error ? err.message : String(err)));
+      alert(t('fix.apm.errorPrefix') + (err instanceof Error ? err.message : String(err)));
     }
   };
 
   const handleRejectApplication = async (app: Application) => {
-    if (!confirm(`¿Rechazar ${app.agency_name}?`)) return;
+    if (!confirm(t('fix.apm.confirmReject', { name: app.agency_name }))) return;
     await supabase
       .from("listing_partner_applications")
       .update({ status: "rejected", reviewed_by: user?.email ?? user?.id ?? "andreas-legacy", reviewed_at: new Date().toISOString() })
@@ -260,7 +260,7 @@ export default function AdminPortalManager() {
       .map((p) => `${current.includes(p.id) ? "[x]" : "[ ]"} ${p.name} (${p.id.slice(0, 8)})`)
       .join("\n");
     const input = prompt(
-      `Proyectos asignados a ${partner.agency_name}.\nListado actual:\n${list}\n\nPega los IDs (uno por línea, completos):`,
+      t('fix.apm.assignProjectsPrompt', { name: partner.agency_name, list }),
       current.join("\n")
     );
     if (input === null) return;
@@ -312,7 +312,7 @@ export default function AdminPortalManager() {
             {k === "partners" && `🤝 ${t('admin.portal.tabPartners')} (${partners.length})`}
             {k === "applications" && `📨 ${t('admin.portal.tabApplications')} (${applications.filter((a) => a.status === "pending").length})`}
             {k === "faqs" && `❓ FAQs (${faqs.length})`}
-            {k === "timelines" && `📅 Timelines (${projectsCatalog.filter((p) => Array.isArray(p.timeline) && p.timeline.length > 0).length}/${projectsCatalog.length})`}
+            {k === "timelines" && `📅 ${t('fix.apm.tabTimelines')} (${projectsCatalog.filter((p) => Array.isArray(p.timeline) && p.timeline.length > 0).length}/${projectsCatalog.length})`}
             {k === "equipo" && `👷 ${t('admin.portal.tabEquipo')}`}
           </button>
         ))}
@@ -352,7 +352,8 @@ export default function AdminPortalManager() {
 // ─── Subcomponents ────────────────────────────────────────────────────────
 
 function ActivityTab({ events }: { events: ActivityEvent[] }) {
-  if (events.length === 0) return <p className="text-primary/60">Aún no hay actividad reciente.</p>;
+  const { t } = useTranslation();
+  if (events.length === 0) return <p className="text-primary/60">{t('fix.apm.noRecentActivity')}</p>;
   return (
     <ol className="space-y-2">
       {events.map((e) => (
@@ -371,6 +372,7 @@ function ActivityTab({ events }: { events: ActivityEvent[] }) {
 }
 
 function PropertiesTab({ data, onChange }: { data: Property[]; onChange: () => Promise<void> }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState<Property | null>(null);
   const [creating, setCreating] = useState(false);
 
@@ -409,7 +411,7 @@ function PropertiesTab({ data, onChange }: { data: Property[]; onChange: () => P
         onClick={() => setCreating(true)}
         className="mb-4 bg-primary text-white px-4 py-2 rounded-full text-sm"
       >
-        + Nuevo proyecto
+        {t('fix.apm.newProjectBtn')}
       </button>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -418,8 +420,8 @@ function PropertiesTab({ data, onChange }: { data: Property[]; onChange: () => P
             <h3 className="font-serif text-lg text-primary">{p.name}</h3>
             <p className="text-xs text-primary/60">slug: {p.slug}</p>
             {p.area && <p className="text-sm">{p.area}</p>}
-            {typeof p.pct_progress === "number" && <p className="text-sm">Avance: {p.pct_progress}%</p>}
-            <button onClick={() => setEditing(p)} className="text-xs underline mt-2">Editar</button>
+            {typeof p.pct_progress === "number" && <p className="text-sm">{t('fix.apm.progress', { pct: p.pct_progress })}</p>}
+            <button onClick={() => setEditing(p)} className="text-xs underline mt-2">{t('fix.apm.edit')}</button>
           </article>
         ))}
       </div>
@@ -460,18 +462,18 @@ function PropertyEditor({
       <div className="bg-white rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
         <h2 className="font-serif text-2xl mb-4">{isNew ? t('admin.portal.newProject') : t('admin.portal.editProject')}</h2>
         <div className="space-y-3">
-          <Input label="Slug *" value={form.slug} onChange={(v) => update("slug", v)} />
-          <Input label="Nombre *" value={form.name} onChange={(v) => update("name", v)} />
-          <Input label="Área (zona)" value={form.area ?? ""} onChange={(v) => update("area", v)} />
-          <Input label="% Obra" type="number" value={String(form.pct_progress ?? "")} onChange={(v) => update("pct_progress", v ? Number(v) : null)} />
-          <Input label="Fecha entrega" value={form.delivery_date ?? ""} onChange={(v) => update("delivery_date", v)} />
-          <Input label="Hero image URL" value={form.hero_image_url ?? ""} onChange={(v) => update("hero_image_url", v)} />
-          <Input label="Walkthrough URL" value={form.walkthrough_url ?? ""} onChange={(v) => update("walkthrough_url", v)} />
-          <Input label="Brand PDF URL" value={form.brand_pdf_url ?? ""} onChange={(v) => update("brand_pdf_url", v)} />
+          <Input label={t('fix.apm.labelSlug')} value={form.slug} onChange={(v) => update("slug", v)} />
+          <Input label={t('fix.apm.labelName')} value={form.name} onChange={(v) => update("name", v)} />
+          <Input label={t('fix.apm.labelArea')} value={form.area ?? ""} onChange={(v) => update("area", v)} />
+          <Input label={t('fix.apm.labelPctWork')} type="number" value={String(form.pct_progress ?? "")} onChange={(v) => update("pct_progress", v ? Number(v) : null)} />
+          <Input label={t('fix.apm.labelDeliveryDate')} value={form.delivery_date ?? ""} onChange={(v) => update("delivery_date", v)} />
+          <Input label={t('fix.apm.labelHeroImageUrl')} value={form.hero_image_url ?? ""} onChange={(v) => update("hero_image_url", v)} />
+          <Input label={t('fix.apm.labelWalkthroughUrl')} value={form.walkthrough_url ?? ""} onChange={(v) => update("walkthrough_url", v)} />
+          <Input label={t('fix.apm.labelBrandPdfUrl')} value={form.brand_pdf_url ?? ""} onChange={(v) => update("brand_pdf_url", v)} />
         </div>
         <div className="flex gap-2 mt-6">
-          <button onClick={() => void onSave(form, isNew)} className="flex-1 bg-primary text-white py-2 rounded-lg">Guardar</button>
-          <button onClick={onCancel} className="flex-1 bg-white border border-primary/30 text-primary py-2 rounded-lg">Cancelar</button>
+          <button onClick={() => void onSave(form, isNew)} className="flex-1 bg-primary text-white py-2 rounded-lg">{t('fix.apm.save')}</button>
+          <button onClick={onCancel} className="flex-1 bg-white border border-primary/30 text-primary py-2 rounded-lg">{t('fix.apm.cancel')}</button>
         </div>
       </div>
     </div>
@@ -479,6 +481,7 @@ function PropertyEditor({
 }
 
 function UnitsTab({ data, properties, onChange }: { data: Unit[]; properties: Property[]; onChange: () => Promise<void> }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState<Unit | null>(null);
   const [creating, setCreating] = useState(false);
 
@@ -521,14 +524,14 @@ function UnitsTab({ data, properties, onChange }: { data: Unit[]; properties: Pr
 
   return (
     <div>
-      <button onClick={() => setCreating(true)} className="mb-4 bg-primary text-white px-4 py-2 rounded-full text-sm">+ Nueva unidad</button>
+      <button onClick={() => setCreating(true)} className="mb-4 bg-primary text-white px-4 py-2 rounded-full text-sm">{t('fix.apm.newUnitBtn')}</button>
       <div className="overflow-x-auto bg-white/60 rounded-xl">
         <table className="w-full text-sm">
           <thead className="bg-primary/10 text-left">
             <tr>
-              <th className="p-3">Proyecto</th><th className="p-3">Unidad</th>
-              <th className="p-3">Público</th><th className="p-3">Inversor</th><th className="p-3">Agencia</th>
-              <th className="p-3">Status</th><th className="p-3"></th>
+              <th className="p-3">{t('fix.apm.colProject')}</th><th className="p-3">{t('fix.apm.colUnit')}</th>
+              <th className="p-3">{t('fix.apm.colPublic')}</th><th className="p-3">{t('fix.apm.colInvestor')}</th><th className="p-3">{t('fix.apm.colAgency')}</th>
+              <th className="p-3">{t('fix.apm.colStatus')}</th><th className="p-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -540,9 +543,9 @@ function UnitsTab({ data, properties, onChange }: { data: Unit[]; properties: Pr
                 <td className="p-3">{fmt(u.price_inversor)}€</td>
                 <td className="p-3">{fmt(u.price_agencia)}€</td>
                 <td className="p-3">
-                  {u.sold ? "🔴 Vendida" : u.reserved ? "🟡 Reservada" : u.available ? "🟢 Disponible" : "⚪ Inactiva"}
+                  {u.sold ? t('fix.apm.statusSold') : u.reserved ? t('fix.apm.statusReserved') : u.available ? t('fix.apm.statusAvailable') : t('fix.apm.statusInactive')}
                 </td>
-                <td className="p-3"><button onClick={() => setEditing(u)} className="underline text-xs">Editar</button></td>
+                <td className="p-3"><button onClick={() => setEditing(u)} className="underline text-xs">{t('fix.apm.edit')}</button></td>
               </tr>
             ))}
           </tbody>
@@ -588,31 +591,31 @@ function UnitEditor({
         <h2 className="font-serif text-2xl mb-4">{isNew ? t('admin.portal.newUnit') : t('admin.portal.editUnit')}</h2>
         <div className="space-y-3">
           <label className="block">
-            <span className="text-sm font-medium">Proyecto *</span>
+            <span className="text-sm font-medium">{t('fix.apm.labelProject')}</span>
             <select value={form.property_id} onChange={(e) => update("property_id", e.target.value)} className="block w-full rounded-lg border border-primary/20 px-4 py-2.5 mt-1">
               {properties.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </label>
-          <Input label="Nombre unidad *" value={form.unit_name} onChange={(v) => update("unit_name", v)} />
+          <Input label={t('fix.apm.labelUnitName')} value={form.unit_name} onChange={(v) => update("unit_name", v)} />
           <div className="grid grid-cols-3 gap-2">
-            <Input label="Precio público (€)" type="number" value={String(form.price_publico ?? "")} onChange={(v) => update("price_publico", v ? Number(v) : null)} />
-            <Input label="Precio inversor (€)" type="number" value={String(form.price_inversor ?? "")} onChange={(v) => update("price_inversor", v ? Number(v) : null)} />
-            <Input label="Precio agencia (€)" type="number" value={String(form.price_agencia ?? "")} onChange={(v) => update("price_agencia", v ? Number(v) : null)} />
+            <Input label={t('fix.apm.labelPricePublic')} type="number" value={String(form.price_publico ?? "")} onChange={(v) => update("price_publico", v ? Number(v) : null)} />
+            <Input label={t('fix.apm.labelPriceInvestor')} type="number" value={String(form.price_inversor ?? "")} onChange={(v) => update("price_inversor", v ? Number(v) : null)} />
+            <Input label={t('fix.apm.labelPriceAgency')} type="number" value={String(form.price_agencia ?? "")} onChange={(v) => update("price_agencia", v ? Number(v) : null)} />
           </div>
-          <Input label="% Comisión por defecto" type="number" value={String(form.commission_default_pct ?? "")} onChange={(v) => update("commission_default_pct", v ? Number(v) : null)} />
+          <Input label={t('fix.apm.labelDefaultCommission')} type="number" value={String(form.commission_default_pct ?? "")} onChange={(v) => update("commission_default_pct", v ? Number(v) : null)} />
           <div className="grid grid-cols-2 gap-2">
-            <Input label="Hab" type="number" value={String(form.bedrooms ?? "")} onChange={(v) => update("bedrooms", v ? Number(v) : null)} />
-            <Input label="Baños" type="number" value={String(form.bathrooms ?? "")} onChange={(v) => update("bathrooms", v ? Number(v) : null)} />
+            <Input label={t('fix.apm.labelBedrooms')} type="number" value={String(form.bedrooms ?? "")} onChange={(v) => update("bedrooms", v ? Number(v) : null)} />
+            <Input label={t('fix.apm.labelBathrooms')} type="number" value={String(form.bathrooms ?? "")} onChange={(v) => update("bathrooms", v ? Number(v) : null)} />
           </div>
           <div className="flex gap-3">
-            <Toggle label="Disponible" value={form.available} onChange={(v) => update("available", v)} />
-            <Toggle label="Reservada" value={form.reserved} onChange={(v) => update("reserved", v)} />
-            <Toggle label="Vendida" value={form.sold} onChange={(v) => update("sold", v)} />
+            <Toggle label={t('fix.apm.toggleAvailable')} value={form.available} onChange={(v) => update("available", v)} />
+            <Toggle label={t('fix.apm.toggleReserved')} value={form.reserved} onChange={(v) => update("reserved", v)} />
+            <Toggle label={t('fix.apm.toggleSold')} value={form.sold} onChange={(v) => update("sold", v)} />
           </div>
         </div>
         <div className="flex gap-2 mt-6">
-          <button onClick={() => void onSave(form, isNew)} className="flex-1 bg-primary text-white py-2 rounded-lg">Guardar</button>
-          <button onClick={onCancel} className="flex-1 bg-white border border-primary/30 text-primary py-2 rounded-lg">Cancelar</button>
+          <button onClick={() => void onSave(form, isNew)} className="flex-1 bg-primary text-white py-2 rounded-lg">{t('fix.apm.save')}</button>
+          <button onClick={onCancel} className="flex-1 bg-white border border-primary/30 text-primary py-2 rounded-lg">{t('fix.apm.cancel')}</button>
         </div>
       </div>
     </div>
@@ -630,22 +633,23 @@ export function PartnersTab({
   onAssign: (p: Partner) => Promise<void>;
   onChange: () => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const propertyName = (id: string) => properties.find((p) => p.id === id)?.name ?? id.slice(0, 8);
 
   return (
     <div className="space-y-3">
-      {data.length === 0 && <p className="text-primary/60">No hay agencias activas todavía.</p>}
+      {data.length === 0 && <p className="text-primary/60">{t('fix.apm.noActiveAgencies')}</p>}
       {data.map((p) => (
         <article key={p.id} className="bg-white/60 rounded-xl p-4 flex items-start justify-between gap-4">
           <div>
             <h3 className="font-serif text-lg text-primary">{p.agency_name}</h3>
             <p className="text-xs text-primary/60">{p.email} · status: {p.status}</p>
             <p className="text-xs mt-2">
-              Proyectos: {p.projects_assigned?.length ? p.projects_assigned.map(propertyName).join(", ") : "—"}
+              {t('fix.apm.projectsLabel')} {p.projects_assigned?.length ? p.projects_assigned.map(propertyName).join(", ") : "—"}
             </p>
           </div>
           <button onClick={() => void onAssign(p)} className="text-xs bg-primary text-white px-3 py-2 rounded-full">
-            Asignar proyectos
+            {t('fix.apm.assignProjects')}
           </button>
         </article>
       ))}
@@ -670,24 +674,24 @@ export function ApplicationsTab({
     <div className="space-y-6">
       <section>
         <h3 className="font-serif text-xl mb-3">{t('admin.portal.pendingCount', { count: pending.length })}</h3>
-        {pending.length === 0 && <p className="text-primary/60">No hay solicitudes pendientes.</p>}
+        {pending.length === 0 && <p className="text-primary/60">{t('fix.apm.noPendingRequests')}</p>}
         {pending.map((a) => (
           <article key={a.id} className="bg-white/60 rounded-xl p-4 mb-3">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h4 className="font-serif text-lg text-primary">{a.agency_name}</h4>
                 <p className="text-xs text-primary/60">
-                  {a.email} · {a.country ?? "país?"} · vol: {a.monthly_volume ?? "—"}
+                  {a.email} · {a.country ?? t('fix.apm.countryUnknown')} · {t('fix.apm.volLabel')} {a.monthly_volume ?? "—"}
                 </p>
-                {a.manager_name && <p className="text-sm">Manager: {a.manager_name}</p>}
+                {a.manager_name && <p className="text-sm">{t('fix.apm.managerLabel')} {a.manager_name}</p>}
                 {a.projects_interested?.length ? (
-                  <p className="text-sm mt-2">Interesado en: {a.projects_interested.join(", ")}</p>
+                  <p className="text-sm mt-2">{t('fix.apm.interestedInLabel')} {a.projects_interested.join(", ")}</p>
                 ) : null}
                 {a.notes && <p className="text-sm text-primary/60 mt-2 italic">{a.notes}</p>}
               </div>
               <div className="flex flex-col gap-2 shrink-0">
-                <button onClick={() => void onApprove(a)} className="text-xs bg-green-600 text-white px-3 py-2 rounded-full">Aprobar</button>
-                <button onClick={() => void onReject(a)} className="text-xs bg-red-600 text-white px-3 py-2 rounded-full">Rechazar</button>
+                <button onClick={() => void onApprove(a)} className="text-xs bg-green-600 text-white px-3 py-2 rounded-full">{t('fix.apm.approve')}</button>
+                <button onClick={() => void onReject(a)} className="text-xs bg-red-600 text-white px-3 py-2 rounded-full">{t('fix.apm.reject')}</button>
               </div>
             </div>
           </article>
@@ -743,6 +747,7 @@ function Toggle({ label, value, onChange }: { label: string; value: boolean; onC
 // ─── FAQ admin ────────────────────────────────────────────────────────────
 
 export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promise<void> }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState<Faq | null>(null);
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -761,7 +766,7 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
   };
 
   const remove = async (f: Faq) => {
-    if (!confirm(`¿Borrar FAQ "${f.question.slice(0, 50)}…"?`)) return;
+    if (!confirm(t('fix.apm.confirmDeleteFaq', { question: f.question.slice(0, 50) }))) return;
     await supabase.from("faqs").delete().eq("id", f.id);
     await onChange();
   };
@@ -771,27 +776,27 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
       <div className="flex flex-wrap items-center gap-3 justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <select
-            aria-label="Estado"
+            aria-label={t('fix.apm.ariaStatus')}
             value={filter}
             onChange={(e) => setFilter(e.target.value as "all" | "published" | "draft")}
             className="rounded-lg border border-primary/20 px-3 py-1.5 text-sm bg-white"
           >
-            <option value="all">Todos los estados</option>
-            <option value="published">Publicadas</option>
-            <option value="draft">Borradores</option>
+            <option value="all">{t('fix.apm.allStatuses')}</option>
+            <option value="published">{t('fix.apm.published')}</option>
+            <option value="draft">{t('fix.apm.drafts')}</option>
           </select>
           <select
-            aria-label="Categoría"
+            aria-label={t('fix.apm.ariaCategory')}
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="rounded-lg border border-primary/20 px-3 py-1.5 text-sm bg-white"
           >
-            <option value="all">Todas las categorías</option>
+            <option value="all">{t('fix.apm.allCategories')}</option>
             {FAQ_CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <span className="text-xs text-primary/50">{filtered.length} de {data.length}</span>
+          <span className="text-xs text-primary/50">{t('fix.apm.filteredCount', { shown: filtered.length, total: data.length })}</span>
         </div>
         <button
           onClick={() => setEditing({
@@ -802,7 +807,7 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
           })}
           className="bg-primary text-white px-4 py-2 rounded-full text-sm font-bold"
         >
-          + Nueva FAQ
+          {t('fix.apm.newFaqBtn')}
         </button>
       </div>
 
@@ -810,12 +815,12 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
         <table className="w-full text-sm">
           <thead className="bg-almond text-left text-[11px] uppercase tracking-widest text-primary/60">
             <tr>
-              <th className="p-3 w-16">Estado</th>
-              <th className="p-3">Pregunta</th>
-              <th className="p-3 w-28">Categoría</th>
-              <th className="p-3 w-16">Lang</th>
-              <th className="p-3 w-20">Orden</th>
-              <th className="p-3 w-44">Acciones</th>
+              <th className="p-3 w-16">{t('fix.apm.colState')}</th>
+              <th className="p-3">{t('fix.apm.colQuestion')}</th>
+              <th className="p-3 w-28">{t('fix.apm.colCategory')}</th>
+              <th className="p-3 w-16">{t('fix.apm.colLang')}</th>
+              <th className="p-3 w-20">{t('fix.apm.colOrder')}</th>
+              <th className="p-3 w-44">{t('fix.apm.colActions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -825,7 +830,7 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
                   <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${
                     f.is_published ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
                   }`}>
-                    {f.is_published ? "live" : "draft"}
+                    {f.is_published ? t('fix.apm.badgeLive') : t('fix.apm.badgeDraft')}
                   </span>
                 </td>
                 <td className="p-3 max-w-md">
@@ -841,19 +846,19 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
                       onClick={() => setEditing(f)}
                       className="text-[10px] bg-white border border-primary/20 text-primary px-2 py-1 rounded-full"
                     >
-                      Editar
+                      {t('fix.apm.edit')}
                     </button>
                     <button
                       onClick={() => void togglePublish(f)}
                       className="text-[10px] bg-primary text-white px-2 py-1 rounded-full"
                     >
-                      {f.is_published ? "Despublicar" : "Publicar"}
+                      {f.is_published ? t('fix.apm.unpublish') : t('fix.apm.publish')}
                     </button>
                     <button
                       onClick={() => void remove(f)}
                       className="text-[10px] bg-red-50 text-red-700 border border-red-200 px-2 py-1 rounded-full"
                     >
-                      Borrar
+                      {t('fix.apm.delete')}
                     </button>
                   </div>
                 </td>
@@ -862,7 +867,7 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
             {filtered.length === 0 && (
               <tr>
                 <td colSpan={6} className="p-6 text-center text-primary/50">
-                  Sin FAQs en este filtro.
+                  {t('fix.apm.noFaqsInFilter')}
                 </td>
               </tr>
             )}
@@ -892,7 +897,7 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
 
   const save = async () => {
     if (!form.question.trim() || !form.answer.trim()) {
-      setErr("Pregunta y respuesta son obligatorias");
+      setErr(t('fix.apm.questionAnswerRequired'));
       return;
     }
     setSaving(true);
@@ -942,13 +947,13 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
 
         <div className="space-y-4">
           <Input
-            label="Pregunta *"
+            label={t('fix.apm.labelQuestion')}
             value={form.question}
             onChange={(v) => setForm({ ...form, question: v })}
           />
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">Respuesta * (markdown — **negrita**, listas con -)</span>
+            <span className="text-sm font-medium text-primary">{t('fix.apm.labelAnswer')}</span>
             <textarea
               value={form.answer}
               onChange={(e) => setForm({ ...form, answer: e.target.value })}
@@ -959,7 +964,7 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <label className="block">
-              <span className="text-sm font-medium text-primary">Categoría</span>
+              <span className="text-sm font-medium text-primary">{t('fix.apm.labelCategory')}</span>
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -969,7 +974,7 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
               </select>
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-primary">Idioma</span>
+              <span className="text-sm font-medium text-primary">{t('fix.apm.labelLanguage')}</span>
               <select
                 value={form.language}
                 onChange={(e) => setForm({ ...form, language: e.target.value })}
@@ -981,7 +986,7 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
               </select>
             </label>
             <Input
-              label="Orden"
+              label={t('fix.apm.labelOrder')}
               type="number"
               value={String(form.sort_order)}
               onChange={(v) => setForm({ ...form, sort_order: Number(v) || 100 })}
@@ -992,17 +997,17 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
                 checked={form.is_published}
                 onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
               />
-              <span className="text-sm">Publicada</span>
+              <span className="text-sm">{t('fix.apm.publishedCheckbox')}</span>
             </label>
           </div>
 
           <Input
-            label="Tags (coma)"
+            label={t('fix.apm.labelTags')}
             value={(form.tags ?? []).join(", ")}
             onChange={(v) => setForm({ ...form, tags: v.split(",").map((t) => t.trim()).filter(Boolean) })}
           />
           <Input
-            label="Project filter (slugs separados por coma; vacío = todos)"
+            label={t('fix.apm.labelProjectFilter')}
             value={(form.project_filter ?? []).join(", ")}
             onChange={(v) => setForm({ ...form, project_filter: v.split(",").map((t) => t.trim()).filter(Boolean) })}
           />
@@ -1011,14 +1016,14 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
 
           <div className="flex justify-end gap-2 pt-3 border-t border-primary/5">
             <button onClick={onClose} className="px-4 py-2 rounded-full text-primary border border-primary/20">
-              Cancelar
+              {t('fix.apm.cancel')}
             </button>
             <button
               onClick={() => void save()}
               disabled={saving}
               className="bg-primary text-white px-6 py-2 rounded-full font-bold disabled:opacity-50"
             >
-              {saving ? "Guardando…" : form.id ? "Guardar" : "Crear"}
+              {saving ? t('fix.apm.saving') : form.id ? t('fix.apm.save') : t('fix.apm.create')}
             </button>
           </div>
         </div>
@@ -1030,23 +1035,24 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
 // ─── Timelines admin ──────────────────────────────────────────────────────
 
 export function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange: () => Promise<void> }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState<ProjectRow | null>(null);
 
   return (
     <div className="space-y-4">
       <p className="text-xs text-primary/60">
-        Cada proyecto del catálogo público (`projects`) puede tener un timeline visible en su ficha. Edítalo aquí; los cambios salen en `/proyecto/&lt;slug&gt;` al instante.
+        {t('fix.apm.timelinesIntro')}
       </p>
 
       <div className="bg-white rounded-xl overflow-hidden border border-primary/5">
         <table className="w-full text-sm">
           <thead className="bg-almond text-left text-[11px] uppercase tracking-widest text-primary/60">
             <tr>
-              <th className="p-3">Proyecto</th>
-              <th className="p-3 w-28">Status</th>
-              <th className="p-3 w-24">% Obra</th>
-              <th className="p-3 w-24">Fases</th>
-              <th className="p-3 w-44">Acciones</th>
+              <th className="p-3">{t('fix.apm.colProject')}</th>
+              <th className="p-3 w-28">{t('fix.apm.colStatus')}</th>
+              <th className="p-3 w-24">{t('fix.apm.colPctWork')}</th>
+              <th className="p-3 w-24">{t('fix.apm.colPhases')}</th>
+              <th className="p-3 w-44">{t('fix.apm.colActions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -1064,7 +1070,7 @@ export function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange:
                     <span className={`inline-block px-2 py-1 rounded-full text-[10px] font-bold ${
                       phaseCount > 0 ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"
                     }`}>
-                      {phaseCount > 0 ? `${phaseCount} fases` : "sin timeline"}
+                      {phaseCount > 0 ? t('fix.apm.phasesCount', { count: phaseCount }) : t('fix.apm.noTimeline')}
                     </span>
                   </td>
                   <td className="p-3">
@@ -1072,14 +1078,14 @@ export function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange:
                       onClick={() => setEditing(p)}
                       className="text-[10px] bg-primary text-white px-3 py-1.5 rounded-full"
                     >
-                      {phaseCount > 0 ? "Editar" : "Crear timeline"}
+                      {phaseCount > 0 ? t('fix.apm.edit') : t('fix.apm.createTimeline')}
                     </button>
                   </td>
                 </tr>
               );
             })}
             {data.length === 0 && (
-              <tr><td colSpan={5} className="p-6 text-center text-primary/50">Sin proyectos en el catálogo.</td></tr>
+              <tr><td colSpan={5} className="p-6 text-center text-primary/50">{t('fix.apm.noProjectsInCatalog')}</td></tr>
             )}
           </tbody>
         </table>
@@ -1152,7 +1158,7 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
   };
 
   const clearAll = async () => {
-    if (!confirm(`¿Borrar el timeline completo de "${project.name}"?`)) return;
+    if (!confirm(t('fix.apm.confirmClearTimeline', { name: project.name }))) return;
     setSaving(true);
     try {
       await supabase.from("projects").update({ timeline: null }).eq("id", project.id);
@@ -1173,7 +1179,7 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
           <button onClick={onClose} className="text-primary/40 hover:text-primary text-xl">✕</button>
         </div>
         <p className="text-xs text-primary/60 mb-4">
-          Cada fase: título obligatorio, fecha opcional (formato `YYYY-MM` o `YYYY-MM-DD`), % pago y descripción. El status (done/in_progress/pending) se autoderiva del % de obra del proyecto.
+          {t('fix.apm.timelineEditorHelp')}
         </p>
 
         <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
@@ -1181,21 +1187,21 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
             <div key={i} className="border border-primary/10 rounded-xl p-4 bg-almond/30">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-bold uppercase tracking-widest text-primary/60">
-                  Fase {i + 1}
+                  {t('fix.apm.phaseN', { n: i + 1 })}
                 </span>
                 <div className="flex gap-1">
                   <button onClick={() => movePhase(i, -1)} disabled={i === 0} className="text-xs px-2 py-1 rounded bg-white border border-primary/10 disabled:opacity-30">↑</button>
                   <button onClick={() => movePhase(i, 1)} disabled={i === phases.length - 1} className="text-xs px-2 py-1 rounded bg-white border border-primary/10 disabled:opacity-30">↓</button>
-                  <button onClick={() => removePhase(i)} className="text-xs px-2 py-1 rounded bg-red-50 text-red-700 border border-red-200">Borrar</button>
+                  <button onClick={() => removePhase(i)} className="text-xs px-2 py-1 rounded bg-red-50 text-red-700 border border-red-200">{t('fix.apm.delete')}</button>
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
-                <Input label="Título *" value={p.title} onChange={(v) => updatePhase(i, { title: v })} />
-                <Input label="Fecha (YYYY-MM)" value={p.date ?? ""} onChange={(v) => updatePhase(i, { date: v })} />
-                <Input label="% pago" type="number" value={String(p.payment_pct ?? "")} onChange={(v) => updatePhase(i, { payment_pct: v ? Number(v) : 0 })} />
+                <Input label={t('fix.apm.labelTitle')} value={p.title} onChange={(v) => updatePhase(i, { title: v })} />
+                <Input label={t('fix.apm.labelDate')} value={p.date ?? ""} onChange={(v) => updatePhase(i, { date: v })} />
+                <Input label={t('fix.apm.labelPaymentPct')} type="number" value={String(p.payment_pct ?? "")} onChange={(v) => updatePhase(i, { payment_pct: v ? Number(v) : 0 })} />
               </div>
               <label className="block">
-                <span className="text-sm font-medium text-primary">Descripción</span>
+                <span className="text-sm font-medium text-primary">{t('fix.apm.labelDescription')}</span>
                 <textarea
                   value={p.description ?? ""}
                   onChange={(e) => updatePhase(i, { description: e.target.value })}
@@ -1209,10 +1215,10 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
 
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-primary/5">
           <button onClick={addPhase} className="text-sm bg-white border border-primary/20 text-primary px-4 py-2 rounded-full">
-            + Añadir fase
+            {t('fix.apm.addPhase')}
           </button>
           <span className={`text-xs font-bold ${totalPct === 100 ? "text-green-700" : "text-amber-700"}`}>
-            Total pagos: {totalPct}% {totalPct === 100 ? "✓" : "(debería sumar 100%)"}
+            {t('fix.apm.totalPayments', { pct: totalPct })} {totalPct === 100 ? "✓" : t('fix.apm.shouldSum100')}
           </span>
         </div>
 
@@ -1220,12 +1226,12 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
 
         <div className="flex justify-between gap-2 pt-4 mt-4 border-t border-primary/5">
           <button onClick={() => void clearAll()} className="text-xs text-red-700 hover:underline">
-            Borrar timeline completo
+            {t('fix.apm.clearFullTimeline')}
           </button>
           <div className="flex gap-2">
-            <button onClick={onClose} className="px-4 py-2 rounded-full text-primary border border-primary/20 text-sm">Cancelar</button>
+            <button onClick={onClose} className="px-4 py-2 rounded-full text-primary border border-primary/20 text-sm">{t('fix.apm.cancel')}</button>
             <button onClick={() => void save()} disabled={saving} className="bg-primary text-white px-6 py-2 rounded-full font-bold text-sm disabled:opacity-50">
-              {saving ? "Guardando…" : "Guardar"}
+              {saving ? t('fix.apm.saving') : t('fix.apm.save')}
             </button>
           </div>
         </div>
@@ -1319,13 +1325,13 @@ function EquipoTab() {
     await reload();
   };
   const removeVacation = async (id: string) => {
-    if (!confirm("¿Eliminar esta solicitud de vacaciones?")) return;
+    if (!confirm(t('fix.apm.confirmRemoveVacation'))) return;
     await supabase.from("employee_vacations").delete().eq("id", id);
     await reload();
   };
 
   if (loading) {
-    return <div className="text-sm text-primary/60">Cargando equipo…</div>;
+    return <div className="text-sm text-primary/60">{t('fix.apm.loadingTeam')}</div>;
   }
 
   const year = new Date().getFullYear();
@@ -1335,15 +1341,15 @@ function EquipoTab() {
     <div className="space-y-8">
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white rounded-xl p-5 border border-primary/5">
-          <p className="text-xs uppercase tracking-widest text-primary/50">Empleados activos</p>
+          <p className="text-xs uppercase tracking-widest text-primary/50">{t('fix.apm.activeEmployees')}</p>
           <p className="text-3xl font-serif text-primary mt-1">{activeCount}</p>
         </div>
         <div className="bg-white rounded-xl p-5 border border-primary/5">
-          <p className="text-xs uppercase tracking-widest text-primary/50">Fuera hoy</p>
+          <p className="text-xs uppercase tracking-widest text-primary/50">{t('fix.apm.outToday')}</p>
           <p className="text-3xl font-serif text-primary mt-1">{onLeaveNow.length}</p>
         </div>
         <div className="bg-white rounded-xl p-5 border border-primary/5">
-          <p className="text-xs uppercase tracking-widest text-primary/50">Pendientes de aprobar</p>
+          <p className="text-xs uppercase tracking-widest text-primary/50">{t('fix.apm.pendingApproval')}</p>
           <p className={`text-3xl font-serif mt-1 ${pending.length > 0 ? "text-amber-600" : "text-primary"}`}>
             {pending.length}
           </p>
@@ -1352,9 +1358,9 @@ function EquipoTab() {
 
       {/* Solicitudes pendientes de aprobación */}
       <section className="bg-white rounded-xl border border-primary/5 p-5">
-        <h3 className="font-bold text-primary mb-4">Solicitudes de vacaciones pendientes</h3>
+        <h3 className="font-bold text-primary mb-4">{t('fix.apm.pendingVacationRequests')}</h3>
         {pending.length === 0 ? (
-          <p className="text-sm text-primary/50">No hay solicitudes pendientes.</p>
+          <p className="text-sm text-primary/50">{t('fix.apm.noPendingRequests')}</p>
         ) : (
           <ul className="space-y-3">
             {pending.map((v) => (
@@ -1374,13 +1380,13 @@ function EquipoTab() {
                     onClick={() => void setStatus(v.id, "aprobada")}
                     className="text-xs bg-green-600 text-white px-3 py-2 rounded-full font-bold"
                   >
-                    Aprobar
+                    {t('fix.apm.approve')}
                   </button>
                   <button
                     onClick={() => void setStatus(v.id, "rechazada")}
                     className="text-xs bg-red-600 text-white px-3 py-2 rounded-full font-bold"
                   >
-                    Rechazar
+                    {t('fix.apm.reject')}
                   </button>
                 </div>
               </li>
@@ -1395,7 +1401,7 @@ function EquipoTab() {
           <ul className="text-sm text-amber-900 space-y-1">
             {onLeaveNow.map((v) => (
               <li key={v.id}>
-                <b>{vacName(v)}</b> · vuelve el {v.end_date}
+                <b>{vacName(v)}</b> · {t('fix.apm.returnsOn')} {v.end_date}
                 {v.note && <span className="text-amber-700"> · {v.note}</span>}
               </li>
             ))}
@@ -1408,18 +1414,18 @@ function EquipoTab() {
         <div className="flex justify-between items-center px-5 py-4 border-b border-primary/5">
           <h3 className="font-bold text-primary">{t('admin.portal.team')}</h3>
           <Link to="/admin" className="text-xs bg-primary/5 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-full font-bold">
-            Editar perfiles y permisos →
+            {t('fix.apm.editProfilesPermissions')}
           </Link>
         </div>
         <table className="w-full text-sm">
           <thead className="text-xs uppercase tracking-widest text-primary/50">
             <tr>
-              <th className="text-left p-3">Nombre</th>
-              <th className="text-left p-3">Email</th>
-              <th className="text-left p-3">Oficina</th>
-              <th className="text-left p-3">Reportes obra</th>
-              <th className="text-left p-3">Edita fichas</th>
-              <th className="text-left p-3">Activo</th>
+              <th className="text-left p-3">{t('fix.apm.colName')}</th>
+              <th className="text-left p-3">{t('fix.apm.colEmail')}</th>
+              <th className="text-left p-3">{t('fix.apm.colOffice')}</th>
+              <th className="text-left p-3">{t('fix.apm.colWorkReports')}</th>
+              <th className="text-left p-3">{t('fix.apm.colEditsListings')}</th>
+              <th className="text-left p-3">{t('fix.apm.colActive')}</th>
             </tr>
           </thead>
           <tbody>
@@ -1432,13 +1438,13 @@ function EquipoTab() {
                 <td className="p-3">{hasPermission(e, "edit_properties") ? "✅" : "—"}</td>
                 <td className="p-3">
                   <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${e.active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"}`}>
-                    {e.active ? "activo" : "inactivo"}
+                    {e.active ? t('fix.apm.badgeActive') : t('fix.apm.badgeInactive')}
                   </span>
                 </td>
               </tr>
             ))}
             {employees.length === 0 && (
-              <tr><td colSpan={6} className="p-6 text-center text-primary/50">Sin empleados en el roster.</td></tr>
+              <tr><td colSpan={6} className="p-6 text-center text-primary/50">{t('fix.apm.noEmployeesInRoster')}</td></tr>
             )}
           </tbody>
         </table>
@@ -1448,7 +1454,7 @@ function EquipoTab() {
       <section className="bg-white rounded-xl border border-primary/5 p-5">
         <h3 className="font-bold text-primary mb-4">{t('admin.portal.upcomingVacations')}</h3>
         {upcoming.length === 0 ? (
-          <p className="text-sm text-primary/50">Nadie tiene vacaciones aprobadas próximamente.</p>
+          <p className="text-sm text-primary/50">{t('fix.apm.noUpcomingVacations')}</p>
         ) : (
           <ul className="text-sm space-y-2">
             {upcoming.slice(0, 30).map((v) => (
@@ -1461,7 +1467,7 @@ function EquipoTab() {
                   onClick={() => void removeVacation(v.id)}
                   className="text-xs text-red-600 underline"
                 >
-                  Eliminar
+                  {t('fix.apm.remove')}
                 </button>
               </li>
             ))}

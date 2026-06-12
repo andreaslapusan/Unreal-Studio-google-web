@@ -115,19 +115,19 @@ const Navbar: React.FC = () => {
               onClick={() => setSettingsOpen(!settingsOpen)}
               onBlur={() => setTimeout(() => setSettingsOpen(false), 150)}
               className="w-9 h-9 flex items-center justify-center rounded-full bg-white/60 hover:bg-white border border-primary/10 text-primary transition"
-              title="Idioma y divisa"
-              aria-label="Idioma y divisa"
+              title={t('fix.nav.languageAndCurrency')}
+              aria-label={t('fix.nav.languageAndCurrency')}
             >
               <span className="material-symbols-outlined text-[20px]">language</span>
             </button>
             {settingsOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-white border border-primary/10 rounded-xl shadow-2xl py-3 px-3 z-50 space-y-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 font-black mb-2">Idioma</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 font-black mb-2">{t('fix.nav.language')}</p>
                   <LanguageSwitcher />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 font-black mb-2">Divisa</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 font-black mb-2">{t('fix.nav.currency')}</p>
                   <select
                     value={currency}
                     onMouseDown={(e) => e.stopPropagation()}

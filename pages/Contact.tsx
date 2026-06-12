@@ -127,14 +127,14 @@ const Contact: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">Email *</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('fix.contact.emailLabelRequired')}</label>
                       <input
                         type="email"
                         name="email"
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="tu@email.com"
+                        placeholder={t('fix.contact.emailPlaceholder')}
                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
                       />
                     </div>
@@ -148,7 +148,7 @@ const Contact: React.FC = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        placeholder="+34 625 710 770"
+                        placeholder={t('fix.contact.phonePlaceholder')}
                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
                       />
                     </div>
@@ -263,7 +263,7 @@ const Contact: React.FC = () => {
             <div className="bg-white p-8 rounded-[2.5rem] shadow-lg border border-primary/5 flex flex-col">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h4 className="font-bold text-xl text-primary">Madrid, España</h4>
+                  <h4 className="font-bold text-xl text-primary">{t('fix.contact.madridCity')}</h4>
                   <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">{t('contact.hqLabel')}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm">
@@ -271,7 +271,7 @@ const Contact: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-500 font-light mb-6 leading-relaxed">
-                C. de San Nicolás, 17, Centro<br />28013 Madrid, España
+{t('fix.contact.madridAddressLine1')}<br />{t('fix.contact.madridAddressLine2')}
               </p>
               <a 
                 className="inline-flex items-center text-[10px] font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition w-fit" 
@@ -287,7 +287,7 @@ const Contact: React.FC = () => {
             <div className="bg-white p-8 rounded-[2.5rem] shadow-lg border border-primary/5 flex flex-col">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h4 className="font-bold text-xl text-primary">Bali, Indonesia</h4>
+                  <h4 className="font-bold text-xl text-primary">{t('fix.contact.baliCity')}</h4>
                   <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">{t('contact.asiaLabel')}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm">
@@ -295,7 +295,7 @@ const Contact: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-500 font-light mb-6 leading-relaxed">
-                Jl. Pratu Rai Madra No.15, Cemagi, Kec. Mengwi<br />Kabupaten Badung, Bali, Indonesia
+{t('fix.contact.baliAddressLine1')}<br />{t('fix.contact.baliAddressLine2')}
               </p>
               <a 
                 className="inline-flex items-center text-[10px] font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition w-fit" 

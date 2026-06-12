@@ -195,7 +195,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       });
       if (err) throw err;
       if (!data?.success) {
-        setError(data?.error === 'no_account' ? `No existe una cuenta de ${PORTAL_LABEL[portal]} con ese email.` : t('auth.genericError'));
+        setError(data?.error === 'no_account' ? t('fix.login.noAccountForEmail', { portal: PORTAL_LABEL[portal] }) : t('auth.genericError'));
       } else setInfo(t('auth.magicSent'));
     } catch {
       setError(t('auth.genericError'));
@@ -221,7 +221,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       });
       if (err) throw err;
       if (!data?.success) {
-        setError(data?.error === 'no_account' ? `No existe una cuenta de ${PORTAL_LABEL[portal]} con ese email.` : t('auth.genericError'));
+        setError(data?.error === 'no_account' ? t('fix.login.noAccountForEmail', { portal: PORTAL_LABEL[portal] }) : t('auth.genericError'));
       } else setInfo(t('auth.recoverSent'));
     } catch {
       setError(t('auth.genericError'));

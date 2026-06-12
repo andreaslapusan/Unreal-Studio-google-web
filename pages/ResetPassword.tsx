@@ -6,6 +6,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 
 function extractTokens(href: string): { access_token: string; refresh_token: string } | null {
@@ -19,6 +20,7 @@ function extractTokens(href: string): { access_token: string; refresh_token: str
 }
 
 const ResetPassword: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const [fatal, setFatal] = useState('');
@@ -33,13 +35,13 @@ const ResetPassword: React.FC = () => {
     const tokens = extractTokens(window.location.href);
     if (tokens) {
       void supabase.auth.setSession(tokens).then(({ error }) => {
-        if (error) setFatal('El enlace ha expirado o ya se usó.');
+        if (error) setFatal(t('fix.rp.linkExpired'));
         else { setReady(true); window.history.replaceState({}, '', window.location.pathname); }
-      }).catch(() => setFatal('El enlace ha expirado o ya se usó.'));
+      }).catch(() => setFatal(t('fix.rp.linkExpired')));
     } else {
       void supabase.auth.getSession().then(({ data }) => {
         if (data.session) setReady(true);
-        else setFatal('Enlace no válido. Solicita uno nuevo desde la pantalla de acceso.');
+        else setFatal(t('fix.rp.linkInvalid'));
       });
     }
   }, []);
@@ -47,12 +49,12 @@ const ResetPassword: React.FC = () => {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr('');
-    if (pw.length < 8) { setErr('La contraseña debe tener al menos 8 caracteres.'); return; }
-    if (pw !== pw2) { setErr('Las contraseñas no coinciden.'); return; }
+    if (pw.length < 8) { setErr(t('fix.rp.errMinLength')); return; }
+    if (pw !== pw2) { setErr(t('fix.rp.errMismatch')); return; }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
     setBusy(false);
-    if (error) { setErr('No se pudo actualizar. El enlace puede haber caducado; pide uno nuevo.'); return; }
+    if (error) { setErr(t('fix.rp.errUpdateFailed')); return; }
     setDone(true);
     setTimeout(() => navigate('/cliente', { replace: true }), 2600);
   };
@@ -62,29 +64,29 @@ const ResetPassword: React.FC = () => {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-sm p-8 md:p-10">
         <div className="text-center mb-6">
           <span className="font-serif text-3xl font-bold text-primary tracking-tight">Unreal Studio</span>
-          <p className="brand-lema text-primary/50 text-sm mt-1">Beyond the Ordinary, Inside the Unreal</p>
+          <p className="brand-lema text-primary/50 text-sm mt-1">{t('fix.rp.tagline')}</p>
         </div>
 
         {fatal ? (
           <div className="text-center">
-            <h1 className="text-xl font-serif text-primary mb-3">Algo no va bien</h1>
+            <h1 className="text-xl font-serif text-primary mb-3">{t('fix.rp.somethingWrong')}</h1>
             <p className="text-sm text-red-700 mb-5">{fatal}</p>
-            <a href="/cliente" className="inline-block bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition">Volver al acceso</a>
+            <a href="/cliente" className="inline-block bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition">{t('fix.rp.backToLogin')}</a>
           </div>
         ) : done ? (
           <div className="text-center">
             <span className="material-symbols-outlined text-green-600 text-5xl mb-2">check_circle</span>
-            <h1 className="text-xl font-serif text-primary mb-2">Contraseña actualizada</h1>
-            <p className="text-sm text-primary/60">Te llevamos a tu portal…</p>
+            <h1 className="text-xl font-serif text-primary mb-2">{t('fix.rp.passwordUpdated')}</h1>
+            <p className="text-sm text-primary/60">{t('fix.rp.redirecting')}</p>
           </div>
         ) : !ready ? (
-          <p className="text-center text-sm text-primary/50 py-6">Validando tu enlace…</p>
+          <p className="text-center text-sm text-primary/50 py-6">{t('fix.rp.validatingLink')}</p>
         ) : (
           <form onSubmit={submit}>
-            <h1 className="text-2xl font-serif text-primary mb-1 text-center">Nueva contraseña</h1>
-            <p className="text-sm text-primary/50 mb-6 text-center">Elige una contraseña nueva para tu cuenta.</p>
+            <h1 className="text-2xl font-serif text-primary mb-1 text-center">{t('fix.rp.newPasswordTitle')}</h1>
+            <p className="text-sm text-primary/50 mb-6 text-center">{t('fix.rp.newPasswordSubtitle')}</p>
 
-            <label className="block text-[11px] font-black uppercase tracking-widest text-primary/50 mb-1">Contraseña</label>
+            <label className="block text-[11px] font-black uppercase tracking-widest text-primary/50 mb-1">{t('fix.rp.labelPassword')}</label>
             <div className="relative mb-3">
               <input
                 type={show ? 'text' : 'password'}
@@ -92,27 +94,27 @@ const ResetPassword: React.FC = () => {
                 onChange={(e) => setPw(e.target.value)}
                 autoComplete="new-password"
                 className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary outline-none focus:border-primary/40"
-                placeholder="Mínimo 8 caracteres"
+                placeholder={t('fix.rp.placeholderMin8')}
               />
               <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary">
                 <span className="material-symbols-outlined text-lg">{show ? 'visibility_off' : 'visibility'}</span>
               </button>
             </div>
 
-            <label className="block text-[11px] font-black uppercase tracking-widest text-primary/50 mb-1">Repetir contraseña</label>
+            <label className="block text-[11px] font-black uppercase tracking-widest text-primary/50 mb-1">{t('fix.rp.labelRepeatPassword')}</label>
             <input
               type={show ? 'text' : 'password'}
               value={pw2}
               onChange={(e) => setPw2(e.target.value)}
               autoComplete="new-password"
               className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary outline-none focus:border-primary/40 mb-4"
-              placeholder="Repite la contraseña"
+              placeholder={t('fix.rp.placeholderRepeat')}
             />
 
             {err && <p className="text-sm text-red-700 mb-3">{err}</p>}
 
             <button type="submit" disabled={busy} className="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50">
-              {busy ? 'Guardando…' : 'Guardar contraseña'}
+              {busy ? t('fix.rp.saving') : t('fix.rp.saveButton')}
             </button>
           </form>
         )}

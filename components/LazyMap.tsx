@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface LazyMapProps {
   embedUrl: string;
@@ -12,6 +13,7 @@ interface LazyMapProps {
 // experience identical (the map is ready by the time the user scrolls
 // to it) without the upfront cost.
 const LazyMap: React.FC<LazyMapProps> = ({ embedUrl, className }) => {
+  const { t } = useTranslation();
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [shouldMount, setShouldMount] = useState(false);
 
@@ -51,7 +53,7 @@ const LazyMap: React.FC<LazyMapProps> = ({ embedUrl, className }) => {
           allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          title="Ubicación del proyecto"
+          title={t('fix.map.iframeTitle')}
         />
       )}
     </div>

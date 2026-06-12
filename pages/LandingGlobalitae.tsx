@@ -1,9 +1,11 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Project } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 
 const LandingGlobalitae: React.FC = () => {
+  const { t } = useTranslation();
   const [project, setProject] = useState<Project | null>(null);
   const { formatPrice } = useCurrency();
   const [loading, setLoading] = useState(true);
@@ -165,7 +167,7 @@ const LandingGlobalitae: React.FC = () => {
       return (
           <div className="min-h-screen bg-[#f5f0eb] flex flex-col items-center justify-center space-y-4">
               <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">Cargando proyecto...</p>
+              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('fix.lg.loadingProject')}</p>
           </div>
       );
   }
@@ -173,8 +175,8 @@ const LandingGlobalitae: React.FC = () => {
   if (!project) {
       return (
           <div className="min-h-screen bg-[#f5f0eb] flex flex-col items-center justify-center text-center px-6">
-              <h1 className="text-6xl font-serif text-primary mb-4">Proyecto no encontrado</h1>
-              <p className="text-xl text-primary/70">El proyecto que buscas no está disponible actualmente.</p>
+              <h1 className="text-6xl font-serif text-primary mb-4">{t('fix.lg.projectNotFound')}</h1>
+              <p className="text-xl text-primary/70">{t('fix.lg.projectNotAvailable')}</p>
           </div>
       );
   }
@@ -203,7 +205,7 @@ const LandingGlobalitae: React.FC = () => {
 
       <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none px-6">
         <button onClick={() => document.getElementById('inline-sJULfOixnegP6pWUFDy1')?.scrollIntoView({behavior: 'smooth'})} className="pointer-events-auto bg-primary text-white px-6 py-4 rounded-full font-bold text-xs md:text-sm uppercase tracking-widest shadow-2xl hover:bg-black transition flex items-center gap-2">
-          Descarga el Dossier <span className="material-symbols-outlined text-sm">arrow_downward</span>
+          {t('fix.lg.downloadDossier')} <span className="material-symbols-outlined text-sm">arrow_downward</span>
         </button>
       </div>
 
@@ -220,7 +222,7 @@ const LandingGlobalitae: React.FC = () => {
 
         <div className="relative z-10 w-full max-w-7xl mx-auto">
           <div className="inline-block bg-white text-primary text-[10px] md:text-xs font-black px-4 py-2 uppercase tracking-widest rounded-full mb-6 shadow-lg">
-            ÚLTIMAS UNIDADES
+            {t('fix.lg.lastUnits')}
           </div>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-4 leading-[1.1] drop-shadow-lg">
             {project.name}
@@ -232,7 +234,7 @@ const LandingGlobalitae: React.FC = () => {
             </p>
             <div className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/50"></div>
             <p className="text-xl md:text-3xl font-bold text-white">
-              Desde {formatPrice(project.investor_price, project.price_currency)}
+              {t('fix.lg.fromPrice', { price: formatPrice(project.investor_price, project.price_currency) })}
             </p>
           </div>
         </div>
@@ -242,28 +244,28 @@ const LandingGlobalitae: React.FC = () => {
       <section className="relative z-20 -mt-12 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl p-6 md:p-10 grid grid-cols-2 md:flex md:flex-row justify-between items-center gap-6 md:gap-4 md:divide-x divide-gray-100">
           <div className="px-2 md:px-4 md:first:pl-0 text-center md:text-left w-full md:w-auto">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">ROI Alquiler</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.roiRental')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">
-              {project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || 'Consultar'} 
-              <span className="text-[10px] md:text-xs font-sans opacity-80 ml-1 block md:inline">Bruto/año</span>
+              {project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('fix.lg.consult')}
+              <span className="text-[10px] md:text-xs font-sans opacity-80 ml-1 block md:inline">{t('fix.lg.grossPerYear')}</span>
             </p>
           </div>
           <div className="px-2 md:px-4 text-center md:text-left w-full md:w-auto">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">ROI Reventa</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.roiResale')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">
-              {project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : 'Consultar'}
+              {project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('fix.lg.consult')}
             </p>
           </div>
           <div className="px-2 md:px-4 text-center md:text-left w-full md:w-auto">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">Precio Inversor</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.investorPrice')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">{formatPrice(project.investor_price, project.price_currency)}</p>
           </div>
           <div className="px-2 md:px-4 text-center md:text-left w-full md:w-auto">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">Precio Mercado</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.marketPrice')}</p>
             <p className="text-2xl md:text-3xl font-serif line-through opacity-40 text-primary">{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
           <div className="px-2 md:px-4 md:border-r-0 text-center md:text-left w-full md:w-auto col-span-2 md:col-span-1 mt-4 md:mt-0">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">Estado</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.status')}</p>
             <p className="text-lg md:text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter text-primary">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
               {project.status}
@@ -277,7 +279,7 @@ const LandingGlobalitae: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-12">
             <div>
-              <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/40 mb-4">El Proyecto</h2>
+              <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/40 mb-4">{t('fix.lg.theProject')}</h2>
               <h3 className="text-4xl md:text-5xl font-serif text-primary leading-tight mb-8">
                 {project.name}
               </h3>
@@ -290,28 +292,28 @@ const LandingGlobalitae: React.FC = () => {
 
             <div className="text-center py-8">
               <button onClick={() => document.getElementById('inline-sJULfOixnegP6pWUFDy1')?.scrollIntoView({behavior: 'smooth'})} className="bg-primary text-white px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-black transition w-full md:w-auto">
-                Solicita información del proyecto
+                {t('fix.lg.requestInfo')}
               </button>
             </div>
 
             {/* DETALLES */}
             <div className="pt-12 border-t border-primary/10">
-              <h3 className="text-2xl font-serif text-primary mb-8">Detalles</h3>
+              <h3 className="text-2xl font-serif text-primary mb-8">{t('fix.lg.details')}</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Distancia Playa</p>
-                  <p className="text-xl font-bold">{project.distance_beach || 'Consultar'}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.beachDistance')}</p>
+                  <p className="text-xl font-bold">{project.distance_beach || t('fix.lg.consult')}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Contrato</p>
-                  <p className="text-xl font-bold">{project.years_contract ? `${project.years_contract} años + ${project.years_extension || 0} ext.` : 'Consultar'}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.contract')}</p>
+                  <p className="text-xl font-bold">{project.years_contract ? t('fix.lg.contractYears', { years: project.years_contract, ext: project.years_extension || 0 }) : t('fix.lg.consult')}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Disponibles</p>
-                  <p className="text-xl font-bold">{project.available_units || 'Consultar'}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.available')}</p>
+                  <p className="text-xl font-bold">{project.available_units || t('fix.lg.consult')}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Progreso</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.progress')}</p>
                   <p className="text-xl font-bold">{project.completion_percent}%</p>
                 </div>
               </div>
@@ -319,23 +321,23 @@ const LandingGlobalitae: React.FC = () => {
 
             {/* CARACTERÍSTICAS */}
             <div className="pt-12 border-t border-primary/10">
-              <h3 className="text-2xl font-serif text-primary mb-8">Características</h3>
+              <h3 className="text-2xl font-serif text-primary mb-8">{t('fix.lg.features')}</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Dormitorios</p>
-                  <p className="text-xl font-bold">{project.bedrooms || 'Consultar'}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.bedrooms')}</p>
+                  <p className="text-xl font-bold">{project.bedrooms || t('fix.lg.consult')}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Baños</p>
-                  <p className="text-xl font-bold">{project.bathrooms || 'Consultar'}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.bathrooms')}</p>
+                  <p className="text-xl font-bold">{project.bathrooms || t('fix.lg.consult')}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Superficie</p>
-                  <p className="text-xl font-bold">{project.area_m2 ? `${project.area_m2} m²` : 'Consultar'}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.area')}</p>
+                  <p className="text-xl font-bold">{project.area_m2 ? `${project.area_m2} m²` : t('fix.lg.consult')}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">Equipamiento</p>
-                  <p className="text-xl font-bold">{project.furnishing || 'Consultar'}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.furnishing')}</p>
+                  <p className="text-xl font-bold">{project.furnishing || t('fix.lg.consult')}</p>
                 </div>
               </div>
             </div>
@@ -345,39 +347,39 @@ const LandingGlobalitae: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-32 space-y-8">
               <div className="bg-white p-8 rounded-[2rem] shadow-xl border border-primary/5">
-                <h3 className="text-xl font-serif text-primary mb-6 pb-4 border-b border-primary/10">Resumen de Activo</h3>
+                <h3 className="text-xl font-serif text-primary mb-6 pb-4 border-b border-primary/10">{t('fix.lg.assetSummary')}</h3>
                 <ul className="space-y-4">
                   <li className="flex justify-between items-center">
-                    <span className="text-sm text-primary/60">Dormitorios</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.bedrooms')}</span>
                     <span className="font-bold">{project.bedrooms}</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-sm text-primary/60">Baños</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.bathrooms')}</span>
                     <span className="font-bold">{project.bathrooms}</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-sm text-primary/60">Superficie</span>
-                    <span className="font-bold">{project.area_m2 ? `${project.area_m2} m²` : 'Consultar'}</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.area')}</span>
+                    <span className="font-bold">{project.area_m2 ? `${project.area_m2} m²` : t('fix.lg.consult')}</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-sm text-primary/60">Equipamiento</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.furnishing')}</span>
                     <span className="font-bold">{project.furnishing}</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-sm text-primary/60">Piscina</span>
-                    <span className="font-bold">{project.has_pool ? 'Sí' : 'No'}</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.pool')}</span>
+                    <span className="font-bold">{project.has_pool ? t('fix.lg.yes') : t('fix.lg.no')}</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-sm text-primary/60">Finalización</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.completion')}</span>
                     <span className="font-bold">{formatDate(project.completion_date)}</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-sm text-primary/60">Progreso Obra</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.constructionProgress')}</span>
                     <span className="font-bold">{project.completion_percent}%</span>
                   </li>
                   <li className="flex justify-between items-center pt-4 border-t border-primary/10">
-                    <span className="text-sm text-primary/60">Contrato</span>
-                    <span className="font-bold">{project.years_contract ? `${project.years_contract} + ${project.years_extension || 0} años` : 'Consultar'}</span>
+                    <span className="text-sm text-primary/60">{t('fix.lg.contract')}</span>
+                    <span className="font-bold">{project.years_contract ? t('fix.lg.contractYearsShort', { years: project.years_contract, ext: project.years_extension || 0 }) : t('fix.lg.consult')}</span>
                   </li>
                 </ul>
               </div>
@@ -390,7 +392,7 @@ const LandingGlobalitae: React.FC = () => {
                   className="w-full bg-white text-primary border border-primary/10 px-8 py-5 rounded-2xl font-bold hover:bg-gray-50 transition flex items-center justify-center gap-3 shadow-sm"
                 >
                   <span className="material-symbols-outlined">analytics</span>
-                  Ver Informe de Obra
+                  {t('fix.lg.viewConstructionReport')}
                 </a>
               )}
             </div>
@@ -401,7 +403,7 @@ const LandingGlobalitae: React.FC = () => {
       {/* GALERÍA */}
       {project.gallery && project.gallery.length > 0 && (
         <section className="py-20 px-6 md:px-12 max-w-7xl mx-auto border-t border-primary/10">
-          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/40 mb-12 text-center">Galería del Proyecto</h2>
+          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/40 mb-12 text-center">{t('fix.lg.projectGallery')}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {project.gallery.slice(0, 6).map((img: string, idx: number) => (
               <div 
@@ -409,7 +411,7 @@ const LandingGlobalitae: React.FC = () => {
                 className="aspect-square rounded-2xl overflow-hidden cursor-pointer group relative"
                 onClick={() => setLightbox({ open: true, index: idx + 1 })}
               >
-                <img src={getImageUrl(img)} alt={`Galería ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                <img src={getImageUrl(img)} alt={t('fix.lg.galleryAlt', { num: idx + 1 })} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                 <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition duration-300 flex items-center justify-center">
                   <span className="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 transition-opacity transform scale-50 group-hover:scale-100 duration-300">zoom_in</span>
                 </div>
@@ -422,7 +424,7 @@ const LandingGlobalitae: React.FC = () => {
                 onClick={() => setLightbox({ open: true, index: 0 })}
                 className="text-sm font-bold uppercase tracking-widest text-primary hover:text-primary/70 transition"
               >
-                Ver todas las fotos ({allImages.length})
+                {t('fix.lg.viewAllPhotos', { count: allImages.length })}
               </button>
             </div>
           )}
@@ -432,7 +434,7 @@ const LandingGlobalitae: React.FC = () => {
       {/* SERVICIOS INCLUIDOS */}
       {project.amenities && project.amenities.length > 0 && (
         <section className="py-20 px-6 md:px-12 max-w-7xl mx-auto border-t border-primary/10">
-          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/40 mb-12 text-center">Servicios Incluidos</h2>
+          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/40 mb-12 text-center">{t('fix.lg.includedServices')}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {project.amenities.map((amenity: string, idx: number) => {
               const icons: Record<string, string> = {
@@ -458,15 +460,15 @@ const LandingGlobalitae: React.FC = () => {
 
       <div className="text-center py-12">
         <button onClick={() => document.getElementById('inline-sJULfOixnegP6pWUFDy1')?.scrollIntoView({behavior: 'smooth'})} className="bg-primary text-white px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-black transition w-full md:w-auto max-w-[90%] mx-auto">
-          Descarga el Dossier →
+          {t('fix.lg.downloadDossierArrow')}
         </button>
       </div>
 
       {/* CTA / FORMULARIO GHL */}
       <section className="py-24 px-6 md:px-12 bg-white">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-serif text-primary mb-6">Solicita información de este proyecto</h2>
-          <p className="text-lg text-primary/70 mb-12">Déjanos tus datos y un asesor se pondrá en contacto contigo a la brevedad.</p>
+          <h2 className="text-4xl md:text-5xl font-serif text-primary mb-6">{t('fix.lg.requestInfoThisProject')}</h2>
+          <p className="text-lg text-primary/70 mb-12">{t('fix.lg.requestInfoSubtitle')}</p>
           
           <div id="ghl-form" className="bg-[#f5f0eb] p-4 md:p-12 rounded-[2rem] shadow-inner text-left">
             <div className="w-full" style={{minHeight: '735px'}}>
@@ -495,7 +497,7 @@ const LandingGlobalitae: React.FC = () => {
       {/* FOOTER MÍNIMO */}
       <footer className="py-8 text-center border-t border-primary/10">
         <p className="text-xs text-primary/40 font-bold tracking-widest uppercase">
-          © 2026 Unreal Studio × Globalitae. Inversión inmobiliaria en Bali.
+          {t('fix.lg.footerCopyright')}
         </p>
       </footer>
 
@@ -513,7 +515,7 @@ const LandingGlobalitae: React.FC = () => {
           <div className="w-full max-w-6xl px-4 md:px-24 h-[80vh] flex items-center justify-center">
             <img 
               src={allImages[lightbox.index]} 
-              alt="Galería" 
+              alt={t('fix.lg.galleryLightboxAlt')}
               className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
             />
           </div>

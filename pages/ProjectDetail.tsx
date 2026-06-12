@@ -312,7 +312,7 @@ const ProjectDetail: React.FC = () => {
               p_password: loginPassword
           });
           if (error || !data || !data.success) {
-              setLoginError('Credenciales incorrectas.');
+              setLoginError(t('fix.pd.wrongCredentials'));
               setLoginLoading(false);
               return;
           }
@@ -327,7 +327,7 @@ const ProjectDetail: React.FC = () => {
               window.open(getImageUrl(project.construction_update_url), '_blank');
           }
       } catch (err) {
-          setLoginError('Error de conexión.');
+          setLoginError(t('fix.pd.connectionError'));
       } finally {
           setLoginLoading(false);
       }
@@ -498,7 +498,7 @@ const ProjectDetail: React.FC = () => {
                   {project.brochure_url && (
                     <a href={getImageUrl(project.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
                       <span className="material-symbols-outlined">download</span>
-                      Descargar Brochure
+                      {t('fix.pd.downloadBrochure')}
                     </a>
                   )}
                   {project.construction_update_url && (
@@ -513,7 +513,7 @@ const ProjectDetail: React.FC = () => {
                         <div className="text-left">
                             <span className="block leading-none">{t('projectDetail.constructionReport')}</span>
                             <span className="text-[10px] font-medium opacity-60 flex items-center gap-1">
-                                <span className="material-symbols-outlined text-[10px]">lock</span> Acceso Inversor
+                                <span className="material-symbols-outlined text-[10px]">lock</span> {t('fix.pd.investorAccess')}
                                 {project.construction_update_date && ` (${formatDate(project.construction_update_date)})`}
                             </span>
                         </div>
@@ -623,19 +623,19 @@ const ProjectDetail: React.FC = () => {
                     <form onSubmit={handleClientLoginForDoc} className="space-y-4">
                         <div>
                             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
-                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="tu@email.com o +34 625 710 770" className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.password')}</label>
                             <div className="relative">
                               <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
-                              <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? 'Ocultar contraseña' : 'Ver contraseña'} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
+                              <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? t('fix.pd.hidePassword') : t('fix.pd.showPassword')} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
                                 <span className="material-symbols-outlined text-xl">{showLoginPw ? 'visibility_off' : 'visibility'}</span>
                               </button>
                             </div>
                         </div>
                         <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">
-                            {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> Verificando...</> : 'Acceder al informe'}
+                            {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('fix.pd.verifying')}</> : t('fix.pd.accessReport')}
                         </button>
                     </form>
 
@@ -729,7 +729,7 @@ const ProjectDetail: React.FC = () => {
                     >
                       <img
                         loading="lazy"
-                        alt={`Avance de obra ${idx + 1}`}
+                        alt={t('fix.pd.constructionProgressAlt', { n: idx + 1 })}
                         className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
                         src={imgSrc(getImageUrl(img), 600)}
                         srcSet={imgSrcSet(getImageUrl(img), [320, 600, 900])}
@@ -756,7 +756,7 @@ const ProjectDetail: React.FC = () => {
                 >
                   <img
                     loading="lazy"
-                    alt={`${project.name} - Imagen ${idx + 1}`}
+                    alt={t('fix.pd.galleryImageAlt', { name: project.name, n: idx + 1 })}
                     className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
                     src={imgSrc(img, 800)}
                     srcSet={imgSrcSet(img, [400, 800, 1200])}
@@ -844,7 +844,7 @@ const ProjectDetail: React.FC = () => {
                 href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(`Información: ${project.name}`)}&body=${encodeURIComponent(`Hola, me interesa el proyecto "${project.name}" en ${project.location}. Me gustaría recibir más información y agendar una reunión.`)}`}
                 className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"
               >
-                Solicitar info de este proyecto
+                {t('fix.pd.requestProjectInfo')}
               </a>
             </div>
           </div>

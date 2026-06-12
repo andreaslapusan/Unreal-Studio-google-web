@@ -115,7 +115,7 @@ export default function BookingWidget({ url, propertySlug, widgetId }: Props) {
               ref={iframeRef}
               id={id}
               src={finalUrl}
-              title="Booking calendar"
+              title={t("fix.book.iframeTitle")}
               style={{ width: "100%", border: 0, overflow: "hidden", minHeight: 720 }}
               scrolling="no"
               loading="lazy"
