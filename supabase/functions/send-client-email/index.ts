@@ -49,7 +49,7 @@ function brandWrap(subject: string, inner: string): string {
      <span style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:14px;color:rgba(63,35,5,.55);">Beyond the Ordinary, Inside the Unreal</span>
    </td></tr>
    <!-- Tarjeta de contenido -->
-   <tr><td style="background:#ffffff;border-radius:18px;padding:34px 32px;font-family:Manrope,Arial,sans-serif;color:${BROWN};text-align:justify;">
+   <tr><td style="background:#ffffff;border-radius:18px;padding:34px 32px;font-family:Manrope,Arial,sans-serif;color:${BROWN};">
      ${inner}
    </td></tr>
    <!-- Footer ligero: iconos de redes + 1 línea de contacto + legal mínimo -->
@@ -72,7 +72,7 @@ function brandWrap(subject: string, inner: string): string {
   </table>
  </td></tr>
 </table>
-</body></html>`.replace(/>\s+</g, "><").replace(/\s{2,}/g, " ").trim();
+</body></html>`.replace(/>\s+</g, "><").replace(/\s{2,}/g, " ").replace(/<p style="(?![^"]*text-align)/g,'<p style="text-align:justify;').trim();
 }
 
 Deno.serve(async (req) => {
