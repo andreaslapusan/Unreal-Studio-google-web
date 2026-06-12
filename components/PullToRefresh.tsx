@@ -15,6 +15,8 @@ export default function PullToRefresh() {
   const [pull, setPull] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const startY = useRef<number | null>(null);
+  const startX = useRef<number | null>(null);
+  const lockDir = useRef<'v' | 'h' | null>(null);
   const active = useRef(false);
   const pullRef = useRef(0);
 
@@ -29,11 +31,20 @@ export default function PullToRefresh() {
     const onStart = (e: TouchEvent) => {
       if (window.scrollY > 0 || refreshing) { active.current = false; return; }
       startY.current = e.touches[0].clientY;
+      startX.current = e.touches[0].clientX;
+      lockDir.current = null;
       active.current = true;
     };
     const onMove = (e: TouchEvent) => {
-      if (!active.current || startY.current == null) return;
+      if (!active.current || startY.current == null || startX.current == null) return;
       const dy = e.touches[0].clientY - startY.current;
+      const dx = e.touches[0].clientX - startX.current;
+      // Decide la dirección del gesto una sola vez: si es horizontal (deslizar el
+      // menú/carrusel), NO refrescamos. Solo el tirón vertical hacia abajo cuenta.
+      if (lockDir.current == null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        lockDir.current = Math.abs(dy) > Math.abs(dx) ? 'v' : 'h';
+      }
+      if (lockDir.current === 'h') { active.current = false; setP(0); return; }
       if (dy <= 0) { setP(0); return; }
       setP(Math.min(MAX, dy * 0.5)); // resistencia
     };

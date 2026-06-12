@@ -24,35 +24,15 @@ root.render(
 // Boot real-user metrics after first paint so we don't compete with hydration.
 initWebVitals();
 
-// PWA: registra el service worker (instalable + offline + auto-update). Se hace
-// tras 'load' para no competir con el primer render.
-//
-// AUTO-UPDATE: cuando un SW nuevo toma el control (tras desplegar) recargamos la
-// página UNA vez para que la app guardada en pantalla de inicio (iOS standalone)
-// nunca se quede con un shell viejo → evita la "pantalla negra que nunca carga".
+// PWA: registra el service worker (instalable + offline + carga rápida). Se hace
+// tras 'load' para no competir con el primer render. SIN recargas automáticas:
+// el SW nuevo se activa solo en el siguiente arranque (la navegación va a red,
+// así que el HTML siempre es fresco). Evita la doble carga negro→blanco en iOS.
 if ('serviceWorker' in navigator) {
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (refreshing) return;
-    refreshing = true;
-    window.location.reload();
-  });
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js', { updateViaCache: 'none' })
-      .then((reg) => {
-        reg.update().catch(() => {});
-        if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
-        reg.addEventListener('updatefound', () => {
-          const sw = reg.installing;
-          if (!sw) return;
-          sw.addEventListener('statechange', () => {
-            if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-              sw.postMessage('SKIP_WAITING');
-            }
-          });
-        });
-      })
+      .then((reg) => { reg.update().catch(() => {}); })
       .catch(() => { /* sin PWA si falla */ });
   });
 }

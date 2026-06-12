@@ -93,6 +93,9 @@ const AMENITIES_LIST = [
   const [empModal, setEmpModal] = useState<{ emp: EmployeeRow | null } | null>(null);
   // Submenú de Configuración (orden lógico): Etiquetas · Permisos · Marca y datos.
   const [configTab, setConfigTab] = useState<'etiquetas' | 'permisos' | 'marca'>('etiquetas');
+  // Bocadillo de navegación en MÓVIL (sustituye la barra horizontal de menús).
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
+  const ADMIN_MOBILE_VIEWS = ['dashboard', 'projects', 'blogs', 'clients', 'users', 'employees', 'notifications', 'config', 'calendar'];
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
   const [pendingVacations, setPendingVacations] = useState<Array<{ id: string; employee_name: string | null; employee_email: string; start_date: string; end_date: string; type: string; note: string | null }>>([]);
   const loadPendingVacations = useCallback(async () => {
@@ -1072,23 +1075,42 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <button onClick={() => setWalkthroughStep(0)} className="hidden md:flex text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition items-center gap-1">
              <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
           </button>
-          <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
+          <button onClick={handleLogout} className="hidden md:block bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
+          {/* Bocadillo (tres rayitas) en móvil: todos los menús + idioma/divisa/guía/salir */}
+          <button onClick={() => setAdminMenuOpen((o) => !o)} aria-label="Menú" className="md:hidden w-10 h-10 rounded-full bg-gray-100 text-primary flex items-center justify-center active:scale-95 transition">
+            <span className="material-symbols-outlined text-[22px]">{adminMenuOpen ? 'close' : 'menu'}</span>
+          </button>
         </div>
       </header>
 
-      <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
-        <div className="md:hidden flex space-x-6 mb-12 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide">
-          {['dashboard', 'projects', 'blogs', 'clients', 'users', 'employees', 'notifications', 'config', 'calendar'].map((v) => (
-            <button 
-              key={v}
-              onClick={() => setActiveView(v as any)}
-              className={`text-lg font-serif pb-2 transition-all whitespace-nowrap capitalize ${activeView === v ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-primary'}`}
-            >
-              {t(`admin.nav.${v === 'config' ? 'config' : v}`)}
-            </button>
-          ))}
+      {adminMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
+          <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex flex-col gap-1 mb-2">
+              {ADMIN_MOBILE_VIEWS.map((v) => (
+                <button key={v} onClick={() => { setActiveView(v as any); setAdminMenuOpen(false); }}
+                  className={`text-left px-3 py-2 rounded-xl text-sm font-bold capitalize transition ${activeView === v ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
+                  {t(`admin.nav.${v}`)}
+                </button>
+              ))}
+            </div>
+            <div className="border-t border-gray-100 pt-2 flex flex-col gap-2">
+              <div className="flex items-center gap-2 px-1">
+                <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-xs font-bold text-primary">
+                  {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
+                </select>
+                <LanguageSwitcher />
+              </div>
+              <button onClick={() => { setWalkthroughStep(0); setAdminMenuOpen(false); }} className="text-left px-3 py-2 rounded-xl text-xs font-bold text-primary/60 hover:bg-gray-100 inline-flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm">help</span> {t('admin.common.viewGuide')}
+              </button>
+              <button onClick={handleLogout} className="text-left px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
+            </div>
+          </div>
         </div>
+      )}
 
+      <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
         {activeView === 'dashboard' && <DashboardOverview />}
 
         {activeView === 'notifications' && <NotificationsPanel />}
