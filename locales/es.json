@@ -1104,7 +1104,22 @@
       "welcomeConfirm": "¿Enviar el correo de bienvenida a {{email}}?",
       "welcomeSent": "Correo de bienvenida enviado a {{email}}.",
       "welcomeNoEmail": "Este cliente no tiene email. Añádeselo primero.",
-      "welcomeError": "No se pudo enviar la bienvenida: {{error}}"
+      "welcomeError": "No se pudo enviar la bienvenida: {{error}}",
+      "mailCenter": "Enviar correo",
+      "mailCenterTitle": "Enviar correo a {{name}}",
+      "mailWelcome": "Bienvenida",
+      "mailWelcomeDesc": "Acceso al portal + contraseña temporal",
+      "mailReset": "Recuperar contraseña",
+      "mailResetDesc": "Enlace para que el cliente cree una nueva contraseña",
+      "mailReminder": "Recordatorio de pago",
+      "mailReminderDesc": "Aviso del próximo pago con los días que faltan o vencidos",
+      "resetConfirm": "¿Enviar email de recuperación de contraseña a {{email}}?",
+      "resetSent": "Email de recuperación enviado a {{email}}.",
+      "resetError": "No se pudo enviar la recuperación: {{error}}",
+      "reminderConfirm": "¿Enviar recordatorio de pago a {{email}}?",
+      "reminderNoPayments": "Este cliente no tiene pagos pendientes.",
+      "reminderSent": "Recordatorio enviado a {{email}}.",
+      "reminderError": "No se pudo enviar el recordatorio: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -2132,7 +2147,10 @@
       "obraTitle": "Avance de obra",
       "obraProgress": "Progreso de construcción:",
       "obraPhotos": "Ver las últimas fotos de obra →",
-      "footer": "¿Dudas? Responde a este correo: hello@unrealstudiobali.com"
+      "footer": "¿Dudas? Responde a este correo: hello@unrealstudiobali.com",
+      "daysLeft": "Quedan {{n}} días para la fecha límite.",
+      "daysOverdue": "El pago lleva {{n}} días vencido.",
+      "dueToday": "El pago vence hoy."
     }
   }
 }

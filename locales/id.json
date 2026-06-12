@@ -1196,7 +1196,22 @@
       "welcomeConfirm": "Kirim email selamat datang ke {{email}}?",
       "welcomeSent": "Email selamat datang telah dikirim ke {{email}}.",
       "welcomeNoEmail": "Klien ini tidak memiliki email. Tambahkan terlebih dahulu.",
-      "welcomeError": "Gagal mengirim selamat datang: {{error}}"
+      "welcomeError": "Gagal mengirim selamat datang: {{error}}",
+      "mailCenter": "Kirim surat",
+      "mailCenterTitle": "Kirim surat ke {{name}}",
+      "mailWelcome": "Selamat datang",
+      "mailWelcomeDesc": "Akses portal + kata sandi sementara",
+      "mailReset": "Reset kata sandi",
+      "mailResetDesc": "Tautan untuk membuat kata sandi baru",
+      "mailReminder": "Pengingat pembayaran",
+      "mailReminderDesc": "Pemberitahuan tentang pembayaran berikutnya dengan hari yang tersisa atau telah jatuh tempo",
+      "resetConfirm": "Kirim email reset kata sandi ke {{email}}?",
+      "resetSent": "Email reset kata sandi telah dikirim ke {{email}}.",
+      "resetError": "Gagal mengirim reset: {{error}}",
+      "reminderConfirm": "Kirim pengingat pembayaran ke {{email}}?",
+      "reminderNoPayments": "Klien ini tidak memiliki pembayaran yang tertunda.",
+      "reminderSent": "Pengingat telah dikirim ke {{email}}.",
+      "reminderError": "Gagal mengirim pengingat: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -2133,7 +2148,10 @@
       "obraTitle": "Perkembangan Proyek",
       "obraProgress": "Progres konstruksi:",
       "obraPhotos": "Lihat foto-foto proyek terbaru →",
-      "footer": "Pertanyaan? Balas surel ini: hello@unrealstudiobali.com"
+      "footer": "Pertanyaan? Balas surel ini: hello@unrealstudiobali.com",
+      "daysLeft": "Tersisa {{n}} hari sebelum batas waktu.",
+      "daysOverdue": "Pembayaran telah {{n}} hari jatuh tempo.",
+      "dueToday": "Pembayaran jatuh tempo hari ini."
     }
   }
 }

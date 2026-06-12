@@ -66,6 +66,7 @@ const AMENITIES_LIST = [
   const [editingAssignment, setEditingAssignment] = useState<{ clientId: string, clientName: string, assignment: any } | null>(null);
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
+  const [mailClient, setMailClient] = useState<Client | null>(null);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Cerrar con Escape los modales (accesibilidad — auditoría).
@@ -73,6 +74,7 @@ const AMENITIES_LIST = [
   useEscapeKey(() => setEditingAssignment(null), !!editingAssignment);
   useEscapeKey(() => setAssigningProject(null), !!assigningProject);
   useEscapeKey(() => setWhatsappClient(null), !!whatsappClient);
+  useEscapeKey(() => setMailClient(null), !!mailClient);
   useEscapeKey(() => setPaymentsClient(null), !!paymentsClient);
 
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
@@ -784,6 +786,10 @@ const handleSaveClient = async (e: React.FormEvent) => {
     if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
     const isNewClient = !currentClient.id || currentClient.id.startsWith('client-');
     const clientData = currentClient.id?.startsWith('client-') ? { ...currentClient, id: undefined } : currentClient;
+    // ¿Cambió el email? (para auto-enviar la bienvenida al nuevo correo)
+    const prevEmail = (clients.find((c) => c.id === currentClient.id)?.email || '').trim().toLowerCase();
+    const newEmail = (currentClient.email || '').trim();
+    const emailChanged = !!newEmail && newEmail.toLowerCase() !== prevEmail;
     const { data, error } = await supabase.rpc('admin_save_client', {
       p_user_id: userId,
       p_client: clientData
@@ -796,6 +802,13 @@ const handleSaveClient = async (e: React.FormEvent) => {
     if (isNewClient && data && data.temp_password) {
       alert(t('admin.dash.clientCreatedTempPw', { pw: data.temp_password }));
     }
+    // Auto-bienvenida: al poner/cambiar el email del cliente y guardar, se le
+    // manda solo el correo de bienvenida al nuevo email (idioma del cliente).
+    if (emailChanged) {
+      const lang = ((currentClient as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
+      const r = await sendWelcomeCore({ name: currentClient.name || '', email: newEmail, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
+      alert(r.ok ? t('admin.dash.welcomeSent', { email: newEmail }) : t('admin.dash.welcomeError', { error: r.error }));
+    }
   } catch (error) {
     console.error('Error saving client:', error);
     alert(t('admin.dash.saveClientError'));
@@ -804,37 +817,96 @@ const handleSaveClient = async (e: React.FormEvent) => {
   }
 };
 
-// Envío MANUAL del correo de bienvenida a un cliente (en su idioma). Nunca
-// automático: solo cuando el admin pulsa el botón y confirma.
+// ── Correos al cliente (idioma del cliente). Cada plantilla puede enviarse a
+// mano desde el "centro de correo" de la ficha, y la bienvenida además se manda
+// sola al cambiar el email (ver handleSaveClient). ─────────────────────────────
+const clientLangOf = (client: Client) => ((client as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
+const clientPortalUrl = (lang: 'es' | 'en' | 'ro' | 'id') => `https://unrealstudiobali.com${portalPath('cliente', lang)}`;
+
+// Núcleo de la bienvenida: construye y envía. Sin alerts (lo usa el botón y el auto-envío).
+const sendWelcomeCore = async (args: { name: string; email: string; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
+  const userId = getAdminUserId();
+  if (!userId) return { ok: false, error: 'session' };
+  const et = i18n.getFixedT(args.lang);
+  const html = welcomeEmailHtml({
+    firstName: (args.name || '').trim().split(' ')[0],
+    portalUrl: clientPortalUrl(args.lang),
+    email: args.email,
+    tempPassword: args.tempPassword || null,
+    lang: args.lang,
+  });
+  const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
+    body: { adminUserId: userId, to: args.email, lang: args.lang, subject: et('emails.welcome.subject'), html },
+  });
+  if (sErr || !sent?.success) return { ok: false, error: sent?.error || sErr?.message || 'error' };
+  return { ok: true };
+};
+
 const sendWelcome = async (client: Client) => {
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   if (!window.confirm(t('admin.dash.welcomeConfirm', { email }))) return;
-  try {
-    const userId = getAdminUserId();
-    if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
-    const lang = ((client as any).preferred_language || 'es') as string;
-    const et = i18n.getFixedT(lang);
-    const html = welcomeEmailHtml({
-      firstName: (client.name || '').trim().split(' ')[0],
-      portalUrl: `https://unrealstudiobali.com${portalPath('cliente', lang as 'es' | 'en' | 'ro' | 'id')}`,
-      email,
-      tempPassword: (client as any).password_plain || client.temp_password || null,
-      lang,
-    });
-    const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-      body: { adminUserId: userId, to: email, lang, subject: et('emails.welcome.subject'), html },
-    });
-    if (sErr || !sent?.success) {
-      const msg = sent?.error === 'transport_not_configured'
-        ? t('admin.pay.errorTransport', { no: '' })
-        : t('admin.dash.welcomeError', { error: sent?.error || sErr?.message || 'error' });
-      alert(msg); return;
-    }
-    alert(t('admin.dash.welcomeSent', { email }));
-  } catch (error) {
-    alert(t('admin.dash.welcomeError', { error: error instanceof Error ? error.message : String(error) }));
-  }
+  const r = await sendWelcomeCore({ name: client.name || '', email, lang: clientLangOf(client), tempPassword: (client as any).password_plain || client.temp_password });
+  if (!r.ok) { alert(r.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no: '' }) : t('admin.dash.welcomeError', { error: r.error })); return; }
+  alert(t('admin.dash.welcomeSent', { email }));
+};
+
+// Recuperación de contraseña manual (te llaman "perdí la clave" → se la mandas tú).
+const sendResetEmail = async (client: Client) => {
+  const email = (client.email || '').trim();
+  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  if (!window.confirm(t('admin.dash.resetConfirm', { email }))) return;
+  const { data: sent, error: sErr } = await supabase.functions.invoke('send-password-reset', {
+    body: { email, lang: clientLangOf(client), portal: 'cliente' },
+  });
+  if (sErr || !sent?.success) { alert(t('admin.dash.resetError', { error: sent?.error || sErr?.message || 'error' })); return; }
+  alert(t('admin.dash.resetSent', { email }));
+};
+
+// Recordatorio de pago manual: coge el pago pendiente más relevante del cliente
+// (próximo a vencer o, si hay vencidos, el más antiguo) y manda el aviso con los
+// días que faltan / vencidos a día de hoy (zona horaria de Bali).
+const sendReminderEmail = async (client: Client) => {
+  const email = (client.email || '').trim();
+  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  const userId = getAdminUserId();
+  if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+  const { data } = await supabase.rpc('admin_list_client_payments', { p_user_id: userId, p_client_id: client.id });
+  const units: any[] = data?.success ? (data.units || []) : [];
+  const pend = units.flatMap((u) => (u.payments || []).filter((p: any) => !p.received && p.due_date).map((p: any) => ({ ...p, project_name: u.project_name })));
+  if (!pend.length) { alert(t('admin.dash.reminderNoPayments')); return; }
+  const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Makassar' }));
+  today.setHours(0, 0, 0, 0);
+  const daysUntil = (due: string) => Math.round((new Date(due + 'T00:00:00').getTime() - today.getTime()) / 86400000);
+  // Orden: vencidos primero (más antiguo), luego próximos (el más cercano).
+  pend.sort((a, b) => daysUntil(a.due_date) - daysUntil(b.due_date));
+  const overdue = pend.filter((p) => daysUntil(p.due_date) < 0);
+  const target = overdue.length ? overdue[0] : pend[pend.length === overdue.length ? 0 : overdue.length];
+  const d = daysUntil(target.due_date);
+  if (!window.confirm(t('admin.dash.reminderConfirm', { email }))) return;
+  const lang = clientLangOf(client);
+  const et = i18n.getFixedT(lang);
+  const stage = d > 1 ? 'b7' : d === 0 ? 'due' : d < 0 ? (d <= -7 ? 'aN' : 'a3') : 'b7';
+  const n = Math.abs(d);
+  const subject = stage === 'aN' ? et('emails.reminder.aN_subject', { n }) : et(`emails.reminder.${stage}_subject`);
+  const lead = stage === 'aN' ? et('emails.reminder.aN_lead', { n }) : et(`emails.reminder.${stage}_lead`);
+  const daysLine = d > 0 ? et('emails.reminder.daysLeft', { n }) : d === 0 ? et('emails.reminder.dueToday') : et('emails.reminder.daysOverdue', { n });
+  const dueStr = new Date(target.due_date + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: 'long', year: 'numeric' });
+  const BROWN = '#3F2305';
+  const html = `
+    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:${BROWN}">${subject}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.reminder.hi', { name: (client.name || '').trim() })}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${lead}</p>
+    <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.reminder.paymentFor', { project: target.project_name, label: target.label || '' })}</p>
+    <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${et('emails.reminder.deadlineLabel')} <b>${dueStr}</b></p>
+    <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine}</p>
+    <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.reminder.recommendation')}</p>
+    <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.reminder.cta')}</a></p>`;
+  const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
+    body: { adminUserId: userId, to: email, lang, subject, html },
+  });
+  if (sErr || !sent?.success) { alert(t('admin.dash.reminderError', { error: sent?.error || sErr?.message || 'error' })); return; }
+  alert(t('admin.dash.reminderSent', { email }));
 };
 
 const handleDeleteClient = async (id: string) => {
@@ -1329,7 +1401,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
             <div className="flex gap-2 shrink-0 ml-4">
               <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData')}><span className="material-symbols-outlined text-sm">edit</span></button>
-              <button onClick={() => sendWelcome(client)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.sendWelcome')}><span className="material-symbols-outlined text-sm">mail</span></button>
+              <button onClick={() => setMailClient(client)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.mailCenter')}><span className="material-symbols-outlined text-sm">mail</span></button>
               <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></button>
               <button onClick={() => handleDeleteClient(client.id)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title={t('admin.dash.deleteClientTitle')}><span className="material-symbols-outlined text-sm">delete</span></button>
             </div>
@@ -2307,6 +2379,35 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <button key={idx} onClick={() => openWhatsAppTemplate(whatsappClient, tpl.template(whatsappClient))} className="w-full text-left bg-gray-50 hover:bg-green-50 rounded-xl px-6 py-5 transition border border-gray-100 hover:border-green-200">
             <p className="font-bold text-primary text-sm mb-1">{t(tpl.nameKey)}</p>
             <p className="text-xs text-gray-400 line-clamp-2">{tpl.template(whatsappClient).substring(0, 100)}...</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+{mailClient && (
+  <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setMailClient(null); }}>
+    <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[85vh] overflow-y-auto">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h2 className="text-2xl font-serif text-primary">{t('admin.dash.mailCenter')}</h2>
+          <p className="text-sm text-gray-400 mt-1">{t('admin.dash.sendTo')} <strong className="text-primary">{mailClient.name}</strong> <span className="text-gray-300">· {mailClient.email || '—'}</span></p>
+        </div>
+        <button onClick={() => setMailClient(null)} className="p-2 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition"><span className="material-symbols-outlined">close</span></button>
+      </div>
+      <div className="space-y-3">
+        {[
+          { icon: 'waving_hand', titleKey: 'admin.dash.mailWelcome', descKey: 'admin.dash.mailWelcomeDesc', run: () => sendWelcome(mailClient) },
+          { icon: 'lock_reset', titleKey: 'admin.dash.mailReset', descKey: 'admin.dash.mailResetDesc', run: () => sendResetEmail(mailClient) },
+          { icon: 'event', titleKey: 'admin.dash.mailReminder', descKey: 'admin.dash.mailReminderDesc', run: () => sendReminderEmail(mailClient) },
+        ].map((m, idx) => (
+          <button key={idx} onClick={() => { void m.run(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-6 py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-4">
+            <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
+            <span>
+              <span className="block font-bold text-primary text-sm mb-0.5">{t(m.titleKey)}</span>
+              <span className="block text-xs text-gray-400">{t(m.descKey)}</span>
+            </span>
           </button>
         ))}
       </div>

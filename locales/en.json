@@ -1104,7 +1104,22 @@
       "welcomeConfirm": "Send welcome email to {{email}}?",
       "welcomeSent": "Welcome email sent to {{email}}.",
       "welcomeNoEmail": "This client has no email. Add one first.",
-      "welcomeError": "Failed to send welcome: {{error}}"
+      "welcomeError": "Failed to send welcome: {{error}}",
+      "mailCenter": "Send mail",
+      "mailCenterTitle": "Send mail to {{name}}",
+      "mailWelcome": "Welcome",
+      "mailWelcomeDesc": "Access to the portal + temporary password",
+      "mailReset": "Reset password",
+      "mailResetDesc": "Link for the client to create a new password",
+      "mailReminder": "Payment reminder",
+      "mailReminderDesc": "Notice of the next payment with the days left or overdue",
+      "resetConfirm": "Send password recovery email to {{email}}?",
+      "resetSent": "Recovery email sent to {{email}}.",
+      "resetError": "Failed to send recovery: {{error}}",
+      "reminderConfirm": "Send payment reminder to {{email}}?",
+      "reminderNoPayments": "This client has no pending payments.",
+      "reminderSent": "Reminder sent to {{email}}.",
+      "reminderError": "Failed to send reminder: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",
@@ -2132,7 +2147,10 @@
       "obraTitle": "Construction progress",
       "obraProgress": "Construction progress:",
       "obraPhotos": "View the latest construction photos →",
-      "footer": "Doubts? Reply to this email: hello@unrealstudiobali.com"
+      "footer": "Doubts? Reply to this email: hello@unrealstudiobali.com",
+      "daysLeft": "There are {{n}} days left until the deadline.",
+      "daysOverdue": "The payment is {{n}} days overdue.",
+      "dueToday": "The payment is due today."
     }
   }
 }

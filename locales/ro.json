@@ -1104,7 +1104,22 @@
       "welcomeConfirm": "Trimite mesajul de bun venit la {{email}}?",
       "welcomeSent": "Mesajul de bun venit a fost trimis la {{email}}.",
       "welcomeNoEmail": "Acest client nu are adresa de email. Adauga-i una mai intai.",
-      "welcomeError": "Nu s-a putut trimite mesajul de bun venit: {{error}}"
+      "welcomeError": "Nu s-a putut trimite mesajul de bun venit: {{error}}",
+      "mailCenter": "Trimite email",
+      "mailCenterTitle": "Trimite email către {{name}}",
+      "mailWelcome": "Bun venit",
+      "mailWelcomeDesc": "Acces la portal + parolă temporară",
+      "mailReset": "Recuperează parola",
+      "mailResetDesc": "Legătură pentru a crea o parolă nouă",
+      "mailReminder": "Reamintire de plată",
+      "mailReminderDesc": "Avertizare despre următoarea plată cu zilele rămase sau expirate",
+      "resetConfirm": "Trimite email de recuperare a parolei către {{email}}?",
+      "resetSent": "Email de recuperare trimis către {{email}}.",
+      "resetError": "Nu s-a putut trimite recuperarea: {{error}}",
+      "reminderConfirm": "Trimite reamintire de plată către {{email}}?",
+      "reminderNoPayments": "Acest client nu are plăți pendinte.",
+      "reminderSent": "Reamintire trimisă către {{email}}.",
+      "reminderError": "Nu s-a putut trimite reamintirea: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -2132,7 +2147,10 @@
       "obraTitle": "Stadiul lucrărilor",
       "obraProgress": "Progresul construcției:",
       "obraPhotos": "Vizualizează ultimele fotografii de pe șantier →",
-      "footer": "Întrebări? Răspunde la acest e-mail: hello@unrealstudiobali.com"
+      "footer": "Întrebări? Răspunde la acest e-mail: hello@unrealstudiobali.com",
+      "daysLeft": "Mai sunt {{n}} zile până la termen limită.",
+      "daysOverdue": "Plata este întârziată de {{n}} zile.",
+      "dueToday": "Plata este scadentă astăzi."
     }
   }
 }
