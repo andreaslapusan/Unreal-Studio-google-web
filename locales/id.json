@@ -1211,7 +1211,13 @@
       "reminderConfirm": "Kirim pengingat pembayaran ke {{email}}?",
       "reminderNoPayments": "Klien ini tidak memiliki pembayaran yang tertunda.",
       "reminderSent": "Pengingat telah dikirim ke {{email}}.",
-      "reminderError": "Gagal mengirim pengingat: {{error}}"
+      "reminderError": "Gagal mengirim pengingat: {{error}}",
+      "mailReport": "Pemberitahuan Laporan Proyek",
+      "mailReportDesc": "Memberitahu klien bahwa mereka memiliki laporan baru di portal mereka",
+      "reportConfirm": "Kirim pemberitahuan laporan proyek ke {{email}}?",
+      "reportNoProjects": "Klien ini tidak memiliki properti yang ditugaskan.",
+      "reportSent": "Pemberitahuan laporan dikirim ke {{email}} ({{n}}).",
+      "reportError": "Tidak dapat mengirim pemberitahuan laporan: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -2152,6 +2158,13 @@
       "daysLeft": "Tersisa {{n}} hari sebelum batas waktu.",
       "daysOverdue": "Pembayaran telah {{n}} hari jatuh tempo.",
       "dueToday": "Pembayaran jatuh tempo hari ini."
+    },
+    "report": {
+      "subject": "Laporan Proyek Baru Tersedia · {{project}}",
+      "hi": "Halo {{name}},",
+      "body": "Laporan proyek baru untuk properti Anda di {{project}} sudah tersedia. Anda dapat melihat dan mengunduhnya dari portal klien Anda.",
+      "unit": "Properti: {{unit}}",
+      "cta": "Lihat Laporan Saya"
     }
   }
 }

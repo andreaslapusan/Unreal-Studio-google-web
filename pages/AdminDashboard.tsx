@@ -910,6 +910,39 @@ const sendReminderEmail = async (client: Client) => {
   alert(t('admin.dash.reminderSent', { email }));
 };
 
+// Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
+// idioma del cliente. El aviso AUTOMÁTICO al subir un reporte lo manda la edge fn
+// notify-report; este botón es el envío manual equivalente desde la ficha.
+const sendReportEmail = async (client: Client) => {
+  const email = (client.email || '').trim();
+  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
+  if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
+  if (!window.confirm(t('admin.dash.reportConfirm', { email }))) return;
+  const userId = getAdminUserId();
+  if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+  const lang = clientLangOf(client);
+  const et = i18n.getFixedT(lang);
+  const BROWN = '#3F2305';
+  let ok = 0;
+  for (const cp of projs) {
+    const subject = et('emails.report.subject', { project: cp.project_name });
+    const html = [
+      `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
+      `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: (client.name || '').trim() })}</p>`,
+      `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
+      cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
+      `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
+    ].join('');
+    const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
+      body: { adminUserId: userId, to: email, lang, subject, html },
+    });
+    if (!sErr && sent?.success) ok++;
+    else if (ok === 0) { alert(t('admin.dash.reportError', { error: sent?.error || sErr?.message || 'error' })); return; }
+  }
+  alert(t('admin.dash.reportSent', { email, n: ok }));
+};
+
 const handleDeleteClient = async (id: string) => {
   if (!window.confirm(t('admin.dash.confirmDeleteClient'))) return;
   try {
@@ -1235,7 +1268,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
-            <div className="flex justify-between items-end mb-8 gap-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
               <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.props.mgmtTitle')}</h1>
               <button onClick={() => openEditProject()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">add</span> {t('admin.props.newBtn')}
@@ -1273,7 +1306,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {/* Only updating the Project Modal section */}
         {activeView === 'blogs' && (
           <div className="animate-in fade-in duration-500">
-            <div className="flex justify-between items-end mb-8 gap-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
               <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.blogTab.title')}</h1>
               <button onClick={() => openEditBlog()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">post_add</span> {t('admin.blogTab.newBtn')}
@@ -1321,9 +1354,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
 {activeView === 'clients' && (
   <div className="animate-in fade-in duration-500">
-    <div className="flex justify-between items-end mb-8 gap-4">
-      <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.clientsTab.title')}</h1>
-      <button onClick={() => openEditClient()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
+      <h1 className="text-lg sm:text-2xl font-black uppercase tracking-wide sm:tracking-widest text-primary/20 break-words">{t('admin.clientsTab.title')}</h1>
+      <button onClick={() => openEditClient()} className="w-full sm:w-auto justify-center bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition shrink-0">
         <span className="material-symbols-outlined text-base">person_add</span> {t('admin.clientsTab.newClient')}
       </button>
     </div>
@@ -1461,7 +1494,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         
         {activeView === 'users' && (
           <div className="animate-in fade-in duration-500">
-             <div className="flex justify-between items-end mb-8 gap-4">
+             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
               <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.usersTab.title')}</h1>
               <button onClick={() => openEditUser()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">person_add</span> {t('admin.dash.new')}
@@ -2388,24 +2421,25 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 )}
 
 {mailClient && (
-  <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setMailClient(null); }}>
-    <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[85vh] overflow-y-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-2xl font-serif text-primary">{t('admin.dash.mailCenter')}</h2>
-          <p className="text-sm text-gray-400 mt-1">{t('admin.dash.sendTo')} <strong className="text-primary">{mailClient.name}</strong> <span className="text-gray-300">· {mailClient.email || '—'}</span></p>
+  <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setMailClient(null); }}>
+    <div className="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[88vh] overflow-y-auto">
+      <div className="flex justify-between items-start gap-3 mb-6">
+        <div className="min-w-0">
+          <h2 className="text-xl sm:text-2xl font-serif text-primary">{t('admin.dash.mailCenter')}</h2>
+          <p className="text-sm text-gray-400 mt-1 truncate">{t('admin.dash.sendTo')} <strong className="text-primary">{mailClient.name}</strong> <span className="text-gray-300">· {mailClient.email || '—'}</span></p>
         </div>
-        <button onClick={() => setMailClient(null)} className="p-2 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition"><span className="material-symbols-outlined">close</span></button>
+        <button onClick={() => setMailClient(null)} className="p-2 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="space-y-3">
         {[
           { icon: 'waving_hand', titleKey: 'admin.dash.mailWelcome', descKey: 'admin.dash.mailWelcomeDesc', run: () => sendWelcome(mailClient) },
           { icon: 'lock_reset', titleKey: 'admin.dash.mailReset', descKey: 'admin.dash.mailResetDesc', run: () => sendResetEmail(mailClient) },
           { icon: 'event', titleKey: 'admin.dash.mailReminder', descKey: 'admin.dash.mailReminderDesc', run: () => sendReminderEmail(mailClient) },
+          { icon: 'description', titleKey: 'admin.dash.mailReport', descKey: 'admin.dash.mailReportDesc', run: () => sendReportEmail(mailClient) },
         ].map((m, idx) => (
-          <button key={idx} onClick={() => { void m.run(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-6 py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-4">
+          <button key={idx} onClick={() => { void m.run(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-3 sm:gap-4">
             <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
-            <span>
+            <span className="min-w-0">
               <span className="block font-bold text-primary text-sm mb-0.5">{t(m.titleKey)}</span>
               <span className="block text-xs text-gray-400">{t(m.descKey)}</span>
             </span>

@@ -1119,7 +1119,13 @@
       "reminderConfirm": "Trimite reamintire de plată către {{email}}?",
       "reminderNoPayments": "Acest client nu are plăți pendinte.",
       "reminderSent": "Reamintire trimisă către {{email}}.",
-      "reminderError": "Nu s-a putut trimite reamintirea: {{error}}"
+      "reminderError": "Nu s-a putut trimite reamintirea: {{error}}",
+      "mailReport": "Avertizare de raport de proiect",
+      "mailReportDesc": "Avertizează clientul că are un raport nou în portalul său",
+      "reportConfirm": "Trimite avertizare de raport de proiect către {{email}}?",
+      "reportNoProjects": "Acest client nu are proprietăți atribuite.",
+      "reportSent": "Avertizare de raport trimisă către {{email}} ({{n}}).",
+      "reportError": "Nu s-a putut trimite avertizarea de raport: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -2151,6 +2157,13 @@
       "daysLeft": "Mai sunt {{n}} zile până la termen limită.",
       "daysOverdue": "Plata este întârziată de {{n}} zile.",
       "dueToday": "Plata este scadentă astăzi."
+    },
+    "report": {
+      "subject": "Noul raport de proiect disponibil · {{project}}",
+      "hi": "Salut {{name}},",
+      "body": "Acum este disponibil un nou raport de proiect al proprietății tale în {{project}}. Poți să îl consulți și să îl descarci din portalul tău de client.",
+      "unit": "Proprietate: {{unit}}",
+      "cta": "Vizualizează raportul meu"
     }
   }
 }

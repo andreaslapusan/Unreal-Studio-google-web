@@ -1119,7 +1119,13 @@
       "reminderConfirm": "¿Enviar recordatorio de pago a {{email}}?",
       "reminderNoPayments": "Este cliente no tiene pagos pendientes.",
       "reminderSent": "Recordatorio enviado a {{email}}.",
-      "reminderError": "No se pudo enviar el recordatorio: {{error}}"
+      "reminderError": "No se pudo enviar el recordatorio: {{error}}",
+      "mailReport": "Aviso de reporte de obra",
+      "mailReportDesc": "Avisa al cliente de que tiene un nuevo reporte en su portal",
+      "reportConfirm": "¿Enviar aviso de reporte de obra a {{email}}?",
+      "reportNoProjects": "Este cliente no tiene propiedades asignadas.",
+      "reportSent": "Aviso de reporte enviado a {{email}} ({{n}}).",
+      "reportError": "No se pudo enviar el aviso de reporte: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -2151,6 +2157,13 @@
       "daysLeft": "Quedan {{n}} días para la fecha límite.",
       "daysOverdue": "El pago lleva {{n}} días vencido.",
       "dueToday": "El pago vence hoy."
+    },
+    "report": {
+      "subject": "Nuevo reporte de obra disponible · {{project}}",
+      "hi": "Hola {{name}},",
+      "body": "Ya está disponible un nuevo reporte de obra de tu propiedad en {{project}}. Puedes consultarlo y descargarlo desde tu portal de cliente.",
+      "unit": "Propiedad: {{unit}}",
+      "cta": "Ver mi reporte"
     }
   }
 }

@@ -1119,7 +1119,13 @@
       "reminderConfirm": "Send payment reminder to {{email}}?",
       "reminderNoPayments": "This client has no pending payments.",
       "reminderSent": "Reminder sent to {{email}}.",
-      "reminderError": "Failed to send reminder: {{error}}"
+      "reminderError": "Failed to send reminder: {{error}}",
+      "mailReport": "Notice of Work Report",
+      "mailReportDesc": "Notifies the client that they have a new report in their portal",
+      "reportConfirm": "Send work report notice to {{email}}?",
+      "reportNoProjects": "This client has no assigned properties.",
+      "reportSent": "Report notice sent to {{email}} ({{n}}).",
+      "reportError": "Failed to send report notice: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",
@@ -2151,6 +2157,13 @@
       "daysLeft": "There are {{n}} days left until the deadline.",
       "daysOverdue": "The payment is {{n}} days overdue.",
       "dueToday": "The payment is due today."
+    },
+    "report": {
+      "subject": "New Work Report Available · {{project}}",
+      "hi": "Hello {{name}},",
+      "body": "A new work report for your property is now available in {{project}}. You can view and download it from your client portal.",
+      "unit": "Property: {{unit}}",
+      "cta": "View My Report"
     }
   }
 }
