@@ -59,8 +59,8 @@ function reminderHtml(r, st, lang) {
     <div style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;color:#3F2305;letter-spacing:.3px">Unreal Studio</div>
     <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:13px;color:rgba(63,35,5,.55);margin-top:2px">Beyond the Ordinary, Inside the Unreal</div>
   </div>
-  <div style="background:#fff;border-radius:16px;padding:32px 30px">
-    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:23px;margin:0 0 10px">${tr(lang,"hi",{name})}</h1>
+  <div style="background:#fff;border-radius:16px;padding:32px 30px;text-align:justify">
+    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:23px;margin:0 0 10px;text-align:left">${tr(lang,"hi",{name})}</h1>
     <p style="font-size:15px;line-height:1.7;color:rgba(63,35,5,.85);margin:0 0 6px">${st.lead}</p>
     <p style="font-size:15px;line-height:1.7;color:rgba(63,35,5,.85);margin:0 0 4px">${tr(lang,"paymentFor",{project:`<b>${esc(r.project_name || "")}${unit}</b>`, label: esc(r.payment_label || "")})}</p>
     <div style="background:${alert ? "#fbeaea" : "#F3E5D8"};border-radius:12px;padding:18px 20px;margin:20px 0;text-align:center">
@@ -75,7 +75,7 @@ function reminderHtml(r, st, lang) {
     <div style="text-align:center;margin-top:26px"><a href="${PORTAL_BASE}/cliente" style="display:inline-block;background:#3F2305;color:#fff;text-decoration:none;padding:13px 28px;border-radius:99px;font-weight:700;font-size:14px">${tr(lang,"cta")}</a></div>
   </div>
   <div style="text-align:center;font-size:11px;color:rgba(63,35,5,.5);margin-top:16px">Unreal Studio · Bali, Indonesia<br>${tr(lang,"footer")}</div>
-</div>`.trim();
+</div>`.replace(/>\s+</g, "><").trim();
 }
 
 function authorized(req) {
