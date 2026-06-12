@@ -8,6 +8,7 @@ import GlobalLoading from './components/GlobalLoading';
 import LocaleSeo from './components/LocaleSeo';
 // FloatingWhatsApp importado bajo demanda (ver Layout); desactivado por defecto.
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
+import { PORTAL_SEGMENTS, portalPath, type Portal } from './lib/portalUrls';
 // Home is eagerly imported because it's the landing route — lazy() would
 // add a needless extra round-trip on first paint. Everything else is split:
 // each page becomes its own JS chunk, only fetched when the user navigates
@@ -272,7 +273,7 @@ const App: React.FC = () => {
               <Route key={`bare/${r.path}`} path={`/${r.path}`} element={<BareRedirect />} />
             ))}
             <Route path="/lofts-globalitae" element={<LandingGlobalitae />} />
-            <Route path="/agencias/login" element={<AgenciasLogin />} />
+            <Route path="/agencias/login" element={<Navigate to={portalPath('agencias')} replace />} />
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
             <Route path="/agencias/stats" element={<AgenciasStats />} />
@@ -280,7 +281,7 @@ const App: React.FC = () => {
                 `employees`. Fichaje + vacaciones + edición de propiedades + subir
                 partes. Las rutas legacy /manager/* y /equipo/* redirigen aquí para
                 no romper enlaces viejos en correos o documentos. */}
-            <Route path="/empleados" element={<EmpleadosLogin />} />
+            <Route path="/empleados" element={<Navigate to={portalPath('empleados')} replace />} />
             <Route path="/empleados/dashboard" element={<EmpleadosDashboard />} />
             <Route path="/empleados/propiedades" element={<EquipoProperties />} />
             <Route path="/empleados/upload" element={<EquipoUpload />} />
@@ -292,14 +293,26 @@ const App: React.FC = () => {
             <Route path="/equipo/upload" element={<EquipoUpload />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
             <Route path="/auth/reset" element={<ResetPassword />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/login" element={<Navigate to={portalPath('admin', undefined, 'login')} replace />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/marketing" element={<ProtectedRoute><AdminShell><AdminMarketing /></AdminShell></ProtectedRoute>} />
             <Route path="/admin/portal" element={<ProtectedRoute><AdminShell><AdminPortalManager /></AdminShell></ProtectedRoute>} />
             <Route path="/admin/agencias" element={<ProtectedRoute><AdminShell><AdminAgencias /></AdminShell></ProtectedRoute>} />
             <Route path="/agencias/:slug" element={<AgencyPack />} />
-            <Route path="/cliente" element={<ClientLogin />} />
+            <Route path="/cliente" element={<Navigate to={portalPath('cliente')} replace />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />
+
+            {/* URLs de LOGIN localizadas: /{idioma}/{segmento-traducido}
+                (/es/cliente, /en/clients, /ro/clienti, /id/klien, etc.). El prefijo
+                fija el idioma (LangSetter). Aditivo: las rutas antiguas siguen y
+                redirigen aquí (abajo). El flujo post-login no cambia. */}
+            {(SUPPORTED_LANGS as readonly ('es' | 'en' | 'ro' | 'id')[]).flatMap((L) => [
+              <Route key={`pl-${L}-cli`} path={`/${L}/${PORTAL_SEGMENTS.cliente[L]}`} element={<LangSetter lang={L}><ClientLogin /></LangSetter>} />,
+              <Route key={`pl-${L}-emp`} path={`/${L}/${PORTAL_SEGMENTS.empleados[L]}`} element={<LangSetter lang={L}><EmpleadosLogin /></LangSetter>} />,
+              <Route key={`pl-${L}-ag`} path={`/${L}/${PORTAL_SEGMENTS.agencias[L]}`} element={<LangSetter lang={L}><AgenciasLogin /></LangSetter>} />,
+              <Route key={`pl-${L}-adm`} path={`/${L}/admin/login`} element={<LangSetter lang={L}><AdminLogin /></LangSetter>} />,
+            ])}
+
             <Route path="*" element={
               <div className="min-h-screen flex flex-col items-center justify-center bg-almond px-6 text-center">
                 <h1 className="text-8xl font-serif text-primary mb-4">404</h1>

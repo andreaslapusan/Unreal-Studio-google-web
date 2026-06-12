@@ -42,7 +42,7 @@ const AgencyApplications: React.FC = () => {
       });
       if (insErr) throw insErr;
       await supabase.from('listing_partner_applications').update({ status: 'approved', reviewed_by: who, reviewed_at: new Date().toISOString() }).eq('id', app.id);
-      await supabase.auth.signInWithOtp({ email: app.email, options: { emailRedirectTo: `${window.location.origin}/auth/finish`, shouldCreateUser: true } });
+      await supabase.functions.invoke('send-magic-link', { body: { email: app.email, portal: 'agencias', lang: (typeof localStorage !== 'undefined' && localStorage.getItem('_unreal_lang')) || 'es', redirectTo: `${window.location.origin}/auth/finish` } });
       await reload();
       alert('Agencia aprobada + acceso enviado por email.');
     } catch (err) {

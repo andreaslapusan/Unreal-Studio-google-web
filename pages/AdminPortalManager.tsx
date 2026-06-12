@@ -235,9 +235,9 @@ export default function AdminPortalManager() {
         .from("listing_partner_applications")
         .update({ status: "approved", reviewed_by: user?.email ?? user?.id ?? "andreas-legacy", reviewed_at: new Date().toISOString() })
         .eq("id", app.id);
-      // Magic link
+      // Email de acceso branded + traducido (no el nativo de Supabase, sin marca ni idioma).
       const redirect = `${window.location.origin}/auth/finish`;
-      await supabase.auth.signInWithOtp({ email: app.email, options: { emailRedirectTo: redirect, shouldCreateUser: true } });
+      await supabase.functions.invoke('send-magic-link', { body: { email: app.email, portal: 'agencias', lang: (typeof localStorage !== 'undefined' && localStorage.getItem('_unreal_lang')) || 'es', redirectTo: redirect } });
       await reloadAll();
       alert(t('fix.apm.approvedMagicLinkSent'));
     } catch (err) {

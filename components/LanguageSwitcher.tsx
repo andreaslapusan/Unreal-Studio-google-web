@@ -10,6 +10,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SUPPORTED_LANGS } from "./LocaleRoute";
+import { matchPortalPath, portalPath } from "../lib/portalUrls";
 
 const LANGS: { code: "es" | "en" | "ro" | "id"; label: string }[] = [
   { code: "es", label: "ES" },
@@ -31,8 +32,14 @@ export default function LanguageSwitcher({ inverted = false }: { inverted?: bool
     } catch {
       /* ignore */
     }
-    // Si estamos en una ruta pública con prefijo de idioma, navega al mismo
-    // path bajo el nuevo prefijo para mantener URL e idioma sincronizados.
+    // Portal con URL localizada (/es/cliente → /en/clients): mapea el segmento
+    // traducido al nuevo idioma.
+    const pm = matchPortalPath(location.pathname);
+    if (pm) {
+      navigate(`${portalPath(pm.portal, code as 'es' | 'en' | 'ro' | 'id', pm.sub || undefined)}${location.search}${location.hash}`);
+      return;
+    }
+    // Ruta pública con prefijo de idioma: mismo path bajo el nuevo prefijo.
     const seg = location.pathname.split("/").filter(Boolean);
     if (seg[0] && (SUPPORTED_LANGS as readonly string[]).includes(seg[0])) {
       const rest = seg.slice(1).join("/");
