@@ -1125,7 +1125,8 @@
       "reportConfirm": "Trimite avertizare de raport de proiect către {{email}}?",
       "reportNoProjects": "Acest client nu are proprietăți atribuite.",
       "reportSent": "Avertizare de raport trimisă către {{email}} ({{n}}).",
-      "reportError": "Nu s-a putut trimite avertizarea de raport: {{error}}"
+      "reportError": "Nu s-a putut trimite avertizarea de raport: {{error}}",
+      "sendingMail": "Se trimite email…"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",

@@ -68,6 +68,7 @@ const AMENITIES_LIST = [
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [mailClient, setMailClient] = useState<Client | null>(null);
+  const [mailBusy, setMailBusy] = useState(false);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Cerrar con Escape los modales (accesibilidad — auditoría).
@@ -2422,7 +2423,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
 {mailClient && (
   <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setMailClient(null); }}>
-    <div className="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[88vh] overflow-y-auto">
+    <div className="relative bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[88vh] overflow-y-auto">
+      {mailBusy && (
+        <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm rounded-t-3xl sm:rounded-3xl flex flex-col items-center justify-center gap-3">
+          <span className="material-symbols-outlined text-blue-600 text-4xl animate-spin">progress_activity</span>
+          <span className="text-sm font-bold text-primary">{t('admin.dash.sendingMail')}</span>
+        </div>
+      )}
       <div className="flex justify-between items-start gap-3 mb-6">
         <div className="min-w-0">
           <h2 className="text-xl sm:text-2xl font-serif text-primary">{t('admin.dash.mailCenter')}</h2>
@@ -2437,7 +2444,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           { icon: 'event', titleKey: 'admin.dash.mailReminder', descKey: 'admin.dash.mailReminderDesc', run: () => sendReminderEmail(mailClient) },
           { icon: 'description', titleKey: 'admin.dash.mailReport', descKey: 'admin.dash.mailReportDesc', run: () => sendReportEmail(mailClient) },
         ].map((m, idx) => (
-          <button key={idx} onClick={() => { void m.run(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-3 sm:gap-4">
+          <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
             <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
             <span className="min-w-0">
               <span className="block font-bold text-primary text-sm mb-0.5">{t(m.titleKey)}</span>

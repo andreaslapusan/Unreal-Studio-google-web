@@ -1125,7 +1125,8 @@
       "reportConfirm": "Send work report notice to {{email}}?",
       "reportNoProjects": "This client has no assigned properties.",
       "reportSent": "Report notice sent to {{email}} ({{n}}).",
-      "reportError": "Failed to send report notice: {{error}}"
+      "reportError": "Failed to send report notice: {{error}}",
+      "sendingMail": "Sending email…"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

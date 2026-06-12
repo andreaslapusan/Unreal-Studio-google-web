@@ -1125,7 +1125,8 @@
       "reportConfirm": "¿Enviar aviso de reporte de obra a {{email}}?",
       "reportNoProjects": "Este cliente no tiene propiedades asignadas.",
       "reportSent": "Aviso de reporte enviado a {{email}} ({{n}}).",
-      "reportError": "No se pudo enviar el aviso de reporte: {{error}}"
+      "reportError": "No se pudo enviar el aviso de reporte: {{error}}",
+      "sendingMail": "Enviando correo…"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

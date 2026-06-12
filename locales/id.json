@@ -1217,7 +1217,8 @@
       "reportConfirm": "Kirim pemberitahuan laporan proyek ke {{email}}?",
       "reportNoProjects": "Klien ini tidak memiliki properti yang ditugaskan.",
       "reportSent": "Pemberitahuan laporan dikirim ke {{email}} ({{n}}).",
-      "reportError": "Tidak dapat mengirim pemberitahuan laporan: {{error}}"
+      "reportError": "Tidak dapat mengirim pemberitahuan laporan: {{error}}",
+      "sendingMail": "Mengirim email…"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
