@@ -8,7 +8,7 @@ import GlobalLoading from './components/GlobalLoading';
 import LocaleSeo from './components/LocaleSeo';
 // FloatingWhatsApp importado bajo demanda (ver Layout); desactivado por defecto.
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
-import { PORTAL_SEGMENTS, portalPath, type Portal } from './lib/portalUrls';
+import { PORTAL_SEGMENTS, portalPath, matchPortalPath, type Portal } from './lib/portalUrls';
 // Home is eagerly imported because it's the landing route — lazy() would
 // add a needless extra round-trip on first paint. Everything else is split:
 // each page becomes its own JS chunk, only fetched when the user navigates
@@ -127,7 +127,10 @@ const AttributionTracker = () => {
 
 const Layout = ({ children }: { children?: React.ReactNode }) => {
   const location = useLocation();
-  const isHiddenPath = location.pathname.startsWith('/admin')
+  // Las pantallas de LOGIN localizadas (/es/clientes, /en/employees, /es/admin/login…)
+  // son portales → sin Navbar/Footer de marketing (igual que las rutas antiguas).
+  const isHiddenPath = !!matchPortalPath(location.pathname)
+    || location.pathname.startsWith('/admin')
     || location.pathname.startsWith('/cliente')
     || location.pathname.startsWith('/agencias/login')
     || location.pathname.startsWith('/agencias/dashboard')
