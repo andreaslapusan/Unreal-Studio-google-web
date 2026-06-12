@@ -5,6 +5,7 @@
  * ensure_auth_user) y permite eliminar vía admin_delete_employee.
  */
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../../lib/permissions';
 
@@ -29,6 +30,7 @@ const genPassword = () => Math.random().toString(36).slice(2, 6) + Math.random()
 interface Props { emp: EmployeeRow | null; onClose: () => void; onSaved: () => void; }
 
 export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
+  const { t } = useTranslation();
   const isNew = !emp;
   const [tab, setTab] = useState<Tab>('datos');
   const [fullName, setFullName] = useState(emp?.full_name ?? '');
@@ -50,9 +52,9 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
 
   const save = async () => {
     setErr('');
-    if (!fullName.trim()) { setErr('El nombre es obligatorio.'); setTab('datos'); return; }
-    if (!email.trim() || !email.includes('@')) { setErr('Email válido obligatorio.'); setTab('datos'); return; }
-    if (isNew && !password.trim()) { setErr('La contraseña es obligatoria al crear.'); setTab('datos'); return; }
+    if (!fullName.trim()) { setErr(t('fix.emp.errNameRequired')); setTab('datos'); return; }
+    if (!email.trim() || !email.includes('@')) { setErr(t('fix.emp.errEmailRequired')); setTab('datos'); return; }
+    if (isNew && !password.trim()) { setErr(t('fix.emp.errPasswordRequired')); setTab('datos'); return; }
     setSaving(true);
     const { error } = await supabase.rpc('admin_save_employee', {
       p_id: emp?.id ?? null,
@@ -68,7 +70,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
     });
     setSaving(false);
     if (error) {
-      setErr(error.message?.includes('email_exists') ? 'Ya existe un empleado con ese email.' : (error.message || 'Error al guardar.'));
+      setErr(error.message?.includes('email_exists') ? t('fix.emp.errEmailExists') : (error.message || t('fix.emp.errSave')));
       return;
     }
     onSaved();
@@ -77,11 +79,11 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
 
   const del = async () => {
     if (!emp) return;
-    if (!window.confirm(`¿Eliminar a ${emp.full_name || emp.email}? Esta acción no se puede deshacer.`)) return;
+    if (!window.confirm(t('fix.emp.confirmDelete', { name: emp.full_name || emp.email }))) return;
     setDeleting(true);
     const { error } = await supabase.rpc('admin_delete_employee', { p_id: emp.id });
     setDeleting(false);
-    if (error) { setErr(error.message || 'Error al eliminar.'); return; }
+    if (error) { setErr(error.message || t('fix.emp.errDelete')); return; }
     onSaved();
     onClose();
   };
@@ -90,13 +92,13 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
     if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'BUTTON' && !saving) { e.preventDefault(); void save(); }
   };
 
-  const TABS: [Tab, string, string][] = [['datos', 'Datos', 'badge'], ['permisos', 'Permisos', 'key'], ['horario', 'Horario', 'schedule']];
+  const TABS: [Tab, string, string][] = [['datos', t('fix.emp.tabData'), 'badge'], ['permisos', t('fix.emp.tabPermissions'), 'key'], ['horario', t('fix.emp.tabSchedule'), 'schedule']];
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="ust-modal bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()} onKeyDown={onKeyDown}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-xl font-serif text-primary">{isNew ? 'Nuevo empleado' : (fullName || 'Editar empleado')}</h2>
+          <h2 className="text-xl font-serif text-primary">{isNew ? t('fix.emp.titleNew') : (fullName || t('fix.emp.titleEdit'))}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
         </div>
 
@@ -116,22 +118,22 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
             {tab === 'datos' && (
               <>
                 <label className="block">
-                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">Nombre completo</span>
+                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelFullName')}</span>
                   <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" autoFocus />
                 </label>
                 <label className="block">
-                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">Email (usuario de acceso)</span>
+                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelEmail')}</span>
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
                 </label>
                 <label className="block">
-                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">Contraseña {isNew ? '' : '(dejar vacío para no cambiar)'}</span>
+                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelPassword')} {isNew ? '' : t('fix.emp.labelPasswordHint')}</span>
                   <div className="mt-1 flex gap-2">
                     <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder={isNew ? '' : '••••••••'} className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono" />
-                    <button onClick={() => setPassword(genPassword())} className="px-3 py-2 rounded-xl bg-gray-100 text-primary/70 text-xs font-bold hover:bg-gray-200">Generar</button>
+                    <button onClick={() => setPassword(genPassword())} className="px-3 py-2 rounded-xl bg-gray-100 text-primary/70 text-xs font-bold hover:bg-gray-200">{t('fix.emp.generate')}</button>
                   </div>
                 </label>
                 <button onClick={() => setActive((a) => !a)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-                  {active ? 'Activo' : 'Inactivo'}
+                  {active ? t('fix.emp.active') : t('fix.emp.inactive')}
                 </button>
               </>
             )}
@@ -153,19 +155,19 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
             {tab === 'horario' && (
               <>
                 <div className="flex items-center gap-2">
-                  <label className="text-xs font-bold text-primary/50">Entrada
+                  <label className="text-xs font-bold text-primary/50">{t('fix.emp.startTime')}
                     <input type="time" value={start} onChange={(e) => setStart(e.target.value)} className="ml-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm" />
                   </label>
                   <span className="text-gray-300">→</span>
-                  <label className="text-xs font-bold text-primary/50">Salida
+                  <label className="text-xs font-bold text-primary/50">{t('fix.emp.endTime')}
                     <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} className="ml-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm" />
                   </label>
                 </div>
-                <label className="flex items-center gap-2 text-xs font-bold text-primary/50">Margen de tolerancia
-                  <input type="number" min={0} max={120} value={margin} onChange={(e) => setMargin(parseInt(e.target.value) || 0)} className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm w-16" /> min
+                <label className="flex items-center gap-2 text-xs font-bold text-primary/50">{t('fix.emp.tolerance')}
+                  <input type="number" min={0} max={120} value={margin} onChange={(e) => setMargin(parseInt(e.target.value) || 0)} className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm w-16" /> {t('fix.emp.minutes')}
                 </label>
                 <div>
-                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest block mb-1.5">Días laborables</span>
+                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest block mb-1.5">{t('fix.emp.workDays')}</span>
                   <div className="flex gap-1.5">
                     {DAYS.map(([lbl, dow]) => {
                       const on = days.includes(dow);
@@ -186,14 +188,14 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
         <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-gray-100">
           {!isNew ? (
             <button onClick={del} disabled={deleting} className="text-red-600 text-xs font-bold uppercase tracking-widest hover:text-red-700 inline-flex items-center gap-1 disabled:opacity-40">
-              <span className="material-symbols-outlined text-sm">{deleting ? 'progress_activity' : 'delete'}</span> Eliminar
+              <span className="material-symbols-outlined text-sm">{deleting ? 'progress_activity' : 'delete'}</span> {t('fix.emp.delete')}
             </button>
           ) : <span />}
           <div className="flex gap-2">
-            <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-primary/60 text-xs font-bold uppercase tracking-widest hover:bg-gray-100">Cancelar</button>
+            <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-primary/60 text-xs font-bold uppercase tracking-widest hover:bg-gray-100">{t('fix.emp.cancel')}</button>
             <button onClick={save} disabled={saving} className="bg-primary text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-black transition inline-flex items-center gap-1.5 disabled:opacity-50">
               {saving && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}
-              {saving ? 'Guardando…' : 'Guardar'}
+              {saving ? t('fix.emp.saving') : t('fix.emp.save')}
             </button>
           </div>
         </div>

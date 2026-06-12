@@ -1077,7 +1077,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </button>
           <button onClick={handleLogout} className="hidden md:block bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
           {/* Bocadillo (tres rayitas) en móvil: todos los menús + idioma/divisa/guía/salir */}
-          <button onClick={() => setAdminMenuOpen((o) => !o)} aria-label="Menú" className="md:hidden w-10 h-10 rounded-full bg-gray-100 text-primary flex items-center justify-center active:scale-95 transition">
+          <button onClick={() => setAdminMenuOpen((o) => !o)} aria-label={t('fix.adm.menuAria')} className="md:hidden w-10 h-10 rounded-full bg-gray-100 text-primary flex items-center justify-center active:scale-95 transition">
             <span className="material-symbols-outlined text-[22px]">{adminMenuOpen ? 'close' : 'menu'}</span>
           </button>
         </div>
@@ -1095,8 +1095,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               ))}
             </div>
             <div className="border-t border-gray-100 pt-2 flex flex-col gap-2">
-              <div className="flex items-center gap-2 px-1">
-                <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-xs font-bold text-primary">
+              <div className="flex flex-col gap-2 px-1">
+                <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-3 pr-9 py-1.5 text-xs font-bold text-primary">
                   {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
                 </select>
                 <LanguageSwitcher />
@@ -1330,7 +1330,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
                     </div>
                     <div className="flex gap-1 shrink-0">
-                        <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary hover:text-primary/70 transition p-1" title="Calendario de pagos"><span className="material-symbols-outlined text-sm">event</span></button>
+                        <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary hover:text-primary/70 transition p-1" title={t('fix.adm.paymentsCalendar')}><span className="material-symbols-outlined text-sm">event</span></button>
                         <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary hover:text-primary/70 transition p-1" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-sm">edit</span></button>
                         <button onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-400 hover:text-red-600 transition p-1" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-sm">close</span></button>
                     </div>
@@ -1393,7 +1393,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
            <div className="animate-in fade-in duration-500 flex flex-col md:flex-row gap-6">
              {/* Submenú lateral ordenado */}
              <nav className="md:w-48 shrink-0 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible">
-               {([['etiquetas','Etiquetas','sell'],['permisos','Permisos','tune'],['marca','Marca y datos','storefront']] as [typeof configTab,string,string][]).map(([k,label,icon]) => (
+               {([['etiquetas',t('fix.adm.cfgTabLabels'),'sell'],['permisos',t('fix.adm.cfgTabPermissions'),'tune'],['marca',t('fix.adm.cfgTabBrand'),'storefront']] as [typeof configTab,string,string][]).map(([k,label,icon]) => (
                  <button key={k} onClick={() => setConfigTab(k)}
                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition ${configTab === k ? 'bg-primary text-white shadow-sm' : 'text-primary/60 hover:bg-gray-100'}`}>
                    <span className="material-symbols-outlined text-[18px]">{icon}</span>{label}
@@ -1436,10 +1436,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
              {configTab === 'permisos' && (
              <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-               <h3 className="text-xl font-serif text-primary mb-2">Funciones visibles en el portal de clientes</h3>
-               <p className="text-xs text-gray-400 mb-6">Activa o desactiva qué módulos ve el cliente en su portal.</p>
+               <h3 className="text-xl font-serif text-primary mb-2">{t('fix.adm.clientFeaturesTitle')}</h3>
+               <p className="text-xs text-gray-400 mb-6">{t('fix.adm.clientFeaturesHint')}</p>
                <div className="grid sm:grid-cols-2 gap-2">
-                 {([['calculator','Calculadora ROI'],['construction','Reportes de obra'],['brochure','Brochure'],['viewProject','Ver proyecto'],['drive','Carpeta Google Drive']] as [string,string][]).map(([k,label]) => {
+                 {([['calculator',t('fix.adm.featCalculator')],['construction',t('fix.adm.featConstruction')],['brochure',t('fix.adm.featBrochure')],['viewProject',t('fix.adm.featViewProject')],['drive',t('fix.adm.featDrive')]] as [string,string][]).map(([k,label]) => {
                    const feats = ((config as any).brand?.client_features) || {};
                    const on = feats[k] !== false;
                    return (
@@ -1451,7 +1451,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    );
                  })}
                </div>
-               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">Guardar permisos</button>
+               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('fix.adm.savePermissions')}</button>
              </div>
              )}
 
@@ -1586,7 +1586,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <p className="text-xs text-primary/50 mt-1">{t('admin.dash.vacationsManagedHint')}</p>
               </div>
               <button onClick={() => setEmpModal({ emp: null })} className="shrink-0 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition">
-                <span className="material-symbols-outlined text-sm">person_add</span> Crear empleado
+                <span className="material-symbols-outlined text-sm">person_add</span> {t('fix.adm.createEmployee')}
               </button>
             </div>
             <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
@@ -1595,10 +1595,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <tr>
                     <th className="text-left px-4 py-3">{t('admin.dash.thName')}</th>
                     <th className="text-left px-4 py-3">{t('admin.dash.thEmail')}</th>
-                    <th className="text-left px-4 py-3">Permisos</th>
+                    <th className="text-left px-4 py-3">{t('fix.adm.thPermissions')}</th>
                     <th className="text-left px-4 py-3">{t('admin.dash.thSchedule')}</th>
                     <th className="text-left px-4 py-3">{t('admin.dash.thStatus')}</th>
-                    <th className="text-right px-4 py-3">Acciones</th>
+                    <th className="text-right px-4 py-3">{t('fix.adm.thActions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1619,7 +1619,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         </td>
                         <td className="px-4 py-3 text-right whitespace-nowrap">
                           <button onClick={() => setEmpModal({ emp: e as EmployeeRow })} className="text-primary/60 hover:text-primary text-xs font-bold uppercase tracking-widest inline-flex items-center gap-1">
-                            <span className="material-symbols-outlined text-sm">edit</span> Editar
+                            <span className="material-symbols-outlined text-sm">edit</span> {t('fix.adm.edit')}
                           </button>
                         </td>
                       </tr>

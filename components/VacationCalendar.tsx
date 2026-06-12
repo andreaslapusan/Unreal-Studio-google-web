@@ -61,13 +61,18 @@ function typeMetaKey(type: string): VacationType {
   return (type as VacationType) in TYPE_META ? (type as VacationType) : 'vacaciones';
 }
 
-const WEEKDAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const iso = (y: number, m: number, d: number) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+// Nombres de mes y días de la semana SEGÚN EL IDIOMA (lunes primero). 2024-01-01 fue lunes.
+const monthsFor = (locale: string) => Array.from({ length: 12 }, (_, m) => {
+  const n = new Date(2024, m, 1).toLocaleDateString(locale, { month: 'long' });
+  return n.charAt(0).toUpperCase() + n.slice(1);
+});
+const weekdaysFor = (locale: string) => Array.from({ length: 7 }, (_, i) =>
+  new Date(2024, 0, 1 + i).toLocaleDateString(locale, { weekday: 'narrow' }).toUpperCase());
 
 // Rejilla de un mes (lunes primero). Pinta un punto por cada vacación que cubre
 // el día; al pasar el ratón muestra los nombres.
-const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail: string; compact?: boolean }> = ({ y, m, vacations, myEmail, compact }) => {
+const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail: string; weekdays: string[]; compact?: boolean }> = ({ y, m, vacations, myEmail, weekdays, compact }) => {
   const first = new Date(y, m, 1);
   const lead = (first.getDay() + 6) % 7; // 0 = lunes
   const days = new Date(y, m + 1, 0).getDate();
@@ -78,7 +83,7 @@ const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail
   return (
     <div>
       <div className="grid grid-cols-7 mb-1">
-        {WEEKDAYS.map((w) => <div key={w} className={`text-center font-black text-primary/40 ${compact ? 'text-[8px]' : 'text-[10px]'}`}>{w}</div>)}
+        {weekdays.map((w, wi) => <div key={wi} className={`text-center font-black text-primary/40 ${compact ? 'text-[8px]' : 'text-[10px]'}`}>{w}</div>)}
       </div>
       <div className="grid grid-cols-7 gap-0.5">
         {cells.map((d, i) => {
@@ -106,6 +111,9 @@ const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail
 
 const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employeeEmail, employeeName }) => {
   const { t, i18n } = useTranslation();
+  const locale = i18n.language || 'es';
+  const MONTHS = monthsFor(locale);
+  const WEEK = weekdaysFor(locale);
   const typeLabel = (type: string) => t(`vacaciones.types.${typeMetaKey(type)}`);
   const statusLabel = (status: string) =>
     (status in STATUS_CLS ? t(`vacaciones.status.${status}`) : t('vacaciones.status.pendiente'));
@@ -205,7 +213,7 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
   const printCalendar = () => {
     const node = calRef.current;
     if (!node) return;
-    const title = view === 'anio' ? `Calendario de vacaciones ${cursor.y}` : `Vacaciones · ${MONTHS_ES[cursor.m]} ${cursor.y}`;
+    const title = view === 'anio' ? t('fix.vac.printTitleYear', { year: cursor.y }) : t('fix.vac.printTitleMonth', { month: MONTHS[cursor.m], year: cursor.y });
     const iframe = document.createElement('iframe');
     iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
     document.body.appendChild(iframe);
@@ -306,14 +314,14 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
       <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
         <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
           {(['mes', 'anio'] as const).map((v) => (
-            <button key={v} onClick={() => setView(v)} className={`px-3 py-1 rounded-full text-[11px] font-bold transition ${view === v ? 'bg-primary text-white' : 'text-primary/50'}`}>{v === 'mes' ? 'Mes' : 'Año'}</button>
+            <button key={v} onClick={() => setView(v)} className={`px-3 py-1 rounded-full text-[11px] font-bold transition ${view === v ? 'bg-primary text-white' : 'text-primary/50'}`}>{v === 'mes' ? t('fix.vac.viewMonth') : t('fix.vac.viewYear')}</button>
           ))}
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => step(-1)} className="w-8 h-8 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"><span className="material-symbols-outlined text-[18px]">chevron_left</span></button>
-          <span className="text-sm font-bold text-primary min-w-[120px] text-center">{view === 'anio' ? cursor.y : `${MONTHS_ES[cursor.m]} ${cursor.y}`}</span>
+          <span className="text-sm font-bold text-primary min-w-[120px] text-center">{view === 'anio' ? cursor.y : `${MONTHS[cursor.m]} ${cursor.y}`}</span>
           <button onClick={() => step(1)} className="w-8 h-8 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"><span className="material-symbols-outlined text-[18px]">chevron_right</span></button>
-          <button onClick={printCalendar} title="Imprimir" className="w-8 h-8 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"><span className="material-symbols-outlined text-[18px]">print</span></button>
+          <button onClick={printCalendar} title={t('fix.vac.print')} className="w-8 h-8 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"><span className="material-symbols-outlined text-[18px]">print</span></button>
         </div>
       </div>
 
@@ -324,13 +332,13 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
       ) : (
         <div ref={calRef}>
           {view === 'mes' ? (
-            <MonthGrid y={cursor.y} m={cursor.m} vacations={vacations} myEmail={employeeEmail} />
+            <MonthGrid y={cursor.y} m={cursor.m} vacations={vacations} myEmail={employeeEmail} weekdays={WEEK} />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {Array.from({ length: 12 }, (_, m) => (
                 <div key={m}>
-                  <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-1">{MONTHS_ES[m]}</p>
-                  <MonthGrid y={cursor.y} m={m} vacations={vacations} myEmail={employeeEmail} compact />
+                  <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-1">{MONTHS[m]}</p>
+                  <MonthGrid y={cursor.y} m={m} vacations={vacations} myEmail={employeeEmail} weekdays={WEEK} compact />
                 </div>
               ))}
             </div>

@@ -112,7 +112,7 @@ const AttendancePanel: React.FC = () => {
   const downloadPdf = async () => {
     setDownloading(true);
     try {
-      const head = `<tr style="background:#3F2305;color:#fff"><th>Empleado</th><th>Fecha</th>${COLS.map(([, l]) => `<th>${l}</th>`).join('')}<th>Total</th><th>Dif.</th></tr>`;
+      const head = `<tr style="background:#3F2305;color:#fff"><th>${t('fix.att.employee')}</th><th>${t('fix.att.date')}</th>${COLS.map(([k]) => `<th>${t(`fix.att.col_${k}`)}</th>`).join('')}<th>${t('fix.att.total')}</th><th>${t('fix.att.diff')}</th></tr>`;
       const body = dayRows.map((d) => {
         const w = worked(d); const asg = schedule[d.email]; const diff = (w != null && asg != null) ? w - asg : null;
         return `<tr><td><b>${d.name}</b><br><span style="font-size:10px;color:#888">${d.email}</span></td><td>${fmtDay(d.day)}</td>` +
@@ -120,7 +120,7 @@ const AttendancePanel: React.FC = () => {
           `<td style="text-align:center"><b>${w != null ? hm(w) : '—'}</b></td><td style="text-align:center;color:${diff != null && diff < 0 ? '#c00' : '#070'}">${diff != null ? hm(diff) : '—'}</td></tr>`;
       }).join('');
       const inner = `<style>h1{font-size:18px;margin:0 0 12px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #e4d9cc;padding:5px;text-align:left;vertical-align:top}</style>`
-        + `<h1>Reporte de asistencia · ${from} a ${to}</h1><table>${head}${body}</table>`;
+        + `<h1>${t('fix.att.reportTitle', { from, to })}</h1><table>${head}${body}</table>`;
       const { downloadPdfFromHtml } = await import('../../lib/pdf');
       await downloadPdfFromHtml(inner, `reporte-asistencia_${from}_a_${to}.pdf`);
     } finally {
@@ -152,18 +152,18 @@ const AttendancePanel: React.FC = () => {
 
   return (
     <div className="mt-12">
-      <h2 className="text-2xl font-serif text-primary mb-2">Reporte de asistencia</h2>
-      <p className="text-sm text-gray-400 mb-4">Entradas, salidas y pausas del equipo. Filtra por empleados y fechas.</p>
+      <h2 className="text-2xl font-serif text-primary mb-2">{t('fix.att.heading')}</h2>
+      <p className="text-sm text-gray-400 mb-4">{t('fix.att.subtitle')}</p>
 
       <div className="flex flex-wrap items-center gap-2 mb-3">
-        <label className="text-xs text-primary/50 font-bold">Desde
+        <label className="text-xs text-primary/50 font-bold">{t('fix.att.from')}
           <input type="date" value={from} max="2099-12-31" onChange={(e) => setFrom(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
         </label>
-        <label className="text-xs text-primary/50 font-bold">Hasta
+        <label className="text-xs text-primary/50 font-bold">{t('fix.att.to')}
           <input type="date" value={to} max="2099-12-31" onChange={(e) => setTo(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
         </label>
         <button onClick={() => void downloadPdf()} disabled={loading || downloading || dayRows.length === 0} className="ml-auto bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition disabled:opacity-40">
-          <span className={`material-symbols-outlined text-sm ${downloading ? 'animate-spin' : ''}`}>{downloading ? 'progress_activity' : 'download'}</span> {downloading ? 'Generando…' : 'Descargar PDF'}
+          <span className={`material-symbols-outlined text-sm ${downloading ? 'animate-spin' : ''}`}>{downloading ? 'progress_activity' : 'download'}</span> {downloading ? t('fix.att.generating') : t('fix.att.downloadPdf')}
         </button>
       </div>
       {/* Multiselección de empleados (chips). Vacío = todos. */}
@@ -172,7 +172,7 @@ const AttendancePanel: React.FC = () => {
           const on = selected.has(e.email);
           return <button key={e.email} onClick={() => toggle(e.email)} className={`text-[11px] font-bold px-3 py-1.5 rounded-full transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>{e.name}</button>;
         })}
-        {selected.size > 0 && <button onClick={() => setSelected(new Set())} className="text-[11px] text-primary/50 underline px-2">Todos</button>}
+        {selected.size > 0 && <button onClick={() => setSelected(new Set())} className="text-[11px] text-primary/50 underline px-2">{t('fix.att.all')}</button>}
       </div>
 
       {loading ? (
@@ -184,11 +184,11 @@ const AttendancePanel: React.FC = () => {
           <table className="w-full text-sm min-w-[920px]">
             <thead className="bg-gray-50 text-[10px] uppercase tracking-widest text-primary/50">
               <tr>
-                <th className="text-left px-3 py-3 w-[110px]">Empleado</th>
-                <th className="text-left px-2 py-3 w-[70px]">Fecha</th>
-                {COLS.map(([k, l]) => <th key={k as string} className="text-left px-3 py-3">{l}</th>)}
-                <th className="text-center px-2 py-3 w-[64px]">Total</th>
-                <th className="text-center px-2 py-3 w-[64px]">Dif.</th>
+                <th className="text-left px-3 py-3 w-[110px]">{t('fix.att.employee')}</th>
+                <th className="text-left px-2 py-3 w-[70px]">{t('fix.att.date')}</th>
+                {COLS.map(([k]) => <th key={k as string} className="text-left px-3 py-3">{t(`fix.att.col_${k}`)}</th>)}
+                <th className="text-center px-2 py-3 w-[64px]">{t('fix.att.total')}</th>
+                <th className="text-center px-2 py-3 w-[64px]">{t('fix.att.diff')}</th>
               </tr>
             </thead>
             <tbody>

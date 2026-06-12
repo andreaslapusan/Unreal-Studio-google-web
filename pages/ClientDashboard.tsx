@@ -640,7 +640,7 @@ const ClientDashboard: React.FC = () => {
               <p className="font-serif text-lg text-primary leading-tight">{t('admin.clientDash.documentsTitle', 'Tu carpeta de Google Drive')}</p>
               <p className="text-xs text-primary/50">{t('admin.clientDash.documentsBody', 'Accede a tu carpeta privada (contratos, recibos, planos).')}</p>
             </div>
-            <span className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg group-hover:bg-black transition shrink-0">Acceder <span className="material-symbols-outlined text-sm">arrow_forward</span></span>
+            <span className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg group-hover:bg-black transition shrink-0">{t('fix.cld.access')} <span className="material-symbols-outlined text-sm">arrow_forward</span></span>
           </a>
         )}
         {clientId && <ClientUnitsSection clientId={clientId} />}
@@ -748,7 +748,7 @@ const ClientDashboard: React.FC = () => {
                     {clientId && (
                       <div className="mt-5 pt-5 border-t border-gray-100">
                         <button onClick={() => setPaymentsProj(proj)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition">
-                          <span className="material-symbols-outlined text-sm">event</span> Calendario de pagos
+                          <span className="material-symbols-outlined text-sm">event</span> {t('fix.cld.paymentCalendar')}
                         </button>
                       </div>
                     )}
@@ -778,12 +778,12 @@ const ClientDashboard: React.FC = () => {
           <div className="bg-white ust-modal rounded-3xl p-6 md:p-8 shadow-2xl">
             <div className="flex items-start justify-between mb-1">
               <div>
-                <h2 className="text-xl font-serif text-primary">Calendario de pagos</h2>
+                <h2 className="text-xl font-serif text-primary">{t('fix.cld.paymentCalendar')}</h2>
                 <p className="text-sm text-primary/50">{paymentsProj.project_name}{paymentsProj.unit_number ? ` · ${paymentsProj.unit_number}` : ''}</p>
               </div>
-              <button onClick={() => setPaymentsProj(null)} className="text-primary/40 hover:text-primary" title="Cerrar"><span className="material-symbols-outlined">close</span></button>
+              <button onClick={() => setPaymentsProj(null)} className="text-primary/40 hover:text-primary" title={t('fix.cld.close')}><span className="material-symbols-outlined">close</span></button>
             </div>
-            <p className="text-xs text-primary/50 mb-4">La fecha límite es el día en que el importe debe estar recibido por Unreal Studio. Inicia las transferencias con margen.</p>
+            <p className="text-xs text-primary/50 mb-4">{t('fix.cld.paymentDeadlineNote')}</p>
             <ClientPaymentsSection clientId={clientId} filterName={paymentsProj.project_name} filterUnit={paymentsProj.unit_number ?? null} variant="table" />
           </div>
         </div>

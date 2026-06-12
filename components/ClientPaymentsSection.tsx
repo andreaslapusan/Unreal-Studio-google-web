@@ -11,6 +11,7 @@
  * Sin emojis (regla de marca): estados con iconos Material Symbols.
  */
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 
 interface Payment {
@@ -48,6 +49,7 @@ const byDate = (a: Payment, b: Payment) => {
 };
 
 const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUnit, variant = 'list' }) => {
+  const { t } = useTranslation();
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
@@ -95,8 +97,8 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
     ? units.filter((u) => norm(u.project_name) === norm(filterName) && (filterUnit === undefined || norm(u.unit_number) === norm(filterUnit)))
     : units;
 
-  if (loading) return <p className="text-sm text-primary/40 py-4">Cargando calendario…</p>;
-  if (shown.length === 0) return <p className="text-sm text-primary/40 py-4">No hay pagos registrados todavía.</p>;
+  if (loading) return <p className="text-sm text-primary/40 py-4">{t('fix.pay.loadingCalendar')}</p>;
+  if (shown.length === 0) return <p className="text-sm text-primary/40 py-4">{t('fix.pay.noPaymentsYet')}</p>;
 
   // ===== Variante TABLA (modal) =====
   if (variant === 'table') {
@@ -110,8 +112,8 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
           return (
             <div key={u.client_project_id}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-black uppercase tracking-widest text-primary/50">Resumen</span>
-                <span className="text-xs font-bold text-primary">{pct}% recibido · {fmt(recv, u.currency)} / {fmt(total, u.currency)}</span>
+                <span className="text-[11px] font-black uppercase tracking-widest text-primary/50">{t('fix.pay.summary')}</span>
+                <span className="text-xs font-bold text-primary">{t('fix.pay.pctReceived', { pct })} · {fmt(recv, u.currency)} / {fmt(total, u.currency)}</span>
               </div>
               <div className="h-2 bg-primary/10 rounded-full overflow-hidden mb-4">
                 <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
@@ -120,14 +122,14 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                 <table className="w-full text-sm min-w-[760px]">
                   <thead className="bg-almond/50 text-[10px] uppercase tracking-widest text-primary/50">
                     <tr>
-                      <th className="text-left px-4 py-3">Concepto</th>
-                      <th className="text-left px-4 py-3">Fecha límite</th>
-                      <th className="text-right px-4 py-3">Cantidad</th>
-                      <th className="text-right px-4 py-3">Recibida</th>
-                      <th className="text-left px-4 py-3">Fecha cobro</th>
-                      <th className="text-right px-4 py-3">Balance</th>
-                      <th className="text-left px-4 py-3">Estado</th>
-                      <th className="text-right px-4 py-3">Recibí</th>
+                      <th className="text-left px-4 py-3">{t('fix.pay.colConcept')}</th>
+                      <th className="text-left px-4 py-3">{t('fix.pay.colDueDate')}</th>
+                      <th className="text-right px-4 py-3">{t('fix.pay.colAmount')}</th>
+                      <th className="text-right px-4 py-3">{t('fix.pay.colReceived')}</th>
+                      <th className="text-left px-4 py-3">{t('fix.pay.colChargeDate')}</th>
+                      <th className="text-right px-4 py-3">{t('fix.pay.colBalance')}</th>
+                      <th className="text-left px-4 py-3">{t('fix.pay.colStatus')}</th>
+                      <th className="text-right px-4 py-3">{t('fix.pay.colReceipt')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -149,20 +151,20 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           <td className="px-4 py-3 whitespace-nowrap">
                             <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-500' : 'bg-almond text-primary/50'}`}>
                               <span className="material-symbols-outlined text-sm">{p.received ? 'check_circle' : overdue ? 'warning' : 'schedule'}</span>
-                              {p.received ? 'Recibido' : overdue ? 'Vencido' : 'Pendiente'}
+                              {p.received ? t('fix.pay.statusReceived') : overdue ? t('fix.pay.statusOverdue') : t('fix.pay.statusPending')}
                             </span>
                             {!p.received && (
                               <div className="mt-1">
                                 {claimed ? (
-                                  <span className="text-[11px] font-bold text-green-700">Aviso enviado</span>
+                                  <span className="text-[11px] font-bold text-green-700">{t('fix.pay.noticeSent')}</span>
                                 ) : claimingId === p.id ? (
                                   <div className="flex items-center gap-1 mt-1">
-                                    <input type="text" value={claimNote} onChange={(e) => setClaimNote(e.target.value)} placeholder="Referencia (opcional)" className="rounded border border-primary/15 px-2 py-1 text-[11px] bg-white w-32" />
-                                    <button onClick={() => void submitClaim(p.id)} disabled={sending} className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded disabled:opacity-50">{sending ? '…' : 'Confirmar'}</button>
+                                    <input type="text" value={claimNote} onChange={(e) => setClaimNote(e.target.value)} placeholder={t('fix.pay.referenceOptional')} className="rounded border border-primary/15 px-2 py-1 text-[11px] bg-white w-32" />
+                                    <button onClick={() => void submitClaim(p.id)} disabled={sending} className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded disabled:opacity-50">{sending ? '…' : t('fix.pay.confirm')}</button>
                                     <button onClick={() => { setClaimingId(null); setClaimNote(''); }} className="text-[10px] text-primary/50 px-1">×</button>
                                   </div>
                                 ) : (
-                                  <button onClick={() => { setClaimingId(p.id); setClaimNote(''); }} className="text-[10px] font-bold text-primary border border-primary/20 rounded-full px-2 py-0.5 hover:bg-primary hover:text-white transition mt-1">Ya he pagado</button>
+                                  <button onClick={() => { setClaimingId(p.id); setClaimNote(''); }} className="text-[10px] font-bold text-primary border border-primary/20 rounded-full px-2 py-0.5 hover:bg-primary hover:text-white transition mt-1">{t('fix.pay.alreadyPaid')}</button>
                                 )}
                               </div>
                             )}
@@ -170,7 +172,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           <td className="px-4 py-3 text-right whitespace-nowrap">
                             {receipts[p.id] ? (
                               <button onClick={() => void viewReceipt(receipts[p.id].html, receipts[p.id].no_seq)} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
-                                <span className="material-symbols-outlined text-sm">download</span>Recibí
+                                <span className="material-symbols-outlined text-sm">download</span>{t('fix.pay.receipt')}
                               </button>
                             ) : <span className="text-[11px] text-primary/30">—</span>}
                           </td>
@@ -184,7 +186,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                       const tBal = total - tRecv;
                       return (
                         <tr className="border-t-2 border-primary/20 bg-almond/40 font-bold text-primary">
-                          <td className="px-4 py-3" colSpan={2}>TOTAL</td>
+                          <td className="px-4 py-3" colSpan={2}>{t('fix.pay.total')}</td>
                           <td className="px-4 py-3 text-right whitespace-nowrap">{fmt(total, u.currency)}</td>
                           <td className="px-4 py-3 text-right text-green-700 whitespace-nowrap">{fmt(tRecv, u.currency)}</td>
                           <td className="px-4 py-3" />
@@ -206,8 +208,8 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
   // ===== Variante LISTA (full, uso antiguo) =====
   return (
     <section className="mt-10">
-      <h2 className="font-serif text-2xl text-primary mb-1">Calendario de pagos</h2>
-      <p className="text-xs text-primary/50 mb-4">Las fechas indican el día límite para que el importe esté <strong>recibido</strong> por Unreal Studio.</p>
+      <h2 className="font-serif text-2xl text-primary mb-1">{t('fix.pay.calendarTitle')}</h2>
+      <p className="text-xs text-primary/50 mb-4">{t('fix.pay.calendarIntroBefore')}<strong>{t('fix.pay.calendarIntroReceived')}</strong>{t('fix.pay.calendarIntroAfter')}</p>
       <div className="space-y-6">
         {shown.map((u) => {
           const pays = [...u.payments].sort(byDate);
@@ -235,12 +237,12 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           <span className={`material-symbols-outlined text-lg ${iconColor}`}>{icon}</span>
                           <div className="min-w-0">
                             <div className="font-medium truncate text-primary">{p.label}</div>
-                            <div className="text-xs text-primary/60">{p.received && p.paid_at ? `Recibido el ${fmtDate(p.paid_at)}` : p.due_date ? `Fecha límite: ${fmtDate(p.due_date)}` : ''}</div>
+                            <div className="text-xs text-primary/60">{p.received && p.paid_at ? t('fix.pay.receivedOn', { date: fmtDate(p.paid_at) }) : p.due_date ? t('fix.pay.dueDateLabel', { date: fmtDate(p.due_date) }) : ''}</div>
                           </div>
                         </div>
                         <div className="text-right shrink-0">
                           <div className="font-bold text-primary">{fmt(Number(p.amount), p.currency)}</div>
-                          <div className="text-xs text-primary/60">{p.received ? 'Recibido' : overdue ? 'Vencido' : 'Pendiente'}</div>
+                          <div className="text-xs text-primary/60">{p.received ? t('fix.pay.statusReceived') : overdue ? t('fix.pay.statusOverdue') : t('fix.pay.statusPending')}</div>
                         </div>
                       </div>
                     </li>

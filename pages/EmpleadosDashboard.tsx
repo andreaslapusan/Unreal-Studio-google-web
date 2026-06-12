@@ -123,14 +123,14 @@ const EmpleadosDashboard: React.FC = () => {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setPwErr(''); setPwOk('');
-    if (pw.newPass !== pw.confirm) { setPwErr('Las contraseñas no coinciden.'); return; }
-    if (pw.newPass.length < 6) { setPwErr('Mínimo 6 caracteres.'); return; }
+    if (pw.newPass !== pw.confirm) { setPwErr(t('fix.empd.passMismatch')); return; }
+    if (pw.newPass.length < 6) { setPwErr(t('fix.empd.passMinLength')); return; }
     setPwBusy(true);
     try {
       const { error } = await supabase.auth.updateUser({ password: pw.newPass });
-      if (error) { setPwErr('No se pudo cambiar la contraseña.'); return; }
+      if (error) { setPwErr(t('fix.empd.passChangeFailed')); return; }
       if (employee?.id) await supabase.from('employees').update({ password: pw.newPass }).eq('id', employee.id);
-      setPwOk('Contraseña actualizada.');
+      setPwOk(t('fix.empd.passUpdated'));
       setPw({ newPass: '', confirm: '' });
       setTimeout(() => { setShowChangePassword(false); setPwOk(''); }, 1800);
     } finally { setPwBusy(false); }
@@ -300,7 +300,7 @@ const EmpleadosDashboard: React.FC = () => {
               onClick={() => setShowChangePassword(true)}
               className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-1"
             >
-              <span className="material-symbols-outlined text-xs">lock</span> Contraseña
+              <span className="material-symbols-outlined text-xs">lock</span> {t('fix.empd.passwordBtn')}
             </button>
           </>
         }
@@ -309,18 +309,18 @@ const EmpleadosDashboard: React.FC = () => {
       {showChangePassword && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowChangePassword(false); }}>
           <div className="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl">
-            <h2 className="text-xl font-serif text-primary mb-6">Cambiar contraseña</h2>
+            <h2 className="text-xl font-serif text-primary mb-6">{t('fix.empd.changePasswordTitle')}</h2>
             <form onSubmit={handleChangePassword} className="space-y-4">
-              <input type="password" autoComplete="new-password" required placeholder="Nueva contraseña" value={pw.newPass}
+              <input type="password" autoComplete="new-password" required placeholder={t('fix.empd.newPasswordPlaceholder')} value={pw.newPass}
                 onChange={(e) => setPw({ ...pw, newPass: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
-              <input type="password" autoComplete="new-password" required placeholder="Repite la contraseña" value={pw.confirm}
+              <input type="password" autoComplete="new-password" required placeholder={t('fix.empd.repeatPasswordPlaceholder')} value={pw.confirm}
                 onChange={(e) => setPw({ ...pw, confirm: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
               {pwErr && <p className="text-red-600 text-sm">{pwErr}</p>}
               {pwOk && <p className="text-green-600 text-sm">{pwOk}</p>}
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-400 text-xs font-black uppercase tracking-widest hover:bg-gray-50">Cancelar</button>
+                <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-400 text-xs font-black uppercase tracking-widest hover:bg-gray-50">{t('fix.empd.cancel')}</button>
                 <button type="submit" disabled={pwBusy} className="flex-1 py-3 rounded-xl bg-primary text-white text-xs font-black uppercase tracking-widest hover:bg-black transition disabled:opacity-50 inline-flex items-center justify-center gap-1.5">
-                  {pwBusy && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}{pwBusy ? 'Guardando…' : 'Guardar'}
+                  {pwBusy && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}{pwBusy ? t('fix.empd.saving') : t('fix.empd.save')}
                 </button>
               </div>
             </form>
@@ -515,13 +515,13 @@ const EmpleadosDashboard: React.FC = () => {
                 onClick={() => { const t = cameraError.type; setCameraError(null); void startCapture(t); }}
                 className="bg-primary text-white py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition"
               >
-                Reintentar
+                {t('fix.empd.retry')}
               </button>
               <button
                 onClick={() => setCameraError(null)}
                 className="text-primary/50 py-2 text-xs font-bold uppercase tracking-widest hover:text-primary transition"
               >
-                Cerrar
+                {t('fix.empd.close')}
               </button>
             </div>
           </div>

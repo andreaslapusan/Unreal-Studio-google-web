@@ -123,7 +123,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
   // Resetea el proceso de un pago: borra el recibí generado y vuelve a "Pendiente".
   const resetPayment = async (p: Payment) => {
-    if (!window.confirm('Esto BORRARÁ el recibí generado de este pago y lo volverá a "Pendiente" para regenerarlo desde cero. ¿Continuar?')) return;
+    if (!window.confirm(t('fix.cpp.confirmResetPayment'))) return;
     await supabase.rpc('admin_reset_payment', { p_payment_id: p.id });
     await load();
   };
@@ -281,7 +281,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                         </div>
                         <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
                         <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.kw_sent ? 'bg-blue-50 text-blue-600' : p.kw_signed ? 'bg-indigo-50 text-indigo-600' : p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
-                          {p.kw_sent ? 'Enviado' : p.kw_signed ? 'Firmado' : p.received ? 'Recibido' : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
+                          {p.kw_sent ? t('fix.cpp.statusSent') : p.kw_signed ? t('fix.cpp.statusSigned') : p.received ? t('fix.cpp.statusReceived') : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
                         </span>
                         <div className="flex gap-1">
                           <button onClick={() => openKwitansi(u, p)} title={t('admin.pay.generateSendKwitansi')}
@@ -289,7 +289,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                           <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p } })}
                             className="p-1.5 text-primary bg-gray-50 rounded-lg hover:bg-gray-100"><span className="material-symbols-outlined text-sm">edit</span></button>
                           {(p.received || p.kw_signed || p.kw_sent) && (
-                            <button onClick={() => resetPayment(p)} title="Resetear proceso (borra el recibí y vuelve a Pendiente)"
+                            <button onClick={() => resetPayment(p)} title={t('fix.cpp.resetProcessTitle')}
                               className="p-1.5 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100"><span className="material-symbols-outlined text-sm">restart_alt</span></button>
                           )}
                           <button onClick={() => deletePayment(p.id)}
@@ -325,7 +325,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               if (!eu || eu.sale_total == null) return null;
               const assigned = eu.payments.filter((p) => p.id !== editing.pay.id).reduce((s, p) => s + Number(p.amount), 0) + Number(editing.pay.amount || 0);
               const pending = Number(eu.sale_total) - assigned;
-              return <p className={`text-[11px] italic -mt-1 ${pending < 0 ? 'text-red-600 font-bold' : 'text-primary/50'}`}>Pendiente de asignar: {fmt(pending, eu.currency)}</p>;
+              return <p className={`text-[11px] italic -mt-1 ${pending < 0 ? 'text-red-600 font-bold' : 'text-primary/50'}`}>{t('fix.cpp.pendingToAssign', { amount: fmt(pending, eu.currency) })}</p>;
             })()}
             <label className="block text-[10px] font-black uppercase text-gray-400">{t('admin.pay.dueDateLabel')}</label>
             <input type="date" min="2000-01-01" max="2099-12-31" className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm"
@@ -333,12 +333,12 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
               value={editing.pay.notes || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, notes: e.target.value } })} />
             {/* Importe REAL recibido + fecha de cobro (si llega de menos por comisiones, el cliente ve el balance en rojo). */}
-            <label className="block text-[10px] font-black uppercase text-gray-400">Recibido (importe real) y fecha de cobro</label>
+            <label className="block text-[10px] font-black uppercase text-gray-400">{t('fix.cpp.receivedRealAmountLabel')}</label>
             <div className="flex gap-2">
-              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder="Importe recibido"
+              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('fix.cpp.receivedAmountPlaceholder')}
                 value={editing.pay.received_amount != null ? grp(editing.pay.received_amount) : ''}
                 onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, received_amount: e.target.value ? parseNum(e.target.value) : null } })} />
-              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg text-sm" title="Fecha de cobro"
+              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg text-sm" title={t('fix.cpp.collectionDateTitle')}
                 value={(editing.pay.paid_at || '').slice(0, 10)}
                 onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, paid_at: e.target.value ? new Date(e.target.value + 'T00:00:00+08:00').toISOString() : null } })} />
             </div>
@@ -377,20 +377,20 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;
               return (
                 <div className="space-y-2">
-                  <button onClick={() => void downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> Descargar PDF</button>
-                  <p className="text-[11px] text-gray-400 text-center">Pasos en orden: marcar recibido → firmar → enviar.</p>
+                  <button onClick={() => void downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> {t('fix.cpp.downloadPdf')}</button>
+                  <p className="text-[11px] text-gray-400 text-center">{t('fix.cpp.stepsInOrder')}</p>
                   <div className="grid grid-cols-3 gap-2">
                     <button disabled={kw.sending || kwReceived} onClick={markReceived}
                       className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-60 ${kwReceived ? 'bg-green-100 text-green-700' : 'bg-primary text-white hover:bg-black'}`}>
-                      {kwReceived ? '1 · Recibido' : '1 · Marcar recibido'}
+                      {kwReceived ? t('fix.cpp.step1Received') : t('fix.cpp.step1MarkReceived')}
                     </button>
                     <button disabled={kw.sending || !kwReceived || kw.signed} onClick={signKwitansi}
                       className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-40 ${kw.signed ? 'bg-green-100 text-green-700' : 'bg-primary text-white hover:bg-black'}`}>
-                      {kw.signed ? '2 · Firmado' : '2 · Firmar'}
+                      {kw.signed ? t('fix.cpp.step2Signed') : t('fix.cpp.step2Sign')}
                     </button>
                     <button disabled={kw.sending || !kw.signed} onClick={sendKwitansi}
                       className="py-2.5 rounded-lg text-xs font-bold bg-primary text-white hover:bg-black transition disabled:opacity-40">
-                      {kw.sending ? '…' : '3 · Enviar al cliente'}
+                      {kw.sending ? '…' : t('fix.cpp.step3SendToClient')}
                     </button>
                   </div>
                 </div>
