@@ -1099,7 +1099,12 @@
       "waTplMilestone": "Hito de obra",
       "waTplCompletion": "Finalización",
       "waTplAnniversary": "Aniversario inversión",
-      "waTplNewProject": "Invitación nuevo proyecto"
+      "waTplNewProject": "Invitación nuevo proyecto",
+      "sendWelcome": "Enviar correo de bienvenida",
+      "welcomeConfirm": "¿Enviar el correo de bienvenida a {{email}}?",
+      "welcomeSent": "Correo de bienvenida enviado a {{email}}.",
+      "welcomeNoEmail": "Este cliente no tiene email. Añádeselo primero.",
+      "welcomeError": "No se pudo enviar la bienvenida: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -2072,7 +2077,8 @@
       "emailLabel": "Email",
       "tempPassword": "Contraseña temporal",
       "cta": "Entrar a mi portal",
-      "security": "Por tu seguridad, cambia la contraseña temporal la primera vez que entres. Si tienes cualquier duda, estamos a un mensaje de distancia."
+      "security": "Por tu seguridad, cambia la contraseña temporal la primera vez que entres. Si tienes cualquier duda, estamos a un mensaje de distancia.",
+      "subject": "Bienvenido/a a Unreal Studio · Acceso a tu portal"
     },
     "recibi": {
       "subject": "Comprobante de pago Nº {{no}} · Unreal Studio",

@@ -1191,7 +1191,12 @@
       "waTplMilestone": "Tahap pekerjaan",
       "waTplCompletion": "Penyelesaian",
       "waTplAnniversary": "Ulang tahun investasi",
-      "waTplNewProject": "Undangan proyek baru"
+      "waTplNewProject": "Undangan proyek baru",
+      "sendWelcome": "Kirim email selamat datang",
+      "welcomeConfirm": "Kirim email selamat datang ke {{email}}?",
+      "welcomeSent": "Email selamat datang telah dikirim ke {{email}}.",
+      "welcomeNoEmail": "Klien ini tidak memiliki email. Tambahkan terlebih dahulu.",
+      "welcomeError": "Gagal mengirim selamat datang: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -2073,7 +2078,8 @@
       "emailLabel": "Email",
       "tempPassword": "Kata sandi sementara",
       "cta": "Masuk ke portal saya",
-      "security": "Untuk keamanan Anda, ganti kata sandi sementara saat pertama kali masuk. Jika Anda memiliki pertanyaan, kami hanya satu pesan jauhnya."
+      "security": "Untuk keamanan Anda, ganti kata sandi sementara saat pertama kali masuk. Jika Anda memiliki pertanyaan, kami hanya satu pesan jauhnya.",
+      "subject": "Selamat datang di Unreal Studio · Akses portal Anda"
     },
     "recibi": {
       "subject": "Bukti pembayaran Nº {{no}} · Unreal Studio",

@@ -20,6 +20,9 @@ import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import { SOCIAL_NETWORKS } from '../lib/socials';
+import { welcomeEmailHtml } from '../lib/clientEmails';
+import { portalPath } from '../lib/portalUrls';
+import i18n from '../lib/i18n';
 import BrandLogo from '../components/BrandLogo';
 
 type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias';
@@ -801,6 +804,39 @@ const handleSaveClient = async (e: React.FormEvent) => {
   }
 };
 
+// Envío MANUAL del correo de bienvenida a un cliente (en su idioma). Nunca
+// automático: solo cuando el admin pulsa el botón y confirma.
+const sendWelcome = async (client: Client) => {
+  const email = (client.email || '').trim();
+  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  if (!window.confirm(t('admin.dash.welcomeConfirm', { email }))) return;
+  try {
+    const userId = getAdminUserId();
+    if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+    const lang = ((client as any).preferred_language || 'es') as string;
+    const et = i18n.getFixedT(lang);
+    const html = welcomeEmailHtml({
+      firstName: (client.name || '').trim().split(' ')[0],
+      portalUrl: `https://unrealstudiobali.com${portalPath('cliente', lang as 'es' | 'en' | 'ro' | 'id')}`,
+      email,
+      tempPassword: (client as any).password_plain || client.temp_password || null,
+      lang,
+    });
+    const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
+      body: { adminUserId: userId, to: email, lang, subject: et('emails.welcome.subject'), html },
+    });
+    if (sErr || !sent?.success) {
+      const msg = sent?.error === 'transport_not_configured'
+        ? t('admin.pay.errorTransport', { no: '' })
+        : t('admin.dash.welcomeError', { error: sent?.error || sErr?.message || 'error' });
+      alert(msg); return;
+    }
+    alert(t('admin.dash.welcomeSent', { email }));
+  } catch (error) {
+    alert(t('admin.dash.welcomeError', { error: error instanceof Error ? error.message : String(error) }));
+  }
+};
+
 const handleDeleteClient = async (id: string) => {
   if (!window.confirm(t('admin.dash.confirmDeleteClient'))) return;
   try {
@@ -1293,6 +1329,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
             <div className="flex gap-2 shrink-0 ml-4">
               <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData')}><span className="material-symbols-outlined text-sm">edit</span></button>
+              <button onClick={() => sendWelcome(client)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.sendWelcome')}><span className="material-symbols-outlined text-sm">mail</span></button>
               <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></button>
               <button onClick={() => handleDeleteClient(client.id)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title={t('admin.dash.deleteClientTitle')}><span className="material-symbols-outlined text-sm">delete</span></button>
             </div>

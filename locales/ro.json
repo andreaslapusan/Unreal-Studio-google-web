@@ -1099,7 +1099,12 @@
       "waTplMilestone": "Punct de referință al proiectului",
       "waTplCompletion": "Finalizare",
       "waTplAnniversary": "Aniversare investiție",
-      "waTplNewProject": "Invitație la noul proiect"
+      "waTplNewProject": "Invitație la noul proiect",
+      "sendWelcome": "Trimite mesajul de bun venit",
+      "welcomeConfirm": "Trimite mesajul de bun venit la {{email}}?",
+      "welcomeSent": "Mesajul de bun venit a fost trimis la {{email}}.",
+      "welcomeNoEmail": "Acest client nu are adresa de email. Adauga-i una mai intai.",
+      "welcomeError": "Nu s-a putut trimite mesajul de bun venit: {{error}}"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -2072,7 +2077,8 @@
       "emailLabel": "Adresă de e-mail",
       "tempPassword": "Parolă temporară",
       "cta": "Intră în portalul meu",
-      "security": "Pentru siguranța dvs., schimbați parola temporară la prima intrare. Dacă aveți întrebări, suntem la un mesaj distanță."
+      "security": "Pentru siguranța dvs., schimbați parola temporară la prima intrare. Dacă aveți întrebări, suntem la un mesaj distanță.",
+      "subject": "Bun venit la Unreal Studio · Acces la portalul tau"
     },
     "recibi": {
       "subject": "Dovadă de plată Nº {{no}} · Unreal Studio",
