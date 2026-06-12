@@ -2085,6 +2085,48 @@
       "number": "Comprobante Nº",
       "downloadInstruction": "Puedes descargar tu comprobante de pago desde tu portal de cliente, en el calendario de pagos, en la fila del pago correspondiente.",
       "cta": "Ver mi portal"
+    },
+    "reset": {
+      "subject": "Restablece tu contraseña · Unreal Studio",
+      "heading": "Restablece tu contraseña",
+      "p1": "Has solicitado restablecer la contraseña de tu portal de Unreal Studio.",
+      "p2": "Pulsa el botón para crear una nueva. El enlace caduca en 1 hora.",
+      "button": "Crear nueva contraseña",
+      "footer": "Si no has sido tú, ignora este correo: tu contraseña no cambiará."
+    },
+    "magic": {
+      "subject": "Tu enlace de acceso · Unreal Studio",
+      "heading": "Entra a tu portal",
+      "p1": "Has solicitado un enlace de acceso a tu portal de Unreal Studio.",
+      "p2": "Pulsa el botón para entrar. El enlace caduca en 1 hora y solo funciona una vez.",
+      "button": "Entrar a mi portal",
+      "footer": "Si no has sido tú, ignora este correo."
+    },
+    "reminder": {
+      "b7_subject": "Tu próximo pago vence en 7 días",
+      "b7_lead": "Te recordamos que se acerca la fecha límite de tu próximo pago.",
+      "b7_when": "Quedan 7 días para la fecha límite.",
+      "b2_subject": "Tu próximo pago vence en 2 días",
+      "b2_lead": "Tu próximo pago está muy próximo a su fecha límite.",
+      "b2_when": "Quedan 2 días para la fecha límite.",
+      "due_subject": "Tu pago vence hoy",
+      "due_lead": "Hoy es la fecha límite para que el importe quede recibido por Unreal Studio. Si tienes cualquier dificultad para completarlo, ponte en contacto con nuestro equipo cuanto antes para que podamos ayudarte y evitar posibles penalizaciones por demora.",
+      "due_when": "La fecha límite es hoy.",
+      "a3_subject": "Tu pago ha vencido — estamos para ayudarte",
+      "a3_lead": "Tu pago venció hace 3 días y aún no nos consta recibido. Si tienes cualquier dificultad o duda, por favor ponte en contacto con nuestro equipo cuanto antes; te ayudaremos a regularizarlo y a evitar posibles penalizaciones por demora.",
+      "a3_when": "Lleva 3 días de retraso.",
+      "aN_subject": "Tu pago lleva {{n}} días vencido",
+      "aN_lead": "Tu pago lleva {{n}} días vencido y aún no nos consta recibido. Te pedimos que regularices la situación lo antes posible. Si necesitas ayuda, escríbenos y lo resolvemos juntos.",
+      "aN_when": "Lleva {{n}} días de retraso.",
+      "hi": "Hola {{name}},",
+      "paymentFor": "Pago correspondiente a {{project}} — {{label}}.",
+      "deadlineLabel": "Fecha límite para que el importe sea recibido por Unreal Studio:",
+      "recommendation": "Por los tiempos de las transferencias internacionales, te recomendamos iniciar el pago con varios días de margen para que llegue a tiempo. Si ya lo has realizado, puedes ignorar este mensaje. ¡Gracias!",
+      "cta": "Ver mi portal",
+      "obraTitle": "Avance de obra",
+      "obraProgress": "Progreso de construcción:",
+      "obraPhotos": "Ver las últimas fotos de obra →",
+      "footer": "¿Dudas? Responde a este correo: hello@unrealstudiobali.com"
     }
   }
 }

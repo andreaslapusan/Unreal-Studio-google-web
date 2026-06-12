@@ -2086,6 +2086,48 @@
       "number": "Bukti Nº",
       "downloadInstruction": "Anda dapat mengunduh bukti pembayaran Anda dari portal pelanggan, di kalender pembayaran, di baris pembayaran yang sesuai.",
       "cta": "Lihat portal saya"
+    },
+    "reset": {
+      "subject": "Atur Ulang Kata Sandi Anda · Unreal Studio",
+      "heading": "Atur Ulang Kata Sandi Anda",
+      "p1": "Anda telah meminta untuk mengatur ulang kata sandi portal Unreal Studio Anda.",
+      "p2": "Klik tombol untuk membuat yang baru. Tautan ini akan kedaluwarsa dalam 1 jam.",
+      "button": "Buat Kata Sandi Baru",
+      "footer": "Jika bukan Anda, abaikan surel ini: kata sandi Anda tidak akan berubah."
+    },
+    "magic": {
+      "subject": "Tautan Akses Anda · Unreal Studio",
+      "heading": "Masuk ke Portal Anda",
+      "p1": "Anda telah meminta tautan akses ke portal Unreal Studio Anda.",
+      "p2": "Klik tombol untuk masuk. Tautan ini akan kedaluwarsa dalam 1 jam dan hanya berfungsi sekali.",
+      "button": "Masuk ke Portal Saya",
+      "footer": "Jika bukan Anda, abaikan surel ini."
+    },
+    "reminder": {
+      "b7_subject": "Pembayaran Anda Jatuh Tempo dalam 7 Hari",
+      "b7_lead": "Kami mengingatkan Anda bahwa batas waktu pembayaran Anda sudah dekat.",
+      "b7_when": "Tersisa 7 hari hingga batas waktu.",
+      "b2_subject": "Pembayaran Anda Jatuh Tempo dalam 2 Hari",
+      "b2_lead": "Pembayaran Anda sudah sangat dekat dengan batas waktu.",
+      "b2_when": "Tersisa 2 hari hingga batas waktu.",
+      "due_subject": "Pembayaran Anda Jatuh Tempo Hari Ini",
+      "due_lead": "Hari ini adalah batas waktu untuk pembayaran Anda diterima oleh Unreal Studio. Jika Anda mengalami kesulitan, hubungi tim kami secepatnya agar kami dapat membantu Anda dan menghindari denda keterlambatan.",
+      "due_when": "Batas waktu adalah hari ini.",
+      "a3_subject": "Pembayaran Anda Telah Jatuh Tempo — Kami Siap Membantu",
+      "a3_lead": "Pembayaran Anda telah jatuh tempo 3 hari yang lalu dan belum kami terima. Jika Anda mengalami kesulitan atau keraguan, hubungi tim kami secepatnya; kami akan membantu Anda menyelesaikannya dan menghindari denda keterlambatan.",
+      "a3_when": "Telah 3 hari keterlambatan.",
+      "aN_subject": "Pembayaran Anda Telah Jatuh Tempo Selama {{n}} Hari",
+      "aN_lead": "Pembayaran Anda telah jatuh tempo selama {{n}} hari dan belum kami terima. Kami meminta Anda untuk menyelesaikan masalah ini secepat mungkin. Jika Anda membutuhkan bantuan, tulis kepada kami dan kita selesaikan bersama.",
+      "aN_when": "Telah {{n}} hari keterlambatan.",
+      "hi": "Halo {{name}},",
+      "paymentFor": "Pembayaran untuk {{project}} — {{label}}.",
+      "deadlineLabel": "Batas waktu untuk pembayaran diterima oleh Unreal Studio:",
+      "recommendation": "Karena waktu transfer internasional, kami sarankan Anda untuk memulai pembayaran beberapa hari sebelumnya agar dapat diterima tepat waktu. Jika Anda sudah melakukan pembayaran, Anda dapat mengabaikan pesan ini. Terima kasih!",
+      "cta": "Lihat Portal Saya",
+      "obraTitle": "Perkembangan Proyek",
+      "obraProgress": "Progres konstruksi:",
+      "obraPhotos": "Lihat foto-foto proyek terbaru →",
+      "footer": "Pertanyaan? Balas surel ini: hello@unrealstudiobali.com"
     }
   }
 }

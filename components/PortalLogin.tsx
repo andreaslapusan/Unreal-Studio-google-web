@@ -35,7 +35,7 @@ const PORTAL_LABEL: Record<PortalKey, string> = {
 };
 
 const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, dark }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
@@ -191,7 +191,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       // Magic link branded por nuestro transporte (el signInWithOtp nativo no
       // entrega: Auth sin SMTP propio). Igual que el reset.
       const { data, error: err } = await supabase.functions.invoke('send-magic-link', {
-        body: { email: email.trim().toLowerCase(), portal, redirectTo: `${window.location.origin}/auth/finish?portal=${portal}` },
+        body: { email: email.trim().toLowerCase(), portal, lang: i18n.language, redirectTo: `${window.location.origin}/auth/finish?portal=${portal}` },
       });
       if (err) throw err;
       if (!data?.success) {
@@ -217,7 +217,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       // enlace de recovery y manda el email branded desde no.reply@ (el reset
       // nativo de Supabase no entrega: Auth no tiene SMTP propio configurado).
       const { data, error: err } = await supabase.functions.invoke('send-password-reset', {
-        body: { email: email.trim().toLowerCase(), portal, redirectTo: `${window.location.origin}/auth/reset?portal=${portal}` },
+        body: { email: email.trim().toLowerCase(), portal, lang: i18n.language, redirectTo: `${window.location.origin}/auth/reset?portal=${portal}` },
       });
       if (err) throw err;
       if (!data?.success) {

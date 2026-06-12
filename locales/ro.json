@@ -2085,6 +2085,48 @@
       "number": "Dovadă de plată Nº",
       "downloadInstruction": "Puteți descărca dovada de plată din portalul dvs. de client, în calendarul de plăți, în rândul plății corespunzătoare.",
       "cta": "Vizualizați portalul meu"
+    },
+    "reset": {
+      "subject": "Resetează parola · Unreal Studio",
+      "heading": "Resetează parola",
+      "p1": "Ai solicitat resetarea parolei pentru portalul tău Unreal Studio.",
+      "p2": "Apasă butonul pentru a crea o nouă parolă. Linkul expiră în 1 oră.",
+      "button": "Creează o nouă parolă",
+      "footer": "Dacă nu ai fost tu, ignoră acest e-mail: parola ta nu se va schimba."
+    },
+    "magic": {
+      "subject": "Linkul tău de acces · Unreal Studio",
+      "heading": "Intră în portal",
+      "p1": "Ai solicitat un link de acces la portalul tău Unreal Studio.",
+      "p2": "Apasă butonul pentru a intra. Linkul expiră în 1 oră și funcționează doar o dată.",
+      "button": "Intră în portalul meu",
+      "footer": "Dacă nu ai fost tu, ignoră acest e-mail."
+    },
+    "reminder": {
+      "b7_subject": "Următorul tău plată expiră în 7 zile",
+      "b7_lead": "Îți reamintim că se apropie termenul limită pentru următorul tău plată.",
+      "b7_when": "Mai sunt 7 zile până la termenul limită.",
+      "b2_subject": "Următorul tău plată expiră în 2 zile",
+      "b2_lead": "Următorul tău plată este foarte aproape de termenul limită.",
+      "b2_when": "Mai sunt 2 zile până la termenul limită.",
+      "due_subject": "Plata ta expiră astăzi",
+      "due_lead": "Astăzi este termenul limită pentru a primi suma de către Unreal Studio. Dacă întâmpini dificultăți în a o finaliza, te rog să ne contactezi cât mai curând posibil pentru a te ajuta și a evita eventualele penalități pentru întârziere.",
+      "due_when": "Termenul limită este astăzi.",
+      "a3_subject": "Plata ta a expirat — suntem aici pentru a te ajuta",
+      "a3_lead": "Plata ta a expirat acum 3 zile și încă nu am primit confirmarea. Dacă ai întâmpinat dificultăți sau ai dubii, te rog să ne contactezi cât mai curând posibil; te vom ajuta să regularizezi situația și să eviți eventualele penalități pentru întârziere.",
+      "a3_when": "Sunt 3 zile de întârziere.",
+      "aN_subject": "Plata ta a expirat de {{n}} zile",
+      "aN_lead": "Plata ta a expirat de {{n}} zile și încă nu am primit confirmarea. Te rugăm să regularizezi situația cât mai curând posibil. Dacă ai nevoie de ajutor, scrie-ne și o să rezolvăm împreună.",
+      "aN_when": "Sunt {{n}} zile de întârziere.",
+      "hi": "Salut {{name}},",
+      "paymentFor": "Plată pentru {{project}} — {{label}}.",
+      "deadlineLabel": "Termenul limită pentru a primi suma de către Unreal Studio:",
+      "recommendation": "Din cauza timpilor de transfer internațional, te recomandăm să inițiezi plata cu câteva zile înainte pentru a ajunge la timp. Dacă ai făcut deja plata, poți ignora acest mesaj. Mulțumim!",
+      "cta": "Vizualizează portalul meu",
+      "obraTitle": "Stadiul lucrărilor",
+      "obraProgress": "Progresul construcției:",
+      "obraPhotos": "Vizualizează ultimele fotografii de pe șantier →",
+      "footer": "Întrebări? Răspunde la acest e-mail: hello@unrealstudiobali.com"
     }
   }
 }
