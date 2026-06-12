@@ -139,8 +139,19 @@ export function renderKwitansiHtml(d: KwitansiData): string {
     : `<span style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;letter-spacing:.3px;color:#3F2305">Unreal Studio</span>`;
 
   return `
-<div style="max-width:560px;margin:0 auto;background:#F3E5D8;padding:28px;border-radius:18px;font-family:Manrope,Arial,sans-serif;color:#3F2305">
-  <div style="background:#fff;border:1px solid rgba(63,35,5,.18);border-radius:14px;padding:30px 32px">
+<style>
+@media (max-width:520px){
+  .kwrcpt{padding:16px !important}
+  .kwrcpt .kwcard{padding:20px 18px !important}
+  .kwrcpt table{display:block !important;width:100% !important}
+  .kwrcpt tbody,.kwrcpt tr{display:block !important;width:100% !important}
+  .kwrcpt td{display:block !important;width:100% !important;text-align:left !important;vertical-align:top !important}
+  .kwrcpt .kwfig{margin:6px 0 18px !important}
+  .kwrcpt .kwsign{text-align:left !important}
+}
+</style>
+<div class="kwrcpt" style="max-width:560px;margin:0 auto;background:#F3E5D8;padding:28px;border-radius:18px;font-family:Manrope,Arial,sans-serif;color:#3F2305">
+  <div class="kwcard" style="background:#fff;border:1px solid rgba(63,35,5,.18);border-radius:14px;padding:30px 32px">
     <!-- Cabecera: logo + lema + título -->
     <table style="width:100%;border-collapse:collapse"><tr>
       <td style="text-align:left;vertical-align:top">
@@ -165,10 +176,10 @@ export function renderKwitansiHtml(d: KwitansiData): string {
     </table>
 
     <table style="width:100%;margin-top:30px"><tr>
-      <td style="vertical-align:bottom;width:45%">
+      <td class="kwfig" style="vertical-align:bottom;width:45%">
         <div style="display:inline-block;background:#F3E5D8;border:1.5px solid #3F2305;border-radius:10px;padding:10px 18px;font-size:18px;font-weight:800;letter-spacing:.5px">${esc(figure)}</div>
       </td>
-      <td style="text-align:center;vertical-align:bottom">
+      <td class="kwsign" style="text-align:center;vertical-align:bottom">
         <div style="font-size:13px;color:rgba(63,35,5,.7);margin-bottom:6px">${esc(place)}${dateStr ? ', ' + esc(dateStr) : ''}</div>
         <!-- Sello a la IZQUIERDA + firma GRANDE a la derecha, pisándolo un poco
              por su parte izquierda. Todo POR ENCIMA de la línea (no se corta). -->

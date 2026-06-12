@@ -171,7 +171,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const markReceived = async () => {
     if (!kw?.payId) return;
     setKw({ ...kw, sending: true });
-    await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: { id: kw.payId, client_project_id: '', received: true, paid_at: kw.date || todayISO() } });
+    // Importe REAL recibido + fecha = lo del recibí (kw.amount/kw.date). Así el
+    // calendario muestra el balance correcto sin pedir el dato dos veces.
+    await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: { id: kw.payId, client_project_id: '', received: true, received_amount: kw.amount ?? null, paid_at: (kw.date ? new Date(kw.date + 'T00:00:00+08:00').toISOString() : todayISO()) } });
     await load();
     setKw((cur) => cur ? { ...cur, sending: false } : cur);
   };
@@ -335,16 +337,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               value={editing.pay.due_date || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, due_date: e.target.value } })} />
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
               value={editing.pay.notes || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, notes: e.target.value } })} />
-            {/* Importe REAL recibido + fecha de cobro (si llega de menos por comisiones, el cliente ve el balance en rojo). */}
-            <label className="block text-[10px] font-black uppercase text-gray-400">{t('fix.cpp.receivedRealAmountLabel')}</label>
-            <div className="flex gap-2">
-              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('fix.cpp.receivedAmountPlaceholder')}
-                value={editing.pay.received_amount != null ? grp(editing.pay.received_amount) : ''}
-                onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, received_amount: e.target.value ? parseNum(e.target.value) : null } })} />
-              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg text-sm" title={t('fix.cpp.collectionDateTitle')}
-                value={(editing.pay.paid_at || '').slice(0, 10)}
-                onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, paid_at: e.target.value ? new Date(e.target.value + 'T00:00:00+08:00').toISOString() : null } })} />
-            </div>
+            {/* El importe REAL recibido y la fecha de cobro se capturan al GENERAR EL RECIBÍ
+                (al marcar recibido), no aquí — para no duplicarlo en el calendario. */}
             <div className="flex gap-2 pt-2">
               <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-gray-500">{t('admin.common.cancel')}</button>
               <button disabled={saving} onClick={savePayment} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">{saving ? t('admin.common.saving') : t('admin.common.save')}</button>

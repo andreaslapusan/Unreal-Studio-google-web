@@ -830,7 +830,7 @@ const sendWelcomeCore = async (args: { name: string; email: string; lang: 'es' |
   if (!userId) return { ok: false, error: 'session' };
   const et = i18n.getFixedT(args.lang);
   const html = welcomeEmailHtml({
-    firstName: (args.name || '').trim().split(' ')[0],
+    firstName: (args.name || '').trim(), // nombre COMPLETO (Andreas lo pidió: "Luis Mestre", no solo "Luis")
     portalUrl: clientPortalUrl(args.lang),
     email: args.email,
     tempPassword: args.tempPassword || null,
@@ -2221,8 +2221,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
 {/* Modal Editar/Crear Cliente */}
 {isEditingClient && (
-  <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
-    <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
+  <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
+    <div className="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
       <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
       <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
       <form onSubmit={handleSaveClient} className="space-y-5">
@@ -2275,7 +2275,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
 {editingAssignment && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditingAssignment(null); }}>
-        <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
+        <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
             <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.adminDash.editAssignment')}</h2>
             <p className="text-sm text-gray-400 mb-2">{t('admin.dash.clientLabel')}: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
             <p className="text-sm text-gray-400 mb-8">{t('admin.dash.projectLabel')}: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
@@ -2315,7 +2315,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {/* Modal Asignar Proyecto a un cliente */}
 {assigningProject && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setAssigningProject(null); }}>
-        <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl">
+        <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
             <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.dash.assignProjectTitle')}</h2>
             <p className="text-sm text-gray-400 mb-8">{t('admin.dash.clientLabel')}: <strong className="text-primary">{assigningProject.clientName}</strong></p>
             <form onSubmit={handleAssignProject} className="space-y-6">
