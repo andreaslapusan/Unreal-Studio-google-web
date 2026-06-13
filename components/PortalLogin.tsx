@@ -55,13 +55,15 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     document.title = `${PORTAL_LABEL[portal]} | Unreal Studio`;
   }, [portal]);
 
-  // Si llegamos aquí porque el dashboard expulsó una sesión cuyo email ya no
-  // coincide con ningún perfil (p.ej. se cambió el email del cliente), avisamos
-  // de que vuelva a entrar con su email actual. Limpiamos el query de la URL.
+  // Si llegamos aquí porque el dashboard expulsó una sesión cuyo email/cuenta no
+  // tiene acceso a este portal (p.ej. se inició con un email antiguo), mostramos
+  // un ERROR claro de "sin acceso". Limpiamos el query de la URL.
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get('e') === 'mismatch') {
-      setInfo(t('auth.sessionEmailChanged', {
-        defaultValue: 'Tu sesión usaba un email anterior. Inicia sesión con tu email actual.',
+    const e = new URLSearchParams(window.location.search).get('e');
+    if (e === 'mismatch' || e === 'noaccess') {
+      setError(t('auth.noAccessPortal', {
+        portal: PORTAL_LABEL[portal],
+        defaultValue: 'Esta cuenta no tiene acceso al portal de {{portal}}. Inicia sesión con tu email actual.',
       }));
       window.history.replaceState(null, '', window.location.pathname);
     }

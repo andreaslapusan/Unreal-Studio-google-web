@@ -14,7 +14,8 @@ export interface KwitansiData {
   currency?: string;
   forPayment: string;
   place?: string;
-  date?: string;                  // ISO yyyy-mm-dd
+  date?: string;                  // ISO yyyy-mm-dd (fecha del recibí)
+  dueDate?: string;               // ISO yyyy-mm-dd — fecha de vencimiento del pago
   lang?: string;                  // es | en | ro | id (default es)
   logoUrl?: string;
   signatureUrl?: string;
@@ -115,11 +116,11 @@ function fmtDate(iso: string | undefined, lang: string): string {
 const esc = (s: string) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 
-const LABELS: Record<string, { title: string; no: string; from: string; amount: string; concept: string }> = {
-  es: { title: 'Recibí de pago', no: 'Nº', from: 'Recibí de', amount: 'La cantidad de', concept: 'En concepto de' },
-  en: { title: 'Payment receipt', no: 'No.', from: 'Received from', amount: 'The amount of', concept: 'For' },
-  ro: { title: 'Chitanță de plată', no: 'Nr.', from: 'Primit de la', amount: 'Suma de', concept: 'Pentru' },
-  id: { title: 'Tanda terima', no: 'No.', from: 'Telah terima dari', amount: 'Uang sejumlah', concept: 'Untuk pembayaran' },
+const LABELS: Record<string, { title: string; no: string; from: string; amount: string; concept: string; due: string }> = {
+  es: { title: 'Recibí de pago', no: 'Nº', from: 'Recibí de', amount: 'La cantidad de', concept: 'En concepto de', due: 'Fecha de vencimiento del pago' },
+  en: { title: 'Payment receipt', no: 'No.', from: 'Received from', amount: 'The amount of', concept: 'For', due: 'Payment due date' },
+  ro: { title: 'Chitanță de plată', no: 'Nr.', from: 'Primit de la', amount: 'Suma de', concept: 'Pentru', due: 'Data scadenței' },
+  id: { title: 'Tanda terima', no: 'No.', from: 'Telah terima dari', amount: 'Uang sejumlah', concept: 'Untuk pembayaran', due: 'Tanggal jatuh tempo' },
 };
 
 /**
@@ -134,6 +135,7 @@ export function renderKwitansiHtml(d: KwitansiData): string {
   const words = amountInWords(d.amount, currency, lang);
   const figure = formatFigure(d.amount, currency);
   const dateStr = fmtDate(d.date, lang);
+  const dueStr = fmtDate(d.dueDate, lang);
   const logo = d.logoUrl
     ? `<img src="${esc(d.logoUrl)}" alt="Unreal Studio" style="height:30px;opacity:.95" />`
     : `<span style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;letter-spacing:.3px;color:#3F2305">Unreal Studio</span>`;
@@ -180,7 +182,8 @@ export function renderKwitansiHtml(d: KwitansiData): string {
         <div style="display:inline-block;background:#F3E5D8;border:1.5px solid #3F2305;border-radius:10px;padding:10px 18px;font-size:18px;font-weight:800;letter-spacing:.5px">${esc(figure)}</div>
       </td>
       <td class="kwsign" style="text-align:center;vertical-align:bottom">
-        <div style="font-size:13px;color:rgba(63,35,5,.7);margin-bottom:6px">${esc(place)}${dateStr ? ', ' + esc(dateStr) : ''}</div>
+        <div style="font-size:13px;color:rgba(63,35,5,.7);margin-bottom:2px">${esc(place)}${dateStr ? ', ' + esc(dateStr) : ''}</div>
+        ${dueStr ? `<div style="font-size:11px;color:rgba(63,35,5,.5);margin-bottom:6px">${esc(L.due)}: ${esc(dueStr)}</div>` : ''}
         <!-- Sello a la IZQUIERDA + firma GRANDE a la derecha, pisándolo un poco
              por su parte izquierda. Todo POR ENCIMA de la línea (no se corta). -->
         <div style="position:relative;height:118px;margin-bottom:6px;text-align:left">

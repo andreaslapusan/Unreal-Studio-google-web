@@ -85,7 +85,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const [saving, setSaving] = useState(false);
   const [kw, setKw] = useState<null | {
     cp: string; payId?: string; received_from: string; amount: number; currency: string;
-    for_payment: string; place: string; date: string; sending: boolean; displayNo: string;
+    for_payment: string; place: string; date: string; dueDate?: string; sending: boolean; displayNo: string;
     signed?: boolean; kwitansiId?: string;
   }>(null);
 
@@ -149,6 +149,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       // fecha límite acordada (due_date); en último caso, hoy. Así al reabrir se
       // ve la fecha YA guardada y no "revierte" a hoy (era la sensación de "no guarda").
       date: p?.paid_at ? p.paid_at.slice(0, 10) : (p?.due_date ? p.due_date.slice(0, 10) : todayISO()),
+      dueDate: p?.due_date ? p.due_date.slice(0, 10) : undefined,
       sending: false,
       displayNo,
     });
@@ -156,7 +157,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
   const kwitansiHtml = (no: string | number, withSignature = true) => kw && renderKwitansiHtml({
     no, receivedFrom: kw.received_from, amount: kw.amount, currency: kw.currency,
-    forPayment: kw.for_payment, place: kw.place, date: kw.date, lang: clientLang || 'es',
+    forPayment: kw.for_payment, place: kw.place, date: kw.date, dueDate: kw.dueDate, lang: clientLang || 'es',
     logoUrl: brand?.logo || undefined,
     signatureUrl: withSignature ? (adminSignature || undefined) : undefined,
     stampUrl: brand?.stamp || undefined,
