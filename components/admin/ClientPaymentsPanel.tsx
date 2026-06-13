@@ -267,7 +267,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
           {units.filter((u) => filterName === undefined || ((u.project_name || '').trim().toLowerCase() === (filterName || '').trim().toLowerCase() && (filterUnit === undefined || (u.unit_number || '').trim().toLowerCase() === (filterUnit || '').trim().toLowerCase()))).map((u) => {
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
-            const recv = u.payments.filter((p) => p.received).reduce((s, p) => s + Number(p.amount), 0);
+            const recv = u.payments.filter((p) => p.received).reduce((s, p) => s + ((p as any).received_amount != null ? Number((p as any).received_amount) : Number(p.amount)), 0);
             return (
               <div key={u.client_project_id} className="border border-gray-100 rounded-2xl overflow-hidden">
                 <div className="bg-gray-50 px-5 py-3 flex justify-between items-center">
@@ -296,9 +296,15 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                             {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(p.paid_at).toLocaleDateString(uiLocale()) })}`}
                           </p>
                         </div>
-                        <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
-                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.kw_sent ? 'bg-blue-50 text-blue-600' : p.kw_signed ? 'bg-indigo-50 text-indigo-600' : p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
-                          {p.kw_sent ? t('fix.cpp.statusSent') : p.kw_signed ? t('fix.cpp.statusSigned') : p.received ? t('fix.cpp.statusReceived') : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
+                        <div className="text-right shrink-0">
+                          <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
+                          {p.received && (p as any).received_amount != null && Number((p as any).received_amount) !== Number(p.amount) && (
+                            <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(Number((p as any).received_amount), p.currency)}</span>
+                          )}
+                        </div>
+                        {/* Estado = etapa del recibí: pendiente → recibido → firmado → enviado. */}
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.kw_sent ? 'bg-blue-50 text-blue-600' : p.kw_signed ? 'bg-indigo-50 text-indigo-600' : p.received ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'}`}>
+                          {p.kw_sent ? t('fix.cpp.statusSent') : p.kw_signed ? t('fix.cpp.statusSigned') : p.received ? t('fix.cpp.statusReceived') : t('admin.pay.statusPending')}
                         </span>
                         <div className="flex gap-1">
                           <button onClick={() => openKwitansi(u, p)} title={t('admin.pay.generateSendKwitansi')}
@@ -328,12 +334,12 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-3">
             <h3 className="font-black text-primary">{editing.pay.id ? t('admin.pay.editPayment') : t('admin.pay.newPayment')}</h3>
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.labelPlaceholder')}
-              value={editing.pay.label || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, label: e.target.value } })} />
+              value={editing.pay.label || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, label: e.target.value } }))} />
             <div className="flex gap-2">
               <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.amountPlaceholder')}
-                value={grp(editing.pay.amount || 0)} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, amount: parseNum(e.target.value) } })} />
+                value={grp(editing.pay.amount || 0)} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, amount: parseNum(e.target.value) } }))} />
               <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg text-sm" value={editing.pay.currency || 'IDR'}
-                onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, currency: e.target.value } })}>
+                onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, currency: e.target.value } }))}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
             </div>
@@ -346,9 +352,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             })()}
             <label className="block text-[10px] font-black uppercase text-gray-400">{t('admin.pay.dueDateLabel')}</label>
             <input type="date" min="2000-01-01" max="2099-12-31" className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm"
-              value={editing.pay.due_date || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, due_date: e.target.value } })} />
+              value={editing.pay.due_date || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, due_date: e.target.value } }))} />
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
-              value={editing.pay.notes || ''} onChange={(e) => setEditing({ ...editing, pay: { ...editing.pay, notes: e.target.value } })} />
+              value={editing.pay.notes || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, notes: e.target.value } }))} />
             {/* El importe REAL recibido y la fecha de cobro se capturan al GENERAR EL RECIBÍ
                 (al marcar recibido), no aquí — para no duplicarlo en el calendario. */}
             <div className="flex gap-2 pt-2">
@@ -369,16 +375,16 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.receivedFromPlaceholder')}
-                value={kw.received_from} onChange={(e) => setKw({ ...kw, received_from: e.target.value })} />
+                value={kw.received_from} onChange={(e) => setKw((pv: any) => ({ ...pv, received_from: e.target.value }))} />
               <input type="text" inputMode="numeric" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.amountPlaceholder')}
-                value={grp(kw.amount || 0)} onChange={(e) => setKw({ ...kw, amount: parseNum(e.target.value) })} />
-              <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw({ ...kw, currency: e.target.value })}>
+                value={grp(kw.amount || 0)} onChange={(e) => setKw((pv: any) => ({ ...pv, amount: parseNum(e.target.value) }))} />
+              <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw((pv: any) => ({ ...pv, currency: e.target.value }))}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
               <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.forPaymentPlaceholder')}
-                value={kw.for_payment} onChange={(e) => setKw({ ...kw, for_payment: e.target.value })} />
-              <input className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.placePlaceholder')} value={kw.place} onChange={(e) => setKw({ ...kw, place: e.target.value })} />
-              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw({ ...kw, date: e.target.value })} />
+                value={kw.for_payment} onChange={(e) => setKw((pv: any) => ({ ...pv, for_payment: e.target.value }))} />
+              <input className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.placePlaceholder')} value={kw.place} onChange={(e) => setKw((pv: any) => ({ ...pv, place: e.target.value }))} />
+              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw((pv: any) => ({ ...pv, date: e.target.value }))} />
             </div>
             <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
             <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo, !!kw.signed) || '' }} />
