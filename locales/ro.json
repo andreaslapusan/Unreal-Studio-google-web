@@ -2150,7 +2150,7 @@
       "footer": "Dacă nu ai fost tu, ignoră acest e-mail."
     },
     "reminder": {
-      "b7_subject": "Următorul tău plată expiră în 7 zile",
+      "b7_subject": "Următoarea plată scade în {{n}} zile",
       "b7_lead": "Îți reamintim că se apropie termenul limită pentru următorul tău plată.",
       "b7_when": "Mai sunt 7 zile până la termenul limită.",
       "b2_subject": "Următorul tău plată expiră în 2 zile",
@@ -2160,8 +2160,8 @@
       "due_lead": "Astăzi este termenul limită pentru a primi suma de către Unreal Studio. Dacă întâmpini dificultăți în a o finaliza, te rog să ne contactezi cât mai curând posibil pentru a te ajuta și a evita eventualele penalități pentru întârziere.",
       "due_when": "Termenul limită este astăzi.",
       "a3_subject": "Plata ta a expirat — suntem aici pentru a te ajuta",
-      "a3_lead": "Plata ta a expirat acum 3 zile și încă nu am primit confirmarea. Dacă ai întâmpinat dificultăți sau ai dubii, te rog să ne contactezi cât mai curând posibil; te vom ajuta să regularizezi situația și să eviți eventualele penalități pentru întârziere.",
-      "a3_when": "Sunt 3 zile de întârziere.",
+      "a3_lead": "Plata ta a fost scadentă acum {{n}} zile și încă nu ne apare primită. Dacă întâmpini dificultăți sau ai întrebări, te rugăm să contactezi echipa noastră cât mai curând; te vom ajuta să o regularizezi și să eviți eventuale penalizări de întârziere.",
+      "a3_when": "Are {{n}} zile întârziere.",
       "aN_subject": "Plata ta a expirat de {{n}} zile",
       "aN_lead": "Plata ta a expirat de {{n}} zile și încă nu am primit confirmarea. Te rugăm să regularizezi situația cât mai curând posibil. Dacă ai nevoie de ajutor, scrie-ne și o să rezolvăm împreună.",
       "aN_when": "Sunt {{n}} zile de întârziere.",

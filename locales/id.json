@@ -2151,7 +2151,7 @@
       "footer": "Jika bukan Anda, abaikan surel ini."
     },
     "reminder": {
-      "b7_subject": "Pembayaran Anda Jatuh Tempo dalam 7 Hari",
+      "b7_subject": "Pembayaran berikutnya jatuh tempo dalam {{n}} hari",
       "b7_lead": "Kami mengingatkan Anda bahwa batas waktu pembayaran Anda sudah dekat.",
       "b7_when": "Tersisa 7 hari hingga batas waktu.",
       "b2_subject": "Pembayaran Anda Jatuh Tempo dalam 2 Hari",
@@ -2161,8 +2161,8 @@
       "due_lead": "Hari ini adalah batas waktu untuk pembayaran Anda diterima oleh Unreal Studio. Jika Anda mengalami kesulitan, hubungi tim kami secepatnya agar kami dapat membantu Anda dan menghindari denda keterlambatan.",
       "due_when": "Batas waktu adalah hari ini.",
       "a3_subject": "Pembayaran Anda Telah Jatuh Tempo — Kami Siap Membantu",
-      "a3_lead": "Pembayaran Anda telah jatuh tempo 3 hari yang lalu dan belum kami terima. Jika Anda mengalami kesulitan atau keraguan, hubungi tim kami secepatnya; kami akan membantu Anda menyelesaikannya dan menghindari denda keterlambatan.",
-      "a3_when": "Telah 3 hari keterlambatan.",
+      "a3_lead": "Pembayaran Anda telah jatuh tempo {{n}} hari lalu dan belum kami terima. Jika ada kesulitan atau pertanyaan, silakan hubungi tim kami sesegera mungkin; kami akan membantu menyelesaikannya dan menghindari kemungkinan denda keterlambatan.",
+      "a3_when": "Terlambat {{n}} hari.",
       "aN_subject": "Pembayaran Anda Telah Jatuh Tempo Selama {{n}} Hari",
       "aN_lead": "Pembayaran Anda telah jatuh tempo selama {{n}} hari dan belum kami terima. Kami meminta Anda untuk menyelesaikan masalah ini secepat mungkin. Jika Anda membutuhkan bantuan, tulis kepada kami dan kita selesaikan bersama.",
       "aN_when": "Telah {{n}} hari keterlambatan.",

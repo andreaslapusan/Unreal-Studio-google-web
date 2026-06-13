@@ -889,8 +889,8 @@ const sendReminderEmail = async (client: Client) => {
   const et = i18n.getFixedT(lang);
   const stage = d > 1 ? 'b7' : d === 0 ? 'due' : d < 0 ? (d <= -7 ? 'aN' : 'a3') : 'b7';
   const n = Math.abs(d);
-  const subject = stage === 'aN' ? et('emails.reminder.aN_subject', { n }) : et(`emails.reminder.${stage}_subject`);
-  const lead = stage === 'aN' ? et('emails.reminder.aN_lead', { n }) : et(`emails.reminder.${stage}_lead`);
+  const subject = et(`emails.reminder.${stage}_subject`, { n });
+  const lead = et(`emails.reminder.${stage}_lead`, { n });
   const daysLine = d > 0 ? et('emails.reminder.daysLeft', { n }) : d === 0 ? et('emails.reminder.dueToday') : et('emails.reminder.daysOverdue', { n });
   const dueStr = new Date(target.due_date + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: 'long', year: 'numeric' });
   const BROWN = '#3F2305';

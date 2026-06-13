@@ -2150,7 +2150,7 @@
       "footer": "If it wasn't you, ignore this email."
     },
     "reminder": {
-      "b7_subject": "Your next payment is due in 7 days",
+      "b7_subject": "Your next payment is due in {{n}} days",
       "b7_lead": "We remind you that the deadline for your next payment is approaching.",
       "b7_when": "There are 7 days left until the deadline.",
       "b2_subject": "Your next payment is due in 2 days",
@@ -2160,8 +2160,8 @@
       "due_lead": "Today is the deadline for the amount to be received by Unreal Studio. If you have any difficulty completing it, please contact our team as soon as possible so we can help you and avoid possible late penalties.",
       "due_when": "The deadline is today.",
       "a3_subject": "Your payment is overdue — we're here to help",
-      "a3_lead": "Your payment was due 3 days ago and we still haven't received it. If you have any difficulty or doubt, please contact our team as soon as possible; we'll help you regularize it and avoid possible late penalties.",
-      "a3_when": "It's been 3 days overdue.",
+      "a3_lead": "Your payment was due {{n}} days ago and we have not yet received it. If you have any difficulty or question, please contact our team as soon as possible; we will help you settle it and avoid possible late penalties.",
+      "a3_when": "It is {{n}} days overdue.",
       "aN_subject": "Your payment has been overdue for {{n}} days",
       "aN_lead": "Your payment has been overdue for {{n}} days and we still haven't received it. We ask you to regularize the situation as soon as possible. If you need help, write to us and we'll resolve it together.",
       "aN_when": "It's been {{n}} days overdue.",
