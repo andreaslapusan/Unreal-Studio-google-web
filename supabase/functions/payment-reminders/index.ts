@@ -56,7 +56,7 @@ function reminderHtml(r, st, lang) {
   return `
 <div style="max-width:600px;margin:0 auto;background:#F3E5D8;padding:30px;font-family:Manrope,Arial,sans-serif;color:#3F2305">
   <div style="text-align:center;margin-bottom:22px">
-    <div style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;color:#3F2305;letter-spacing:.3px">Unreal Studio</div>
+    <div style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;color:#3F2305;letter-spacing:.3px">Unreal Studio Bali</div>
     <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:13px;color:rgba(63,35,5,.55);margin-top:2px">Beyond the Ordinary, Inside the Unreal</div>
   </div>
   <div style="background:#fff;border-radius:16px;padding:32px 30px">

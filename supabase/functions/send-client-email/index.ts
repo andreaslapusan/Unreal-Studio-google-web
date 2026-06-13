@@ -43,7 +43,7 @@ function brandWrap(subject: string, inner: string): string {
   <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
    <!-- Cabecera: marca + lema -->
    <tr><td align="center" style="padding:8px 0 2px;">
-     <span style="font-family:'DM Serif Display',Georgia,serif;font-size:26px;font-weight:700;color:${BROWN};letter-spacing:.3px;">Unreal Studio</span>
+     <span style="font-family:'DM Serif Display',Georgia,serif;font-size:26px;font-weight:700;color:${BROWN};letter-spacing:.3px;">Unreal Studio Bali</span>
    </td></tr>
    <tr><td align="center" style="padding:0 0 22px;">
      <span style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:14px;color:rgba(63,35,5,.55);">Beyond the Ordinary, Inside the Unreal</span>
