@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { renderKwitansiHtml } from '../lib/kwitansi';
 
 interface Payment {
   id: string; label: string; amount: number; currency: string;
@@ -100,6 +101,29 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
     finally { setDownloadingId(null); }
   };
 
+  // HTML del preview: lo RE-RENDERIZAMOS con los datos del recibí (incluida la
+  // fecha de vencimiento) en vez de usar el html almacenado, que en recibís
+  // antiguos se firmó sin esa línea. Sello/firma se extraen del html guardado.
+  const previewHtml = (kw: any): string => {
+    const srcs: string[] = []; const re = /<img[^>]+src="([^"]+)"/g; let m;
+    while ((m = re.exec(kw.html || ''))) srcs.push(m[1]);
+    const hasLogo = srcs.length >= 3; // [logo?, sello, firma]
+    return renderKwitansiHtml({
+      no: kw.display_no || kw.no_seq,
+      receivedFrom: kw.received_from || '',
+      amount: Number(kw.amount || 0),
+      currency: kw.currency || 'EUR',
+      forPayment: kw.for_payment || '',
+      place: kw.place || 'Bali',
+      date: kw.kwitansi_date,
+      dueDate: kw.due_date || undefined,
+      lang: i18n.language,
+      logoUrl: hasLogo ? srcs[0] : undefined,
+      stampUrl: hasLogo ? srcs[1] : srcs[0],
+      signatureUrl: hasLogo ? srcs[2] : srcs[1],
+    });
+  };
+
   // Pop-up de previsualización del recibí + botón de descarga (web y web-app).
   const previewModal = preview ? (
     <div className="fixed inset-0 z-[70] bg-black/60 flex items-center justify-center p-3 sm:p-4" onClick={() => setPreview(null)}>
@@ -108,7 +132,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
           <h3 className="font-serif text-lg text-primary">{t('fix.pay.receipt')}</h3>
           <button onClick={() => setPreview(null)} className="text-primary/40 hover:text-primary p-1"><span className="material-symbols-outlined">close</span></button>
         </div>
-        <div className="overflow-y-auto p-4" dangerouslySetInnerHTML={{ __html: preview.kw.html || '' }} />
+        <div className="overflow-y-auto p-4" dangerouslySetInnerHTML={{ __html: previewHtml(preview.kw) }} />
         <div className="px-5 py-3 border-t border-primary/10 shrink-0">
           <button
             onClick={() => void viewReceipt(preview.kw, preview.payId)}
