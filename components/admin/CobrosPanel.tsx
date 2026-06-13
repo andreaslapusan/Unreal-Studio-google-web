@@ -171,7 +171,13 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiNext7')}</p><p className="font-bold text-base text-amber-200">{money(kpis.global.next7, displayCurrency)}</p></div>
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiNext30')}</p><p className="font-bold text-base">{money(kpis.global.next30, displayCurrency)}</p></div>
           </div>
-          <p className="text-[9px] text-white/40 mt-2">{t('cobros.globalNote', { defaultValue: 'Convertido a {{cur}} (tasas de la web). Detalle por moneda abajo.', cur: displayCurrency })}</p>
+          <p className="text-[9px] text-white/40 mt-2">{t('cobros.globalNote', { defaultValue: 'Convertido a {{cur}} (tasas actuales de la web). Detalle por moneda abajo.', cur: displayCurrency })}</p>
+          <div className="text-[10px] text-white/60 mt-1 flex flex-wrap gap-x-4 gap-y-0.5">
+            {Object.keys(kpis.byCur).filter((c) => c !== displayCurrency).map((c) => {
+              const r = (RT[c] || DEFAULT_RATES[c] || 1) / (RT[displayCurrency] || DEFAULT_RATES[displayCurrency] || 1);
+              return <span key={c}>1 {displayCurrency} = {new Intl.NumberFormat('es-ES', { maximumFractionDigits: r >= 100 ? 0 : 4 }).format(r)} {c}</span>;
+            })}
+          </div>
         </div>
       )}
 
