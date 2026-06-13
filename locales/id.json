@@ -1227,7 +1227,11 @@
       "clientPermsHint": "Secara default mewarisi dari Konfigurasi. Apa yang dinonaktifkan secara global tidak dapat diaktifkan di sini.",
       "clientPermsLocked": "Aktifkan terlebih dahulu di Konfigurasi",
       "deliveryDate": "Tanggal Serah Terima (handover)",
-      "deliveryDateHint": "Dengan menetapkannya, garansi 2 minggu untuk cacat kosmetik dimulai."
+      "deliveryDateHint": "Dengan menetapkannya, garansi 2 minggu untuk cacat kosmetik dimulai.",
+      "mailCalendar": "Kalender Pembayaran",
+      "mailCalendarDesc": "Kirimkan rencana pembayaran lengkap kepada klien (jumlah, tanggal, dan saldo)",
+      "calendarConfirm": "Kirim kalender pembayaran ke {{email}}?",
+      "calendarSent": "Kalender pembayaran telah dikirim ke {{email}}."
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -2177,6 +2181,18 @@
       "body": "Laporan proyek baru untuk properti Anda di {{project}} sudah tersedia. Anda dapat melihat dan mengunduhnya dari portal klien Anda.",
       "unit": "Properti: {{unit}}",
       "cta": "Lihat Laporan Saya"
+    },
+    "calendar": {
+      "subject": "Kalender Pembayaran Anda · Unreal Studio",
+      "hi": "Halo {{name}},",
+      "intro": "Berikut adalah ringkasan rencana pembayaran Anda. Anda dapat memeriksanya kapan saja dari portal klien Anda.",
+      "colConcept": "Konsep",
+      "colDue": "Tenggat Waktu",
+      "colAmount": "Jumlah",
+      "colReceived": "Diterima",
+      "colBalance": "Saldo",
+      "total": "Total",
+      "cta": "Lihat di Portal Saya"
     }
   },
   "cobros": {

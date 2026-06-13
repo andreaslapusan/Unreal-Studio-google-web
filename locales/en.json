@@ -1135,7 +1135,11 @@
       "clientPermsHint": "By default it inherits from Settings. What is disabled globally cannot be activated here.",
       "clientPermsLocked": "Activate it first in Settings",
       "deliveryDate": "Delivery Date (Handover)",
-      "deliveryDateHint": "Once set, the 2-week cosmetic defect warranty begins."
+      "deliveryDateHint": "Once set, the 2-week cosmetic defect warranty begins.",
+      "mailCalendar": "Payment Calendar",
+      "mailCalendarDesc": "Sends the client their complete payment plan (amounts, dates, and balance)",
+      "calendarConfirm": "Send payment calendar to {{email}}?",
+      "calendarSent": "Payment calendar sent to {{email}}."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",
@@ -2176,6 +2180,18 @@
       "body": "A new work report for your property is now available in {{project}}. You can view and download it from your client portal.",
       "unit": "Property: {{unit}}",
       "cta": "View My Report"
+    },
+    "calendar": {
+      "subject": "Your Payment Calendar · Unreal Studio",
+      "hi": "Hi {{name}},",
+      "intro": "Here is a summary of your payment plan. You can view it at any time from your client portal.",
+      "colConcept": "Concept",
+      "colDue": "Due Date",
+      "colAmount": "Amount",
+      "colReceived": "Received",
+      "colBalance": "Balance",
+      "total": "Total",
+      "cta": "View in my portal"
     }
   },
   "cobros": {

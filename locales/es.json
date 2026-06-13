@@ -1135,7 +1135,11 @@
       "clientPermsHint": "Por defecto hereda lo de Configuración. Lo que esté desactivado globalmente no se puede activar aquí.",
       "clientPermsLocked": "Actívalo primero en Configuración",
       "deliveryDate": "Fecha de entrega (handover)",
-      "deliveryDateHint": "Al fijarla, arranca la garantía de 2 semanas para defectos cosméticos."
+      "deliveryDateHint": "Al fijarla, arranca la garantía de 2 semanas para defectos cosméticos.",
+      "mailCalendar": "Calendario de pagos",
+      "mailCalendarDesc": "Envía al cliente su plan de pagos completo (importes, fechas y balance)",
+      "calendarConfirm": "¿Enviar el calendario de pagos a {{email}}?",
+      "calendarSent": "Calendario de pagos enviado a {{email}}."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -2176,6 +2180,18 @@
       "body": "Ya está disponible un nuevo reporte de obra de tu propiedad en {{project}}. Puedes consultarlo y descargarlo desde tu portal de cliente.",
       "unit": "Propiedad: {{unit}}",
       "cta": "Ver mi reporte"
+    },
+    "calendar": {
+      "subject": "Tu calendario de pagos · Unreal Studio",
+      "hi": "Hola {{name}},",
+      "intro": "Aquí tienes el resumen de tu plan de pagos. Puedes consultarlo en cualquier momento desde tu portal de cliente.",
+      "colConcept": "Concepto",
+      "colDue": "Fecha límite",
+      "colAmount": "Importe",
+      "colReceived": "Recibido",
+      "colBalance": "Balance",
+      "total": "Total",
+      "cta": "Ver en mi portal"
     }
   },
   "cobros": {

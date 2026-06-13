@@ -945,6 +945,44 @@ const sendReportEmail = async (client: Client) => {
   alert(t('admin.dash.reportSent', { email, n: ok }));
 };
 
+// Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
+// concepto, fecha límite, importe, recibido, balance + totales), en su idioma.
+const sendCalendarEmail = async (client: Client) => {
+  const email = (client.email || '').trim();
+  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  const userId = getAdminUserId();
+  if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+  const { data } = await supabase.rpc('admin_list_client_payments', { p_user_id: userId, p_client_id: client.id });
+  const units: any[] = data?.success ? (data.units || []) : [];
+  if (!units.length) { alert(t('admin.dash.reportNoProjects')); return; }
+  if (!window.confirm(t('admin.dash.calendarConfirm', { email }))) return;
+  const lang = clientLangOf(client);
+  const et = i18n.getFixedT(lang);
+  const BROWN = '#3F2305';
+  const money = (n: number, c: string) => { try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
+  const fmtd = (s: string | null) => s ? new Date(s + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+  const recv = (p: any) => p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0);
+  const th = `style="text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:rgba(63,35,5,.5);padding:6px 8px;border-bottom:1px solid rgba(63,35,5,.15)"`;
+  const td = `style="font-size:13px;color:${BROWN};padding:7px 8px;border-bottom:1px solid rgba(63,35,5,.08)"`;
+  let body = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${et('emails.calendar.subject')}</h1>`;
+  body += `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.calendar.hi', { name: (client.name || '').trim() })}</p>`;
+  body += `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${et('emails.calendar.intro')}</p>`;
+  for (const u of units) {
+    let tA = 0, tR = 0;
+    body += `<h2 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:${BROWN}">${u.project_name || ''}${u.unit_number ? ' · ' + u.unit_number : ''}</h2>`;
+    body += `<table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
+    for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
+      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}${bal > 0 ? ' color:#c0392b' : ''}>${money(bal, u.currency)}</td></tr>`; }
+    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}><b>${money(tA - tR, u.currency)}</b></td></tr></table>`;
+  }
+  body += `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
+  const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
+    body: { adminUserId: userId, to: email, lang, subject: et('emails.calendar.subject'), html: body },
+  });
+  if (sErr || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || sErr?.message || 'error' })); return; }
+  alert(t('admin.dash.calendarSent', { email }));
+};
+
 const handleDeleteClient = async (id: string) => {
   if (!window.confirm(t('admin.dash.confirmDeleteClient'))) return;
   try {
@@ -2478,6 +2516,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           { icon: 'lock_reset', titleKey: 'admin.dash.mailReset', descKey: 'admin.dash.mailResetDesc', run: () => sendResetEmail(mailClient) },
           { icon: 'event', titleKey: 'admin.dash.mailReminder', descKey: 'admin.dash.mailReminderDesc', run: () => sendReminderEmail(mailClient) },
           { icon: 'description', titleKey: 'admin.dash.mailReport', descKey: 'admin.dash.mailReportDesc', run: () => sendReportEmail(mailClient) },
+          { icon: 'event_note', titleKey: 'admin.dash.mailCalendar', descKey: 'admin.dash.mailCalendarDesc', run: () => sendCalendarEmail(mailClient) },
         ].map((m, idx) => (
           <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
             <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>

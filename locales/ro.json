@@ -1135,7 +1135,11 @@
       "clientPermsHint": "Prin definiție, moștenește ceea ce este în Configurare. Ceea ce este dezactivat la nivel global nu poate fi activat aici.",
       "clientPermsLocked": "Activează-l mai întâi în Configurare",
       "deliveryDate": "Data de livrare (predare)",
-      "deliveryDateHint": "Odata setata, incepe garantia de 2 saptamani pentru defecte cosmetice."
+      "deliveryDateHint": "Odata setata, incepe garantia de 2 saptamani pentru defecte cosmetice.",
+      "mailCalendar": "Calendarul de plăți",
+      "mailCalendarDesc": "Trimite clientului planul complet de plăți (sume, date și sold)",
+      "calendarConfirm": "Trimite calendarul de plăți către {{email}}?",
+      "calendarSent": "Calendarul de plăți a fost trimis către {{email}}."
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -2176,6 +2180,18 @@
       "body": "Acum este disponibil un nou raport de proiect al proprietății tale în {{project}}. Poți să îl consulți și să îl descarci din portalul tău de client.",
       "unit": "Proprietate: {{unit}}",
       "cta": "Vizualizează raportul meu"
+    },
+    "calendar": {
+      "subject": "Calendarul tău de plăți · Unreal Studio",
+      "hi": "Salut {{name}},",
+      "intro": "Iată un rezumat al planului tău de plăți. Poți să îl verifici oricând din portalul tău de client.",
+      "colConcept": "Concept",
+      "colDue": "Data scadentă",
+      "colAmount": "Sumă",
+      "colReceived": "Primit",
+      "colBalance": "Sold",
+      "total": "Total",
+      "cta": "Vizualizează în portalul meu"
     }
   },
   "cobros": {
