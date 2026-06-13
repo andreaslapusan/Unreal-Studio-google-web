@@ -46,6 +46,10 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   const [sortKey, setSortKey] = useState<SortKey | ''>('');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [liveRates, setLiveRates] = useState<Record<string, number> | null>(null);
+  const [marketRows, setMarketRows] = useState<any[]>([]);
+  // Tasas HISTÓRICAS por fecha de cobro (para convertir lo cobrado a la tasa del
+  // momento del pago, no la de hoy). { 'YYYY-MM-DD': { EUR:1, USD:.., IDR:.. } }
+  const [histRates, setHistRates] = useState<Record<string, Record<string, number>>>({});
   const today = baliToday();
 
   // Tasas de cambio EN VIVO del forex en cada carga/refresco (no usar valores
@@ -63,11 +67,34 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
     if (!adminUserId) return;
     void (async () => {
       setLoading(true);
-      const { data } = await supabase.rpc('admin_all_payments', { p_user_id: adminUserId });
-      setRows(data?.success ? (data.payments || []) : []);
+      const [pays, mkt] = await Promise.all([
+        supabase.rpc('admin_all_payments', { p_user_id: adminUserId }),
+        supabase.rpc('admin_sold_market_value'),
+      ]);
+      setRows(pays.data?.success ? (pays.data.payments || []) : []);
+      setMarketRows((mkt.data as any)?.success ? ((mkt.data as any).rows || []) : []);
       setLoading(false);
     })();
   }, [adminUserId]);
+
+  // Carga las tasas históricas de cada FECHA DE COBRO (forex del momento del pago).
+  // Fuente gratuita con histórico e IDR: fawazahmed0 currency-api (base EUR).
+  useEffect(() => {
+    const dates = Array.from(new Set(rows.filter((r) => r.received && r.paid_at).map((r) => String(r.paid_at).slice(0, 10))));
+    const missing = dates.filter((d) => !histRates[d]);
+    if (!missing.length) return;
+    let alive = true;
+    Promise.all(missing.map((d) =>
+      fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${d}/v1/currencies/eur.json`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => ({ d, rates: j?.eur ? { EUR: 1, USD: j.eur.usd, IDR: j.eur.idr, GBP: j.eur.gbp, AUD: j.eur.aud, SGD: j.eur.sgd } as Record<string, number> : null }))
+        .catch(() => ({ d, rates: null as Record<string, number> | null })),
+    )).then((res) => {
+      if (!alive) return;
+      setHistRates((prev) => { const n = { ...prev }; for (const x of res) if (x.rates) n[x.d] = x.rates; return n; });
+    });
+    return () => { alive = false; };
+  }, [rows]);
 
   const daysTo = (d: string | null) => d ? Math.round((Date.parse(d + 'T12:00:00Z') - Date.parse(today + 'T12:00:00Z')) / 86400000) : null;
   const stateOf = (p: Pay): 'recibido' | 'vencido' | 'pendiente' => {
@@ -82,6 +109,12 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   const conv = (amount: number, from: string) => {
     const rf = RT[from] || DEFAULT_RATES[from] || 1;
     const rt = RT[displayCurrency] || DEFAULT_RATES[displayCurrency] || 1;
+    return (amount / rf) * rt;
+  };
+  // Conversión con tasas de una fecha concreta (histórico del momento del cobro).
+  const convAt = (amount: number, from: string, dr: Record<string, number>) => {
+    const rf = dr[from] || RT[from] || DEFAULT_RATES[from] || 1;
+    const rt = dr[displayCurrency] || RT[displayCurrency] || DEFAULT_RATES[displayCurrency] || 1;
     return (amount / rf) * rt;
   };
 
@@ -128,25 +161,21 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
 
   // KPIs por moneda: lo NO recibido (due/overdue/next7/next30) + lo COBRADO.
   const kpis = useMemo(() => {
-    const byCur: Record<string, { due: number; overdue: number; next7: number; next30: number; collected: number; total: number; market: number }> = {};
-    const global = { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0, total: 0, market: 0 };
+    const byCur: Record<string, { due: number; overdue: number; next7: number; next30: number; collected: number; total: number }> = {};
+    const global = { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0, total: 0 };
     let overdueCount = 0;
-    const seenUnits = new Set<string>(); // valor de mercado: 1 vez por unidad vendida
-    const ensure = (cc: string) => (byCur[cc] = byCur[cc] || { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0, total: 0, market: 0 });
+    const ensure = (cc: string) => (byCur[cc] = byCur[cc] || { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0, total: 0 });
     for (const r of scoped) {
       const c = r.currency || 'EUR';
       ensure(c);
-      // Valor de mercado: market_price del proyecto, contado una vez por unidad.
-      if (r.client_project_id && !seenUnits.has(r.client_project_id) && r.market_price) {
-        seenUnits.add(r.client_project_id);
-        const mc = r.market_currency || c;
-        ensure(mc).market += Number(r.market_price);
-        global.market += conv(Number(r.market_price), mc);
-      }
       const planned = r.amount || 0;
       byCur[c].total += planned; global.total += conv(planned, c); // total ventas (valor del plan)
       if (r.received) {
-        const rc = recvOf(r); byCur[c].collected += rc; global.collected += conv(rc, c);
+        const rc = recvOf(r); byCur[c].collected += rc;
+        // Global de lo cobrado: tasa del MOMENTO del cobro (paid_at) si la tenemos.
+        const dt = r.paid_at ? String(r.paid_at).slice(0, 10) : null;
+        const dr = dt ? histRates[dt] : null;
+        global.collected += dr ? convAt(rc, c, dr) : conv(rc, c);
         continue;
       }
       const amt = r.amount || 0; const cv = conv(amt, c);
@@ -158,7 +187,21 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
     }
     const pendCount = scoped.filter((r) => !r.received).length;
     return { byCur, global, overdueCount, pendCount, multiCur: Object.keys(byCur).length > 1 };
-  }, [scoped, today, displayCurrency, rates, liveRates]);
+  }, [scoped, today, displayCurrency, rates, liveRates, histRates]);
+
+  // Valor de MERCADO (independiente de pagos): market_price del proyecto × nº de
+  // unidades vendidas, agrupado por moneda. Respeta el filtro de proyecto(s).
+  const market = useMemo(() => {
+    const byCur: Record<string, number> = {}; let g = 0;
+    for (const r of marketRows) {
+      if (fProjects.length && !fProjects.includes(r.project_name)) continue;
+      const cur = r.currency || 'EUR';
+      const val = Number(r.market_price || 0) * Number(r.units || 0);
+      byCur[cur] = (byCur[cur] || 0) + val;
+      g += conv(val, cur);
+    }
+    return { byCur, global: g };
+  }, [marketRows, fProjects, displayCurrency, rates, liveRates]);
 
   const STATE_CLS: Record<string, string> = {
     recibido: 'bg-green-50 text-green-700', vencido: 'bg-red-50 text-red-600',
@@ -196,7 +239,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
           <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-2">{t('cobros.kpiGlobal', { defaultValue: 'Global' })} · {displayCurrency}</p>
           <div className="grid grid-cols-3 gap-3 text-sm">
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiTotalSales', { defaultValue: 'Total ventas' })}</p><p className="font-black text-base text-white">{money(kpis.global.total, displayCurrency)}</p></div>
-            <div><p className="text-white/50 text-[11px]">{t('cobros.kpiMarket', { defaultValue: 'Valor mercado' })}</p><p className="font-black text-base text-white">{money(kpis.global.market, displayCurrency)}</p></div>
+            <div><p className="text-white/50 text-[11px]">{t('cobros.kpiMarket', { defaultValue: 'Valor mercado' })}</p><p className="font-black text-base text-white">{money(market.global, displayCurrency)}</p></div>
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiCollected', { defaultValue: 'Cobrado' })}</p><p className="font-black text-base text-green-300">{money(kpis.global.collected, displayCurrency)}</p></div>
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiDue')}</p><p className="font-black text-base">{money(kpis.global.due, displayCurrency)}</p></div>
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiOverdue')}</p><p className="font-black text-base text-red-300">{money(kpis.global.overdue, displayCurrency)}</p></div>
@@ -220,7 +263,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
             <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2">{c}</p>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiTotalSales', { defaultValue: 'Total ventas' })}</span><span className="font-black text-primary">{fmt(k.total, c)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiMarket', { defaultValue: 'Valor mercado' })}</span><span className="font-bold text-primary/80">{fmt(k.market, c)}</span></div>
+              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiMarket', { defaultValue: 'Valor mercado' })}</span><span className="font-bold text-primary/80">{fmt(market.byCur[c] || 0, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiCollected', { defaultValue: 'Cobrado' })}</span><span className="font-black text-green-700">{fmt(k.collected, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiDue')}</span><span className="font-black text-primary">{fmt(k.due, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiOverdue')}</span><span className="font-black text-red-600">{fmt(k.overdue, c)}</span></div>
