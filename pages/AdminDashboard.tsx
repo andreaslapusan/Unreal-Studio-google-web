@@ -256,70 +256,36 @@ const AMENITIES_LIST = [
 
   // --- DATA LOADING ---
   const loadData = useCallback(async () => {
-      // Proyectos
-      const { data: projectsData, error: projectsError } = await supabase
-          .from('projects')
-          .select('*')
-          .order('sort_order', { ascending: true });
-      
-      if (projectsData) {
-          const safeProjects = projectsData.map((p: any) => ({
+      // Cargar TODO en PARALELO (antes era secuencial → 5 viajes encadenados =
+      // panel "ultra lento" en conexiones lentas). Cada bloque es independiente.
+      const userId = getAdminUserId();
+      const [projectsRes, blogsRes, usersRes, clientsRes, configRes] = await Promise.all([
+          supabase.from('projects').select('*').order('sort_order', { ascending: true }),
+          supabase.from('blogs').select('*').order('published_date', { ascending: false }),
+          userId ? supabase.rpc('admin_list_users', { p_user_id: userId }) : Promise.resolve({ data: null, error: null }),
+          userId ? supabase.rpc('admin_list_clients', { p_user_id: userId }) : Promise.resolve({ data: null, error: null }),
+          supabase.from('app_config').select('*'),
+      ]);
+
+      if (projectsRes.data) {
+          setProjects(projectsRes.data.map((p: any) => ({
                 ...p,
                 gallery: parseJsonField(p.gallery, []),
-                investor_tiers: parseJsonField(p.investor_tiers, [])
-          }));
-          setProjects(safeProjects as unknown as Project[]);
-      } else if (projectsError) {
-          console.error('Error loading projects:', projectsError);
-      }
+                investor_tiers: parseJsonField(p.investor_tiers, []),
+          })) as unknown as Project[]);
+      } else if (projectsRes.error) { console.error('Error loading projects:', projectsRes.error); }
 
-      // Blogs
-      const { data: blogsData, error: blogsError } = await supabase
-          .from('blogs')
-          .select('*')
-          .order('published_date', { ascending: false });
+      if (blogsRes.data) setBlogs(blogsRes.data as unknown as BlogPost[]);
+      else if (blogsRes.error) console.error('Error loading blogs:', blogsRes.error);
 
-      if (blogsData) {
-          setBlogs(blogsData as unknown as BlogPost[]);
-      } else if (blogsError) {
-          console.error('Error loading blogs:', blogsError);
-      }
+      if ((usersRes.data as any)?.success) setUsers((usersRes.data as any).users || []);
+      if ((clientsRes.data as any)?.success) setClients((clientsRes.data as any).clients || []);
 
-      // Usuarios
-      const userId = getAdminUserId();
-      if (userId) {
-          const { data: usersResult, error: usersError } = await supabase.rpc('admin_list_users', { p_user_id: userId });
-          if (usersResult && usersResult.success) {
-              setUsers(usersResult.users || []);
-          } else if (usersError) {
-              console.error('Error loading users:', usersError);
-          }
-      }
-
-      // Clientes
-      if (userId) {
-        const { data: clientsResult, error: clientsError } = await supabase.rpc('admin_list_clients', { p_user_id: userId });
-        if (clientsResult && clientsResult.success) {
-          setClients(clientsResult.clients || []);
-        } else if (clientsError) {
-          console.error('Error loading clients:', clientsError);
-        }
-      }
-
-      // Configuración
-      const { data: configRows, error: configError } = await supabase
-          .from('app_config')
-          .select('*');
-
-      if (configRows && configRows.length > 0) {
+      if (configRes.data && configRes.data.length > 0) {
           const configObj: Record<string, any> = {};
-          configRows.forEach((row: any) => {
-              configObj[row.key] = row.value;
-          });
+          configRes.data.forEach((row: any) => { configObj[row.key] = row.value; });
           setConfig({ ...DEFAULT_CONFIG, ...configObj } as AppConfig);
-      } else if (configError) {
-          console.error('Error loading config:', configError);
-      }
+      } else if (configRes.error) { console.error('Error loading config:', configRes.error); }
   }, []);
 
   useEffect(() => {
