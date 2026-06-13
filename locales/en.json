@@ -1801,8 +1801,8 @@
       "collectionDateTitle": "Collection Date",
       "downloadPdf": "Download PDF",
       "stepsInOrder": "Steps in order: mark received → sign → send.",
-      "step1Received": "1 · Received",
-      "step1MarkReceived": "1 · Mark Received",
+      "step1Received": "1 · Received/Save",
+      "step1MarkReceived": "1 · Received/Save",
       "step2Signed": "2 · Signed",
       "step2Sign": "2 · Sign",
       "step3SendToClient": "3 · Send to Client"

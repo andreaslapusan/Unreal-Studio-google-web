@@ -1801,8 +1801,8 @@
       "collectionDateTitle": "Fecha de cobro",
       "downloadPdf": "Descargar PDF",
       "stepsInOrder": "Pasos en orden: marcar recibido → firmar → enviar.",
-      "step1Received": "1 · Recibido",
-      "step1MarkReceived": "1 · Marcar recibido",
+      "step1Received": "1 · Recibido/Guardar",
+      "step1MarkReceived": "1 · Recibido/Guardar",
       "step2Signed": "2 · Firmado",
       "step2Sign": "2 · Firmar",
       "step3SendToClient": "3 · Enviar al cliente"

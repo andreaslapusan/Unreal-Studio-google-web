@@ -1801,8 +1801,8 @@
       "collectionDateTitle": "Data încasării",
       "downloadPdf": "Descarcă PDF",
       "stepsInOrder": "Pașii în ordine: marchează primit → semnează → trimite.",
-      "step1Received": "1 · Primit",
-      "step1MarkReceived": "1 · Marchează primit",
+      "step1Received": "1 · Primit/Salvează",
+      "step1MarkReceived": "1 · Primit/Salvează",
       "step2Signed": "2 · Semnat",
       "step2Sign": "2 · Semnează",
       "step3SendToClient": "3 · Trimite către client"

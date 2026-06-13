@@ -1802,8 +1802,8 @@
       "collectionDateTitle": "Tanggal Penagihan",
       "downloadPdf": "Unduh PDF",
       "stepsInOrder": "Langkah-langkah dalam urutan: tandai diterima → tandatangani → kirim.",
-      "step1Received": "1 · Diterima",
-      "step1MarkReceived": "1 · Tandai Diterima",
+      "step1Received": "1 · Diterima/Simpan",
+      "step1MarkReceived": "1 · Diterima/Simpan",
       "step2Signed": "2 · Tertandatangani",
       "step2Sign": "2 · Tandatangani",
       "step3SendToClient": "3 · Kirim ke Klien"
