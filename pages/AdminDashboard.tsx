@@ -1073,7 +1073,8 @@ const handleEditAssignment = async (e: React.FormEvent) => {
             p_currency: editingAssignment.assignment.currency,
             p_date: editingAssignment.assignment.purchase_date || null,
             p_status: editingAssignment.assignment.status || 'Reserva',
-            p_delivery: (editingAssignment.assignment as any).delivery_date || ''
+            p_delivery: (editingAssignment.assignment as any).delivery_date || '',
+            p_drive: (editingAssignment.assignment as any).drive_folder_url ?? ''
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
@@ -1533,10 +1534,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
                     </div>
-                    <div className="flex gap-1 shrink-0">
-                        <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary hover:text-primary/70 transition p-1" title={t('fix.adm.paymentsCalendar')}><span className="material-symbols-outlined text-sm">event</span></button>
-                        <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary hover:text-primary/70 transition p-1" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-sm">edit</span></button>
-                        <button onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-400 hover:text-red-600 transition p-1" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-sm">close</span></button>
+                    <div className="flex gap-1.5 shrink-0 items-center">
+                        {cp.drive_folder_url && <a href={cp.drive_folder_url} target="_blank" rel="noopener noreferrer" className="text-amber-700 bg-amber-50 hover:bg-amber-100 transition p-2 rounded-lg" title={t('admin.dash.driveFolder', { defaultValue: 'Carpeta de documentación (Drive)' })}><span className="material-symbols-outlined text-xl leading-none">folder</span></a>}
+                        <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('fix.adm.paymentsCalendar')}><span className="material-symbols-outlined text-xl leading-none">event</span></button>
+                        <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-xl leading-none">edit</span></button>
+                        <button onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-500 bg-red-50 hover:bg-red-100 transition p-2 rounded-lg" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-xl leading-none">close</span></button>
                     </div>
                   </div>
                 ))}
@@ -2399,6 +2401,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.deliveryDate')}</label>
                     <input type="date" value={((editingAssignment.assignment as any).delivery_date || '').slice(0, 10)} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, delivery_date: e.target.value} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
                     <p className="text-[10px] text-gray-400 mt-1">{t('admin.dash.deliveryDateHint')}</p>
+                </div>
+                <div>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.driveFolderLabel', { defaultValue: 'Carpeta de documentación (Drive) de este proyecto' })}</label>
+                    <input type="url" value={(editingAssignment.assignment as any).drive_folder_url || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, drive_folder_url: e.target.value} as any})} placeholder="https://drive.google.com/drive/folders/..." className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-medium" />
                 </div>
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
