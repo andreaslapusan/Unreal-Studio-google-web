@@ -2226,6 +2226,7 @@
     "colBalance": "Balance",
     "overdueD": "{{n}} d overdue",
     "leftD": "{{n}} d",
-    "openPayments": "Open client payments"
+    "openPayments": "Open client payments",
+    "kpiCollected": "Collected"
   }
 }

@@ -125,15 +125,18 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   };
   const toggleProject = (p: string) => setFProjects((cur) => cur.includes(p) ? cur.filter((x) => x !== p) : [...cur, p]);
 
-  // KPIs por moneda sobre lo NO recibido del ALCANCE filtrado.
+  // KPIs por moneda: lo NO recibido (due/overdue/next7/next30) + lo COBRADO.
   const kpis = useMemo(() => {
-    const pend = scoped.filter((r) => !r.received);
-    const byCur: Record<string, { due: number; overdue: number; next7: number; next30: number }> = {};
-    const global = { due: 0, overdue: 0, next7: 0, next30: 0 };
+    const byCur: Record<string, { due: number; overdue: number; next7: number; next30: number; collected: number }> = {};
+    const global = { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0 };
     let overdueCount = 0;
-    for (const r of pend) {
+    for (const r of scoped) {
       const c = r.currency || 'EUR';
-      byCur[c] = byCur[c] || { due: 0, overdue: 0, next7: 0, next30: 0 };
+      byCur[c] = byCur[c] || { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0 };
+      if (r.received) {
+        const rc = recvOf(r); byCur[c].collected += rc; global.collected += conv(rc, c);
+        continue;
+      }
       const amt = r.amount || 0; const cv = conv(amt, c);
       byCur[c].due += amt; global.due += cv;
       const dd = daysTo(r.due_date);
@@ -141,7 +144,8 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
       else if (dd != null && dd <= 7) { byCur[c].next7 += amt; global.next7 += cv; }
       if (dd != null && dd >= 0 && dd <= 30) { byCur[c].next30 += amt; global.next30 += cv; }
     }
-    return { byCur, global, overdueCount, pendCount: pend.length, multiCur: Object.keys(byCur).length > 1 };
+    const pendCount = scoped.filter((r) => !r.received).length;
+    return { byCur, global, overdueCount, pendCount, multiCur: Object.keys(byCur).length > 1 };
   }, [scoped, today, displayCurrency, rates, liveRates]);
 
   const STATE_CLS: Record<string, string> = {
@@ -178,7 +182,8 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
       {kpis.multiCur && (
         <div className="bg-primary text-white rounded-2xl shadow-sm p-4 mb-3">
           <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-2">{t('cobros.kpiGlobal', { defaultValue: 'Global' })} · {displayCurrency}</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-sm">
+            <div><p className="text-white/50 text-[11px]">{t('cobros.kpiCollected', { defaultValue: 'Cobrado' })}</p><p className="font-black text-base text-green-300">{money(kpis.global.collected, displayCurrency)}</p></div>
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiDue')}</p><p className="font-black text-base">{money(kpis.global.due, displayCurrency)}</p></div>
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiOverdue')}</p><p className="font-black text-base text-red-300">{money(kpis.global.overdue, displayCurrency)}</p></div>
             <div><p className="text-white/50 text-[11px]">{t('cobros.kpiNext7')}</p><p className="font-bold text-base text-amber-200">{money(kpis.global.next7, displayCurrency)}</p></div>
@@ -200,6 +205,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
           <div key={c} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2">{c}</p>
             <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiCollected', { defaultValue: 'Cobrado' })}</span><span className="font-black text-green-700">{fmt(k.collected, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiDue')}</span><span className="font-black text-primary">{fmt(k.due, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiOverdue')}</span><span className="font-black text-red-600">{fmt(k.overdue, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiNext7')}</span><span className="font-bold text-amber-700">{fmt(k.next7, c)}</span></div>
