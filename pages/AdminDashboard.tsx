@@ -810,7 +810,9 @@ const handleSaveClient = async (e: React.FormEvent) => {
     // manda solo el correo de bienvenida al nuevo email (idioma del cliente).
     if (emailChanged) {
       const lang = ((currentClient as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
-      const r = await sendWelcomeCore({ name: currentClient.name || '', email: newEmail, emails: emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails }), lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
+      const _holders = (currentClient as any).holders;
+      const _emails = (_holders && _holders.length) ? _holders.map((h: any) => (h.email || '').trim()).filter(Boolean) : emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails });
+      const r = await sendWelcomeCore({ name: currentClient.name || '', email: newEmail, emails: _emails, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
       alert(r.ok ? t('admin.dash.welcomeSent', { email: newEmail }) : t('admin.dash.welcomeError', { error: r.error }));
     }
   } catch (error) {
@@ -2347,24 +2349,35 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
       <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
       <form onSubmit={handleSaveClient} onKeyDown={(e) => { if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') e.preventDefault(); }} className="space-y-5">
-        <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.fullName')}</label>
-          <input type="text" required value={currentClient.name || ''} onChange={(e) => setCurrentClient({...currentClient, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder={t('admin.dash.clientNamePh')} />
-        </div>
-        <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.emailRequired')}</label>
-          <input type="email" required value={currentClient.email || ''} onChange={(e) => setCurrentClient({...currentClient, email: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder={t('admin.dash.emailPh')} />
-          {/* Emails adicionales (co-titulares): 1 ficha, varios correos. Los emails van a TODOS. */}
-          <div className="mt-2 space-y-2">
-            {(((currentClient as any).extra_emails) || []).map((em: string, i: number) => (
-              <div key={i} className="flex gap-2">
-                <input type="email" value={em} onChange={(e) => setCurrentClient((prev: any) => { const arr = [...(prev.extra_emails || [])]; arr[i] = e.target.value; return { ...prev, extra_emails: arr }; })} className="flex-1 px-5 py-3 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.extraEmailPh', { defaultValue: 'Otro email (co-titular)…' })} />
-                <button type="button" onClick={() => setCurrentClient((prev: any) => ({ ...prev, extra_emails: (prev.extra_emails || []).filter((_: string, j: number) => j !== i) }))} className="px-3 text-red-400 hover:text-red-600"><span className="material-symbols-outlined">close</span></button>
+        {/* TITULARES: cada titular con su NOMBRE y su EMAIL. El título de la ficha
+            junta los nombres con " & " y los correos van a todos. */}
+        {(() => {
+          const cc: any = currentClient;
+          const hs: any[] = (cc.holders && cc.holders.length)
+            ? cc.holders
+            : [{ name: cc.name || '', email: cc.email || '' }, ...((cc.extra_emails) || []).map((e: string) => ({ name: '', email: e }))];
+          const setH = (next: any[]) => setCurrentClient((prev: any) => ({
+            ...prev, holders: next,
+            name: (next.map((h) => (h.name || '').trim()).filter(Boolean).join(' & ')) || prev.name,
+            email: (next.find((h) => (h.email || '').trim())?.email || prev.email),
+          }));
+          return (
+            <div>
+              <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.holders', { defaultValue: 'Titular(es) — nombre y email' })}</label>
+              <div className="space-y-2">
+                {hs.map((h, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input type="text" value={h.name || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, name: e.target.value } : x); setH(n); }} className="flex-1 px-4 py-3 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderNamePh', { defaultValue: 'Nombre' })} />
+                    <input type="email" value={h.email || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, email: e.target.value } : x); setH(n); }} className="flex-1 px-4 py-3 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderEmailPh', { defaultValue: 'Email' })} />
+                    {hs.length > 1 && <button type="button" onClick={() => setH(hs.filter((_, j) => j !== i))} className="px-2 text-red-400 hover:text-red-600"><span className="material-symbols-outlined">close</span></button>}
+                  </div>
+                ))}
               </div>
-            ))}
-            <button type="button" onClick={() => setCurrentClient((prev: any) => ({ ...prev, extra_emails: [...(prev.extra_emails || []), ''] }))} className="text-xs font-bold text-primary hover:text-black inline-flex items-center gap-1"><span className="material-symbols-outlined text-sm">add</span> {t('admin.dash.addEmail', { defaultValue: 'Añadir otro email' })}</button>
-          </div>
-        </div>
+              <button type="button" onClick={() => setH([...hs, { name: '', email: '' }])} className="mt-2 text-xs font-bold text-primary hover:text-black inline-flex items-center gap-1"><span className="material-symbols-outlined text-sm">add</span> {t('admin.dash.addHolder', { defaultValue: 'Añadir titular' })}</button>
+              {hs.filter((h) => (h.name || '').trim()).length > 1 && <p className="text-xs text-primary/50 mt-1">{t('admin.dash.titlePreview', { defaultValue: 'Título' })}: <b>{hs.map((h) => (h.name || '').trim()).filter(Boolean).join(' & ')}</b></p>}
+            </div>
+          );
+        })()}
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.phoneLabel')}</label>
           <input type="text" value={currentClient.phone || ''} onChange={(e) => setCurrentClient({...currentClient, phone: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="+34 625 710 770" />
