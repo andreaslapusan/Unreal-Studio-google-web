@@ -1311,6 +1311,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'cobros' && (
           <CobrosPanel
             adminUserId={getAdminUserId()}
+            displayCurrency={currency}
+            rates={(config as any).exchangeRates}
             onOpenPayments={(r) => { setPaymentsFilter({ name: r.project_name || '', unit: r.unit_number ?? null }); setPaymentsClient({ id: r.client_id, name: r.client_name, email: r.client_email } as any); }}
           />
         )}

@@ -29,9 +29,11 @@ const fmt = (n: number, c: string) => {
   catch { return `${c} ${Math.round(n)}`; }
 };
 const recvOf = (p: Pay) => (p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0));
-const STATE_RANK: Record<string, number> = { vencido: 0, proximo: 1, pendiente: 2, recibido: 3 };
+// Estados: SOLO recibido / pendiente / vencido (en todo el sistema).
+const STATE_RANK: Record<string, number> = { vencido: 0, pendiente: 1, recibido: 2 };
+const DEFAULT_RATES: Record<string, number> = { EUR: 1, USD: 1.08, GBP: 0.83, AUD: 1.65, IDR: 17200 };
 
-const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row: Pay) => void }> = ({ adminUserId, onOpenPayments }) => {
+const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row: Pay) => void; displayCurrency?: string; rates?: Record<string, number> }> = ({ adminUserId, onOpenPayments, displayCurrency = 'EUR', rates }) => {
   const { t } = useTranslation();
   const [rows, setRows] = useState<Pay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,12 +57,18 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   }, [adminUserId]);
 
   const daysTo = (d: string | null) => d ? Math.round((Date.parse(d + 'T12:00:00Z') - Date.parse(today + 'T12:00:00Z')) / 86400000) : null;
-  const stateOf = (p: Pay): 'recibido' | 'vencido' | 'proximo' | 'pendiente' => {
+  const stateOf = (p: Pay): 'recibido' | 'vencido' | 'pendiente' => {
     if (p.received) return 'recibido';
     const dd = daysTo(p.due_date);
     if (dd != null && dd < 0) return 'vencido';
-    if (dd != null && dd <= 7) return 'proximo';
     return 'pendiente';
+  };
+  // Conversión a la divisa del header (para el resumen GLOBAL).
+  const RT = rates && Object.keys(rates).length ? rates : DEFAULT_RATES;
+  const conv = (amount: number, from: string) => {
+    const rf = RT[from] || DEFAULT_RATES[from] || 1;
+    const rt = RT[displayCurrency] || DEFAULT_RATES[displayCurrency] || 1;
+    return (amount / rf) * rt;
   };
 
   const projects = useMemo(() => Array.from(new Set(rows.map((r) => r.project_name).filter(Boolean))) as string[], [rows]);
@@ -108,23 +116,26 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   const kpis = useMemo(() => {
     const pend = scoped.filter((r) => !r.received);
     const byCur: Record<string, { due: number; overdue: number; next7: number; next30: number }> = {};
+    const global = { due: 0, overdue: 0, next7: 0, next30: 0 };
     let overdueCount = 0;
     for (const r of pend) {
       const c = r.currency || 'EUR';
       byCur[c] = byCur[c] || { due: 0, overdue: 0, next7: 0, next30: 0 };
-      const amt = r.amount || 0; byCur[c].due += amt;
+      const amt = r.amount || 0; const cv = conv(amt, c);
+      byCur[c].due += amt; global.due += cv;
       const dd = daysTo(r.due_date);
-      if (dd != null && dd < 0) { byCur[c].overdue += amt; overdueCount++; }
-      else if (dd != null && dd <= 7) byCur[c].next7 += amt;
-      if (dd != null && dd >= 0 && dd <= 30) byCur[c].next30 += amt;
+      if (dd != null && dd < 0) { byCur[c].overdue += amt; global.overdue += cv; overdueCount++; }
+      else if (dd != null && dd <= 7) { byCur[c].next7 += amt; global.next7 += cv; }
+      if (dd != null && dd >= 0 && dd <= 30) { byCur[c].next30 += amt; global.next30 += cv; }
     }
-    return { byCur, overdueCount, pendCount: pend.length };
-  }, [scoped, today]);
+    return { byCur, global, overdueCount, pendCount: pend.length, multiCur: Object.keys(byCur).length > 1 };
+  }, [scoped, today, displayCurrency, rates]);
 
   const STATE_CLS: Record<string, string> = {
     recibido: 'bg-green-50 text-green-700', vencido: 'bg-red-50 text-red-600',
-    proximo: 'bg-amber-50 text-amber-700', pendiente: 'bg-gray-100 text-gray-500',
+    pendiente: 'bg-gray-100 text-gray-500',
   };
+  const money = (n: number, c: string) => { try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
 
   // Cabecera ordenable. align 'right' alinea a la derecha (importes/días/balance).
   const Th = (k: SortKey | null, label: string, align?: 'right') => (
@@ -149,6 +160,20 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
         <h1 className="text-lg sm:text-2xl font-black uppercase tracking-wide sm:tracking-widest text-primary/20">{t('cobros.title')}</h1>
         <span className="text-[11px] font-bold text-primary/40">{t('cobros.pendingCount', { n: kpis.pendCount })} · {t('cobros.overdueCount', { n: kpis.overdueCount })}</span>
       </div>
+
+      {/* Resumen GLOBAL: todas las monedas convertidas a la divisa del header */}
+      {kpis.multiCur && (
+        <div className="bg-primary text-white rounded-2xl shadow-sm p-4 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-2">{t('cobros.kpiGlobal', { defaultValue: 'Global' })} · {displayCurrency}</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            <div><p className="text-white/50 text-[11px]">{t('cobros.kpiDue')}</p><p className="font-black text-base">{money(kpis.global.due, displayCurrency)}</p></div>
+            <div><p className="text-white/50 text-[11px]">{t('cobros.kpiOverdue')}</p><p className="font-black text-base text-red-300">{money(kpis.global.overdue, displayCurrency)}</p></div>
+            <div><p className="text-white/50 text-[11px]">{t('cobros.kpiNext7')}</p><p className="font-bold text-base text-amber-200">{money(kpis.global.next7, displayCurrency)}</p></div>
+            <div><p className="text-white/50 text-[11px]">{t('cobros.kpiNext30')}</p><p className="font-bold text-base">{money(kpis.global.next30, displayCurrency)}</p></div>
+          </div>
+          <p className="text-[9px] text-white/40 mt-2">{t('cobros.globalNote', { defaultValue: 'Convertido a {{cur}} (tasas de la web). Detalle por moneda abajo.', cur: displayCurrency })}</p>
+        </div>
+      )}
 
       {/* KPIs por moneda (según el filtro activo) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
@@ -193,7 +218,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
         </div>
 
         <select value={fCurrency} onChange={(e) => setFCurrency(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold"><option value="">{t('cobros.allCurrencies')}</option>{currencies.map((c) => <option key={c} value={c}>{c}</option>)}</select>
-        <select value={fState} onChange={(e) => setFState(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold"><option value="">{t('cobros.allStates')}</option><option value="vencido">{t('cobros.stVencido')}</option><option value="proximo">{t('cobros.stProximo')}</option><option value="pendiente">{t('cobros.stPendiente')}</option><option value="recibido">{t('cobros.stRecibido')}</option></select>
+        <select value={fState} onChange={(e) => setFState(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold"><option value="">{t('cobros.allStates')}</option><option value="vencido">{t('cobros.stVencido')}</option><option value="pendiente">{t('cobros.stPendiente')}</option><option value="recibido">{t('cobros.stRecibido')}</option></select>
       </div>
 
       {/* Tabla */}
