@@ -607,7 +607,7 @@
       "employees": "Karyawan",
       "notifications": "Pemberitahuan",
       "agencies": "Agensi",
-      "cobros": "Pembayaran",
+      "cobros": "Keuangan",
       "faqs": "FAQ"
     },
     "common": {
@@ -2201,7 +2201,7 @@
     }
   },
   "cobros": {
-    "title": "Pembayaran",
+    "title": "Keuangan",
     "pendingCount": "{{n}} pembayaran tertunda",
     "overdueCount": "{{n}} jatuh tempo",
     "kpiDue": "Belum Dibayar",

@@ -64,6 +64,10 @@ const AMENITIES_LIST = [
   const [projectFilterOpen, setProjectFilterOpen] = useState(false);
   const [clientFilterCurrency, setClientFilterCurrency] = useState(''); // por divisa cerrada en contrato
   const [clientSort, setClientSort] = useState<'name' | 'amount_desc' | 'amount_asc' | 'recent'>('name');
+  const [clientFilterStatus, setClientFilterStatus] = useState(''); // '', active, inactive, draft
+  const [clientFilterPerms, setClientFilterPerms] = useState<string[]>([]); // filtrar por permisos asignados (multi)
+  const [selectedClientIds, setSelectedClientIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
   const [assigningProject, setAssigningProject] = useState<{ clientId: string, clientName: string } | null>(null);
   const [editingAssignment, setEditingAssignment] = useState<{ clientId: string, clientName: string, assignment: any } | null>(null);
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0 });
@@ -1485,11 +1489,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       {filteredClients.map(client => (
         <div key={client.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           {/* Header con datos del cliente */}
-          <div className="p-6 flex justify-between items-start">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-1">
-                <h3 className="text-lg font-bold text-primary">{client.name}</h3>
-                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${client.is_active ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{client.is_active ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
+          <div className="p-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-1 flex-wrap">
+                <h3 className="text-lg font-bold text-primary break-words">{client.name}</h3>
+                {(() => { const st = (client as any).status || (client.is_active ? 'active' : 'inactive'); return (
+                  <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
+                ); })()}
               </div>
               <p className="text-sm text-gray-500">{client.email} {client.phone && `· ${client.phone}`}</p>
               {(client as any).last_login && (
@@ -1512,7 +1518,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               </div>
               {client.notes && <p className="text-xs text-primary/40 mt-2 italic">{client.notes}</p>}
             </div>
-            <div className="flex gap-2 shrink-0 ml-4">
+            <div className="flex gap-2 shrink-0 flex-wrap sm:ml-4">
               <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData')}><span className="material-symbols-outlined text-sm">edit</span></button>
               <button onClick={() => setMailClient(client)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.mailCenter')}><span className="material-symbols-outlined text-sm">mail</span></button>
               <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></button>
@@ -2345,8 +2351,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {/* Modal Editar/Crear Cliente */}
 {isEditingClient && (
   <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
-    <div className="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
-      <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
+    <div className="relative bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[92vh] overflow-y-auto overscroll-contain">
+      <button type="button" onClick={() => setIsEditingClient(false)} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+      <h2 className="text-2xl font-serif text-primary mb-2 pr-10">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
       <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
       <form onSubmit={handleSaveClient} onKeyDown={(e) => { if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') e.preventDefault(); }} className="space-y-5">
         {/* TITULARES: cada titular con su NOMBRE y su EMAIL. El título de la ficha
@@ -2398,9 +2405,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
           </select>
         </div>
-        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
-          <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.dash.clientActive')}</span>
-          <button type="button" onClick={() => setCurrentClient({...currentClient, is_active: !currentClient.is_active})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentClient.is_active ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+          <label className="text-[10px] font-black uppercase text-primary/60 block mb-2">{t('admin.dash.clientStatus', { defaultValue: 'Estado del cliente' })}</label>
+          <select value={(currentClient as any).status || (currentClient.is_active === false ? 'inactive' : 'active')} onChange={(e) => setCurrentClient((prev: any) => ({ ...prev, status: e.target.value, is_active: e.target.value === 'active' }))} className="w-full px-5 py-3 bg-white border border-gray-200 rounded-2xl font-bold">
+            <option value="active">{t('admin.clientsTab.active')}</option>
+            <option value="inactive">{t('admin.clientsTab.inactive')}</option>
+            <option value="draft">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</option>
+          </select>
+          <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.draftHint', { defaultValue: 'Activo = puede entrar y cuenta en Finanzas. Inactivo = no entra, sí cuenta. Draft = perfil de prueba, no entra ni cuenta.' })}</p>
         </div>
         {/* Permisos POR CLIENTE: heredan Configuración; lo global-OFF queda bloqueado
             (solo se activa en Configuración); lo global-ON se puede desactivar aquí. */}

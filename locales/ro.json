@@ -516,7 +516,7 @@
       "viewSite": "Vezi site-ul public",
       "panel": "Panou de administrare",
       "agencies": "Agenții",
-      "cobros": "Încasări",
+      "cobros": "Finanțe",
       "faqs": "Întrebări"
     },
     "clientLogin": {
@@ -2200,7 +2200,7 @@
     }
   },
   "cobros": {
-    "title": "Încasări",
+    "title": "Finanțe",
     "pendingCount": "{{n}} plăți în așteptare",
     "overdueCount": "{{n}} întârzieri",
     "kpiDue": "De încasat",
