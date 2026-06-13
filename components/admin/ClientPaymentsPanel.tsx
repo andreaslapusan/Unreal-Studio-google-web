@@ -167,7 +167,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const downloadKwitansi = async () => {
     if (!kw) return;
     const { downloadPdfFromHtml } = await import('../../lib/pdf');
-    await downloadPdfFromHtml(kwitansiHtml(kw.displayNo), `${kw.displayNo} - Unreal Studio.pdf`);
+    await downloadPdfFromHtml(kwitansiHtml(kw.displayNo), `${kw.displayNo} ${kw.received_from}`.trim().replace(/[\\/:*?"<>|]+/g, '-') + '.pdf');
   };
 
   // Flujo en 3 pasos OBLIGATORIOS y en orden: recibido → firmar → enviar.

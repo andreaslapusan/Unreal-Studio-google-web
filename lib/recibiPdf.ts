@@ -158,9 +158,9 @@ export async function downloadRecibiPdf(d: RecibiPdfData): Promise<void> {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 130, 110);
   doc.text('Unreal Studio · Bali, Indonesia · hello@unrealstudiobali.com', W / 2, 214, { align: 'center' });
 
-  // Nombre de archivo con identidad del proyecto: "DS-02 - Unreal Studio.pdf"
-  // (unidad si existe; si no, el proyecto). Saneamos caracteres no válidos.
-  const who = (d.unit || d.projectName || String(d.no)).trim();
-  const safe = who.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim();
-  doc.save(`${safe} - Unreal Studio.pdf`);
+  // Nombre de archivo = "Nº del recibí + cliente": p.ej. "DS-02 Andreas Lapusan.pdf".
+  // Saneamos caracteres no válidos para un nombre de fichero.
+  const base = `${d.no} ${d.receivedFrom || ''}`.trim();
+  const safe = base.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim();
+  doc.save(`${safe}.pdf`);
 }
