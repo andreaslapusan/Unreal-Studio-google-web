@@ -1759,7 +1759,8 @@
       "calendarIntroReceived": "diterima",
       "calendarIntroAfter": " oleh Unreal Studio.",
       "receivedOn": "Diterima pada {{date}}",
-      "dueDateLabel": "Tanggal Jatuh Tempo: {{date}}"
+      "dueDateLabel": "Tanggal Jatuh Tempo: {{date}}",
+      "popupBlocked": "Izinkan pop-up untuk melihat/mengunduh bukti pembayaran."
     },
     "empd": {
       "passMismatch": "Kata sandi tidak cocok.",

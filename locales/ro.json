@@ -1758,7 +1758,8 @@
       "calendarIntroReceived": "primită",
       "calendarIntroAfter": " de către Unreal Studio.",
       "receivedOn": "Primit la {{date}}",
-      "dueDateLabel": "Data scadentă: {{date}}"
+      "dueDateLabel": "Data scadentă: {{date}}",
+      "popupBlocked": "Permite ferestrele pop-up pentru a vizualiza/descărca chitanța."
     },
     "empd": {
       "passMismatch": "Parolele nu corespund.",

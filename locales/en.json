@@ -1758,7 +1758,8 @@
       "calendarIntroReceived": "received",
       "calendarIntroAfter": " by Unreal Studio.",
       "receivedOn": "Received on {{date}}",
-      "dueDateLabel": "Due date: {{date}}"
+      "dueDateLabel": "Due date: {{date}}",
+      "popupBlocked": "Allow pop-ups to view/download the receipt."
     },
     "empd": {
       "passMismatch": "Passwords do not match.",

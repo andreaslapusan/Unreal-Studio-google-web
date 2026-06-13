@@ -1758,7 +1758,8 @@
       "calendarIntroReceived": "recibido",
       "calendarIntroAfter": " por Unreal Studio.",
       "receivedOn": "Recibido el {{date}}",
-      "dueDateLabel": "Fecha límite: {{date}}"
+      "dueDateLabel": "Fecha límite: {{date}}",
+      "popupBlocked": "Permite las ventanas emergentes para ver/descargar el recibí."
     },
     "empd": {
       "passMismatch": "Las contraseñas no coinciden.",

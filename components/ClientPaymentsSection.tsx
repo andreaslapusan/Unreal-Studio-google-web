@@ -50,7 +50,7 @@ const byDate = (a: Payment, b: Payment) => {
 };
 
 const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUnit, variant = 'list' }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
@@ -77,10 +77,15 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
     })();
   }, [clientId]);
 
-  // Descarga DIRECTA del recibí en PDF (sin abrir pestaña ni diálogo de imprimir).
-  const viewReceipt = async (html: string, no: number) => {
-    const { downloadPdfFromHtml } = await import('../lib/pdf');
-    await downloadPdfFromHtml(html, `recibi_${no}.pdf`);
+  // Abre el recibí en una pestaña nueva y lanza el diálogo nativo de impresión /
+  // "Guardar como PDF". Es FIABLE en iPhone (el método anterior con html2canvas se
+  // quedaba en negro / no hacía nada en iOS Safari). La ventana se abre de forma
+  // SÍNCRONA dentro del click (sin await antes) para que el navegador no la bloquee.
+  const viewReceipt = (html: string, no: number) => {
+    const win = window.open('', '_blank');
+    if (!win) { alert(t('fix.pay.popupBlocked')); return; }
+    const doc = `<!doctype html><html lang="${i18n.language || 'es'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet"><title>Recibí ${no}</title><style>@page{margin:10mm}body{margin:0;background:#fff;font-family:Manrope,Arial,sans-serif}</style></head><body onload="setTimeout(function(){try{window.print();}catch(e){}},500)">${html}</body></html>`;
+    win.document.open(); win.document.write(doc); win.document.close();
   };
 
   const submitClaim = async (paymentId: string) => {
