@@ -2265,6 +2265,28 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.dash.clientActive')}</span>
           <button type="button" onClick={() => setCurrentClient({...currentClient, is_active: !currentClient.is_active})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentClient.is_active ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
         </div>
+        {/* Permisos POR CLIENTE: heredan Configuración; lo global-OFF queda bloqueado
+            (solo se activa en Configuración); lo global-ON se puede desactivar aquí. */}
+        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+          <p className="text-[10px] font-black uppercase text-primary/60 mb-1">{t('admin.dash.clientPermsTitle')}</p>
+          <p className="text-[10px] text-gray-400 mb-3">{t('admin.dash.clientPermsHint')}</p>
+          <div className="grid grid-cols-1 gap-2">
+            {([['calculator', t('fix.adm.featCalculator')], ['construction', t('fix.adm.featConstruction')], ['brochure', t('fix.adm.featBrochure')], ['viewProject', t('fix.adm.featViewProject')], ['drive', t('fix.adm.featDrive')]] as [string, string][]).map(([k, label]) => {
+              const globalOn = ((((config as any).brand?.client_features) || {})[k]) !== false;
+              const ov = ((currentClient as any).feature_overrides) || {};
+              const clientOn = ov[k] !== false;
+              const on = globalOn && clientOn;
+              return (
+                <button key={k} type="button" disabled={!globalOn}
+                  onClick={() => setCurrentClient({ ...currentClient, feature_overrides: { ...ov, [k]: !clientOn } } as any)}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${!globalOn ? 'bg-gray-100 border-gray-200 text-gray-300 cursor-not-allowed' : on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                  <span className="text-left">{label}{!globalOn && <span className="block text-[9px] font-normal text-gray-400 normal-case">{t('admin.dash.clientPermsLocked')}</span>}</span>
+                  <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <div className="flex gap-4 pt-4">
           <button type="button" onClick={() => setIsEditingClient(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
           <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? t('admin.adminDash.savingEllipsis') : t('admin.adminDash.save')}</button>

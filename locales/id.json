@@ -1218,7 +1218,10 @@
       "reportNoProjects": "Klien ini tidak memiliki properti yang ditugaskan.",
       "reportSent": "Pemberitahuan laporan dikirim ke {{email}} ({{n}}).",
       "reportError": "Tidak dapat mengirim pemberitahuan laporan: {{error}}",
-      "sendingMail": "Mengirim email…"
+      "sendingMail": "Mengirim email…",
+      "clientPermsTitle": "Izin Klien Ini",
+      "clientPermsHint": "Secara default mewarisi dari Konfigurasi. Apa yang dinonaktifkan secara global tidak dapat diaktifkan di sini.",
+      "clientPermsLocked": "Aktifkan terlebih dahulu di Konfigurasi"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",

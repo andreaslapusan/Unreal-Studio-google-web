@@ -1126,7 +1126,10 @@
       "reportNoProjects": "This client has no assigned properties.",
       "reportSent": "Report notice sent to {{email}} ({{n}}).",
       "reportError": "Failed to send report notice: {{error}}",
-      "sendingMail": "Sending email…"
+      "sendingMail": "Sending email…",
+      "clientPermsTitle": "Permissions for this client",
+      "clientPermsHint": "By default it inherits from Settings. What is disabled globally cannot be activated here.",
+      "clientPermsLocked": "Activate it first in Settings"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

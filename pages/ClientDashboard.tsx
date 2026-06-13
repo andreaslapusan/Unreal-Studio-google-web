@@ -377,7 +377,9 @@ const ClientDashboard: React.FC = () => {
       setFeatures(((data?.value as any)?.client_features) || {});
     })();
   }, []);
-  const feat = (k: string) => features[k] !== false; // por defecto visible
+  // Visible si está ON globalmente Y no está desactivada específicamente para este
+  // cliente (override por cliente solo puede RESTRINGIR, nunca activar lo global-OFF).
+  const feat = (k: string) => features[k] !== false && ((clientData as any)?.client?.feature_overrides?.[k] !== false);
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';

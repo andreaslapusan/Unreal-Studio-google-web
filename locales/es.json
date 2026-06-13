@@ -1126,7 +1126,10 @@
       "reportNoProjects": "Este cliente no tiene propiedades asignadas.",
       "reportSent": "Aviso de reporte enviado a {{email}} ({{n}}).",
       "reportError": "No se pudo enviar el aviso de reporte: {{error}}",
-      "sendingMail": "Enviando correo…"
+      "sendingMail": "Enviando correo…",
+      "clientPermsTitle": "Permisos de este cliente",
+      "clientPermsHint": "Por defecto hereda lo de Configuración. Lo que esté desactivado globalmente no se puede activar aquí.",
+      "clientPermsLocked": "Actívalo primero en Configuración"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

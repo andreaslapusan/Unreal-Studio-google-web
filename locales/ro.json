@@ -1126,7 +1126,10 @@
       "reportNoProjects": "Acest client nu are proprietăți atribuite.",
       "reportSent": "Avertizare de raport trimisă către {{email}} ({{n}}).",
       "reportError": "Nu s-a putut trimite avertizarea de raport: {{error}}",
-      "sendingMail": "Se trimite email…"
+      "sendingMail": "Se trimite email…",
+      "clientPermsTitle": "Permisiunile acestui client",
+      "clientPermsHint": "Prin definiție, moștenește ceea ce este în Configurare. Ceea ce este dezactivat la nivel global nu poate fi activat aici.",
+      "clientPermsLocked": "Activează-l mai întâi în Configurare"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
