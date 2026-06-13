@@ -27,8 +27,8 @@ import { portalPath } from '../lib/portalUrls';
 import i18n from '../lib/i18n';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'cobros' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'cobros', 'calendar', 'employees', 'notifications', 'faqs', 'agencias'];
+type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'cobros' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'cobros', 'calendar', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
 
 const GUIDE_STEPS = [
   { titleKey: 'admin.dash.guide1Title', textKey: 'admin.dash.guide1Text' },
@@ -121,6 +121,7 @@ const AMENITIES_LIST = [
     { key: 'projects', view: 'projects' },
     { key: 'calendar', view: 'calendar' },
     { key: 'clients', view: 'clients' },
+    { key: 'arquitectura', view: 'arquitectura' },
     { key: 'employees', view: 'employees' },
     { key: 'users', view: 'users' },
     { key: 'blogs', view: 'blogs' },
@@ -1630,8 +1631,71 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   </div>
 )}
 
+        {/* === Arquitectura: hub de proyectos de arquitectura (documentación Drive + planes de pago) === */}
+        {activeView === 'arquitectura' && (() => {
+          const archItems = (clients || []).flatMap((c: any) => (c.projects || [])
+            .filter((cp: any) => cp.investment_type === 'arquitectura')
+            .map((cp: any) => ({ client: c, cp })));
+          const groups: Record<string, { client: any; cp: any }[]> = {};
+          archItems.forEach((it: any) => { const k = it.cp.project_name || it.cp.project_id || '—'; (groups[k] = groups[k] || []).push(it); });
+          const groupKeys = Object.keys(groups).sort();
+          return (
+            <div className="animate-in fade-in duration-500">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
+                <div>
+                  <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.nav.arquitectura', 'Arquitectura')}</h1>
+                  <p className="text-xs text-gray-400 mt-1">{t('admin.arch.subtitle', { defaultValue: 'Proyectos de arquitectura: documentación (Drive) y plan de pagos por cliente.' })}</p>
+                </div>
+                <button onClick={() => navigate('/admin?view=clients')} className="bg-primary text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
+                  <span className="material-symbols-outlined text-base">person_add</span> {t('admin.arch.associate', { defaultValue: 'Asociar cliente' })}
+                </button>
+              </div>
+              {archItems.length === 0 ? (
+                <div className="bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-8 text-center">
+                  <span className="material-symbols-outlined text-4xl text-amber-700/40">architecture</span>
+                  <p className="text-sm font-bold text-primary mt-2">{t('admin.arch.emptyTitle', { defaultValue: 'Aún no hay clientes de arquitectura' })}</p>
+                  <p className="text-xs text-gray-400 mt-1 max-w-md mx-auto">{t('admin.arch.emptyHint', { defaultValue: 'Para asociar un cliente: Clientes → su ficha → en la propiedad asignada, cambia el tipo de inversión a "Arquitectura". Aparecerá aquí para gestionar su carpeta de Drive y su plan de pagos.' })}</p>
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {groupKeys.map((gk) => (
+                    <div key={gk}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="material-symbols-outlined text-amber-700">architecture</span>
+                        <h2 className="text-lg font-bold text-primary break-words">{gk}</h2>
+                        <span className="text-[10px] font-black uppercase text-primary/30">{groups[gk].length}</span>
+                      </div>
+                      <div className="space-y-3">
+                        {groups[gk].map(({ client, cp }, idx) => (
+                          <div key={cp.id || idx} className="bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-bold text-primary break-words">{client.name}</span>
+                                {cp.unit_number && <span className="text-[10px] bg-white text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
+                                {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
+                              </div>
+                              <p className="text-xs text-gray-400 mt-0.5 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}</p>
+                            </div>
+                            <div className="flex gap-1.5 shrink-0 flex-wrap items-center justify-end">
+                              {cp.drive_folder_url
+                                ? <a href={cp.drive_folder_url} target="_blank" rel="noopener noreferrer" className="text-amber-700 bg-amber-50 hover:bg-amber-100 transition px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-base leading-none">folder</span>{t('admin.arch.driveOpen', { defaultValue: 'Drive' })}</a>
+                                : <span className="text-[10px] text-gray-400 italic px-2">{t('admin.arch.noDrive', { defaultValue: 'Sin carpeta Drive' })}</span>}
+                              <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary bg-white hover:bg-primary/10 transition px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-base leading-none">payments</span>{t('admin.arch.payments', { defaultValue: 'Pagos' })}</button>
+                              <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary bg-white hover:bg-primary/10 transition px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-base leading-none">edit</span>{t('admin.arch.editFolder', { defaultValue: 'Drive / Editar' })}</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
         {/* ... (Users and Config views remain unchanged) ... */}
-        
+
         {activeView === 'users' && (
           <div className="animate-in fade-in duration-500">
              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">

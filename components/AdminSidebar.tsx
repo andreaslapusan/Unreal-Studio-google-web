@@ -61,6 +61,7 @@ const AdminSidebar: React.FC = () => {
     { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'calendar', icon: 'calendar_month', label: t('admin.nav.calendar'), to: '/admin?view=calendar', view: 'calendar' },
     { key: 'clients', icon: 'person', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
+    { key: 'arquitectura', icon: 'architecture', label: t('admin.nav.arquitectura', 'Arquitectura'), to: '/admin?view=arquitectura', view: 'arquitectura' },
     { key: 'employees', icon: 'badge', label: t('admin.nav.employees'), to: '/admin?view=employees', view: 'employees' },
     { key: 'users', icon: 'security', label: t('admin.nav.users'), to: '/admin?view=users', view: 'users' },
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
