@@ -31,7 +31,7 @@ const fmt = (n: number, c: string) => {
 const recvOf = (p: Pay) => (p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0));
 // Estados: SOLO recibido / pendiente / vencido (en todo el sistema).
 const STATE_RANK: Record<string, number> = { vencido: 0, pendiente: 1, recibido: 2 };
-const DEFAULT_RATES: Record<string, number> = { EUR: 1, USD: 1.08, GBP: 0.83, AUD: 1.65, IDR: 17200 };
+const DEFAULT_RATES: Record<string, number> = { EUR: 1, USD: 1.15, GBP: 0.86, AUD: 1.64, IDR: 20700 };
 
 const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row: Pay) => void; displayCurrency?: string; rates?: Record<string, number> }> = ({ adminUserId, onOpenPayments, displayCurrency = 'EUR', rates }) => {
   const { t } = useTranslation();
@@ -44,7 +44,19 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState<SortKey | ''>('');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [liveRates, setLiveRates] = useState<Record<string, number> | null>(null);
   const today = baliToday();
+
+  // Tasas de cambio EN VIVO del forex en cada carga/refresco (no usar valores
+  // cacheados/obsoletos): 1 EUR = X. Si falla, cae a las tasas pasadas o defaults.
+  useEffect(() => {
+    let alive = true;
+    fetch('https://open.er-api.com/v6/latest/EUR')
+      .then((r) => r.json())
+      .then((d) => { if (alive && d?.rates) setLiveRates({ EUR: 1, USD: d.rates.USD, IDR: d.rates.IDR, GBP: d.rates.GBP, AUD: d.rates.AUD, NZD: d.rates.NZD, CAD: d.rates.CAD, SGD: d.rates.SGD }); })
+      .catch(() => { /* fallback */ });
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     if (!adminUserId) return;
@@ -63,8 +75,9 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
     if (dd != null && dd < 0) return 'vencido';
     return 'pendiente';
   };
-  // Conversión a la divisa del header (para el resumen GLOBAL).
-  const RT = rates && Object.keys(rates).length ? rates : DEFAULT_RATES;
+  // Conversión a la divisa del header (para el resumen GLOBAL). Prioridad: tasas
+  // en vivo del forex > tasas pasadas por props > defaults.
+  const RT = liveRates || (rates && Object.keys(rates).length ? rates : DEFAULT_RATES);
   const conv = (amount: number, from: string) => {
     const rf = RT[from] || DEFAULT_RATES[from] || 1;
     const rt = RT[displayCurrency] || DEFAULT_RATES[displayCurrency] || 1;
@@ -129,7 +142,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
       if (dd != null && dd >= 0 && dd <= 30) { byCur[c].next30 += amt; global.next30 += cv; }
     }
     return { byCur, global, overdueCount, pendCount: pend.length, multiCur: Object.keys(byCur).length > 1 };
-  }, [scoped, today, displayCurrency, rates]);
+  }, [scoped, today, displayCurrency, rates, liveRates]);
 
   const STATE_CLS: Record<string, string> = {
     recibido: 'bg-green-50 text-green-700', vencido: 'bg-red-50 text-red-600',
