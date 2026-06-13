@@ -447,6 +447,8 @@ const ClientDashboard: React.FC = () => {
       }
       if (!r.id) { navigate('/cliente', { replace: true }); return; }
       setClientId(r.id);
+      // Registra el inicio de sesión del cliente (last_login + aviso al admin).
+      void supabase.rpc('client_mark_login').then(() => {}, () => {});
       await loadDashboard(r.id);
       if (searchParams.get('change_password') === 'true') {
         setShowChangePassword(true);

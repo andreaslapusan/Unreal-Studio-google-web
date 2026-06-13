@@ -42,6 +42,7 @@ const VacationManager: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [vacations, setVacations] = useState<Vacation[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(new Date().getMonth()); // un solo mes visible (con flechas)
   const [selected, setSelected] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Vacation | null>(null);
@@ -122,9 +123,9 @@ const VacationManager: React.FC = () => {
             {employees.map((e) => <option key={e.id} value={e.email}>{e.full_name || e.email}</option>)}
           </select>
           <div className="flex items-center gap-2">
-            <button onClick={() => setYear((y) => y - 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_left</span></button>
-            <span className="text-xl font-bold text-primary">{year}</span>
-            <button onClick={() => setYear((y) => y + 1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_right</span></button>
+            <button onClick={() => { if (viewMonth === 0) { setViewMonth(11); setYear((y) => y - 1); } else setViewMonth(viewMonth - 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_left</span></button>
+            <span className="text-base font-bold text-primary capitalize min-w-[150px] text-center">{new Date(year, viewMonth, 1).toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric' })}</span>
+            <button onClick={() => { if (viewMonth === 11) { setViewMonth(0); setYear((y) => y + 1); } else setViewMonth(viewMonth + 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_right</span></button>
           </div>
         </div>
       </div>
@@ -165,43 +166,40 @@ const VacationManager: React.FC = () => {
       {loading ? (
         <div className="flex justify-center py-12"><span className="material-symbols-outlined animate-spin text-3xl text-primary/30">refresh</span></div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 12 }, (_, monthIdx) => {
+        <div className="max-w-2xl mx-auto bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-primary/5">
+          {(() => {
+            const monthIdx = viewMonth;
             const monthDate = new Date(year, monthIdx, 1);
-            const monthName = monthDate.toLocaleDateString(uiLocale(), { month: 'long' });
             const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
             const firstDayOfWeek = (monthDate.getDay() + 6) % 7;
             return (
-              <div key={monthIdx} className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5">
-                <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3 text-center capitalize">{monthName}</h3>
-                <div className="grid grid-cols-7 gap-1 text-center">
-                  {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d) => <span key={d} className="text-[8px] font-bold text-primary/30">{d}</span>)}
-                  {Array.from({ length: firstDayOfWeek }, (_, i) => <span key={`e${i}`} />)}
-                  {Array.from({ length: daysInMonth }, (_, dayIdx) => {
-                    const day = dayIdx + 1;
-                    const dateStr = `${year}-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    const offs = dayMap.get(dateStr) ?? [];
-                    const isToday = dateStr === new Date().toISOString().slice(0, 10);
-                    return (
-                      <div key={day}
-                        onMouseEnter={offs.length ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
-                        onMouseLeave={offs.length ? () => setHoverDay(null) : undefined}
-                        className={`relative text-[10px] rounded-lg p-1 min-h-[28px] flex flex-col items-center justify-center ${offs.length ? 'cursor-help' : ''} ${isToday ? 'ring-2 ring-primary' : ''} ${offs.length ? 'bg-primary/5' : ''}`}>
-                        <span className="font-bold text-primary/80">{day}</span>
-                        {offs.length > 0 && (
-                          <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
-                            {offs.slice(0, 4).map((v, i) => (
-                              <span key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="grid grid-cols-7 gap-1.5 text-center">
+                {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d) => <span key={d} className="text-[11px] font-bold text-primary/30 pb-1">{d}</span>)}
+                {Array.from({ length: firstDayOfWeek }, (_, i) => <span key={`e${i}`} />)}
+                {Array.from({ length: daysInMonth }, (_, dayIdx) => {
+                  const day = dayIdx + 1;
+                  const dateStr = `${year}-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                  const offs = dayMap.get(dateStr) ?? [];
+                  const isToday = dateStr === new Date().toISOString().slice(0, 10);
+                  return (
+                    <div key={day}
+                      onMouseEnter={offs.length ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
+                      onMouseLeave={offs.length ? () => setHoverDay(null) : undefined}
+                      className={`relative text-sm rounded-lg p-1 min-h-[48px] flex flex-col items-center justify-center ${offs.length ? 'cursor-help' : ''} ${isToday ? 'ring-2 ring-primary' : ''} ${offs.length ? 'bg-primary/5' : ''}`}>
+                      <span className="font-bold text-primary/80">{day}</span>
+                      {offs.length > 0 && (
+                        <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
+                          {offs.slice(0, 6).map((v, i) => (
+                            <span key={i} className="w-2 h-2 rounded-full" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             );
-          })}
+          })()}
         </div>
       )}
 

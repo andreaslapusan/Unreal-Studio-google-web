@@ -1466,6 +1466,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${client.is_active ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{client.is_active ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
               </div>
               <p className="text-sm text-gray-500">{client.email} {client.phone && `· ${client.phone}`}</p>
+              {(client as any).last_login && (
+                <p className="text-[11px] text-green-700 font-medium mt-0.5">
+                  <span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                </p>
+              )}
               <div className="mt-1 space-y-0.5">
                 {((client as any).password_plain || client.temp_password) && (
                   <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_plain || client.temp_password); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>

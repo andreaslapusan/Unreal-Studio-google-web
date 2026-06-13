@@ -2227,6 +2227,7 @@
     "overdueD": "{{n}} d vencido",
     "leftD": "{{n}} d",
     "openPayments": "Abrir pagos del cliente",
-    "kpiCollected": "Cobrado"
+    "kpiCollected": "Cobrado",
+    "kpiTotalSales": "Total ventas"
   }
 }

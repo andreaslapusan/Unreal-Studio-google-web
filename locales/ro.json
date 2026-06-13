@@ -2227,6 +2227,7 @@
     "overdueD": "{{n}} zile întârziat",
     "leftD": "{{n}} zile",
     "openPayments": "Deschideți plățile clientului",
-    "kpiCollected": "Încasat"
+    "kpiCollected": "Încasat",
+    "kpiTotalSales": "Total vânzări"
   }
 }

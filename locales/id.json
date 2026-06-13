@@ -2228,6 +2228,7 @@
     "overdueD": "{{n}} d jatuh tempo",
     "leftD": "{{n}} d",
     "openPayments": "Buka Pembayaran Klien",
-    "kpiCollected": "Terkumpul"
+    "kpiCollected": "Terkumpul",
+    "kpiTotalSales": "Total penjualan"
   }
 }

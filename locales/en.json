@@ -2227,6 +2227,7 @@
     "overdueD": "{{n}} d overdue",
     "leftD": "{{n}} d",
     "openPayments": "Open client payments",
-    "kpiCollected": "Collected"
+    "kpiCollected": "Collected",
+    "kpiTotalSales": "Total sales"
   }
 }
