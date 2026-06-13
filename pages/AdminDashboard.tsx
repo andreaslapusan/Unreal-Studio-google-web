@@ -72,7 +72,10 @@ const AMENITIES_LIST = [
   const [mailBusy, setMailBusy] = useState(false);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
+  // Preview de email antes de enviar (todos los correos pasan por aquí).
+  const [emailPreview, setEmailPreview] = useState<null | { to: string; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean }>(null);
   // Cerrar con Escape los modales (accesibilidad — auditoría).
+  useEscapeKey(() => setEmailPreview(null), !!emailPreview);
   useEscapeKey(() => setIsEditingClient(false), isEditingClient);
   useEscapeKey(() => setEditingAssignment(null), !!editingAssignment);
   useEscapeKey(() => setAssigningProject(null), !!assigningProject);
@@ -880,6 +883,22 @@ const sendResetEmail = async (client: Client) => {
 // Recordatorio de pago manual: coge el pago pendiente más relevante del cliente
 // (próximo a vencer o, si hay vencidos, el más antiguo) y manda el aviso con los
 // días que faltan / vencidos a día de hoy (zona horaria de Bali).
+// Preview de email: en vez de enviar directo, abrimos un pop-up con la vista
+// previa; el envío real ocurre al pulsar "Enviar" en sendPreviewedEmail.
+const openEmailPreview = (args: { to: string; subject: string; html: string; sentMsg: string; userId: string; lang: string }) => {
+  setEmailPreview({ ...args, sending: false });
+};
+const sendPreviewedEmail = async () => {
+  if (!emailPreview) return;
+  setEmailPreview((p) => p ? { ...p, sending: true } : p);
+  const { data: sent, error } = await supabase.functions.invoke('send-client-email', {
+    body: { adminUserId: emailPreview.userId, to: emailPreview.to, lang: emailPreview.lang, subject: emailPreview.subject, html: emailPreview.html },
+  });
+  if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
+  alert(emailPreview.sentMsg);
+  setEmailPreview(null);
+};
+
 const sendReminderEmail = async (client: Client) => {
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
@@ -897,7 +916,6 @@ const sendReminderEmail = async (client: Client) => {
   const overdue = pend.filter((p) => daysUntil(p.due_date) < 0);
   const target = overdue.length ? overdue[0] : pend[pend.length === overdue.length ? 0 : overdue.length];
   const d = daysUntil(target.due_date);
-  if (!window.confirm(t('admin.dash.reminderConfirm', { email }))) return;
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
   const stage = d > 1 ? 'b7' : d === 0 ? 'due' : d < 0 ? (d <= -7 ? 'aN' : 'a3') : 'b7';
@@ -916,11 +934,7 @@ const sendReminderEmail = async (client: Client) => {
     <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine}</p>
     <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.reminder.recommendation')}</p>
     <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.reminder.cta')}</a></p>`;
-  const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-    body: { adminUserId: userId, to: email, lang, subject, html },
-  });
-  if (sErr || !sent?.success) { alert(t('admin.dash.reminderError', { error: sent?.error || sErr?.message || 'error' })); return; }
-  alert(t('admin.dash.reminderSent', { email }));
+  openEmailPreview({ to: email, subject, html, sentMsg: t('admin.dash.reminderSent', { email }), userId, lang });
 };
 
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
@@ -966,7 +980,6 @@ const sendCalendarEmail = async (client: Client) => {
   const { data } = await supabase.rpc('admin_list_client_payments', { p_user_id: userId, p_client_id: client.id });
   const units: any[] = data?.success ? (data.units || []) : [];
   if (!units.length) { alert(t('admin.dash.reportNoProjects')); return; }
-  if (!window.confirm(t('admin.dash.calendarConfirm', { email }))) return;
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
   const BROWN = '#3F2305';
@@ -988,11 +1001,8 @@ const sendCalendarEmail = async (client: Client) => {
     body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td ${td}><b>${money(tA - tR, u.currency)}</b></td></tr></table>`;
   }
   body += `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
-  const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-    body: { adminUserId: userId, to: email, lang, subject: et('emails.calendar.subject'), html: body },
-  });
-  if (sErr || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || sErr?.message || 'error' })); return; }
-  alert(t('admin.dash.calendarSent', { email }));
+  // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up).
+  openEmailPreview({ to: email, subject: et('emails.calendar.subject'), html: body, sentMsg: t('admin.dash.calendarSent', { email }), userId, lang });
 };
 
 const handleDeleteClient = async (id: string) => {
@@ -2291,9 +2301,34 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   </div>
 )}
 
+{/* Pop-up de PREVIEW del email antes de enviar (calendario, recordatorio, etc.) */}
+{emailPreview && (
+  <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget && !emailPreview.sending) setEmailPreview(null); }}>
+    <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+        <div className="min-w-0">
+          <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailPreviewTitle', { defaultValue: 'Previsualización del email' })}</h3>
+          <p className="text-xs text-gray-400 mt-0.5 truncate">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}: <b>{emailPreview.to}</b> · {emailPreview.subject}</p>
+        </div>
+        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
+      </div>
+      <div className="overflow-y-auto p-5 bg-[#F3E5D8]">
+        <div className="max-w-xl mx-auto">
+          <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>
+          <div className="bg-white rounded-2xl p-6 shadow-sm" dangerouslySetInnerHTML={{ __html: emailPreview.html }} />
+        </div>
+      </div>
+      <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
+        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
+        <button onClick={() => void sendPreviewedEmail()} disabled={emailPreview.sending} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{emailPreview.sending ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })}</>}</button>
+      </div>
+    </div>
+  </div>
+)}
+
 {/* Modal Editar/Crear Cliente */}
 {isEditingClient && (
-  <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
+  <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
     <div className="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
       <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
       <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
