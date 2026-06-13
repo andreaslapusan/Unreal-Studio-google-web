@@ -766,7 +766,7 @@ const ClientDashboard: React.FC = () => {
                         </button>
                         {proj.drive_folder_url && feat('drive') && (
                           <a href={proj.drive_folder_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition">
-                            <span className="material-symbols-outlined text-sm">folder</span> {t('admin.clientDash.btnDrive', { defaultValue: 'Documentación (Drive)' })}
+                            <span className="material-symbols-outlined text-sm">folder</span> {t('admin.clientDash.btnDrive', { defaultValue: 'Documentación' })}
                           </a>
                         )}
                       </div>
