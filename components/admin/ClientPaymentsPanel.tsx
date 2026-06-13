@@ -46,6 +46,7 @@ interface Props {
   clientId: string;
   clientName: string;
   clientEmail: string | null;
+  clientExtraEmails?: string[] | null;
   adminUserId: string;
   brand?: { logo?: string; stamp?: string; commercial_email?: string; phone?: string };
   adminSignature?: string;
@@ -77,7 +78,7 @@ const grp = (n: number) => (n ? n.toLocaleString('es-ES', { useGrouping: 'always
 const parseNum = (s: string) => Number(String(s).replace(/\D/g, '')) || 0;
 
 
-const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, adminUserId, brand, adminSignature, clientLang, filterName, filterUnit, onClose }) => {
+const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, clientExtraEmails, adminUserId, brand, adminSignature, clientLang, filterName, filterUnit, onClose }) => {
   const { t } = useTranslation();
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -236,7 +237,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.recibi.cta')}</a></p>`;
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
       body: {
-        adminUserId, to: clientEmail, kwitansiId: kw.kwitansiId, lang: loc,
+        adminUserId, to: [clientEmail, ...(clientExtraEmails || [])].filter(Boolean), kwitansiId: kw.kwitansiId, lang: loc,
         subject: et('emails.recibi.subject', { no }),
         html: body,
       },

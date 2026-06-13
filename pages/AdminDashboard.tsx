@@ -73,7 +73,7 @@ const AMENITIES_LIST = [
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
-  const [emailPreview, setEmailPreview] = useState<null | { to: string; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean }>(null);
+  const [emailPreview, setEmailPreview] = useState<null | { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean }>(null);
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
   const [booted, setBooted] = useState(false);
@@ -810,7 +810,7 @@ const handleSaveClient = async (e: React.FormEvent) => {
     // manda solo el correo de bienvenida al nuevo email (idioma del cliente).
     if (emailChanged) {
       const lang = ((currentClient as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
-      const r = await sendWelcomeCore({ name: currentClient.name || '', email: newEmail, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
+      const r = await sendWelcomeCore({ name: currentClient.name || '', email: newEmail, emails: emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails }), lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
       alert(r.ok ? t('admin.dash.welcomeSent', { email: newEmail }) : t('admin.dash.welcomeError', { error: r.error }));
     }
   } catch (error) {
@@ -826,9 +826,11 @@ const handleSaveClient = async (e: React.FormEvent) => {
 // sola al cambiar el email (ver handleSaveClient). ─────────────────────────────
 const clientLangOf = (client: Client) => ((client as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
 const clientPortalUrl = (lang: 'es' | 'en' | 'ro' | 'id') => `https://unrealstudiobali.com${portalPath('cliente', lang)}`;
+// Todos los emails de una ficha (titular + co-titulares). Los envíos van a TODOS.
+const emailsOf = (c: any): string[] => [c?.email, ...((c?.extra_emails) || [])].map((e: string) => (e || '').trim()).filter(Boolean);
 
 // Núcleo de la bienvenida: construye y envía. Sin alerts (lo usa el botón y el auto-envío).
-const sendWelcomeCore = async (args: { name: string; email: string; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
+const sendWelcomeCore = async (args: { name: string; email: string; emails?: string[]; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
   const userId = getAdminUserId();
   if (!userId) return { ok: false, error: 'session' };
   const et = i18n.getFixedT(args.lang);
@@ -840,7 +842,7 @@ const sendWelcomeCore = async (args: { name: string; email: string; lang: 'es' |
     lang: args.lang,
   });
   const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-    body: { adminUserId: userId, to: args.email, lang: args.lang, subject: et('emails.welcome.subject'), html },
+    body: { adminUserId: userId, to: (args.emails && args.emails.length ? args.emails : args.email), lang: args.lang, subject: et('emails.welcome.subject'), html },
   });
   if (sErr || !sent?.success) return { ok: false, error: sent?.error || sErr?.message || 'error' };
   return { ok: true };
@@ -855,7 +857,7 @@ const sendWelcome = async (client: Client) => {
   const et = i18n.getFixedT(lang);
   // Bienvenida MANUAL → pasa por la preview antes de enviar.
   const html = welcomeEmailHtml({ firstName: (client.name || '').trim(), portalUrl: clientPortalUrl(lang), email, tempPassword: (client as any).password_plain || client.temp_password || null, lang });
-  openEmailPreview({ to: email, subject: et('emails.welcome.subject'), html, sentMsg: t('admin.dash.welcomeSent', { email }), userId, lang });
+  openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html, sentMsg: t('admin.dash.welcomeSent', { email }), userId, lang });
 };
 
 // Recuperación de contraseña manual (te llaman "perdí la clave" → se la mandas tú).
@@ -875,7 +877,7 @@ const sendResetEmail = async (client: Client) => {
 // días que faltan / vencidos a día de hoy (zona horaria de Bali).
 // Preview de email: en vez de enviar directo, abrimos un pop-up con la vista
 // previa; el envío real ocurre al pulsar "Enviar" en sendPreviewedEmail.
-const openEmailPreview = (args: { to: string; subject: string; html: string; sentMsg: string; userId: string; lang: string }) => {
+const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string }) => {
   setEmailPreview({ ...args, sending: false });
 };
 const sendPreviewedEmail = async () => {
@@ -924,7 +926,7 @@ const sendReminderEmail = async (client: Client) => {
     <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine}</p>
     <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.reminder.recommendation')}</p>
     <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.reminder.cta')}</a></p>`;
-  openEmailPreview({ to: email, subject, html, sentMsg: t('admin.dash.reminderSent', { email }), userId, lang });
+  openEmailPreview({ to: emailsOf(client), subject, html, sentMsg: t('admin.dash.reminderSent', { email }), userId, lang });
 };
 
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
@@ -949,7 +951,7 @@ const sendReportEmail = async (client: Client) => {
     cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
     `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
   ].join('');
-  openEmailPreview({ to: email, subject, html, sentMsg: t('admin.dash.reportSent', { email, n: 1 }), userId, lang });
+  openEmailPreview({ to: emailsOf(client), subject, html, sentMsg: t('admin.dash.reportSent', { email, n: 1 }), userId, lang });
 };
 
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
@@ -986,7 +988,7 @@ const sendCalendarEmail = async (client: Client) => {
   }
   body += `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up).
-  openEmailPreview({ to: email, subject: et('emails.calendar.subject'), html: body, sentMsg: t('admin.dash.calendarSent', { email }), userId, lang });
+  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: body, sentMsg: t('admin.dash.calendarSent', { email }), userId, lang });
 };
 
 const handleDeleteClient = async (id: string) => {
@@ -2306,7 +2308,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
         <div className="min-w-0">
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailPreviewTitle', { defaultValue: 'Previsualización del email' })}</h3>
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}: <b>{emailPreview.to}</b> · {emailPreview.subject}</p>
+          <p className="text-xs text-gray-400 mt-0.5 truncate">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}: <b>{Array.isArray(emailPreview.to) ? emailPreview.to.join(', ') : emailPreview.to}</b> · {emailPreview.subject}</p>
         </div>
         <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
@@ -2338,6 +2340,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.emailRequired')}</label>
           <input type="email" required value={currentClient.email || ''} onChange={(e) => setCurrentClient({...currentClient, email: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder={t('admin.dash.emailPh')} />
+          {/* Emails adicionales (co-titulares): 1 ficha, varios correos. Los emails van a TODOS. */}
+          <div className="mt-2 space-y-2">
+            {(((currentClient as any).extra_emails) || []).map((em: string, i: number) => (
+              <div key={i} className="flex gap-2">
+                <input type="email" value={em} onChange={(e) => setCurrentClient((prev: any) => { const arr = [...(prev.extra_emails || [])]; arr[i] = e.target.value; return { ...prev, extra_emails: arr }; })} className="flex-1 px-5 py-3 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.extraEmailPh', { defaultValue: 'Otro email (co-titular)…' })} />
+                <button type="button" onClick={() => setCurrentClient((prev: any) => ({ ...prev, extra_emails: (prev.extra_emails || []).filter((_: string, j: number) => j !== i) }))} className="px-3 text-red-400 hover:text-red-600"><span className="material-symbols-outlined">close</span></button>
+              </div>
+            ))}
+            <button type="button" onClick={() => setCurrentClient((prev: any) => ({ ...prev, extra_emails: [...(prev.extra_emails || []), ''] }))} className="text-xs font-bold text-primary hover:text-black inline-flex items-center gap-1"><span className="material-symbols-outlined text-sm">add</span> {t('admin.dash.addEmail', { defaultValue: 'Añadir otro email' })}</button>
+          </div>
         </div>
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.phoneLabel')}</label>
@@ -2518,6 +2530,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     clientId={paymentsClient.id}
     clientName={paymentsClient.name}
     clientEmail={paymentsClient.email || null}
+    clientExtraEmails={(paymentsClient as any).extra_emails || []}
     adminUserId={getAdminUserId() as string}
     brand={(config as any).brand || {}}
     adminSignature={mySignature}
