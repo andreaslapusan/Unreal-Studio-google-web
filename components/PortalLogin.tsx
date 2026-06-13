@@ -168,6 +168,18 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       // tiramos al dashboard de ESTE portal (su auth + RLS son la barrera real);
       // nunca lo enviamos a OTRO portal.
       if (list === null || list.includes(portal)) {
+        // Verificación FUERTE para clientes: el email de la sesión debe mapear a un
+        // cliente real (p.ej. si se cambió el email del perfil, get_my_portals puede
+        // decir 'cliente' por el metadata pero ya no hay cliente). Sin esto, entraría
+        // al dashboard y rebotaría; aquí damos el error claro YA en el formulario.
+        if (portal === 'cliente') {
+          const { data: cid } = await supabase.rpc('client_my_id');
+          if (!cid?.success) {
+            try { await supabase.auth.signOut(); } catch { /* ignore */ }
+            setError(t('auth.noAccessPortal', { portal: PORTAL_LABEL[portal], defaultValue: 'Esta cuenta no tiene acceso al portal de {{portal}}. Inicia sesión con tu email actual.' }));
+            return;
+          }
+        }
         navigate(PORTAL_DASH[portal], { replace: true });
         return;
       }

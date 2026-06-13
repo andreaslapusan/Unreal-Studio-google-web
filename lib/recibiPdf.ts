@@ -54,6 +54,13 @@ function imgSrcs(html?: string): string[] {
   return out;
 }
 
+// Envuelve una promesa con un límite de tiempo: si tarda más de `ms`, resuelve a
+// null. Evita que la generación del PDF se cuelgue para SIEMPRE si una imagen
+// (sello/firma) no responde — síntoma: "le doy a descargar y no pasa nada".
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T | null> {
+  return Promise.race([p, new Promise<null>((res) => setTimeout(() => res(null), ms))]);
+}
+
 // Carga una imagen remota → {dataUrl, w, h, fmt} (para jsPDF.addImage). null si falla.
 async function loadImg(url: string): Promise<{ data: string; w: number; h: number; fmt: string } | null> {
   try {
@@ -135,7 +142,7 @@ export async function downloadRecibiPdf(d: RecibiPdfData): Promise<void> {
     if (srcs.length >= 3) srcs = srcs.slice(1); // descarta el logo de cabecera
     srcs = srcs.slice(0, 2);
     const loaded: { data: string; w: number; h: number; fmt: string }[] = [];
-    for (const s of srcs) { const im = await loadImg(s); if (im) loaded.push(im); }
+    for (const s of srcs) { const im = await withTimeout(loadImg(s), 5000); if (im) loaded.push(im); }
     const maxH = 22, gap = 4;
     const dims = loaded.map((im) => { const r = Math.min(28 / im.w, maxH / im.h); return { im, w: im.w * r, h: im.h * r }; });
     const totalW = dims.reduce((s, x) => s + x.w, 0) + gap * Math.max(0, dims.length - 1);

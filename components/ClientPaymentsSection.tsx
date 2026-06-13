@@ -58,6 +58,11 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
   const [claimedIds, setClaimedIds] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
   const [receipts, setReceipts] = useState<Record<string, { id: string; html: string; no_seq: number }>>({});
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  // Preview del recibí en un pop-up antes de descargar (evita que el navegador
+  // —p.ej. Brave— bloquee la descarga directa sin avisar; el botón "Descargar"
+  // del pop-up es un gesto de usuario claro).
+  const [preview, setPreview] = useState<{ kw: any; payId: string } | null>(null);
 
   useEffect(() => {
     if (!clientId) return;
@@ -80,7 +85,8 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
   // Genera el recibí como PDF FIJO A4 dibujado con jsPDF (no captura de pantalla:
   // el método con html2canvas se quedaba en negro en iPhone). Documento físico de
   // dimensiones fijas, igual en todos los dispositivos, que se descarga como archivo.
-  const viewReceipt = async (kw: any) => {
+  const viewReceipt = async (kw: any, payId: string) => {
+    setDownloadingId(payId);
     try {
       const { downloadRecibiPdf } = await import('../lib/recibiPdf');
       await downloadRecibiPdf({
@@ -91,7 +97,31 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
         lang: i18n.language, html: kw.html,
       });
     } catch { alert(t('fix.pay.popupBlocked')); }
+    finally { setDownloadingId(null); }
   };
+
+  // Pop-up de previsualización del recibí + botón de descarga (web y web-app).
+  const previewModal = preview ? (
+    <div className="fixed inset-0 z-[70] bg-black/60 flex items-center justify-center p-3 sm:p-4" onClick={() => setPreview(null)}>
+      <div className="bg-almond w-full max-w-2xl max-h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-primary/10 shrink-0">
+          <h3 className="font-serif text-lg text-primary">{t('fix.pay.receipt')}</h3>
+          <button onClick={() => setPreview(null)} className="text-primary/40 hover:text-primary p-1"><span className="material-symbols-outlined">close</span></button>
+        </div>
+        <div className="overflow-y-auto p-4" dangerouslySetInnerHTML={{ __html: preview.kw.html || '' }} />
+        <div className="px-5 py-3 border-t border-primary/10 shrink-0">
+          <button
+            onClick={() => void viewReceipt(preview.kw, preview.payId)}
+            disabled={downloadingId === preview.payId}
+            className="w-full inline-flex items-center justify-center gap-2 bg-primary text-white text-xs font-black uppercase tracking-widest py-3 rounded-xl hover:bg-black transition disabled:opacity-70"
+          >
+            <span className={`material-symbols-outlined text-base ${downloadingId === preview.payId ? 'animate-spin' : ''}`}>{downloadingId === preview.payId ? 'progress_activity' : 'download'}</span>
+            {downloadingId === preview.payId ? t('fix.pay.generating', { defaultValue: 'Generando…' }) : t('fix.pay.downloadPdf', { defaultValue: 'Descargar PDF' })}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
 
   const submitClaim = async (paymentId: string) => {
     setSending(true);
@@ -114,6 +144,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
   // ===== Variante TABLA (modal) =====
   if (variant === 'table') {
     return (
+      <>
       <div className="space-y-8">
         {shown.map((u) => {
           const pays = [...u.payments].sort(byDate);
@@ -182,8 +213,8 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           </td>
                           <td className="px-4 py-3 text-right whitespace-nowrap">
                             {receipts[p.id] ? (
-                              <button onClick={() => void viewReceipt(receipts[p.id])} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
-                                <span className="material-symbols-outlined text-sm">download</span>{t('fix.pay.receipt')}
+                              <button onClick={() => setPreview({ kw: receipts[p.id], payId: p.id })} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
+                                <span className="material-symbols-outlined text-sm">visibility</span>{t('fix.pay.receipt')}
                               </button>
                             ) : <span className="text-[11px] text-primary/30">—</span>}
                           </td>
@@ -213,6 +244,8 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
           );
         })}
       </div>
+      {previewModal}
+      </>
     );
   }
 
