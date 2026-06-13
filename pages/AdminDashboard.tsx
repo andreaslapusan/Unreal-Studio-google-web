@@ -74,6 +74,9 @@ const AMENITIES_LIST = [
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
   const [emailPreview, setEmailPreview] = useState<null | { to: string; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean }>(null);
+  // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
+  // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
+  const [booted, setBooted] = useState(false);
   // Cerrar con Escape los modales (accesibilidad — auditoría).
   useEscapeKey(() => setEmailPreview(null), !!emailPreview);
   useEscapeKey(() => setIsEditingClient(false), isEditingClient);
@@ -310,7 +313,8 @@ const AMENITIES_LIST = [
         } catch { /* ignore */ }
       }
       if (cancelled) return;
-      loadData();
+      await loadData();
+      if (!cancelled) setBooted(true);
       loadDaysOff();
       void loadMySignature();
     };
@@ -1164,6 +1168,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   const handleSaveLabels = () => {
       saveConfigToDb(config);
   };
+
+  if (!booted) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-almond gap-4">
+        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <p className="text-primary/50 text-xs font-bold uppercase tracking-widest animate-pulse">{t('admin.dash.loadingPanel', { defaultValue: 'Cargando panel…' })}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans text-left relative">
