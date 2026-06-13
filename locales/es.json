@@ -829,7 +829,10 @@
       "documentsBody": "Accede a tu carpeta privada de Drive (contratos, recibos, planos).",
       "languageLabel": "Idioma",
       "receiptsTitle": "Recibos de pago generados",
-      "receiptsView": "Ver / Descargar"
+      "receiptsView": "Ver / Descargar",
+      "deliveredOn": "Entregada el {{date}}",
+      "warrantyDaysLeft": "Garantía de defectos cosméticos: quedan {{n}} días para reportar.",
+      "warrantyClosed": "El plazo de 2 semanas para reportar defectos cosméticos ha finalizado."
     },
     "agencias": {
       "title": "Pack para Agencias",
@@ -1129,7 +1132,9 @@
       "sendingMail": "Enviando correo…",
       "clientPermsTitle": "Permisos de este cliente",
       "clientPermsHint": "Por defecto hereda lo de Configuración. Lo que esté desactivado globalmente no se puede activar aquí.",
-      "clientPermsLocked": "Actívalo primero en Configuración"
+      "clientPermsLocked": "Actívalo primero en Configuración",
+      "deliveryDate": "Fecha de entrega (handover)",
+      "deliveryDateHint": "Al fijarla, arranca la garantía de 2 semanas para defectos cosméticos."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

@@ -1021,7 +1021,8 @@ const handleEditAssignment = async (e: React.FormEvent) => {
             p_amount: editingAssignment.assignment.investment_amount || 0,
             p_currency: editingAssignment.assignment.currency,
             p_date: editingAssignment.assignment.purchase_date || null,
-            p_status: editingAssignment.assignment.status || 'Reserva'
+            p_status: editingAssignment.assignment.status || 'Reserva',
+            p_delivery: (editingAssignment.assignment as any).delivery_date || ''
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
@@ -2325,6 +2326,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                             <option value="Completado">{translateStatus('Completado', t)}</option>
                         </select>
                     </div>
+                </div>
+                <div>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.deliveryDate')}</label>
+                    <input type="date" value={((editingAssignment.assignment as any).delivery_date || '').slice(0, 10)} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, delivery_date: e.target.value} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
+                    <p className="text-[10px] text-gray-400 mt-1">{t('admin.dash.deliveryDateHint')}</p>
                 </div>
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>

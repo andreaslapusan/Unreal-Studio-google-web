@@ -921,7 +921,10 @@
       "documentsBody": "Akses folder Drive pribadi Anda (kontrak, kwitansi, denah).",
       "languageLabel": "Bahasa",
       "receiptsTitle": "Kwitansi Anda",
-      "receiptsView": "Lihat / Unduh"
+      "receiptsView": "Lihat / Unduh",
+      "deliveredOn": "Dikirim pada {{date}}",
+      "warrantyDaysLeft": "Garansi cacat kosmetik: {{n}} hari tersisa untuk melaporkan.",
+      "warrantyClosed": "Jangka waktu 2 minggu untuk melaporkan cacat kosmetik telah berakhir."
     },
     "agencias": {
       "title": "Paket untuk Agen",
@@ -1221,7 +1224,9 @@
       "sendingMail": "Mengirim email…",
       "clientPermsTitle": "Izin Klien Ini",
       "clientPermsHint": "Secara default mewarisi dari Konfigurasi. Apa yang dinonaktifkan secara global tidak dapat diaktifkan di sini.",
-      "clientPermsLocked": "Aktifkan terlebih dahulu di Konfigurasi"
+      "clientPermsLocked": "Aktifkan terlebih dahulu di Konfigurasi",
+      "deliveryDate": "Tanggal Serah Terima (handover)",
+      "deliveryDateHint": "Dengan menetapkannya, garansi 2 minggu untuk cacat kosmetik dimulai."
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",

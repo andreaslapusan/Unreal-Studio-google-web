@@ -829,7 +829,10 @@
       "documentsBody": "Access your private Drive folder (contracts, receipts, plans).",
       "languageLabel": "Language",
       "receiptsTitle": "Your receipts (kwitansi)",
-      "receiptsView": "View / Download"
+      "receiptsView": "View / Download",
+      "deliveredOn": "Delivered on {{date}}",
+      "warrantyDaysLeft": "Cosmetic defect warranty: {{n}} days left to report.",
+      "warrantyClosed": "The 2-week period for reporting cosmetic defects has ended."
     },
     "agencias": {
       "title": "Agency Pack",
@@ -1129,7 +1132,9 @@
       "sendingMail": "Sending email…",
       "clientPermsTitle": "Permissions for this client",
       "clientPermsHint": "By default it inherits from Settings. What is disabled globally cannot be activated here.",
-      "clientPermsLocked": "Activate it first in Settings"
+      "clientPermsLocked": "Activate it first in Settings",
+      "deliveryDate": "Delivery Date (Handover)",
+      "deliveryDateHint": "Once set, the 2-week cosmetic defect warranty begins."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

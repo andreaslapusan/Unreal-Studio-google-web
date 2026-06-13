@@ -722,6 +722,18 @@ const ClientDashboard: React.FC = () => {
                       )}
                     </div>
 
+                    {proj.delivery_date && (() => {
+                      const dl = new Date(new Date(proj.delivery_date).getTime() + 14 * 86400000);
+                      const days = Math.ceil((dl.getTime() - Date.now()) / 86400000);
+                      const open = days > 0;
+                      return (
+                        <div className={`mt-3 rounded-2xl px-4 py-3 text-xs ${open ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-gray-50 text-gray-500 border border-gray-200'}`}>
+                          <p className="font-black uppercase tracking-widest text-[10px] mb-0.5">{t('admin.clientDash.deliveredOn', { date: formatDate(proj.delivery_date) })}</p>
+                          <p className="font-bold">{open ? t('admin.clientDash.warrantyDaysLeft', { n: days }) : t('admin.clientDash.warrantyClosed')}</p>
+                        </div>
+                      );
+                    })()}
+
                     {(proj.brochure_url || proj.construction_update_url || proj.project_slug) && (
                       <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
                           {proj.brochure_url && feat('brochure') && (

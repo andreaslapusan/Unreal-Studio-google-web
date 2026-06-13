@@ -829,7 +829,10 @@
       "documentsBody": "Accesează folderul tău privat Drive (contracte, chitanțe, planuri).",
       "languageLabel": "Limbă",
       "receiptsTitle": "Chitanțele tale (kwitansi)",
-      "receiptsView": "Vezi / Descarcă"
+      "receiptsView": "Vezi / Descarcă",
+      "deliveredOn": "Livrata pe {{date}}",
+      "warrantyDaysLeft": "Garantia pentru defecte cosmetice: au ramas {{n}} zile pentru a raporta.",
+      "warrantyClosed": "Termenul de 2 saptamani pentru a raporta defecte cosmetice a expirat."
     },
     "agencias": {
       "title": "Pack pentru Agenții",
@@ -1129,7 +1132,9 @@
       "sendingMail": "Se trimite email…",
       "clientPermsTitle": "Permisiunile acestui client",
       "clientPermsHint": "Prin definiție, moștenește ceea ce este în Configurare. Ceea ce este dezactivat la nivel global nu poate fi activat aici.",
-      "clientPermsLocked": "Activează-l mai întâi în Configurare"
+      "clientPermsLocked": "Activează-l mai întâi în Configurare",
+      "deliveryDate": "Data de livrare (predare)",
+      "deliveryDateHint": "Odata setata, incepe garantia de 2 saptamani pentru defecte cosmetice."
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
