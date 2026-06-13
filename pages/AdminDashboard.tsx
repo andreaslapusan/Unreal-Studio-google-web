@@ -862,10 +862,13 @@ const sendWelcomeCore = async (args: { name: string; email: string; lang: 'es' |
 const sendWelcome = async (client: Client) => {
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
-  if (!window.confirm(t('admin.dash.welcomeConfirm', { email }))) return;
-  const r = await sendWelcomeCore({ name: client.name || '', email, lang: clientLangOf(client), tempPassword: (client as any).password_plain || client.temp_password });
-  if (!r.ok) { alert(r.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no: '' }) : t('admin.dash.welcomeError', { error: r.error })); return; }
-  alert(t('admin.dash.welcomeSent', { email }));
+  const userId = getAdminUserId();
+  if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+  const lang = clientLangOf(client);
+  const et = i18n.getFixedT(lang);
+  // Bienvenida MANUAL → pasa por la preview antes de enviar.
+  const html = welcomeEmailHtml({ firstName: (client.name || '').trim(), portalUrl: clientPortalUrl(lang), email, tempPassword: (client as any).password_plain || client.temp_password || null, lang });
+  openEmailPreview({ to: email, subject: et('emails.welcome.subject'), html, sentMsg: t('admin.dash.welcomeSent', { email }), userId, lang });
 };
 
 // Recuperación de contraseña manual (te llaman "perdí la clave" → se la mandas tú).
