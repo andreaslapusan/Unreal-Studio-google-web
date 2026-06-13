@@ -393,18 +393,24 @@ const ClientDashboard: React.FC = () => {
 
   // Resuelve el id de cliente desde la sesión Supabase Auth (no del token
   // legacy _ust_client_). null si no hay sesión o la cuenta no es cliente.
-  const resolveClientId = async (): Promise<string | null> => {
+  // Devuelve: { id } si la sesión es de un cliente; { noSession:true } si no hay
+  // sesión; { mismatch:true } si HAY sesión pero NO corresponde a ningún cliente
+  // (p.ej. se cambió el email del cliente y la sesión quedó con el viejo).
+  const resolveClientId = async (): Promise<{ id?: string; noSession?: boolean; mismatch?: boolean }> => {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return null;
+    if (!session) return { noSession: true };
     const { data } = await supabase.rpc('client_my_id');
-    return (data && data.success) ? (data.client_id as string) : null;
+    if (data && data.success) return { id: data.client_id as string };
+    return { mismatch: true };
   };
 
   const loadDashboard = useCallback(async (cid: string) => {
     try {
       const { data, error } = await supabase.rpc('client_get_dashboard', { p_client_id: cid });
       if (error || !data || !data.success) {
-        navigate('/cliente');
+        // NO redirigir a /cliente aquí: el login, al ver la sesión, re-redirige
+        // de vuelta → bucle infinito. Dejamos clientData en null → se muestra la
+        // pantalla de error con botón manual "volver al login" (cierra sesión).
         return;
       }
       setClientData(data);
@@ -429,10 +435,19 @@ const ClientDashboard: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      const id = await resolveClientId();
-      if (!id) { navigate('/cliente'); return; }
-      setClientId(id);
-      await loadDashboard(id);
+      const r = await resolveClientId();
+      if (r.mismatch) {
+        // Sesión válida pero NO es de un cliente (típicamente: el email del
+        // cliente cambió y la sesión arrastra el viejo). CERRAMOS la sesión para
+        // ROMPER el bucle: sin sesión, el login muestra el formulario en vez de
+        // re-redirigir aquí. Antes esto provocaba el bucle infinito de login.
+        try { await supabase.auth.signOut(); } catch { /* ignore */ }
+        navigate('/cliente?e=mismatch', { replace: true });
+        return;
+      }
+      if (!r.id) { navigate('/cliente', { replace: true }); return; }
+      setClientId(r.id);
+      await loadDashboard(r.id);
       if (searchParams.get('change_password') === 'true') {
         setShowChangePassword(true);
       }

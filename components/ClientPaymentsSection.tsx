@@ -84,9 +84,11 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
     try {
       const { downloadRecibiPdf } = await import('../lib/recibiPdf');
       await downloadRecibiPdf({
-        no: kw.no_seq, receivedFrom: kw.received_from || '', amount: Number(kw.amount || 0),
+        no: kw.display_no || kw.no_seq, receivedFrom: kw.received_from || '', amount: Number(kw.amount || 0),
         currency: kw.currency || 'EUR', forPayment: kw.for_payment || '', place: kw.place || 'Bali',
-        date: kw.kwitansi_date, lang: i18n.language, html: kw.html,
+        date: kw.kwitansi_date, dueDate: kw.due_date || undefined,
+        projectName: kw.project_name || undefined, unit: kw.unit_number || undefined,
+        lang: i18n.language, html: kw.html,
       });
     } catch { alert(t('fix.pay.popupBlocked')); }
   };

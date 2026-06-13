@@ -1347,6 +1347,7 @@
     "noAccess": "¿Sin acceso? Pídele tus datos a tu responsable."
   },
   "auth": {
+    "sessionEmailChanged": "Tu sesión usaba un email anterior. Inicia sesión con tu email actual.",
     "subtitle": "Acceso al portal",
     "email": "Email",
     "password": "Contraseña",

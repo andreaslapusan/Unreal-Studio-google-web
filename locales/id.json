@@ -1439,6 +1439,7 @@
     "noAccess": "Tidak memiliki akses? Minta data Anda kepada orang yang bertanggung jawab."
   },
   "auth": {
+    "sessionEmailChanged": "Sesi Anda memakai email lama. Masuk dengan email Anda saat ini.",
     "subtitle": "Akses portal",
     "email": "Email",
     "password": "Kata sandi",

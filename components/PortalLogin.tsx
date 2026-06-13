@@ -55,6 +55,19 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     document.title = `${PORTAL_LABEL[portal]} | Unreal Studio`;
   }, [portal]);
 
+  // Si llegamos aquí porque el dashboard expulsó una sesión cuyo email ya no
+  // coincide con ningún perfil (p.ej. se cambió el email del cliente), avisamos
+  // de que vuelva a entrar con su email actual. Limpiamos el query de la URL.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('e') === 'mismatch') {
+      setInfo(t('auth.sessionEmailChanged', {
+        defaultValue: 'Tu sesión usaba un email anterior. Inicia sesión con tu email actual.',
+      }));
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // "Recordarme": prerrellena email Y contraseña guardados de ESTE portal (Andreas
   // lo pidió expresamente: que la contraseña quede guardada y visible/precargada
   // cuando "recordarme" está activo). Se guarda en localStorage (ofuscada en base64).

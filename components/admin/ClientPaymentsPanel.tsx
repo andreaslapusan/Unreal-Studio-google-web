@@ -145,7 +145,10 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       currency: p?.currency ?? u.currency ?? 'IDR',
       for_payment: `${u.project_name}${u.unit_number ? ' · ' + t('admin.pay.unit') + ' ' + u.unit_number : ''}${p?.label ? ' — ' + p.label : ''}`,
       place: 'Bali',
-      date: p?.paid_at ? p.paid_at.slice(0, 10) : todayISO(),
+      // Fecha del recibí: la de cobro ya guardada (paid_at) si existe; si no, la
+      // fecha límite acordada (due_date); en último caso, hoy. Así al reabrir se
+      // ve la fecha YA guardada y no "revierte" a hoy (era la sensación de "no guarda").
+      date: p?.paid_at ? p.paid_at.slice(0, 10) : (p?.due_date ? p.due_date.slice(0, 10) : todayISO()),
       sending: false,
       displayNo,
     });
@@ -163,7 +166,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const downloadKwitansi = async () => {
     if (!kw) return;
     const { downloadPdfFromHtml } = await import('../../lib/pdf');
-    await downloadPdfFromHtml(kwitansiHtml(kw.displayNo), `recibi_${kw.displayNo}.pdf`);
+    await downloadPdfFromHtml(kwitansiHtml(kw.displayNo), `${kw.displayNo} - Unreal Studio.pdf`);
   };
 
   // Flujo en 3 pasos OBLIGATORIOS y en orden: recibido → firmar → enviar.
@@ -171,9 +174,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const markReceived = async () => {
     if (!kw?.payId) return;
     setKw({ ...kw, sending: true });
-    // Importe REAL recibido + fecha = lo del recibí (kw.amount/kw.date). Así el
-    // calendario muestra el balance correcto sin pedir el dato dos veces.
-    await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: { id: kw.payId, client_project_id: '', received: true, received_amount: kw.amount ?? null, paid_at: (kw.date ? new Date(kw.date + 'T00:00:00+08:00').toISOString() : todayISO()) } });
+    // Importe REAL recibido + fecha = lo del recibí (kw.amount/kw.date). GUARDA YA
+    // (aunque no esté firmado y se cierre la ventana). Se puede re-marcar para
+    // CORREGIR la fecha de cobro. La fecha se ancla a mediodía UTC para que el día
+    // se conserve igual en cualquier huso (evita el off-by-one que la movía un día).
+    await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: { id: kw.payId, client_project_id: '', received: true, received_amount: kw.amount ?? null, paid_at: (kw.date ? `${kw.date}T12:00:00.000Z` : new Date().toISOString()) } });
     await load();
     setKw((cur) => cur ? { ...cur, sending: false } : cur);
   };
@@ -189,7 +194,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       p_kwitansi: {
         client_project_id: kw.cp, client_payment_id: kw.payId ?? '',
         received_from: kw.received_from, amount: String(kw.amount), currency: kw.currency,
-        for_payment: kw.for_payment, place: kw.place, kwitansi_date: kw.date, html,
+        for_payment: kw.for_payment, place: kw.place, kwitansi_date: kw.date, display_no: kw.displayNo, html,
       },
     });
     if (cErr || !created?.success) { setKw({ ...kw, sending: false }); alert(t('admin.pay.errorCreateKwitansi')); return; }
@@ -377,8 +382,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                   <button onClick={() => void downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> {t('fix.cpp.downloadPdf')}</button>
                   <p className="text-[11px] text-gray-400 text-center">{t('fix.cpp.stepsInOrder')}</p>
                   <div className="grid grid-cols-3 gap-2">
-                    <button disabled={kw.sending || kwReceived} onClick={markReceived}
-                      className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-60 ${kwReceived ? 'bg-green-100 text-green-700' : 'bg-primary text-white hover:bg-black'}`}>
+                    <button disabled={kw.sending} onClick={markReceived}
+                      className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-60 ${kwReceived ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-primary text-white hover:bg-black'}`}>
                       {kwReceived ? t('fix.cpp.step1Received') : t('fix.cpp.step1MarkReceived')}
                     </button>
                     <button disabled={kw.sending || !kwReceived || kw.signed} onClick={signKwitansi}

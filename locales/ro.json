@@ -1347,6 +1347,7 @@
     "noAccess": "Fără acces? Cere datele managerului tău."
   },
   "auth": {
+    "sessionEmailChanged": "Sesiunea ta folosea un email anterior. Autentifică-te cu emailul actual.",
     "subtitle": "Acces portal",
     "email": "Email",
     "password": "Parolă",

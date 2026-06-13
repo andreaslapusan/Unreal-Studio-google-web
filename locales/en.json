@@ -1347,6 +1347,7 @@
     "noAccess": "No access? Ask your manager for your details."
   },
   "auth": {
+    "sessionEmailChanged": "Your session used a previous email. Please sign in with your current email.",
     "subtitle": "Portal access",
     "email": "Email",
     "password": "Password",
