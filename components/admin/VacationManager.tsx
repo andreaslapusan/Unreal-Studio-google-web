@@ -46,15 +46,29 @@ const VacationManager: React.FC = () => {
   const [selected, setSelected] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Vacation | null>(null);
+  const [payDue, setPayDue] = useState<any[]>([]);
+  // Mapa fecha límite → cobros pendientes (para marcar en el calendario).
+  const payDayMap = useMemo(() => {
+    const m = new Map<string, any[]>();
+    for (const p of payDue) {
+      if (!p.due_date) continue;
+      const d = String(p.due_date).slice(0, 10);
+      const arr = m.get(d) ?? []; arr.push(p); m.set(d, arr);
+    }
+    return m;
+  }, [payDue]);
+  const fmtMoney = (n: number, c: string) => { try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0 } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [emp, vac] = await Promise.all([
+    const [emp, vac, pays] = await Promise.all([
       supabase.from('employees').select('id, full_name, email').eq('active', true).order('full_name'),
       supabase.from('employee_vacations').select('id, employee_id, employee_email, employee_name, start_date, end_date, type, status, note').order('start_date'),
+      supabase.rpc('payment_reminders_candidates'), // cobros pendientes (con fecha límite)
     ]);
     setEmployees((emp.data as Employee[]) ?? []);
     setVacations((vac.data as Vacation[]) ?? []);
+    setPayDue((pays.data as any)?.success ? ((pays.data as any).payments ?? []) : []);
     setLoading(false);
   }, []);
   useEffect(() => { void load(); }, [load]);
@@ -180,20 +194,21 @@ const VacationManager: React.FC = () => {
                   const day = dayIdx + 1;
                   const dateStr = `${year}-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                   const offs = dayMap.get(dateStr) ?? [];
+                  const pays = payDayMap.get(dateStr) ?? [];
+                  const hasAny = offs.length > 0 || pays.length > 0;
                   const isToday = dateStr === new Date().toISOString().slice(0, 10);
                   return (
                     <div key={day}
-                      onMouseEnter={offs.length ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
-                      onMouseLeave={offs.length ? () => setHoverDay(null) : undefined}
-                      className={`relative text-sm rounded-lg p-1 min-h-[48px] flex flex-col items-center justify-center ${offs.length ? 'cursor-help' : ''} ${isToday ? 'ring-2 ring-primary' : ''} ${offs.length ? 'bg-primary/5' : ''}`}>
+                      onMouseEnter={hasAny ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
+                      onMouseLeave={hasAny ? () => setHoverDay(null) : undefined}
+                      className={`relative text-sm rounded-lg p-1 min-h-[48px] flex flex-col items-center justify-center ${hasAny ? 'cursor-help' : ''} ${isToday ? 'ring-2 ring-primary' : ''} ${pays.length ? 'bg-amber-50' : offs.length ? 'bg-primary/5' : ''}`}>
                       <span className="font-bold text-primary/80">{day}</span>
-                      {offs.length > 0 && (
-                        <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
-                          {offs.slice(0, 6).map((v, i) => (
-                            <span key={i} className="w-2 h-2 rounded-full" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
-                          ))}
-                        </div>
-                      )}
+                      <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center items-center">
+                        {offs.slice(0, 6).map((v, i) => (
+                          <span key={i} className="w-2 h-2 rounded-full" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
+                        ))}
+                        {pays.length > 0 && <span className="text-[10px] font-black text-amber-600 leading-none">€{pays.length > 1 ? `·${pays.length}` : ''}</span>}
+                      </div>
                     </div>
                   );
                 })}
@@ -255,7 +270,7 @@ const VacationManager: React.FC = () => {
       )}
 
       {/* Tooltip flotante al pasar el ratón sobre un día con vacaciones */}
-      {hoverDay && (dayMap.get(hoverDay.date)?.length ?? 0) > 0 && (
+      {hoverDay && ((dayMap.get(hoverDay.date)?.length ?? 0) > 0 || (payDayMap.get(hoverDay.date)?.length ?? 0) > 0) && (
         <div className="fixed z-[200] pointer-events-none w-72 bg-white rounded-2xl shadow-2xl border border-primary/10 p-4 text-xs"
           style={{ top: Math.min(hoverDay.y + 14, window.innerHeight - 220), left: Math.min(hoverDay.x + 14, window.innerWidth - 300) }}>
           <p className="font-black uppercase tracking-widest text-primary/40 text-[10px] mb-2 capitalize">
@@ -273,6 +288,19 @@ const VacationManager: React.FC = () => {
               </li>
             ))}
           </ul>
+          {(payDayMap.get(hoverDay.date)?.length ?? 0) > 0 && (
+            <div className="mt-2 pt-2 border-t border-gray-100">
+              <p className="font-black uppercase tracking-widest text-amber-600 text-[10px] mb-1">{t('admin.vac.paymentsDue', { defaultValue: 'Cobros este día' })}</p>
+              <ul className="space-y-1">
+                {(payDayMap.get(hoverDay.date) ?? []).map((p, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-amber-600 font-black shrink-0">€</span>
+                    <div className="min-w-0"><p className="font-bold text-primary">{p.client_name} · {fmtMoney(Number(p.amount), p.currency || 'EUR')}</p><p className="text-primary/50">{p.payment_label || ''}</p></div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <p className="mt-2 pt-2 border-t border-gray-100 font-bold text-primary/70">{t('admin.vac.weekTotal', { n: weekTotal(hoverDay.date) })}</p>
         </div>
       )}
