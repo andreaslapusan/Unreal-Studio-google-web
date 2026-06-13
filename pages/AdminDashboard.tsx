@@ -981,10 +981,11 @@ const sendCalendarEmail = async (client: Client) => {
   for (const u of units) {
     let tA = 0, tR = 0;
     body += `<h2 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:${BROWN}">${u.project_name || ''}${u.unit_number ? ' · ' + u.unit_number : ''}</h2>`;
-    body += `<table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
+    const fmtPaid = (s: string | null) => s ? new Date(s).toLocaleDateString(lang, { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+    body += `<table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
     for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
-      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}${bal > 0 ? ' color:#c0392b' : ''}>${money(bal, u.currency)}</td></tr>`; }
-    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}><b>${money(tA - tR, u.currency)}</b></td></tr></table>`;
+      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td ${td}${bal > 0 ? ' color:#c0392b' : ''}>${money(bal, u.currency)}</td></tr>`; }
+    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td ${td}><b>${money(tA - tR, u.currency)}</b></td></tr></table>`;
   }
   body += `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
   const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {

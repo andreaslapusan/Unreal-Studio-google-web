@@ -100,6 +100,12 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
   const savePayment = async () => {
     if (!editing) return;
+    // Validación: no permitir crear/guardar un pago sin concepto, importe, divisa y fecha.
+    const pp = editing.pay;
+    if (!String(pp.label || '').trim() || !Number(pp.amount) || !pp.currency || !pp.due_date) {
+      alert(t('admin.pay.fillRequired', { defaultValue: 'Rellena concepto, importe, divisa y fecha límite.' }));
+      return;
+    }
     setSaving(true);
     const payload: any = { ...editing.pay, client_project_id: editing.cp };
     const { data, error } = await withLoading(supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: payload }));
