@@ -2229,6 +2229,7 @@
     "leftD": "{{n}} zile",
     "openPayments": "Deschideți plățile clientului",
     "kpiCollected": "Încasat",
-    "kpiTotalSales": "Total vânzări"
+    "kpiTotalSales": "Total vânzări",
+    "kpiMarket": "Valoare piață"
   }
 }

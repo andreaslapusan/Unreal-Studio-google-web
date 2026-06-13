@@ -2229,6 +2229,7 @@
     "leftD": "{{n}} d",
     "openPayments": "Abrir pagos del cliente",
     "kpiCollected": "Cobrado",
-    "kpiTotalSales": "Total ventas"
+    "kpiTotalSales": "Total ventas",
+    "kpiMarket": "Valor mercado"
   }
 }

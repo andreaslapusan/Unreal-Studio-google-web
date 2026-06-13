@@ -53,22 +53,20 @@ const AdminSidebar: React.FC = () => {
     return () => { alive = false; clearInterval(iv); };
   }, [currentView]);
 
-  const sections: NavItem[] = [
+  // Orden único pedido por Andreas (móvil + escritorio).
+  const nav: NavItem[] = [
     { key: 'dashboard', icon: 'dashboard', label: t('admin.nav.dashboard', 'Dashboard'), to: '/admin?view=dashboard', view: 'dashboard' },
     { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'cobros', icon: 'payments', label: t('admin.nav.cobros'), to: '/admin?view=cobros', view: 'cobros' },
+    { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'calendar', icon: 'calendar_month', label: t('admin.nav.calendar'), to: '/admin?view=calendar', view: 'calendar' },
     { key: 'clients', icon: 'person', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
     { key: 'employees', icon: 'badge', label: t('admin.nav.employees'), to: '/admin?view=employees', view: 'employees' },
     { key: 'users', icon: 'security', label: t('admin.nav.users'), to: '/admin?view=users', view: 'users' },
-    { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
-    { key: 'agencias', icon: 'public', label: t('admin.nav.agenciesMgmt', 'Agencias'), to: '/admin?view=agencias', view: 'agencias' },
     { key: 'faqs', icon: 'help', label: t('admin.nav.faqs', 'FAQs'), to: '/admin?view=faqs', view: 'faqs' },
-  ];
-
-  const pages: NavItem[] = [
     { key: 'marketing', icon: 'campaign', label: t('admin.nav.marketing'), to: '/admin/marketing', path: '/admin/marketing' },
+    { key: 'agencias', icon: 'public', label: t('admin.nav.agenciesMgmt', 'Agencias'), to: '/admin?view=agencias', view: 'agencias' },
     { key: 'agencyPacks', icon: 'handshake', label: t('admin.nav.agencyPacks', 'Packs Agencia'), to: '/admin/agencias', path: '/admin/agencias' },
   ];
 
@@ -114,11 +112,7 @@ const AdminSidebar: React.FC = () => {
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-3">
-        <p className="px-5 pt-2 pb-1 text-[10px] font-black uppercase tracking-widest text-white/30">{t('admin.nav.sections', 'Secciones')}</p>
-        {sections.map((it) => renderItem(it, isSectionActive(it)))}
-
-        <p className="px-5 pt-5 pb-1 text-[10px] font-black uppercase tracking-widest text-white/30">{t('admin.nav.tools', 'Herramientas')}</p>
-        {pages.map((it) => renderItem(it, !!isPageActive(it)))}
+        {nav.map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
       </nav>
 
       {/* Configuración: siempre al fondo del todo, justo encima del logout. */}

@@ -283,7 +283,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     return (
       <PortalShell dark={dark}>
         <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl border border-primary/5 flex flex-col items-center gap-4">
-          <span className="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span>
+          <span className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           <p className="text-sm text-primary/50">{t('auth.loadingSession', { defaultValue: 'Iniciando sesión…' })}</p>
         </div>
       </PortalShell>
@@ -384,7 +384,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
             disabled={busy}
             className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {busy ? <span className="material-symbols-outlined animate-spin text-sm">refresh</span> : null}
+            {busy ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : null}
             {t('auth.signin')}
           </button>
 

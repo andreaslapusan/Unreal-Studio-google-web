@@ -114,15 +114,15 @@ const AMENITIES_LIST = [
     { key: 'dashboard', view: 'dashboard' },
     { key: 'notifications', view: 'notifications' },
     { key: 'cobros', view: 'cobros' },
+    { key: 'projects', view: 'projects' },
     { key: 'calendar', view: 'calendar' },
     { key: 'clients', view: 'clients' },
     { key: 'employees', view: 'employees' },
     { key: 'users', view: 'users' },
-    { key: 'projects', view: 'projects' },
     { key: 'blogs', view: 'blogs' },
+    { key: 'faqs', view: 'faqs' },
     { key: 'marketing', to: '/admin/marketing' },
     { key: 'agencias', view: 'agencias' },
-    { key: 'faqs', view: 'faqs' },
     { key: 'config', view: 'config' },
   ];
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
@@ -328,7 +328,9 @@ const AMENITIES_LIST = [
         } catch { /* ignore */ }
       }
       if (cancelled) return;
-      await loadData();
+      // Carga datos, pero NO bloquees el panel indefinidamente si la red va lenta:
+      // a los 12s mostramos la UI igualmente (con lo que haya cargado).
+      await Promise.race([loadData(), new Promise((r) => setTimeout(r, 12000))]);
       if (!cancelled) setBooted(true);
       loadDaysOff();
       void loadMySignature();
@@ -2553,7 +2555,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="relative bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[88vh] overflow-y-auto">
       {mailBusy && (
         <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm rounded-t-3xl sm:rounded-3xl flex flex-col items-center justify-center gap-3">
-          <span className="material-symbols-outlined text-blue-600 text-4xl animate-spin">progress_activity</span>
+          <span className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           <span className="text-sm font-bold text-primary">{t('admin.dash.sendingMail')}</span>
         </div>
       )}

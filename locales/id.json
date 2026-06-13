@@ -2230,6 +2230,7 @@
     "leftD": "{{n}} d",
     "openPayments": "Buka Pembayaran Klien",
     "kpiCollected": "Terkumpul",
-    "kpiTotalSales": "Total penjualan"
+    "kpiTotalSales": "Total penjualan",
+    "kpiMarket": "Nilai pasar"
   }
 }

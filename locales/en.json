@@ -2229,6 +2229,7 @@
     "leftD": "{{n}} d",
     "openPayments": "Open client payments",
     "kpiCollected": "Collected",
-    "kpiTotalSales": "Total sales"
+    "kpiTotalSales": "Total sales",
+    "kpiMarket": "Market value"
   }
 }
