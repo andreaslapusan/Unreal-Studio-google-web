@@ -1540,7 +1540,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
     <div className="space-y-4">
       {filteredClients.map(client => (
-        <div key={client.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div key={client.id} className="bg-[#f7f1ea] rounded-2xl border border-[#e4d8c9] shadow-sm overflow-hidden">
           {/* Header con datos del cliente — layout consistente: casilla + info (izq) + acciones (der/abajo) */}
           <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
             <div className="flex items-start gap-3 flex-1 min-w-0">
