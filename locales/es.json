@@ -2208,6 +2208,7 @@
     "empty": "No hay cobros que mostrar.",
     "searchPh": "Buscar cliente/proyecto…",
     "allProjects": "Todos los proyectos",
+    "nProjects": "{{n}} proyectos",
     "allCurrencies": "Todas las divisas",
     "allStates": "Todos los estados",
     "stVencido": "Vencido",

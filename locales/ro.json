@@ -2208,6 +2208,7 @@
     "empty": "Nu există încasări de afișat.",
     "searchPh": "Căutați client/proiect…",
     "allProjects": "Toate proiectele",
+    "nProjects": "{{n}} proiecte",
     "allCurrencies": "Toate valutele",
     "allStates": "Toate stările",
     "stVencido": "Întârziat",

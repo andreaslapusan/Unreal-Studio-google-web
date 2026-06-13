@@ -2209,6 +2209,7 @@
     "empty": "Tidak ada pembayaran untuk ditampilkan.",
     "searchPh": "Cari klien/proyek…",
     "allProjects": "Semua Proyek",
+    "nProjects": "{{n}} proyek",
     "allCurrencies": "Semua Mata Uang",
     "allStates": "Semua Status",
     "stVencido": "Jatuh Tempo",

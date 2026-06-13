@@ -2208,6 +2208,7 @@
     "empty": "No payments to display.",
     "searchPh": "Search client/project…",
     "allProjects": "All projects",
+    "nProjects": "{{n}} projects",
     "allCurrencies": "All currencies",
     "allStates": "All states",
     "stVencido": "Overdue",
