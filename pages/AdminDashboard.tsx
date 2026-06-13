@@ -66,7 +66,7 @@ const AMENITIES_LIST = [
   const [clientSort, setClientSort] = useState<'name' | 'amount_desc' | 'amount_asc' | 'recent'>('name');
   const [assigningProject, setAssigningProject] = useState<{ clientId: string, clientName: string } | null>(null);
   const [editingAssignment, setEditingAssignment] = useState<{ clientId: string, clientName: string, assignment: any } | null>(null);
-  const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
+  const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0 });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [mailClient, setMailClient] = useState<Client | null>(null);
   const [mailBusy, setMailBusy] = useState(false);
@@ -1022,7 +1022,9 @@ const handleAssignProject = async (e: React.FormEvent) => {
       p_amount: assignForm.investment_amount,
       p_currency: assignForm.currency,
       p_date: assignForm.purchase_date || null,
-      p_status: assignForm.status
+      p_status: assignForm.status,
+      p_investment_type: (assignForm as any).investment_type || 'compra',
+      p_pool_total: (assignForm as any).pool_total || null,
     });
     if (error) throw error;
     if (data && !data.success) throw new Error(data.error);
@@ -1070,7 +1072,9 @@ const handleEditAssignment = async (e: React.FormEvent) => {
             p_date: editingAssignment.assignment.purchase_date || null,
             p_status: editingAssignment.assignment.status || 'Reserva',
             p_delivery: (editingAssignment.assignment as any).delivery_date || '',
-            p_drive: (editingAssignment.assignment as any).drive_folder_url ?? ''
+            p_drive: (editingAssignment.assignment as any).drive_folder_url ?? '',
+            p_investment_type: (editingAssignment.assignment as any).investment_type ?? '',
+            p_pool_total: (editingAssignment.assignment as any).pool_total_amount ?? null
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
@@ -2445,6 +2449,24 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.driveFolderLabel', { defaultValue: 'Carpeta de documentación (Drive) de este proyecto' })}</label>
                     <input type="url" value={(editingAssignment.assignment as any).drive_folder_url || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, drive_folder_url: e.target.value} as any})} placeholder="https://drive.google.com/drive/folders/..." className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-medium" />
                 </div>
+                <div>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentType', { defaultValue: 'Tipo de inversión' })}</label>
+                    <select value={(editingAssignment.assignment as any).investment_type || 'compra'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_type: e.target.value} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                      <option value="compra">{t('admin.dash.invCompra', { defaultValue: 'Compra (revender/alquilar)' })}</option>
+                      <option value="pool">{t('admin.dash.invPool', { defaultValue: 'Pool de inversión' })}</option>
+                      <option value="desarrollo">{t('admin.dash.invDesarrollo', { defaultValue: 'Desarrollo a medida' })}</option>
+                      <option value="arquitectura">{t('admin.dash.invArquitectura', { defaultValue: 'Arquitectura' })}</option>
+                    </select>
+                </div>
+                {(editingAssignment.assignment as any).investment_type === 'pool' && (
+                  <div>
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
+                    <input type="number" value={(editingAssignment.assignment as any).pool_total_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, pool_total_amount: parseFloat(e.target.value) || 0} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
+                    {Number((editingAssignment.assignment as any).pool_total_amount) > 0 && (
+                      <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(editingAssignment.assignment.investment_amount || 0) / Number((editingAssignment.assignment as any).pool_total_amount)) * 100).toFixed(2)}%</p>
+                    )}
+                  </div>
+                )}
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
                     <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.dash.close')}</button>
