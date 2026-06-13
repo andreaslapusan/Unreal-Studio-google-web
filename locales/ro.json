@@ -508,7 +508,7 @@
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agenții",
-      "dashboard": "Panou",
+      "dashboard": "Dashboard",
       "employees": "Angajați",
       "notifications": "Notificări",
       "sections": "Secțiuni",
@@ -516,7 +516,8 @@
       "viewSite": "Vezi site-ul public",
       "panel": "Panou de administrare",
       "agencies": "Agenții",
-      "cobros": "Încasări"
+      "cobros": "Încasări",
+      "faqs": "Întrebări"
     },
     "clientLogin": {
       "title": "Portal Investitor",

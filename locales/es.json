@@ -508,7 +508,7 @@
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agencias",
-      "dashboard": "Panel",
+      "dashboard": "Dashboard",
       "employees": "Empleados",
       "notifications": "Notificaciones",
       "sections": "Secciones",
@@ -516,7 +516,8 @@
       "viewSite": "Ver web pública",
       "panel": "Panel de administración",
       "agencies": "Agencias",
-      "cobros": "Cobros"
+      "cobros": "Cobros",
+      "faqs": "FAQs"
     },
     "clientLogin": {
       "title": "Portal Inversor",

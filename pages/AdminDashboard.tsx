@@ -109,7 +109,22 @@ const AMENITIES_LIST = [
   const [configTab, setConfigTab] = useState<'etiquetas' | 'permisos' | 'marca'>('etiquetas');
   // Bocadillo de navegación en MÓVIL (sustituye la barra horizontal de menús).
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
-  const ADMIN_MOBILE_VIEWS = ['dashboard', 'projects', 'blogs', 'clients', 'cobros', 'users', 'employees', 'notifications', 'config', 'calendar'];
+  // Orden del menú móvil (incluye Marketing —que es una ruta— y Agencias, que antes no salían).
+  const ADMIN_MOBILE_NAV: { key: string; view?: AdminView; to?: string }[] = [
+    { key: 'dashboard', view: 'dashboard' },
+    { key: 'notifications', view: 'notifications' },
+    { key: 'cobros', view: 'cobros' },
+    { key: 'calendar', view: 'calendar' },
+    { key: 'clients', view: 'clients' },
+    { key: 'employees', view: 'employees' },
+    { key: 'users', view: 'users' },
+    { key: 'projects', view: 'projects' },
+    { key: 'blogs', view: 'blogs' },
+    { key: 'marketing', to: '/admin/marketing' },
+    { key: 'agencias', view: 'agencias' },
+    { key: 'faqs', view: 'faqs' },
+    { key: 'config', view: 'config' },
+  ];
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
   const [pendingVacations, setPendingVacations] = useState<Array<{ id: string; employee_name: string | null; employee_email: string; start_date: string; end_date: string; type: string; note: string | null }>>([]);
   const loadPendingVacations = useCallback(async () => {
@@ -1269,10 +1284,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div className="md:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
           <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-1 mb-2">
-              {ADMIN_MOBILE_VIEWS.map((v) => (
-                <button key={v} onClick={() => { setActiveView(v as any); setAdminMenuOpen(false); }}
-                  className={`text-left px-3 py-2 rounded-xl text-sm font-bold capitalize transition ${activeView === v ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
-                  {t(`admin.nav.${v}`)}
+              {ADMIN_MOBILE_NAV.map((it) => (
+                <button key={it.key} onClick={() => { if (it.to) navigate(it.to); else setActiveView(it.view as any); setAdminMenuOpen(false); }}
+                  className={`text-left px-3 py-2 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
+                  {t(`admin.nav.${it.key}`)}
                 </button>
               ))}
             </div>

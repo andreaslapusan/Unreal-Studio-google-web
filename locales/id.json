@@ -603,11 +603,12 @@
       "marketing": "Pemasaran",
       "portalManager": "Portal Manager",
       "agencias": "Agen",
-      "dashboard": "Panel",
+      "dashboard": "Dashboard",
       "employees": "Karyawan",
       "notifications": "Pemberitahuan",
       "agencies": "Agensi",
-      "cobros": "Pembayaran"
+      "cobros": "Pembayaran",
+      "faqs": "FAQ"
     },
     "common": {
       "save": "Simpan",

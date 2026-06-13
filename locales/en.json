@@ -516,7 +516,8 @@
       "viewSite": "View public site",
       "panel": "Admin panel",
       "agencies": "Agencies",
-      "cobros": "Payments"
+      "cobros": "Payments",
+      "faqs": "FAQs"
     },
     "clientLogin": {
       "title": "Investor Portal",
