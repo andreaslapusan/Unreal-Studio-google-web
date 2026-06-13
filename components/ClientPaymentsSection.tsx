@@ -77,15 +77,18 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
     })();
   }, [clientId]);
 
-  // Abre el recibí en una pestaña nueva y lanza el diálogo nativo de impresión /
-  // "Guardar como PDF". Es FIABLE en iPhone (el método anterior con html2canvas se
-  // quedaba en negro / no hacía nada en iOS Safari). La ventana se abre de forma
-  // SÍNCRONA dentro del click (sin await antes) para que el navegador no la bloquee.
-  const viewReceipt = (html: string, no: number) => {
-    const win = window.open('', '_blank');
-    if (!win) { alert(t('fix.pay.popupBlocked')); return; }
-    const doc = `<!doctype html><html lang="${i18n.language || 'es'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet"><title>Recibí ${no}</title><style>@page{margin:10mm}body{margin:0;background:#fff;font-family:Manrope,Arial,sans-serif}</style></head><body onload="setTimeout(function(){try{window.print();}catch(e){}},500)">${html}</body></html>`;
-    win.document.open(); win.document.write(doc); win.document.close();
+  // Genera el recibí como PDF FIJO A4 dibujado con jsPDF (no captura de pantalla:
+  // el método con html2canvas se quedaba en negro en iPhone). Documento físico de
+  // dimensiones fijas, igual en todos los dispositivos, que se descarga como archivo.
+  const viewReceipt = async (kw: any) => {
+    try {
+      const { downloadRecibiPdf } = await import('../lib/recibiPdf');
+      await downloadRecibiPdf({
+        no: kw.no_seq, receivedFrom: kw.received_from || '', amount: Number(kw.amount || 0),
+        currency: kw.currency || 'EUR', forPayment: kw.for_payment || '', place: kw.place || 'Bali',
+        date: kw.kwitansi_date, lang: i18n.language, html: kw.html,
+      });
+    } catch { alert(t('fix.pay.popupBlocked')); }
   };
 
   const submitClaim = async (paymentId: string) => {
@@ -177,7 +180,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           </td>
                           <td className="px-4 py-3 text-right whitespace-nowrap">
                             {receipts[p.id] ? (
-                              <button onClick={() => void viewReceipt(receipts[p.id].html, receipts[p.id].no_seq)} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
+                              <button onClick={() => void viewReceipt(receipts[p.id])} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
                                 <span className="material-symbols-outlined text-sm">download</span>{t('fix.pay.receipt')}
                               </button>
                             ) : <span className="text-[11px] text-primary/30">—</span>}
