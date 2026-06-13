@@ -1357,7 +1357,8 @@
     "portal_admin": "Admin",
     "noAccessHere": "Your account has no access to this portal.",
     "verifyError": "Could not verify your access. Please try again.",
-    "noAccessPortal": "This account doesn't have access to the {{portal}} portal."
+    "noAccessPortal": "This account doesn't have access to the {{portal}} portal.",
+    "loadingSession": "Loading session…"
   },
   "privacy": {
     "docTitle": "Privacy Policy | Unreal Studio Madrid",

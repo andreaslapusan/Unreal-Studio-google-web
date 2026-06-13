@@ -47,26 +47,39 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [chooser, setChooser] = useState<PortalKey[] | null>(null);
+  // Mientras verificamos una sesión ya existente (recordarme) → spinner, para no
+  // mostrar el formulario de login unos segundos y que parezca que no recuerda.
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     document.title = `${PORTAL_LABEL[portal]} | Unreal Studio`;
   }, [portal]);
 
-  // "Recordarme": prerrellena el email guardado de ESTE portal. La contraseña
-  // NO se guarda en claro (riesgo de seguridad); el gestor de contraseñas del
-  // navegador/Safari la recuerda vía autoComplete="current-password".
+  // "Recordarme": prerrellena email Y contraseña guardados de ESTE portal (Andreas
+  // lo pidió expresamente: que la contraseña quede guardada y visible/precargada
+  // cuando "recordarme" está activo). Se guarda en localStorage (ofuscada en base64).
   useEffect(() => {
     try {
       const saved = localStorage.getItem(`ust_email_${portal}`);
-      if (saved) { setEmail(saved); setRemember(true); }
-      else setRemember(localStorage.getItem(`ust_remember_${portal}`) !== '0');
+      if (saved) {
+        setEmail(saved); setRemember(true);
+        const pw = localStorage.getItem(`ust_pw_${portal}`);
+        if (pw) { try { setPassword(atob(pw)); } catch { setPassword(pw); } }
+      } else setRemember(localStorage.getItem(`ust_remember_${portal}`) !== '0');
     } catch { /* ignore */ }
   }, [portal]);
 
   const persistRemember = () => {
     try {
-      if (remember) { localStorage.setItem(`ust_email_${portal}`, email.trim().toLowerCase()); localStorage.removeItem(`ust_remember_${portal}`); }
-      else { localStorage.removeItem(`ust_email_${portal}`); localStorage.setItem(`ust_remember_${portal}`, '0'); }
+      if (remember) {
+        localStorage.setItem(`ust_email_${portal}`, email.trim().toLowerCase());
+        try { localStorage.setItem(`ust_pw_${portal}`, btoa(password)); } catch { /* pw no-ascii */ }
+        localStorage.removeItem(`ust_remember_${portal}`);
+      } else {
+        localStorage.removeItem(`ust_email_${portal}`);
+        localStorage.removeItem(`ust_pw_${portal}`);
+        localStorage.setItem(`ust_remember_${portal}`, '0');
+      }
     } catch { /* ignore */ }
   };
 
@@ -90,14 +103,21 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   async function routeIfMember() {
     if (routingRef.current) return;
     routingRef.current = true;
+    setChecking(true);
     try {
       const list = await getPortalsWithRetry();
-      if (list && list.includes(portal)) {
+      // Si pertenece a este portal, O no se pudo verificar (RPC lenta/caída),
+      // redirige igualmente: la sesión ya existe y auth+RLS son la barrera real.
+      // Así un usuario "recordado" NO se queda atascado en el login por un hipo
+      // de la RPC (era la causa de "a veces no me recuerda").
+      if (list === null || list.includes(portal)) {
         navigate(PORTAL_DASH[portal], { replace: true });
+        return;
       }
-      // No pertenece a este portal → se queda en el formulario de login.
+      // Verificado y NO pertenece a este portal → se queda en el formulario.
     } finally {
       routingRef.current = false;
+      setChecking(false);
     }
   }
 
@@ -229,6 +249,19 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       setBusy(false);
     }
   };
+
+  // Verificando sesión existente (recordarme) → spinner en vez del formulario,
+  // para que no aparezca el login unos segundos antes de entrar.
+  if (loading || checking) {
+    return (
+      <PortalShell dark={dark}>
+        <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl border border-primary/5 flex flex-col items-center gap-4">
+          <span className="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span>
+          <p className="text-sm text-primary/50">{t('auth.loadingSession', { defaultValue: 'Iniciando sesión…' })}</p>
+        </div>
+      </PortalShell>
+    );
+  }
 
   // Selector multi-rol.
   if (chooser) {

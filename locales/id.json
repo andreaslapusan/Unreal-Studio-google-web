@@ -1449,7 +1449,8 @@
     "portal_admin": "Admin",
     "noAccessHere": "Akun Anda tidak memiliki akses ke portal ini.",
     "verifyError": "Tidak dapat memverifikasi akses Anda. Coba lagi.",
-    "noAccessPortal": "Akun ini tidak memiliki akses ke portal {{portal}}."
+    "noAccessPortal": "Akun ini tidak memiliki akses ke portal {{portal}}.",
+    "loadingSession": "Menginisialisasi sesi…"
   },
   "privacy": {
     "collectList1": [
