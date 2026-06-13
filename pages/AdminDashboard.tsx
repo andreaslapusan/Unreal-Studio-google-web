@@ -764,6 +764,13 @@ const filteredClients = clients
     }
     if (clientFilterProjects.length && !(c.projects || []).some((cp: any) => clientFilterProjects.includes(cp.project_name || cp.project_id))) return false;
     if (clientFilterCurrency && !(c.projects || []).some((cp: any) => cp.currency === clientFilterCurrency)) return false;
+    const st = c.status || (c.is_active ? 'active' : 'inactive');
+    if (clientFilterStatus && st !== clientFilterStatus) return false;
+    if (clientFilterPerms.length) {
+      const gf = ((config as any).brand?.client_features) || {};
+      const ov = c.feature_overrides || {};
+      if (!clientFilterPerms.every((k: string) => (gf[k] !== false) && (ov[k] !== false))) return false;
+    }
     return true;
   })
   .sort((a: any, b: any) => {
@@ -777,6 +784,23 @@ const filteredClients = clients
     }
     return 0;
   });
+
+const toggleClientSel = (id: string) => setSelectedClientIds((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+const allFilteredSelected = filteredClients.length > 0 && filteredClients.every((c: any) => selectedClientIds.has(c.id));
+const toggleSelectAll = () => setSelectedClientIds((prev) => allFilteredSelected ? new Set() : new Set(filteredClients.map((c: any) => c.id)));
+const bulkClients = async (action: 'delete' | 'status', status?: string) => {
+  if (!selectedClientIds.size) return;
+  const userId = getAdminUserId();
+  if (!userId) { alert(t('admin.dash.sessionExpired')); return; }
+  if (action === 'delete' && !window.confirm(t('admin.dash.bulkDeleteConfirm', { n: selectedClientIds.size, defaultValue: `¿Borrar ${selectedClientIds.size} cliente(s)? No se puede deshacer.` }))) return;
+  setBulkBusy(true);
+  try {
+    const { data, error } = await supabase.rpc('admin_bulk_clients', { p_user_id: userId, p_ids: Array.from(selectedClientIds), p_action: action, p_status: status || null });
+    if (error || !data?.success) { alert(t('admin.dash.bulkError', { defaultValue: 'Error en la acción en bloque' })); return; }
+    setSelectedClientIds(new Set());
+    await loadData();
+  } finally { setBulkBusy(false); }
+};
 
 const openEditClient = (client?: Client) => {
   setCurrentClient(client ? { ...client } : {
@@ -1473,52 +1497,82 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <option value="">{t('admin.clientsTab.allCurrencies')}</option>
         {clientCurrencyOptions.map((c) => <option key={c as string} value={c as string}>{c as string}</option>)}
       </select>
+      <select value={clientFilterStatus} onChange={(e) => setClientFilterStatus(e.target.value)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
+        <option value="">{t('admin.clientsTab.allStatuses', { defaultValue: 'Todos los estados' })}</option>
+        <option value="active">{t('admin.clientsTab.active')}</option>
+        <option value="inactive">{t('admin.clientsTab.inactive')}</option>
+        <option value="draft">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</option>
+      </select>
+      <div className="flex items-center gap-1 flex-wrap">
+        <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">{t('admin.clientsTab.permsFilter', { defaultValue: 'Permisos' })}:</span>
+        {([['drive', t('fix.adm.featDrive')], ['brochure', t('fix.adm.featBrochure')], ['construction', t('fix.adm.featConstruction')], ['viewProject', t('fix.adm.featViewProject')], ['calculator', t('fix.adm.featCalculator')]] as [string, string][]).map(([k, label]) => (
+          <button key={k} type="button" onClick={() => setClientFilterPerms((p) => p.includes(k) ? p.filter((x) => x !== k) : [...p, k])} className={`text-[10px] font-bold px-2 py-1 rounded-full border transition ${clientFilterPerms.includes(k) ? 'bg-primary text-white border-primary' : 'bg-white text-gray-400 border-gray-200 hover:border-primary/30'}`}>{label}</button>
+        ))}
+      </div>
       <select value={clientSort} onChange={(e) => setClientSort(e.target.value as any)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
         <option value="name">{t('admin.clientsTab.sortName')}</option>
         <option value="amount_desc">{t('admin.clientsTab.sortAmountDesc')}</option>
         <option value="amount_asc">{t('admin.clientsTab.sortAmountAsc')}</option>
         <option value="recent">{t('admin.clientsTab.sortRecent')}</option>
       </select>
-      {(clientFilterProjects.length || clientFilterCurrency || clientSearch) && (
-        <button onClick={() => { setClientFilterProjects([]); setClientFilterCurrency(''); setClientSearch(''); }} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary px-2">{t('admin.clientsTab.clear')}</button>
+      {(clientFilterProjects.length || clientFilterCurrency || clientSearch || clientFilterStatus || clientFilterPerms.length) && (
+        <button onClick={() => { setClientFilterProjects([]); setClientFilterCurrency(''); setClientSearch(''); setClientFilterStatus(''); setClientFilterPerms([]); }} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary px-2">{t('admin.clientsTab.clear')}</button>
       )}
       <span className="text-[10px] font-black uppercase tracking-widest text-primary/30 ml-auto">{t('admin.clientsTab.clientCount', { n: filteredClients.length })}</span>
     </div>
 
+    {/* Barra de acciones en bloque (selección múltiple) */}
+    {filteredClients.length > 0 && (
+      <div className="flex items-center gap-3 mb-3 flex-wrap">
+        <label className="flex items-center gap-2 text-xs font-bold text-primary/60 cursor-pointer"><input type="checkbox" checked={allFilteredSelected} onChange={toggleSelectAll} className="rounded border-gray-300" /> {t('admin.clientsTab.selectAll', { defaultValue: 'Seleccionar todos' })}</label>
+        {selectedClientIds.size > 0 && (
+          <div className="flex items-center gap-2 flex-wrap bg-primary/5 rounded-xl px-3 py-2">
+            <span className="text-xs font-black text-primary">{t('admin.clientsTab.nSelected', { n: selectedClientIds.size, defaultValue: `${selectedClientIds.size} sel.` })}</span>
+            <span className="text-[10px] text-gray-400">{t('admin.clientsTab.setStatusTo', { defaultValue: 'Estado →' })}</span>
+            <button disabled={bulkBusy} onClick={() => void bulkClients('status', 'active')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-green-600 text-white disabled:opacity-50">{t('admin.clientsTab.active')}</button>
+            <button disabled={bulkBusy} onClick={() => void bulkClients('status', 'inactive')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-gray-400 text-white disabled:opacity-50">{t('admin.clientsTab.inactive')}</button>
+            <button disabled={bulkBusy} onClick={() => void bulkClients('status', 'draft')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-amber-500 text-white disabled:opacity-50">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</button>
+            <button disabled={bulkBusy} onClick={() => void bulkClients('delete')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-red-600 text-white disabled:opacity-50 inline-flex items-center gap-1"><span className="material-symbols-outlined text-xs">delete</span>{t('admin.clientsTab.deleteSel', { defaultValue: 'Borrar' })}</button>
+          </div>
+        )}
+      </div>
+    )}
+
     <div className="space-y-4">
       {filteredClients.map(client => (
         <div key={client.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {/* Header con datos del cliente */}
-          <div className="p-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-1 flex-wrap">
-                <h3 className="text-lg font-bold text-primary break-words">{client.name}</h3>
-                {(() => { const st = (client as any).status || (client.is_active ? 'active' : 'inactive'); return (
-                  <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
-                ); })()}
-              </div>
-              <p className="text-sm text-gray-500">{client.email} {client.phone && `· ${client.phone}`}</p>
-              {(client as any).last_login && (
-                <p className="text-[11px] text-green-700 font-medium mt-0.5">
-                  <span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                </p>
-              )}
-              <div className="mt-1 space-y-0.5">
-                {((client as any).password_plain || client.temp_password) && (
-                  <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_plain || client.temp_password); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>
-                    <span className="material-symbols-outlined text-xs align-middle">key</span> {(client as any).password_plain || client.temp_password}
-                    {client.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
-                  </p>
+          {/* Header con datos del cliente — layout consistente: casilla + info (izq) + acciones (der/abajo) */}
+          <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <input type="checkbox" checked={selectedClientIds.has(client.id)} onChange={() => toggleClientSel(client.id)} className="mt-1.5 rounded border-gray-300 shrink-0" title={t('admin.dash.selectClient', { defaultValue: 'Seleccionar' })} />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <h3 className="text-base sm:text-lg font-bold text-primary break-words">{client.name}</h3>
+                  {(() => { const st = (client as any).status || (client.is_active ? 'active' : 'inactive'); return (
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
+                  ); })()}
+                </div>
+                <p className="text-sm text-gray-500 break-words">{client.email}{client.phone && ` · ${client.phone}`}</p>
+                {(client as any).last_login && (
+                  <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
                 )}
-                {isSuperAdmin && (client as any).password_hash && (
-                  <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>
-                    🔒 {(client as any).password_hash.substring(0, 20)}...
-                  </p>
-                )}
+                <div className="mt-1 space-y-0.5">
+                  {((client as any).password_plain || client.temp_password) && (
+                    <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block break-all" onClick={() => {navigator.clipboard.writeText((client as any).password_plain || client.temp_password); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>
+                      <span className="material-symbols-outlined text-xs align-middle">key</span> {(client as any).password_plain || client.temp_password}
+                      {client.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
+                    </p>
+                  )}
+                  {isSuperAdmin && (client as any).password_hash && (
+                    <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>
+                      🔒 {(client as any).password_hash.substring(0, 20)}...
+                    </p>
+                  )}
+                </div>
+                {client.notes && <p className="text-xs text-primary/40 mt-2 italic break-words">{client.notes}</p>}
               </div>
-              {client.notes && <p className="text-xs text-primary/40 mt-2 italic">{client.notes}</p>}
             </div>
-            <div className="flex gap-2 shrink-0 flex-wrap sm:ml-4">
+            <div className="flex gap-1.5 shrink-0 flex-wrap justify-end">
               <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData')}><span className="material-symbols-outlined text-sm">edit</span></button>
               <button onClick={() => setMailClient(client)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.mailCenter')}><span className="material-symbols-outlined text-sm">mail</span></button>
               <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></button>
