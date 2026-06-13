@@ -2318,19 +2318,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.clientDriveFolder')}</label>
           <input type="url" value={(currentClient as any).drive_folder_url || ''} onChange={(e) => setCurrentClient({...currentClient, drive_folder_url: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="https://drive.google.com/drive/folders/..." />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.preferredLanguage')}</label>
-            <select value={(currentClient as any).preferred_language || 'es'} onChange={(e) => setCurrentClient({...currentClient, preferred_language: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
-              <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.preferredCurrency')}</label>
-            <select value={(currentClient as any).preferred_currency || (((config as any).brand?.default_currency_clients) || 'EUR')} onChange={(e) => setCurrentClient({...currentClient, preferred_currency: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
-              <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
-            </select>
-          </div>
+        {/* Solo idioma. La divisa NO se elige por cliente: el cliente ve únicamente
+            las divisas que fija el admin en cada compra/calendario (sin selector). */}
+        <div>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.preferredLanguage')}</label>
+          <select value={(currentClient as any).preferred_language || 'es'} onChange={(e) => setCurrentClient({...currentClient, preferred_language: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
+            <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
+          </select>
         </div>
         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
           <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.dash.clientActive')}</span>
