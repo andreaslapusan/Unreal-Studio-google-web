@@ -515,7 +515,8 @@
       "tools": "Instrumente",
       "viewSite": "Vezi site-ul public",
       "panel": "Panou de administrare",
-      "agencies": "Agenții"
+      "agencies": "Agenții",
+      "cobros": "Încasări"
     },
     "clientLogin": {
       "title": "Portal Investitor",
@@ -2176,5 +2177,34 @@
       "unit": "Proprietate: {{unit}}",
       "cta": "Vizualizează raportul meu"
     }
+  },
+  "cobros": {
+    "title": "Încasări",
+    "pendingCount": "{{n}} plăți în așteptare",
+    "overdueCount": "{{n}} întârzieri",
+    "kpiDue": "De încasat",
+    "kpiOverdue": "Întârziat",
+    "kpiNext7": "Următorii 7 zile",
+    "kpiNext30": "Următorii 30 zile",
+    "empty": "Nu există încasări de afișat.",
+    "searchPh": "Căutați client/proiect…",
+    "allProjects": "Toate proiectele",
+    "allCurrencies": "Toate valutele",
+    "allStates": "Toate stările",
+    "stVencido": "Întârziat",
+    "stProximo": "Următor",
+    "stPendiente": "În așteptare",
+    "stRecibido": "Primit",
+    "colClient": "Client",
+    "colProject": "Proiect",
+    "colConcept": "Concept",
+    "colAmount": "Sumă",
+    "colDue": "Data limită",
+    "colDays": "Zile",
+    "colState": "Stare",
+    "colBalance": "Sold",
+    "overdueD": "{{n}} zile întârziat",
+    "leftD": "{{n}} zile",
+    "openPayments": "Deschideți plățile clientului"
   }
 }

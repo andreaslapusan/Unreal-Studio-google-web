@@ -13,6 +13,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import EmployeeEditModal, { EmployeeRow } from '../components/admin/EmployeeEditModal';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
+import CobrosPanel from '../components/admin/CobrosPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
 import AttendancePanel from '../components/admin/AttendancePanel';
@@ -26,8 +27,8 @@ import { portalPath } from '../lib/portalUrls';
 import i18n from '../lib/i18n';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'calendar', 'employees', 'notifications', 'faqs', 'agencias'];
+type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'cobros' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'cobros', 'calendar', 'employees', 'notifications', 'faqs', 'agencias'];
 
 const GUIDE_STEPS = [
   { titleKey: 'admin.dash.guide1Title', textKey: 'admin.dash.guide1Text' },
@@ -102,7 +103,7 @@ const AMENITIES_LIST = [
   const [configTab, setConfigTab] = useState<'etiquetas' | 'permisos' | 'marca'>('etiquetas');
   // Bocadillo de navegación en MÓVIL (sustituye la barra horizontal de menús).
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
-  const ADMIN_MOBILE_VIEWS = ['dashboard', 'projects', 'blogs', 'clients', 'users', 'employees', 'notifications', 'config', 'calendar'];
+  const ADMIN_MOBILE_VIEWS = ['dashboard', 'projects', 'blogs', 'clients', 'cobros', 'users', 'employees', 'notifications', 'config', 'calendar'];
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
   const [pendingVacations, setPendingVacations] = useState<Array<{ id: string; employee_name: string | null; employee_email: string; start_date: string; end_date: string; type: string; note: string | null }>>([]);
   const loadPendingVacations = useCallback(async () => {
@@ -1258,6 +1259,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'dashboard' && <DashboardOverview />}
 
         {activeView === 'notifications' && <NotificationsPanel />}
+        {activeView === 'cobros' && (
+          <CobrosPanel
+            adminUserId={getAdminUserId()}
+            onOpenPayments={(r) => { setPaymentsFilter({ name: r.project_name || '', unit: r.unit_number ?? null }); setPaymentsClient({ id: r.client_id, name: r.client_name, email: r.client_email } as any); }}
+          />
+        )}
 
         {activeView === 'faqs' && (
           <div className="animate-in fade-in duration-500">

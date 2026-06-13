@@ -515,7 +515,8 @@
       "tools": "Tools",
       "viewSite": "View public site",
       "panel": "Admin panel",
-      "agencies": "Agencies"
+      "agencies": "Agencies",
+      "cobros": "Payments"
     },
     "clientLogin": {
       "title": "Investor Portal",
@@ -2176,5 +2177,34 @@
       "unit": "Property: {{unit}}",
       "cta": "View My Report"
     }
+  },
+  "cobros": {
+    "title": "Payments",
+    "pendingCount": "{{n}} pending payments",
+    "overdueCount": "{{n}} overdue",
+    "kpiDue": "Due for payment",
+    "kpiOverdue": "Overdue",
+    "kpiNext7": "Next 7 days",
+    "kpiNext30": "Next 30 days",
+    "empty": "No payments to display.",
+    "searchPh": "Search client/project…",
+    "allProjects": "All projects",
+    "allCurrencies": "All currencies",
+    "allStates": "All states",
+    "stVencido": "Overdue",
+    "stProximo": "Upcoming",
+    "stPendiente": "Pending",
+    "stRecibido": "Received",
+    "colClient": "Client",
+    "colProject": "Project",
+    "colConcept": "Concept",
+    "colAmount": "Amount",
+    "colDue": "Due date",
+    "colDays": "Days",
+    "colState": "Status",
+    "colBalance": "Balance",
+    "overdueD": "{{n}} d overdue",
+    "leftD": "{{n}} d",
+    "openPayments": "Open client payments"
   }
 }

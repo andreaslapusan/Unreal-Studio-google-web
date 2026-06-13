@@ -606,7 +606,8 @@
       "dashboard": "Panel",
       "employees": "Karyawan",
       "notifications": "Pemberitahuan",
-      "agencies": "Agensi"
+      "agencies": "Agensi",
+      "cobros": "Pembayaran"
     },
     "common": {
       "save": "Simpan",
@@ -2177,5 +2178,34 @@
       "unit": "Properti: {{unit}}",
       "cta": "Lihat Laporan Saya"
     }
+  },
+  "cobros": {
+    "title": "Pembayaran",
+    "pendingCount": "{{n}} pembayaran tertunda",
+    "overdueCount": "{{n}} jatuh tempo",
+    "kpiDue": "Belum Dibayar",
+    "kpiOverdue": "Jatuh Tempo",
+    "kpiNext7": "7 Hari Berikutnya",
+    "kpiNext30": "30 Hari Berikutnya",
+    "empty": "Tidak ada pembayaran untuk ditampilkan.",
+    "searchPh": "Cari klien/proyek…",
+    "allProjects": "Semua Proyek",
+    "allCurrencies": "Semua Mata Uang",
+    "allStates": "Semua Status",
+    "stVencido": "Jatuh Tempo",
+    "stProximo": "Mendatang",
+    "stPendiente": "Tertunda",
+    "stRecibido": "Diterima",
+    "colClient": "Klien",
+    "colProject": "Proyek",
+    "colConcept": "Konsep",
+    "colAmount": "Jumlah",
+    "colDue": "Batas Waktu",
+    "colDays": "Hari",
+    "colState": "Status",
+    "colBalance": "Saldo",
+    "overdueD": "{{n}} d jatuh tempo",
+    "leftD": "{{n}} d",
+    "openPayments": "Buka Pembayaran Klien"
   }
 }

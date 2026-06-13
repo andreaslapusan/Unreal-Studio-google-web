@@ -515,7 +515,8 @@
       "tools": "Herramientas",
       "viewSite": "Ver web pública",
       "panel": "Panel de administración",
-      "agencies": "Agencias"
+      "agencies": "Agencias",
+      "cobros": "Cobros"
     },
     "clientLogin": {
       "title": "Portal Inversor",
@@ -2176,5 +2177,34 @@
       "unit": "Propiedad: {{unit}}",
       "cta": "Ver mi reporte"
     }
+  },
+  "cobros": {
+    "title": "Cobros",
+    "pendingCount": "{{n}} pagos pendientes",
+    "overdueCount": "{{n}} vencidos",
+    "kpiDue": "Por cobrar",
+    "kpiOverdue": "Vencido",
+    "kpiNext7": "Próx. 7 días",
+    "kpiNext30": "Próx. 30 días",
+    "empty": "No hay cobros que mostrar.",
+    "searchPh": "Buscar cliente/proyecto…",
+    "allProjects": "Todos los proyectos",
+    "allCurrencies": "Todas las divisas",
+    "allStates": "Todos los estados",
+    "stVencido": "Vencido",
+    "stProximo": "Próximo",
+    "stPendiente": "Pendiente",
+    "stRecibido": "Recibido",
+    "colClient": "Cliente",
+    "colProject": "Proyecto",
+    "colConcept": "Concepto",
+    "colAmount": "Importe",
+    "colDue": "Fecha límite",
+    "colDays": "Días",
+    "colState": "Estado",
+    "colBalance": "Balance",
+    "overdueD": "{{n}} d vencido",
+    "leftD": "{{n}} d",
+    "openPayments": "Abrir pagos del cliente"
   }
 }
