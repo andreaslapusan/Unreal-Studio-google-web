@@ -1231,7 +1231,9 @@
       "mailCalendar": "Kalender Pembayaran",
       "mailCalendarDesc": "Kirimkan rencana pembayaran lengkap kepada klien (jumlah, tanggal, dan saldo)",
       "calendarConfirm": "Kirim kalender pembayaran ke {{email}}?",
-      "calendarSent": "Kalender pembayaran telah dikirim ke {{email}}."
+      "calendarSent": "Kalender pembayaran telah dikirim ke {{email}}.",
+      "brochureByLang": "Brosur berdasarkan bahasa",
+      "brochureByLangHint": "Unggah PDF per bahasa. Jika tidak ada bahasa, maka bahasa Inggris (ENG) digunakan sebagai default."
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",

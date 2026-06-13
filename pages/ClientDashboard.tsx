@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
+import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
@@ -734,10 +735,10 @@ const ClientDashboard: React.FC = () => {
                       );
                     })()}
 
-                    {(proj.brochure_url || proj.construction_update_url || proj.project_slug) && (
+                    {(brochureFor(proj, i18n.language) || proj.construction_update_url || proj.project_slug) && (
                       <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
-                          {proj.brochure_url && feat('brochure') && (
-                              <a href={getImageUrl(proj.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
+                          {brochureFor(proj, i18n.language) && feat('brochure') && (
+                              <a href={getImageUrl(brochureFor(proj, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">download</span> {t('admin.clientDash.btnBrochure')}
                               </a>
                           )}

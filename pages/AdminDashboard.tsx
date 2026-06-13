@@ -414,6 +414,17 @@ const AMENITIES_LIST = [
   }, [blogs]);
 
   // --- IMAGE UPLOAD LOGIC ---
+  // Sube un brochure para un IDIOMA concreto → currentProject.brochures[lang].
+  const handleBrochureLangUpload = async (e: React.ChangeEvent<HTMLInputElement>, lang: string) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setUploading(true);
+    try {
+      const path = await uploadImage(file, 'projects');
+      if (!path) throw new Error('Upload failed');
+      setCurrentProject(prev => ({ ...prev, brochures: { ...(((prev as any).brochures) || {}), [lang]: getImageUrl(path) } } as any));
+    } catch { alert(t('admin.dash.saveClientError')); } finally { setUploading(false); }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'project_main' | 'project_gallery' | 'blog_main' | 'project_brochure' | 'project_construction_update' | 'project_construction_gallery' | 'project_floor_plans') => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -2086,13 +2097,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   <h3 className="text-lg font-serif text-primary mb-6">{t('admin.dash.linksDocs')}</h3>
   <div className="space-y-4">
     <div>
-        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.brochureUrl')}</label>
-        <div className="flex gap-2">
-            <input type="text" value={currentProject.brochure_url || ''} onChange={(e) => setCurrentProject({...currentProject, brochure_url: e.target.value})} placeholder="https://..." className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
-            <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
-                <input type="file" className="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" onChange={(e) => handleFileUpload(e, 'project_brochure')} disabled={uploading} />
-            </label>
+        <label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t('admin.dash.brochureByLang')}</label>
+        <p className="text-[10px] text-gray-400 mb-3">{t('admin.dash.brochureByLangHint')}</p>
+        <div className="space-y-2">
+          {([['en','English (ENG) · por defecto'],['es','Español'],['ro','Română'],['id','Indonesia']] as [string,string][]).map(([lng,label]) => {
+            const val = ((currentProject as any).brochures?.[lng]) || (lng === 'en' ? (currentProject.brochure_url || '') : '');
+            return (
+              <div key={lng} className="flex gap-2 items-center">
+                <span className="w-10 text-[10px] font-black uppercase text-primary/50 shrink-0">{lng}</span>
+                <input type="text" value={val} onChange={(e) => setCurrentProject({...currentProject, brochures: {...(((currentProject as any).brochures) || {}), [lng]: e.target.value}} as any)} placeholder={label} className="flex-grow px-4 py-3 bg-gray-50 rounded-xl font-medium text-sm" />
+                <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <span className="material-symbols-outlined text-base">{uploading ? 'refresh' : 'upload_file'}</span>
+                  <input type="file" className="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" onChange={(e) => handleBrochureLangUpload(e, lng)} disabled={uploading} />
+                </label>
+              </div>
+            );
+          })}
         </div>
     </div>
     <div className="grid grid-cols-2 gap-6">

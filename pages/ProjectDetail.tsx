@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
+import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
@@ -492,12 +493,12 @@ const ProjectDetail: React.FC = () => {
           </section>
 
           {/* Botones de Descarga en Columna Principal - MOVIDO AQUÍ PARA MAYOR VISIBILIDAD */}
-          {(project.brochure_url || project.construction_update_url || (project.floor_plans && project.floor_plans.length > 0)) && (
+          {(brochureFor(project, i18n.language) || project.construction_update_url || (project.floor_plans && project.floor_plans.length > 0)) && (
             <section className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm">
                 <h3 className="text-2xl font-serif text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
                 <div className="flex flex-wrap gap-4">
-                  {project.brochure_url && (
-                    <a href={getImageUrl(project.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
+                  {brochureFor(project, i18n.language) && (
+                    <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
                       <span className="material-symbols-outlined">download</span>
                       {t('fix.pd.downloadBrochure')}
                     </a>
@@ -818,10 +819,10 @@ const ProjectDetail: React.FC = () => {
                 </div>
 
                 {/* Botones en Sidebar */}
-                {(project.brochure_url || project.construction_update_url) && (
+                {(brochureFor(project, i18n.language) || project.construction_update_url) && (
                   <div className="pt-6 border-t border-gray-100 space-y-3">
-                    {project.brochure_url && (
-                      <a href={getImageUrl(project.brochure_url)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
+                    {brochureFor(project, i18n.language) && (
+                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
                         <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}

@@ -1139,7 +1139,9 @@
       "mailCalendar": "Payment Calendar",
       "mailCalendarDesc": "Sends the client their complete payment plan (amounts, dates, and balance)",
       "calendarConfirm": "Send payment calendar to {{email}}?",
-      "calendarSent": "Payment calendar sent to {{email}}."
+      "calendarSent": "Payment calendar sent to {{email}}.",
+      "brochureByLang": "Brochure by language",
+      "brochureByLangHint": "Upload a PDF per language. If a language is not available, English (ENG) is used by default."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

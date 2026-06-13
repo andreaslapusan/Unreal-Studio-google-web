@@ -1139,7 +1139,9 @@
       "mailCalendar": "Calendario de pagos",
       "mailCalendarDesc": "Envía al cliente su plan de pagos completo (importes, fechas y balance)",
       "calendarConfirm": "¿Enviar el calendario de pagos a {{email}}?",
-      "calendarSent": "Calendario de pagos enviado a {{email}}."
+      "calendarSent": "Calendario de pagos enviado a {{email}}.",
+      "brochureByLang": "Brochure por idioma",
+      "brochureByLangHint": "Sube un PDF por idioma. Si un idioma no tiene, se usa el de inglés (ENG) por defecto."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

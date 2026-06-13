@@ -1139,7 +1139,9 @@
       "mailCalendar": "Calendarul de plăți",
       "mailCalendarDesc": "Trimite clientului planul complet de plăți (sume, date și sold)",
       "calendarConfirm": "Trimite calendarul de plăți către {{email}}?",
-      "calendarSent": "Calendarul de plăți a fost trimis către {{email}}."
+      "calendarSent": "Calendarul de plăți a fost trimis către {{email}}.",
+      "brochureByLang": "Broșură pe limbă",
+      "brochureByLangHint": "Încărcați un PDF pe limbă. Dacă o limbă nu are, se utilizează limba engleză (ENG) implicit."
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
