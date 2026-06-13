@@ -302,9 +302,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                             <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(Number((p as any).received_amount), p.currency)}</span>
                           )}
                         </div>
-                        {/* Estado = etapa del recibí: pendiente → recibido → firmado → enviado. */}
-                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.kw_sent ? 'bg-blue-50 text-blue-600' : p.kw_signed ? 'bg-indigo-50 text-indigo-600' : p.received ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'}`}>
-                          {p.kw_sent ? t('fix.cpp.statusSent') : p.kw_signed ? t('fix.cpp.statusSigned') : p.received ? t('fix.cpp.statusReceived') : t('admin.pay.statusPending')}
+                        {/* Estado: pendiente → vencido → recibido → firmado → enviado. */}
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.kw_sent ? 'bg-blue-50 text-blue-600' : p.kw_signed ? 'bg-indigo-50 text-indigo-600' : p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
+                          {p.kw_sent ? t('fix.cpp.statusSent') : p.kw_signed ? t('fix.cpp.statusSigned') : p.received ? t('fix.cpp.statusReceived') : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
                         </span>
                         <div className="flex gap-1">
                           <button onClick={() => openKwitansi(u, p)} title={t('admin.pay.generateSendKwitansi')}
