@@ -203,8 +203,6 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                       const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
                       const received = recvOf(p);
                       const balance = Number(p.amount) - received;
-                      // Rojo cuando llegó algo pero falta (p.ej. comisiones): 4.995 de 5.000 → balance 5.
-                      const shortfall = received > 0 && balance > 0;
                       const claimed = claimedIds.has(p.id);
                       return (
                         <tr key={p.id} className="border-t border-primary/5">
@@ -213,7 +211,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           <td className="px-4 py-3 text-right font-bold text-primary whitespace-nowrap">{fmt(Number(p.amount), p.currency)}</td>
                           <td className="px-4 py-3 text-right text-green-700 whitespace-nowrap">{received > 0 ? fmt(received, p.currency) : '—'}</td>
                           <td className="px-4 py-3 text-primary/60 whitespace-nowrap">{received > 0 ? fmtDate(p.paid_at) : '—'}</td>
-                          <td className={`px-4 py-3 text-right whitespace-nowrap ${shortfall ? 'text-red-600 font-bold' : 'text-primary/70'}`}>{fmt(balance, p.currency)}</td>
+                          <td className={`px-4 py-3 text-right whitespace-nowrap font-bold ${balance > 0 ? 'text-red-600' : 'text-green-700'}`}>{fmt(balance, p.currency)}</td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-500' : 'bg-almond text-primary/50'}`}>
                               <span className="material-symbols-outlined text-sm">{p.received ? 'check_circle' : overdue ? 'warning' : 'schedule'}</span>
@@ -256,7 +254,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           <td className="px-4 py-3 text-right whitespace-nowrap">{fmt(total, u.currency)}</td>
                           <td className="px-4 py-3 text-right text-green-700 whitespace-nowrap">{fmt(tRecv, u.currency)}</td>
                           <td className="px-4 py-3" />
-                          <td className={`px-4 py-3 text-right whitespace-nowrap ${tBal > 0 ? 'text-red-600' : ''}`}>{fmt(tBal, u.currency)}</td>
+                          <td className={`px-4 py-3 text-right whitespace-nowrap font-bold ${tBal > 0 ? 'text-red-600' : 'text-green-700'}`}>{fmt(tBal, u.currency)}</td>
                           <td className="px-4 py-3" colSpan={2} />
                         </tr>
                       );

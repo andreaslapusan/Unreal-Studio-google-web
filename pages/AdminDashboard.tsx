@@ -948,29 +948,21 @@ const sendReportEmail = async (client: Client) => {
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
   if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
-  if (!window.confirm(t('admin.dash.reportConfirm', { email }))) return;
   const userId = getAdminUserId();
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
   const BROWN = '#3F2305';
-  let ok = 0;
-  for (const cp of projs) {
-    const subject = et('emails.report.subject', { project: cp.project_name });
-    const html = [
-      `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
-      `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: (client.name || '').trim() })}</p>`,
-      `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
-      cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
-      `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
-    ].join('');
-    const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-      body: { adminUserId: userId, to: email, lang, subject, html },
-    });
-    if (!sErr && sent?.success) ok++;
-    else if (ok === 0) { alert(t('admin.dash.reportError', { error: sent?.error || sErr?.message || 'error' })); return; }
-  }
-  alert(t('admin.dash.reportSent', { email, n: ok }));
+  const cp = projs[0]; // preview/envío del primer proyecto (la mayoría tiene 1)
+  const subject = et('emails.report.subject', { project: cp.project_name });
+  const html = [
+    `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
+    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: (client.name || '').trim() })}</p>`,
+    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
+    cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
+    `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
+  ].join('');
+  openEmailPreview({ to: email, subject, html, sentMsg: t('admin.dash.reportSent', { email, n: 1 }), userId, lang });
 };
 
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
@@ -1000,8 +992,10 @@ const sendCalendarEmail = async (client: Client) => {
     const fmtPaid = (s: string | null) => s ? new Date(s).toLocaleDateString(lang, { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
     body += `<table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
     for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
-      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td ${td}${bal > 0 ? ' color:#c0392b' : ''}>${money(bal, u.currency)}</td></tr>`; }
-    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td ${td}><b>${money(tA - tR, u.currency)}</b></td></tr></table>`;
+      const balCol = bal > 0 ? '#c0392b' : '#15803d';
+      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:13px;padding:7px 8px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
+    const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
+    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:13px;padding:7px 8px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table>`;
   }
   body += `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up).
