@@ -73,7 +73,7 @@ const AMENITIES_LIST = [
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
-  const [emailPreview, setEmailPreview] = useState<null | { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean }>(null);
+  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean }>(null);
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
   const [booted, setBooted] = useState(false);
@@ -878,13 +878,14 @@ const sendResetEmail = async (client: Client) => {
 // Preview de email: en vez de enviar directo, abrimos un pop-up con la vista
 // previa; el envío real ocurre al pulsar "Enviar" en sendPreviewedEmail.
 const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string }) => {
-  setEmailPreview({ ...args, sending: false });
+  const recipients = (Array.isArray(args.to) ? args.to : [args.to]).map((e) => (e || '').trim()).filter(Boolean);
+  setEmailPreview({ recipients, selected: [...recipients], subject: args.subject, html: args.html, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false });
 };
 const sendPreviewedEmail = async () => {
-  if (!emailPreview) return;
+  if (!emailPreview || emailPreview.selected.length === 0) return;
   setEmailPreview((p) => p ? { ...p, sending: true } : p);
   const { data: sent, error } = await supabase.functions.invoke('send-client-email', {
-    body: { adminUserId: emailPreview.userId, to: emailPreview.to, lang: emailPreview.lang, subject: emailPreview.subject, html: emailPreview.html },
+    body: { adminUserId: emailPreview.userId, to: emailPreview.selected, lang: emailPreview.lang, subject: emailPreview.subject, html: emailPreview.html },
   });
   if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
   alert(emailPreview.sentMsg);
@@ -2312,7 +2313,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
         <div className="min-w-0">
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailPreviewTitle', { defaultValue: 'Previsualización del email' })}</h3>
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}: <b>{Array.isArray(emailPreview.to) ? emailPreview.to.join(', ') : emailPreview.to}</b> · {emailPreview.subject}</p>
+          <p className="text-xs text-gray-400 mt-0.5 truncate">{emailPreview.subject}</p>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
+            {emailPreview.recipients.map((em) => (
+              <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${emailPreview.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                <input type="checkbox" checked={emailPreview.selected.includes(em)} onChange={() => setEmailPreview((p) => p ? { ...p, selected: p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em] } : p)} className="rounded" />
+                {em}
+              </label>
+            ))}
+          </div>
         </div>
         <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
@@ -2324,7 +2334,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </div>
       <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
         <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
-        <button onClick={() => void sendPreviewedEmail()} disabled={emailPreview.sending} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{emailPreview.sending ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })}</>}</button>
+        <button onClick={() => void sendPreviewedEmail()} disabled={emailPreview.sending || emailPreview.selected.length === 0} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{emailPreview.sending ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> {t('admin.adminDash.savingEllipsis')}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })} ({emailPreview.selected.length})</>}</button>
       </div>
     </div>
   </div>
