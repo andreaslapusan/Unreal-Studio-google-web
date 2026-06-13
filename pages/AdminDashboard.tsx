@@ -2297,7 +2297,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
       <h2 className="text-2xl font-serif text-primary mb-2">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
       <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
-      <form onSubmit={handleSaveClient} className="space-y-5">
+      <form onSubmit={handleSaveClient} onKeyDown={(e) => { if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') e.preventDefault(); }} className="space-y-5">
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.fullName')}</label>
           <input type="text" required value={currentClient.name || ''} onChange={(e) => setCurrentClient({...currentClient, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder={t('admin.dash.clientNamePh')} />
