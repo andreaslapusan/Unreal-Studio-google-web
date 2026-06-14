@@ -169,9 +169,11 @@ async function main() {
         html = setMeta(html, "twitter:image", img, "name");
         html = setCanonical(html, canonical);
 
-        const outDir = resolve(DIST, ...(loc.prefix ? [loc.prefix] : []), "proyecto", slug);
+        // Fichero <slug>.html (no carpeta/index.html) para que nginx lo sirva con
+        // try_files $uri.html SIN redirigir a barra final.
+        const outDir = resolve(DIST, ...(loc.prefix ? [loc.prefix] : []), "proyecto");
         mkdirSync(outDir, { recursive: true });
-        writeFileSync(resolve(outDir, "index.html"), html, "utf8");
+        writeFileSync(resolve(outDir, `${slug}.html`), html, "utf8");
         count++;
       }
     }
