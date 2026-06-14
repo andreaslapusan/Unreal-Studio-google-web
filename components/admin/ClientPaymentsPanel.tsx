@@ -116,7 +116,10 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       return;
     }
     setSaving(true);
-    const payload: any = { ...editing.pay, client_project_id: editing.cp };
+    // La divisa la fija la ASIGNACIÓN de la propiedad (la venta), no el pago.
+    // Forzamos siempre la moneda de la unidad para que no pueda diferir.
+    const unitCur = units.find((x) => x.client_project_id === editing.cp)?.currency || editing.pay.currency;
+    const payload: any = { ...editing.pay, currency: unitCur, client_project_id: editing.cp };
     const { data, error } = await withLoading(supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: payload }));
     setSaving(false);
     if (error || !data?.success) { alert(t('admin.pay.errorSavePayment')); return; }
@@ -345,13 +348,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <h3 className="font-black text-primary">{editing.pay.id ? t('admin.pay.editPayment') : t('admin.pay.newPayment')}</h3>
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.labelPlaceholder')}
               value={editing.pay.label || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, label: e.target.value } }))} />
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-stretch">
               <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.amountPlaceholder')}
                 value={grp(editing.pay.amount || 0)} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, amount: parseNum(e.target.value) } }))} />
-              <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg text-sm" value={editing.pay.currency || 'IDR'}
-                onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, currency: e.target.value } }))}>
-                <option>IDR</option><option>EUR</option><option>USD</option>
-              </select>
+              {/* La divisa la fija la venta (asignación de la propiedad), no se elige aquí. */}
+              <span className="px-3 flex items-center bg-gray-100 border rounded-lg text-sm font-bold text-primary/70" title={t('admin.pay.currencyFromSale', { defaultValue: 'La divisa la fija la venta de la propiedad' })}>
+                {units.find((x) => x.client_project_id === editing.cp)?.currency || editing.pay.currency || 'EUR'}
+              </span>
             </div>
             {(() => {
               const eu = units.find((x) => x.client_project_id === editing.cp);
