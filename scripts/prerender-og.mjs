@@ -95,8 +95,9 @@ function localizedDescription(p, code) {
 function ogImage(image) {
   if (!image) return `${ORIGIN}/img/og-image.webp`;
   if (/^https?:\/\//i.test(image)) return image;
-  // Endpoint de transformación (mismo que usa la app) → 1200×630 para el preview.
-  return `${SUPABASE_URL}/storage/v1/render/image/public/images/${image}?width=1200&height=630&resize=cover`;
+  // URL pública directa del bucket. (El endpoint /render/image da 403: las
+  // transformaciones no están habilitadas en este plan.)
+  return `${SUPABASE_URL}/storage/v1/object/public/images/${image}`;
 }
 
 // Reemplaza (o inserta antes de </head>) un <meta property|name="key" content="...">.
@@ -110,6 +111,11 @@ function setTitle(html, title) {
   const t = esc(title);
   if (/<title>[^<]*<\/title>/i.test(html)) return html.replace(/<title>[^<]*<\/title>/i, `<title>${t}</title>`);
   return html.replace(/<\/head>/i, `    <title>${t}</title>\n  </head>`);
+}
+// Elimina un <meta property|name="key" ...> (p.ej. dimensiones de imagen que ya no son ciertas).
+function removeMeta(html, key) {
+  const re = new RegExp(`\\s*<meta\\s+(?:property|name)="${key.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}"[^>]*>`, "i");
+  return html.replace(re, "");
 }
 function setCanonical(html, url) {
   const u = esc(url);
@@ -162,6 +168,9 @@ async function main() {
         html = setMeta(html, "og:description", desc);
         html = setMeta(html, "og:image", img);
         html = setMeta(html, "og:image:alt", p.name);
+        // Dimensiones del template (1200x630) no aplican a la imagen real del proyecto.
+        html = removeMeta(html, "og:image:width");
+        html = removeMeta(html, "og:image:height");
         html = setMeta(html, "og:url", url);
         html = setMeta(html, "og:locale", loc.ogLocale);
         html = setMeta(html, "twitter:title", title, "name");
