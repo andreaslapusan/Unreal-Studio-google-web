@@ -2,7 +2,7 @@
  * /equipo/upload — internal form for the construction team to publish
  * progress updates (photos, videos, PDFs). Backed by Supabase.
  */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
@@ -24,7 +24,7 @@ interface QueuedFile {
 }
 
 export default function EquipoUpload() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,6 +38,38 @@ export default function EquipoUpload() {
   const [files, setFiles] = useState<QueuedFile[]>([]);
   const [submitState, setSubmitState] = useState<"idle" | "submitting" | "ok" | "error">("idle");
   const [submitError, setSubmitError] = useState<string>("");
+
+  // Lista de reportes ya subidos (para que el equipo confirme/haga seguimiento
+  // de lo que publicó: Adam pedía poder VER el PDF/foto tras subirlo).
+  const [uploads, setUploads] = useState<any[]>([]);
+  const [loadingUploads, setLoadingUploads] = useState<boolean>(true);
+  const [listFilter, setListFilter] = useState<string>("");
+
+  const loadUploads = useCallback(async () => {
+    setLoadingUploads(true);
+    const { data: ups } = await supabase
+      .from("property_updates")
+      .select("id, property_id, title, summary, pct_progress_at_update, posted_at, posted_by, visibility")
+      .order("posted_at", { ascending: false })
+      .limit(60);
+    const rows = (ups ?? []) as any[];
+    const ids = rows.map((r) => r.id);
+    let assetsByUpdate: Record<string, any[]> = {};
+    if (ids.length) {
+      const { data: assets } = await supabase
+        .from("update_assets")
+        .select("update_id, asset_type, external_url, file_name, position")
+        .in("update_id", ids);
+      for (const a of (assets ?? []) as any[]) {
+        (assetsByUpdate[a.update_id] = assetsByUpdate[a.update_id] || []).push(a);
+      }
+    }
+    for (const r of rows) r._assets = (assetsByUpdate[r.id] || []).sort((a, b) => (a.position || 0) - (b.position || 0));
+    setUploads(rows);
+    setLoadingUploads(false);
+  }, []);
+
+  useEffect(() => { if (user) void loadUploads(); }, [user, loadUploads]);
 
   useEffect(() => {
     if (!user) return;
@@ -176,6 +208,9 @@ export default function EquipoUpload() {
       setSummary("");
       setFiles([]);
       setVisibility("all");
+      // Refresca la lista para que el reporte recién subido aparezca arriba
+      // (confirmación visible de que SÍ se ha guardado).
+      void loadUploads();
     } catch (err) {
       setSubmitState("error");
       setSubmitError(err instanceof Error ? err.message : String(err));
@@ -319,6 +354,89 @@ export default function EquipoUpload() {
           )}
           {submitError && <p className="text-red-700 text-sm">{submitError}</p>}
         </form>
+
+        {/* === Reportes ya subidos: seguimiento/checklist para el equipo === */}
+        {(() => {
+          const propName: Record<string, string> = {};
+          for (const p of properties) propName[p.id] = p.name;
+          const shown = uploads.filter((u) => !listFilter || u.property_id === listFilter);
+          const fmtDate = (s: string) => {
+            try { return new Date(s).toLocaleDateString(i18n.language || "es", { day: "2-digit", month: "short", year: "numeric" }); }
+            catch { return s; }
+          };
+          const fmtTime = (s: string) => {
+            try { return new Date(s).toLocaleTimeString(i18n.language || "es", { hour: "2-digit", minute: "2-digit" }); }
+            catch { return ""; }
+          };
+          return (
+            <section className="mt-12">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
+                <div>
+                  <h2 className="font-serif text-2xl text-primary">{t("admin.equipoUpload.uploadedTitle", { defaultValue: "Reportes subidos" })}</h2>
+                  <p className="text-sm text-primary/50">{t("admin.equipoUpload.uploadedSubtitle", { defaultValue: "Aquí ves lo que ya has publicado y sus archivos. Si tu reporte aparece en la lista, se ha subido bien." })}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <select value={listFilter} onChange={(e) => setListFilter(e.target.value)} className="rounded-lg border border-primary/20 px-3 py-2 text-sm">
+                    <option value="">{t("admin.equipoUpload.allProjects", { defaultValue: "Todos los proyectos" })}</option>
+                    {properties.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                  <button type="button" onClick={() => void loadUploads()} className="text-sm bg-primary/10 hover:bg-primary/20 text-primary px-3 py-2 rounded-lg inline-flex items-center gap-1" title={t("admin.common.refresh", { defaultValue: "Actualizar" })}>
+                    <span className="material-symbols-outlined text-base">refresh</span>
+                  </button>
+                </div>
+              </div>
+
+              {loadingUploads ? (
+                <p className="text-sm text-primary/50">{t("admin.common.loading")}</p>
+              ) : shown.length === 0 ? (
+                <p className="text-sm text-primary/50">{t("admin.equipoUpload.noUploads", { defaultValue: "Todavía no hay reportes subidos para este filtro." })}</p>
+              ) : (
+                <ul className="space-y-3">
+                  {shown.map((u) => (
+                    <li key={u.id} className="bg-white rounded-2xl border border-primary/10 p-4 shadow-sm">
+                      <div className="flex items-start justify-between gap-3 flex-wrap">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="material-symbols-outlined text-green-600 text-lg leading-none">check_circle</span>
+                            <span className="font-bold text-primary break-words">{u.title}</span>
+                            {typeof u.pct_progress_at_update === "number" && (
+                              <span className="text-[11px] font-bold bg-primary/5 text-primary px-2 py-0.5 rounded-full">{u.pct_progress_at_update}%</span>
+                            )}
+                            {u.visibility === "listers-only" && (
+                              <span className="text-[10px] font-bold bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full">{t("admin.equipoUpload.visListers")}</span>
+                            )}
+                          </div>
+                          <p className="text-xs text-primary/50 mt-1 break-words">
+                            {propName[u.property_id] || "—"} · {fmtDate(u.posted_at)} {fmtTime(u.posted_at)}
+                          </p>
+                          {u.summary && <p className="text-sm text-primary/70 mt-1 break-words">{u.summary}</p>}
+                        </div>
+                        <span className="text-[11px] font-bold text-primary/40 shrink-0">{(u._assets?.length || 0)} {t("admin.equipoUpload.filesCount", { defaultValue: "archivos" })}</span>
+                      </div>
+
+                      {u._assets && u._assets.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {u._assets.map((a: any, i: number) => (
+                            a.asset_type === "image" ? (
+                              <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer" className="block w-16 h-16 rounded-lg overflow-hidden border border-primary/10">
+                                <img src={a.external_url} alt={a.file_name || ""} className="w-full h-full object-cover" loading="lazy" />
+                              </a>
+                            ) : (
+                              <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold bg-primary/5 hover:bg-primary/15 text-primary px-3 py-2 rounded-lg">
+                                <span className="material-symbols-outlined text-base leading-none">{a.asset_type === "pdf" ? "picture_as_pdf" : a.asset_type === "video" ? "movie" : "description"}</span>
+                                <span className="truncate max-w-[160px]">{a.file_name || a.asset_type}</span>
+                              </a>
+                            )
+                          ))}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          );
+        })()}
       </main>
     </div>
   );
