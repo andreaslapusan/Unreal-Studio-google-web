@@ -26,6 +26,9 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
   const [file, setFile] = useState<File | null>(null);
   const [state, setState] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [error, setError] = useState('');
+  // Último reporte fijado en el proyecto (lo que ven los clientes ahora mismo).
+  const [last, setLast] = useState<{ url: string | null; date: string | null } | null>(null);
+  const [loadingLast, setLoadingLast] = useState(false);
   useEscapeKey(onClose);
 
   useEffect(() => {
@@ -36,6 +39,16 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
       // Sin preselección: el empleado DEBE elegir un proyecto (regla de Andreas).
     })();
   }, []);
+
+  // Al elegir proyecto, carga el último reporte que ven los clientes.
+  const loadLast = async (pid: string) => {
+    if (!pid) { setLast(null); return; }
+    setLoadingLast(true);
+    const { data } = await supabase.from('projects').select('construction_update_url, construction_update_date').eq('id', pid).maybeSingle();
+    setLast({ url: (data as any)?.construction_update_url ?? null, date: (data as any)?.construction_update_date ?? null });
+    setLoadingLast(false);
+  };
+  useEffect(() => { void loadLast(projectId); }, [projectId]);
 
   const pickFile = (f: File | null) => {
     setError('');
@@ -62,7 +75,10 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
       if (rpcErr) throw rpcErr;
       if (res && res.success === false) throw new Error(res.error || 'error');
       setState('ok');
-      setTimeout(onClose, 1200);
+      setFile(null);
+      // Refresca el "último reporte" para que Adam CONFIRME que el nuevo ya está
+      // fijado (lo que ven los clientes). No cerramos solos: que lo vea él.
+      void loadLast(projectId);
     } catch (e) {
       setState('error');
       setError(e instanceof Error ? e.message : String(e));
@@ -86,6 +102,27 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
             {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </label>
+
+        {/* Último reporte que ven los clientes para ese proyecto */}
+        {projectId && (
+          <div className="mb-4 rounded-2xl border border-primary/10 bg-primary/5 p-4">
+            <span className="block text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">{t('empleados.reportModal.lastUploaded', { defaultValue: 'Último reporte subido (lo que ven los clientes)' })}</span>
+            {loadingLast ? (
+              <p className="text-sm text-primary/50">{t('admin.common.loading')}</p>
+            ) : last?.url ? (
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-primary flex items-center gap-1"><span className="material-symbols-outlined text-green-600 text-base leading-none">check_circle</span>{last.date || '—'}</p>
+                </div>
+                <a href={last.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-black bg-primary text-white px-3 py-2 rounded-xl">
+                  <span className="material-symbols-outlined text-base leading-none">picture_as_pdf</span> {t('empleados.reportModal.viewPdf', { defaultValue: 'Ver PDF' })}
+                </a>
+              </div>
+            ) : (
+              <p className="text-sm text-primary/50">{t('empleados.reportModal.noLast', { defaultValue: 'Aún no hay reporte subido para este proyecto.' })}</p>
+            )}
+          </div>
+        )}
 
         <label className="block mb-4">
           <span className="block text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">{t('empleados.reportModal.reportDate')}</span>

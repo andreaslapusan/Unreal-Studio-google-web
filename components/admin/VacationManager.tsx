@@ -46,6 +46,7 @@ const VacationManager: React.FC = () => {
   const [selected, setSelected] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Vacation | null>(null);
+  const [dayDetail, setDayDetail] = useState<string | null>(null); // día pinchado → popup
   const [payDue, setPayDue] = useState<any[]>([]);
   // Mapa fecha límite → cobros pendientes (para marcar en el calendario).
   const payDayMap = useMemo(() => {
@@ -96,6 +97,7 @@ const VacationManager: React.FC = () => {
   // Tooltip flotante al pasar el ratón por un día con vacaciones.
   const [hoverDay, setHoverDay] = useState<{ date: string; x: number; y: number } | null>(null);
   useEscapeKey(() => setEditing(null), !!editing);
+  useEscapeKey(() => setDayDetail(null), !!dayDetail);
   const dayCount = (start: string, end: string) => { let n = 0; for (const _ of eachDay(start, end)) n++; return n; };
   const weekTotal = (dateStr: string) => {
     const d = new Date(dateStr + 'T00:00:00');
@@ -201,7 +203,8 @@ const VacationManager: React.FC = () => {
                     <div key={day}
                       onMouseEnter={hasAny ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
                       onMouseLeave={hasAny ? () => setHoverDay(null) : undefined}
-                      className={`relative text-sm rounded-lg p-1 min-h-[48px] flex flex-col items-center justify-center ${hasAny ? 'cursor-help' : ''} ${isToday ? 'ring-2 ring-primary' : ''} ${pays.length ? 'bg-amber-50' : offs.length ? 'bg-primary/5' : ''}`}>
+                      onClick={() => { setHoverDay(null); setDayDetail(dateStr); }}
+                      className={`relative text-sm rounded-lg p-1 min-h-[48px] flex flex-col items-center justify-center cursor-pointer hover:ring-1 hover:ring-primary/30 ${isToday ? 'ring-2 ring-primary' : ''} ${pays.length ? 'bg-amber-50' : offs.length ? 'bg-primary/5' : ''}`}>
                       <span className="font-bold text-primary/80">{day}</span>
                       <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center items-center">
                         {offs.slice(0, 6).map((v, i) => (
@@ -304,6 +307,66 @@ const VacationManager: React.FC = () => {
           <p className="mt-2 pt-2 border-t border-gray-100 font-bold text-primary/70">{t('admin.vac.weekTotal', { n: weekTotal(hoverDay.date) })}</p>
         </div>
       )}
+
+      {/* Popup al PINCHAR un día: leyenda + detalle de lo que hay ese día (móvil + escritorio) */}
+      {dayDetail && (() => {
+        const offs = dayMap.get(dayDetail) ?? [];
+        const pays = payDayMap.get(dayDetail) ?? [];
+        return (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) setDayDetail(null); }}>
+            <div className="bg-white rounded-2xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto overscroll-contain">
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <h3 className="text-lg font-serif text-primary capitalize">
+                  {new Date(dayDetail + 'T00:00:00').toLocaleDateString(uiLocale(), { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
+                </h3>
+                <button onClick={() => setDayDetail(null)} className="text-primary/40 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
+              </div>
+
+              {/* Leyenda: qué significa cada cosa */}
+              <div className="bg-gray-50 rounded-xl p-3 mb-4 space-y-1.5">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">{t('admin.vac.legendTitle', { defaultValue: 'Leyenda' })}</p>
+                <div className="flex items-center gap-2 text-xs text-primary/70"><span className="w-2.5 h-2.5 rounded-full bg-primary" /> {t('admin.vac.legendVacation', { defaultValue: 'Bolita de color = empleado de vacaciones/ausente (un color por persona)' })}</div>
+                <div className="flex items-center gap-2 text-xs text-primary/70"><span className="w-2.5 h-2.5 rounded-full bg-primary opacity-40" /> {t('admin.vac.legendPending', { defaultValue: 'Bolita apagada = solicitud pendiente de aprobar' })}</div>
+                <div className="flex items-center gap-2 text-xs text-primary/70"><span className="text-amber-600 font-black">€</span> {t('admin.vac.legendPayment', { defaultValue: 'Cobro de cliente con fecha límite ese día' })}</div>
+              </div>
+
+              {/* Ausencias del día */}
+              <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2">{t('admin.vac.dayAbsences', { defaultValue: 'Ausencias' })}</p>
+              {offs.length === 0 ? (
+                <p className="text-sm text-primary/40 mb-4">{t('admin.vac.dayNoAbsences', { defaultValue: 'Nadie ausente este día.' })}</p>
+              ) : (
+                <ul className="space-y-2 mb-4">
+                  {offs.map((v, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full mt-1 shrink-0" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
+                      <div className="min-w-0">
+                        <p className="font-bold text-primary text-sm">{nameFor(v)} <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{isApproved(v.status) ? t('admin.vac.statusApproved') : t('admin.vac.statusPending')}</span></p>
+                        <p className="text-xs text-primary/60">{v.start_date} → {v.end_date} · {t('admin.vac.daysTotal', { n: dayCount(v.start_date, v.end_date) })}</p>
+                        <p className="text-xs text-primary/50 capitalize">{v.type}{v.note ? ` · ${t('admin.vac.reason')}: ${v.note}` : ''}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Cobros del día */}
+              <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">{t('admin.vac.paymentsDue', { defaultValue: 'Cobros este día' })}</p>
+              {pays.length === 0 ? (
+                <p className="text-sm text-primary/40">{t('admin.vac.dayNoPayments', { defaultValue: 'Ningún cobro con vencimiento este día.' })}</p>
+              ) : (
+                <ul className="space-y-2">
+                  {pays.map((p, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-amber-600 font-black shrink-0">€</span>
+                      <div className="min-w-0"><p className="font-bold text-primary text-sm">{p.client_name} · {fmtMoney(Number(p.amount), p.currency || 'EUR')}</p><p className="text-xs text-primary/50">{p.payment_label || ''}</p></div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
