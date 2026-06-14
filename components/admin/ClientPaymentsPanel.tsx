@@ -99,6 +99,14 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
   useEffect(() => { void load(); }, [load]);
 
+  // Bloquea el scroll del fondo mientras el popup está abierto (si no, al llegar
+  // al final del popup el gesto arrastra la página de detrás).
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   const savePayment = async () => {
     if (!editing) return;
     // Validación: no permitir crear/guardar un pago sin concepto, importe, divisa y fecha.
@@ -252,7 +260,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto py-8 px-4">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto overscroll-contain py-8 px-4">
       <div className="bg-white rounded-3xl ust-modal shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white rounded-t-3xl">
           <div>

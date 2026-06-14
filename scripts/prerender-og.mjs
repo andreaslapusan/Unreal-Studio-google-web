@@ -1,0 +1,184 @@
+#!/usr/bin/env node
+/**
+ * Pre-render de Open Graph por proyecto y por idioma.
+ *
+ * El sitio es un SPA estático servido por nginx. Los crawlers de WhatsApp /
+ * Telegram / Facebook NO ejecutan JS, así que solo leen los <meta> del
+ * index.html estático → preview genérico en español para TODOS los enlaces.
+ *
+ * Este script (postbuild) genera, a partir del dist/index.html ya construido,
+ * un index.html por cada proyecto × idioma en su ruta real
+ * (dist/<locale>/proyecto/<slug>/index.html), con título, descripción, imagen
+ * y og:locale CORRECTOS y en el idioma del enlace. nginx ya sirve estos
+ * index.html anidados (try_files $uri $uri/ /index.html), así que el crawler
+ * recibe el preview bueno y el usuario sigue recibiendo el SPA (que rehidrata
+ * normal).
+ *
+ * Si Supabase falla en build (sin red, proyecto caído) NO rompe el build:
+ * avisa y sale 0, dejando el OG genérico.
+ */
+import { createClient } from "@supabase/supabase-js";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DIST = resolve(__dirname, "..", "dist");
+const TEMPLATE = resolve(DIST, "index.html");
+const ORIGIN = "https://unrealstudiobali.com";
+
+const SUPABASE_URL = "https://rnielxgackkshnatvagj.supabase.co";
+const ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuaWVseGdhY2trc2huYXR2YWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MzE4NTEsImV4cCI6MjA4NjQwNzg1MX0.5X6k4TVLrH1AJMLw797l4LWTy3cROhh-Q4gAPl-GPJY";
+
+// Idiomas con URL propia. 'es' es el x-default (también ruta sin prefijo).
+const LOCALES = [
+  { code: "es", prefix: "", ogLocale: "es_ES" },
+  { code: "es", prefix: "es", ogLocale: "es_ES" },
+  { code: "en", prefix: "en", ogLocale: "en_US" },
+  { code: "ro", prefix: "ro", ogLocale: "ro_RO" },
+  { code: "id", prefix: "id", ogLocale: "id_ID" },
+];
+
+// ---- slug SEO: réplica EXACTA de lib/projectUrl.ts (no importable desde .mjs) ----
+function slugify(input) {
+  return String(input || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-+/g, "-");
+}
+function locationParts(loc) {
+  return String(loc || "")
+    .split(",")
+    .map((p) => slugify(p))
+    .filter((p) => p && p !== "bali" && p !== "indonesia");
+}
+function projectSeoSlug(project) {
+  const locs = locationParts(project.location);
+  const slug = project.slug;
+  if (locs.length === 0) return slug;
+  const firstLocSuffix = `-${locs[0]}`;
+  if (slug.endsWith(firstLocSuffix) || slug.includes(firstLocSuffix + "-")) return slug;
+  return `${slug}-${locs.join("-")}`;
+}
+
+// ---- helpers ----
+function esc(s) {
+  return String(s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function plain(s) {
+  return String(s || "")
+    .replace(/<[^>]*>/g, " ")     // quita HTML
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function truncate(s, n) {
+  if (s.length <= n) return s;
+  return s.slice(0, n - 1).trimEnd() + "…";
+}
+function localizedDescription(p, code) {
+  const raw =
+    (code === "en" && p.description_en) ||
+    (code === "ro" && p.description_ro) ||
+    (code === "id" && p.description_id) ||
+    p.description ||
+    "";
+  return truncate(plain(raw), 200);
+}
+function ogImage(image) {
+  if (!image) return `${ORIGIN}/img/og-image.webp`;
+  if (/^https?:\/\//i.test(image)) return image;
+  // Endpoint de transformación (mismo que usa la app) → 1200×630 para el preview.
+  return `${SUPABASE_URL}/storage/v1/render/image/public/images/${image}?width=1200&height=630&resize=cover`;
+}
+
+// Reemplaza (o inserta antes de </head>) un <meta property|name="key" content="...">.
+function setMeta(html, key, value, attr = "property") {
+  const v = esc(value);
+  const re = new RegExp(`(<meta\\s+(?:property|name)="${key.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}"\\s+content=")[^"]*(")`, "i");
+  if (re.test(html)) return html.replace(re, `$1${v}$2`);
+  return html.replace(/<\/head>/i, `    <meta ${attr}="${key}" content="${v}">\n  </head>`);
+}
+function setTitle(html, title) {
+  const t = esc(title);
+  if (/<title>[^<]*<\/title>/i.test(html)) return html.replace(/<title>[^<]*<\/title>/i, `<title>${t}</title>`);
+  return html.replace(/<\/head>/i, `    <title>${t}</title>\n  </head>`);
+}
+function setCanonical(html, url) {
+  const u = esc(url);
+  if (/<link\s+rel="canonical"[^>]*>/i.test(html)) {
+    return html.replace(/<link\s+rel="canonical"[^>]*>/i, `<link rel="canonical" href="${u}">`);
+  }
+  return html.replace(/<\/head>/i, `    <link rel="canonical" href="${u}">\n  </head>`);
+}
+
+async function main() {
+  if (!existsSync(TEMPLATE)) {
+    console.warn("[prerender-og] dist/index.html no existe; nada que hacer.");
+    return;
+  }
+  const template = readFileSync(TEMPLATE, "utf8");
+
+  const sb = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
+  let projects = [];
+  try {
+    const { data, error } = await sb
+      .from("projects")
+      .select("slug,name,location,description,description_en,description_ro,description_id,image");
+    if (error) throw error;
+    projects = data || [];
+  } catch (e) {
+    console.warn("[prerender-og] No se pudo leer Supabase, se deja el OG genérico:", e?.message || e);
+    return;
+  }
+
+  let count = 0;
+  for (const p of projects) {
+    if (!p.slug) continue;
+    const seoSlug = projectSeoSlug(p);
+    // Cubrimos el slug SEO (el que comparte la web) y el slug corto (enlaces viejos).
+    const slugs = Array.from(new Set([seoSlug, p.slug]));
+    const img = ogImage(p.image);
+
+    for (const loc of LOCALES) {
+      const desc = localizedDescription(p, loc.code);
+      const title = `${p.name} | Unreal Studio Bali`;
+      const canonical = `${ORIGIN}${loc.prefix ? "/" + loc.prefix : ""}/proyecto/${seoSlug}`;
+
+      for (const slug of slugs) {
+        const url = `${ORIGIN}${loc.prefix ? "/" + loc.prefix : ""}/proyecto/${slug}`;
+        let html = template;
+        html = setTitle(html, title);
+        html = setMeta(html, "description", desc, "name");
+        html = setMeta(html, "og:type", "article");
+        html = setMeta(html, "og:title", title);
+        html = setMeta(html, "og:description", desc);
+        html = setMeta(html, "og:image", img);
+        html = setMeta(html, "og:image:alt", p.name);
+        html = setMeta(html, "og:url", url);
+        html = setMeta(html, "og:locale", loc.ogLocale);
+        html = setMeta(html, "twitter:title", title, "name");
+        html = setMeta(html, "twitter:description", desc, "name");
+        html = setMeta(html, "twitter:image", img, "name");
+        html = setCanonical(html, canonical);
+
+        const outDir = resolve(DIST, ...(loc.prefix ? [loc.prefix] : []), "proyecto", slug);
+        mkdirSync(outDir, { recursive: true });
+        writeFileSync(resolve(outDir, "index.html"), html, "utf8");
+        count++;
+      }
+    }
+  }
+  console.log(`[prerender-og] Generados ${count} index.html (${projects.length} proyectos × ${LOCALES.length} idiomas).`);
+}
+
+main().catch((e) => {
+  console.warn("[prerender-og] Error no fatal, build continúa:", e?.message || e);
+});
