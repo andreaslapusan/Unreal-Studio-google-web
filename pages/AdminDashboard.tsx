@@ -30,6 +30,16 @@ import BrandLogo from '../components/BrandLogo';
 type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'cobros' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura';
 const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'cobros', 'calendar', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
 
+// Nombre de titulares para saludos de email: deduplica las partes unidas por " & "
+// (algunas fichas tienen el nombre repetido, p.ej. "Alberto & Alberto") sin tocar la BD.
+const dedupeAmpNames = (raw: string | null | undefined): string => {
+  const parts = String(raw || '').split('&').map((s) => s.trim()).filter(Boolean);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of parts) { const k = p.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push(p); } }
+  return out.join(' & ');
+};
+
 const GUIDE_STEPS = [
   { titleKey: 'admin.dash.guide1Title', textKey: 'admin.dash.guide1Text' },
   { titleKey: 'admin.dash.guide2Title', textKey: 'admin.dash.guide2Text' },
@@ -841,7 +851,7 @@ const handleSaveClient = async (e: React.FormEvent) => {
       const lang = ((currentClient as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
       const _holders = (currentClient as any).holders;
       const _emails = (_holders && _holders.length) ? _holders.map((h: any) => (h.email || '').trim()).filter(Boolean) : emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails });
-      const r = await sendWelcomeCore({ name: currentClient.name || '', email: newEmail, emails: _emails, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
+      const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: newEmail, emails: _emails, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
       alert(r.ok ? t('admin.dash.welcomeSent', { email: newEmail }) : t('admin.dash.welcomeError', { error: r.error }));
     }
   } catch (error) {
@@ -887,7 +897,7 @@ const sendWelcome = async (client: Client) => {
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
   // Bienvenida MANUAL → pasa por la preview antes de enviar.
-  const html = welcomeEmailHtml({ firstName: (client.name || '').trim(), portalUrl: clientPortalUrl(lang), email, tempPassword: (client as any).password_plain || client.temp_password || null, lang });
+  const html = welcomeEmailHtml({ firstName: dedupeAmpNames(client.name), portalUrl: clientPortalUrl(lang), email, tempPassword: (client as any).password_plain || client.temp_password || null, lang });
   openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html, sentMsg: t('admin.dash.welcomeSent', { email }), userId, lang });
 };
 
@@ -951,7 +961,7 @@ const sendReminderEmail = async (client: Client) => {
   const BROWN = '#3F2305';
   const html = `
     <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:${BROWN}">${subject}</h1>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.reminder.hi', { name: (client.name || '').trim() })}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.reminder.hi', { name: dedupeAmpNames(client.name) })}</p>
     <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${lead}</p>
     <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.reminder.paymentFor', { project: target.project_name, label: target.label || '' })}</p>
     <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${et('emails.reminder.deadlineLabel')} <b>${dueStr}</b></p>
@@ -978,7 +988,7 @@ const sendReportEmail = async (client: Client) => {
   const subject = et('emails.report.subject', { project: cp.project_name });
   const html = [
     `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
-    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: (client.name || '').trim() })}</p>`,
+    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: dedupeAmpNames(client.name) })}</p>`,
     `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
     cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
     `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
@@ -1000,23 +1010,23 @@ const sendCalendarEmail = async (client: Client) => {
   const et = i18n.getFixedT(lang);
   const BROWN = '#3F2305';
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
-  const fmtd = (s: string | null) => s ? new Date(s + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+  const fmtd = (s: string | null) => s ? new Date(s + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
   const recv = (p: any) => p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0);
-  const th = `style="text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:rgba(63,35,5,.5);padding:6px 8px;border-bottom:1px solid rgba(63,35,5,.15)"`;
-  const td = `style="font-size:13px;color:${BROWN};padding:7px 8px;border-bottom:1px solid rgba(63,35,5,.08)"`;
+  const th = `style="text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:rgba(63,35,5,.5);padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.15)"`;
+  const td = `style="font-size:12px;color:${BROWN};padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.08)"`;
   let body = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${et('emails.calendar.subject')}</h1>`;
-  body += `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.calendar.hi', { name: (client.name || '').trim() })}</p>`;
+  body += `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.calendar.hi', { name: dedupeAmpNames(client.name) })}</p>`;
   body += `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${et('emails.calendar.intro')}</p>`;
   for (const u of units) {
     let tA = 0, tR = 0;
     body += `<h2 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:${BROWN}">${u.project_name || ''}${u.unit_number ? ' · ' + u.unit_number : ''}</h2>`;
-    const fmtPaid = (s: string | null) => s ? new Date(s).toLocaleDateString(lang, { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
-    body += `<table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
+    const fmtPaid = (s: string | null) => s ? new Date(s).toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
+    body += `<div style="width:100%;overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-bottom:6px;table-layout:fixed"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
     for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
       const balCol = bal > 0 ? '#c0392b' : '#15803d';
-      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:13px;padding:7px 8px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
+      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
     const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
-    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:13px;padding:7px 8px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table>`;
+    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
   }
   body += `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up).
