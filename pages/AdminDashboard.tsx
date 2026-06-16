@@ -2121,7 +2121,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.name')}</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
                   <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.location')}</label><select value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">{config.customZones.map(z => <option key={z} value={z}>{z}</option>)}</select></div>
                   <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.type', 'Tipo')}</label><select value={currentProject.property_type || ''} onChange={(e) => setCurrentProject({...currentProject, property_type: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">{config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}</select></div>
@@ -2139,7 +2139,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.description')}</label><textarea rows={4} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
                 
-                 <div className="grid grid-cols-3 gap-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><input type="number" value={currentProject.investor_price || 0} onChange={(e) => setCurrentProject({...currentProject, investor_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><input type="number" value={currentProject.market_price || 0} onChange={(e) => setCurrentProject({...currentProject, market_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-5 py-4 bg-primary text-white rounded-2xl font-bold h-[58px]">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
@@ -2241,11 +2241,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </div>
     </div>
 
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder={t('admin.dash.beachDistancePh')} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
       <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
     </div>
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.contractYears')}</label><input type="number" value={currentProject.years_contract || 25} onChange={(e) => setCurrentProject({...currentProject, years_contract: parseInt(e.target.value) || 25})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
       <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.extensionYears')}</label><input type="number" value={currentProject.years_extension || 0} onChange={(e) => setCurrentProject({...currentProject, years_extension: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
     </div>
@@ -2291,7 +2291,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           })}
         </div>
     </div>
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div>
          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.constructionReportUrl')}</label>
          <div className="flex gap-2">
@@ -2314,10 +2314,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
               </div>
               {/* Ficha extendida: datos de agencia / legal / drive / vídeo (los usan los packs de agencia). */}
-              <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-serif text-primary mb-1">{t('admin.dash.agencyLegalExtra')}</h3>
-                <p className="text-xs text-gray-400 mb-4">{t('admin.dash.agencyLegalHint')}</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <details className="border-t border-gray-100 pt-6">
+                <summary className="cursor-pointer select-none mb-4"><span className="text-lg font-serif text-primary">{t('admin.dash.agencyLegalExtra')}</span><span className="block text-xs text-gray-400">{t('admin.dash.agencyLegalHint')}</span></summary>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {([
                     ['zone',t('admin.dash.fldZone'),'text'],['owner_name',t('admin.dash.fldOwner'),'text'],['lease_end_date',t('admin.dash.fldLeaseEnd'),'text'],
                     ['lease_years_paid',t('admin.dash.fldYearsPaid'),'number'],['extension_cost_usd',t('admin.dash.fldExtensionCost'),'number'],
@@ -2346,11 +2345,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </label>
                   ))}
                 </div>
-              </div>
+              </details>
               {/* Traducciones (EN/ID) de los campos que aparecen en los packs de agencia. */}
-              <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-serif text-primary mb-1">{t('admin.dash.packTranslations')}</h3>
-                <p className="text-xs text-gray-400 mb-4">{t('admin.dash.packTranslationsHint')}</p>
+              <details className="border-t border-gray-100 pt-6">
+                <summary className="cursor-pointer select-none mb-4"><span className="text-lg font-serif text-primary">{t('admin.dash.packTranslations')}</span><span className="block text-xs text-gray-400">{t('admin.dash.packTranslationsHint')}</span></summary>
                 <div className="space-y-3">
                   {([
                     ['description',t('admin.dash.trDescription')],['status',t('admin.dash.trStatus')],['completion_date',t('admin.dash.trCompletionDate')],
@@ -2367,36 +2365,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </div>
                   ))}
                 </div>
-              </div>
-              {/* Hitos / Desarrollo del proyecto — OCULTO en la web pública; gestión interna */}
-              <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-serif text-primary mb-1">{t('admin.dash.milestonesTitle')}</h3>
-                <p className="text-xs text-gray-400 mb-4">{t('admin.dash.milestonesHint')}</p>
-                <div className="space-y-3">
-                  {(((currentProject as any).timeline as any[]) || []).map((ph: any, i: number) => {
-                    const tl = (((currentProject as any).timeline as any[]) || []);
-                    const setTl = (next: any[]) => setCurrentProject({ ...(currentProject as any), timeline: next });
-                    const upd = (k: string, v: any) => setTl(tl.map((x, j) => j === i ? { ...x, [k]: v } : x));
-                    return (
-                      <div key={i} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.phase', { n: i + 1 })}</span>
-                          <button type="button" onClick={() => setTl(tl.filter((_, j) => j !== i))} className="text-[11px] font-bold text-red-600 hover:underline">{t('admin.dash.remove')}</button>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-2">
-                          <input placeholder={t('admin.dash.phTitle')} value={ph.title || ''} onChange={(e) => upd('title', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
-                          <input placeholder={t('admin.dash.phDateYm')} value={ph.date || ''} onChange={(e) => upd('date', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
-                          <input type="number" placeholder={t('admin.dash.phPaymentPct')} value={ph.payment_pct ?? ''} onChange={(e) => upd('payment_pct', e.target.value ? Number(e.target.value) : 0)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm" />
-                        </div>
-                        <textarea placeholder={t('admin.dash.phPhaseDesc')} value={ph.description || ''} onChange={(e) => upd('description', e.target.value)} rows={2} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm resize-none" />
-                      </div>
-                    );
-                  })}
-                </div>
-                <button type="button" onClick={() => setCurrentProject({ ...(currentProject as any), timeline: [ ...(((currentProject as any).timeline as any[]) || []), { title: '', date: '', payment_pct: 0, description: '' } ] })} className="mt-3 text-[10px] font-black uppercase tracking-widest text-primary">{t('admin.dash.addPhase')}</button>
-              </div>
+              </details>
 
-              <div className="flex gap-4 pt-6"><button type="submit" className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black">{t('admin.adminDash.saveProperty')}</button><button type="button" onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-400 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-200">{t('admin.common.cancel')}</button></div>
+              <div className="flex gap-3 pt-4 sticky bottom-0 bg-white/95 backdrop-blur -mx-1 px-1">
+                <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg hover:bg-black disabled:opacity-60 inline-flex items-center justify-center gap-2">
+                  {uploading && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                  {uploading ? t('admin.common.saving') : t('admin.adminDash.saveProperty')}
+                </button>
+                <button type="button" onClick={() => setIsEditing(false)} className="px-6 bg-gray-100 text-gray-500 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-gray-200">{t('admin.common.cancel')}</button>
+              </div>
             </form>
           </div>
         </div>
@@ -2600,7 +2577,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <p className="text-sm text-gray-400 mb-2">{t('admin.dash.clientLabel')}: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
             <p className="text-sm text-gray-400 mb-8">{t('admin.dash.projectLabel')}: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
             <form onSubmit={handleEditAssignment} className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.unitReference')}</label><input value={editingAssignment.assignment.unit_number || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, unit_number: e.target.value}})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
                     <div>
                         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
@@ -2612,7 +2589,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={editingAssignment.assignment.purchase_date || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, purchase_date: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentStatus')}</label>
                         <select value={editingAssignment.assignment.status || 'Reserva'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, status: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
@@ -2673,7 +2650,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.unitReference')}</label><input value={assignForm.unit_number} onChange={(e) => setAssignForm({...assignForm, unit_number: e.target.value})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
                     <div>
                         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
@@ -2685,7 +2662,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={assignForm.purchase_date} onChange={(e) => setAssignForm({...assignForm, purchase_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentStatus')}</label>
                         <select value={assignForm.status} onChange={(e) => setAssignForm({...assignForm, status: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
