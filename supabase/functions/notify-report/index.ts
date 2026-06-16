@@ -52,9 +52,14 @@ Deno.serve(async (req) => {
   // Clientes asignados a ese proyecto (cada asignación = una propiedad).
   const { data: cps } = await supabase
     .from("client_projects")
-    .select("unit_number, clients(name,email,preferred_language)")
+    .select("unit_number, clients(name,email,preferred_language,status,is_active)")
     .eq("project_id", projectId);
   const recipients = (cps || [])
+    // Solo clientes ACTIVOS: nunca avisar a DRAFT ni a INACTIVOS.
+    .filter((r) => {
+      const eff = r.clients?.status || (r.clients?.is_active === false ? "inactive" : "active");
+      return eff === "active";
+    })
     .map((r) => ({ name: r.clients?.name || "", email: (r.clients?.email || "").trim(), lang: r.clients?.preferred_language || "es", unit: r.unit_number }))
     .filter((c) => c.email && c.email.includes("@"));
 
@@ -66,6 +71,10 @@ Deno.serve(async (req) => {
   if (!host || !user || !pass) return json({ success: false, error: "transport_not_configured" }, 503);
   const port = Number(Deno.env.get("SMTP_PORT") ?? "465");
   const from = Deno.env.get("MAIL_FROM") ?? "Unreal Studio <no.reply@unrealstudiobali.com>";
+
+  // Anti-spam: List-Unsubscribe + versión texto-plano.
+  const UNSUB = { "List-Unsubscribe": "<mailto:hello@unrealstudiobali.com?subject=unsubscribe>", "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
+  const toText = (h) => String(h || "").replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ").trim();
 
   let sent = 0; const errors = [];
   for (const c of recipients) {
@@ -82,7 +91,7 @@ Deno.serve(async (req) => {
     ].join("");
     const client = new SMTPClient({ connection: { hostname: host, port, tls: port === 465, auth: { username: user, password: pass } } });
     try {
-      await client.send({ from, to: c.email, replyTo: "hello@unrealstudiobali.com", subject, html: brandWrap(subject, inner).trim() });
+      await client.send({ from, to: c.email, replyTo: "hello@unrealstudiobali.com", subject, content: toText(inner) || subject, html: brandWrap(subject, inner).trim(), headers: UNSUB });
       sent++;
     } catch (e) { errors.push(String(e?.message || e)); }
     finally { try { await client.close(); } catch { /* ignore */ } }

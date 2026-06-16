@@ -97,6 +97,17 @@ Deno.serve(async (req) => {
   const port = Number(Deno.env.get("SMTP_PORT") ?? "465");
   const from = Deno.env.get("MAIL_FROM") ?? "Unreal Studio <no.reply@unrealstudiobali.com>";
 
+  // Anti-spam: cabecera List-Unsubscribe (Gmail/Outlook lo premian) + versión
+  // texto-plano (multipart/alternative mejora la entrega a bandeja de entrada).
+  const UNSUB = {
+    "List-Unsubscribe": "<mailto:hello@unrealstudiobali.com?subject=unsubscribe>",
+    "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+  };
+  const toText = (h: string) => String(h || "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&[a-z]+;/g, " ")
+    .replace(/\s+/g, " ").trim();
+
   const client = new SMTPClient({
     connection: { hostname: host, port, tls: port === 465, auth: { username: user, password: pass } },
   });
@@ -106,7 +117,9 @@ Deno.serve(async (req) => {
       to: p.to,
       replyTo: "hello@unrealstudiobali.com",
       subject: p.subject,
+      content: toText(p.html) || p.subject,
       html: brandWrap(p.subject, p.html),
+      headers: UNSUB,
     });
   } catch (e) {
     try { await client.close(); } catch { /* ignore */ }

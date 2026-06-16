@@ -114,6 +114,11 @@ const NotificationsPanel: React.FC = () => {
 
   const unreadCount = items.filter((n) => !n.is_read).length;
   const attentionCount = overdue.length + noProp.length;
+  // El filtro de tipo también controla los bloques de "atención":
+  const showOverdue = typeFilter === 'all' || typeFilter === 'payment_overdue';
+  const showNoProp = typeFilter === 'all' || typeFilter === 'no_property';
+  const showList = typeFilter !== 'payment_overdue' && typeFilter !== 'no_property';
+  const showAttention = (showOverdue && overdue.length > 0) || (showNoProp && noProp.length > 0);
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -132,6 +137,8 @@ const NotificationsPanel: React.FC = () => {
         <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={SELECT_CLS}>
           <option value="all">{t('admin.notif.allTypes')}</option>
           {Object.entries(TYPE_META).map(([k, m]) => <option key={k} value={k}>{t(m.labelKey)}</option>)}
+          <option value="payment_overdue">{t('admin.notif.typePaymentOverdue', { defaultValue: 'Pagos vencidos' })}</option>
+          <option value="no_property">{t('admin.notif.typeNoProperty', { defaultValue: 'Clientes sin propiedad' })}</option>
         </select>
         <select value={order} onChange={(e) => setOrder(e.target.value as any)} className={SELECT_CLS}>
           <option value="recent">{t('admin.notif.orderRecent')}</option>
@@ -144,12 +151,12 @@ const NotificationsPanel: React.FC = () => {
       </div>
 
       {/* Requiere tu atención */}
-      {attentionCount > 0 && (
+      {showAttention && (
         <div className="bg-white rounded-3xl border border-amber-200 p-5 mb-8 shadow-sm">
           <h2 className="text-sm font-black uppercase tracking-widest text-amber-700 mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined text-base">priority_high</span> {t('admin.notif.requiresAttention')}
           </h2>
-          {overdue.length > 0 && (
+          {showOverdue && overdue.length > 0 && (
             <div className="mb-4">
               <p className="text-[11px] font-bold uppercase tracking-widest text-primary/40 mb-2">{t('admin.notif.overduePayments', { count: overdue.length })}</p>
               <ul className="space-y-1.5">
@@ -162,7 +169,7 @@ const NotificationsPanel: React.FC = () => {
               </ul>
             </div>
           )}
-          {noProp.length > 0 && (
+          {showNoProp && noProp.length > 0 && (
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-primary/40 mb-2">{t('admin.notif.clientsNoProperty', { count: noProp.length })}</p>
               <div className="flex flex-wrap gap-2">
@@ -175,8 +182,8 @@ const NotificationsPanel: React.FC = () => {
         </div>
       )}
 
-      {/* Lista */}
-      {loading ? (
+      {/* Lista (oculta si el filtro es un tipo de "atención") */}
+      {showList && (loading ? (
         <div className="flex justify-center py-12"><span className="material-symbols-outlined animate-spin text-3xl text-primary/30">refresh</span></div>
       ) : sorted.length === 0 ? (
         <p className="text-center text-primary/40 py-12">{t('admin.notif.emptyFiltered')}</p>
@@ -219,7 +226,7 @@ const NotificationsPanel: React.FC = () => {
             );
           })}
         </ul>
-      )}
+      ))}
     </div>
   );
 };

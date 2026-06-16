@@ -27,8 +27,10 @@ async function sendMail(msg) {
   if (!host || !user || !pass) throw new Error("SMTP not configured");
   const port = Number(Deno.env.get("SMTP_PORT") ?? "465");
   const from = Deno.env.get("MAIL_FROM") ?? FROM_DEFAULT;
+  const UNSUB = { "List-Unsubscribe": "<mailto:hello@unrealstudiobali.com?subject=unsubscribe>", "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
+  const toText = (h) => String(h || "").replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ").trim();
   const client = new SMTPClient({ connection: { hostname: host, port, tls: port === 465, auth: { username: user, password: pass } } });
-  try { await client.send({ from, to: msg.to, replyTo: "hello@unrealstudiobali.com", subject: msg.subject, html: msg.html }); }
+  try { await client.send({ from, to: msg.to, replyTo: "hello@unrealstudiobali.com", subject: msg.subject, content: toText(msg.html) || msg.subject, html: msg.html, headers: UNSUB }); }
   finally { await client.close(); }
 }
 
