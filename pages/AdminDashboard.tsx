@@ -430,6 +430,21 @@ const AMENITIES_LIST = [
     } catch { alert(t('admin.dash.saveClientError')); } finally { setUploading(false); }
   };
 
+  // Plano por URL (además de subir PDF): pegar un enlace de Drive/PDF. Convierte
+  // los enlaces de Google Drive a /preview para que se abran/incrusten bien.
+  const [floorPlanUrl, setFloorPlanUrl] = useState('');
+  const driveToPreview = (u: string): string => {
+    const m = u.match(/\/file\/d\/([^/?]+)/) || u.match(/[?&]id=([^&]+)/);
+    return m ? `https://drive.google.com/file/d/${m[1]}/preview` : u.trim();
+  };
+  const addFloorPlanUrl = () => {
+    const u = floorPlanUrl.trim();
+    if (!u) return;
+    const norm = u.includes('drive.google.com') ? driveToPreview(u) : u;
+    setCurrentProject((prev) => ({ ...prev, floor_plans: [...(prev.floor_plans || []), norm] }));
+    setFloorPlanUrl('');
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'project_main' | 'project_gallery' | 'blog_main' | 'project_brochure' | 'project_construction_update' | 'project_construction_gallery' | 'project_floor_plans') => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -2082,18 +2097,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
                 <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.projectPlans')}</label>
-                   <div className="flex gap-2 mb-4">
-                       <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                   <div className="flex gap-2 mb-2">
+                       <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`} title={t('admin.props.uploadPdf', { defaultValue: 'Subir PDF' })}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
                            <input type="file" className="hidden" accept=".pdf" onChange={(e) => handleFileUpload(e, 'project_floor_plans')} disabled={uploading} />
                        </label>
+                   </div>
+                   {/* …o pegar un enlace (Google Drive / PDF) */}
+                   <div className="flex gap-2 mb-4">
+                       <input type="url" value={floorPlanUrl} onChange={(e) => setFloorPlanUrl(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addFloorPlanUrl(); } }} placeholder={t('admin.props.planUrlPlaceholder', { defaultValue: 'o pega un enlace (Drive / PDF)…' })} className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:border-primary/30 focus:outline-none" />
+                       <button type="button" onClick={addFloorPlanUrl} className="bg-primary/10 text-primary px-4 rounded-2xl text-sm font-bold hover:bg-primary/20 transition">{t('admin.props.addPlan', { defaultValue: 'Añadir' })}</button>
                    </div>
                    <div className="flex flex-col gap-2">
                        {(currentProject.floor_plans || []).map((pdf, idx) => (
                            <div key={idx} className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border border-gray-100">
                                <div className="flex items-center gap-3 overflow-hidden">
                                    <span className="material-symbols-outlined text-gray-400">picture_as_pdf</span>
-                                   <span className="text-sm font-medium truncate">{pdf.split('/').pop()}</span>
+                                   <span className="text-sm font-medium truncate">{pdf.includes('drive.google.com') ? t('admin.props.planDrive', { defaultValue: 'Plano (Google Drive)' }) : (pdf.split('/').pop() || 'Plano')}</span>
                                </div>
                                <button type="button" onClick={() => removePhoto(pdf, 'floor_plans')} className="p-2 hover:bg-red-50 text-red-500 rounded-xl transition"><span className="material-symbols-outlined">delete</span></button>
                            </div>
