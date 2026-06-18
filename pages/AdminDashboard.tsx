@@ -881,7 +881,7 @@ const handleSaveClient = async (e: React.FormEvent) => {
       const lang = ((currentClient as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
       const _holders = (currentClient as any).holders;
       const _emails = (_holders && _holders.length) ? _holders.map((h: any) => (h.email || '').trim()).filter(Boolean) : emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails });
-      const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: newEmail, emails: _emails, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
+      const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: newEmail, emails: _emails, holders: _holders, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
       alert(r.ok ? t('admin.dash.welcomeSent', { email: (_emails && _emails.length ? _emails.join(', ') : newEmail) }) : t('admin.dash.welcomeError', { error: r.error }));
     }
   } catch (error) {
@@ -901,15 +901,17 @@ const clientPortalUrl = (lang: 'es' | 'en' | 'ro' | 'id') => `https://unrealstud
 const emailsOf = (c: any): string[] => [c?.email, ...((c?.extra_emails) || [])].map((e: string) => (e || '').trim()).filter(Boolean);
 
 // Núcleo de la bienvenida: construye y envía. Sin alerts (lo usa el botón y el auto-envío).
-const sendWelcomeCore = async (args: { name: string; email: string; emails?: string[]; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
+const sendWelcomeCore = async (args: { name: string; email: string; emails?: string[]; holders?: any[]; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
   const userId = getAdminUserId();
   if (!userId) return { ok: false, error: 'session' };
   const et = i18n.getFixedT(args.lang);
-  // Un correo por titular, cada uno con SU propio email de acceso (no el del principal).
+  // Un correo por titular, cada uno con SU propio email de acceso Y SU propio nombre
+  // (independencia total entre titulares — NO el nombre combinado de la pareja).
+  const clientLike = { holders: args.holders, name: args.name };
   const targets = (args.emails && args.emails.length ? args.emails : [args.email]).map((e) => (e || '').trim()).filter(Boolean);
   for (const to of targets) {
     const html = welcomeEmailHtml({
-      firstName: (args.name || '').trim(), // nombre COMPLETO (Andreas lo pidió: "Luis Mestre", no solo "Luis")
+      firstName: holderNameByEmail(clientLike, to), // nombre del titular de ESTE email (no el combinado)
       portalUrl: clientPortalUrl(args.lang),
       email: to,
       tempPassword: args.tempPassword || null,
