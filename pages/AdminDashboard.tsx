@@ -100,7 +100,7 @@ const AMENITIES_LIST = [
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
-  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string }>(null);
+  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string }>(null);
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
   const [booted, setBooted] = useState(false);
@@ -956,8 +956,9 @@ const sendResetEmail = async (client: Client) => {
 // SU propio email de acceso). Si no, se envía el mismo html a todos los seleccionados.
 const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; buildHtml?: (email: string) => string }) => {
   const recipients = (Array.isArray(args.to) ? args.to : [args.to]).map((e) => (e || '').trim()).filter(Boolean);
-  const html0 = args.buildHtml ? args.buildHtml(recipients[0] || '') : args.html;
-  setEmailPreview({ recipients, selected: [...recipients], subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml });
+  const first = recipients[0] || '';
+  const html0 = args.buildHtml ? args.buildHtml(first) : args.html;
+  setEmailPreview({ recipients, selected: [...recipients], previewEmail: first, subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml });
 };
 const sendPreviewedEmail = async () => {
   if (!emailPreview || emailPreview.selected.length === 0) return;
@@ -2488,11 +2489,21 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
             {emailPreview.recipients.map((em) => (
               <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${emailPreview.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
-                <input type="checkbox" checked={emailPreview.selected.includes(em)} onChange={() => setEmailPreview((p) => { if (!p) return p; const selected = p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em]; const html = p.buildHtml ? p.buildHtml(selected[0] || em) : p.html; return { ...p, selected, html }; })} className="rounded" />
+                <input type="checkbox" checked={emailPreview.selected.includes(em)} onChange={() => setEmailPreview((p) => { if (!p) return p; const selected = p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em]; return { ...p, selected }; })} className="rounded" />
                 {em}
               </label>
             ))}
           </div>
+          {emailPreview.buildHtml && emailPreview.recipients.length > 1 && (
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewViewAs', { defaultValue: 'Ver como' })}:</span>
+              {emailPreview.recipients.map((em) => (
+                <button key={em} type="button" onClick={() => setEmailPreview((p) => p && p.buildHtml ? { ...p, previewEmail: em, html: p.buildHtml(em) } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${emailPreview.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-primary/40'}`}>
+                  {em}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
