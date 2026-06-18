@@ -484,7 +484,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               </div>
               <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
             </div>
-            <div className="overflow-y-auto p-5 bg-gray-50 flex-1">
+            <div className="overflow-y-auto p-5 bg-[#F3E5D8] flex-1">
+              <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>
               <div className="bg-white rounded-2xl p-6 shadow-sm" dangerouslySetInnerHTML={{ __html: recibiSend.buildBody(recibiSend.previewEmail) }} />
             </div>
             <div className="flex gap-2 p-4 border-t">
