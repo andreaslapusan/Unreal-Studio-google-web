@@ -29,12 +29,25 @@ interface OverduePayment { id: string; label: string; amount: number; currency: 
 interface ConstructionAlert { project_id: string; project_name: string; completion_percent: number | null; construction_update_date: string | null; has_report: boolean; days_since: number | null; }
 interface ClientLite { id: string; name: string; email: string | null; }
 
-const INFO_TYPES = new Set(['client_login', 'late_checkin', 'generic']);
+interface PendingVacation { id: string; employee_name: string | null; start_date: string; end_date: string; type: string | null; note: string | null; }
+
+// Tipos que van al feed de ACTIVIDAD (info). vacation_request es solo log: la TAREA
+// de aprobar se calcula de employee_vacations (pendientes), no de la notificación.
+const INFO_TYPES = new Set(['client_login', 'late_checkin', 'generic', 'vacation_request']);
 const INFO_META: Record<string, { icon: string; labelKey: string; def: string; color: string }> = {
   client_login: { icon: 'login', labelKey: 'admin.notif.typeClientLogin', def: 'Acceso de cliente', color: 'text-blue-600 bg-blue-50' },
   late_checkin: { icon: 'schedule', labelKey: 'admin.notif.typeLateCheckin', def: 'Fichaje tarde', color: 'text-orange-600 bg-orange-50' },
+  vacation_request: { icon: 'beach_access', labelKey: 'admin.notif.typeVacation', def: 'Solicitud de vacaciones', color: 'text-amber-600 bg-amber-50' },
   generic: { icon: 'notifications', labelKey: 'admin.notif.typeGeneric', def: 'Aviso', color: 'text-gray-600 bg-gray-100' },
 };
+const ACT_FILTERS: { value: string; def: string }[] = [
+  { value: 'all', def: 'Todo' },
+  { value: 'client_login', def: 'Accesos de clientes' },
+  { value: 'late_checkin', def: 'Fichajes tarde' },
+  { value: 'vacation_request', def: 'Solicitudes de vacaciones' },
+  { value: 'generic', def: 'Avisos' },
+];
+const SELECT_CLS = 'rounded-lg border border-gray-200 py-1.5 text-sm bg-white';
 
 function fmtWhen(iso: string): string {
   try { return new Date(iso).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch { return iso; }
@@ -52,7 +65,12 @@ const NotificationsPanel: React.FC = () => {
   const [overdue, setOverdue] = useState<OverduePayment[]>([]);
   const [missingReports, setMissingReports] = useState<ConstructionAlert[]>([]);
   const [staleProps, setStaleProps] = useState<ConstructionAlert[]>([]);
+  const [pendingVacs, setPendingVacs] = useState<PendingVacation[]>([]);
   const [noProp, setNoProp] = useState<ClientLite[]>([]);
+  // Filtros/orden del feed de Actividad.
+  const [actType, setActType] = useState<string>('all');
+  const [actSearch, setActSearch] = useState('');
+  const [actOrder, setActOrder] = useState<'recent' | 'old'>('recent');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -66,6 +84,7 @@ const NotificationsPanel: React.FC = () => {
     setOverdue((p.overdue_payments as OverduePayment[]) ?? []);
     setStaleProps((p.stale_properties as ConstructionAlert[]) ?? []);
     setMissingReports((p.missing_reports as ConstructionAlert[]) ?? []);
+    setPendingVacs((p.pending_vacations as PendingVacation[]) ?? []);
     setNoProp((p.clients_no_property as ClientLite[]) ?? []);
     setLoading(false);
   }, []);
@@ -80,34 +99,27 @@ const NotificationsPanel: React.FC = () => {
 
   // Eventos abiertos por tipo (sin resolver).
   const claims = useMemo(() => items.filter((n) => n.type === 'payment_claim' && !n.is_read), [items]);
-  const vacs = useMemo(() => items.filter((n) => n.type === 'vacation_request' && !n.is_read), [items]);
-  const activity = useMemo(() => items.filter((n) => INFO_TYPES.has(n.type)), [items]);
 
-  // Actividad agrupada por día y tipo ("5 clientes entraron al portal").
-  const activityGroups = useMemo(() => {
-    const dayKey = (iso: string) => { try { return new Date(iso).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short' }); } catch { return iso.slice(0, 10); } };
-    const map = new Map<string, { type: string; day: string; count: number; last: string }>();
-    const singles: Notif[] = [];
-    for (const n of activity) {
-      if (n.type === 'client_login' || n.type === 'late_checkin') {
-        const k = `${n.type}|${dayKey(n.created_at)}`;
-        const g = map.get(k) || { type: n.type, day: dayKey(n.created_at), count: 0, last: n.created_at };
-        g.count++; if (n.created_at > g.last) g.last = n.created_at; map.set(k, g);
-      } else singles.push(n);
-    }
-    return { agg: Array.from(map.values()).sort((a, b) => b.last.localeCompare(a.last)), singles };
-  }, [activity]);
+  // Feed de Actividad: detallado, filtrable y ordenable (quién / qué / cuándo).
+  const activity = useMemo(() => {
+    let arr = items.filter((n) => INFO_TYPES.has(n.type));
+    if (actType !== 'all') arr = arr.filter((n) => n.type === actType);
+    const q = actSearch.trim().toLowerCase();
+    if (q) arr = arr.filter((n) => `${n.title} ${n.body || ''} ${n.actor_name || ''} ${n.actor_email || ''}`.toLowerCase().includes(q));
+    arr = [...arr].sort((a, b) => actOrder === 'recent' ? b.created_at.localeCompare(a.created_at) : a.created_at.localeCompare(b.created_at));
+    return arr;
+  }, [items, actType, actSearch, actOrder]);
 
   const obraCount = missingReports.length + staleProps.length;
   const cobrosCount = overdue.length + claims.length;
-  const equipoCount = vacs.length; // clients_no_property es baja prioridad, no cuenta
+  const equipoCount = pendingVacs.length; // clients_no_property es baja prioridad, no cuenta
   const taskCount = cobrosCount + obraCount + equipoCount;
 
   // Resumen "empieza tu día"
   const summaryParts: string[] = [];
   if (overdue.length) summaryParts.push(t('admin.notif.sumOverdue', { defaultValue: '{{n}} por cobrar', n: overdue.length }));
   if (claims.length) summaryParts.push(t('admin.notif.sumClaims', { defaultValue: '{{n}} por verificar', n: claims.length }));
-  if (vacs.length) summaryParts.push(t('admin.notif.sumVacs', { defaultValue: '{{n}} vacaciones', n: vacs.length }));
+  if (pendingVacs.length) summaryParts.push(t('admin.notif.sumVacs', { defaultValue: '{{n}} vacaciones', n: pendingVacs.length }));
   if (obraCount) summaryParts.push(t('admin.notif.sumObra', { defaultValue: '{{n}} obra sin actualizar', n: obraCount }));
 
   const Chip: React.FC<{ n: number }> = ({ n }) => n > 0 ? <span className="text-[10px] font-black bg-primary/10 text-primary rounded-full px-2 py-0.5">{n}</span> : null;
@@ -217,20 +229,18 @@ const NotificationsPanel: React.FC = () => {
               </div>
             )}
 
-            {/* EQUIPO */}
-            {(vacs.length > 0 || noProp.length > 0) && (
+            {/* EQUIPO — vacaciones PENDIENTES (calculadas de employee_vacations; se
+                limpian solas al aprobar/rechazar en Calendario). */}
+            {(pendingVacs.length > 0 || noProp.length > 0) && (
               <div>
                 {groupTitle('groups', t('admin.notif.grpEquipo', { defaultValue: 'Equipo' }), equipoCount)}
                 <ul className="space-y-2">
-                  {vacs.map((n) => (
-                    <Row key={n.id} icon="beach_access" color="text-amber-600 bg-amber-50"
-                      actions={<>
-                        <PrimaryBtn onClick={() => navigate('/admin?view=calendar')} label={t('admin.notif.actApprove', { defaultValue: 'Aprobar' })} />
-                        <AsyncButton onClick={() => resolve(n.id)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">{t('admin.notif.done', { defaultValue: 'Hecho' })}</AsyncButton>
-                      </>}>
-                      <p className="font-bold text-primary text-sm">{n.title}</p>
-                      {n.body && <p className="text-sm text-primary/70 mt-0.5">{n.body}</p>}
-                      <p className="text-[11px] text-primary/40 mt-1">{fmtWhen(n.created_at)}</p>
+                  {pendingVacs.map((v) => (
+                    <Row key={v.id} icon="beach_access" color="text-amber-600 bg-amber-50"
+                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=calendar')} label={t('admin.notif.actApprove', { defaultValue: 'Aprobar / Rechazar' })} />}>
+                      <p className="font-bold text-primary text-sm">{v.employee_name || '—'}</p>
+                      <p className="text-sm text-primary/70">{new Date(v.start_date).toLocaleDateString(uiLocale())} → {new Date(v.end_date).toLocaleDateString(uiLocale())}{v.type ? ` · ${v.type}` : ''}</p>
+                      {v.note && <p className="text-[12px] text-primary/50 mt-0.5">{v.note}</p>}
                     </Row>
                   ))}
                 </ul>
@@ -249,41 +259,44 @@ const NotificationsPanel: React.FC = () => {
           </div>
         )
       ) : (
-        // ACTIVIDAD — agrupada por día (logins/fichajes) + genéricas sueltas
-        activity.length === 0 ? (
-          <p className="text-center text-primary/40 py-12">{t('admin.notif.noActivity', { defaultValue: 'Sin actividad reciente.' })}</p>
-        ) : (
-          <ul className="space-y-2">
-            {activityGroups.agg.map((g) => {
-              const m = INFO_META[g.type] || INFO_META.generic;
-              const label = g.type === 'client_login'
-                ? t('admin.notif.aggLogins', { defaultValue: '{{n}} accesos de clientes al portal', n: g.count })
-                : t('admin.notif.aggLate', { defaultValue: '{{n}} fichajes tarde', n: g.count });
-              return (
-                <li key={`${g.type}-${g.day}`} className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white/60 p-3.5">
-                  <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.color}`}><span className="material-symbols-outlined text-[18px]">{m.icon}</span></span>
-                  <div className="min-w-0 flex-1">
-                    <span className="font-semibold text-primary text-sm">{g.count > 1 ? label : ''}</span>
-                    {g.count === 1 && <span className="font-semibold text-primary text-sm">{t(m.labelKey, { defaultValue: m.def })}</span>}
-                  </div>
-                  <span className="text-[11px] text-primary/40 shrink-0">{g.day}</span>
-                </li>
-              );
-            })}
-            {activityGroups.singles.map((n) => {
-              const m = INFO_META[n.type] || INFO_META.generic;
-              return (
-                <li key={n.id} className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-white/60 p-3.5">
-                  <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.color}`}><span className="material-symbols-outlined text-[18px]">{m.icon}</span></span>
-                  <div className="min-w-0 flex-1">
-                    <span className="font-semibold text-primary text-sm">{n.title}</span>
-                    {n.body && <p className="text-sm text-primary/60 mt-0.5">{n.body}</p>}
-                    <p className="text-[11px] text-primary/40 mt-1">{fmtWhen(n.created_at)}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+        // ACTIVIDAD — log detallado, filtrable y ordenable (quién / qué / cuándo)
+        <>
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <select value={actType} onChange={(e) => setActType(e.target.value)} className={SELECT_CLS}>
+              {ACT_FILTERS.map((f) => <option key={f.value} value={f.value}>{f.value === 'all' ? t('admin.notif.allTypes', { defaultValue: 'Todo' }) : t(`admin.notif.f_${f.value}`, { defaultValue: f.def })}</option>)}
+            </select>
+            <select value={actOrder} onChange={(e) => setActOrder(e.target.value as any)} className={SELECT_CLS}>
+              <option value="recent">{t('admin.notif.orderRecent', { defaultValue: 'Más recientes' })}</option>
+              <option value="old">{t('admin.notif.orderOld', { defaultValue: 'Más antiguas' })}</option>
+            </select>
+            <input value={actSearch} onChange={(e) => setActSearch(e.target.value)} placeholder={t('admin.notif.searchActor', { defaultValue: 'Buscar por nombre…' })} className="rounded-lg border border-gray-200 py-1.5 px-3 text-sm bg-white flex-1 min-w-[160px]" />
+            <span className="text-xs text-primary/40 ml-auto">{t('admin.notif.notifCount', { count: activity.length })}</span>
+          </div>
+          {activity.length === 0 ? (
+            <p className="text-center text-primary/40 py-12">{t('admin.notif.noActivity', { defaultValue: 'Sin actividad reciente.' })}</p>
+          ) : (
+            <ul className="space-y-2">
+              {activity.map((n) => {
+                const m = INFO_META[n.type] || INFO_META.generic;
+                const who = n.actor_name || n.title;
+                return (
+                  <li key={n.id} className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-white/60 p-3.5">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.color}`}><span className="material-symbols-outlined text-[18px]">{m.icon}</span></span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-primary text-sm">{who}</span>
+                        <span className="text-[10px] uppercase tracking-widest text-primary/30">{t(m.labelKey, { defaultValue: m.def })}</span>
+                      </div>
+                      {n.body && <p className="text-sm text-primary/60 mt-0.5">{n.body}</p>}
+                      {n.actor_email && <p className="text-[11px] text-primary/40">{n.actor_email}</p>}
+                    </div>
+                    <span className="text-[11px] text-primary/40 shrink-0 whitespace-nowrap">{fmtWhen(n.created_at)}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </>
         )
       )}
     </div>
