@@ -47,6 +47,7 @@ interface Props {
   clientName: string;
   clientEmail: string | null;
   clientExtraEmails?: string[] | null;
+  clientHolders?: { name?: string; email?: string }[] | null;
   adminUserId: string;
   brand?: { logo?: string; stamp?: string; commercial_email?: string; phone?: string };
   adminSignature?: string;
@@ -78,7 +79,7 @@ const grp = (n: number) => (n ? n.toLocaleString('es-ES', { useGrouping: 'always
 const parseNum = (s: string) => Number(String(s).replace(/\D/g, '')) || 0;
 
 
-const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, clientExtraEmails, adminUserId, brand, adminSignature, clientLang, filterName, filterUnit, onClose }) => {
+const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, clientExtraEmails, clientHolders, adminUserId, brand, adminSignature, clientLang, filterName, filterUnit, onClose }) => {
   const { t } = useTranslation();
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,6 +90,23 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     for_payment: string; place: string; date: string; dueDate?: string; sending: boolean; displayNo: string;
     signed?: boolean; kwitansiId?: string;
   }>(null);
+  // Pantalla intermedia de envío del recibí: preview + selección de destinatarios.
+  // Cada titular recibe un correo SEPARADO con SU nombre (Andreas: siempre mails
+  // separados cuando hay más de un usuario).
+  const [recibiSend, setRecibiSend] = useState<null | {
+    recipients: string[]; selected: string[]; previewEmail: string;
+    no: string; subject: string; kwitansiId: string; loc: string;
+    buildBody: (email: string) => string; sending: boolean;
+  }>(null);
+  // Nombre del titular concreto por su email (saludo personalizado); fallback al nombre completo de la ficha.
+  const holderNameByEmail = (em: string): string => {
+    const target = (em || '').trim().toLowerCase();
+    if (target && Array.isArray(clientHolders)) {
+      const m = clientHolders.find((h) => (h?.email || '').trim().toLowerCase() === target);
+      if (m && (m.name || '').trim()) return (m.name || '').trim();
+    }
+    return (clientName || '').trim();
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -221,11 +239,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     setKw({ ...kw, sending: false, signed: true, kwitansiId: created.id });
   };
 
-  // Paso 3: ENVIAR al cliente por email (solo si ya está firmado).
-  const sendKwitansi = async () => {
+  // Paso 3: pulsar "Enviar a cliente(s)" → abre la pantalla intermedia (preview +
+  // selección de destinatarios). El envío real ocurre en confirmSendKwitansi.
+  const sendKwitansi = () => {
     if (!kw?.kwitansiId) return;
     if (!clientEmail) { alert(t('admin.pay.clientNoEmail')); return; }
-    setKw({ ...kw, sending: true });
     const no = kw.displayNo;
     const loc = clientLang || 'es';
     const et = i18n.getFixedT(loc); // email en el idioma del CLIENTE
@@ -233,10 +251,10 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     const dueStr = kwPay?.due_date ? new Date(kwPay.due_date).toLocaleDateString(loc) : '';
     const paidStr = kw.date ? new Date(kw.date).toLocaleDateString(loc) : '';
     const fig = formatFigure(kw.amount, kw.currency);
-    const firstName = (clientName || '').trim(); // nombre COMPLETO (Andreas: nunca truncar a la 1ª palabra)
-    const body = `
+    // Cuerpo PERSONALIZADO por destinatario (saludo con SU nombre).
+    const buildBody = (em: string) => `
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:#3F2305">${et('emails.recibi.title')}</h1>
-      <p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#3F2305">${et('emails.recibi.hi', { name: firstName })}</p>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#3F2305">${et('emails.recibi.hi', { name: holderNameByEmail(em) })}</p>
       <table style="width:100%;font-size:14px;line-height:1.9;color:#3F2305;margin:0 0 16px">
         <tr><td style="color:rgba(63,35,5,.55);width:160px">${et('emails.recibi.concept')}</td><td style="font-weight:700">${kw.for_payment}</td></tr>
         <tr><td style="color:rgba(63,35,5,.55)">${et('emails.recibi.amountReceived')}</td><td style="font-weight:700">${fig}</td></tr>
@@ -246,20 +264,26 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       </table>
       <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">${et('emails.recibi.downloadInstruction')}</p>
       <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.recibi.cta')}</a></p>`;
-    const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-      body: {
-        adminUserId, to: [clientEmail, ...(clientExtraEmails || [])].filter(Boolean), kwitansiId: kw.kwitansiId, lang: loc,
-        subject: et('emails.recibi.subject', { no }),
-        html: body,
-      },
-    });
-    setKw((cur) => cur ? { ...cur, sending: false } : cur);
-    if (sErr || !sent?.success) {
-      const msg = sent?.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no }) : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
-      alert(msg); return;
+    const recipients = [clientEmail, ...(clientExtraEmails || [])].map((e) => (e || '').trim()).filter(Boolean);
+    setRecibiSend({ recipients, selected: [...recipients], previewEmail: recipients[0] || '', no, subject: et('emails.recibi.subject', { no }), kwitansiId: kw.kwitansiId, loc, buildBody, sending: false });
+  };
+
+  // Envío real: un correo SEPARADO por cada destinatario seleccionado, con su nombre.
+  const confirmSendKwitansi = async () => {
+    if (!recibiSend || recibiSend.selected.length === 0) return;
+    const rs = recibiSend;
+    setRecibiSend((p) => p ? { ...p, sending: true } : p);
+    for (const to of rs.selected) {
+      const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
+        body: { adminUserId, to, kwitansiId: rs.kwitansiId, lang: rs.loc, subject: rs.subject, html: rs.buildBody(to) },
+      });
+      if (sErr || !sent?.success) {
+        const msg = sent?.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no: rs.no }) : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
+        setRecibiSend((p) => p ? { ...p, sending: false } : p); alert(msg); return;
+      }
     }
-    alert(t('admin.pay.kwitansiSent', { no, email: clientEmail }));
-    setKw(null); await load();
+    alert(t('admin.pay.kwitansiSent', { no: rs.no, email: rs.selected.join(', ') }));
+    setRecibiSend(null); setKw(null); await load();
   };
 
   return (
@@ -424,6 +448,48 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                 </div>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Pantalla intermedia de envío del recibí: preview + selección de destinatarios.
+          Cada titular recibe un correo SEPARADO con su nombre. */}
+      {recibiSend && (
+        <div className="fixed inset-0 z-[170] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget && !recibiSend.sending) setRecibiSend(null); }}>
+          <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl max-h-[88vh] flex flex-col overflow-hidden">
+            <div className="flex items-start justify-between gap-3 p-5 border-b">
+              <div className="min-w-0">
+                <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.pay.kwitansiSendTitle', { defaultValue: 'Enviar recibí al cliente' })}</h3>
+                <p className="text-xs text-gray-400 mt-0.5 truncate">{recibiSend.subject}</p>
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
+                  {recibiSend.recipients.map((em) => (
+                    <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${recibiSend.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                      <input type="checkbox" checked={recibiSend.selected.includes(em)} onChange={() => setRecibiSend((p) => { if (!p) return p; const selected = p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em]; return { ...p, selected }; })} className="rounded" />
+                      {em}
+                    </label>
+                  ))}
+                </div>
+                {recibiSend.recipients.length > 1 && (
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewViewAs', { defaultValue: 'Ver como' })}:</span>
+                    {recibiSend.recipients.map((em) => (
+                      <button key={em} type="button" onClick={() => setRecibiSend((p) => p ? { ...p, previewEmail: em } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${recibiSend.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-primary/40'}`}>
+                        {em}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
+            </div>
+            <div className="overflow-y-auto p-5 bg-gray-50 flex-1">
+              <div className="bg-white rounded-2xl p-6 shadow-sm" dangerouslySetInnerHTML={{ __html: recibiSend.buildBody(recibiSend.previewEmail) }} />
+            </div>
+            <div className="flex gap-2 p-4 border-t">
+              <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
+              <button onClick={() => void confirmSendKwitansi()} disabled={recibiSend.sending || recibiSend.selected.length === 0} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{recibiSend.sending ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> {t('admin.adminDash.savingEllipsis', { defaultValue: 'Enviando…' })}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })} ({recibiSend.selected.length})</>}</button>
+            </div>
           </div>
         </div>
       )}

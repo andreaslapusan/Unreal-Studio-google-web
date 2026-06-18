@@ -1012,16 +1012,16 @@ const sendReminderEmail = async (client: Client) => {
   const daysLine = d > 0 ? et('emails.reminder.daysLeft', { n }) : d === 0 ? et('emails.reminder.dueToday') : et('emails.reminder.daysOverdue', { n });
   const dueStr = new Date(target.due_date + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: 'long', year: 'numeric' });
   const BROWN = '#3F2305';
-  const html = `
+  const buildHtml = (em: string) => `
     <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:${BROWN}">${subject}</h1>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.reminder.hi', { name: dedupeAmpNames(client.name) })}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.reminder.hi', { name: holderNameByEmail(client, em) })}</p>
     <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${lead}</p>
     <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.reminder.paymentFor', { project: target.project_name, label: target.label || '' })}</p>
     <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${et('emails.reminder.deadlineLabel')} <b>${dueStr}</b></p>
     <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine}</p>
     <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.reminder.recommendation')}</p>
     <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.reminder.cta')}</a></p>`;
-  openEmailPreview({ to: emailsOf(client), subject, html, sentMsg: t('admin.dash.reminderSent', { email }), userId, lang });
+  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reminderSent', { email }), userId, lang, buildHtml });
 };
 
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
@@ -1039,14 +1039,14 @@ const sendReportEmail = async (client: Client) => {
   const BROWN = '#3F2305';
   const cp = projs[0]; // preview/envío del primer proyecto (la mayoría tiene 1)
   const subject = et('emails.report.subject', { project: cp.project_name });
-  const html = [
+  const buildHtml = (em: string) => [
     `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
-    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: dedupeAmpNames(client.name) })}</p>`,
+    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: holderNameByEmail(client, em) })}</p>`,
     `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
     cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
     `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
   ].join('');
-  openEmailPreview({ to: emailsOf(client), subject, html, sentMsg: t('admin.dash.reportSent', { email, n: 1 }), userId, lang });
+  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reportSent', { email, n: 1 }), userId, lang, buildHtml });
 };
 
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
@@ -1065,25 +1065,27 @@ const sendCalendarEmail = async (client: Client) => {
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
   const fmtd = (s: string | null) => s ? new Date(s + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
   const recv = (p: any) => p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0);
-  const th = `style="text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:rgba(63,35,5,.5);padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.15)"`;
-  const td = `style="font-size:12px;color:${BROWN};padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.08)"`;
-  let body = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${et('emails.calendar.subject')}</h1>`;
-  body += `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.calendar.hi', { name: dedupeAmpNames(client.name) })}</p>`;
-  body += `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${et('emails.calendar.intro')}</p>`;
+  const th = `style="text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:rgba(63,35,5,.5);padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.15);white-space:nowrap"`;
+  const td = `style="font-size:12px;color:${BROWN};padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap"`;
+  const h1 = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${et('emails.calendar.subject')}</h1>`;
+  const intro = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${et('emails.calendar.intro')}</p>`;
+  let tables = '';
   for (const u of units) {
     let tA = 0, tR = 0;
-    body += `<h2 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:${BROWN}">${u.project_name || ''}${u.unit_number ? ' · ' + u.unit_number : ''}</h2>`;
+    tables += `<h2 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:${BROWN}">${u.project_name || ''}${u.unit_number ? ' · ' + u.unit_number : ''}</h2>`;
     const fmtPaid = (s: string | null) => s ? new Date(s).toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
-    body += `<div style="width:100%;overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-bottom:6px;table-layout:fixed"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
+    tables += `<div style="width:100%;overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
     for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
       const balCol = bal > 0 ? '#c0392b' : '#15803d';
-      body += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
+      tables += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
     const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
-    body += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 5px;border-bottom:1px solid rgba(63,35,5,.08);font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
+    tables += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
   }
-  body += `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
-  // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up).
-  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: body, sentMsg: t('admin.dash.calendarSent', { email }), userId, lang });
+  const cta = `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
+  const buildHtml = (em: string) => h1 + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + intro + tables + cta;
+  // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up). Cada
+  // titular recibe un correo SEPARADO con su nombre.
+  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.calendarSent', { email }), userId, lang, buildHtml });
 };
 
 const handleDeleteClient = async (id: string) => {
@@ -2761,6 +2763,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     clientName={paymentsClient.name}
     clientEmail={paymentsClient.email || null}
     clientExtraEmails={(paymentsClient as any).extra_emails || []}
+    clientHolders={(paymentsClient as any).holders || []}
     adminUserId={getAdminUserId() as string}
     brand={(config as any).brand || {}}
     adminSignature={mySignature}

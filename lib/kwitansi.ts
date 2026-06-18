@@ -179,7 +179,7 @@ export function renderKwitansiHtml(d: KwitansiData): string {
 
     <table style="width:100%;margin-top:30px"><tr>
       <td class="kwfig" style="vertical-align:bottom;width:45%">
-        <div style="display:inline-block;background:#F3E5D8;border:1.5px solid #3F2305;border-radius:10px;padding:10px 18px;font-size:18px;font-weight:800;letter-spacing:.5px">${esc(figure)}</div>
+        <div style="display:inline-block;background:#F3E5D8;border:1.5px solid #3F2305;border-radius:10px;padding:10px 18px;font-size:17px;font-weight:800;letter-spacing:.3px;white-space:nowrap">${esc(figure)}</div>
       </td>
       <td class="kwsign" style="text-align:center;vertical-align:bottom">
         <div style="font-size:13px;color:rgba(63,35,5,.7);margin-bottom:2px">${esc(place)}${dateStr ? ', ' + esc(dateStr) : ''}</div>
