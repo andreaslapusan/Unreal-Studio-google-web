@@ -111,9 +111,7 @@ const Footer: React.FC = () => {
           <a className="hover:text-primary transition flex items-center gap-1" href="/cliente">
             <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
           </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/agencias/login">
-            <span className="material-symbols-outlined text-xs">person_add</span> {t('footer.agencies')}
-          </a>
+          {/* Agencias OCULTO temporalmente de la web pública (Andreas, 2026-06-18) */}
           <a className="hover:text-primary transition flex items-center gap-1" href="/empleados">
             <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
           </a>
