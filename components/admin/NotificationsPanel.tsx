@@ -297,7 +297,6 @@ const NotificationsPanel: React.FC = () => {
             </ul>
           )}
         </>
-        )
       )}
     </div>
   );
