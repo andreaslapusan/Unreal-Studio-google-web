@@ -50,7 +50,8 @@ const NotificationsPanel: React.FC = () => {
   const [items, setItems] = useState<Notif[]>([]);
   const [loading, setLoading] = useState(true);
   const [overdue, setOverdue] = useState<OverduePayment[]>([]);
-  const [construction, setConstruction] = useState<ConstructionAlert[]>([]);
+  const [missingReports, setMissingReports] = useState<ConstructionAlert[]>([]);
+  const [staleProps, setStaleProps] = useState<ConstructionAlert[]>([]);
   const [noProp, setNoProp] = useState<ClientLite[]>([]);
 
   const load = useCallback(async () => {
@@ -63,7 +64,8 @@ const NotificationsPanel: React.FC = () => {
     setItems((notifs as Notif[]) ?? []);
     const p = (panel as any) ?? {};
     setOverdue((p.overdue_payments as OverduePayment[]) ?? []);
-    setConstruction((p.construction_alerts as ConstructionAlert[]) ?? []);
+    setStaleProps((p.stale_properties as ConstructionAlert[]) ?? []);
+    setMissingReports((p.missing_reports as ConstructionAlert[]) ?? []);
     setNoProp((p.clients_no_property as ClientLite[]) ?? []);
     setLoading(false);
   }, []);
@@ -81,8 +83,23 @@ const NotificationsPanel: React.FC = () => {
   const vacs = useMemo(() => items.filter((n) => n.type === 'vacation_request' && !n.is_read), [items]);
   const activity = useMemo(() => items.filter((n) => INFO_TYPES.has(n.type)), [items]);
 
+  // Actividad agrupada por día y tipo ("5 clientes entraron al portal").
+  const activityGroups = useMemo(() => {
+    const dayKey = (iso: string) => { try { return new Date(iso).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short' }); } catch { return iso.slice(0, 10); } };
+    const map = new Map<string, { type: string; day: string; count: number; last: string }>();
+    const singles: Notif[] = [];
+    for (const n of activity) {
+      if (n.type === 'client_login' || n.type === 'late_checkin') {
+        const k = `${n.type}|${dayKey(n.created_at)}`;
+        const g = map.get(k) || { type: n.type, day: dayKey(n.created_at), count: 0, last: n.created_at };
+        g.count++; if (n.created_at > g.last) g.last = n.created_at; map.set(k, g);
+      } else singles.push(n);
+    }
+    return { agg: Array.from(map.values()).sort((a, b) => b.last.localeCompare(a.last)), singles };
+  }, [activity]);
+
+  const obraCount = missingReports.length + staleProps.length;
   const cobrosCount = overdue.length + claims.length;
-  const obraCount = construction.length;
   const equipoCount = vacs.length; // clients_no_property es baja prioridad, no cuenta
   const taskCount = cobrosCount + obraCount + equipoCount;
 
@@ -91,7 +108,7 @@ const NotificationsPanel: React.FC = () => {
   if (overdue.length) summaryParts.push(t('admin.notif.sumOverdue', { defaultValue: '{{n}} por cobrar', n: overdue.length }));
   if (claims.length) summaryParts.push(t('admin.notif.sumClaims', { defaultValue: '{{n}} por verificar', n: claims.length }));
   if (vacs.length) summaryParts.push(t('admin.notif.sumVacs', { defaultValue: '{{n}} vacaciones', n: vacs.length }));
-  if (construction.length) summaryParts.push(t('admin.notif.sumObra', { defaultValue: '{{n}} obra sin actualizar', n: construction.length }));
+  if (obraCount) summaryParts.push(t('admin.notif.sumObra', { defaultValue: '{{n}} obra sin actualizar', n: obraCount }));
 
   const Chip: React.FC<{ n: number }> = ({ n }) => n > 0 ? <span className="text-[10px] font-black bg-primary/10 text-primary rounded-full px-2 py-0.5">{n}</span> : null;
   const groupTitle = (icon: string, title: string, n: number) => (
@@ -172,19 +189,26 @@ const NotificationsPanel: React.FC = () => {
               </div>
             )}
 
-            {/* OBRA */}
+            {/* OBRA — estancada (>30d) primero, luego reporte faltante */}
             {obraCount > 0 && (
               <div>
                 {groupTitle('construction', t('admin.notif.grpObra', { defaultValue: 'Obra' }), obraCount)}
                 <ul className="space-y-2">
-                  {construction.map((c) => (
-                    <Row key={c.project_id} icon="construction" color="text-amber-700 bg-amber-50"
-                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=projects')} label={t('admin.notif.actUpdateObra', { defaultValue: 'Actualizar obra' })} />}>
+                  {staleProps.map((c) => (
+                    <Row key={`st-${c.project_id}`} icon="priority_high" color="text-red-600 bg-red-50"
+                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=projects')} label={t('admin.notif.actUpdateObra', { defaultValue: 'Actualizar estado' })} />}>
+                      <p className="font-bold text-primary text-sm">{c.project_name}</p>
+                      <p className="text-sm text-primary/70">{t('admin.notif.obraStale', { defaultValue: 'Obra sin novedades hace {{n}} días', n: c.days_since })}{typeof c.completion_percent === 'number' ? ` · ${c.completion_percent}%` : ''}</p>
+                    </Row>
+                  ))}
+                  {missingReports.map((c) => (
+                    <Row key={`mr-${c.project_id}`} icon="construction" color="text-amber-700 bg-amber-50"
+                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=projects')} label={t('admin.notif.actUploadReport', { defaultValue: 'Subir reporte' })} />}>
                       <p className="font-bold text-primary text-sm">{c.project_name}</p>
                       <p className="text-sm text-primary/70">
                         {c.days_since == null
                           ? t('admin.notif.obraNever', { defaultValue: 'Nunca se ha subido reporte de obra' })
-                          : t('admin.notif.obraStale', { defaultValue: 'Último reporte hace {{n}} días', n: c.days_since })}
+                          : t('admin.notif.obraMissing', { defaultValue: 'Sin reporte nuevo hace {{n}} días', n: c.days_since })}
                         {typeof c.completion_percent === 'number' ? ` · ${c.completion_percent}%` : ''}
                       </p>
                     </Row>
@@ -225,21 +249,34 @@ const NotificationsPanel: React.FC = () => {
           </div>
         )
       ) : (
-        // ACTIVIDAD
+        // ACTIVIDAD — agrupada por día (logins/fichajes) + genéricas sueltas
         activity.length === 0 ? (
           <p className="text-center text-primary/40 py-12">{t('admin.notif.noActivity', { defaultValue: 'Sin actividad reciente.' })}</p>
         ) : (
           <ul className="space-y-2">
-            {activity.map((n) => {
+            {activityGroups.agg.map((g) => {
+              const m = INFO_META[g.type] || INFO_META.generic;
+              const label = g.type === 'client_login'
+                ? t('admin.notif.aggLogins', { defaultValue: '{{n}} accesos de clientes al portal', n: g.count })
+                : t('admin.notif.aggLate', { defaultValue: '{{n}} fichajes tarde', n: g.count });
+              return (
+                <li key={`${g.type}-${g.day}`} className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white/60 p-3.5">
+                  <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.color}`}><span className="material-symbols-outlined text-[18px]">{m.icon}</span></span>
+                  <div className="min-w-0 flex-1">
+                    <span className="font-semibold text-primary text-sm">{g.count > 1 ? label : ''}</span>
+                    {g.count === 1 && <span className="font-semibold text-primary text-sm">{t(m.labelKey, { defaultValue: m.def })}</span>}
+                  </div>
+                  <span className="text-[11px] text-primary/40 shrink-0">{g.day}</span>
+                </li>
+              );
+            })}
+            {activityGroups.singles.map((n) => {
               const m = INFO_META[n.type] || INFO_META.generic;
               return (
                 <li key={n.id} className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-white/60 p-3.5">
                   <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.color}`}><span className="material-symbols-outlined text-[18px]">{m.icon}</span></span>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-primary text-sm">{n.title}</span>
-                      <span className="text-[10px] uppercase tracking-widest text-primary/30">{t(m.labelKey, { defaultValue: m.def })}</span>
-                    </div>
+                    <span className="font-semibold text-primary text-sm">{n.title}</span>
                     {n.body && <p className="text-sm text-primary/60 mt-0.5">{n.body}</p>}
                     <p className="text-[11px] text-primary/40 mt-1">{fmtWhen(n.created_at)}</p>
                   </div>
