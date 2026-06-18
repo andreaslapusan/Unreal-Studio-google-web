@@ -40,6 +40,19 @@ const dedupeAmpNames = (raw: string | null | undefined): string => {
   return out.join(' & ');
 };
 
+// Resuelve el nombre del titular concreto por su email (para saludar a cada
+// destinatario con SU nombre, no con el del titular principal). Si no hay match
+// en holders, cae al nombre deduplicado de la ficha.
+const holderNameByEmail = (client: any, em: string): string => {
+  const target = (em || '').trim().toLowerCase();
+  const hs = client?.holders;
+  if (target && Array.isArray(hs)) {
+    const m = hs.find((h: any) => (h?.email || '').trim().toLowerCase() === target);
+    if (m && (m.name || '').trim()) return (m.name || '').trim();
+  }
+  return dedupeAmpNames(client?.name);
+};
+
 const GUIDE_STEPS = [
   { titleKey: 'admin.dash.guide1Title', textKey: 'admin.dash.guide1Text' },
   { titleKey: 'admin.dash.guide2Title', textKey: 'admin.dash.guide2Text' },
@@ -918,7 +931,7 @@ const sendWelcome = async (client: Client) => {
   // Bienvenida MANUAL → preview con personalización por titular: cada uno ve SU
   // propio email de acceso (no el del titular principal).
   const tempPw = (client as any).password_plain || client.temp_password || null;
-  const buildHtml = (em: string) => welcomeEmailHtml({ firstName: dedupeAmpNames(client.name), portalUrl: clientPortalUrl(lang), email: em || email, tempPassword: tempPw, lang });
+  const buildHtml = (em: string) => welcomeEmailHtml({ firstName: holderNameByEmail(client, em || email), portalUrl: clientPortalUrl(lang), email: em || email, tempPassword: tempPw, lang });
   openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.welcomeSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
 };
 
