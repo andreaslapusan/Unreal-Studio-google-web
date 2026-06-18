@@ -52,16 +52,35 @@ Deno.serve(async (req) => {
   // Clientes asignados a ese proyecto (cada asignación = una propiedad).
   const { data: cps } = await supabase
     .from("client_projects")
-    .select("unit_number, clients(name,email,preferred_language,status,is_active)")
+    .select("unit_number, clients(name,email,extra_emails,holders,preferred_language,status,is_active)")
     .eq("project_id", projectId);
-  const recipients = (cps || [])
+
+  // Independencia total entre titulares: 1 correo SEPARADO por titular, cada uno
+  // con SU nombre. Si hay holders [{name,email}] se usan; si no, email principal +
+  // extra_emails (con el nombre de la ficha). Dedupe por email.
+  const titularsOf = (cl) => {
+    const out = [];
+    const hs = Array.isArray(cl?.holders) ? cl.holders : null;
+    if (hs && hs.length) {
+      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || cl?.name || "").trim(), email: em }); }
+    }
+    if (!out.length) {
+      const pe = (cl?.email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (cl?.name || "").trim(), email: pe });
+      for (const e of (cl?.extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (cl?.name || "").trim(), email: em }); }
+    }
+    const seen = new Set();
+    return out.filter((r) => { const k = r.email.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+  };
+
+  const recipients = [];
+  for (const r of (cps || [])) {
+    const cl = r.clients;
     // Solo clientes ACTIVOS: nunca avisar a DRAFT ni a INACTIVOS.
-    .filter((r) => {
-      const eff = r.clients?.status || (r.clients?.is_active === false ? "inactive" : "active");
-      return eff === "active";
-    })
-    .map((r) => ({ name: r.clients?.name || "", email: (r.clients?.email || "").trim(), lang: r.clients?.preferred_language || "es", unit: r.unit_number }))
-    .filter((c) => c.email && c.email.includes("@"));
+    const eff = cl?.status || (cl?.is_active === false ? "inactive" : "active");
+    if (eff !== "active") continue;
+    const lang = cl?.preferred_language || "es";
+    for (const tt of titularsOf(cl)) recipients.push({ name: tt.name, email: tt.email, lang, unit: r.unit_number });
+  }
 
   // Interruptor de seguridad: si está apagado, no envía (solo informa).
   const enabled = String(Deno.env.get("REPORT_NOTIFY_ENABLED") || "").toLowerCase() === "true";

@@ -96,6 +96,23 @@ Deno.serve(async (req) => {
   if (error) return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
   const candidates = data?.payments ?? [];
   if (!smtpConfigured()) return new Response(JSON.stringify({ success: false, error: "transport_not_configured", candidates: candidates.length }), { status: 503 });
+  // Independencia total entre titulares: 1 correo SEPARADO por titular, cada uno
+  // con SU nombre. holders [{name,email}] si existen; si no, email principal +
+  // extra_emails (con el nombre de la ficha). Dedupe por email.
+  const titularsOf = (r) => {
+    const out = [];
+    const hs = Array.isArray(r?.client_holders) ? r.client_holders : null;
+    if (hs && hs.length) {
+      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || r?.client_name || "").trim(), email: em }); }
+    }
+    if (!out.length) {
+      const pe = (r?.client_email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: pe });
+      for (const e of (r?.client_extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: em }); }
+    }
+    const seen = new Set();
+    return out.filter((x) => { const k = x.email.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+  };
+
   const today = baliToday();
   let sent = 0; const failed = [];
   for (const r of candidates) {
@@ -105,11 +122,15 @@ Deno.serve(async (req) => {
     if (!st) continue;
     const already = r.reminder_stages_sent || [];
     if (already.includes(st.key)) continue;
-    try {
-      await sendMail({ to: r.client_email, subject: `${st.subject} · Unreal Studio`, html: reminderHtml(r, st, lang) });
-      await supabase.rpc("payment_reminder_mark_stage", { p_payment_id: r.payment_id, p_stage: st.key });
-      sent++;
-    } catch (e) { failed.push(`${r.payment_id}: ${String(e)}`); }
+    let anySent = false;
+    for (const tt of titularsOf(r)) {
+      try {
+        await sendMail({ to: tt.email, subject: `${st.subject} · Unreal Studio`, html: reminderHtml({ ...r, client_name: tt.name }, st, lang) });
+        sent++; anySent = true;
+      } catch (e) { failed.push(`${r.payment_id} ${tt.email}: ${String(e)}`); }
+    }
+    // La etapa se marca una vez por pago (no por destinatario) si al menos uno salió.
+    if (anySent) { try { await supabase.rpc("payment_reminder_mark_stage", { p_payment_id: r.payment_id, p_stage: st.key }); } catch (e) { failed.push(`mark ${r.payment_id}: ${String(e)}`); } }
   }
   return new Response(JSON.stringify({ success: true, sent, failed }), { headers: { "Content-Type": "application/json" } });
 });

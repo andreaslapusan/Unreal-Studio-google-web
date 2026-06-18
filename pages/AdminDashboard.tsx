@@ -1021,7 +1021,7 @@ const sendReminderEmail = async (client: Client) => {
     <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine}</p>
     <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.reminder.recommendation')}</p>
     <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.reminder.cta')}</a></p>`;
-  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reminderSent', { email }), userId, lang, buildHtml });
+  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reminderSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
 };
 
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
@@ -1046,7 +1046,7 @@ const sendReportEmail = async (client: Client) => {
     cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
     `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
   ].join('');
-  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reportSent', { email, n: 1 }), userId, lang, buildHtml });
+  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reportSent', { email: emailsOf(client).join(', '), n: 1 }), userId, lang, buildHtml });
 };
 
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
@@ -1085,7 +1085,7 @@ const sendCalendarEmail = async (client: Client) => {
   const buildHtml = (em: string) => h1 + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + intro + tables + cta;
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up). Cada
   // titular recibe un correo SEPARADO con su nombre.
-  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.calendarSent', { email }), userId, lang, buildHtml });
+  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.calendarSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
 };
 
 const handleDeleteClient = async (id: string) => {

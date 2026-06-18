@@ -361,6 +361,7 @@ const ClientDashboard: React.FC = () => {
 
   const [clientData, setClientData] = useState<any>(null);
   const [clientId, setClientId] = useState<string | null>(null);
+  const [myEmail, setMyEmail] = useState<string>(''); // email del titular que ha iniciado sesión (para saludarle por SU nombre)
   const [loading, setLoading] = useState(true);
   const [allProjects, setAllProjects] = useState<Record<string, any>>({});
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -399,6 +400,7 @@ const ClientDashboard: React.FC = () => {
   const resolveClientId = async (): Promise<{ id?: string; noSession?: boolean; mismatch?: boolean }> => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return { noSession: true };
+    setMyEmail((session.user?.email || '').trim());
     const { data } = await supabase.rpc('client_my_id');
     if (data && data.success) return { id: data.client_id as string };
     return { mismatch: true };
@@ -643,7 +645,16 @@ const ClientDashboard: React.FC = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
         <p className="text-sm text-primary/60 font-medium mb-5">
-          {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(client.name || '').trim()}</span>
+          {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(() => {
+            // Saludo personalizado al titular que ha iniciado sesión (independencia
+            // total): si su email coincide con un holder, su nombre; si no, el de la ficha.
+            const hs = (client as any).holders;
+            if (myEmail && Array.isArray(hs)) {
+              const m = hs.find((h: any) => (h?.email || '').trim().toLowerCase() === myEmail.toLowerCase());
+              if (m && (m.name || '').trim()) return (m.name || '').trim();
+            }
+            return (client.name || '').trim();
+          })()}</span>
         </p>
         {/* El acceso al Drive de cada proyecto va dentro de su tarjeta (abajo, junto
             al calendario de pagos), no como tarjeta suelta arriba. */}
