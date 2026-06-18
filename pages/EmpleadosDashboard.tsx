@@ -162,10 +162,19 @@ const EmpleadosDashboard: React.FC = () => {
         audio: false,
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
+      // El <video> puede no estar montado todavía cuando llega el stream (setCapture
+      // dispara el render en el siguiente frame). Reintentamos enganchar hasta que exista,
+      // si no la cámara sale en negro (el stream nunca se asigna al elemento).
+      const attach = (tries = 0) => {
+        const v = videoRef.current;
+        if (v) {
+          v.srcObject = streamRef.current;
+          v.play().catch(() => { /* iOS a veces rechaza; el autoPlay lo cubre */ });
+        } else if (tries < 60 && streamRef.current) {
+          requestAnimationFrame(() => attach(tries + 1));
+        }
+      };
+      attach();
     } catch (err) {
       // Mensaje según el motivo: permiso bloqueado vs sin cámara.
       const name = (err as { name?: string })?.name ?? '';
@@ -447,7 +456,7 @@ const EmpleadosDashboard: React.FC = () => {
             </button>
           </div>
           <div className="flex-1 flex items-center justify-center overflow-hidden">
-            <video ref={videoRef} playsInline muted className="max-h-full max-w-full object-contain" />
+            <video ref={videoRef} autoPlay playsInline muted className="max-h-full max-w-full object-contain" />
           </div>
           <div className="p-8 flex items-center justify-center">
             <button
