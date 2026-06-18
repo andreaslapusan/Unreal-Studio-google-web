@@ -11,6 +11,7 @@ import { uiLocale } from '../../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { useEscapeKey } from '../../lib/useEscapeKey';
+import AsyncButton from '../AsyncButton';
 
 interface Employee { id: string; full_name: string | null; email: string; }
 interface Vacation {
@@ -169,8 +170,8 @@ const VacationManager: React.FC = () => {
                   <p className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}{v.note ? ` · ${v.note}` : ''}</p>
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">{t('admin.vac.approve')}</button>
-                  <button onClick={() => void setStatus(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">{t('admin.vac.reject')}</button>
+                  <AsyncButton onClick={() => setStatus(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">{t('admin.vac.approve')}</AsyncButton>
+                  <AsyncButton onClick={() => setStatus(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">{t('admin.vac.reject')}</AsyncButton>
                   <button onClick={() => setEditing(v)} className="text-[11px] font-black uppercase tracking-widest bg-gray-100 text-primary px-3 py-2 rounded-lg hover:bg-gray-200 transition">{t('admin.vac.modify')}</button>
                 </div>
               </li>
@@ -237,9 +238,9 @@ const VacationManager: React.FC = () => {
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{v.status}</span>
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  {!isApproved(v.status) && <button onClick={() => void setStatus(v.id, 'aprobada')} className="text-[10px] font-bold text-green-700 hover:underline">{t('admin.vac.approve')}</button>}
+                  {!isApproved(v.status) && <AsyncButton onClick={() => setStatus(v.id, 'aprobada')} className="text-[10px] font-bold text-green-700 hover:underline">{t('admin.vac.approve')}</AsyncButton>}
                   <button onClick={() => setEditing(v)} className="text-[10px] font-bold text-primary/60 hover:underline">{t('admin.vac.modify')}</button>
-                  <button onClick={() => void remove(v.id)} className="text-[10px] font-bold text-red-600 hover:underline">{t('admin.common.delete')}</button>
+                  <AsyncButton onClick={() => remove(v.id)} className="text-[10px] font-bold text-red-600 hover:underline">{t('admin.common.delete')}</AsyncButton>
                 </div>
               </li>
             ))}
@@ -265,7 +266,7 @@ const VacationManager: React.FC = () => {
                 <input type="text" value={editing.note ?? ''} onChange={(e) => setEditing({ ...editing, note: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
             </div>
             <div className="flex gap-2 mt-5">
-              <button onClick={() => void saveEdit()} className="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-sm">{t('admin.common.save')}</button>
+              <AsyncButton onClick={() => saveEdit()} className="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-sm">{t('admin.common.save')}</AsyncButton>
               <button onClick={() => setEditing(null)} className="flex-1 bg-gray-100 text-primary py-2.5 rounded-xl font-bold text-sm">{t('admin.common.cancel')}</button>
             </div>
           </div>

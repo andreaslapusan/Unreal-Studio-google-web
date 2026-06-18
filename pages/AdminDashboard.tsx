@@ -13,6 +13,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import EmployeeEditModal, { EmployeeRow } from '../components/admin/EmployeeEditModal';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
+import AsyncButton from '../components/AsyncButton';
 import CobrosPanel from '../components/admin/CobrosPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
@@ -101,7 +102,7 @@ const AMENITIES_LIST = [
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
   const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string }>(null);
-  const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[] }>(null); // elegir proyecto del aviso de obra cuando el cliente tiene varios
+  const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[]; selected: string[] }>(null); // elegir proyecto(s) del aviso de obra cuando el cliente tiene varios
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
   const [booted, setBooted] = useState(false);
@@ -1028,23 +1029,32 @@ const sendReminderEmail = async (client: Client) => {
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
 // idioma del cliente. El aviso AUTOMÁTICO al subir un reporte lo manda la edge fn
 // notify-report; este botón es el envío manual equivalente desde la ficha.
-// Construye y abre el preview del aviso de reporte para UN proyecto concreto.
-const sendReportForProject = (client: Client, cp: any) => {
+// Construye y abre el preview del aviso de reporte para uno o VARIOS proyectos.
+const sendReportForProjects = (client: Client, cps: any[]) => {
+  const list = (cps || []).filter(Boolean);
+  if (!list.length) return;
   const email = (client.email || '').trim();
   const userId = getAdminUserId();
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
   const BROWN = '#3F2305';
-  const subject = et('emails.report.subject', { project: cp.project_name });
+  const multi = list.length > 1;
+  const subject = multi
+    ? et('emails.report.subjectMulti', { defaultValue: 'Nuevo reporte de obra disponible' })
+    : et('emails.report.subject', { project: list[0].project_name });
+  const projBlock = list.map((cp: any) =>
+    `<p style="font-size:15px;line-height:1.6;margin:0 0 4px;color:${BROWN}"><b>${cp.project_name}</b>${cp.unit_number ? ` <span style="color:rgba(63,35,5,.6)">· ${cp.unit_number}</span>` : ''}</p>`
+  ).join('');
   const buildHtml = (em: string) => [
     `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
     `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: holderNameByEmail(client, em) })}</p>`,
-    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
-    cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
+    multi
+      ? `<p style="font-size:15px;line-height:1.6;margin:0 0 10px;color:${BROWN}">${et('emails.report.bodyMulti', { defaultValue: 'Ya están disponibles nuevos reportes de obra de tus propiedades. Puedes consultarlos y descargarlos desde tu portal de cliente.' })}</p><div style="margin:0 0 16px">${projBlock}</div>`
+      : `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: list[0].project_name })}</p>${list[0].unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: list[0].unit_number })}</p>` : ''}`,
     `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
   ].join('');
-  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reportSent', { email: emailsOf(client).join(', '), n: 1 }), userId, lang, buildHtml });
+  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reportSent', { email: emailsOf(client).join(', '), n: list.length }), userId, lang, buildHtml });
 };
 
 const sendReportEmail = async (client: Client) => {
@@ -1052,9 +1062,9 @@ const sendReportEmail = async (client: Client) => {
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
   if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
-  // Con varios proyectos asignados, el admin elige PARA CUÁL es el aviso de obra.
-  if (projs.length > 1) { setReportPicker({ client, projs }); return; }
-  sendReportForProject(client, projs[0]);
+  // Con varios proyectos asignados, el admin elige PARA CUÁLES es el aviso (uno, varios o todos).
+  if (projs.length > 1) { setReportPicker({ client, projs, selected: projs.map((p: any) => p.id) }); return; }
+  sendReportForProjects(client, projs);
 };
 
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
@@ -1603,10 +1613,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="flex items-center gap-2 flex-wrap bg-primary/5 rounded-xl px-3 py-2">
             <span className="text-xs font-black text-primary">{t('admin.clientsTab.nSelected', { n: selectedClientIds.size, defaultValue: `${selectedClientIds.size} sel.` })}</span>
             <span className="text-[10px] text-gray-400">{t('admin.clientsTab.setStatusTo', { defaultValue: 'Estado →' })}</span>
-            <button disabled={bulkBusy} onClick={() => void bulkClients('status', 'active')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-green-600 text-white disabled:opacity-50">{t('admin.clientsTab.active')}</button>
-            <button disabled={bulkBusy} onClick={() => void bulkClients('status', 'inactive')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-gray-400 text-white disabled:opacity-50">{t('admin.clientsTab.inactive')}</button>
-            <button disabled={bulkBusy} onClick={() => void bulkClients('status', 'draft')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-amber-500 text-white disabled:opacity-50">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</button>
-            <button disabled={bulkBusy} onClick={() => void bulkClients('delete')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-red-600 text-white disabled:opacity-50 inline-flex items-center gap-1"><span className="material-symbols-outlined text-xs">delete</span>{t('admin.clientsTab.deleteSel', { defaultValue: 'Borrar' })}</button>
+            <AsyncButton disabled={bulkBusy} onClick={() => bulkClients('status', 'active')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-green-600 text-white disabled:opacity-50">{t('admin.clientsTab.active')}</AsyncButton>
+            <AsyncButton disabled={bulkBusy} onClick={() => bulkClients('status', 'inactive')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-gray-400 text-white disabled:opacity-50">{t('admin.clientsTab.inactive')}</AsyncButton>
+            <AsyncButton disabled={bulkBusy} onClick={() => bulkClients('status', 'draft')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-amber-500 text-white disabled:opacity-50">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</AsyncButton>
+            <AsyncButton disabled={bulkBusy} onClick={() => bulkClients('delete')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-red-600 text-white disabled:opacity-50 inline-flex items-center gap-1"><span className="material-symbols-outlined text-xs">delete</span>{t('admin.clientsTab.deleteSel', { defaultValue: 'Borrar' })}</AsyncButton>
           </div>
         )}
       </div>
@@ -1689,7 +1699,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         {cp.drive_folder_url && <a href={cp.drive_folder_url} target="_blank" rel="noopener noreferrer" className="text-amber-700 bg-amber-50 hover:bg-amber-100 transition p-2 rounded-lg" title={t('admin.dash.driveFolder', { defaultValue: 'Carpeta de documentación (Drive)' })}><span className="material-symbols-outlined text-xl leading-none">folder</span></a>}
                         <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('fix.adm.paymentsCalendar')}><span className="material-symbols-outlined text-xl leading-none">event</span></button>
                         <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-xl leading-none">edit</span></button>
-                        <button onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-500 bg-red-50 hover:bg-red-100 transition p-2 rounded-lg" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-xl leading-none">close</span></button>
+                        <AsyncButton onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-500 bg-red-50 hover:bg-red-100 transition p-2 rounded-lg" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-xl leading-none">close</span></AsyncButton>
                     </div>
                   </div>
                 ))}
@@ -1790,10 +1800,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                           <td className="px-6 py-4 text-sm text-gray-500">{u.username}</td>
                           {isSuperAdmin && (
                             <td className="px-6 py-4">
-                              {(u as any).password_plain && (
-                                <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((u as any).password_plain); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>🔑 {(u as any).password_plain}</p>
-                              )}
-                              <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block mt-0.5" onClick={() => {navigator.clipboard.writeText(u.password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>🔒 {u.password_hash.substring(0, 25)}...</p>
+                              {(() => {
+                                // Mostrar la contraseña SOLO si tenemos el texto plano real.
+                                // Si lo guardado es un hash bcrypt ($2a$…), NO es la contraseña
+                                // → mostrar puntos (Andreas: "esa no es mi contraseña").
+                                const pw = (u as any).password_plain as string | undefined;
+                                const isHash = !!pw && /^\$2[aby]?\$/.test(pw);
+                                if (pw && !isHash) {
+                                  return <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText(pw); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>🔑 {pw}</p>;
+                                }
+                                return <p className="text-[10px] text-gray-400 font-mono inline-block px-1" title={t('admin.dash.pwEncryptedHint', { defaultValue: 'Cifrada — no visible. Usa Editar para fijar una nueva.' })}>•••••••• <span className="text-[9px]">({t('admin.dash.pwEncrypted', { defaultValue: 'cifrada' })})</span></p>;
+                              })()}
                             </td>
                           )}
                           <td className="px-6 py-4 text-right flex justify-end gap-2">
@@ -1871,7 +1888,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    );
                  })}
                </div>
-               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('fix.adm.savePermissions')}</button>
+               <AsyncButton onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('fix.adm.savePermissions')}</AsyncButton>
              </div>
              )}
 
@@ -1914,7 +1931,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                      value={(config as any).brand?.phone || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), phone: e.target.value } } as any)} />
                  </div>
                </div>
-               <button onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveBrandCompany')}</button>
+               <AsyncButton onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveBrandCompany')}</AsyncButton>
                <p className="mt-3 text-[11px] text-gray-400">{t('admin.dash.signatureHint')}</p>
              </div>
 
@@ -1989,7 +2006,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    <p className="text-[10px] text-gray-400 mt-1">{t('admin.dash.defaultCurrencyHint')}</p>
                  </div>
                </div>
-               <button onClick={() => saveConfigToDb(config)} className="mt-7 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveCompanyData')}</button>
+               <AsyncButton onClick={() => saveConfigToDb(config)} className="mt-7 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveCompanyData')}</AsyncButton>
              </div>
              </>
              )}
@@ -2499,12 +2516,21 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <button onClick={() => setReportPicker(null)} className="p-2 text-gray-400 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="p-4 space-y-2">
-        {reportPicker.projs.map((cp: any, i: number) => (
-          <button key={cp.id || i} type="button" onClick={() => { const c = reportPicker.client; setReportPicker(null); sendReportForProject(c, cp); }} className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-primary hover:bg-primary/5 transition flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary/60 text-base">apartment</span>
-            <span className="font-bold text-primary text-sm break-words">{cp.project_name}{cp.unit_number ? <span className="text-gray-400 font-normal"> · {cp.unit_number}</span> : null}</span>
-          </button>
-        ))}
+        <label className="flex items-center gap-2 px-2 pb-1 cursor-pointer select-none">
+          <input type="checkbox" className="rounded" checked={reportPicker.selected.length === reportPicker.projs.length} onChange={(e) => setReportPicker((p) => p ? { ...p, selected: e.target.checked ? p.projs.map((x: any) => x.id) : [] } : p)} />
+          <span className="text-[10px] font-black uppercase tracking-widest text-primary/50">{t('admin.dash.selectAll', { defaultValue: 'Seleccionar todos' })}</span>
+        </label>
+        {reportPicker.projs.map((cp: any, i: number) => {
+          const on = reportPicker.selected.includes(cp.id);
+          return (
+            <label key={cp.id || i} className={`w-full text-left px-4 py-3 rounded-xl border transition flex items-center gap-2 cursor-pointer ${on ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/40'}`}>
+              <input type="checkbox" className="rounded" checked={on} onChange={() => setReportPicker((p) => p ? { ...p, selected: p.selected.includes(cp.id) ? p.selected.filter((x) => x !== cp.id) : [...p.selected, cp.id] } : p)} />
+              <span className="material-symbols-outlined text-primary/60 text-base">apartment</span>
+              <span className="font-bold text-primary text-sm break-words">{cp.project_name}{cp.unit_number ? <span className="text-gray-400 font-normal"> · {cp.unit_number}</span> : null}</span>
+            </label>
+          );
+        })}
+        <button type="button" disabled={reportPicker.selected.length === 0} onClick={() => { const c = reportPicker.client; const cps = reportPicker.projs.filter((x: any) => reportPicker.selected.includes(x.id)); setReportPicker(null); sendReportForProjects(c, cps); }} className="w-full mt-2 bg-primary text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"><span className="material-symbols-outlined text-sm">visibility</span> {t('admin.dash.reportPickContinue', { defaultValue: 'Ver email' })} ({reportPicker.selected.length})</button>
       </div>
     </div>
   </div>

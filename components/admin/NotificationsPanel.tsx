@@ -12,6 +12,7 @@ import { uiLocale } from '../../lib/dateLocale';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
+import AsyncButton from '../AsyncButton';
 
 interface Notif {
   id: string;
@@ -127,9 +128,9 @@ const NotificationsPanel: React.FC = () => {
           <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.notif.title')}</h1>
           {unreadCount > 0 && <p className="text-xs text-primary/50 mt-1">{t('admin.notif.unreadCount', { count: unreadCount })}</p>}
         </div>
-        <button onClick={markAll} className="text-[10px] font-black uppercase tracking-widest text-primary/50 hover:text-primary transition flex items-center gap-1">
+        <AsyncButton onClick={() => markAll()} className="text-[10px] font-black uppercase tracking-widest text-primary/50 hover:text-primary transition flex items-center gap-1">
           <span className="material-symbols-outlined text-sm">done_all</span> {t('admin.notif.markAllRead')}
-        </button>
+        </AsyncButton>
       </div>
 
       {/* Filtros — ARRIBA, antes de la lista */}
@@ -212,13 +213,13 @@ const NotificationsPanel: React.FC = () => {
                     </button>
                   )}
                   <div className="flex items-center gap-2">
-                    <button onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">
+                    <AsyncButton onClick={() => markRead(n.id, !n.is_read)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">
                       {n.is_read ? t('admin.notif.markUnread') : t('admin.notif.markRead')}
-                    </button>
+                    </AsyncButton>
                     {!PROTECTED.has(n.type) && (
-                      <button onClick={() => del(n.id)} title={t('admin.notif.delete')} className="text-primary/30 hover:text-red-500 transition">
+                      <AsyncButton onClick={() => del(n.id)} title={t('admin.notif.delete')} className="text-primary/30 hover:text-red-500 transition">
                         <span className="material-symbols-outlined text-base">delete</span>
-                      </button>
+                      </AsyncButton>
                     )}
                   </div>
                 </div>

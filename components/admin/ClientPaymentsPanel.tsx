@@ -17,6 +17,7 @@ import { supabase } from '../../lib/supabase';
 import { renderKwitansiHtml, formatFigure } from '../../lib/kwitansi';
 import i18n from '../../lib/i18n';
 import { withLoading } from '../../lib/loading';
+import AsyncButton from '../AsyncButton';
 
 interface Payment {
   id: string;
@@ -323,8 +324,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                     const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
                     return (
                       <div key={p.id} className="px-5 py-3 flex items-center gap-3 flex-wrap">
-                        <button onClick={() => toggleReceived(p)} title={t('admin.pay.markReceived')}
-                          className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold transition ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500 hover:bg-green-600 hover:text-white' : 'border-2 border-gray-300 text-gray-300 hover:border-green-600 hover:text-green-600'}`}>✓</button>
+                        <AsyncButton onClick={() => toggleReceived(p)} title={t('admin.pay.markReceived')}
+                          className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold transition ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500 hover:bg-green-600 hover:text-white' : 'border-2 border-gray-300 text-gray-300 hover:border-green-600 hover:text-green-600'}`}>✓</AsyncButton>
                         <div className="flex-1 min-w-[140px]">
                           <p className="font-semibold text-sm text-primary">{p.label || t('admin.pay.noLabel')}</p>
                           <p className="text-[11px] text-gray-400">
@@ -348,11 +349,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                           <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p } })}
                             className="p-1.5 text-primary bg-gray-50 rounded-lg hover:bg-gray-100"><span className="material-symbols-outlined text-sm">edit</span></button>
                           {(p.received || p.kw_signed || p.kw_sent) && (
-                            <button onClick={() => resetPayment(p)} title={t('fix.cpp.resetProcessTitle')}
-                              className="p-1.5 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100"><span className="material-symbols-outlined text-sm">restart_alt</span></button>
+                            <AsyncButton onClick={() => resetPayment(p)} title={t('fix.cpp.resetProcessTitle')}
+                              className="p-1.5 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100"><span className="material-symbols-outlined text-sm">restart_alt</span></AsyncButton>
                           )}
-                          <button onClick={() => deletePayment(p.id)}
-                            className="p-1.5 text-red-500 bg-red-50 rounded-lg hover:bg-red-100"><span className="material-symbols-outlined text-sm">delete</span></button>
+                          <AsyncButton onClick={() => deletePayment(p.id)}
+                            className="p-1.5 text-red-500 bg-red-50 rounded-lg hover:bg-red-100"><span className="material-symbols-outlined text-sm">delete</span></AsyncButton>
                         </div>
                       </div>
                     );
@@ -429,7 +430,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;
               return (
                 <div className="space-y-2">
-                  <button onClick={() => void downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> {t('fix.cpp.downloadPdf')}</button>
+                  <AsyncButton onClick={() => downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> {t('fix.cpp.downloadPdf')}</AsyncButton>
                   <p className="text-[11px] text-gray-400 text-center">{t('fix.cpp.stepsInOrder')}</p>
                   <div className="grid grid-cols-3 gap-2">
                     <button disabled={kw.sending} onClick={markReceived}
