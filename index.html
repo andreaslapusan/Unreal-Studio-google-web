@@ -150,9 +150,35 @@
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@200;300;400;500;600;700;800;900&family=Montserrat:wght@200;900&display=swap">
     </noscript>
-    <!-- Material Symbols Outlined COMPLETO (todos los iconos siempre disponibles). -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"></noscript>
+    <!-- Material Symbols Outlined COMPLETO (todos los iconos siempre disponibles).
+         display=block: durante la carga el glifo es invisible (no se ve la palabra
+         "dashboard", "refresh"...). Además, abajo ocultamos el texto-ligadura hasta
+         que la fuente esté lista, para conexiones lentas. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"></noscript>
+    <style>
+      /* Conexiones lentas: hasta que la fuente de iconos cargue, ocultar el
+         texto-ligadura (si no, se ven las PALABRAS de los iconos). Cuando la
+         fuente está lista, el script de abajo pone .icons-ready y aparecen. */
+      .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp { font-display: block; }
+      html:not(.icons-ready) .material-symbols-outlined,
+      html:not(.icons-ready) .material-symbols-rounded,
+      html:not(.icons-ready) .material-symbols-sharp { color: transparent !important; }
+    </style>
+    <script>
+      (function () {
+        var done = false;
+        function ready() { if (done) return; done = true; document.documentElement.classList.add('icons-ready'); }
+        try {
+          if (document.fonts && document.fonts.load) {
+            document.fonts.load('24px "Material Symbols Outlined"').then(ready).catch(ready);
+            if (document.fonts.ready && document.fonts.ready.then) document.fonts.ready.then(ready);
+            // Si la fuente tarda demasiado o falla (offline), mostrar igualmente a los 10s.
+            setTimeout(ready, 10000);
+          } else { ready(); }
+        } catch (e) { ready(); }
+      })();
+    </script>
     <!-- Tailwind theme + custom site CSS now lives in index.css and is compiled
          by Vite/PostCSS into a single <link rel="stylesheet"> at build time.
          (The leftover esm.sh importmap from the AI Studio scaffold has been
