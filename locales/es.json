@@ -1825,6 +1825,7 @@
       "clientFeaturesHint": "Activa o desactiva qué módulos ve el cliente en su portal.",
       "featCalculator": "Calculadora ROI",
       "featConstruction": "Reportes de obra",
+      "featConstructionProgress": "Progreso de obra",
       "featBrochure": "Brochure",
       "featViewProject": "Ver proyecto",
       "featDrive": "Carpeta Google Drive",

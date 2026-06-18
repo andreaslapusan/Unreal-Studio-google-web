@@ -722,7 +722,7 @@ const ClientDashboard: React.FC = () => {
                           <p className="text-sm font-bold text-primary">{formatDate(proj.purchase_date)}</p>
                         </div>
                       )}
-                      {proj.completion_percent !== undefined && (
+                      {proj.completion_percent !== undefined && feat('constructionProgress') && (
                         <div>
                           <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelConstructionProgress')}</p>
                           <div className="flex items-center gap-2">
@@ -774,9 +774,11 @@ const ClientDashboard: React.FC = () => {
                     )}
                     {clientId && (
                       <div className="mt-5 pt-5 border-t border-gray-100 flex flex-wrap gap-3">
-                        <button onClick={() => setPaymentsProj(proj)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition">
-                          <span className="material-symbols-outlined text-sm">event</span> {t('fix.cld.paymentCalendar')}
-                        </button>
+                        {Number(proj.payments_count) > 0 && (
+                          <button onClick={() => setPaymentsProj(proj)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition">
+                            <span className="material-symbols-outlined text-sm">event</span> {t('fix.cld.paymentCalendar')}
+                          </button>
+                        )}
                         {proj.drive_folder_url && feat('drive') && (
                           <a href={proj.drive_folder_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition">
                             <span className="material-symbols-outlined text-sm">folder</span> {t('admin.clientDash.btnDrive', { defaultValue: 'Documentación' })}

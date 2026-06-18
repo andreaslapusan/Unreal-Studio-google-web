@@ -1826,6 +1826,7 @@
       "clientFeaturesHint": "Aktifkan atau nonaktifkan modul apa yang dilihat klien di portal mereka.",
       "featCalculator": "Kalkulator ROI",
       "featConstruction": "Laporan Konstruksi",
+      "featConstructionProgress": "Progres Konstruksi",
       "featBrochure": "Brosur",
       "featViewProject": "Lihat Proyek",
       "featDrive": "Folder Google Drive",

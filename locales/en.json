@@ -1825,6 +1825,7 @@
       "clientFeaturesHint": "Activate or deactivate which modules the client sees in their portal.",
       "featCalculator": "ROI Calculator",
       "featConstruction": "Construction Reports",
+      "featConstructionProgress": "Construction Progress",
       "featBrochure": "Brochure",
       "featViewProject": "View Project",
       "featDrive": "Google Drive Folder",

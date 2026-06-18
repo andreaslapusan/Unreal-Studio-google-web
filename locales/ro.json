@@ -1825,6 +1825,7 @@
       "clientFeaturesHint": "Activează sau dezactivează modulele pe care le vede clientul în portalul său.",
       "featCalculator": "Calculator ROI",
       "featConstruction": "Rapoarte de construcție",
+      "featConstructionProgress": "Progresul construcției",
       "featBrochure": "Broșură",
       "featViewProject": "Vizualizează proiect",
       "featDrive": "Dosar Google Drive",

@@ -101,6 +101,7 @@ const AMENITIES_LIST = [
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
   const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string }>(null);
+  const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[] }>(null); // elegir proyecto del aviso de obra cuando el cliente tiene varios
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
   const [booted, setBooted] = useState(false);
@@ -1027,17 +1028,14 @@ const sendReminderEmail = async (client: Client) => {
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
 // idioma del cliente. El aviso AUTOMÁTICO al subir un reporte lo manda la edge fn
 // notify-report; este botón es el envío manual equivalente desde la ficha.
-const sendReportEmail = async (client: Client) => {
+// Construye y abre el preview del aviso de reporte para UN proyecto concreto.
+const sendReportForProject = (client: Client, cp: any) => {
   const email = (client.email || '').trim();
-  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
-  const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
-  if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
   const userId = getAdminUserId();
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
   const BROWN = '#3F2305';
-  const cp = projs[0]; // preview/envío del primer proyecto (la mayoría tiene 1)
   const subject = et('emails.report.subject', { project: cp.project_name });
   const buildHtml = (em: string) => [
     `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
@@ -1047,6 +1045,16 @@ const sendReportEmail = async (client: Client) => {
     `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
   ].join('');
   openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reportSent', { email: emailsOf(client).join(', '), n: 1 }), userId, lang, buildHtml });
+};
+
+const sendReportEmail = async (client: Client) => {
+  const email = (client.email || '').trim();
+  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
+  if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
+  // Con varios proyectos asignados, el admin elige PARA CUÁL es el aviso de obra.
+  if (projs.length > 1) { setReportPicker({ client, projs }); return; }
+  sendReportForProject(client, projs[0]);
 };
 
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
@@ -1571,7 +1579,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </select>
       <div className="flex items-center gap-1 flex-wrap">
         <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">{t('admin.clientsTab.permsFilter', { defaultValue: 'Permisos' })}:</span>
-        {([['drive', t('fix.adm.featDrive')], ['brochure', t('fix.adm.featBrochure')], ['construction', t('fix.adm.featConstruction')], ['viewProject', t('fix.adm.featViewProject')], ['calculator', t('fix.adm.featCalculator')]] as [string, string][]).map(([k, label]) => (
+        {([['drive', t('fix.adm.featDrive')], ['brochure', t('fix.adm.featBrochure')], ['construction', t('fix.adm.featConstruction')], ['constructionProgress', t('fix.adm.featConstructionProgress', { defaultValue: 'Progreso de obra' })], ['viewProject', t('fix.adm.featViewProject')], ['calculator', t('fix.adm.featCalculator')]] as [string, string][]).map(([k, label]) => (
           <button key={k} type="button" onClick={() => setClientFilterPerms((p) => p.includes(k) ? p.filter((x) => x !== k) : [...p, k])} className={`text-[10px] font-bold px-2 py-1 rounded-full border transition ${clientFilterPerms.includes(k) ? 'bg-primary text-white border-primary' : 'bg-white text-gray-400 border-gray-200 hover:border-primary/30'}`}>{label}</button>
         ))}
       </div>
@@ -1851,7 +1859,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                <h3 className="text-xl font-serif text-primary mb-2">{t('fix.adm.clientFeaturesTitle')}</h3>
                <p className="text-xs text-gray-400 mb-6">{t('fix.adm.clientFeaturesHint')}</p>
                <div className="grid sm:grid-cols-2 gap-2">
-                 {([['calculator',t('fix.adm.featCalculator')],['construction',t('fix.adm.featConstruction')],['brochure',t('fix.adm.featBrochure')],['viewProject',t('fix.adm.featViewProject')],['drive',t('fix.adm.featDrive')]] as [string,string][]).map(([k,label]) => {
+                 {([['calculator',t('fix.adm.featCalculator')],['construction',t('fix.adm.featConstruction')],['constructionProgress',t('fix.adm.featConstructionProgress',{defaultValue:'Progreso de obra'})],['brochure',t('fix.adm.featBrochure')],['viewProject',t('fix.adm.featViewProject')],['drive',t('fix.adm.featDrive')]] as [string,string][]).map(([k,label]) => {
                    const feats = ((config as any).brand?.client_features) || {};
                    const on = feats[k] !== false;
                    return (
@@ -2480,6 +2488,28 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 )}
 
 {/* Pop-up de PREVIEW del email antes de enviar (calendario, recordatorio, etc.) */}
+{reportPicker && (
+  <div className="fixed inset-0 z-[165] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setReportPicker(null); }}>
+    <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div>
+          <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.reportPickTitle', { defaultValue: 'Aviso de obra — elige proyecto' })}</h3>
+          <p className="text-xs text-gray-400 mt-0.5 truncate">{reportPicker.client.name}</p>
+        </div>
+        <button onClick={() => setReportPicker(null)} className="p-2 text-gray-400 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
+      </div>
+      <div className="p-4 space-y-2">
+        {reportPicker.projs.map((cp: any, i: number) => (
+          <button key={cp.id || i} type="button" onClick={() => { const c = reportPicker.client; setReportPicker(null); sendReportForProject(c, cp); }} className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-primary hover:bg-primary/5 transition flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary/60 text-base">apartment</span>
+            <span className="font-bold text-primary text-sm break-words">{cp.project_name}{cp.unit_number ? <span className="text-gray-400 font-normal"> · {cp.unit_number}</span> : null}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
 {emailPreview && (
   <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget && !emailPreview.sending) setEmailPreview(null); }}>
     <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
@@ -2595,7 +2625,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <p className="text-[10px] font-black uppercase text-primary/60 mb-1">{t('admin.dash.clientPermsTitle')}</p>
           <p className="text-[10px] text-gray-400 mb-3">{t('admin.dash.clientPermsHint')}</p>
           <div className="grid grid-cols-1 gap-2">
-            {([['calculator', t('fix.adm.featCalculator')], ['construction', t('fix.adm.featConstruction')], ['brochure', t('fix.adm.featBrochure')], ['viewProject', t('fix.adm.featViewProject')], ['drive', t('fix.adm.featDrive')]] as [string, string][]).map(([k, label]) => {
+            {([['calculator', t('fix.adm.featCalculator')], ['construction', t('fix.adm.featConstruction')], ['constructionProgress', t('fix.adm.featConstructionProgress', { defaultValue: 'Progreso de obra' })], ['brochure', t('fix.adm.featBrochure')], ['viewProject', t('fix.adm.featViewProject')], ['drive', t('fix.adm.featDrive')]] as [string, string][]).map(([k, label]) => {
               const globalOn = ((((config as any).brand?.client_features) || {})[k]) !== false;
               const ov = ((currentClient as any).feature_overrides) || {};
               const clientOn = ov[k] !== false;
