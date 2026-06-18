@@ -1127,7 +1127,7 @@ const handleAssignProject = async (e: React.FormEvent) => {
     if (data && !data.success) throw new Error(data.error);
     await loadData();
     setAssigningProject(null);
-    setAssignForm({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' });
+    setAssignForm({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0 });
   } catch (error) {
     console.error('Error assigning project:', error);
     alert(t('admin.dash.assignProjectError'));
@@ -1662,7 +1662,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   ) : null;
                 })()}
               </div>
-              <button onClick={() => { setAssigningProject({ clientId: client.id, clientName: client.name }); setAssignForm({ project_id: projects[0]?.id || '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva' }); }} className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-black transition">
+              <button onClick={() => { setAssigningProject({ clientId: client.id, clientName: client.name }); setAssignForm({ project_id: projects[0]?.id || '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0 }); }} className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-black transition">
                 <span className="material-symbols-outlined text-xs">add</span> {t('admin.clientsTab.assign')}
               </button>
             </div>
@@ -2722,6 +2722,26 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                             <option value="Completado">{translateStatus('Completado', t)}</option>
                         </select>
                     </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentType', { defaultValue: 'Tipo de inversión' })}</label>
+                        <select value={(assignForm as any).investment_type || 'compra'} onChange={(e) => setAssignForm({...assignForm, investment_type: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                            <option value="compra">{t('admin.dash.invCompra', { defaultValue: 'Compra' })}</option>
+                            <option value="pool">{t('admin.dash.invPool', { defaultValue: 'Pool' })}</option>
+                            <option value="desarrollo">{t('admin.dash.invDesarrollo', { defaultValue: 'Desarrollo' })}</option>
+                            <option value="arquitectura">{t('admin.dash.invArquitectura', { defaultValue: 'Arquitectura' })}</option>
+                        </select>
+                    </div>
+                    {(assignForm as any).investment_type === 'pool' && (
+                      <div>
+                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del pool' })}</label>
+                        <input type="number" value={(assignForm as any).pool_total || ''} onChange={(e) => setAssignForm({...assignForm, pool_total: parseFloat(e.target.value) || 0} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
+                        {Number((assignForm as any).pool_total) > 0 && Number(assignForm.investment_amount) > 0 && (
+                          <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(assignForm.investment_amount) / Number((assignForm as any).pool_total)) * 100).toFixed(2)}%</p>
+                        )}
+                      </div>
+                    )}
                 </div>
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading || !assignForm.project_id} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.dash.assignBtn')}</button>
