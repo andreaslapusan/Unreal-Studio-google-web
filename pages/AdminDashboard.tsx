@@ -87,7 +87,7 @@ const AMENITIES_LIST = [
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
-  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean }>(null);
+  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string }>(null);
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
   const [booted, setBooted] = useState(false);
@@ -867,7 +867,7 @@ const handleSaveClient = async (e: React.FormEvent) => {
       const _holders = (currentClient as any).holders;
       const _emails = (_holders && _holders.length) ? _holders.map((h: any) => (h.email || '').trim()).filter(Boolean) : emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails });
       const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: newEmail, emails: _emails, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
-      alert(r.ok ? t('admin.dash.welcomeSent', { email: newEmail }) : t('admin.dash.welcomeError', { error: r.error }));
+      alert(r.ok ? t('admin.dash.welcomeSent', { email: (_emails && _emails.length ? _emails.join(', ') : newEmail) }) : t('admin.dash.welcomeError', { error: r.error }));
     }
   } catch (error) {
     console.error('Error saving client:', error);
@@ -890,17 +890,21 @@ const sendWelcomeCore = async (args: { name: string; email: string; emails?: str
   const userId = getAdminUserId();
   if (!userId) return { ok: false, error: 'session' };
   const et = i18n.getFixedT(args.lang);
-  const html = welcomeEmailHtml({
-    firstName: (args.name || '').trim(), // nombre COMPLETO (Andreas lo pidió: "Luis Mestre", no solo "Luis")
-    portalUrl: clientPortalUrl(args.lang),
-    email: args.email,
-    tempPassword: args.tempPassword || null,
-    lang: args.lang,
-  });
-  const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-    body: { adminUserId: userId, to: (args.emails && args.emails.length ? args.emails : args.email), lang: args.lang, subject: et('emails.welcome.subject'), html },
-  });
-  if (sErr || !sent?.success) return { ok: false, error: sent?.error || sErr?.message || 'error' };
+  // Un correo por titular, cada uno con SU propio email de acceso (no el del principal).
+  const targets = (args.emails && args.emails.length ? args.emails : [args.email]).map((e) => (e || '').trim()).filter(Boolean);
+  for (const to of targets) {
+    const html = welcomeEmailHtml({
+      firstName: (args.name || '').trim(), // nombre COMPLETO (Andreas lo pidió: "Luis Mestre", no solo "Luis")
+      portalUrl: clientPortalUrl(args.lang),
+      email: to,
+      tempPassword: args.tempPassword || null,
+      lang: args.lang,
+    });
+    const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
+      body: { adminUserId: userId, to, lang: args.lang, subject: et('emails.welcome.subject'), html },
+    });
+    if (sErr || !sent?.success) return { ok: false, error: sent?.error || sErr?.message || 'error' };
+  }
   return { ok: true };
 };
 
@@ -911,9 +915,11 @@ const sendWelcome = async (client: Client) => {
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
-  // Bienvenida MANUAL → pasa por la preview antes de enviar.
-  const html = welcomeEmailHtml({ firstName: dedupeAmpNames(client.name), portalUrl: clientPortalUrl(lang), email, tempPassword: (client as any).password_plain || client.temp_password || null, lang });
-  openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html, sentMsg: t('admin.dash.welcomeSent', { email }), userId, lang });
+  // Bienvenida MANUAL → preview con personalización por titular: cada uno ve SU
+  // propio email de acceso (no el del titular principal).
+  const tempPw = (client as any).password_plain || client.temp_password || null;
+  const buildHtml = (em: string) => welcomeEmailHtml({ firstName: dedupeAmpNames(client.name), portalUrl: clientPortalUrl(lang), email: em || email, tempPassword: tempPw, lang });
+  openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.welcomeSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
 };
 
 // Recuperación de contraseña manual (te llaman "perdí la clave" → se la mandas tú).
@@ -933,19 +939,37 @@ const sendResetEmail = async (client: Client) => {
 // días que faltan / vencidos a día de hoy (zona horaria de Bali).
 // Preview de email: en vez de enviar directo, abrimos un pop-up con la vista
 // previa; el envío real ocurre al pulsar "Enviar" en sendPreviewedEmail.
-const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string }) => {
+// buildHtml: si se pasa, el correo se PERSONALIZA por destinatario (cada titular ve
+// SU propio email de acceso). Si no, se envía el mismo html a todos los seleccionados.
+const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; buildHtml?: (email: string) => string }) => {
   const recipients = (Array.isArray(args.to) ? args.to : [args.to]).map((e) => (e || '').trim()).filter(Boolean);
-  setEmailPreview({ recipients, selected: [...recipients], subject: args.subject, html: args.html, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false });
+  const html0 = args.buildHtml ? args.buildHtml(recipients[0] || '') : args.html;
+  setEmailPreview({ recipients, selected: [...recipients], subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml });
 };
 const sendPreviewedEmail = async () => {
   if (!emailPreview || emailPreview.selected.length === 0) return;
+  const ep = emailPreview;
   setEmailPreview((p) => p ? { ...p, sending: true } : p);
-  const { data: sent, error } = await supabase.functions.invoke('send-client-email', {
-    body: { adminUserId: emailPreview.userId, to: emailPreview.selected, lang: emailPreview.lang, subject: emailPreview.subject, html: emailPreview.html },
-  });
-  if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
-  alert(emailPreview.sentMsg);
-  setEmailPreview(null);
+  try {
+    if (ep.buildHtml) {
+      // Un correo PERSONALIZADO por cada destinatario (su propio email de acceso).
+      for (const to of ep.selected) {
+        const { data: sent, error } = await supabase.functions.invoke('send-client-email', {
+          body: { adminUserId: ep.userId, to, lang: ep.lang, subject: ep.subject, html: ep.buildHtml(to) },
+        });
+        if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
+      }
+    } else {
+      const { data: sent, error } = await supabase.functions.invoke('send-client-email', {
+        body: { adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html },
+      });
+      if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
+    }
+    alert(ep.sentMsg);
+    setEmailPreview(null);
+  } catch (e) {
+    alert(t('admin.dash.reportError', { error: String(e) })); setEmailPreview((p) => p ? { ...p, sending: false } : p);
+  }
 };
 
 const sendReminderEmail = async (client: Client) => {
@@ -2451,7 +2475,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
             {emailPreview.recipients.map((em) => (
               <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${emailPreview.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
-                <input type="checkbox" checked={emailPreview.selected.includes(em)} onChange={() => setEmailPreview((p) => p ? { ...p, selected: p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em] } : p)} className="rounded" />
+                <input type="checkbox" checked={emailPreview.selected.includes(em)} onChange={() => setEmailPreview((p) => { if (!p) return p; const selected = p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em]; const html = p.buildHtml ? p.buildHtml(selected[0] || em) : p.html; return { ...p, selected, html }; })} className="rounded" />
                 {em}
               </label>
             ))}
