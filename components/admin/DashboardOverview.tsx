@@ -10,7 +10,7 @@ import { supabase } from '../../lib/supabase';
 
 interface Stats {
   properties: number; clients: number; employees: number; agencies: number;
-  pending_applications: number; unread: number; pending_vacations: number; overdue: number;
+  pending_applications: number; unread: number; tasks: number; pending_vacations: number; overdue: number;
 }
 
 const card = "bg-white rounded-2xl p-5 shadow-sm border border-primary/5 text-left w-full hover:border-primary/20 transition";
@@ -36,7 +36,8 @@ const DashboardOverview: React.FC = () => {
     </button>
   );
 
-  const attention = s ? (s.unread + s.pending_vacations + s.overdue + s.pending_applications) : 0;
+  // "Tareas" ya incluye pagos vencidos + obra + vacaciones pendientes + pagos reclamados.
+  const attention = s ? ((s.tasks ?? 0) + s.pending_applications) : 0;
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -49,9 +50,7 @@ const DashboardOverview: React.FC = () => {
             <span className="material-symbols-outlined text-base">priority_high</span> Requiere tu atención
           </h2>
           <div className="flex flex-wrap gap-2">
-            {s.unread > 0 && <button onClick={() => navigate('/admin?view=notifications')} className="text-xs font-bold bg-white border border-amber-200 text-primary px-3 py-1.5 rounded-full hover:bg-amber-100">{s.unread} notificación(es) sin leer →</button>}
-            {s.overdue > 0 && <button onClick={() => navigate('/admin?view=notifications')} className="text-xs font-bold bg-white border border-red-200 text-red-600 px-3 py-1.5 rounded-full hover:bg-red-50">{s.overdue} pago(s) vencido(s) →</button>}
-            {s.pending_vacations > 0 && <button onClick={() => navigate('/admin?view=calendar')} className="text-xs font-bold bg-white border border-amber-200 text-primary px-3 py-1.5 rounded-full hover:bg-amber-100">{s.pending_vacations} vacación(es) por aprobar →</button>}
+            {(s.tasks ?? 0) > 0 && <button onClick={() => navigate('/admin?view=notifications')} className="text-xs font-bold bg-white border border-amber-200 text-primary px-3 py-1.5 rounded-full hover:bg-amber-100">{s.tasks} tarea(s) pendiente(s) →</button>}
             {s.pending_applications > 0 && <button onClick={() => navigate('/admin?view=agencias')} className="text-xs font-bold bg-white border border-amber-200 text-primary px-3 py-1.5 rounded-full hover:bg-amber-100">{s.pending_applications} agencia(s) por revisar →</button>}
           </div>
         </div>
@@ -63,7 +62,7 @@ const DashboardOverview: React.FC = () => {
         <Stat icon="person" label="Clientes" value={s?.clients ?? 0} to="/admin?view=clients" />
         <Stat icon="badge" label="Empleados" value={s?.employees ?? 0} to="/admin?view=employees" />
         <Stat icon="public" label="Agencias" value={s?.agencies ?? 0} to="/admin?view=agencias" />
-        <Stat icon="notifications" label="Sin leer" value={s?.unread ?? 0} to="/admin?view=notifications" alert />
+        <Stat icon="notifications" label="Tareas pendientes" value={s?.tasks ?? 0} to="/admin?view=notifications" alert />
         <Stat icon="payments" label="Pagos vencidos" value={s?.overdue ?? 0} to="/admin?view=notifications" alert />
         <Stat icon="beach_access" label="Vacaciones pend." value={s?.pending_vacations ?? 0} to="/admin?view=calendar" alert />
         <Stat icon="public" label="Agencias por revisar" value={s?.pending_applications ?? 0} to="/admin?view=agencias" alert />
