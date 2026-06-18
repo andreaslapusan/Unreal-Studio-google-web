@@ -1029,8 +1029,23 @@ const sendReminderEmail = async (client: Client) => {
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
 // idioma del cliente. El aviso AUTOMÁTICO al subir un reporte lo manda la edge fn
 // notify-report; este botón es el envío manual equivalente desde la ficha.
-// Construye y abre el preview del aviso de reporte para uno o VARIOS proyectos.
-const sendReportForProjects = (client: Client, cps: any[]) => {
+// HTML del aviso de reporte para UNA propiedad, en el idioma del cliente.
+// Personalizado por destinatario (saludo con su nombre).
+const buildReportHtmlFor = (client: Client, cp: any, lang: string, et: any) => (em: string) => {
+  const BROWN = '#3F2305';
+  return [
+    `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${et('emails.report.subject', { project: cp.project_name })}</h1>`,
+    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: holderNameByEmail(client, em) })}</p>`,
+    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
+    cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
+    `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
+  ].join('');
+};
+
+// Aviso de obra: UN correo SEPARADO por propiedad (y por titular), en el idioma
+// del cliente. 1 propiedad → preview; varias → se envían directas (un mail por
+// propiedad × titular) tras confirmar, porque cada propiedad es un correo distinto.
+const sendReportForProjects = async (client: Client, cps: any[]) => {
   const list = (cps || []).filter(Boolean);
   if (!list.length) return;
   const email = (client.email || '').trim();
@@ -1038,23 +1053,29 @@ const sendReportForProjects = (client: Client, cps: any[]) => {
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
-  const BROWN = '#3F2305';
-  const multi = list.length > 1;
-  const subject = multi
-    ? et('emails.report.subjectMulti', { defaultValue: 'Nuevo reporte de obra disponible' })
-    : et('emails.report.subject', { project: list[0].project_name });
-  const projBlock = list.map((cp: any) =>
-    `<p style="font-size:15px;line-height:1.6;margin:0 0 4px;color:${BROWN}"><b>${cp.project_name}</b>${cp.unit_number ? ` <span style="color:rgba(63,35,5,.6)">· ${cp.unit_number}</span>` : ''}</p>`
-  ).join('');
-  const buildHtml = (em: string) => [
-    `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${subject}</h1>`,
-    `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: holderNameByEmail(client, em) })}</p>`,
-    multi
-      ? `<p style="font-size:15px;line-height:1.6;margin:0 0 10px;color:${BROWN}">${et('emails.report.bodyMulti', { defaultValue: 'Ya están disponibles nuevos reportes de obra de tus propiedades. Puedes consultarlos y descargarlos desde tu portal de cliente.' })}</p><div style="margin:0 0 16px">${projBlock}</div>`
-      : `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: list[0].project_name })}</p>${list[0].unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: list[0].unit_number })}</p>` : ''}`,
-    `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
-  ].join('');
-  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reportSent', { email: emailsOf(client).join(', '), n: list.length }), userId, lang, buildHtml });
+  const recipients = emailsOf(client);
+
+  if (list.length === 1) {
+    const cp = list[0];
+    const buildHtml = buildReportHtmlFor(client, cp, lang, et);
+    openEmailPreview({ to: recipients, subject: et('emails.report.subject', { project: cp.project_name }), html: buildHtml(recipients[0] || email), sentMsg: t('admin.dash.reportSent', { email: recipients.join(', '), n: 1 }), userId, lang, buildHtml });
+    return;
+  }
+
+  // Varias propiedades → un correo separado por propiedad y por titular.
+  if (!window.confirm(t('admin.dash.reportSendMultiConfirm', { defaultValue: 'Se enviará un correo separado por cada propiedad ({{p}}) a cada titular ({{r}}). ¿Enviar?', p: list.length, r: recipients.length }))) return;
+  let sent = 0; let failed = 0;
+  for (const cp of list) {
+    const buildHtml = buildReportHtmlFor(client, cp, lang, et);
+    const subject = et('emails.report.subject', { project: cp.project_name });
+    for (const to of recipients) {
+      try {
+        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang, subject, html: buildHtml(to) } });
+        if (error || !data?.success) failed++; else sent++;
+      } catch { failed++; }
+    }
+  }
+  alert(t('admin.dash.reportSentMulti', { defaultValue: 'Avisos enviados: {{n}}{{f}}', n: sent, f: failed ? ` · fallidos: ${failed}` : '' }));
 };
 
 const sendReportEmail = async (client: Client) => {
@@ -2530,7 +2551,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </label>
           );
         })}
-        <button type="button" disabled={reportPicker.selected.length === 0} onClick={() => { const c = reportPicker.client; const cps = reportPicker.projs.filter((x: any) => reportPicker.selected.includes(x.id)); setReportPicker(null); sendReportForProjects(c, cps); }} className="w-full mt-2 bg-primary text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"><span className="material-symbols-outlined text-sm">visibility</span> {t('admin.dash.reportPickContinue', { defaultValue: 'Ver email' })} ({reportPicker.selected.length})</button>
+        <button type="button" disabled={reportPicker.selected.length === 0} onClick={() => { const c = reportPicker.client; const cps = reportPicker.projs.filter((x: any) => reportPicker.selected.includes(x.id)); setReportPicker(null); void sendReportForProjects(c, cps); }} className="w-full mt-2 bg-primary text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"><span className="material-symbols-outlined text-sm">arrow_forward</span> {t('admin.dash.reportPickContinue', { defaultValue: 'Continuar' })} ({reportPicker.selected.length})</button>
       </div>
     </div>
   </div>

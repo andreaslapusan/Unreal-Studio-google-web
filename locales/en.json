@@ -1774,7 +1774,9 @@
       "calendarIntroAfter": " by Unreal Studio.",
       "receivedOn": "Received on {{date}}",
       "dueDateLabel": "Due date: {{date}}",
-      "popupBlocked": "Allow pop-ups to view/download the receipt."
+      "popupBlocked": "Allow pop-ups to view/download the receipt.",
+      "generating": "Generating…",
+      "downloadPdf": "Download PDF"
     },
     "empd": {
       "passMismatch": "Passwords do not match.",
@@ -2197,7 +2199,8 @@
       "colReceived": "Received",
       "colBalance": "Balance",
       "total": "Total",
-      "cta": "View in my portal"
+      "cta": "View in my portal",
+      "colReceivedDate": "Received on"
     }
   },
   "cobros": {

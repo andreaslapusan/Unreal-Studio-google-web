@@ -1774,7 +1774,9 @@
       "calendarIntroAfter": " de către Unreal Studio.",
       "receivedOn": "Primit la {{date}}",
       "dueDateLabel": "Data scadentă: {{date}}",
-      "popupBlocked": "Permite ferestrele pop-up pentru a vizualiza/descărca chitanța."
+      "popupBlocked": "Permite ferestrele pop-up pentru a vizualiza/descărca chitanța.",
+      "generating": "Se generează…",
+      "downloadPdf": "Descarcă PDF"
     },
     "empd": {
       "passMismatch": "Parolele nu corespund.",
@@ -2197,7 +2199,8 @@
       "colReceived": "Primit",
       "colBalance": "Sold",
       "total": "Total",
-      "cta": "Vizualizează în portalul meu"
+      "cta": "Vizualizează în portalul meu",
+      "colReceivedDate": "Primit la"
     }
   },
   "cobros": {

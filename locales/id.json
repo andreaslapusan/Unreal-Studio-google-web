@@ -1775,7 +1775,9 @@
       "calendarIntroAfter": " oleh Unreal Studio.",
       "receivedOn": "Diterima pada {{date}}",
       "dueDateLabel": "Tanggal Jatuh Tempo: {{date}}",
-      "popupBlocked": "Izinkan pop-up untuk melihat/mengunduh bukti pembayaran."
+      "popupBlocked": "Izinkan pop-up untuk melihat/mengunduh bukti pembayaran.",
+      "generating": "Membuat…",
+      "downloadPdf": "Unduh PDF"
     },
     "empd": {
       "passMismatch": "Kata sandi tidak cocok.",
@@ -2198,7 +2200,8 @@
       "colReceived": "Diterima",
       "colBalance": "Saldo",
       "total": "Total",
-      "cta": "Lihat di Portal Saya"
+      "cta": "Lihat di Portal Saya",
+      "colReceivedDate": "Diterima pada"
     }
   },
   "cobros": {

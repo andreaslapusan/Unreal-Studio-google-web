@@ -323,11 +323,6 @@ const ProjectDetail: React.FC = () => {
           setShowClientLogin(false);
           setLoginEmail('');
           setLoginPassword('');
-          
-          // Abrir el documento ahora que está logueado
-          if (project?.construction_update_url) {
-              window.open(getImageUrl(project.construction_update_url), '_blank');
-          }
       } catch (err) {
           setLoginError(t('fix.pd.connectionError'));
       } finally {
@@ -493,7 +488,7 @@ const ProjectDetail: React.FC = () => {
           </section>
 
           {/* Botones de Descarga en Columna Principal - MOVIDO AQUÍ PARA MAYOR VISIBILIDAD */}
-          {(brochureFor(project, i18n.language) || project.construction_update_url || (project.floor_plans && project.floor_plans.length > 0)) && (
+          {(brochureFor(project, i18n.language) || (project.floor_plans && project.floor_plans.length > 0)) && (
             <section className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm">
                 <h3 className="text-2xl font-serif text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
                 <div className="flex flex-wrap gap-4">
@@ -503,24 +498,9 @@ const ProjectDetail: React.FC = () => {
                       {t('fix.pd.downloadBrochure')}
                     </a>
                   )}
-                  {project.construction_update_url && (
-                    <button onClick={() => {
-                        if (isClientLoggedIn()) {
-                            window.open(getImageUrl(project.construction_update_url), '_blank');
-                        } else {
-                            setShowClientLogin(true);
-                        }
-                    }} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-white text-primary border-2 border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-gray-50 hover:border-primary/30 transition">
-                        <span className="material-symbols-outlined">construction</span>
-                        <div className="text-left">
-                            <span className="block leading-none">{t('projectDetail.constructionReport')}</span>
-                            <span className="text-[10px] font-medium opacity-60 flex items-center gap-1">
-                                <span className="material-symbols-outlined text-[10px]">lock</span> {t('fix.pd.investorAccess')}
-                                {project.construction_update_date && ` (${formatDate(project.construction_update_date)})`}
-                            </span>
-                        </div>
-                    </button>
-                  )}
+                  {/* Reporte de obra: NO se expone en la página pública (es privado y
+                      específico de cada cliente). Se ve solo en el portal /cliente,
+                      gateado por las propiedades que el cliente tiene asignadas. */}
                 </div>
                 
                 {project.floor_plans && project.floor_plans.length > 0 && (
@@ -819,26 +799,14 @@ const ProjectDetail: React.FC = () => {
                 </div>
 
                 {/* Botones en Sidebar */}
-                {(brochureFor(project, i18n.language) || project.construction_update_url) && (
+                {brochureFor(project, i18n.language) && (
                   <div className="pt-6 border-t border-gray-100 space-y-3">
                     {brochureFor(project, i18n.language) && (
                       <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
                         <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}
-                    {project.construction_update_url && (
-                      <button onClick={() => {
-                          if (isClientLoggedIn()) {
-                              window.open(getImageUrl(project.construction_update_url), '_blank');
-                          } else {
-                              setShowClientLogin(true);
-                          }
-                      }} className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-green-600 hover:text-white text-green-700 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
-                          <span className="material-symbols-outlined text-sm">construction</span>
-                          <span className="material-symbols-outlined text-xs opacity-50">lock</span>
-                          {t('projectDetail.constructionReport')} {project.construction_update_date && <span className="opacity-70 ml-1">({formatDate(project.construction_update_date)})</span>}
-                      </button>
-                    )}
+                    {/* Reporte de obra: privado → solo en el portal /cliente, gateado por asignación. */}
                   </div>
                 )}
               </div>

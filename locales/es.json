@@ -1774,7 +1774,9 @@
       "calendarIntroAfter": " por Unreal Studio.",
       "receivedOn": "Recibido el {{date}}",
       "dueDateLabel": "Fecha límite: {{date}}",
-      "popupBlocked": "Permite las ventanas emergentes para ver/descargar el recibí."
+      "popupBlocked": "Permite las ventanas emergentes para ver/descargar el recibí.",
+      "generating": "Generando…",
+      "downloadPdf": "Descargar PDF"
     },
     "empd": {
       "passMismatch": "Las contraseñas no coinciden.",
@@ -2197,7 +2199,8 @@
       "colReceived": "Recibido",
       "colBalance": "Balance",
       "total": "Total",
-      "cta": "Ver en mi portal"
+      "cta": "Ver en mi portal",
+      "colReceivedDate": "Recibido el"
     }
   },
   "cobros": {
