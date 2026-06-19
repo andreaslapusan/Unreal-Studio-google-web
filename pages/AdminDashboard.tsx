@@ -54,6 +54,20 @@ const holderNameByEmail = (client: any, em: string): string => {
   return dedupeAmpNames(client?.name);
 };
 
+// Idioma del titular concreto por su email (cada titular recibe en SU idioma).
+// Fallback: idioma preferido de la ficha, o 'es'.
+const holderLangByEmail = (client: any, em: string): 'es' | 'en' | 'ro' | 'id' => {
+  const target = (em || '').trim().toLowerCase();
+  const hs = client?.holders;
+  if (target && Array.isArray(hs)) {
+    const m = hs.find((h: any) => (h?.email || '').trim().toLowerCase() === target);
+    const l = m && (m.lang || '').trim();
+    if (l && ['es', 'en', 'ro', 'id'].includes(l)) return l as any;
+  }
+  const cl = (client?.preferred_language || 'es');
+  return (['es', 'en', 'ro', 'id'].includes(cl) ? cl : 'es') as any;
+};
+
 const GUIDE_STEPS = [
   { titleKey: 'admin.dash.guide1Title', textKey: 'admin.dash.guide1Text' },
   { titleKey: 'admin.dash.guide2Title', textKey: 'admin.dash.guide2Text' },
@@ -915,21 +929,22 @@ const emailsOf = (c: any): string[] => [c?.email, ...((c?.extra_emails) || [])].
 const sendWelcomeCore = async (args: { name: string; email: string; emails?: string[]; holders?: any[]; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
   const userId = getAdminUserId();
   if (!userId) return { ok: false, error: 'session' };
-  const et = i18n.getFixedT(args.lang);
-  // Un correo por titular, cada uno con SU propio email de acceso Y SU propio nombre
-  // (independencia total entre titulares — NO el nombre combinado de la pareja).
-  const clientLike = { holders: args.holders, name: args.name };
+  // Un correo por titular, cada uno con SU email de acceso, SU nombre y SU IDIOMA
+  // (independencia total entre titulares).
+  const clientLike = { holders: args.holders, name: args.name, preferred_language: args.lang };
   const targets = (args.emails && args.emails.length ? args.emails : [args.email]).map((e) => (e || '').trim()).filter(Boolean);
   for (const to of targets) {
+    const lang = holderLangByEmail(clientLike, to);
+    const et = i18n.getFixedT(lang);
     const html = welcomeEmailHtml({
-      firstName: holderNameByEmail(clientLike, to), // nombre del titular de ESTE email (no el combinado)
-      portalUrl: clientPortalUrl(args.lang),
+      firstName: holderNameByEmail(clientLike, to),
+      portalUrl: clientPortalUrl(lang),
       email: to,
       tempPassword: args.tempPassword || null,
-      lang: args.lang,
+      lang,
     });
     const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-      body: { adminUserId: userId, to, lang: args.lang, subject: et('emails.welcome.subject'), html },
+      body: { adminUserId: userId, to, lang, subject: et('emails.welcome.subject'), html },
     });
     if (sErr || !sent?.success) return { ok: false, error: sent?.error || sErr?.message || 'error' };
   }
@@ -946,7 +961,7 @@ const sendWelcome = async (client: Client) => {
   // Bienvenida MANUAL → preview con personalización por titular: cada uno ve SU
   // propio email de acceso (no el del titular principal).
   const tempPw = (client as any).password_plain || client.temp_password || null;
-  const buildHtml = (em: string) => welcomeEmailHtml({ firstName: holderNameByEmail(client, em || email), portalUrl: clientPortalUrl(lang), email: em || email, tempPassword: tempPw, lang });
+  const buildHtml = (em: string) => { const lg = holderLangByEmail(client, em || email); return welcomeEmailHtml({ firstName: holderNameByEmail(client, em || email), portalUrl: clientPortalUrl(lg), email: em || email, tempPassword: tempPw, lang: lg }); };
   openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.welcomeSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
 };
 
@@ -1027,15 +1042,22 @@ const sendReminderEmail = async (client: Client) => {
   const daysLine = d > 0 ? et('emails.reminder.daysLeft', { n }) : d === 0 ? et('emails.reminder.dueToday') : et('emails.reminder.daysOverdue', { n });
   const dueStr = new Date(target.due_date + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: 'long', year: 'numeric' });
   const BROWN = '#3F2305';
-  const buildHtml = (em: string) => `
-    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:${BROWN}">${subject}</h1>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.reminder.hi', { name: holderNameByEmail(client, em) })}</p>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${lead}</p>
-    <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.reminder.paymentFor', { project: target.project_name, label: target.label || '' })}</p>
-    <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${et('emails.reminder.deadlineLabel')} <b>${dueStr}</b></p>
-    <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine}</p>
-    <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.reminder.recommendation')}</p>
-    <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.reminder.cta')}</a></p>`;
+  const buildHtml = (em: string) => {
+    const lg = holderLangByEmail(client, em); const e2 = i18n.getFixedT(lg);
+    const subj = e2(`emails.reminder.${stage}_subject`, { n });
+    const lead2 = e2(`emails.reminder.${stage}_lead`, { n });
+    const daysLine2 = d > 0 ? e2('emails.reminder.daysLeft', { n }) : d === 0 ? e2('emails.reminder.dueToday') : e2('emails.reminder.daysOverdue', { n });
+    const dueStr2 = new Date(target.due_date + 'T00:00:00').toLocaleDateString(lg, { day: '2-digit', month: 'long', year: 'numeric' });
+    return `
+    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:${BROWN}">${subj}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${e2('emails.reminder.hi', { name: holderNameByEmail(client, em) })}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${lead2}</p>
+    <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.reminder.paymentFor', { project: target.project_name, label: target.label || '' })}</p>
+    <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${e2('emails.reminder.deadlineLabel')} <b>${dueStr2}</b></p>
+    <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine2}</p>
+    <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${e2('emails.reminder.recommendation')}</p>
+    <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.reminder.cta')}</a></p>`;
+  };
   openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reminderSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
 };
 
@@ -1044,14 +1066,15 @@ const sendReminderEmail = async (client: Client) => {
 // notify-report; este botón es el envío manual equivalente desde la ficha.
 // HTML del aviso de reporte para UNA propiedad, en el idioma del cliente.
 // Personalizado por destinatario (saludo con su nombre).
-const buildReportHtmlFor = (client: Client, cp: any, lang: string, et: any) => (em: string) => {
+const buildReportHtmlFor = (client: Client, cp: any) => (em: string) => {
   const BROWN = '#3F2305';
+  const lg = holderLangByEmail(client, em); const et = i18n.getFixedT(lg);
   return [
     `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${et('emails.report.subject', { project: cp.project_name })}</h1>`,
     `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: holderNameByEmail(client, em) })}</p>`,
     `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
     cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
-    `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
+    `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
   ].join('');
 };
 
@@ -1070,7 +1093,7 @@ const sendReportForProjects = async (client: Client, cps: any[]) => {
 
   if (list.length === 1) {
     const cp = list[0];
-    const buildHtml = buildReportHtmlFor(client, cp, lang, et);
+    const buildHtml = buildReportHtmlFor(client, cp);
     openEmailPreview({ to: recipients, subject: et('emails.report.subject', { project: cp.project_name }), html: buildHtml(recipients[0] || email), sentMsg: t('admin.dash.reportSent', { email: recipients.join(', '), n: 1 }), userId, lang, buildHtml });
     return;
   }
@@ -1079,11 +1102,12 @@ const sendReportForProjects = async (client: Client, cps: any[]) => {
   if (!window.confirm(t('admin.dash.reportSendMultiConfirm', { defaultValue: 'Se enviará un correo separado por cada propiedad ({{p}}) a cada titular ({{r}}). ¿Enviar?', p: list.length, r: recipients.length }))) return;
   let sent = 0; let failed = 0;
   for (const cp of list) {
-    const buildHtml = buildReportHtmlFor(client, cp, lang, et);
-    const subject = et('emails.report.subject', { project: cp.project_name });
+    const buildHtml = buildReportHtmlFor(client, cp);
     for (const to of recipients) {
+      const lg = holderLangByEmail(client, to);
+      const subject = i18n.getFixedT(lg)('emails.report.subject', { project: cp.project_name });
       try {
-        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang, subject, html: buildHtml(to) } });
+        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang: lg, subject, html: buildHtml(to) } });
         if (error || !data?.success) failed++; else sent++;
       } catch { failed++; }
     }
@@ -1133,8 +1157,15 @@ const sendCalendarEmail = async (client: Client) => {
     const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
     tables += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
   }
-  const cta = `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lang)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${et('emails.calendar.cta')}</a></p>`;
-  const buildHtml = (em: string) => h1 + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${et('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + intro + tables + cta;
+  // Cabecera/saludo/intro/cta en el idioma de CADA titular (la tabla de cifras es
+  // numérica; sus cabeceras quedan en el idioma de la ficha).
+  const buildHtml = (em: string) => {
+    const lg = holderLangByEmail(client, em); const e2 = i18n.getFixedT(lg);
+    const h1b = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${e2('emails.calendar.subject')}</h1>`;
+    const introb = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${e2('emails.calendar.intro')}</p>`;
+    const ctab = `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.calendar.cta')}</a></p>`;
+    return h1b + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + introb + tables + ctab;
+  };
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up). Cada
   // titular recibe un correo SEPARADO con su nombre.
   openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.calendarSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
@@ -2627,25 +2658,36 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           const cc: any = currentClient;
           const hs: any[] = (cc.holders && cc.holders.length)
             ? cc.holders
-            : [{ name: cc.name || '', email: cc.email || '' }, ...((cc.extra_emails) || []).map((e: string) => ({ name: '', email: e }))];
+            : [{ name: cc.name || '', email: cc.email || '', phone: cc.phone || '', lang: cc.preferred_language || 'es' }, ...((cc.extra_emails) || []).map((e: string) => ({ name: '', email: e, phone: '', lang: cc.preferred_language || 'es' }))];
           const setH = (next: any[]) => setCurrentClient((prev: any) => ({
             ...prev, holders: next,
             name: (next.map((h) => (h.name || '').trim()).filter(Boolean).join(' & ')) || prev.name,
             email: (next.find((h) => (h.email || '').trim())?.email || prev.email),
+            // El teléfono/idioma del cliente = los del 1er titular (default para la ficha y el portal).
+            phone: (next.find((h) => (h.phone || '').trim())?.phone ?? prev.phone),
+            preferred_language: (next.find((h) => (h.lang || '').trim())?.lang || prev.preferred_language),
           }));
           return (
             <div>
-              <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.holders', { defaultValue: 'Titular(es) — nombre y email' })}</label>
-              <div className="space-y-2">
+              <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.holders', { defaultValue: 'Titular(es) — nombre, email, teléfono e idioma' })}</label>
+              <div className="space-y-3">
                 {hs.map((h, i) => (
-                  <div key={i} className="flex gap-2">
-                    <input type="text" value={h.name || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, name: e.target.value } : x); setH(n); }} className="flex-1 px-4 py-3 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderNamePh', { defaultValue: 'Nombre' })} />
-                    <input type="email" value={h.email || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, email: e.target.value } : x); setH(n); }} className="flex-1 px-4 py-3 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderEmailPh', { defaultValue: 'Email' })} />
-                    {hs.length > 1 && <button type="button" onClick={() => setH(hs.filter((_, j) => j !== i))} className="px-2 text-red-400 hover:text-red-600"><span className="material-symbols-outlined">close</span></button>}
+                  <div key={i} className="bg-gray-50/60 rounded-2xl p-2 border border-gray-100">
+                    <div className="flex gap-2 items-start">
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input type="text" value={h.name || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, name: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderNamePh', { defaultValue: 'Nombre' })} />
+                        <input type="email" value={h.email || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, email: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderEmailPh', { defaultValue: 'Email' })} />
+                        <input type="text" value={h.phone || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, phone: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderPhonePh', { defaultValue: 'Teléfono' })} />
+                        <select value={h.lang || 'es'} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, lang: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-bold border border-gray-100 focus:border-primary/20 focus:outline-none text-sm">
+                          <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
+                        </select>
+                      </div>
+                      {hs.length > 1 && <button type="button" onClick={() => setH(hs.filter((_, j) => j !== i))} className="px-2 py-3 text-red-400 hover:text-red-600"><span className="material-symbols-outlined">close</span></button>}
+                    </div>
                   </div>
                 ))}
               </div>
-              <button type="button" onClick={() => setH([...hs, { name: '', email: '' }])} className="mt-2 text-xs font-bold text-primary hover:text-black inline-flex items-center gap-1"><span className="material-symbols-outlined text-sm">add</span> {t('admin.dash.addHolder', { defaultValue: 'Añadir titular' })}</button>
+              <button type="button" onClick={() => setH([...hs, { name: '', email: '', phone: '', lang: (currentClient as any).preferred_language || 'es' }])} className="mt-2 text-xs font-bold text-primary hover:text-black inline-flex items-center gap-1"><span className="material-symbols-outlined text-sm">add</span> {t('admin.dash.addHolder', { defaultValue: 'Añadir titular' })}</button>
               {hs.filter((h) => (h.name || '').trim()).length > 1 && <p className="text-xs text-primary/50 mt-1">{t('admin.dash.titlePreview', { defaultValue: 'Título' })}: <b>{hs.map((h) => (h.name || '').trim()).filter(Boolean).join(' & ')}</b></p>}
             </div>
           );
