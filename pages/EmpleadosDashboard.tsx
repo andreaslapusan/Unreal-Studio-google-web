@@ -34,49 +34,27 @@ function fmtTime(iso: string): string {
   return baliTime(iso) || '--:--';
 }
 
-// Frase del día para el equipo (humor/Murphy/motivación). Cambia cada día (misma
-// todo el día). Bilingüe: ES por defecto, EN para el resto de idiomas.
-const TEAM_PHRASES_ES = [
-  'Ley de Murphy: si algo puede salir mal, esperará a que el cliente esté mirando.',
-  'El café es ese puente entre "no puedo" y "ya está hecho".',
-  'Trabajar en equipo divide el trabajo y multiplica los memes.',
-  'Si funciona a la primera, desconfía: revísalo dos veces.',
-  'La reunión que pudo ser un email… igual hoy sí es un email.',
-  'Nada motiva más que una fecha de entrega de ayer.',
-  'El plan perfecto dura hasta el primer mensaje de WhatsApp.',
-  'Hazlo bien una vez y serás el responsable para siempre.',
-  'La impresora detecta cuándo tienes prisa. Siempre.',
-  'Hoy es un buen día para ser un poco leyenda.',
-  'Murphy dice: la pieza que falta estaba en la otra caja.',
-  'Sonríe: cuesta menos calorías que quejarse.',
-  'El wifi va lento solo cuando lo necesitas rápido.',
-  'Cada gran obra empezó con un "¿y si lo probamos?".',
-  'Si todo está bajo control, es que vas demasiado lento. 😉',
-  'La energía de hoy: la justa para hacerlo increíble.',
-  'No hay problema que un buen plan (y un café) no mejore.',
-  'Equipo Unreal: convertimos el caos en villas.',
-  'El optimista inventó el avión; el pesimista, el cinturón. Lleva los dos.',
-  'Recuerda: tú haces que esto funcione. Gracias por ello.',
+// Frase del día para el equipo (humor/Murphy/motivación). MISMA frase cada día en
+// los 4 idiomas (es/en/ro/id) — es la misma cita traducida, no una distinta por idioma.
+type Quote = { es: string; en: string; ro: string; id: string };
+const TEAM_QUOTES: Quote[] = [
+  { es: 'Ley de Murphy: si algo puede salir mal, esperará a que el cliente esté mirando.', en: "Murphy's law: if it can go wrong, it'll wait until the client is watching.", ro: 'Legea lui Murphy: dacă ceva poate merge prost, va aștepta să se uite clientul.', id: 'Hukum Murphy: kalau bisa salah, ia menunggu sampai klien melihat.' },
+  { es: 'El café es el puente entre "no puedo" y "ya está hecho".', en: 'Coffee: the bridge between "I can\'t" and "it\'s done".', ro: 'Cafeaua: puntea dintre "nu pot" și "gata".', id: 'Kopi: jembatan antara "tidak bisa" dan "selesai".' },
+  { es: 'Trabajar en equipo divide el trabajo y multiplica los memes.', en: 'Teamwork divides the work and multiplies the memes.', ro: 'Munca în echipă împarte munca și înmulțește meme-urile.', id: 'Kerja tim membagi pekerjaan dan melipatgandakan meme.' },
+  { es: 'Si funciona a la primera, desconfía: revísalo dos veces.', en: 'If it works on the first try, be suspicious. Check it twice.', ro: 'Dacă merge din prima, fii suspicios: verifică de două ori.', id: 'Kalau berhasil sekali coba, curigai. Periksa dua kali.' },
+  { es: 'La reunión que pudo ser un email… hoy igual sí es un email.', en: 'The meeting that could have been an email… today maybe it is one.', ro: 'Ședința care putea fi un email… azi poate chiar este.', id: 'Rapat yang seharusnya cukup email… hari ini mungkin memang email.' },
+  { es: 'Nada motiva más que una fecha de entrega de ayer.', en: 'Nothing motivates like a deadline that was yesterday.', ro: 'Nimic nu motivează ca un termen care era ieri.', id: 'Tidak ada yang lebih memotivasi dari tenggat kemarin.' },
+  { es: 'El plan perfecto dura hasta el primer mensaje de WhatsApp.', en: 'The perfect plan lasts until the first WhatsApp message.', ro: 'Planul perfect ține până la primul mesaj de WhatsApp.', id: 'Rencana sempurna bertahan sampai pesan WhatsApp pertama.' },
+  { es: 'Hazlo bien una vez y serás el responsable para siempre.', en: 'Do it well once and you own it forever.', ro: 'Fă-o bine o dată și ești responsabil pe veci.', id: 'Lakukan dengan baik sekali, jadi tanggung jawabmu selamanya.' },
+  { es: 'Hoy es un buen día para ser un poco leyenda.', en: 'Today is a good day to be a bit of a legend.', ro: 'Azi e o zi bună să fii un pic legendă.', id: 'Hari ini hari yang baik untuk jadi sedikit legenda.' },
+  { es: 'Sonríe: gasta menos calorías que quejarse.', en: 'Smile: it burns fewer calories than complaining.', ro: 'Zâmbește: arde mai puține calorii decât plânsul.', id: 'Tersenyumlah: lebih hemat kalori daripada mengeluh.' },
+  { es: 'Cada gran obra empezó con un "¿y si lo probamos?".', en: 'Every great build started with "what if we try it?".', ro: 'Orice lucrare mare a început cu "dacă am încerca?".', id: 'Setiap karya besar dimulai dari "bagaimana kalau dicoba?".' },
+  { es: 'Si todo está bajo control, vas demasiado lento. 😉', en: "If everything is under control, you're going too slow. 😉", ro: 'Dacă totul e sub control, mergi prea încet. 😉', id: 'Kalau semua terkendali, kamu terlalu lambat. 😉' },
+  { es: 'No hay problema que un buen plan (y un café) no mejore.', en: "No problem a good plan (and a coffee) can't improve.", ro: 'Nicio problemă pe care un plan bun (și o cafea) să n-o îmbunătățească.', id: 'Tidak ada masalah yang tak membaik dengan rencana bagus (dan kopi).' },
+  { es: 'Equipo Unreal: convertimos el caos en villas.', en: 'Team Unreal: we turn chaos into villas.', ro: 'Echipa Unreal: transformăm haosul în vile.', id: 'Tim Unreal: kami mengubah kekacauan jadi vila.' },
+  { es: 'Recuerda: tú haces que esto funcione. Gracias por ello.', en: 'Remember: you make this work. Thank you for that.', ro: 'Ține minte: tu faci ca asta să meargă. Mulțumim.', id: 'Ingat: kamu yang membuat ini berjalan. Terima kasih.' },
 ];
-const TEAM_PHRASES_EN = [
-  "Murphy's law: if it can go wrong, it'll wait until the client is watching.",
-  'Coffee: the bridge between "I can\'t" and "it\'s done".',
-  'Teamwork divides the work and multiplies the memes.',
-  'If it works on the first try, be suspicious. Check it twice.',
-  'The meeting that could have been an email… maybe today it is one.',
-  'Nothing motivates like a deadline that was yesterday.',
-  'The perfect plan lasts until the first WhatsApp message.',
-  'Do it well once and you own it forever.',
-  'The printer always knows when you\'re in a hurry.',
-  'Today is a good day to be a bit of a legend.',
-  'Smile: it burns fewer calories than complaining.',
-  'Every great build started with "what if we try it?".',
-  'If everything is under control, you\'re going too slow. 😉',
-  'Today\'s energy: exactly enough to make it amazing.',
-  'No problem a good plan (and a coffee) can\'t improve.',
-  'Team Unreal: we turn chaos into villas.',
-  'Remember: you make this work. Thank you for that.',
-];
+function quoteLang(l: string): keyof Quote { return (['es', 'en', 'ro', 'id'].includes(l) ? l : 'es') as keyof Quote; }
 // Frases cortas para la pantalla de la cámara (que sonrían).
 const SMILE_ES = ['¡Sonríe! 😄', 'Di "Bali" 🌴', 'Cara de crack 😎', 'Hoy lo petas 🔥', 'Buen rollito ✨', 'A brillar ☀️', 'Equipo Unreal 💪', '¡Guapo/a! 😍', 'Energía top ⚡', 'Sonrisa de campeón 🏆'];
 const SMILE_EN = ['Smile! 😄', 'Say "Bali" 🌴', 'Looking great 😎', "You've got this 🔥", 'Good vibes ✨', 'Shine on ☀️', 'Team Unreal 💪', 'Lookin\' good! 😍', 'Top energy ⚡', "Champion's smile 🏆"];
@@ -396,8 +374,8 @@ const EmpleadosDashboard: React.FC = () => {
       <div className="px-5 py-6 md:py-10">
       <div className="max-w-md mx-auto">
         {(() => {
-          const list = (i18n.language || 'es').startsWith('es') ? TEAM_PHRASES_ES : TEAM_PHRASES_EN;
-          const phrase = list[Math.floor(Date.now() / 86400000) % list.length];
+          const q = TEAM_QUOTES[Math.floor(Date.now() / 86400000) % TEAM_QUOTES.length];
+          const phrase = q[quoteLang(i18n.language)];
           return (
             <div className="bg-primary text-almond rounded-3xl px-5 py-4 mb-6 flex items-start gap-3 shadow-sm">
               <span className="material-symbols-outlined text-[20px] shrink-0 opacity-80">emoji_objects</span>
