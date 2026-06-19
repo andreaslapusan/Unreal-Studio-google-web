@@ -271,7 +271,9 @@
     "articleNotFound": "Artículo no encontrado",
     "shareTitle": "¿Te ha gustado este artículo?",
     "shareBody": "Compártelo con otros inversores interesados en el mercado internacional.",
-    "metaDescription": "Guías y novedades sobre invertir en propiedades en Bali: leasehold, rentabilidad, zonas y proceso de compra para inversores."
+    "metaDescription": "Guías y novedades sobre invertir en propiedades en Bali: leasehold, rentabilidad, zonas y proceso de compra para inversores.",
+    "copyLink": "Copiar enlace",
+    "share": "Compartir"
   },
   "agenciasPartnership": {
     "tag": "Programa de Agencias Colaboradoras",
@@ -412,7 +414,13 @@
     "linkSlugLabel": "Slug:",
     "copyPrompt": "Copia el link:",
     "copyPersonalLinkPrompt": "Copia tu link:",
-    "accountNotLinked": "Tu cuenta aún no está vinculada a una agencia. Contacta soporte."
+    "accountNotLinked": "Tu cuenta aún no está vinculada a una agencia. Contacta soporte.",
+    "infoStep1": "Consulta los proyectos que tienes asignados y su material de marca (PDF, recorrido virtual).",
+    "infoStep2": "Personaliza tu marca (logo y enlace personal) en el panel superior para compartir con tus clientes.",
+    "infoStep3": "Usa tu enlace personal para que las visitas y reservas queden atribuidas a tu agencia.",
+    "infoStep4": "Revisa tus estadísticas desde el botón de estadísticas del menú superior.",
+    "infoTitle": "Cómo usar tu portal de agencia",
+    "instructions": "Instrucciones"
   },
   "agenciasStats": {
     "headerTitle": "Mis estadísticas",
@@ -496,7 +504,9 @@
       "previous": "Anterior",
       "close": "Cerrar",
       "language": "Idioma",
-      "currency": "Divisa"
+      "currency": "Divisa",
+      "menu": "Menú",
+      "refresh": "Actualizar"
     },
     "nav": {
       "projects": "Propiedades",
@@ -517,7 +527,10 @@
       "panel": "Panel de administración",
       "agencies": "Agencias",
       "cobros": "Finanzas",
-      "faqs": "FAQs"
+      "faqs": "FAQs",
+      "agenciesMgmt": "Agencias",
+      "agencyPacks": "Packs Agencia",
+      "arquitectura": "Arquitectura"
     },
     "clientLogin": {
       "title": "Portal Inversor",
@@ -591,7 +604,11 @@
       "contractYears": "Años contrato",
       "extensionYears": "Años extensión",
       "progressPct": "Progreso de obra (%)",
-      "type": "Tipo"
+      "type": "Tipo",
+      "addPlan": "Añadir",
+      "planDrive": "Plano (Google Drive)",
+      "planUrlPlaceholder": "o pega un enlace (Drive / PDF)…",
+      "uploadPdf": "Subir PDF"
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -617,7 +634,15 @@
       "active": "Activo",
       "inactive": "Inactivo",
       "unit": "Unidad",
-      "newClient": "Nuevo Cliente"
+      "newClient": "Nuevo Cliente",
+      "allStatuses": "Todos los estados",
+      "deleteSel": "Borrar",
+      "draft": "Draft",
+      "lastLogin": "Último acceso",
+      "nSelected": "{{n}} sel.",
+      "permsFilter": "Permisos",
+      "selectAll": "Seleccionar todos",
+      "setStatusTo": "Estado →"
     },
     "usersTab": {
       "title": "Administradores",
@@ -700,7 +725,12 @@
       "submitting": "Subiendo…",
       "submit": "Publicar update",
       "successMsg": "✅ Update publicado. Triggers de notificación deben reaccionar.",
-      "btnAdmin": "Admin"
+      "btnAdmin": "Admin",
+      "allProjects": "Todos los proyectos",
+      "filesCount": "archivos",
+      "noUploads": "Todavía no hay reportes subidos para este filtro.",
+      "uploadedSubtitle": "Aquí ves lo que ya has publicado y sus archivos. Si tu reporte aparece en la lista, se ha subido bien.",
+      "uploadedTitle": "Reportes subidos"
     },
     "equipoDash": {
       "greeting": "Hola, {{name}}",
@@ -835,7 +865,13 @@
       "receiptsView": "Ver / Descargar",
       "deliveredOn": "Entregada el {{date}}",
       "warrantyDaysLeft": "Garantía de defectos cosméticos: quedan {{n}} días para reportar.",
-      "warrantyClosed": "El plazo de 2 semanas para reportar defectos cosméticos ha finalizado."
+      "warrantyClosed": "El plazo de 2 semanas para reportar defectos cosméticos ha finalizado.",
+      "paybackMonths": "{{count}} meses",
+      "paybackYears": "{{count}} años",
+      "poolNote": "Tu aportación sobre el total del complejo y el % que representa.",
+      "poolOf": "de",
+      "poolTitle": "Pool de inversión",
+      "welcome": "Bienvenido a Unreal Studio"
     },
     "agencias": {
       "title": "Pack para Agencias",
@@ -1143,7 +1179,38 @@
       "calendarConfirm": "¿Enviar el calendario de pagos a {{email}}?",
       "calendarSent": "Calendario de pagos enviado a {{email}}.",
       "brochureByLang": "Brochure por idioma",
-      "brochureByLangHint": "Sube un PDF por idioma. Si un idioma no tiene, se usa el de inglés (ENG) por defecto."
+      "brochureByLangHint": "Sube un PDF por idioma. Si un idioma no tiene, se usa el de inglés (ENG) por defecto.",
+      "addHolder": "Añadir titular",
+      "bulkDeleteConfirm": "¿Borrar {{n}} cliente(s)? No se puede deshacer.",
+      "bulkError": "Error en la acción en bloque",
+      "clientStatus": "Estado del cliente",
+      "draftHint": "Activo = puede entrar y cuenta en Finanzas. Inactivo = no entra, sí cuenta. Draft = perfil de prueba, no entra ni cuenta.",
+      "driveFolder": "Carpeta de documentación (Drive)",
+      "driveFolderLabel": "Carpeta de documentación (Drive) de este proyecto",
+      "emailPreviewTitle": "Previsualización del email",
+      "emailPreviewTo": "Para",
+      "emailPreviewViewAs": "Ver como",
+      "holderEmailPh": "Email",
+      "holderNamePh": "Nombre",
+      "holders": "Titular(es) — nombre y email",
+      "invArquitectura": "Arquitectura",
+      "invCompra": "Compra (revender/alquilar)",
+      "invDesarrollo": "Desarrollo a medida",
+      "invPool": "Pool de inversión",
+      "investmentType": "Tipo de inversión",
+      "loadingPanel": "Cargando panel…",
+      "poolShare": "Participación",
+      "poolTotal": "Total del complejo (para el %)",
+      "pwEncrypted": "cifrada",
+      "pwEncryptedHint": "Cifrada — no visible. Usa Editar para fijar una nueva.",
+      "reportPickContinue": "Continuar",
+      "reportPickTitle": "Aviso de obra — elige proyecto",
+      "reportSendMultiConfirm": "Se enviará un correo separado por cada propiedad ({{p}}) a cada titular ({{r}}). ¿Enviar?",
+      "reportSentMulti": "Avisos enviados: {{n}}{{f}}",
+      "selectAll": "Seleccionar todos",
+      "selectClient": "Seleccionar",
+      "sendEmailBtn": "Enviar",
+      "titlePreview": "Título"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -1250,7 +1317,11 @@
       "errorCreateKwitansi": "No se pudo crear el recibo.",
       "errorTransport": "Recibo #{{no}} creado, pero el buzón hello@ aún no tiene SMTP configurado. Avísale a Andreas para meter la contraseña.",
       "errorSend": "Recibo creado pero el envío falló: {{error}}",
-      "kwitansiSent": "Recibo #{{no}} enviado a {{email}}"
+      "kwitansiSent": "Recibo #{{no}} enviado a {{email}}",
+      "currencyFromSale": "La divisa la fija la venta de la propiedad",
+      "fillRequired": "Rellena concepto, importe, divisa y fecha límite.",
+      "kwitansiSendTitle": "Enviar recibí al cliente",
+      "receivedAmtLabel": "recibido"
     },
     "notif": {
       "title": "Notificaciones",
@@ -1278,7 +1349,29 @@
       "goToClient": "Ir al cliente",
       "goToCalendar": "Ir a calendario",
       "viewAttendance": "Ver fichajes",
-      "delete": "Borrar"
+      "delete": "Borrar",
+      "actApprove": "Aprobar / Rechazar",
+      "actUpdateObra": "Actualizar estado",
+      "actUploadReport": "Subir reporte",
+      "actVerify": "Verificar",
+      "actViewPayment": "Ver cobro",
+      "allClear": "Todo al día. No tienes tareas pendientes.",
+      "done": "Hecho",
+      "grpCobros": "Cobros",
+      "grpEquipo": "Equipo",
+      "grpObra": "Obra",
+      "noActivity": "Sin actividad reciente.",
+      "obraMissing": "Sin reporte nuevo hace {{n}} días",
+      "obraNever": "Nunca se ha subido reporte de obra",
+      "obraStale": "Obra sin novedades hace {{n}} días",
+      "searchActor": "Buscar por nombre…",
+      "startDay": "Para hoy",
+      "sumClaims": "{{n}} por verificar",
+      "sumObra": "{{n}} obra sin actualizar",
+      "sumOverdue": "{{n}} por cobrar",
+      "sumVacs": "{{n}} vacaciones",
+      "tabActivity": "Actividad",
+      "tabTasks": "Tareas"
     },
     "vac": {
       "confirmDelete": "¿Eliminar esta solicitud de vacaciones?",
@@ -1304,7 +1397,15 @@
       "note": "Nota",
       "daysTotal": "{{n}} días",
       "weekTotal": "Total esta semana: {{n}} días",
-      "reason": "Motivo"
+      "reason": "Motivo",
+      "dayAbsences": "Ausencias",
+      "dayNoAbsences": "Nadie ausente este día.",
+      "dayNoPayments": "Ningún cobro con vencimiento este día.",
+      "legendPayment": "Cobro de cliente con fecha límite ese día",
+      "legendPending": "Bolita apagada = solicitud pendiente de aprobar",
+      "legendTitle": "Leyenda",
+      "legendVacation": "Bolita de color = empleado de vacaciones/ausente (un color por persona)",
+      "paymentsDue": "Cobros este día"
     },
     "att": {
       "title": "Fichajes",
@@ -1320,6 +1421,32 @@
       "breakStart": "Inicio pausa",
       "breakEnd": "Fin pausa",
       "location": "Ver ubicación"
+    },
+    "arch": {
+      "associate": "Asociar cliente",
+      "driveOpen": "Drive",
+      "editFolder": "Drive / Editar",
+      "emptyHint": "Para asociar un cliente: Clientes → su ficha → en la propiedad asignada, cambia el tipo de inversión a \"Arquitectura\". Aparecerá aquí para gestionar su carpeta de Drive y su plan de pagos.",
+      "emptyTitle": "Aún no hay clientes de arquitectura",
+      "noDrive": "Sin carpeta Drive",
+      "payments": "Pagos",
+      "subtitle": "Proyectos de arquitectura: documentación (Drive) y plan de pagos por cliente."
+    },
+    "attRep": {
+      "count": "{{n}} reportes",
+      "empty": "Aún no hay reportes generados.",
+      "errDownload": "No se pudo descargar el reporte.",
+      "sortDateAsc": "Fecha (antiguos)",
+      "sortDateDesc": "Fecha (recientes)",
+      "sortPresAsc": "Menos presentes",
+      "sortPresDesc": "Más presentes",
+      "subtitle": "Reporte diario generado automáticamente a las 23:59 (hora Bali). Descargable, con foto por fichaje.",
+      "thAction": "Descargar",
+      "thDate": "Fecha",
+      "thGenerated": "Generado",
+      "thPresent": "Asistencia",
+      "thSize": "Tamaño",
+      "title": "Reportes de asistencia (PDF)"
     }
   },
   "footer": {
@@ -1571,7 +1698,10 @@
       "submit": "Subir reporte",
       "done": "Reporte subido.",
       "close": "Cerrar",
-      "selectProject": "Selecciona un proyecto"
+      "selectProject": "Selecciona un proyecto",
+      "lastUploaded": "Último reporte subido (lo que ven los clientes)",
+      "noLast": "Aún no hay reporte subido para este proyecto.",
+      "viewPdf": "Ver PDF"
     }
   },
   "vacaciones": {
@@ -2234,6 +2364,8 @@
     "openPayments": "Abrir pagos del cliente",
     "kpiCollected": "Cobrado",
     "kpiTotalSales": "Total ventas",
-    "kpiMarket": "Valor mercado"
+    "kpiMarket": "Valor mercado",
+    "globalNote": "Convertido a {{cur}} (tasas actuales de la web). Detalle por moneda abajo.",
+    "kpiGlobal": "Global"
   }
 }

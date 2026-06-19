@@ -271,7 +271,9 @@
     "articleNotFound": "Articolul nu a fost găsit",
     "shareTitle": "Ți-a plăcut acest articol?",
     "shareBody": "Distribuie-l altor investitori interesați de piața internațională.",
-    "metaDescription": "Ghiduri și noutăți despre investiții în proprietăți în Bali: leasehold, randament, zone și procesul de achiziție pentru investitori."
+    "metaDescription": "Ghiduri și noutăți despre investiții în proprietăți în Bali: leasehold, randament, zone și procesul de achiziție pentru investitori.",
+    "copyLink": "Copiază linkul",
+    "share": "Distribuie"
   },
   "agenciasPartnership": {
     "tag": "Program Agenții Partenere",
@@ -412,7 +414,13 @@
     "linkSlugLabel": "Slug:",
     "copyPrompt": "Copiază link-ul:",
     "copyPersonalLinkPrompt": "Copiază link-ul tău:",
-    "accountNotLinked": "Contul tău nu este încă asociat unei agenții. Contactează suportul."
+    "accountNotLinked": "Contul tău nu este încă asociat unei agenții. Contactează suportul.",
+    "infoStep1": "Consultă proiectele care îți sunt atribuite și materialul de brand (PDF, tur virtual).",
+    "infoStep2": "Personalizează-ți brandul (logo și link personal) în panoul de sus pentru a-l împărtăși cu clienții tăi.",
+    "infoStep3": "Folosește linkul tău personal pentru ca vizitele și rezervările să fie atribuite agenției tale.",
+    "infoStep4": "Verifică-ți statisticile din butonul de statistici din meniul de sus.",
+    "infoTitle": "Cum să folosești portalul tău de agenție",
+    "instructions": "Instrucțiuni"
   },
   "agenciasStats": {
     "headerTitle": "Statisticile mele",
@@ -496,7 +504,9 @@
       "previous": "Anteriorul",
       "close": "Închide",
       "language": "Limbă",
-      "currency": "Monedă"
+      "currency": "Monedă",
+      "menu": "Meniu",
+      "refresh": "Reîmprospătează"
     },
     "nav": {
       "projects": "Proprietăți",
@@ -517,7 +527,10 @@
       "panel": "Panou de administrare",
       "agencies": "Agenții",
       "cobros": "Finanțe",
-      "faqs": "Întrebări"
+      "faqs": "Întrebări",
+      "agenciesMgmt": "Agenții",
+      "agencyPacks": "Pachete Agenție",
+      "arquitectura": "Arhitectură"
     },
     "clientLogin": {
       "title": "Portal Investitor",
@@ -591,7 +604,11 @@
       "contractYears": "Ani contract",
       "extensionYears": "Ani extensie",
       "progressPct": "Progres șantier (%)",
-      "type": "Tip"
+      "type": "Tip",
+      "addPlan": "Adaugă",
+      "planDrive": "Plan (Google Drive)",
+      "planUrlPlaceholder": "sau lipește un link (Drive / PDF)…",
+      "uploadPdf": "Încarcă PDF"
     },
     "blogTab": {
       "title": "Articole Blog",
@@ -617,7 +634,15 @@
       "active": "Activ",
       "inactive": "Inactiv",
       "unit": "Unitate",
-      "newClient": "Client nou"
+      "newClient": "Client nou",
+      "allStatuses": "Toate statusurile",
+      "deleteSel": "Șterge",
+      "draft": "Draft",
+      "lastLogin": "Ultima conectare",
+      "nSelected": "{{n}} sel.",
+      "permsFilter": "Permisiuni",
+      "selectAll": "Selectează tot",
+      "setStatusTo": "Status →"
     },
     "usersTab": {
       "title": "Administratori",
@@ -700,7 +725,12 @@
       "submitting": "Se încarcă…",
       "submit": "Publică update",
       "successMsg": "✅ Update publicat. Notificările ar trebui să se declanșeze.",
-      "btnAdmin": "Admin"
+      "btnAdmin": "Admin",
+      "allProjects": "Toate proiectele",
+      "filesCount": "fișiere",
+      "noUploads": "Încă nu există rapoarte încărcate pentru acest filtru.",
+      "uploadedSubtitle": "Aici vezi ce ai publicat deja și fișierele aferente. Dacă raportul tău apare în listă, a fost încărcat corect.",
+      "uploadedTitle": "Rapoarte încărcate"
     },
     "equipoDash": {
       "greeting": "Salut, {{name}}",
@@ -835,7 +865,13 @@
       "receiptsView": "Vezi / Descarcă",
       "deliveredOn": "Livrata pe {{date}}",
       "warrantyDaysLeft": "Garantia pentru defecte cosmetice: au ramas {{n}} zile pentru a raporta.",
-      "warrantyClosed": "Termenul de 2 saptamani pentru a raporta defecte cosmetice a expirat."
+      "warrantyClosed": "Termenul de 2 saptamani pentru a raporta defecte cosmetice a expirat.",
+      "paybackMonths": "{{count}} luni",
+      "paybackYears": "{{count}} ani",
+      "poolNote": "Contribuția ta la totalul complexului și procentul pe care îl reprezintă.",
+      "poolOf": "din",
+      "poolTitle": "Fond de investiții",
+      "welcome": "Bun venit la Unreal Studio"
     },
     "agencias": {
       "title": "Pack pentru Agenții",
@@ -1143,7 +1179,38 @@
       "calendarConfirm": "Trimite calendarul de plăți către {{email}}?",
       "calendarSent": "Calendarul de plăți a fost trimis către {{email}}.",
       "brochureByLang": "Broșură pe limbă",
-      "brochureByLangHint": "Încărcați un PDF pe limbă. Dacă o limbă nu are, se utilizează limba engleză (ENG) implicit."
+      "brochureByLangHint": "Încărcați un PDF pe limbă. Dacă o limbă nu are, se utilizează limba engleză (ENG) implicit.",
+      "addHolder": "Adaugă titular",
+      "bulkDeleteConfirm": "Ștergi {{n}} client(i)? Nu se poate anula.",
+      "bulkError": "Eroare la acțiunea în masă",
+      "clientStatus": "Status client",
+      "draftHint": "Activ = se poate conecta și contează în Finanțe. Inactiv = nu se conectează, dar contează. Draft = profil de test, nu se conectează și nu contează.",
+      "driveFolder": "Folder de documentație (Drive)",
+      "driveFolderLabel": "Folder de documentație (Drive) pentru acest proiect",
+      "emailPreviewTitle": "Previzualizare email",
+      "emailPreviewTo": "Către",
+      "emailPreviewViewAs": "Vezi ca",
+      "holderEmailPh": "Email",
+      "holderNamePh": "Nume",
+      "holders": "Titular(i) — nume și email",
+      "invArquitectura": "Arhitectură",
+      "invCompra": "Achiziție (revânzare/închiriere)",
+      "invDesarrollo": "Dezvoltare la comandă",
+      "invPool": "Fond de investiții",
+      "investmentType": "Tip de investiție",
+      "loadingPanel": "Se încarcă panoul…",
+      "poolShare": "Participare",
+      "poolTotal": "Total complex (pentru %)",
+      "pwEncrypted": "criptată",
+      "pwEncryptedHint": "Criptată — nevizibilă. Folosește Editare pentru a seta una nouă.",
+      "reportPickContinue": "Continuă",
+      "reportPickTitle": "Notificare șantier — alege proiectul",
+      "reportSendMultiConfirm": "Se va trimite un email separat pentru fiecare proprietate ({{p}}) către fiecare titular ({{r}}). Trimiți?",
+      "reportSentMulti": "Notificări trimise: {{n}}{{f}}",
+      "selectAll": "Selectează tot",
+      "selectClient": "Selectează",
+      "sendEmailBtn": "Trimite",
+      "titlePreview": "Titlu"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -1250,7 +1317,11 @@
       "errorCreateKwitansi": "Nu s-a putut crea kwitansi.",
       "errorTransport": "Kwitansi #{{no}} creat, dar cutia poștală hello@ încă nu are SMTP configurat. Anunțați-l pe Andreas pentru a introduce parola.",
       "errorSend": "Kwitansi creat, dar trimiterea a eșuat: {{error}}",
-      "kwitansiSent": "Kwitansi #{{no}} trimis către {{email}} "
+      "kwitansiSent": "Kwitansi #{{no}} trimis către {{email}} ",
+      "currencyFromSale": "Moneda este stabilită de vânzarea proprietății",
+      "fillRequired": "Completează conceptul, suma, moneda și data limită.",
+      "kwitansiSendTitle": "Trimite chitanța clientului",
+      "receivedAmtLabel": "primit"
     },
     "notif": {
       "title": "Notificări",
@@ -1278,7 +1349,29 @@
       "goToClient": "Mergeți la client",
       "goToCalendar": "Mergi la calendar",
       "viewAttendance": "Vezi pontaje",
-      "delete": "Șterge"
+      "delete": "Șterge",
+      "actApprove": "Aprobă / Respinge",
+      "actUpdateObra": "Actualizează statusul",
+      "actUploadReport": "Încarcă raport",
+      "actVerify": "Verifică",
+      "actViewPayment": "Vezi încasarea",
+      "allClear": "Totul la zi. Nu ai sarcini în așteptare.",
+      "done": "Gata",
+      "grpCobros": "Încasări",
+      "grpEquipo": "Echipă",
+      "grpObra": "Șantier",
+      "noActivity": "Nicio activitate recentă.",
+      "obraMissing": "Niciun raport nou de {{n}} zile",
+      "obraNever": "Nu a fost încărcat niciodată un raport de șantier",
+      "obraStale": "Niciun progres pe șantier de {{n}} zile",
+      "searchActor": "Caută după nume…",
+      "startDay": "Pentru azi",
+      "sumClaims": "{{n}} de verificat",
+      "sumObra": "{{n}} șantier neactualizat",
+      "sumOverdue": "{{n}} de încasat",
+      "sumVacs": "{{n}} concedii",
+      "tabActivity": "Activitate",
+      "tabTasks": "Sarcini"
     },
     "vac": {
       "confirmDelete": "Ștergeți această solicitare de vacanță?",
@@ -1304,7 +1397,15 @@
       "note": "Notă",
       "daysTotal": "{{n}} zile",
       "weekTotal": "Total această săptămână: {{n}} zile",
-      "reason": "Motiv"
+      "reason": "Motiv",
+      "dayAbsences": "Absențe",
+      "dayNoAbsences": "Nimeni absent în această zi.",
+      "dayNoPayments": "Nicio încasare cu scadență în această zi.",
+      "legendPayment": "Încasare de la client cu termen în acea zi",
+      "legendPending": "Bulină stinsă = cerere în așteptarea aprobării",
+      "legendTitle": "Legendă",
+      "legendVacation": "Bulină colorată = angajat în concediu/absent (o culoare per persoană)",
+      "paymentsDue": "Încasări în această zi"
     },
     "att": {
       "title": "Pontaje",
@@ -1320,6 +1421,32 @@
       "breakStart": "Început pauză",
       "breakEnd": "Sfârșit pauză",
       "location": "Vezi locația"
+    },
+    "arch": {
+      "associate": "Asociază client",
+      "driveOpen": "Drive",
+      "editFolder": "Drive / Editare",
+      "emptyHint": "Pentru a asocia un client: Clienți → fișa lor → în proprietatea atribuită, schimbă tipul de investiție în \"Arhitectură\". Va apărea aici pentru a gestiona folderul Drive și planul de plăți.",
+      "emptyTitle": "Încă nu există clienți de arhitectură",
+      "noDrive": "Fără folder Drive",
+      "payments": "Plăți",
+      "subtitle": "Proiecte de arhitectură: documentație (Drive) și plan de plăți per client."
+    },
+    "attRep": {
+      "count": "{{n}} rapoarte",
+      "empty": "Încă nu există rapoarte generate.",
+      "errDownload": "Raportul nu a putut fi descărcat.",
+      "sortDateAsc": "Dată (cele mai vechi)",
+      "sortDateDesc": "Dată (cele mai recente)",
+      "sortPresAsc": "Cei mai puțini prezenți",
+      "sortPresDesc": "Cei mai mulți prezenți",
+      "subtitle": "Raport zilnic generat automat la 23:59 (ora Bali). Descărcabil, cu o fotografie per pontaj.",
+      "thAction": "Descarcă",
+      "thDate": "Dată",
+      "thGenerated": "Generat",
+      "thPresent": "Prezență",
+      "thSize": "Dimensiune",
+      "title": "Rapoarte de prezență (PDF)"
     }
   },
   "footer": {
@@ -1571,7 +1698,10 @@
       "submit": "Încarcă raportul",
       "done": "Raport încărcat.",
       "close": "Închide",
-      "selectProject": "Selectează un proiect"
+      "selectProject": "Selectează un proiect",
+      "lastUploaded": "Ultimul raport încărcat (ceea ce văd clienții)",
+      "noLast": "Încă nu există raport încărcat pentru acest proiect.",
+      "viewPdf": "Vezi PDF"
     }
   },
   "vacaciones": {
@@ -2234,6 +2364,8 @@
     "openPayments": "Deschideți plățile clientului",
     "kpiCollected": "Încasat",
     "kpiTotalSales": "Total vânzări",
-    "kpiMarket": "Valoare piață"
+    "kpiMarket": "Valoare piață",
+    "globalNote": "Convertit în {{cur}} (cursurile actuale ale site-ului). Detaliu pe monede mai jos.",
+    "kpiGlobal": "Global"
   }
 }

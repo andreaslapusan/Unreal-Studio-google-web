@@ -271,7 +271,9 @@
     "articleNotFound": "Article not found",
     "shareTitle": "Enjoyed this article?",
     "shareBody": "Share it with other investors interested in international real estate.",
-    "metaDescription": "Guides and news on investing in Bali property: leasehold, returns, areas and the buying process for investors."
+    "metaDescription": "Guides and news on investing in Bali property: leasehold, returns, areas and the buying process for investors.",
+    "copyLink": "Copy link",
+    "share": "Share"
   },
   "agenciasPartnership": {
     "tag": "Partner Agencies Program",
@@ -412,7 +414,13 @@
     "linkSlugLabel": "Slug:",
     "copyPrompt": "Copy the link:",
     "copyPersonalLinkPrompt": "Copy your link:",
-    "accountNotLinked": "Your account is not linked to an agency yet. Contact support."
+    "accountNotLinked": "Your account is not linked to an agency yet. Contact support.",
+    "infoStep1": "Check the projects assigned to you and their brand material (PDF, virtual tour).",
+    "infoStep2": "Customize your brand (logo and personal link) in the top panel to share with your clients.",
+    "infoStep3": "Use your personal link so that visits and bookings are attributed to your agency.",
+    "infoStep4": "Review your statistics from the statistics button in the top menu.",
+    "infoTitle": "How to use your agency portal",
+    "instructions": "Instructions"
   },
   "agenciasStats": {
     "headerTitle": "My stats",
@@ -496,7 +504,9 @@
       "previous": "Previous",
       "close": "Close",
       "language": "Language",
-      "currency": "Currency"
+      "currency": "Currency",
+      "menu": "Menu",
+      "refresh": "Refresh"
     },
     "nav": {
       "projects": "Properties",
@@ -517,7 +527,10 @@
       "panel": "Admin panel",
       "agencies": "Agencies",
       "cobros": "Finance",
-      "faqs": "FAQs"
+      "faqs": "FAQs",
+      "agenciesMgmt": "Agencies",
+      "agencyPacks": "Agency Packs",
+      "arquitectura": "Architecture"
     },
     "clientLogin": {
       "title": "Investor Portal",
@@ -591,7 +604,11 @@
       "contractYears": "Contract years",
       "extensionYears": "Extension years",
       "progressPct": "Construction progress (%)",
-      "type": "Type"
+      "type": "Type",
+      "addPlan": "Add",
+      "planDrive": "Floor plan (Google Drive)",
+      "planUrlPlaceholder": "or paste a link (Drive / PDF)…",
+      "uploadPdf": "Upload PDF"
     },
     "blogTab": {
       "title": "Blog Articles",
@@ -617,7 +634,15 @@
       "active": "Active",
       "inactive": "Inactive",
       "unit": "Unit",
-      "newClient": "New client"
+      "newClient": "New client",
+      "allStatuses": "All statuses",
+      "deleteSel": "Delete",
+      "draft": "Draft",
+      "lastLogin": "Last login",
+      "nSelected": "{{n}} sel.",
+      "permsFilter": "Permissions",
+      "selectAll": "Select all",
+      "setStatusTo": "Status →"
     },
     "usersTab": {
       "title": "Administrators",
@@ -700,7 +725,12 @@
       "submitting": "Uploading…",
       "submit": "Publish update",
       "successMsg": "✅ Update published. Notification triggers should fire.",
-      "btnAdmin": "Admin"
+      "btnAdmin": "Admin",
+      "allProjects": "All projects",
+      "filesCount": "files",
+      "noUploads": "No reports uploaded yet for this filter.",
+      "uploadedSubtitle": "Here you see what you have already published and its files. If your report appears in the list, it was uploaded correctly.",
+      "uploadedTitle": "Uploaded reports"
     },
     "equipoDash": {
       "greeting": "Hi, {{name}}",
@@ -835,7 +865,13 @@
       "receiptsView": "View / Download",
       "deliveredOn": "Delivered on {{date}}",
       "warrantyDaysLeft": "Cosmetic defect warranty: {{n}} days left to report.",
-      "warrantyClosed": "The 2-week period for reporting cosmetic defects has ended."
+      "warrantyClosed": "The 2-week period for reporting cosmetic defects has ended.",
+      "paybackMonths": "{{count}} months",
+      "paybackYears": "{{count}} years",
+      "poolNote": "Your contribution to the complex total and the % it represents.",
+      "poolOf": "of",
+      "poolTitle": "Investment pool",
+      "welcome": "Welcome to Unreal Studio"
     },
     "agencias": {
       "title": "Agency Pack",
@@ -1126,9 +1162,9 @@
       "reminderNoPayments": "This client has no pending payments.",
       "reminderSent": "Reminder sent to {{email}}.",
       "reminderError": "Failed to send reminder: {{error}}",
-      "mailReport": "Notice of Work Report",
+      "mailReport": "Construction Report Notice",
       "mailReportDesc": "Notifies the client that they have a new report in their portal",
-      "reportConfirm": "Send work report notice to {{email}}?",
+      "reportConfirm": "Send construction report notice to {{email}}?",
       "reportNoProjects": "This client has no assigned properties.",
       "reportSent": "Report notice sent to {{email}} ({{n}}).",
       "reportError": "Failed to send report notice: {{error}}",
@@ -1143,7 +1179,38 @@
       "calendarConfirm": "Send payment calendar to {{email}}?",
       "calendarSent": "Payment calendar sent to {{email}}.",
       "brochureByLang": "Brochure by language",
-      "brochureByLangHint": "Upload a PDF per language. If a language is not available, English (ENG) is used by default."
+      "brochureByLangHint": "Upload a PDF per language. If a language is not available, English (ENG) is used by default.",
+      "addHolder": "Add holder",
+      "bulkDeleteConfirm": "Delete {{n}} client(s)? This cannot be undone.",
+      "bulkError": "Error in the bulk action",
+      "clientStatus": "Client status",
+      "draftHint": "Active = can log in and counts in Finance. Inactive = cannot log in, still counts. Draft = test profile, neither logs in nor counts.",
+      "driveFolder": "Documentation folder (Drive)",
+      "driveFolderLabel": "Documentation folder (Drive) for this project",
+      "emailPreviewTitle": "Email preview",
+      "emailPreviewTo": "To",
+      "emailPreviewViewAs": "View as",
+      "holderEmailPh": "Email",
+      "holderNamePh": "Name",
+      "holders": "Holder(s) — name and email",
+      "invArquitectura": "Architecture",
+      "invCompra": "Purchase (resell/rent)",
+      "invDesarrollo": "Custom development",
+      "invPool": "Investment pool",
+      "investmentType": "Investment type",
+      "loadingPanel": "Loading panel…",
+      "poolShare": "Share",
+      "poolTotal": "Complex total (for the %)",
+      "pwEncrypted": "encrypted",
+      "pwEncryptedHint": "Encrypted — not visible. Use Edit to set a new one.",
+      "reportPickContinue": "Continue",
+      "reportPickTitle": "Construction update — choose project",
+      "reportSendMultiConfirm": "A separate email will be sent for each property ({{p}}) to each holder ({{r}}). Send?",
+      "reportSentMulti": "Notices sent: {{n}}{{f}}",
+      "selectAll": "Select all",
+      "selectClient": "Select",
+      "sendEmailBtn": "Send",
+      "titlePreview": "Title"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",
@@ -1250,7 +1317,11 @@
       "errorCreateKwitansi": "Failed to create Kwitansi.",
       "errorTransport": "Kwitansi #{{no}} created, but hello@ mailbox has no SMTP configured. Inform Andreas to enter the password.",
       "errorSend": "Kwitansi created but sending failed: {{error}}",
-      "kwitansiSent": "Kwitansi #{{no}} sent to {{email}} "
+      "kwitansiSent": "Kwitansi #{{no}} sent to {{email}} ",
+      "currencyFromSale": "The currency is set by the property sale",
+      "fillRequired": "Fill in concept, amount, currency and due date.",
+      "kwitansiSendTitle": "Send receipt to client",
+      "receivedAmtLabel": "received"
     },
     "notif": {
       "title": "Notifications",
@@ -1278,7 +1349,29 @@
       "goToClient": "Go to Client",
       "goToCalendar": "Go to calendar",
       "viewAttendance": "View attendance",
-      "delete": "Delete"
+      "delete": "Delete",
+      "actApprove": "Approve / Reject",
+      "actUpdateObra": "Update status",
+      "actUploadReport": "Upload report",
+      "actVerify": "Verify",
+      "actViewPayment": "View payment",
+      "allClear": "All caught up. You have no pending tasks.",
+      "done": "Done",
+      "grpCobros": "Payments",
+      "grpEquipo": "Team",
+      "grpObra": "Construction",
+      "noActivity": "No recent activity.",
+      "obraMissing": "No new report for {{n}} days",
+      "obraNever": "No construction report has ever been uploaded",
+      "obraStale": "No construction updates for {{n}} days",
+      "searchActor": "Search by name…",
+      "startDay": "For today",
+      "sumClaims": "{{n}} to verify",
+      "sumObra": "{{n}} construction not updated",
+      "sumOverdue": "{{n}} to collect",
+      "sumVacs": "{{n}} vacations",
+      "tabActivity": "Activity",
+      "tabTasks": "Tasks"
     },
     "vac": {
       "confirmDelete": "Delete this vacation request?",
@@ -1304,7 +1397,15 @@
       "note": "Note",
       "daysTotal": "{{n}} days",
       "weekTotal": "This week total: {{n}} days",
-      "reason": "Reason"
+      "reason": "Reason",
+      "dayAbsences": "Absences",
+      "dayNoAbsences": "No one absent on this day.",
+      "dayNoPayments": "No payment due on this day.",
+      "legendPayment": "Client payment due that day",
+      "legendPending": "Faded dot = request pending approval",
+      "legendTitle": "Legend",
+      "legendVacation": "Colored dot = employee on vacation/absent (one color per person)",
+      "paymentsDue": "Payments due this day"
     },
     "att": {
       "title": "Attendance",
@@ -1320,6 +1421,32 @@
       "breakStart": "Break start",
       "breakEnd": "Break end",
       "location": "View location"
+    },
+    "arch": {
+      "associate": "Link client",
+      "driveOpen": "Drive",
+      "editFolder": "Drive / Edit",
+      "emptyHint": "To link a client: Clients → their profile → in the assigned property, change the investment type to \"Architecture\". They will appear here to manage their Drive folder and payment plan.",
+      "emptyTitle": "No architecture clients yet",
+      "noDrive": "No Drive folder",
+      "payments": "Payments",
+      "subtitle": "Architecture projects: documentation (Drive) and payment plan per client."
+    },
+    "attRep": {
+      "count": "{{n}} reports",
+      "empty": "No reports generated yet.",
+      "errDownload": "Could not download the report.",
+      "sortDateAsc": "Date (oldest)",
+      "sortDateDesc": "Date (newest)",
+      "sortPresAsc": "Fewest present",
+      "sortPresDesc": "Most present",
+      "subtitle": "Daily report generated automatically at 23:59 (Bali time). Downloadable, with a photo per check-in.",
+      "thAction": "Download",
+      "thDate": "Date",
+      "thGenerated": "Generated",
+      "thPresent": "Attendance",
+      "thSize": "Size",
+      "title": "Attendance reports (PDF)"
     }
   },
   "footer": {
@@ -1571,7 +1698,10 @@
       "submit": "Upload report",
       "done": "Report uploaded.",
       "close": "Close",
-      "selectProject": "Select a project"
+      "selectProject": "Select a project",
+      "lastUploaded": "Last uploaded report (what clients see)",
+      "noLast": "No report uploaded yet for this project.",
+      "viewPdf": "View PDF"
     }
   },
   "vacaciones": {
@@ -1957,7 +2087,7 @@
       "colName": "Name",
       "colEmail": "Email",
       "colOffice": "Office",
-      "colWorkReports": "Work reports",
+      "colWorkReports": "Construction reports",
       "colEditsListings": "Edit listings",
       "colActive": "Active",
       "badgeActive": "active",
@@ -2183,9 +2313,9 @@
       "dueToday": "The payment is due today."
     },
     "report": {
-      "subject": "New Work Report Available · {{project}}",
+      "subject": "New Construction Report Available · {{project}}",
       "hi": "Hello {{name}},",
-      "body": "A new work report for your property is now available in {{project}}. You can view and download it from your client portal.",
+      "body": "A new construction report for your property is now available in {{project}}. You can view and download it from your client portal.",
       "unit": "Property: {{unit}}",
       "cta": "View My Report"
     },
@@ -2234,6 +2364,8 @@
     "openPayments": "Open client payments",
     "kpiCollected": "Collected",
     "kpiTotalSales": "Total sales",
-    "kpiMarket": "Market value"
+    "kpiMarket": "Market value",
+    "globalNote": "Converted to {{cur}} (current website rates). Breakdown by currency below.",
+    "kpiGlobal": "Global"
   }
 }

@@ -271,7 +271,9 @@
     "articleNotFound": "Artikel tidak ditemukan",
     "shareTitle": "Suka artikel ini?",
     "shareBody": "Bagikan dengan investor lain yang tertarik pada real estate internasional.",
-    "metaDescription": "Panduan dan berita tentang investasi properti di Bali: leasehold, imbal hasil, area, dan proses pembelian untuk investor."
+    "metaDescription": "Panduan dan berita tentang investasi properti di Bali: leasehold, imbal hasil, area, dan proses pembelian untuk investor.",
+    "copyLink": "Salin tautan",
+    "share": "Bagikan"
   },
   "agenciasPartnership": {
     "tag": "Program Mitra Listing",
@@ -413,7 +415,13 @@
     "linkSlugLabel": "Slug:",
     "copyPrompt": "Salin tautan:",
     "copyPersonalLinkPrompt": "Salin tautan Anda:",
-    "accountNotLinked": "Akun Anda belum terhubung dengan agen. Hubungi dukungan."
+    "accountNotLinked": "Akun Anda belum terhubung dengan agen. Hubungi dukungan.",
+    "infoStep1": "Periksa proyek yang ditugaskan kepada Anda dan materi merek mereka (PDF, tur virtual).",
+    "infoStep2": "Sesuaikan merek Anda (logo dan tautan pribadi) di panel atas untuk dibagikan kepada klien Anda.",
+    "infoStep3": "Gunakan tautan pribadi Anda agar kunjungan dan pemesanan diatribusikan ke agensi Anda.",
+    "infoStep4": "Tinjau statistik Anda dari tombol statistik di menu atas.",
+    "infoTitle": "Cara menggunakan portal agensi Anda",
+    "instructions": "Petunjuk"
   },
   "agenciasStats": {
     "headerTitle": "Statistik saya",
@@ -501,7 +509,10 @@
       "submit": "Unggah laporan",
       "done": "Laporan diunggah.",
       "close": "Tutup",
-      "selectProject": "Pilih proyek"
+      "selectProject": "Pilih proyek",
+      "lastUploaded": "Laporan terakhir yang diunggah (yang dilihat klien)",
+      "noLast": "Belum ada laporan yang diunggah untuk proyek ini.",
+      "viewPdf": "Lihat PDF"
     },
     "fichaje": {
       "msg": {
@@ -587,7 +598,15 @@
       "active": "Aktif",
       "inactive": "Tidak aktif",
       "unit": "Unit",
-      "newClient": "Klien baru"
+      "newClient": "Klien baru",
+      "allStatuses": "Semua status",
+      "deleteSel": "Hapus",
+      "draft": "Draf",
+      "lastLogin": "Login terakhir",
+      "nSelected": "{{n}} terpilih",
+      "permsFilter": "Izin",
+      "selectAll": "Pilih semua",
+      "setStatusTo": "Status →"
     },
     "nav": {
       "sections": "Bagian",
@@ -608,7 +627,10 @@
       "notifications": "Pemberitahuan",
       "agencies": "Agensi",
       "cobros": "Keuangan",
-      "faqs": "FAQ"
+      "faqs": "FAQ",
+      "agenciesMgmt": "Agensi",
+      "agencyPacks": "Paket Agensi",
+      "arquitectura": "Arsitektur"
     },
     "common": {
       "save": "Simpan",
@@ -628,7 +650,9 @@
       "previous": "Sebelumnya",
       "close": "Tutup",
       "language": "Bahasa",
-      "currency": "Mata uang"
+      "currency": "Mata uang",
+      "menu": "Menu",
+      "refresh": "Segarkan"
     },
     "clientLogin": {
       "title": "Portal Investor",
@@ -702,7 +726,11 @@
       "contractYears": "Tahun Kontrak",
       "extensionYears": "Tahun Perpanjangan",
       "progressPct": "Proses Pembangunan (%)",
-      "type": "Tipe"
+      "type": "Tipe",
+      "addPlan": "Tambah",
+      "planDrive": "Denah (Google Drive)",
+      "planUrlPlaceholder": "atau tempel tautan (Drive / PDF)…",
+      "uploadPdf": "Unggah PDF"
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -792,7 +820,12 @@
       "submitting": "Mengunggah…",
       "submit": "Terbitkan update",
       "successMsg": "✅ Update diterbitkan. Pemicu notifikasi harus bereaksi.",
-      "btnAdmin": "Admin"
+      "btnAdmin": "Admin",
+      "allProjects": "Semua proyek",
+      "filesCount": "berkas",
+      "noUploads": "Belum ada laporan yang diunggah untuk filter ini.",
+      "uploadedSubtitle": "Di sini Anda melihat apa yang sudah Anda terbitkan dan berkasnya. Jika laporan Anda muncul di daftar, berarti sudah terunggah dengan benar.",
+      "uploadedTitle": "Laporan yang diunggah"
     },
     "equipoDash": {
       "greeting": "Halo, {{name}}",
@@ -927,7 +960,13 @@
       "receiptsView": "Lihat / Unduh",
       "deliveredOn": "Dikirim pada {{date}}",
       "warrantyDaysLeft": "Garansi cacat kosmetik: {{n}} hari tersisa untuk melaporkan.",
-      "warrantyClosed": "Jangka waktu 2 minggu untuk melaporkan cacat kosmetik telah berakhir."
+      "warrantyClosed": "Jangka waktu 2 minggu untuk melaporkan cacat kosmetik telah berakhir.",
+      "paybackMonths": "{{count}} bulan",
+      "paybackYears": "{{count}} tahun",
+      "poolNote": "Kontribusi Anda terhadap total kompleks dan % yang diwakilinya.",
+      "poolOf": "dari",
+      "poolTitle": "Pool investasi",
+      "welcome": "Selamat datang di Unreal Studio"
     },
     "agencias": {
       "title": "Paket untuk Agen",
@@ -1235,7 +1274,38 @@
       "calendarConfirm": "Kirim kalender pembayaran ke {{email}}?",
       "calendarSent": "Kalender pembayaran telah dikirim ke {{email}}.",
       "brochureByLang": "Brosur berdasarkan bahasa",
-      "brochureByLangHint": "Unggah PDF per bahasa. Jika tidak ada bahasa, maka bahasa Inggris (ENG) digunakan sebagai default."
+      "brochureByLangHint": "Unggah PDF per bahasa. Jika tidak ada bahasa, maka bahasa Inggris (ENG) digunakan sebagai default.",
+      "addHolder": "Tambah pemegang",
+      "bulkDeleteConfirm": "Hapus {{n}} klien? Tindakan ini tidak dapat dibatalkan.",
+      "bulkError": "Kesalahan pada tindakan massal",
+      "clientStatus": "Status klien",
+      "draftHint": "Aktif = bisa masuk dan dihitung di Keuangan. Nonaktif = tidak bisa masuk, tetap dihitung. Draf = profil uji, tidak masuk dan tidak dihitung.",
+      "driveFolder": "Folder dokumentasi (Drive)",
+      "driveFolderLabel": "Folder dokumentasi (Drive) untuk proyek ini",
+      "emailPreviewTitle": "Pratinjau email",
+      "emailPreviewTo": "Kepada",
+      "emailPreviewViewAs": "Lihat sebagai",
+      "holderEmailPh": "Email",
+      "holderNamePh": "Nama",
+      "holders": "Pemegang — nama dan email",
+      "invArquitectura": "Arsitektur",
+      "invCompra": "Pembelian (jual kembali/sewa)",
+      "invDesarrollo": "Pengembangan khusus",
+      "invPool": "Pool investasi",
+      "investmentType": "Jenis investasi",
+      "loadingPanel": "Memuat panel…",
+      "poolShare": "Bagian",
+      "poolTotal": "Total kompleks (untuk %)",
+      "pwEncrypted": "terenkripsi",
+      "pwEncryptedHint": "Terenkripsi — tidak terlihat. Gunakan Edit untuk menetapkan yang baru.",
+      "reportPickContinue": "Lanjutkan",
+      "reportPickTitle": "Pemberitahuan konstruksi — pilih proyek",
+      "reportSendMultiConfirm": "Email terpisah akan dikirim untuk setiap properti ({{p}}) ke setiap pemegang ({{r}}). Kirim?",
+      "reportSentMulti": "Pemberitahuan terkirim: {{n}}{{f}}",
+      "selectAll": "Pilih semua",
+      "selectClient": "Pilih",
+      "sendEmailBtn": "Kirim",
+      "titlePreview": "Judul"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -1342,7 +1412,11 @@
       "errorCreateKwitansi": "Gagal membuat kwitansi.",
       "errorTransport": "Kwitansi #{{no}} dibuat, tetapi kotak surat hello@ belum memiliki SMTP yang dikonfigurasi. Beritahu Andreas untuk memasukkan kata sandi.",
       "errorSend": "Kwitansi dibuat tetapi pengiriman gagal: {{error}}",
-      "kwitansiSent": "Kwitansi #{{no}} dikirim ke {{email}} "
+      "kwitansiSent": "Kwitansi #{{no}} dikirim ke {{email}} ",
+      "currencyFromSale": "Mata uang ditentukan oleh penjualan properti",
+      "fillRequired": "Isi keterangan, jumlah, mata uang, dan tanggal jatuh tempo.",
+      "kwitansiSendTitle": "Kirim tanda terima ke klien",
+      "receivedAmtLabel": "diterima"
     },
     "notif": {
       "title": "Pemberitahuan",
@@ -1370,7 +1444,29 @@
       "goToClient": "Ke klien",
       "goToCalendar": "Ke kalender",
       "viewAttendance": "Lihat absensi",
-      "delete": "Hapus"
+      "delete": "Hapus",
+      "actApprove": "Setujui / Tolak",
+      "actUpdateObra": "Perbarui status",
+      "actUploadReport": "Unggah laporan",
+      "actVerify": "Verifikasi",
+      "actViewPayment": "Lihat pembayaran",
+      "allClear": "Semua beres. Anda tidak memiliki tugas tertunda.",
+      "done": "Selesai",
+      "grpCobros": "Penagihan",
+      "grpEquipo": "Tim",
+      "grpObra": "Konstruksi",
+      "noActivity": "Tidak ada aktivitas terbaru.",
+      "obraMissing": "Tidak ada laporan baru selama {{n}} hari",
+      "obraNever": "Belum pernah ada laporan konstruksi yang diunggah",
+      "obraStale": "Tidak ada pembaruan konstruksi selama {{n}} hari",
+      "searchActor": "Cari berdasarkan nama…",
+      "startDay": "Untuk hari ini",
+      "sumClaims": "{{n}} untuk diverifikasi",
+      "sumObra": "{{n}} konstruksi belum diperbarui",
+      "sumOverdue": "{{n}} untuk ditagih",
+      "sumVacs": "{{n}} cuti",
+      "tabActivity": "Aktivitas",
+      "tabTasks": "Tugas"
     },
     "vac": {
       "confirmDelete": "Hapus permintaan cuti ini?",
@@ -1396,7 +1492,15 @@
       "note": "Catatan",
       "daysTotal": "{{n}} hari",
       "weekTotal": "Total minggu ini: {{n}} hari",
-      "reason": "Alasan"
+      "reason": "Alasan",
+      "dayAbsences": "Ketidakhadiran",
+      "dayNoAbsences": "Tidak ada yang absen pada hari ini.",
+      "dayNoPayments": "Tidak ada pembayaran jatuh tempo pada hari ini.",
+      "legendPayment": "Pembayaran klien jatuh tempo pada hari itu",
+      "legendPending": "Titik redup = permintaan menunggu persetujuan",
+      "legendTitle": "Keterangan",
+      "legendVacation": "Titik berwarna = karyawan sedang cuti/absen (satu warna per orang)",
+      "paymentsDue": "Pembayaran jatuh tempo hari ini"
     },
     "att": {
       "title": "Absensi",
@@ -1412,6 +1516,32 @@
       "breakStart": "Mulai istirahat",
       "breakEnd": "Selesai istirahat",
       "location": "Lihat lokasi"
+    },
+    "arch": {
+      "associate": "Tautkan klien",
+      "driveOpen": "Drive",
+      "editFolder": "Drive / Edit",
+      "emptyHint": "Untuk menautkan klien: Klien → profil mereka → pada properti yang ditetapkan, ubah jenis investasi menjadi \"Arsitektur\". Mereka akan muncul di sini untuk mengelola folder Drive dan rencana pembayaran mereka.",
+      "emptyTitle": "Belum ada klien arsitektur",
+      "noDrive": "Tanpa folder Drive",
+      "payments": "Pembayaran",
+      "subtitle": "Proyek arsitektur: dokumentasi (Drive) dan rencana pembayaran per klien."
+    },
+    "attRep": {
+      "count": "{{n}} laporan",
+      "empty": "Belum ada laporan yang dibuat.",
+      "errDownload": "Tidak dapat mengunduh laporan.",
+      "sortDateAsc": "Tanggal (terlama)",
+      "sortDateDesc": "Tanggal (terbaru)",
+      "sortPresAsc": "Paling sedikit hadir",
+      "sortPresDesc": "Paling banyak hadir",
+      "subtitle": "Laporan harian dibuat otomatis pukul 23:59 (waktu Bali). Dapat diunduh, dengan foto per absensi.",
+      "thAction": "Unduh",
+      "thDate": "Tanggal",
+      "thGenerated": "Dibuat",
+      "thPresent": "Kehadiran",
+      "thSize": "Ukuran",
+      "title": "Laporan kehadiran (PDF)"
     }
   },
   "footer": {
@@ -2235,6 +2365,8 @@
     "openPayments": "Buka Pembayaran Klien",
     "kpiCollected": "Terkumpul",
     "kpiTotalSales": "Total penjualan",
-    "kpiMarket": "Nilai pasar"
+    "kpiMarket": "Nilai pasar",
+    "globalNote": "Dikonversi ke {{cur}} (kurs situs web saat ini). Rincian per mata uang di bawah.",
+    "kpiGlobal": "Global"
   }
 }
