@@ -912,10 +912,15 @@ const handleSaveClient = async (e: React.FormEvent) => {
     if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
     const isNewClient = !currentClient.id || currentClient.id.startsWith('client-');
     const clientData = currentClient.id?.startsWith('client-') ? { ...currentClient, id: undefined } : currentClient;
-    // ¿Cambió el email? (para auto-enviar la bienvenida al nuevo correo)
-    const prevEmail = (clients.find((c) => c.id === currentClient.id)?.email || '').trim().toLowerCase();
+    // Emails NUEVOS añadidos (principal o cualquier co-titular) → se les manda la
+    // bienvenida. Comparamos el conjunto de correos ANTES vs DESPUÉS, para no
+    // reenviar a los que ya estaban y para cubrir también a los co-titulares.
+    const prevClient = clients.find((c) => c.id === currentClient.id);
+    const prevSet = new Set(emailsOf(prevClient || {}).map((x) => x.toLowerCase()));
     const newEmail = (currentClient.email || '').trim();
-    const emailChanged = !!newEmail && newEmail.toLowerCase() !== prevEmail;
+    const allNewEmails = emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails, holders: (currentClient as any).holders });
+    // Placeholder @pendiente.* nunca recibe correo.
+    const addedEmails = allNewEmails.filter((e) => !prevSet.has(e.toLowerCase()) && !/@pendiente\./i.test(e));
     const { data, error } = await supabase.rpc('admin_save_client', {
       p_user_id: userId,
       p_client: clientData
@@ -928,14 +933,12 @@ const handleSaveClient = async (e: React.FormEvent) => {
     if (isNewClient && data && data.temp_password) {
       alert(t('admin.dash.clientCreatedTempPw', { pw: data.temp_password }));
     }
-    // Auto-bienvenida: al poner/cambiar el email del cliente y guardar, se le
-    // manda solo el correo de bienvenida al nuevo email (idioma del cliente).
-    if (emailChanged) {
+    // Auto-bienvenida a los correos nuevos (cada uno con su nombre e idioma).
+    if (addedEmails.length) {
       const lang = ((currentClient as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
       const _holders = (currentClient as any).holders;
-      const _emails = (_holders && _holders.length) ? _holders.map((h: any) => (h.email || '').trim()).filter(Boolean) : emailsOf({ email: newEmail, extra_emails: (currentClient as any).extra_emails });
-      const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: newEmail, emails: _emails, holders: _holders, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
-      alert(r.ok ? t('admin.dash.welcomeSent', { email: (_emails && _emails.length ? _emails.join(', ') : newEmail) }) : t('admin.dash.welcomeError', { error: r.error }));
+      const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: addedEmails[0], emails: addedEmails, holders: _holders, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
+      alert(r.ok ? t('admin.dash.welcomeSent', { email: addedEmails.join(', ') }) : t('admin.dash.welcomeError', { error: r.error }));
     }
   } catch (error) {
     console.error('Error saving client:', error);
@@ -951,7 +954,13 @@ const handleSaveClient = async (e: React.FormEvent) => {
 const clientLangOf = (client: Client) => ((client as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
 const clientPortalUrl = (lang: 'es' | 'en' | 'ro' | 'id') => `https://unrealstudiobali.com${portalPath('cliente', lang)}`;
 // Todos los emails de una ficha (titular + co-titulares). Los envíos van a TODOS.
-const emailsOf = (c: any): string[] => [c?.email, ...((c?.extra_emails) || [])].map((e: string) => (e || '').trim()).filter(Boolean);
+const emailsOf = (c: any): string[] => {
+  const hs = Array.isArray(c?.holders) ? c.holders.map((h: any) => h?.email) : [];
+  const all = [c?.email, ...((c?.extra_emails) || []), ...hs].map((e: string) => (e || '').trim()).filter(Boolean);
+  const seen = new Set<string>(); const out: string[] = [];
+  for (const e of all) { const k = e.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push(e); } }
+  return out;
+};
 
 // Núcleo de la bienvenida: construye y envía. Sin alerts (lo usa el botón y el auto-envío).
 const sendWelcomeCore = async (args: { name: string; email: string; emails?: string[]; holders?: any[]; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
