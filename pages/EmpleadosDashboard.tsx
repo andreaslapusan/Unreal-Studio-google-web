@@ -150,6 +150,13 @@ const EmpleadosDashboard: React.FC = () => {
     void supabase.rpc('employee_set_language', { p_lang: i18n.language });
   }, [i18n.language, employee?.id]);
 
+  // Frase divertida en pantalla mientras hacen la foto (cambia cada vez que abren la cámara).
+  const smileMsg = useMemo(() => {
+    if (!capture) return '';
+    const list = (i18n.language || 'es').startsWith('es') ? SMILE_ES : SMILE_EN;
+    return list[Math.floor(Math.random() * list.length)];
+  }, [capture, i18n.language]);
+
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
@@ -504,31 +511,42 @@ const EmpleadosDashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Cámara a pantalla completa */}
+      {/* Cámara a pantalla completa — marco moderno de marca Unreal */}
       {capture && (
-        <div className="fixed inset-0 z-50 bg-black flex flex-col">
-          <div className="flex items-center justify-between p-4 text-white">
-            <span className="font-bold uppercase tracking-widest text-xs">
-              {fichajeLabel(capture)} · {t('empleados.camera.takePhotoSuffix')}
+        <div className="fixed inset-0 z-50 flex flex-col" style={{ background: 'linear-gradient(160deg,#3F2305 0%,#5a3a14 55%,#F3E5D8 100%)' }}>
+          <div className="flex items-center justify-between px-4 py-3">
+            <span className="bg-white/15 backdrop-blur text-almond font-black uppercase tracking-widest text-[11px] px-4 py-2 rounded-full">
+              {fichajeLabel(capture)}
             </span>
-            <button onClick={cancelCapture} aria-label={t('empleados.camera.close')} disabled={busy}>
+            <button onClick={cancelCapture} aria-label={t('empleados.camera.close')} disabled={busy} className="w-9 h-9 rounded-full bg-white/15 backdrop-blur text-almond flex items-center justify-center hover:bg-white/25 transition disabled:opacity-50">
               <span className="material-symbols-outlined">close</span>
             </button>
           </div>
-          <div className="flex-1 flex items-center justify-center overflow-hidden">
-            <video ref={videoRef} autoPlay playsInline muted className="max-h-full max-w-full object-contain" />
+          <div className="flex-1 flex items-center justify-center overflow-hidden px-4 pb-2 min-h-0">
+            <div className="relative w-full max-w-md h-full max-h-[68vh] rounded-[2rem] overflow-hidden border-[3px] border-almond/80 shadow-2xl bg-black">
+              <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+              {/* Frase divertida en pantalla (no se graba en la foto) */}
+              {smileMsg && (
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-primary/75 backdrop-blur text-almond text-sm font-bold px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap">{smileMsg}</div>
+              )}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-almond/90 text-[10px] font-black uppercase tracking-[0.2em]">Unreal Studio</div>
+            </div>
           </div>
-          <div className="p-8 flex items-center justify-center">
+          <div className="pb-8 pt-3 flex flex-col items-center gap-3">
+            {busy ? (
+              <p className="text-almond/90 text-sm font-medium">{t('empleados.camera.saving')}</p>
+            ) : (
+              <p className="text-almond/80 text-xs font-medium">{t('empleados.camera.takePhotoSuffix')}</p>
+            )}
             <button
               onClick={captureAndSubmit}
               disabled={busy}
-              className="w-20 h-20 rounded-full bg-white border-4 border-white/40 shadow-xl active:scale-95 transition disabled:opacity-60 flex items-center justify-center"
+              className="w-[72px] h-[72px] rounded-full bg-almond ring-4 ring-almond/30 shadow-xl active:scale-95 transition disabled:opacity-60 flex items-center justify-center"
               aria-label={t('empleados.camera.takePhotoAria')}
             >
-              {busy && <span className="material-symbols-outlined animate-spin text-2xl text-primary">refresh</span>}
+              {busy ? <span className="material-symbols-outlined animate-spin text-2xl text-primary">progress_activity</span> : <span className="w-14 h-14 rounded-full border-2 border-primary/30" />}
             </button>
           </div>
-          {busy && <p className="text-center text-white/80 text-sm pb-6">{t('empleados.camera.saving')}</p>}
         </div>
       )}
 
