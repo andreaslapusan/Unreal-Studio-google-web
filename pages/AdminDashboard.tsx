@@ -115,7 +115,7 @@ const AMENITIES_LIST = [
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
-  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string }>(null);
+  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string }>(null);
   const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[]; selected: string[] }>(null); // elegir proyecto(s) del aviso de obra cuando el cliente tiene varios
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
@@ -999,7 +999,7 @@ const sendWelcome = async (client: Client) => {
   // propio email de acceso (no el del titular principal).
   const tempPw = (client as any).password_plain || client.temp_password || null;
   const buildHtml = (em: string) => { const lg = holderLangByEmail(client, em || email); return welcomeEmailHtml({ firstName: holderNameByEmail(client, em || email), portalUrl: clientPortalUrl(lg), email: em || email, tempPassword: tempPw, lang: lg }); };
-  openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.welcomeSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
+  openEmailPreview({ to: emailsOf(client), subject: et('emails.welcome.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: (ems) => t('admin.dash.welcomeSent', { email: ems.join(', ') }), userId, lang, buildHtml });
 };
 
 // Recuperación de contraseña manual (te llaman "perdí la clave" → se la mandas tú).
@@ -1021,7 +1021,7 @@ const sendResetEmail = async (client: Client) => {
 // previa; el envío real ocurre al pulsar "Enviar" en sendPreviewedEmail.
 // buildHtml: si se pasa, el correo se PERSONALIZA por destinatario (cada titular ve
 // SU propio email de acceso). Si no, se envía el mismo html a todos los seleccionados.
-const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: string; userId: string; lang: string; buildHtml?: (email: string) => string }) => {
+const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; buildHtml?: (email: string) => string }) => {
   const recipients = (Array.isArray(args.to) ? args.to : [args.to]).map((e) => (e || '').trim()).filter(Boolean);
   const first = recipients[0] || '';
   const html0 = args.buildHtml ? args.buildHtml(first) : args.html;
@@ -1046,7 +1046,7 @@ const sendPreviewedEmail = async () => {
       });
       if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
     }
-    alert(ep.sentMsg);
+    alert(ep.sentMsg(ep.selected));
     setEmailPreview(null);
   } catch (e) {
     alert(t('admin.dash.reportError', { error: String(e) })); setEmailPreview((p) => p ? { ...p, sending: false } : p);
@@ -1095,7 +1095,7 @@ const sendReminderEmail = async (client: Client) => {
     <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${e2('emails.reminder.recommendation')}</p>
     <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.reminder.cta')}</a></p>`;
   };
-  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.reminderSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
+  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: (ems) => t('admin.dash.reminderSent', { email: ems.join(', ') }), userId, lang, buildHtml });
 };
 
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
@@ -1131,7 +1131,7 @@ const sendReportForProjects = async (client: Client, cps: any[]) => {
   if (list.length === 1) {
     const cp = list[0];
     const buildHtml = buildReportHtmlFor(client, cp);
-    openEmailPreview({ to: recipients, subject: et('emails.report.subject', { project: cp.project_name }), html: buildHtml(recipients[0] || email), sentMsg: t('admin.dash.reportSent', { email: recipients.join(', '), n: 1 }), userId, lang, buildHtml });
+    openEmailPreview({ to: recipients, subject: et('emails.report.subject', { project: cp.project_name }), html: buildHtml(recipients[0] || email), sentMsg: (ems) => t('admin.dash.reportSent', { email: ems.join(', '), n: 1 }), userId, lang, buildHtml });
     return;
   }
 
@@ -1205,7 +1205,7 @@ const sendCalendarEmail = async (client: Client) => {
   };
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up). Cada
   // titular recibe un correo SEPARADO con su nombre.
-  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: t('admin.dash.calendarSent', { email: emailsOf(client).join(', ') }), userId, lang, buildHtml });
+  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: (ems) => t('admin.dash.calendarSent', { email: ems.join(', ') }), userId, lang, buildHtml });
 };
 
 const handleDeleteClient = async (id: string) => {
