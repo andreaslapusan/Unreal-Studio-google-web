@@ -149,20 +149,20 @@ const AMENITIES_LIST = [
       setSearchParams(sp, { replace: true });
     }
   }, [searchParams, setSearchParams]);
-  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null; preferred_language?: string | null }>>([]);
   const loadEmployees = useCallback(async () => {
     const { data } = await supabase
       .from('employees')
-      .select('id, email, full_name, password, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days, late_margin_min')
+      .select('id, email, full_name, password, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days, late_margin_min, preferred_language')
       .order('full_name');
     setEmployees((data as typeof employees) ?? []);
   }, []);
   // Modal de alta/edición de empleado: null = cerrado, {emp:null} = nuevo, {emp:row} = editar.
   const [empModal, setEmpModal] = useState<{ emp: EmployeeRow | null } | null>(null);
   // Redactar correo manual al equipo (empleados), igual que a clientes.
-  const [teamCompose, setTeamCompose] = useState<null | { recipients: { email: string; name: string }[]; selected: string[]; subject: string; body: string; sending: boolean }>(null);
+  const [teamCompose, setTeamCompose] = useState<null | { recipients: { email: string; name: string; lang: string }[]; selected: string[]; subject: string; body: string; sending: boolean }>(null);
   const openTeamCompose = (only?: { email: string; name: string }) => {
-    const active = employees.filter((e) => e.active && (e.email || '').includes('@')).map((e) => ({ email: e.email, name: e.full_name || e.email }));
+    const active = employees.filter((e) => e.active && (e.email || '').includes('@')).map((e) => ({ email: e.email, name: e.full_name || e.email, lang: (e.preferred_language || 'es') }));
     const recips = only ? active.filter((r) => r.email === only.email) : active;
     setTeamCompose({ recipients: recips, selected: recips.map((r) => r.email), subject: '', body: '', sending: false });
   };
@@ -176,10 +176,11 @@ const AMENITIES_LIST = [
     const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] as string));
     let ok = 0; let fail = 0;
     for (const to of tc.selected) {
-      const name = tc.recipients.find((r) => r.email === to)?.name || '';
-      const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">Hola ${esc(name)},</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap">${esc(tc.body)}</div>`;
+      const r = tc.recipients.find((x) => x.email === to);
+      const name = r?.name || ''; const lg = r?.lang || 'es';
+      const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${i18n.getFixedT(lg)('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name })}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap">${esc(tc.body)}</div>`;
       try {
-        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang: 'es', subject: tc.subject, html } });
+        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang: lg, subject: tc.subject, html } });
         if (error || !data?.success) fail++; else ok++;
       } catch { fail++; }
     }

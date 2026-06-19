@@ -36,7 +36,7 @@ function fmtTime(iso: string): string {
 
 const EmpleadosDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, loading, signOut } = useAuth();
   const fichajeLabel = (type: FichajeType) => t(`empleados.fichaje.label.${type}`);
   const fichajeMsg = (type: FichajeType) => t(`empleados.fichaje.msg.${type}`);
@@ -93,7 +93,7 @@ const EmpleadosDashboard: React.FC = () => {
     void (async () => {
       const { data } = await supabase
         .from('employees')
-        .select('id, full_name, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days')
+        .select('id, full_name, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days, preferred_language')
         .eq('email', realEmailOf(user))
         .maybeSingle();
       // SEGURIDAD: si el empleado ha sido marcado inactivo (o ya no existe),
@@ -105,6 +105,9 @@ const EmpleadosDashboard: React.FC = () => {
       }
       setCanUploadReports(hasPermission(data, 'upload_reports'));
       setCanEditProperties(hasPermission(data, 'edit_properties'));
+      // Idioma del empleado: al entrar, mostrar el portal en SU idioma preferido.
+      const elang = (data as any).preferred_language;
+      if (elang && ['es', 'en', 'ro', 'id'].includes(elang) && i18n.language !== elang) void i18n.changeLanguage(elang);
       if (data?.id) setEmployee({
         id: data.id as string,
         full_name: (data.full_name as string) ?? null,
@@ -114,6 +117,13 @@ const EmpleadosDashboard: React.FC = () => {
       });
     })();
   }, [user]);
+
+  // Si el empleado cambia el idioma (selector del portal), se guarda en su perfil
+  // para que la próxima vez (y sus emails) salgan en ese idioma.
+  useEffect(() => {
+    if (!employee?.id) return;
+    void supabase.rpc('employee_set_language', { p_lang: i18n.language });
+  }, [i18n.language, employee?.id]);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());

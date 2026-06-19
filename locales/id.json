@@ -1312,7 +1312,8 @@
       "emailBodyPh": "Tulis pesan…",
       "emailTeamHint": "Dikirim dengan templat merek Unreal Studio, satu email per penerima, menyapa masing-masing dengan namanya.",
       "teamComposeIncomplete": "Tambahkan subjek, pesan, dan minimal satu penerima.",
-      "teamComposeSent": "Terkirim: {{ok}}{{f}}"
+      "teamComposeSent": "Terkirim: {{ok}}{{f}}",
+      "emailGreeting": "Halo {{name}},"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -1875,7 +1876,8 @@
       "delete": "Hapus",
       "cancel": "Batal",
       "saving": "Menyimpan…",
-      "save": "Simpan"
+      "save": "Simpan",
+      "language": "Bahasa pilihan"
     },
     "vac": {
       "printTitleYear": "Kalender Liburan {{year}}",

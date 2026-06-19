@@ -1217,7 +1217,8 @@
       "emailBodyPh": "Scrie mesajul…",
       "emailTeamHint": "Se trimite cu șablonul de brand Unreal Studio, un email per destinatar, salutând fiecare pe nume.",
       "teamComposeIncomplete": "Adaugă subiect, mesaj și cel puțin un destinatar.",
-      "teamComposeSent": "Trimise: {{ok}}{{f}}"
+      "teamComposeSent": "Trimise: {{ok}}{{f}}",
+      "emailGreeting": "Salut {{name}},"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -1874,7 +1875,8 @@
       "delete": "Șterge",
       "cancel": "Anulează",
       "saving": "Se salvează…",
-      "save": "Salvează"
+      "save": "Salvează",
+      "language": "Limbă preferată"
     },
     "vac": {
       "printTitleYear": "Calendar de vacanță {{year}}",

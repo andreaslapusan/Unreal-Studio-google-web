@@ -37,6 +37,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
   const [email, setEmail] = useState(emp?.email ?? '');
   const [password, setPassword] = useState(isNew ? genPassword() : '');
   const [active, setActive] = useState(emp?.active ?? true);
+  const [lang, setLang] = useState<string>((emp as any)?.preferred_language ?? 'es');
   const [perms, setPerms] = useState<Record<string, boolean>>(() => {
     const m: Record<string, boolean> = {};
     EMPLOYEE_PERMISSIONS.forEach((p) => { m[p.key] = hasPermission(emp, p.key); });
@@ -67,6 +68,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
       p_work_end: end || null,
       p_work_days: days.length ? days : null,
       p_late_margin: margin,
+      p_lang: lang || 'es',
     });
     setSaving(false);
     if (error) {
@@ -131,6 +133,12 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
                     <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder={isNew ? '' : '••••••••'} className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono" />
                     <button onClick={() => setPassword(genPassword())} className="px-3 py-2 rounded-xl bg-gray-100 text-primary/70 text-xs font-bold hover:bg-gray-200">{t('fix.emp.generate')}</button>
                   </div>
+                </label>
+                <label className="block">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('fix.emp.language', { defaultValue: 'Idioma preferido' })}</span>
+                  <select value={lang} onChange={(e) => setLang(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-bold">
+                    <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
+                  </select>
                 </label>
                 <button onClick={() => setActive((a) => !a)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
                   {active ? t('fix.emp.active') : t('fix.emp.inactive')}

@@ -1217,7 +1217,8 @@
       "emailBodyPh": "Escribe el mensaje…",
       "emailTeamHint": "Se envía con la plantilla de marca Unreal Studio, un correo por destinatario, saludándole por su nombre.",
       "teamComposeIncomplete": "Pon asunto, mensaje y al menos un destinatario.",
-      "teamComposeSent": "Enviados: {{ok}}{{f}}"
+      "teamComposeSent": "Enviados: {{ok}}{{f}}",
+      "emailGreeting": "Hola {{name}},"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -1874,7 +1875,8 @@
       "delete": "Eliminar",
       "cancel": "Cancelar",
       "saving": "Guardando…",
-      "save": "Guardar"
+      "save": "Guardar",
+      "language": "Idioma preferido"
     },
     "vac": {
       "printTitleYear": "Calendario de vacaciones {{year}}",
