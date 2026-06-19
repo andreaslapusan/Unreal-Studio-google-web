@@ -10,7 +10,7 @@
  *   - foto → bucket privado `attendance` en `${user.id}/...`
  *   - registro → tabla `attendance` (RLS: solo el propio empleado inserta)
  */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -77,6 +77,9 @@ const TEAM_PHRASES_EN = [
   'Team Unreal: we turn chaos into villas.',
   'Remember: you make this work. Thank you for that.',
 ];
+// Frases cortas para la pantalla de la cámara (que sonrían).
+const SMILE_ES = ['¡Sonríe! 😄', 'Di "Bali" 🌴', 'Cara de crack 😎', 'Hoy lo petas 🔥', 'Buen rollito ✨', 'A brillar ☀️', 'Equipo Unreal 💪', '¡Guapo/a! 😍', 'Energía top ⚡', 'Sonrisa de campeón 🏆'];
+const SMILE_EN = ['Smile! 😄', 'Say "Bali" 🌴', 'Looking great 😎', "You've got this 🔥", 'Good vibes ✨', 'Shine on ☀️', 'Team Unreal 💪', 'Lookin\' good! 😍', 'Top energy ⚡', "Champion's smile 🏆"];
 
 const EmpleadosDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -282,25 +285,6 @@ const EmpleadosDashboard: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    // Marco fino de marca Unreal + mensaje divertido (buen rollo). Fino para no
-    // tapar el contenido de la foto.
-    const W = canvas.width, H = canvas.height;
-    const BROWN = '#3F2305';
-    const fb = Math.max(3, Math.round(W * 0.012)); // grosor del marco (finito)
-    ctx.strokeStyle = BROWN; ctx.lineWidth = fb;
-    ctx.strokeRect(fb / 2, fb / 2, W - fb, H - fb);
-    // Barra inferior translúcida con marca + mensaje.
-    const barH = Math.round(H * 0.085);
-    ctx.fillStyle = 'rgba(63,35,5,0.62)';
-    ctx.fillRect(fb, H - barH - fb, W - fb * 2, barH);
-    const SMILE = ['¡Sonríe! 😄', 'Que sea un gran día ✨', 'Equipo Unreal 💪', 'A por todas hoy 🚀', '¡Buen rollito! 🌴', 'Café y a brillar ☕', 'Hoy lo petamos 🔥', 'Gracias por tu curro 🙌', 'Bali vibes 🌊', '¡Crack! 👏', 'Sonrisa de campeón 😎', 'Energía Unreal ⚡'];
-    const msg = SMILE[Math.floor((Date.now() / 1000)) % SMILE.length];
-    ctx.fillStyle = '#F3E5D8';
-    ctx.font = `700 ${Math.round(barH * 0.42)}px Manrope, Arial, sans-serif`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText('Unreal Studio', fb + Math.round(W * 0.03), H - barH / 2 - fb);
-    ctx.textAlign = 'right';
-    ctx.fillText(msg, W - fb - Math.round(W * 0.03), H - barH / 2 - fb);
     const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.45));
     if (!blob) {
       setToast({ ok: false, msg: t('empleados.toast.photoFailed') });
