@@ -1716,6 +1716,10 @@
       "lastUploaded": "Last uploaded report (what clients see)",
       "noLast": "No report uploaded yet for this project.",
       "viewPdf": "View PDF"
+    },
+    "props": {
+      "title": "Edit properties",
+      "subtitle": "Update project details, photos and data."
     }
   },
   "vacaciones": {

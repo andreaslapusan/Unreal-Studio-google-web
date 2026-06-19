@@ -1716,6 +1716,10 @@
       "lastUploaded": "Último reporte subido (lo que ven los clientes)",
       "noLast": "Aún no hay reporte subido para este proyecto.",
       "viewPdf": "Ver PDF"
+    },
+    "props": {
+      "title": "Editar propiedades",
+      "subtitle": "Actualiza fichas, fotos y datos de los proyectos."
     }
   },
   "vacaciones": {

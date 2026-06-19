@@ -578,6 +578,10 @@
     "header": {
       "subtitleFallback": "Tim",
       "instructions": "Instruksi"
+    },
+    "props": {
+      "title": "Edit properti",
+      "subtitle": "Perbarui detail, foto, dan data proyek."
     }
   },
   "admin": {

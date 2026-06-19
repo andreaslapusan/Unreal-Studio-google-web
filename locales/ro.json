@@ -1716,6 +1716,10 @@
       "lastUploaded": "Ultimul raport încărcat (ceea ce văd clienții)",
       "noLast": "Încă nu există raport încărcat pentru acest proiect.",
       "viewPdf": "Vezi PDF"
+    },
+    "props": {
+      "title": "Editează proprietăți",
+      "subtitle": "Actualizează detaliile, pozele și datele proiectelor."
     }
   },
   "vacaciones": {

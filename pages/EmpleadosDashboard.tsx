@@ -509,20 +509,35 @@ const EmpleadosDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Hub Team: solo subir reportes de obra (editar fichas se quitó: mala idea) */}
-        {canUploadReports && (
+        {/* Hub Team: accesos según permisos (subir reportes de obra, editar fichas) */}
+        {(canUploadReports || canEditProperties) && (
           <div className="mt-8 grid grid-cols-1 gap-3">
-            <button
-              onClick={() => setShowReportModal(true)}
-              className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
-            >
-              <span className="material-symbols-outlined text-primary">construction</span>
-              <span className="flex-1">
-                <span className="block font-bold text-primary text-sm">{t('empleados.reports.title')}</span>
-                <span className="block text-xs text-primary/50">{t('empleados.reports.subtitle')}</span>
-              </span>
-              <span className="material-symbols-outlined text-primary/30">chevron_right</span>
-            </button>
+            {canUploadReports && (
+              <button
+                onClick={() => setShowReportModal(true)}
+                className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+              >
+                <span className="material-symbols-outlined text-primary">construction</span>
+                <span className="flex-1">
+                  <span className="block font-bold text-primary text-sm">{t('empleados.reports.title')}</span>
+                  <span className="block text-xs text-primary/50">{t('empleados.reports.subtitle')}</span>
+                </span>
+                <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+              </button>
+            )}
+            {canEditProperties && (
+              <button
+                onClick={() => navigate('/empleados/propiedades')}
+                className="bg-white rounded-2xl p-4 shadow-sm border border-primary/5 flex items-center gap-3 text-left hover:border-primary/20 transition"
+              >
+                <span className="material-symbols-outlined text-primary">home_work</span>
+                <span className="flex-1">
+                  <span className="block font-bold text-primary text-sm">{t('empleados.props.title', { defaultValue: 'Editar propiedades' })}</span>
+                  <span className="block text-xs text-primary/50">{t('empleados.props.subtitle', { defaultValue: 'Actualiza fichas, fotos y datos de los proyectos.' })}</span>
+                </span>
+                <span className="material-symbols-outlined text-primary/30">chevron_right</span>
+              </button>
+            )}
           </div>
         )}
       </div>
