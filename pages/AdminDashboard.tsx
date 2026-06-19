@@ -124,6 +124,17 @@ const AMENITIES_LIST = [
   const viewParam = searchParams.get('view') as AdminView | null;
   const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) ? viewParam : 'dashboard';
   const setActiveView = (v: AdminView) => setSearchParams({ view: v });
+  // Búsqueda pre-rellenada por URL (?q=): p.ej. desde Notificaciones "Ver cobro →"
+  // auto-busca al cliente. Aplica el término y limpia el q de la URL.
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) {
+      setClientSearch(q);
+      const sp = new URLSearchParams(searchParams);
+      sp.delete('q');
+      setSearchParams(sp, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
   const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null }>>([]);
   const loadEmployees = useCallback(async () => {
     const { data } = await supabase

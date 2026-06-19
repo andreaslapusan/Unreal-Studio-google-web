@@ -180,7 +180,7 @@ const NotificationsPanel: React.FC = () => {
                 <ul className="space-y-2">
                   {overdue.map((o) => (
                     <Row key={`ov-${o.id}`} icon="priority_high" color="text-red-600 bg-red-50"
-                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=clients')} label={t('admin.notif.actViewPayment', { defaultValue: 'Ver cobro' })} />}>
+                      actions={<PrimaryBtn onClick={() => navigate(`/admin?view=clients&q=${encodeURIComponent(o.client_name || '')}`)} label={t('admin.notif.actViewPayment', { defaultValue: 'Ver cobro' })} />}>
                       <p className="font-bold text-primary text-sm">{o.client_name}</p>
                       <p className="text-sm text-primary/70">{o.label} · <span className="text-red-600 font-bold">{fmtMoney(Number(o.amount), o.currency)}</span></p>
                       <p className="text-[11px] text-red-500 mt-0.5">{t('admin.notif.expiredOn', { date: new Date(o.due_date).toLocaleDateString(uiLocale()) })}</p>
@@ -189,7 +189,7 @@ const NotificationsPanel: React.FC = () => {
                   {claims.map((n) => (
                     <Row key={n.id} icon="payments" color="text-green-700 bg-green-50"
                       actions={<>
-                        <PrimaryBtn onClick={() => navigate('/admin?view=clients')} label={t('admin.notif.actVerify', { defaultValue: 'Verificar' })} />
+                        <PrimaryBtn onClick={() => navigate(`/admin?view=clients${n.actor_name ? '&q=' + encodeURIComponent(n.actor_name) : ''}`)} label={t('admin.notif.actVerify', { defaultValue: 'Verificar' })} />
                         <AsyncButton onClick={() => resolve(n.id)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">{t('admin.notif.done', { defaultValue: 'Hecho' })}</AsyncButton>
                       </>}>
                       <p className="font-bold text-primary text-sm">{n.title}</p>
@@ -249,7 +249,7 @@ const NotificationsPanel: React.FC = () => {
                     <p className="text-[11px] font-bold uppercase tracking-widest text-primary/30 mb-2">{t('admin.notif.clientsNoProperty', { count: noProp.length })}</p>
                     <div className="flex flex-wrap gap-2">
                       {noProp.map((c) => (
-                        <button key={c.id} onClick={() => navigate('/admin?view=clients')} className="text-xs bg-gray-50 text-primary/70 px-3 py-1 rounded-full hover:bg-primary/10">{c.name}</button>
+                        <button key={c.id} onClick={() => navigate(`/admin?view=clients&q=${encodeURIComponent(c.name || '')}`)} className="text-xs bg-gray-50 text-primary/70 px-3 py-1 rounded-full hover:bg-primary/10">{c.name}</button>
                       ))}
                     </div>
                   </div>
