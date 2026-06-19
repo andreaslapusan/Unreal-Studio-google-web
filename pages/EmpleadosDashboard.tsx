@@ -132,7 +132,10 @@ const EmpleadosDashboard: React.FC = () => {
       setCanEditProperties(hasPermission(data, 'edit_properties'));
       // Idioma del empleado: al entrar, mostrar el portal en SU idioma preferido.
       const elang = (data as any).preferred_language;
-      if (elang && ['es', 'en', 'ro', 'id'].includes(elang) && i18n.language !== elang) void i18n.changeLanguage(elang);
+      if (elang && ['es', 'en', 'ro', 'id'].includes(elang)) {
+        try { localStorage.setItem('_unreal_lang', elang); } catch { /* ignore */ }
+        if (i18n.language !== elang) void i18n.changeLanguage(elang);
+      }
       if (data?.id) setEmployee({
         id: data.id as string,
         full_name: (data.full_name as string) ?? null,
@@ -270,7 +273,28 @@ const EmpleadosDashboard: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.45));
+    // Marco de marca Unreal grabado en la foto: borde finito redondeado + barra
+    // inferior con "Unreal Studio" y la frase divertida.
+    const W = canvas.width, H = canvas.height;
+    const BR = '#3F2305', CREAM = '#F3E5D8';
+    const pad = Math.max(4, Math.round(W * 0.018));
+    const rad = Math.round(W * 0.05);
+    const rr = (x: number, y: number, w: number, h: number, r: number) => {
+      ctx.beginPath();
+      if ((ctx as any).roundRect) (ctx as any).roundRect(x, y, w, h, r);
+      else { ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+    };
+    ctx.strokeStyle = CREAM; ctx.lineWidth = Math.max(3, Math.round(W * 0.01));
+    rr(pad, pad, W - pad * 2, H - pad * 2, rad); ctx.stroke();
+    const barH = Math.round(H * 0.075);
+    ctx.save(); rr(pad, H - pad - barH, W - pad * 2, barH, rad); ctx.clip();
+    ctx.fillStyle = 'rgba(63,35,5,0.66)'; ctx.fillRect(pad, H - pad - barH, W - pad * 2, barH); ctx.restore();
+    ctx.fillStyle = CREAM; ctx.textBaseline = 'middle';
+    ctx.font = `800 ${Math.round(barH * 0.4)}px Manrope, Arial, sans-serif`;
+    ctx.textAlign = 'left'; ctx.fillText('Unreal Studio', pad + Math.round(W * 0.045), H - pad - barH / 2);
+    ctx.textAlign = 'right'; ctx.font = `700 ${Math.round(barH * 0.36)}px Manrope, Arial, sans-serif`;
+    ctx.fillText(smileMsg || '', W - pad - Math.round(W * 0.045), H - pad - barH / 2);
+    const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.5));
     if (!blob) {
       setToast({ ok: false, msg: t('empleados.toast.photoFailed') });
       return;

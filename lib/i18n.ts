@@ -19,6 +19,16 @@ import id from "../locales/id.json";
 
 import { geoLanguageDetector } from "./geoLanguageDetector";
 
+// Preferencia de idioma guardada por el usuario (la fija LanguageSwitcher). Si
+// existe, MANDA en TODA la app desde el primer render — incluido el panel admin,
+// que antes ignoraba la preferencia y arrancaba siempre en español aunque el
+// usuario hubiera elegido otro idioma en otro portal.
+let _storedLng: string | undefined;
+try {
+  const s = localStorage.getItem("_unreal_lang");
+  if (s && ["es", "en", "ro", "id"].includes(s)) _storedLng = s;
+} catch { /* ignore */ }
+
 void i18n
   .use(geoLanguageDetector)
   .use(initReactI18next)
@@ -29,6 +39,7 @@ void i18n
       ro: { translation: ro },
       id: { translation: id },
     },
+    ...(_storedLng ? { lng: _storedLng } : {}),
     fallbackLng: "es",
     supportedLngs: ["es", "en", "ro", "id"],
     interpolation: { escapeValue: false },

@@ -418,7 +418,10 @@ const ClientDashboard: React.FC = () => {
       setClientData(data);
       // Idioma del portal = el preferido del cliente (el mismo de sus emails).
       const lang = data?.client?.preferred_language;
-      if (lang && ['es', 'en', 'ro', 'id'].includes(lang) && i18n.language !== lang) void i18n.changeLanguage(lang);
+      if (lang && ['es', 'en', 'ro', 'id'].includes(lang)) {
+        try { localStorage.setItem('_unreal_lang', lang); } catch { /* ignore */ }
+        if (i18n.language !== lang) void i18n.changeLanguage(lang);
+      }
 
       // Fetch all projects to ensure we have all fields (like URLs)
       const { data: projectsData } = await supabase.from('projects').select('*');
