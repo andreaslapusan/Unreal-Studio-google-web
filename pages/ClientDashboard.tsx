@@ -735,6 +735,26 @@ const ClientDashboard: React.FC = () => {
                       )}
                     </div>
 
+                    {proj.investment_type === 'pool' && Number(proj.pool_total_amount) > 0 && (() => {
+                      const cur = proj.investment_currency || 'EUR';
+                      const recibido = Number(proj.received_total || 0);
+                      const total = Number(proj.pool_total_amount);
+                      const pct = total > 0 ? (recibido / total) * 100 : 0;
+                      return (
+                        <div className="mt-5 bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-4">
+                          <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.poolTitle', { defaultValue: 'Pool de inversión' })}</p>
+                          <div className="flex items-end justify-between gap-3 flex-wrap">
+                            <p className="text-sm text-primary"><span className="font-bold">{formatMoney(recibido, cur)}</span> <span className="text-primary/50">{t('admin.clientDash.poolOf', { defaultValue: 'de' })} {formatMoney(total, cur)}</span></p>
+                            <p className="text-sm font-black text-primary">{pct.toFixed(2)}%</p>
+                          </div>
+                          <div className="mt-2 bg-white rounded-full h-2 overflow-hidden">
+                            <div className="bg-primary h-full rounded-full" style={{ width: `${Math.min(100, pct)}%` }}></div>
+                          </div>
+                          <p className="text-[10px] text-primary/40 mt-2">{t('admin.clientDash.poolNote', { defaultValue: 'Tu aportación sobre el total del complejo y el % que representa.' })}</p>
+                        </div>
+                      );
+                    })()}
+
                     {proj.delivery_date && (() => {
                       const dl = new Date(new Date(proj.delivery_date).getTime() + 14 * 86400000);
                       const days = Math.ceil((dl.getTime() - Date.now()) / 86400000);

@@ -2817,15 +2817,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div>
                         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentType', { defaultValue: 'Tipo de inversión' })}</label>
                         <select value={(assignForm as any).investment_type || 'compra'} onChange={(e) => setAssignForm({...assignForm, investment_type: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
-                            <option value="compra">{t('admin.dash.invCompra', { defaultValue: 'Compra' })}</option>
-                            <option value="pool">{t('admin.dash.invPool', { defaultValue: 'Pool' })}</option>
-                            <option value="desarrollo">{t('admin.dash.invDesarrollo', { defaultValue: 'Desarrollo' })}</option>
+                            <option value="compra">{t('admin.dash.invCompra', { defaultValue: 'Compra (revender/alquilar)' })}</option>
+                            <option value="pool">{t('admin.dash.invPool', { defaultValue: 'Pool de inversión' })}</option>
+                            <option value="desarrollo">{t('admin.dash.invDesarrollo', { defaultValue: 'Desarrollo a medida' })}</option>
                             <option value="arquitectura">{t('admin.dash.invArquitectura', { defaultValue: 'Arquitectura' })}</option>
                         </select>
                     </div>
                     {(assignForm as any).investment_type === 'pool' && (
                       <div>
-                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del pool' })}</label>
+                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
                         <input type="number" value={(assignForm as any).pool_total || ''} onChange={(e) => setAssignForm({...assignForm, pool_total: parseFloat(e.target.value) || 0} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
                         {Number((assignForm as any).pool_total) > 0 && Number(assignForm.investment_amount) > 0 && (
                           <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(assignForm.investment_amount) / Number((assignForm as any).pool_total)) * 100).toFixed(2)}%</p>
