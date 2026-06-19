@@ -2792,14 +2792,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.clientDriveFolder')}</label>
           <input type="url" value={(currentClient as any).drive_folder_url || ''} onChange={(e) => setCurrentClient({...currentClient, drive_folder_url: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="https://drive.google.com/drive/folders/..." />
         </div>
-        {/* Solo idioma. La divisa NO se elige por cliente: el cliente ve únicamente
-            las divisas que fija el admin en cada compra/calendario (sin selector). */}
-        <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.preferredLanguage')}</label>
-          <select value={(currentClient as any).preferred_language || 'es'} onChange={(e) => setCurrentClient({...currentClient, preferred_language: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-transparent focus:border-primary/20 focus:outline-none">
-            <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
-          </select>
-        </div>
+        {/* El idioma se elige POR TITULAR (cada bloque de titular tiene su selector).
+            preferred_language del cliente se sincroniza desde el primer titular como
+            fallback, así que aquí NO repetimos un selector global de idioma.
+            La divisa tampoco se elige por cliente: el cliente ve únicamente las
+            divisas que fija el admin en cada compra/calendario (sin selector). */}
         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
           <label className="text-[10px] font-black uppercase text-primary/60 block mb-2">{t('admin.dash.clientStatus', { defaultValue: 'Estado del cliente' })}</label>
           <select value={(currentClient as any).status || (currentClient.is_active === false ? 'inactive' : 'active')} onChange={(e) => setCurrentClient((prev: any) => ({ ...prev, status: e.target.value, is_active: e.target.value === 'active' }))} className="w-full px-5 py-3 bg-white border border-gray-200 rounded-2xl font-bold">
