@@ -1210,7 +1210,14 @@
       "selectAll": "Selectează tot",
       "selectClient": "Selectează",
       "sendEmailBtn": "Trimite",
-      "titlePreview": "Titlu"
+      "titlePreview": "Titlu",
+      "emailTeam": "Email echipei",
+      "emailEmployee": "Trimite email",
+      "emailSubjectPh": "Subiect",
+      "emailBodyPh": "Scrie mesajul…",
+      "emailTeamHint": "Se trimite cu șablonul de brand Unreal Studio, un email per destinatar, salutând fiecare pe nume.",
+      "teamComposeIncomplete": "Adaugă subiect, mesaj și cel puțin un destinatar.",
+      "teamComposeSent": "Trimise: {{ok}}{{f}}"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",

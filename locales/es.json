@@ -1210,7 +1210,14 @@
       "selectAll": "Seleccionar todos",
       "selectClient": "Seleccionar",
       "sendEmailBtn": "Enviar",
-      "titlePreview": "Título"
+      "titlePreview": "Título",
+      "emailTeam": "Email al equipo",
+      "emailEmployee": "Enviar email",
+      "emailSubjectPh": "Asunto",
+      "emailBodyPh": "Escribe el mensaje…",
+      "emailTeamHint": "Se envía con la plantilla de marca Unreal Studio, un correo por destinatario, saludándole por su nombre.",
+      "teamComposeIncomplete": "Pon asunto, mensaje y al menos un destinatario.",
+      "teamComposeSent": "Enviados: {{ok}}{{f}}"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

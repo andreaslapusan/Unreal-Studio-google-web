@@ -1305,7 +1305,14 @@
       "selectAll": "Pilih semua",
       "selectClient": "Pilih",
       "sendEmailBtn": "Kirim",
-      "titlePreview": "Judul"
+      "titlePreview": "Judul",
+      "emailTeam": "Email tim",
+      "emailEmployee": "Kirim email",
+      "emailSubjectPh": "Subjek",
+      "emailBodyPh": "Tulis pesan…",
+      "emailTeamHint": "Dikirim dengan templat merek Unreal Studio, satu email per penerima, menyapa masing-masing dengan namanya.",
+      "teamComposeIncomplete": "Tambahkan subjek, pesan, dan minimal satu penerima.",
+      "teamComposeSent": "Terkirim: {{ok}}{{f}}"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",

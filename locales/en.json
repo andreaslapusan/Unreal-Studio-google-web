@@ -1210,7 +1210,14 @@
       "selectAll": "Select all",
       "selectClient": "Select",
       "sendEmailBtn": "Send",
-      "titlePreview": "Title"
+      "titlePreview": "Title",
+      "emailTeam": "Email the team",
+      "emailEmployee": "Send email",
+      "emailSubjectPh": "Subject",
+      "emailBodyPh": "Write the message…",
+      "emailTeamHint": "Sent with the Unreal Studio brand template, one email per recipient, greeting each by name.",
+      "teamComposeIncomplete": "Add a subject, a message and at least one recipient.",
+      "teamComposeSent": "Sent: {{ok}}{{f}}"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

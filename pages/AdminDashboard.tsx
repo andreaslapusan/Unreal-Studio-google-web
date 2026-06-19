@@ -159,6 +159,33 @@ const AMENITIES_LIST = [
   }, []);
   // Modal de alta/edición de empleado: null = cerrado, {emp:null} = nuevo, {emp:row} = editar.
   const [empModal, setEmpModal] = useState<{ emp: EmployeeRow | null } | null>(null);
+  // Redactar correo manual al equipo (empleados), igual que a clientes.
+  const [teamCompose, setTeamCompose] = useState<null | { recipients: { email: string; name: string }[]; selected: string[]; subject: string; body: string; sending: boolean }>(null);
+  const openTeamCompose = (only?: { email: string; name: string }) => {
+    const active = employees.filter((e) => e.active && (e.email || '').includes('@')).map((e) => ({ email: e.email, name: e.full_name || e.email }));
+    const recips = only ? active.filter((r) => r.email === only.email) : active;
+    setTeamCompose({ recipients: recips, selected: recips.map((r) => r.email), subject: '', body: '', sending: false });
+  };
+  const sendTeamCompose = async () => {
+    if (!teamCompose) return;
+    const tc = teamCompose;
+    const userId = getAdminUserId();
+    if (!userId) { alert(t('admin.dash.sessionExpired')); return; }
+    if (!tc.subject.trim() || !tc.body.trim() || tc.selected.length === 0) { alert(t('admin.dash.teamComposeIncomplete', { defaultValue: 'Pon asunto, mensaje y al menos un destinatario.' })); return; }
+    setTeamCompose((p) => p ? { ...p, sending: true } : p);
+    const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] as string));
+    let ok = 0; let fail = 0;
+    for (const to of tc.selected) {
+      const name = tc.recipients.find((r) => r.email === to)?.name || '';
+      const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">Hola ${esc(name)},</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap">${esc(tc.body)}</div>`;
+      try {
+        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang: 'es', subject: tc.subject, html } });
+        if (error || !data?.success) fail++; else ok++;
+      } catch { fail++; }
+    }
+    setTeamCompose(null);
+    alert(t('admin.dash.teamComposeSent', { defaultValue: 'Enviados: {{ok}}{{f}}', ok, f: fail ? ` · fallidos: ${fail}` : '' }));
+  };
   // Submenú de Configuración (orden lógico): Etiquetas · Permisos · Marca y datos.
   const [configTab, setConfigTab] = useState<'etiquetas' | 'permisos' | 'marca'>('etiquetas');
   // Bocadillo de navegación en MÓVIL (sustituye la barra horizontal de menús).
@@ -2087,9 +2114,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <p className="text-sm text-gray-400">{t('admin.dash.employeeProfilesHint')}</p>
                 <p className="text-xs text-primary/50 mt-1">{t('admin.dash.vacationsManagedHint')}</p>
               </div>
-              <button onClick={() => setEmpModal({ emp: null })} className="shrink-0 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition">
-                <span className="material-symbols-outlined text-sm">person_add</span> {t('fix.adm.createEmployee')}
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button onClick={() => openTeamCompose()} className="bg-white border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-primary/5 transition">
+                  <span className="material-symbols-outlined text-sm">mail</span> {t('admin.dash.emailTeam', { defaultValue: 'Email al equipo' })}
+                </button>
+                <button onClick={() => setEmpModal({ emp: null })} className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition">
+                  <span className="material-symbols-outlined text-sm">person_add</span> {t('fix.adm.createEmployee')}
+                </button>
+              </div>
             </div>
             <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
               <table className="w-full text-sm">
@@ -2120,6 +2152,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                           </button>
                         </td>
                         <td className="px-4 py-3 text-right whitespace-nowrap">
+                          {(e.email || '').includes('@') && (
+                            <button onClick={() => openTeamCompose({ email: e.email, name: e.full_name || e.email })} title={t('admin.dash.emailEmployee', { defaultValue: 'Enviar email' })} className="text-primary/50 hover:text-primary mr-3 inline-flex items-center">
+                              <span className="material-symbols-outlined text-sm">mail</span>
+                            </button>
+                          )}
                           <button onClick={() => setEmpModal({ emp: e as EmployeeRow })} className="text-primary/60 hover:text-primary text-xs font-bold uppercase tracking-widest inline-flex items-center gap-1">
                             <span className="material-symbols-outlined text-sm">edit</span> {t('fix.adm.edit')}
                           </button>
@@ -2135,6 +2172,36 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
             {empModal && (
               <EmployeeEditModal emp={empModal.emp} onClose={() => setEmpModal(null)} onSaved={() => void loadEmployees()} />
+            )}
+            {teamCompose && (
+              <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(ev) => { if (ev.target === ev.currentTarget && !teamCompose.sending) setTeamCompose(null); }}>
+                <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl max-h-[88vh] flex flex-col overflow-hidden">
+                  <div className="flex items-start justify-between gap-3 p-5 border-b">
+                    <div className="min-w-0">
+                      <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailTeam', { defaultValue: 'Email al equipo' })}</h3>
+                      <div className="flex flex-wrap items-center gap-2 mt-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
+                        {teamCompose.recipients.map((r) => (
+                          <label key={r.email} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${teamCompose.selected.includes(r.email) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                            <input type="checkbox" checked={teamCompose.selected.includes(r.email)} onChange={() => setTeamCompose((p) => { if (!p) return p; const sel = p.selected.includes(r.email) ? p.selected.filter((x) => x !== r.email) : [...p.selected, r.email]; return { ...p, selected: sel }; })} className="rounded" />
+                            {r.name}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <button onClick={() => setTeamCompose(null)} disabled={teamCompose.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
+                  </div>
+                  <div className="p-5 space-y-3 overflow-y-auto">
+                    <input value={teamCompose.subject} onChange={(e) => setTeamCompose((p) => p ? { ...p, subject: e.target.value } : p)} placeholder={t('admin.dash.emailSubjectPh', { defaultValue: 'Asunto' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm" />
+                    <textarea value={teamCompose.body} onChange={(e) => setTeamCompose((p) => p ? { ...p, body: e.target.value } : p)} placeholder={t('admin.dash.emailBodyPh', { defaultValue: 'Escribe el mensaje…' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium text-sm h-48 resize-none" />
+                    <p className="text-[11px] text-gray-400">{t('admin.dash.emailTeamHint', { defaultValue: 'Se envía con la plantilla de marca Unreal Studio, un correo por destinatario, saludándole por su nombre.' })}</p>
+                  </div>
+                  <div className="flex gap-2 p-4 border-t">
+                    <button onClick={() => setTeamCompose(null)} disabled={teamCompose.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
+                    <button onClick={() => void sendTeamCompose()} disabled={teamCompose.sending || teamCompose.selected.length === 0 || !teamCompose.subject.trim() || !teamCompose.body.trim()} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{teamCompose.sending ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> {t('admin.adminDash.savingEllipsis', { defaultValue: 'Enviando…' })}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })} ({teamCompose.selected.length})</>}</button>
+                  </div>
+                </div>
+              </div>
             )}
             <AttendancePanel />
           </div>
