@@ -2805,7 +2805,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
                     <input type="number" value={(editingAssignment.assignment as any).pool_total_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, pool_total_amount: parseFloat(e.target.value) || 0} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
                     {Number((editingAssignment.assignment as any).pool_total_amount) > 0 && (
-                      <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(editingAssignment.assignment.investment_amount || 0) / Number((editingAssignment.assignment as any).pool_total_amount)) * 100).toFixed(2)}%</p>
+                      <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(editingAssignment.assignment.investment_amount || 0) / Number((editingAssignment.assignment as any).pool_total_amount)) * 100).toFixed(4)}%</p>
                     )}
                   </div>
                 )}
@@ -2870,7 +2870,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
                         <input type="number" value={(assignForm as any).pool_total || ''} onChange={(e) => setAssignForm({...assignForm, pool_total: parseFloat(e.target.value) || 0} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
                         {Number((assignForm as any).pool_total) > 0 && Number(assignForm.investment_amount) > 0 && (
-                          <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(assignForm.investment_amount) / Number((assignForm as any).pool_total)) * 100).toFixed(2)}%</p>
+                          <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(assignForm.investment_amount) / Number((assignForm as any).pool_total)) * 100).toFixed(4)}%</p>
                         )}
                       </div>
                     )}

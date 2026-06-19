@@ -58,15 +58,17 @@ Deno.serve(async (req) => {
   // Independencia total entre titulares: 1 correo SEPARADO por titular, cada uno
   // con SU nombre. Si hay holders [{name,email}] se usan; si no, email principal +
   // extra_emails (con el nombre de la ficha). Dedupe por email.
+  // Cada titular con SU nombre y SU idioma (h.lang) — independencia total.
   const titularsOf = (cl) => {
     const out = [];
+    const fb = cl?.preferred_language || "es";
     const hs = Array.isArray(cl?.holders) ? cl.holders : null;
     if (hs && hs.length) {
-      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || cl?.name || "").trim(), email: em }); }
+      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || cl?.name || "").trim(), email: em, lang: (h?.lang || fb) }); }
     }
     if (!out.length) {
-      const pe = (cl?.email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (cl?.name || "").trim(), email: pe });
-      for (const e of (cl?.extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (cl?.name || "").trim(), email: em }); }
+      const pe = (cl?.email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (cl?.name || "").trim(), email: pe, lang: fb });
+      for (const e of (cl?.extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (cl?.name || "").trim(), email: em, lang: fb }); }
     }
     const seen = new Set();
     return out.filter((r) => { const k = r.email.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
@@ -78,8 +80,7 @@ Deno.serve(async (req) => {
     // Solo clientes ACTIVOS: nunca avisar a DRAFT ni a INACTIVOS.
     const eff = cl?.status || (cl?.is_active === false ? "inactive" : "active");
     if (eff !== "active") continue;
-    const lang = cl?.preferred_language || "es";
-    for (const tt of titularsOf(cl)) recipients.push({ name: tt.name, email: tt.email, lang, unit: r.unit_number });
+    for (const tt of titularsOf(cl)) recipients.push({ name: tt.name, email: tt.email, lang: tt.lang, unit: r.unit_number });
   }
 
   // Interruptor de seguridad: si está apagado, no envía (solo informa).

@@ -745,7 +745,7 @@ const ClientDashboard: React.FC = () => {
                           <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.poolTitle', { defaultValue: 'Pool de inversión' })}</p>
                           <div className="flex items-end justify-between gap-3 flex-wrap">
                             <p className="text-sm text-primary"><span className="font-bold">{formatMoney(recibido, cur)}</span> <span className="text-primary/50">{t('admin.clientDash.poolOf', { defaultValue: 'de' })} {formatMoney(total, cur)}</span></p>
-                            <p className="text-sm font-black text-primary">{pct.toFixed(2)}%</p>
+                            <p className="text-sm font-black text-primary">{pct.toFixed(4)}%</p>
                           </div>
                           <div className="mt-2 bg-white rounded-full h-2 overflow-hidden">
                             <div className="bg-primary h-full rounded-full" style={{ width: `${Math.min(100, pct)}%` }}></div>

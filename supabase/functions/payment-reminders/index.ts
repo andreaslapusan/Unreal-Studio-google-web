@@ -101,13 +101,14 @@ Deno.serve(async (req) => {
   // extra_emails (con el nombre de la ficha). Dedupe por email.
   const titularsOf = (r) => {
     const out = [];
+    const fb = r?.lang || "es";
     const hs = Array.isArray(r?.client_holders) ? r.client_holders : null;
     if (hs && hs.length) {
-      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || r?.client_name || "").trim(), email: em }); }
+      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || r?.client_name || "").trim(), email: em, lang: (h?.lang || fb) }); }
     }
     if (!out.length) {
-      const pe = (r?.client_email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: pe });
-      for (const e of (r?.client_extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: em }); }
+      const pe = (r?.client_email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: pe, lang: fb });
+      for (const e of (r?.client_extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: em, lang: fb }); }
     }
     const seen = new Set();
     return out.filter((x) => { const k = x.email.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
@@ -116,21 +117,23 @@ Deno.serve(async (req) => {
   const today = baliToday();
   let sent = 0; const failed = [];
   for (const r of candidates) {
-    const lang = r.lang || "es";
     const daysUntil = daysBetween(today, String(r.due_date).slice(0, 10));
-    const st = stageFor(daysUntil, lang);
-    if (!st) continue;
+    const stKey = stageFor(daysUntil, r.lang || "es");
+    if (!stKey) continue;
     const already = r.reminder_stages_sent || [];
-    if (already.includes(st.key)) continue;
+    if (already.includes(stKey.key)) continue;
     let anySent = false;
     for (const tt of titularsOf(r)) {
+      // Cada titular en SU idioma (subject + cuerpo).
+      const tlang = ["es","en","ro","id"].includes(tt.lang) ? tt.lang : (r.lang || "es");
+      const st = stageFor(daysUntil, tlang);
       try {
-        await sendMail({ to: tt.email, subject: `${st.subject} · Unreal Studio`, html: reminderHtml({ ...r, client_name: tt.name }, st, lang) });
+        await sendMail({ to: tt.email, subject: `${st.subject} · Unreal Studio`, html: reminderHtml({ ...r, client_name: tt.name }, st, tlang) });
         sent++; anySent = true;
       } catch (e) { failed.push(`${r.payment_id} ${tt.email}: ${String(e)}`); }
     }
     // La etapa se marca una vez por pago (no por destinatario) si al menos uno salió.
-    if (anySent) { try { await supabase.rpc("payment_reminder_mark_stage", { p_payment_id: r.payment_id, p_stage: st.key }); } catch (e) { failed.push(`mark ${r.payment_id}: ${String(e)}`); } }
+    if (anySent) { try { await supabase.rpc("payment_reminder_mark_stage", { p_payment_id: r.payment_id, p_stage: stKey.key }); } catch (e) { failed.push(`mark ${r.payment_id}: ${String(e)}`); } }
   }
   return new Response(JSON.stringify({ success: true, sent, failed }), { headers: { "Content-Type": "application/json" } });
 });
