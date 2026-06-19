@@ -1218,7 +1218,13 @@
       "emailTeamHint": "Sent with the Unreal Studio brand template, one email per recipient, greeting each by name.",
       "teamComposeIncomplete": "Add a subject, a message and at least one recipient.",
       "teamComposeSent": "Sent: {{ok}}{{f}}",
-      "emailGreeting": "Hi {{name}},"
+      "emailGreeting": "Hi {{name}},",
+      "emailTemplates": "Templates",
+      "tpl_welcome": "Welcome",
+      "tpl_checkin": "Clock-in",
+      "tpl_meeting": "Meeting",
+      "tpl_notice": "Notice",
+      "holderPhonePh": "Phone"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

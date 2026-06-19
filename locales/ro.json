@@ -1218,7 +1218,13 @@
       "emailTeamHint": "Se trimite cu șablonul de brand Unreal Studio, un email per destinatar, salutând fiecare pe nume.",
       "teamComposeIncomplete": "Adaugă subiect, mesaj și cel puțin un destinatar.",
       "teamComposeSent": "Trimise: {{ok}}{{f}}",
-      "emailGreeting": "Salut {{name}},"
+      "emailGreeting": "Salut {{name}},",
+      "emailTemplates": "Șabloane",
+      "tpl_welcome": "Bun venit",
+      "tpl_checkin": "Pontaj",
+      "tpl_meeting": "Ședință",
+      "tpl_notice": "Anunț",
+      "holderPhonePh": "Telefon"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",

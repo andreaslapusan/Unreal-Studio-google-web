@@ -2193,6 +2193,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <button onClick={() => setTeamCompose(null)} disabled={teamCompose.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
                   </div>
                   <div className="p-5 space-y-3 overflow-y-auto">
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 self-center mr-1">{t('admin.dash.emailTemplates', { defaultValue: 'Plantillas' })}:</span>
+                      {([
+                        { k: 'welcome', n: 'Bienvenida', s: 'Bienvenido/a al equipo de Unreal Studio', b: 'Te damos la bienvenida al equipo de Unreal Studio.\n\nTu portal de empleado está listo: https://unrealstudiobali.com/empleados\nDesde ahí fichas tu entrada/salida, ves tu horario y pides vacaciones.\n\nCualquier duda, aquí estamos. ¡Bienvenido/a!' },
+                        { k: 'checkin', n: 'Fichaje', s: 'Recordatorio: ficha tu entrada y salida', b: 'Un recordatorio rápido: acuérdate de fichar tu entrada, pausas y salida cada día desde el portal:\nhttps://unrealstudiobali.com/empleados\n\nSi un día olvidas fichar algo, puedes registrarlo igualmente cuando te acuerdes.\n\nGracias.' },
+                        { k: 'meeting', n: 'Reunión', s: 'Reunión de equipo', b: 'Hola,\n\nConvocamos una reunión de equipo el [DÍA] a las [HORA] en [LUGAR / enlace].\n\nTemas a tratar:\n- \n- \n\nPor favor confirma tu asistencia. Gracias.' },
+                        { k: 'notice', n: 'Aviso', s: 'Aviso importante', b: 'Hola,\n\nQueremos informarte de lo siguiente:\n\n[ESCRIBE AQUÍ EL AVISO]\n\nGracias por tu atención.' },
+                      ] as { k: string; n: string; s: string; b: string }[]).map((tpl) => (
+                        <button key={tpl.k} type="button" onClick={() => setTeamCompose((p) => p ? { ...p, subject: tpl.s, body: tpl.b } : p)} className="text-[11px] font-bold px-2.5 py-1 rounded-full border border-gray-200 text-primary/70 hover:border-primary/40 hover:bg-primary/5 transition">{t('admin.dash.tpl_' + tpl.k, { defaultValue: tpl.n })}</button>
+                      ))}
+                    </div>
                     <input value={teamCompose.subject} onChange={(e) => setTeamCompose((p) => p ? { ...p, subject: e.target.value } : p)} placeholder={t('admin.dash.emailSubjectPh', { defaultValue: 'Asunto' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm" />
                     <textarea value={teamCompose.body} onChange={(e) => setTeamCompose((p) => p ? { ...p, body: e.target.value } : p)} placeholder={t('admin.dash.emailBodyPh', { defaultValue: 'Escribe el mensaje…' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium text-sm h-48 resize-none" />
                     <p className="text-[11px] text-gray-400">{t('admin.dash.emailTeamHint', { defaultValue: 'Se envía con la plantilla de marca Unreal Studio, un correo por destinatario, saludándole por su nombre.' })}</p>

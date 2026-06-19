@@ -34,6 +34,50 @@ function fmtTime(iso: string): string {
   return baliTime(iso) || '--:--';
 }
 
+// Frase del día para el equipo (humor/Murphy/motivación). Cambia cada día (misma
+// todo el día). Bilingüe: ES por defecto, EN para el resto de idiomas.
+const TEAM_PHRASES_ES = [
+  'Ley de Murphy: si algo puede salir mal, esperará a que el cliente esté mirando.',
+  'El café es ese puente entre "no puedo" y "ya está hecho".',
+  'Trabajar en equipo divide el trabajo y multiplica los memes.',
+  'Si funciona a la primera, desconfía: revísalo dos veces.',
+  'La reunión que pudo ser un email… igual hoy sí es un email.',
+  'Nada motiva más que una fecha de entrega de ayer.',
+  'El plan perfecto dura hasta el primer mensaje de WhatsApp.',
+  'Hazlo bien una vez y serás el responsable para siempre.',
+  'La impresora detecta cuándo tienes prisa. Siempre.',
+  'Hoy es un buen día para ser un poco leyenda.',
+  'Murphy dice: la pieza que falta estaba en la otra caja.',
+  'Sonríe: cuesta menos calorías que quejarse.',
+  'El wifi va lento solo cuando lo necesitas rápido.',
+  'Cada gran obra empezó con un "¿y si lo probamos?".',
+  'Si todo está bajo control, es que vas demasiado lento. 😉',
+  'La energía de hoy: la justa para hacerlo increíble.',
+  'No hay problema que un buen plan (y un café) no mejore.',
+  'Equipo Unreal: convertimos el caos en villas.',
+  'El optimista inventó el avión; el pesimista, el cinturón. Lleva los dos.',
+  'Recuerda: tú haces que esto funcione. Gracias por ello.',
+];
+const TEAM_PHRASES_EN = [
+  "Murphy's law: if it can go wrong, it'll wait until the client is watching.",
+  'Coffee: the bridge between "I can\'t" and "it\'s done".',
+  'Teamwork divides the work and multiplies the memes.',
+  'If it works on the first try, be suspicious. Check it twice.',
+  'The meeting that could have been an email… maybe today it is one.',
+  'Nothing motivates like a deadline that was yesterday.',
+  'The perfect plan lasts until the first WhatsApp message.',
+  'Do it well once and you own it forever.',
+  'The printer always knows when you\'re in a hurry.',
+  'Today is a good day to be a bit of a legend.',
+  'Smile: it burns fewer calories than complaining.',
+  'Every great build started with "what if we try it?".',
+  'If everything is under control, you\'re going too slow. 😉',
+  'Today\'s energy: exactly enough to make it amazing.',
+  'No problem a good plan (and a coffee) can\'t improve.',
+  'Team Unreal: we turn chaos into villas.',
+  'Remember: you make this work. Thank you for that.',
+];
+
 const EmpleadosDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -238,6 +282,25 @@ const EmpleadosDashboard: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Marco fino de marca Unreal + mensaje divertido (buen rollo). Fino para no
+    // tapar el contenido de la foto.
+    const W = canvas.width, H = canvas.height;
+    const BROWN = '#3F2305';
+    const fb = Math.max(3, Math.round(W * 0.012)); // grosor del marco (finito)
+    ctx.strokeStyle = BROWN; ctx.lineWidth = fb;
+    ctx.strokeRect(fb / 2, fb / 2, W - fb, H - fb);
+    // Barra inferior translúcida con marca + mensaje.
+    const barH = Math.round(H * 0.085);
+    ctx.fillStyle = 'rgba(63,35,5,0.62)';
+    ctx.fillRect(fb, H - barH - fb, W - fb * 2, barH);
+    const SMILE = ['¡Sonríe! 😄', 'Que sea un gran día ✨', 'Equipo Unreal 💪', 'A por todas hoy 🚀', '¡Buen rollito! 🌴', 'Café y a brillar ☕', 'Hoy lo petamos 🔥', 'Gracias por tu curro 🙌', 'Bali vibes 🌊', '¡Crack! 👏', 'Sonrisa de campeón 😎', 'Energía Unreal ⚡'];
+    const msg = SMILE[Math.floor((Date.now() / 1000)) % SMILE.length];
+    ctx.fillStyle = '#F3E5D8';
+    ctx.font = `700 ${Math.round(barH * 0.42)}px Manrope, Arial, sans-serif`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('Unreal Studio', fb + Math.round(W * 0.03), H - barH / 2 - fb);
+    ctx.textAlign = 'right';
+    ctx.fillText(msg, W - fb - Math.round(W * 0.03), H - barH / 2 - fb);
     const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.45));
     if (!blob) {
       setToast({ ok: false, msg: t('empleados.toast.photoFailed') });
@@ -304,7 +367,7 @@ const EmpleadosDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-almond">
       <PortalHeader
-        subtitle={user.email ?? t('empleados.header.subtitleFallback')}
+        subtitle={employee?.full_name || realEmailOf(user) || user.email || t('empleados.header.subtitleFallback')}
         onLogout={async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/empleados'; }}
         extra={
           <>
@@ -348,6 +411,16 @@ const EmpleadosDashboard: React.FC = () => {
       )}
       <div className="px-5 py-6 md:py-10">
       <div className="max-w-md mx-auto">
+        {(() => {
+          const list = (i18n.language || 'es').startsWith('es') ? TEAM_PHRASES_ES : TEAM_PHRASES_EN;
+          const phrase = list[Math.floor(Date.now() / 86400000) % list.length];
+          return (
+            <div className="bg-primary text-almond rounded-3xl px-5 py-4 mb-6 flex items-start gap-3 shadow-sm">
+              <span className="material-symbols-outlined text-[20px] shrink-0 opacity-80">emoji_objects</span>
+              <p className="text-sm leading-relaxed font-medium italic">{phrase}</p>
+            </div>
+          );
+        })()}
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-primary/5 mb-6">
           <div className="flex items-center justify-between mb-3">
             <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">{t('empleados.today.title')}</p>

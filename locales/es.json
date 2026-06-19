@@ -1218,7 +1218,13 @@
       "emailTeamHint": "Se envía con la plantilla de marca Unreal Studio, un correo por destinatario, saludándole por su nombre.",
       "teamComposeIncomplete": "Pon asunto, mensaje y al menos un destinatario.",
       "teamComposeSent": "Enviados: {{ok}}{{f}}",
-      "emailGreeting": "Hola {{name}},"
+      "emailGreeting": "Hola {{name}},",
+      "emailTemplates": "Plantillas",
+      "tpl_welcome": "Bienvenida",
+      "tpl_checkin": "Fichaje",
+      "tpl_meeting": "Reunión",
+      "tpl_notice": "Aviso",
+      "holderPhonePh": "Teléfono"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

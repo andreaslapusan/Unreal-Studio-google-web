@@ -1313,7 +1313,13 @@
       "emailTeamHint": "Dikirim dengan templat merek Unreal Studio, satu email per penerima, menyapa masing-masing dengan namanya.",
       "teamComposeIncomplete": "Tambahkan subjek, pesan, dan minimal satu penerima.",
       "teamComposeSent": "Terkirim: {{ok}}{{f}}",
-      "emailGreeting": "Halo {{name}},"
+      "emailGreeting": "Halo {{name}},",
+      "emailTemplates": "Templat",
+      "tpl_welcome": "Selamat datang",
+      "tpl_checkin": "Absen",
+      "tpl_meeting": "Rapat",
+      "tpl_notice": "Pemberitahuan",
+      "holderPhonePh": "Telepon"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
