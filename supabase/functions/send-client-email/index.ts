@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
   const authed = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
   const { data: { user: caller } = { user: null } } = await authed.auth.getUser();
   if (!caller) return json({ success: false, error: "Unauthorized" }, 401);
-  const { data: isStaff } = await authed.rpc("is_admin_or_team");
+  const { data: isStaff } = await authed.rpc("is_admin");
   if (isStaff !== true) return json({ success: false, error: "Forbidden" }, 403);
 
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
