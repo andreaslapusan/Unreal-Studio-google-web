@@ -60,8 +60,11 @@ const ResetPassword: React.FC = () => {
     if (pw !== pw2) { setErr(t('fix.rp.errMismatch')); return; }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
+    if (error) { setBusy(false); setErr(t('fix.rp.errUpdateFailed')); return; }
+    // Guarda también el texto plano en la ficha para que el admin lo siga viendo
+    // en tiempo real (lo exige Andreas). No bloquea el flujo si fallara.
+    try { await supabase.rpc('portal_store_plain_password', { p_new: pw }); } catch { /* noop */ }
     setBusy(false);
-    if (error) { setErr(t('fix.rp.errUpdateFailed')); return; }
     setDone(true);
     const valid: Portal[] = ['cliente', 'empleados', 'agencias', 'admin'];
     const dest = (valid as string[]).includes(portalRef.current) ? portalPath(portalRef.current as Portal) : '/cliente';
