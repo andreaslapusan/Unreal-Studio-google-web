@@ -2780,10 +2780,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
           );
         })()}
-        <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.phoneLabel')}</label>
-          <input type="text" value={currentClient.phone || ''} onChange={(e) => setCurrentClient({...currentClient, phone: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="+34 625 710 770" />
-        </div>
+        {/* El teléfono se captura POR TITULAR (cada bloque tiene el suyo). El del
+            cliente se sincroniza desde el 1er titular como fallback, así que aquí
+            NO repetimos un campo global de teléfono. */}
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.notesLabel')}</label>
           <textarea value={currentClient.notes || ''} onChange={(e) => setCurrentClient({...currentClient, notes: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none resize-none h-24" placeholder={t('admin.dash.notesPh')} />
