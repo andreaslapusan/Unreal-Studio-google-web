@@ -44,6 +44,21 @@ const dedupeAmpNames = (raw: string | null | undefined): string => {
 // Resuelve el nombre del titular concreto por su email (para saludar a cada
 // destinatario con SU nombre, no con el del titular principal). Si no hay match
 // en holders, cae al nombre deduplicado de la ficha.
+// Invoca la edge function de email con reintento si la PETICIÓN no llega
+// (cold-start/red): "Failed to send a request to the Edge Function". NO reintenta
+// errores de aplicación que devuelve la función (p.ej. transport_not_configured),
+// que volverían a fallar igual. Devuelve { data, error } como supabase.invoke.
+const invokeSendEmail = async (body: any): Promise<{ data: any; error: any }> => {
+  let data: any = null, error: any = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const r = await supabase.functions.invoke('send-client-email', { body });
+    data = r.data; error = r.error;
+    if (!error || data?.success) break; // llegó a la función → no reintentar
+    await new Promise((res) => setTimeout(res, 800 * (attempt + 1)));
+  }
+  return { data, error };
+};
+
 const holderNameByEmail = (client: any, em: string): string => {
   const target = (em || '').trim().toLowerCase();
   const hs = client?.holders;
@@ -180,7 +195,7 @@ const AMENITIES_LIST = [
       const name = r?.name || ''; const lg = r?.lang || 'es';
       const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${i18n.getFixedT(lg)('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name })}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap">${esc(tc.body)}</div>`;
       try {
-        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang: lg, subject: tc.subject, html } });
+        const { data, error } = await invokeSendEmail({ adminUserId: userId, to, lang: lg, subject: tc.subject, html });
         if (error || !data?.success) fail++; else ok++;
       } catch { fail++; }
     }
@@ -980,9 +995,7 @@ const sendWelcomeCore = async (args: { name: string; email: string; emails?: str
       tempPassword: args.tempPassword || null,
       lang,
     });
-    const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-      body: { adminUserId: userId, to, lang, subject: et('emails.welcome.subject'), html },
-    });
+    const { data: sent, error: sErr } = await invokeSendEmail({ adminUserId: userId, to, lang, subject: et('emails.welcome.subject'), html });
     if (sErr || !sent?.success) return { ok: false, error: sent?.error || sErr?.message || 'error' };
   }
   return { ok: true };
@@ -1035,15 +1048,11 @@ const sendPreviewedEmail = async () => {
     if (ep.buildHtml) {
       // Un correo PERSONALIZADO por cada destinatario (su propio email de acceso).
       for (const to of ep.selected) {
-        const { data: sent, error } = await supabase.functions.invoke('send-client-email', {
-          body: { adminUserId: ep.userId, to, lang: ep.lang, subject: ep.subject, html: ep.buildHtml(to) },
-        });
+        const { data: sent, error } = await invokeSendEmail({ adminUserId: ep.userId, to, lang: ep.lang, subject: ep.subject, html: ep.buildHtml(to) });
         if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
       }
     } else {
-      const { data: sent, error } = await supabase.functions.invoke('send-client-email', {
-        body: { adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html },
-      });
+      const { data: sent, error } = await invokeSendEmail({ adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html });
       if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
     }
     alert(ep.sentMsg(ep.selected));
@@ -1144,7 +1153,7 @@ const sendReportForProjects = async (client: Client, cps: any[]) => {
       const lg = holderLangByEmail(client, to);
       const subject = i18n.getFixedT(lg)('emails.report.subject', { project: cp.project_name });
       try {
-        const { data, error } = await supabase.functions.invoke('send-client-email', { body: { adminUserId: userId, to, lang: lg, subject, html: buildHtml(to) } });
+        const { data, error } = await invokeSendEmail({ adminUserId: userId, to, lang: lg, subject, html: buildHtml(to) });
         if (error || !data?.success) failed++; else sent++;
       } catch { failed++; }
     }

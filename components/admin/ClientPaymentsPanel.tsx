@@ -292,9 +292,18 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     for (const to of rs.selected) {
       const lg = holderLangByEmail(to);
       const subj = i18n.getFixedT(lg)('emails.recibi.subject', { no: rs.no });
-      const { data: sent, error: sErr } = await supabase.functions.invoke('send-client-email', {
-        body: { adminUserId, to, kwitansiId: rs.kwitansiId, lang: lg, subject: subj, html: rs.buildBody(to) },
-      });
+      // Reintenta si la PETICIÓN no llega a la edge function (cold-start/red):
+      // "Failed to send a request to the Edge Function". No reintenta errores de
+      // aplicación (p.ej. transport_not_configured), que volverían a fallar igual.
+      let sent: any = null, sErr: any = null;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const r = await supabase.functions.invoke('send-client-email', {
+          body: { adminUserId, to, kwitansiId: rs.kwitansiId, lang: lg, subject: subj, html: rs.buildBody(to) },
+        });
+        sent = r.data; sErr = r.error;
+        if (!sErr || sent?.success) break; // llegó a la función (ok o error de app) → no reintentar
+        await new Promise((res) => setTimeout(res, 800 * (attempt + 1)));
+      }
       if (sErr || !sent?.success) {
         const msg = sent?.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no: rs.no }) : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
         setRecibiSend((p) => p ? { ...p, sending: false } : p); alert(msg); return;
