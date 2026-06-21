@@ -71,7 +71,7 @@ const ParticipantsPicker: React.FC<{ holders: any[]; value: any; onChange: (v: a
           const em = (h.email || '').trim(); const emL = em.toLowerCase(); const checked = checkedSet.has(emL);
           return (
             <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
-              <input type="checkbox" checked={checked} onChange={() => { const n = new Set(checkedSet); if (n.has(emL)) n.delete(emL); else n.add(emL); emit(n, curPctMap); }} className="rounded" />
+              <input type="checkbox" checked={checked} onChange={() => { const n = new Set(checkedSet); if (n.has(emL)) { if (n.size <= 1) return; n.delete(emL); } else n.add(emL); emit(n, curPctMap); }} className="rounded" />
               <span className="flex-1 text-sm font-medium text-primary truncate">{(h.name || '').trim() || em}<span className="text-gray-400 font-normal"> · {em}</span></span>
               <div className="flex items-center gap-1">
                 <input type="number" min="0" max="100" step="0.0001" value={checked ? (curPctMap[emL] ?? '') : ''} disabled={!checked} onChange={(e) => { const pm = { ...curPctMap, [emL]: e.target.value }; emit(new Set(checkedSet), pm); }} placeholder="%" className="w-20 px-2 py-1 bg-white rounded-lg border border-gray-200 text-sm font-bold text-right disabled:opacity-40" />

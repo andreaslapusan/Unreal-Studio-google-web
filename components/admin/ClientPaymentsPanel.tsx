@@ -281,11 +281,15 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">${e2('emails.recibi.downloadInstruction')}</p>
       <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.recibi.cta')}</a></p>`;
     };
-    // Si la unidad tiene participantes definidos, el recibí va SOLO a ellos; si no, a todos.
+    // Si la unidad tiene participantes definidos, el recibí va SOLO a ellos; si no,
+    // a TODOS los de la ficha (principal + extra_emails + holders), deduplicado —
+    // como emailsOf en el admin, para no dejar fuera a un co-titular.
     const hp = (kwUnit as any)?.holder_participants;
-    const recipients = (Array.isArray(hp) && hp.length)
-      ? hp.map((x: any) => (x?.email || '').trim()).filter(Boolean)
-      : [clientEmail, ...(clientExtraEmails || [])].map((e) => (e || '').trim()).filter(Boolean);
+    const rawRecipients = (Array.isArray(hp) && hp.length)
+      ? hp.map((x: any) => (x?.email || '').trim())
+      : [clientEmail, ...(clientExtraEmails || []), ...((clientHolders || []).map((h: any) => h?.email))].map((e) => (e || '').trim());
+    const seenR = new Set<string>();
+    const recipients = rawRecipients.filter(Boolean).filter((e) => { const k = e.toLowerCase(); if (seenR.has(k)) return false; seenR.add(k); return true; });
     setRecibiSend({ recipients, selected: [...recipients], previewEmail: recipients[0] || '', no, subject: et('emails.recibi.subject', { no }), kwitansiId: kw.kwitansiId, loc, buildBody, sending: false });
   };
 

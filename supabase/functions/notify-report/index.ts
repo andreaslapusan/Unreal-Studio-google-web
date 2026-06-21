@@ -62,14 +62,17 @@ Deno.serve(async (req) => {
   const titularsOf = (cl, participants) => {
     const out = [];
     const fb = cl?.preferred_language || "es";
-    // Participantes de ESTA propiedad: si están definidos, el aviso va SOLO a ellos.
-    const hp = Array.isArray(participants) ? participants : null;
-    const partSet = (hp && hp.length) ? new Set(hp.map((x) => (x?.email || "").trim().toLowerCase()).filter(Boolean)) : null;
     const hs = Array.isArray(cl?.holders) ? cl.holders : null;
-    if (hs && hs.length) {
-      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@") && (!partSet || partSet.has(em.toLowerCase()))) out.push({ name: (h?.name || cl?.name || "").trim(), email: em, lang: (h?.lang || fb) }); }
+    const holderByEmail = (em) => (hs || []).find((h) => (h?.email || "").trim().toLowerCase() === em);
+    // Participantes de ESTA propiedad definidos => el aviso va SOLO a esos emails,
+    // tomándolos VERBATIM (aunque ya no casen con un holder), nunca a nadie.
+    const hp = Array.isArray(participants) && participants.length ? participants : null;
+    if (hp) {
+      for (const x of hp) { const em = (x?.email || "").trim(); if (!em || !em.includes("@")) continue; const h = holderByEmail(em.toLowerCase()); out.push({ name: (h?.name || cl?.name || "").trim(), email: em, lang: (h?.lang || fb) }); }
+    } else if (hs && hs.length) {
+      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || cl?.name || "").trim(), email: em, lang: (h?.lang || fb) }); }
     }
-    if (!out.length && !partSet) {
+    if (!out.length && !hp) {
       const pe = (cl?.email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (cl?.name || "").trim(), email: pe, lang: fb });
       for (const e of (cl?.extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (cl?.name || "").trim(), email: em, lang: fb }); }
     }
