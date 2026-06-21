@@ -871,7 +871,9 @@
       "poolNote": "Tu aportación sobre el total del complejo y el % que representa.",
       "poolOf": "de",
       "poolTitle": "Pool de inversión",
-      "welcome": "Bienvenido a Unreal Studio"
+      "welcome": "Bienvenido a Unreal Studio",
+      "coOwnersTitle": "Titulares de esta propiedad",
+      "coOwnersNote": "Tu participación en esta propiedad."
     },
     "agencias": {
       "title": "Pack para Agencias",
@@ -1224,7 +1226,9 @@
       "tpl_checkin": "Fichaje",
       "tpl_meeting": "Reunión",
       "tpl_notice": "Aviso",
-      "holderPhonePh": "Teléfono"
+      "holderPhonePh": "Teléfono",
+      "participantsLabel": "Titulares que participan en esta propiedad",
+      "participantsHint": "Marca quién participa y, si quieres, su %. Solo verán esta propiedad y recibirán sus emails los marcados. Si dejas todos marcados, participan todos."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

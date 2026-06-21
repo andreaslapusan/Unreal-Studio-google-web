@@ -871,7 +871,9 @@
       "poolNote": "Contribuția ta la totalul complexului și procentul pe care îl reprezintă.",
       "poolOf": "din",
       "poolTitle": "Fond de investiții",
-      "welcome": "Bun venit la Unreal Studio"
+      "welcome": "Bun venit la Unreal Studio",
+      "coOwnersTitle": "Titularii acestei proprietăți",
+      "coOwnersNote": "Cota ta în această proprietate."
     },
     "agencias": {
       "title": "Pack pentru Agenții",
@@ -1224,7 +1226,9 @@
       "tpl_checkin": "Pontaj",
       "tpl_meeting": "Ședință",
       "tpl_notice": "Anunț",
-      "holderPhonePh": "Telefon"
+      "holderPhonePh": "Telefon",
+      "participantsLabel": "Titularii care participă la această proprietate",
+      "participantsHint": "Bifează cine participă și, opțional, procentul. Doar cei bifați vor vedea această proprietate și vor primi emailurile ei. Dacă lași toți bifați, participă toți."
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",

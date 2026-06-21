@@ -31,6 +31,60 @@ import BrandLogo from '../components/BrandLogo';
 type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'cobros' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura';
 const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'cobros', 'calendar', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
 
+// Titulares que PARTICIPAN en una propiedad concreta (+ % opcional). Si la
+// propiedad no tiene participantes definidos (null/[]), participan TODOS los
+// titulares de la ficha (comportamiento histórico, no rompe clientes existentes).
+// Devuelve los emails (lowercase) que participan, dado holder_participants y los
+// titulares de la ficha.
+const participantEmails = (holderParticipants: any, fichaHolders: any[]): string[] => {
+  const hp = Array.isArray(holderParticipants) ? holderParticipants : null;
+  if (hp && hp.length) return hp.map((x: any) => (x?.email || '').trim().toLowerCase()).filter(Boolean);
+  return (fichaHolders || []).map((h: any) => (h?.email || '').trim().toLowerCase()).filter(Boolean);
+};
+
+// Selector de participantes de una propiedad: marca qué titulares de la ficha
+// participan y con qué % (opcional). Si están todos marcados y sin %, guarda []
+// (= "todos", sin gating) para no alterar el comportamiento por defecto.
+const ParticipantsPicker: React.FC<{ holders: any[]; value: any; onChange: (v: any[]) => void; t: any }> = ({ holders, value, onChange, t }) => {
+  const hs = (holders || []).filter((h: any) => (h?.email || '').trim());
+  if (hs.length < 2) return null; // con un solo titular no hay nada que elegir
+  const cur: any[] = Array.isArray(value) ? value : [];
+  const allEmails = hs.map((h: any) => (h.email || '').trim().toLowerCase());
+  // Si value vacío => todos participan (default).
+  const checkedSet = new Set<string>(cur.length ? cur.map((x: any) => (x.email || '').trim().toLowerCase()) : allEmails);
+  const pctOf = (em: string) => { const m = cur.find((x: any) => (x.email || '').trim().toLowerCase() === em); return m && m.pct != null ? m.pct : ''; };
+  const emit = (nextChecked: Set<string>, pctMap: Record<string, any>) => {
+    const arr = hs.filter((h: any) => nextChecked.has((h.email || '').trim().toLowerCase()))
+      .map((h: any) => { const em = (h.email || '').trim(); const p = pctMap[em.toLowerCase()]; return p === '' || p == null ? { email: em } : { email: em, pct: Number(p) }; });
+    // Todos marcados y sin ningún % => [] (todos, sin gating).
+    const allChecked = arr.length === hs.length;
+    const anyPct = arr.some((x: any) => x.pct != null);
+    onChange(allChecked && !anyPct ? [] : arr);
+  };
+  const curPctMap: Record<string, any> = {}; for (const h of hs) curPctMap[(h.email || '').trim().toLowerCase()] = pctOf((h.email || '').trim().toLowerCase());
+  return (
+    <div>
+      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.participantsLabel', { defaultValue: 'Titulares que participan en esta propiedad' })}</label>
+      <p className="text-[11px] text-gray-400 mb-2">{t('admin.dash.participantsHint', { defaultValue: 'Marca quién participa y, si quieres, su %. Solo verán esta propiedad y recibirán sus emails los marcados. Si dejas todos marcados, participan todos.' })}</p>
+      <div className="space-y-2">
+        {hs.map((h: any, i: number) => {
+          const em = (h.email || '').trim(); const emL = em.toLowerCase(); const checked = checkedSet.has(emL);
+          return (
+            <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
+              <input type="checkbox" checked={checked} onChange={() => { const n = new Set(checkedSet); if (n.has(emL)) n.delete(emL); else n.add(emL); emit(n, curPctMap); }} className="rounded" />
+              <span className="flex-1 text-sm font-medium text-primary truncate">{(h.name || '').trim() || em}<span className="text-gray-400 font-normal"> · {em}</span></span>
+              <div className="flex items-center gap-1">
+                <input type="number" min="0" max="100" step="0.0001" value={checked ? (curPctMap[emL] ?? '') : ''} disabled={!checked} onChange={(e) => { const pm = { ...curPctMap, [emL]: e.target.value }; emit(new Set(checkedSet), pm); }} placeholder="%" className="w-20 px-2 py-1 bg-white rounded-lg border border-gray-200 text-sm font-bold text-right disabled:opacity-40" />
+                <span className="text-xs text-gray-400">%</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 // Nombre de titulares para saludos de email: deduplica las partes unidas por " & "
 // (algunas fichas tienen el nombre repetido, p.ej. "Alberto & Alberto") sin tocar la BD.
 const dedupeAmpNames = (raw: string | null | undefined): string => {
@@ -123,7 +177,7 @@ const AMENITIES_LIST = [
   const [bulkBusy, setBulkBusy] = useState(false);
   const [assigningProject, setAssigningProject] = useState<{ clientId: string, clientName: string } | null>(null);
   const [editingAssignment, setEditingAssignment] = useState<{ clientId: string, clientName: string, assignment: any } | null>(null);
-  const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0 });
+  const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0, participants: [] });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [mailClient, setMailClient] = useState<Client | null>(null);
   const [mailBusy, setMailBusy] = useState(false);
@@ -976,6 +1030,17 @@ const emailsOf = (c: any): string[] => {
   for (const e of all) { const k = e.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push(e); } }
   return out;
 };
+// Destinatarios para una PROPIEDAD concreta: si tiene participantes definidos
+// (holder_participants no vacío), solo esos titulares; si no, todos (emailsOf).
+const recipientsForCp = (client: any, cp: any): string[] => {
+  const hp = cp?.holder_participants;
+  if (Array.isArray(hp) && hp.length) {
+    const seen = new Set<string>(); const out: string[] = [];
+    for (const x of hp) { const e = (x?.email || '').trim(); if (!e) continue; const k = e.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push(e); } }
+    return out;
+  }
+  return emailsOf(client);
+};
 
 // Núcleo de la bienvenida: construye y envía. Sin alerts (lo usa el botón y el auto-envío).
 const sendWelcomeCore = async (args: { name: string; email: string; emails?: string[]; holders?: any[]; lang: 'es' | 'en' | 'ro' | 'id'; tempPassword?: string | null }): Promise<{ ok: boolean; error?: string }> => {
@@ -1135,21 +1200,22 @@ const sendReportForProjects = async (client: Client, cps: any[]) => {
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
-  const recipients = emailsOf(client);
 
   if (list.length === 1) {
     const cp = list[0];
+    const recipients = recipientsForCp(client, cp);
     const buildHtml = buildReportHtmlFor(client, cp);
     openEmailPreview({ to: recipients, subject: et('emails.report.subject', { project: cp.project_name }), html: buildHtml(recipients[0] || email), sentMsg: (ems) => t('admin.dash.reportSent', { email: ems.join(', '), n: 1 }), userId, lang, buildHtml });
     return;
   }
 
-  // Varias propiedades → un correo separado por propiedad y por titular.
-  if (!window.confirm(t('admin.dash.reportSendMultiConfirm', { defaultValue: 'Se enviará un correo separado por cada propiedad ({{p}}) a cada titular ({{r}}). ¿Enviar?', p: list.length, r: recipients.length }))) return;
+  // Varias propiedades → un correo separado por propiedad y por titular PARTICIPANTE.
+  const totalR = new Set(list.flatMap((cp) => recipientsForCp(client, cp).map((e) => e.toLowerCase()))).size;
+  if (!window.confirm(t('admin.dash.reportSendMultiConfirm', { defaultValue: 'Se enviará un correo separado por cada propiedad ({{p}}) a cada titular ({{r}}). ¿Enviar?', p: list.length, r: totalR }))) return;
   let sent = 0; let failed = 0;
   for (const cp of list) {
     const buildHtml = buildReportHtmlFor(client, cp);
-    for (const to of recipients) {
+    for (const to of recipientsForCp(client, cp)) {
       const lg = holderLangByEmail(client, to);
       const subject = i18n.getFixedT(lg)('emails.report.subject', { project: cp.project_name });
       try {
@@ -1191,18 +1257,30 @@ const sendCalendarEmail = async (client: Client) => {
   const td = `style="font-size:12px;color:${BROWN};padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap"`;
   const h1 = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${et('emails.calendar.subject')}</h1>`;
   const intro = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${et('emails.calendar.intro')}</p>`;
-  let tables = '';
-  for (const u of units) {
-    let tA = 0, tR = 0;
-    tables += `<h2 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:${BROWN}">${u.project_name || ''}${u.unit_number ? ' · ' + u.unit_number : ''}</h2>`;
-    const fmtPaid = (s: string | null) => s ? new Date(s).toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
-    tables += `<div style="width:100%;overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
-    for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
-      const balCol = bal > 0 ? '#c0392b' : '#15803d';
-      tables += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
-    const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
-    tables += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
-  }
+  // ¿Participa el email `em` en la unidad `u`? Sin participantes definidos → sí (todos).
+  const unitHasEm = (u: any, em: string) => {
+    const hp = u?.holder_participants;
+    if (!Array.isArray(hp) || !hp.length) return true;
+    const t = (em || '').trim().toLowerCase();
+    return hp.some((x: any) => (x?.email || '').trim().toLowerCase() === t);
+  };
+  // Tabla(s) SOLO de las unidades en las que participa el destinatario.
+  const tablesFor = (em: string) => {
+    let tables = '';
+    for (const u of units) {
+      if (!unitHasEm(u, em)) continue;
+      let tA = 0, tR = 0;
+      tables += `<h2 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:${BROWN}">${u.project_name || ''}${u.unit_number ? ' · ' + u.unit_number : ''}</h2>`;
+      const fmtPaid = (s: string | null) => s ? new Date(s).toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
+      tables += `<div style="width:100%;overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${et('emails.calendar.colConcept')}</th><th ${th}>${et('emails.calendar.colDue')}</th><th ${th}>${et('emails.calendar.colAmount')}</th><th ${th}>${et('emails.calendar.colReceived')}</th><th ${th}>${et('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${et('emails.calendar.colBalance')}</th></tr>`;
+      for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
+        const balCol = bal > 0 ? '#c0392b' : '#15803d';
+        tables += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
+      const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
+      tables += `<tr><td ${td}><b>${et('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
+    }
+    return tables;
+  };
   // Cabecera/saludo/intro/cta en el idioma de CADA titular (la tabla de cifras es
   // numérica; sus cabeceras quedan en el idioma de la ficha).
   const buildHtml = (em: string) => {
@@ -1210,11 +1288,18 @@ const sendCalendarEmail = async (client: Client) => {
     const h1b = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${e2('emails.calendar.subject')}</h1>`;
     const introb = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${e2('emails.calendar.intro')}</p>`;
     const ctab = `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.calendar.cta')}</a></p>`;
-    return h1b + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + introb + tables + ctab;
+    return h1b + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + introb + tablesFor(em) + ctab;
   };
+  // Destinatarios = unión de participantes de todas las unidades (cada uno recibe
+  // SOLO sus unidades). Un titular que no participa en ninguna no recibe nada.
+  const calRecipients = (() => {
+    const seen = new Set<string>(); const out: string[] = [];
+    for (const u of units) for (const e of recipientsForCp(client, { holder_participants: u.holder_participants })) { const k = e.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push(e); } }
+    return out;
+  })();
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up). Cada
   // titular recibe un correo SEPARADO con su nombre.
-  openEmailPreview({ to: emailsOf(client), subject: et('emails.calendar.subject'), html: buildHtml(emailsOf(client)[0] || email), sentMsg: (ems) => t('admin.dash.calendarSent', { email: ems.join(', ') }), userId, lang, buildHtml });
+  openEmailPreview({ to: calRecipients, subject: et('emails.calendar.subject'), html: buildHtml(calRecipients[0] || email), sentMsg: (ems) => t('admin.dash.calendarSent', { email: ems.join(', ') }), userId, lang, buildHtml });
 };
 
 const handleDeleteClient = async (id: string) => {
@@ -1251,12 +1336,13 @@ const handleAssignProject = async (e: React.FormEvent) => {
       p_status: assignForm.status,
       p_investment_type: (assignForm as any).investment_type || 'compra',
       p_pool_total: (assignForm as any).pool_total || null,
+      p_participants: ((assignForm as any).participants && (assignForm as any).participants.length) ? (assignForm as any).participants : null,
     });
     if (error) throw error;
     if (data && !data.success) throw new Error(data.error);
     await loadData();
     setAssigningProject(null);
-    setAssignForm({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0 });
+    setAssignForm({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0, participants: [] });
   } catch (error) {
     console.error('Error assigning project:', error);
     alert(t('admin.dash.assignProjectError'));
@@ -1300,7 +1386,8 @@ const handleEditAssignment = async (e: React.FormEvent) => {
             p_delivery: (editingAssignment.assignment as any).delivery_date || '',
             p_drive: (editingAssignment.assignment as any).drive_folder_url ?? '',
             p_investment_type: (editingAssignment.assignment as any).investment_type ?? '',
-            p_pool_total: (editingAssignment.assignment as any).pool_total_amount ?? null
+            p_pool_total: (editingAssignment.assignment as any).pool_total_amount ?? null,
+            p_participants: (editingAssignment.assignment as any).holder_participants ?? null
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
@@ -1791,7 +1878,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   ) : null;
                 })()}
               </div>
-              <button onClick={() => { setAssigningProject({ clientId: client.id, clientName: client.name }); setAssignForm({ project_id: projects[0]?.id || '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0 }); }} className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-black transition">
+              <button onClick={() => { setAssigningProject({ clientId: client.id, clientName: client.name }); setAssignForm({ project_id: projects[0]?.id || '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0, participants: [] }); }} className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-black transition">
                 <span className="material-symbols-outlined text-xs">add</span> {t('admin.clientsTab.assign')}
               </button>
             </div>
@@ -2902,6 +2989,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     )}
                   </div>
                 )}
+                <ParticipantsPicker holders={(clients.find((c) => c.id === editingAssignment.clientId)?.holders) || []} value={(editingAssignment.assignment as any).holder_participants} onChange={(v) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, holder_participants: v} as any})} t={t} />
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
                     <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.dash.close')}</button>
@@ -2968,6 +3056,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       </div>
                     )}
                 </div>
+                <ParticipantsPicker holders={(clients.find((c) => c.id === assigningProject.clientId)?.holders) || []} value={(assignForm as any).participants} onChange={(v) => setAssignForm({...assignForm, participants: v} as any)} t={t} />
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading || !assignForm.project_id} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.dash.assignBtn')}</button>
                     <button type="button" onClick={() => setAssigningProject(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.common.cancel')}</button>

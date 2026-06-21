@@ -258,6 +258,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     const no = kw.displayNo;
     const loc = clientLang || 'es';
     const et = i18n.getFixedT(loc); // email en el idioma del CLIENTE
+    const kwUnit = units.find((u) => (u.payments || []).some((p: any) => p.id === kw.payId));
     const kwPay = units.flatMap((u) => u.payments).find((p) => p.id === kw.payId);
     const dueStr = kwPay?.due_date ? new Date(kwPay.due_date).toLocaleDateString(loc) : '';
     const paidStr = kw.date ? new Date(kw.date).toLocaleDateString(loc) : '';
@@ -280,7 +281,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">${e2('emails.recibi.downloadInstruction')}</p>
       <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.recibi.cta')}</a></p>`;
     };
-    const recipients = [clientEmail, ...(clientExtraEmails || [])].map((e) => (e || '').trim()).filter(Boolean);
+    // Si la unidad tiene participantes definidos, el recibí va SOLO a ellos; si no, a todos.
+    const hp = (kwUnit as any)?.holder_participants;
+    const recipients = (Array.isArray(hp) && hp.length)
+      ? hp.map((x: any) => (x?.email || '').trim()).filter(Boolean)
+      : [clientEmail, ...(clientExtraEmails || [])].map((e) => (e || '').trim()).filter(Boolean);
     setRecibiSend({ recipients, selected: [...recipients], previewEmail: recipients[0] || '', no, subject: et('emails.recibi.subject', { no }), kwitansiId: kw.kwitansiId, loc, buildBody, sending: false });
   };
 

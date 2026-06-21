@@ -102,11 +102,14 @@ Deno.serve(async (req) => {
   const titularsOf = (r) => {
     const out = [];
     const fb = r?.lang || "es";
+    // Participantes de ESTA propiedad: si están definidos, el recordatorio va SOLO a ellos.
+    const hp = Array.isArray(r?.holder_participants) ? r.holder_participants : null;
+    const partSet = (hp && hp.length) ? new Set(hp.map((x) => (x?.email || "").trim().toLowerCase()).filter(Boolean)) : null;
     const hs = Array.isArray(r?.client_holders) ? r.client_holders : null;
     if (hs && hs.length) {
-      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@")) out.push({ name: (h?.name || r?.client_name || "").trim(), email: em, lang: (h?.lang || fb) }); }
+      for (const h of hs) { const em = (h?.email || "").trim(); if (em && em.includes("@") && (!partSet || partSet.has(em.toLowerCase()))) out.push({ name: (h?.name || r?.client_name || "").trim(), email: em, lang: (h?.lang || fb) }); }
     }
-    if (!out.length) {
+    if (!out.length && !partSet) {
       const pe = (r?.client_email || "").trim(); if (pe && pe.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: pe, lang: fb });
       for (const e of (r?.client_extra_emails || [])) { const em = (e || "").trim(); if (em && em.includes("@")) out.push({ name: (r?.client_name || "").trim(), email: em, lang: fb }); }
     }

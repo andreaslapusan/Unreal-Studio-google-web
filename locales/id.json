@@ -970,7 +970,9 @@
       "poolNote": "Kontribusi Anda terhadap total kompleks dan % yang diwakilinya.",
       "poolOf": "dari",
       "poolTitle": "Pool investasi",
-      "welcome": "Selamat datang di Unreal Studio"
+      "welcome": "Selamat datang di Unreal Studio",
+      "coOwnersTitle": "Pemilik properti ini",
+      "coOwnersNote": "Bagian Anda di properti ini."
     },
     "agencias": {
       "title": "Paket untuk Agen",
@@ -1323,7 +1325,9 @@
       "tpl_checkin": "Absen",
       "tpl_meeting": "Rapat",
       "tpl_notice": "Pemberitahuan",
-      "holderPhonePh": "Telepon"
+      "holderPhonePh": "Telepon",
+      "participantsLabel": "Pemilik yang berpartisipasi di properti ini",
+      "participantsHint": "Centang siapa yang ikut serta dan, jika mau, persentasenya. Hanya yang dicentang yang akan melihat properti ini dan menerima emailnya. Jika semua dicentang, semua ikut serta."
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
