@@ -41,6 +41,11 @@ function brandWrap(subject, inner) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ success: false, error: "Method not allowed" }, 405);
+  // Solo la invoca el RPC employee_post_construction_report (server-to-server) con
+  // un secreto compartido en el header. Sin él, cualquiera podría dispararla.
+  const SECRET = Deno.env.get("NOTIFY_REPORT_SECRET") ?? "";
+  if (!SECRET) return json({ success: false, error: "server misconfigured: NOTIFY_REPORT_SECRET not set" }, 500);
+  if (req.headers.get("x-notify-secret") !== SECRET) return json({ success: false, error: "Unauthorized" }, 401);
   let p; try { p = await req.json(); } catch { return json({ success: false, error: "Bad JSON" }, 400); }
   const projectId = String(p.project_id || "").trim();
   if (!projectId) return json({ success: false, error: "project_id required" }, 400);

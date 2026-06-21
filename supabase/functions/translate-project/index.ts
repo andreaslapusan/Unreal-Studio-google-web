@@ -27,6 +27,16 @@ Deno.serve(async (req) => {
   const id = body?.project_id;
   if (!id) return json({ error: "project_id required" }, 400);
 
+  // Auth: solo admin/team con sesión válida (evita que cualquiera dispare llamadas
+  // de pago a Groq). Lo llama el panel admin al guardar un proyecto.
+  const authHeader = req.headers.get("Authorization") || "";
+  if (!authHeader.toLowerCase().startsWith("bearer ")) return json({ error: "unauthorized" }, 401);
+  const authed = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_ANON_KEY"), { global: { headers: { Authorization: authHeader } } });
+  const { data: { user: caller } = { user: null } } = await authed.auth.getUser();
+  if (!caller) return json({ error: "unauthorized" }, 401);
+  const { data: isStaff } = await authed.rpc("is_admin_or_team");
+  if (isStaff !== true) return json({ error: "forbidden" }, 403);
+
   const supabase = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
   const cols = FIELDS.join(", ");
   const { data: p } = await supabase.from("projects").select(`id, ${cols}`).eq("id", id).maybeSingle();

@@ -1564,6 +1564,26 @@
       "thPresent": "Kehadiran",
       "thSize": "Ukuran",
       "title": "Laporan kehadiran (PDF)"
+    },
+    "overview": {
+      "title": "Ringkasan",
+      "needsAttention": "Perlu perhatian Anda",
+      "tasksPendingChip": "{{n}} tugas tertunda →",
+      "agenciesReviewChip": "{{n}} agen untuk ditinjau →",
+      "properties": "Properti",
+      "clients": "Klien",
+      "employees": "Karyawan",
+      "agencies": "Agen",
+      "tasksPending": "Tugas tertunda",
+      "overduePayments": "Pembayaran terlambat",
+      "vacationsPending": "Cuti tertunda",
+      "agenciesReview": "Agen untuk ditinjau"
+    },
+    "agencyApps": {
+      "title": "Agen",
+      "pendingCount": "{{n}} aplikasi tertunda",
+      "applications": "Aplikasi",
+      "activePartners": "Agen aktif"
     }
   },
   "footer": {
@@ -1580,7 +1600,16 @@
     "rights": "© 2026 Unreal Studio Bali. Seluruh hak cipta dilindungi.",
     "privacy": "Privasi",
     "terms": "Ketentuan",
-    "agencies": "Agen"
+    "agencies": "Agen",
+    "days": {
+      "mon": "Sen",
+      "tue": "Sel",
+      "wed": "Rab",
+      "thu": "Kam",
+      "fri": "Jum",
+      "sat": "Sab",
+      "sun": "Min"
+    }
   },
   "team": {
     "emailLabel": "Email kerja",

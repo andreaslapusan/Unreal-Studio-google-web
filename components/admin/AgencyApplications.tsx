@@ -5,12 +5,14 @@
  * Reutiliza ApplicationsTab/PartnersTab de AdminPortalManager.
  */
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth-context';
 import { ApplicationsTab, PartnersTab } from '../../pages/AdminPortalManager';
 
 const AgencyApplications: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [applications, setApplications] = useState<any[]>([]);
   const [partners, setPartners] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
@@ -72,13 +74,13 @@ const AgencyApplications: React.FC = () => {
 
   return (
     <div className="animate-in fade-in duration-500 space-y-10">
-      <h2 className="text-2xl font-serif text-primary">Agencias{pendingCount > 0 ? ` · ${pendingCount} solicitud(es) pendiente(s)` : ''}</h2>
+      <h2 className="text-2xl font-serif text-primary">{t('admin.agencyApps.title', { defaultValue: 'Agencias' })}{pendingCount > 0 ? ` · ${t('admin.agencyApps.pendingCount', { defaultValue: '{{n}} solicitud(es) pendiente(s)', n: pendingCount })}` : ''}</h2>
       <section>
-        <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">Solicitudes</h3>
+        <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyApps.applications', { defaultValue: 'Solicitudes' })}</h3>
         <ApplicationsTab data={applications} onApprove={handleApprove} onReject={handleReject} />
       </section>
       <section>
-        <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">Agencias activas</h3>
+        <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyApps.activePartners', { defaultValue: 'Agencias activas' })}</h3>
         <PartnersTab data={partners} properties={properties} onAssign={handleAssign} onChange={reload} />
       </section>
     </div>

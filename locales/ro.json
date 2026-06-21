@@ -1465,6 +1465,26 @@
       "thPresent": "Prezență",
       "thSize": "Dimensiune",
       "title": "Rapoarte de prezență (PDF)"
+    },
+    "overview": {
+      "title": "Rezumat",
+      "needsAttention": "Necesită atenția ta",
+      "tasksPendingChip": "{{n}} sarcină(i) în așteptare →",
+      "agenciesReviewChip": "{{n}} agenție(i) de verificat →",
+      "properties": "Proprietăți",
+      "clients": "Clienți",
+      "employees": "Angajați",
+      "agencies": "Agenții",
+      "tasksPending": "Sarcini în așteptare",
+      "overduePayments": "Plăți restante",
+      "vacationsPending": "Concedii în așteptare",
+      "agenciesReview": "Agenții de verificat"
+    },
+    "agencyApps": {
+      "title": "Agenții",
+      "pendingCount": "{{n}} cerere(i) în așteptare",
+      "applications": "Cereri",
+      "activePartners": "Agenții active"
     }
   },
   "footer": {
@@ -1481,7 +1501,16 @@
     "rights": "© 2026 Unreal Studio Bali. Toate drepturile rezervate.",
     "privacy": "Confidențialitate",
     "terms": "Termeni",
-    "agencies": "Agenții"
+    "agencies": "Agenții",
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mie",
+      "thu": "Joi",
+      "fri": "Vin",
+      "sat": "Sâm",
+      "sun": "Dum"
+    }
   },
   "team": {
     "emailLabel": "Email de serviciu",

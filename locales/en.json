@@ -1465,6 +1465,26 @@
       "thPresent": "Attendance",
       "thSize": "Size",
       "title": "Attendance reports (PDF)"
+    },
+    "overview": {
+      "title": "Overview",
+      "needsAttention": "Needs your attention",
+      "tasksPendingChip": "{{n}} pending task(s) →",
+      "agenciesReviewChip": "{{n}} agency(ies) to review →",
+      "properties": "Properties",
+      "clients": "Clients",
+      "employees": "Employees",
+      "agencies": "Agencies",
+      "tasksPending": "Pending tasks",
+      "overduePayments": "Overdue payments",
+      "vacationsPending": "Pending leave",
+      "agenciesReview": "Agencies to review"
+    },
+    "agencyApps": {
+      "title": "Agencies",
+      "pendingCount": "{{n}} pending application(s)",
+      "applications": "Applications",
+      "activePartners": "Active agencies"
     }
   },
   "footer": {
@@ -1481,7 +1501,16 @@
     "rights": "© 2026 Unreal Studio Bali. All rights reserved.",
     "privacy": "Privacy",
     "terms": "Terms",
-    "agencies": "Agencies"
+    "agencies": "Agencies",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
   },
   "team": {
     "emailLabel": "Work email",

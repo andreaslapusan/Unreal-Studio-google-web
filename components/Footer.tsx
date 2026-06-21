@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
           {hoursEntries.length > 0 && (
             <div className="mb-6 text-[11px] text-primary/50 font-medium space-y-0.5">
               {hoursEntries.map(([k, v]) => (
-                <div key={k} className="flex gap-2"><span className="font-bold text-primary/70 w-8">{DAY_LABEL[k] || k}</span> {v}</div>
+                <div key={k} className="flex gap-2"><span className="font-bold text-primary/70 w-8">{t('footer.days.' + k, { defaultValue: DAY_LABEL[k] || k })}</span> {v}</div>
               ))}
             </div>
           )}

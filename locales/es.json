@@ -1465,6 +1465,26 @@
       "thPresent": "Asistencia",
       "thSize": "Tamaño",
       "title": "Reportes de asistencia (PDF)"
+    },
+    "overview": {
+      "title": "Resumen",
+      "needsAttention": "Requiere tu atención",
+      "tasksPendingChip": "{{n}} tarea(s) pendiente(s) →",
+      "agenciesReviewChip": "{{n}} agencia(s) por revisar →",
+      "properties": "Propiedades",
+      "clients": "Clientes",
+      "employees": "Empleados",
+      "agencies": "Agencias",
+      "tasksPending": "Tareas pendientes",
+      "overduePayments": "Pagos vencidos",
+      "vacationsPending": "Vacaciones pend.",
+      "agenciesReview": "Agencias por revisar"
+    },
+    "agencyApps": {
+      "title": "Agencias",
+      "pendingCount": "{{n}} solicitud(es) pendiente(s)",
+      "applications": "Solicitudes",
+      "activePartners": "Agencias activas"
     }
   },
   "footer": {
@@ -1481,7 +1501,16 @@
     "rights": "© 2026 Unreal Studio Bali. Todos los derechos reservados.",
     "privacy": "Privacidad",
     "terms": "Términos",
-    "agencies": "Agencias"
+    "agencies": "Agencias",
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb",
+      "sun": "Dom"
+    }
   },
   "team": {
     "emailLabel": "Email de trabajo",

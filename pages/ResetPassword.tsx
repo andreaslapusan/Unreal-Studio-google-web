@@ -4,10 +4,11 @@
  * la plantilla de marca). El enlace de recovery trae los tokens en el hash; los
  * canjeamos por sesión y mostramos el formulario de nueva contraseña.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { portalPath, type Portal } from '../lib/portalUrls';
 
 function extractTokens(href: string): { access_token: string; refresh_token: string } | null {
   const hashIdx = href.indexOf('#');
@@ -31,7 +32,13 @@ const ResetPassword: React.FC = () => {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
 
+  // El portal de origen viene en ?portal=... (lo pone PortalLogin). Lo capturamos
+  // AL MONTAR, antes de que replaceState borre el query string, para redirigir
+  // luego al portal correcto y no siempre a /cliente.
+  const portalRef = useRef<string>('');
+
   useEffect(() => {
+    portalRef.current = new URLSearchParams(window.location.search).get('portal') || '';
     const tokens = extractTokens(window.location.href);
     if (tokens) {
       void supabase.auth.setSession(tokens).then(({ error }) => {
@@ -56,7 +63,9 @@ const ResetPassword: React.FC = () => {
     setBusy(false);
     if (error) { setErr(t('fix.rp.errUpdateFailed')); return; }
     setDone(true);
-    setTimeout(() => navigate('/cliente', { replace: true }), 2600);
+    const valid: Portal[] = ['cliente', 'empleados', 'agencias', 'admin'];
+    const dest = (valid as string[]).includes(portalRef.current) ? portalPath(portalRef.current as Portal) : '/cliente';
+    setTimeout(() => navigate(dest, { replace: true }), 2600);
   };
 
   return (

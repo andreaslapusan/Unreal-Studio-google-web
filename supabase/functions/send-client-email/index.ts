@@ -93,6 +93,18 @@ Deno.serve(async (req) => {
     return json({ success: false, error: "adminUserId, to, subject, html required" }, 400);
   }
 
+  // Autoriza por la SESIÓN del que llama (un adminUserId conocido no basta: los
+  // UUID de admin no son secretos). Exige un Bearer de sesión Supabase válida y
+  // que ese usuario sea admin/team. Todas las llamadas vienen del panel admin,
+  // que sí lleva la sesión del admin en el header Authorization.
+  const authHeader = req.headers.get("Authorization") || "";
+  if (!authHeader.toLowerCase().startsWith("bearer ")) return json({ success: false, error: "Unauthorized" }, 401);
+  const authed = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
+  const { data: { user: caller } = { user: null } } = await authed.auth.getUser();
+  if (!caller) return json({ success: false, error: "Unauthorized" }, 401);
+  const { data: isStaff } = await authed.rpc("is_admin_or_team");
+  if (isStaff !== true) return json({ success: false, error: "Forbidden" }, 403);
+
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: admin } = await supabase
     .from("admin_users").select("id").eq("id", p.adminUserId).eq("is_active", true).maybeSingle();

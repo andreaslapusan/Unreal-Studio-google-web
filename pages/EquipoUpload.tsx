@@ -9,6 +9,7 @@ import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
 import { hasPermission } from "../lib/permissions";
+import { realEmailOf } from "../lib/portalAuth";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 interface PropertySummary {
@@ -83,12 +84,13 @@ export default function EquipoUpload() {
   // además de los roles admin/team. null = comprobando.
   const [empAllowed, setEmpAllowed] = useState<boolean | null>(null);
   useEffect(() => {
-    if (!user?.email) { setEmpAllowed(false); return; }
+    const realEmail = realEmailOf(user);
+    if (!realEmail) { setEmpAllowed(false); return; }
     void (async () => {
       const { data } = await supabase
         .from("employees")
         .select("can_upload_reports, permissions")
-        .eq("email", user.email)
+        .eq("email", realEmail)
         .maybeSingle();
       setEmpAllowed(hasPermission(data, "upload_reports"));
     })();
@@ -147,7 +149,7 @@ export default function EquipoUpload() {
           title: title.trim(),
           summary: summary.trim() || null,
           pct_progress_at_update: pctProgress ? Number(pctProgress) : null,
-          posted_by: user.email ?? user.id,
+          posted_by: realEmailOf(user) || user.id,
           visibility,
         })
         .select("id")

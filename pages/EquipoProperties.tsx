@@ -14,6 +14,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
+import { realEmailOf } from '../lib/portalAuth';
 
 type Project = Record<string, any>;
 
@@ -40,7 +41,7 @@ const EquipoProperties: React.FC = () => {
     if (!user?.email) { setAllowed(false); return; }
     if (isStaff) { setAllowed(true); return; }
     void (async () => {
-      const { data } = await supabase.from('employees').select('permissions, can_upload_reports').eq('email', user.email).maybeSingle();
+      const { data } = await supabase.from('employees').select('permissions, can_upload_reports').eq('email', realEmailOf(user)).maybeSingle();
       setAllowed(hasPermission(data, 'edit_properties'));
     })();
   }, [user, authLoading, isStaff]);
