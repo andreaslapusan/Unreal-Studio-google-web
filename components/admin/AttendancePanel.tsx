@@ -181,15 +181,17 @@ const AttendancePanel: React.FC = () => {
       ) : dayRows.length === 0 ? (
         <p className="text-sm text-gray-300 italic">{t('admin.att.empty')}</p>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <div className="max-h-[78vh] overflow-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
           <table className="w-full text-sm min-w-[920px]">
-            <thead className="bg-gray-50 text-[10px] uppercase tracking-widest text-primary/50">
+            <thead className="text-[10px] uppercase tracking-widest text-primary/50">
+              {/* Cabecera fija al hacer scroll: sticky top-0 sobre cada celda + fondo
+                  opaco y sombra inferior para que se lea siempre la columna. */}
               <tr>
-                <th className="text-left px-3 py-3 w-[110px]">{t('fix.att.employee')}</th>
-                <th className="text-left px-2 py-3 w-[70px]">{t('fix.att.date')}</th>
-                {COLS.map(([k]) => <th key={k as string} className="text-left px-3 py-3">{t(`fix.att.col_${k}`)}</th>)}
-                <th className="text-center px-2 py-3 w-[64px]">{t('fix.att.total')}</th>
-                <th className="text-center px-2 py-3 w-[64px]">{t('fix.att.diff')}</th>
+                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3 w-[110px]">{t('fix.att.employee')}</th>
+                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-2 py-3 w-[70px]">{t('fix.att.date')}</th>
+                {COLS.map(([k]) => <th key={k as string} className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3">{t(`fix.att.col_${k}`)}</th>)}
+                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.total')}</th>
+                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.diff')}</th>
               </tr>
             </thead>
             <tbody>
