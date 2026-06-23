@@ -85,12 +85,12 @@ const AttendancePanel: React.FC = () => {
     return Object.values(map).sort((a, b) => b.day.localeCompare(a.day) || a.name.localeCompare(b.name));
   }, [rows, selected]);
 
-  // Minutos trabajados: (salida - entrada) - (pausa_out - pausa_in).
+  // Minutos trabajados: salida - entrada (del día completo). La pausa de comida
+  // NO se descuenta: Andreas la incluye como tiempo de trabajo. Las columnas de
+  // pausa se siguen mostrando como info, pero no restan al total.
   const worked = (d: DayRow): number | null => {
     if (!d.check_in || !d.check_out) return null;
-    let mins = (new Date(d.check_out.ts).getTime() - new Date(d.check_in.ts).getTime()) / 60000;
-    if (d.break_start && d.break_end) mins -= (new Date(d.break_end.ts).getTime() - new Date(d.break_start.ts).getTime()) / 60000;
-    return mins;
+    return (new Date(d.check_out.ts).getTime() - new Date(d.check_in.ts).getTime()) / 60000;
   };
 
   const toggle = (email: string) => setSelected((prev) => { const n = new Set(prev); n.has(email) ? n.delete(email) : n.add(email); return n; });
