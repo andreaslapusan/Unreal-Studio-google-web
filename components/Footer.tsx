@@ -59,6 +59,7 @@ const Footer: React.FC = () => {
             <li><Link className="hover:text-primary transition" to="/">{t('footer.home')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/blog">{t('footer.blog')}</Link></li>
+            <li><Link className="hover:text-primary transition" to="/faq">{t('nav.faq')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/contacto">{t('footer.contact')}</Link></li>
           </ul>
         </div>

@@ -49,6 +49,28 @@ const ACT_FILTERS: { value: string; def: string }[] = [
 ];
 const SELECT_CLS = 'rounded-lg border border-gray-200 py-1.5 text-sm bg-white';
 
+// Cuerpo del evento en el IDIOMA del admin, reconstruido desde datos estructurados
+// (actor_name + metadata), en vez del body guardado en español. Cae al body si no
+// hay datos suficientes.
+function locBody(n: any, t: any): string {
+  const m = n.metadata || {};
+  const d = (s: string) => { try { return new Date(s + 'T00:00:00').toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch { return s; } };
+  switch (n.type) {
+    case 'client_login':
+      return t('admin.notif.b_clientLogin', { defaultValue: 'Ha entrado en su portal' });
+    case 'late_checkin':
+      return m.checkin ? t('admin.notif.b_lateCheckin', { defaultValue: 'Entrada a las {{checkin}} (horario {{start}} +{{margin}} min de margen)', checkin: m.checkin, start: m.start, margin: m.margin }) : (n.body || '');
+    case 'vacation_request':
+      return m.start ? `${d(m.start)} → ${d(m.end)} · ${t('admin.notif.vtype_' + (m.vtype || 'vacaciones'), { defaultValue: m.vtype || 'vacaciones' })}` : (n.body || '');
+    case 'payment_claim': {
+      const label = (n.body || '').replace(/^Pago:\s*/i, '');
+      return t('admin.notif.b_paymentClaim', { defaultValue: 'Pago: {{label}}', label });
+    }
+    default:
+      return n.body || '';
+  }
+}
+
 function fmtWhen(iso: string): string {
   try { return new Date(iso).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch { return iso; }
 }
@@ -192,8 +214,8 @@ const NotificationsPanel: React.FC = () => {
                         <PrimaryBtn onClick={() => navigate(`/admin?view=clients${n.actor_name ? '&q=' + encodeURIComponent(n.actor_name) : ''}`)} label={t('admin.notif.actVerify', { defaultValue: 'Verificar' })} />
                         <AsyncButton onClick={() => resolve(n.id)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition">{t('admin.notif.done', { defaultValue: 'Hecho' })}</AsyncButton>
                       </>}>
-                      <p className="font-bold text-primary text-sm">{n.title}</p>
-                      {n.body && <p className="text-sm text-primary/70 mt-0.5">{n.body}</p>}
+                      <p className="font-bold text-primary text-sm">{t('admin.notif.t_paymentClaim', { defaultValue: '{{name}} dice que ya pagó', name: n.actor_name || '' })}</p>
+                      {locBody(n, t) && <p className="text-sm text-primary/70 mt-0.5">{locBody(n, t)}</p>}
                       <p className="text-[11px] text-primary/40 mt-1">{fmtWhen(n.created_at)}</p>
                     </Row>
                   ))}
@@ -287,7 +309,7 @@ const NotificationsPanel: React.FC = () => {
                         <span className="font-semibold text-primary text-sm">{who}</span>
                         <span className="text-[10px] uppercase tracking-widest text-primary/30">{t(m.labelKey, { defaultValue: m.def })}</span>
                       </div>
-                      {n.body && <p className="text-sm text-primary/60 mt-0.5">{n.body}</p>}
+                      {locBody(n, t) && <p className="text-sm text-primary/60 mt-0.5">{locBody(n, t)}</p>}
                       {n.actor_email && <p className="text-[11px] text-primary/40">{n.actor_email}</p>}
                     </div>
                     <span className="text-[11px] text-primary/40 shrink-0 whitespace-nowrap">{fmtWhen(n.created_at)}</span>
