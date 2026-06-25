@@ -1835,7 +1835,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
                   ); })()}
                 </div>
-                <p className="text-sm text-gray-500 break-words">{client.email}{client.phone && ` · ${client.phone}`}</p>
+                <p className="text-sm text-gray-500 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}{client.phone && ` · ${client.phone}`}</p>
                 {(client as any).last_login && (
                   <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
                 )}
