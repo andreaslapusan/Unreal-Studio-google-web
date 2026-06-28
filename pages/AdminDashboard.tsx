@@ -185,7 +185,7 @@ const AMENITIES_LIST = [
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
   const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string; buildSubject?: (email: string) => string }>(null);
-  const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[]; selected: string[] }>(null); // elegir proyecto(s) del aviso de obra cuando el cliente tiene varios
+  const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[]; selected: string[]; excluded: string[] }>(null); // elegir proyecto(s) y destinatarios del aviso de obra
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
   const [booted, setBooted] = useState(false);
@@ -1009,6 +1009,23 @@ const handleSaveClient = async (e: React.FormEvent) => {
       const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: addedEmails[0], emails: addedEmails, holders: _holders, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
       alert(r.ok ? t('admin.dash.welcomeSent', { email: addedEmails.join(', ') }) : t('admin.dash.welcomeError', { error: r.error }));
     }
+    // Al AÑADIR un cotitular a una ficha que YA tiene propiedades asignadas, ofrecer
+    // repartir a partes iguales el % de participación en TODAS ellas. Cancelar = el
+    // admin lo ajusta a mano por propiedad (deja la casilla en blanco).
+    try {
+      const finalHolders = (((currentClient as any).holders) || []).filter((h: any) => (h?.email || '').trim());
+      const assignments = (((prevClient as any)?.projects) || []).filter((cp: any) => cp?.id);
+      if (!isNewClient && addedEmails.length && finalHolders.length >= 2 && assignments.length) {
+        const n = finalHolders.length;
+        const pct = Math.round(100 / n);
+        if (window.confirm(t('admin.dash.applyParticipantsAll', { defaultValue: '¿Repartir la participación a partes iguales ({{p}}% cada uno, {{n}} titulares) en las {{c}} propiedades asignadas? Aceptar = aplicar en todas; Cancelar = lo pones tú a mano por propiedad.', p: pct, n, c: assignments.length }))) {
+          const participants = finalHolders.map((h: any) => ({ email: (h.email || '').trim(), pct }));
+          const { data: pd, error: pe } = await supabase.rpc('admin_set_client_participants', { p_user_id: userId, p_client_id: currentClient.id, p_participants: participants });
+          if (pe || (pd && !pd.success)) { alert(t('admin.dash.applyParticipantsErr', { defaultValue: 'No se pudieron aplicar los participantes a todas las propiedades.' })); }
+          else { await loadData(); alert(t('admin.dash.applyParticipantsOk', { defaultValue: 'Participación aplicada en {{c}} propiedades.', c: (pd as any)?.updated ?? assignments.length })); }
+        }
+      }
+    } catch (err) { console.error('apply participants all', err); }
   } catch (error) {
     console.error('Error saving client:', error);
     alert(t('admin.dash.saveClientError'));
@@ -1193,9 +1210,13 @@ const buildReportHtmlFor = (client: Client, cp: any) => (em: string) => {
 // Aviso de obra: UN correo SEPARADO por propiedad (y por titular), en el idioma
 // del cliente. 1 propiedad → preview; varias → se envían directas (un mail por
 // propiedad × titular) tras confirmar, porque cada propiedad es un correo distinto.
-const sendReportForProjects = async (client: Client, cps: any[]) => {
+const sendReportForProjects = async (client: Client, cps: any[], allowed?: string[]) => {
   const list = (cps || []).filter(Boolean);
   if (!list.length) return;
+  // Si se pasa `allowed`, solo se envía a esos destinatarios (intersección con los
+  // participantes de cada propiedad). Si no, a todos los participantes de cada una.
+  const allowSet = (allowed && allowed.length) ? new Set(allowed.map((e) => e.toLowerCase())) : null;
+  const recForCp = (cp: any) => recipientsForCp(client, cp).filter((e) => !allowSet || allowSet.has(e.toLowerCase()));
   const email = (client.email || '').trim();
   const userId = getAdminUserId();
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
@@ -1204,19 +1225,21 @@ const sendReportForProjects = async (client: Client, cps: any[]) => {
 
   if (list.length === 1) {
     const cp = list[0];
-    const recipients = recipientsForCp(client, cp);
+    const recipients = recForCp(cp);
+    if (!recipients.length) { alert(t('admin.dash.reportNoRecipients', { defaultValue: 'No hay destinatarios seleccionados.' })); return; }
     const buildHtml = buildReportHtmlFor(client, cp);
     openEmailPreview({ to: recipients, subject: et('emails.report.subject', { project: cp.project_name }), html: buildHtml(recipients[0] || email), sentMsg: (ems) => t('admin.dash.reportSent', { email: ems.join(', '), n: 1 }), userId, lang, buildHtml, buildSubject: (em) => i18n.getFixedT(holderLangByEmail(client, em))('emails.report.subject', { project: cp.project_name }) });
     return;
   }
 
   // Varias propiedades → un correo separado por propiedad y por titular PARTICIPANTE.
-  const totalR = new Set(list.flatMap((cp) => recipientsForCp(client, cp).map((e) => e.toLowerCase()))).size;
+  const totalR = new Set(list.flatMap((cp) => recForCp(cp).map((e) => e.toLowerCase()))).size;
+  if (!totalR) { alert(t('admin.dash.reportNoRecipients', { defaultValue: 'No hay destinatarios seleccionados.' })); return; }
   if (!window.confirm(t('admin.dash.reportSendMultiConfirm', { defaultValue: 'Se enviará un correo separado por cada propiedad ({{p}}) a cada titular ({{r}}). ¿Enviar?', p: list.length, r: totalR }))) return;
   let sent = 0; let failed = 0;
   for (const cp of list) {
     const buildHtml = buildReportHtmlFor(client, cp);
-    for (const to of recipientsForCp(client, cp)) {
+    for (const to of recForCp(cp)) {
       const lg = holderLangByEmail(client, to);
       const subject = i18n.getFixedT(lg)('emails.report.subject', { project: cp.project_name });
       try {
@@ -1233,8 +1256,10 @@ const sendReportEmail = async (client: Client) => {
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
   if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
-  // Con varios proyectos asignados, el admin elige PARA CUÁLES es el aviso (uno, varios o todos).
-  if (projs.length > 1) { setReportPicker({ client, projs, selected: projs.map((p: any) => p.id) }); return; }
+  // El admin elige PARA CUÁLES propiedades y A QUIÉN va el aviso, si hay más de una
+  // opción (varias propiedades o varios destinatarios participantes).
+  const unionR = new Set(projs.flatMap((cp: any) => recipientsForCp(client, cp).map((e: string) => e.toLowerCase())));
+  if (projs.length > 1 || unionR.size > 1) { setReportPicker({ client, projs, selected: projs.map((p: any) => p.id), excluded: [] }); return; }
   sendReportForProjects(client, projs);
 };
 
@@ -2760,7 +2785,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <div>
-          <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.reportPickTitle', { defaultValue: 'Aviso de obra — elige proyecto' })}</h3>
+          <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.reportPickTitle', { defaultValue: 'Aviso de obra — proyectos y destinatarios' })}</h3>
           <p className="text-xs text-gray-400 mt-0.5 truncate">{reportPicker.client.name}</p>
         </div>
         <button onClick={() => setReportPicker(null)} className="p-2 text-gray-400 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
@@ -2780,7 +2805,32 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </label>
           );
         })}
-        <button type="button" disabled={reportPicker.selected.length === 0} onClick={() => { const c = reportPicker.client; const cps = reportPicker.projs.filter((x: any) => reportPicker.selected.includes(x.id)); setReportPicker(null); void sendReportForProjects(c, cps); }} className="w-full mt-2 bg-primary text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"><span className="material-symbols-outlined text-sm">arrow_forward</span> {t('admin.dash.reportPickContinue', { defaultValue: 'Continuar' })} ({reportPicker.selected.length})</button>
+        {(() => {
+          const selCps = reportPicker.projs.filter((x: any) => reportPicker.selected.includes(x.id));
+          const excl = new Set(reportPicker.excluded.map((e) => e.toLowerCase()));
+          const avail: string[] = []; const seen = new Set<string>();
+          for (const cp of selCps) for (const e of recipientsForCp(reportPicker.client, cp)) { const k = e.toLowerCase(); if (!seen.has(k)) { seen.add(k); avail.push(e); } }
+          const checked = avail.filter((e) => !excl.has(e.toLowerCase()));
+          return (
+            <>
+              <div className="pt-2 mt-1 border-t border-gray-100">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/50 px-2 mb-1">{t('admin.dash.reportPickRecipients', { defaultValue: 'Destinatarios' })}</p>
+                {avail.length === 0 ? (
+                  <p className="text-xs text-gray-400 px-2 py-1">{t('admin.dash.reportPickPickProject', { defaultValue: 'Selecciona alguna propiedad para ver sus destinatarios.' })}</p>
+                ) : avail.map((em) => {
+                  const on = !excl.has(em.toLowerCase());
+                  return (
+                    <label key={em} className="flex items-center gap-2 px-2 py-1.5 cursor-pointer select-none">
+                      <input type="checkbox" className="rounded" checked={on} onChange={() => setReportPicker((p) => p ? { ...p, excluded: on ? [...p.excluded, em] : p.excluded.filter((x) => x.toLowerCase() !== em.toLowerCase()) } : p)} />
+                      <span className="text-sm text-primary font-medium break-all">{holderNameByEmail(reportPicker.client, em)} <span className="text-gray-400 font-normal">· {em}</span></span>
+                    </label>
+                  );
+                })}
+              </div>
+              <button type="button" disabled={reportPicker.selected.length === 0 || checked.length === 0} onClick={() => { const c = reportPicker.client; setReportPicker(null); void sendReportForProjects(c, selCps, checked); }} className="w-full mt-2 bg-primary text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"><span className="material-symbols-outlined text-sm">arrow_forward</span> {t('admin.dash.reportPickContinue', { defaultValue: 'Continuar' })} ({reportPicker.selected.length})</button>
+            </>
+          );
+        })()}
       </div>
     </div>
   </div>
