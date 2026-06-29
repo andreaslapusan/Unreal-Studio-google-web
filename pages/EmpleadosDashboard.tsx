@@ -55,9 +55,38 @@ const TEAM_QUOTES: Quote[] = [
   { es: 'Recuerda: tú haces que esto funcione. Gracias por ello.', en: 'Remember: you make this work. Thank you for that.', ro: 'Ține minte: tu faci ca asta să meargă. Mulțumim.', id: 'Ingat: kamu yang membuat ini berjalan. Terima kasih.' },
 ];
 function quoteLang(l: string): keyof Quote { return (['es', 'en', 'ro', 'id'].includes(l) ? l : 'es') as keyof Quote; }
-// Frases cortas para la pantalla de la cámara (que sonrían).
-const SMILE_ES = ['¡Sonríe! 😄', 'Di "Bali" 🌴', 'Cara de crack 😎', 'Hoy lo petas 🔥', 'Buen rollito ✨', 'A brillar ☀️', 'Equipo Unreal 💪', '¡Guapo/a! 😍', 'Energía top ⚡', 'Sonrisa de campeón 🏆'];
-const SMILE_EN = ['Smile! 😄', 'Say "Bali" 🌴', 'Looking great 😎', "You've got this 🔥", 'Good vibes ✨', 'Shine on ☀️', 'Team Unreal 💪', 'Lookin\' good! 😍', 'Top energy ⚡', "Champion's smile 🏆"];
+// Frases cortas para la pantalla de la cámara (que sonrían). Variadas y SIN repetir:
+// el selector pickSmile() evita las últimas vistas (por dispositivo, vía localStorage).
+const SMILE_ES = ['¡Sonríe! 😄', 'Di "Bali" 🌴', 'Cara de crack 😎', 'Hoy lo petas 🔥', 'Buen rollito ✨', 'A brillar ☀️', 'Equipo Unreal 💪', '¡Guapo/a! 😍', 'Energía top ⚡', 'Sonrisa de campeón 🏆', 'Modo leyenda 🦸', 'Pura vibra 🌊', 'A por todas 🚀', 'Crack del fichaje ⏱️', 'Sonrisa marca de la casa 🏠', 'Hoy construyes villas 🏗️', 'Café y a darlo todo ☕', 'Mírate, qué arte 🎨', 'Día de 10 🔟', '¡Sales en la foto! 📸', 'Vibras de isla 🏝️', 'Motor del equipo 🔧', 'Que se note la actitud 😏', 'Sonrisa nivel pro 🤩'];
+const SMILE_EN = ['Smile! 😄', 'Say "Bali" 🌴', 'Looking great 😎', "You've got this 🔥", 'Good vibes ✨', 'Shine on ☀️', 'Team Unreal 💪', 'Lookin\' good! 😍', 'Top energy ⚡', "Champion's smile 🏆", 'Legend mode 🦸', 'Pure vibes 🌊', "Let's go 🚀", 'Clock-in champ ⏱️', 'Signature smile 🏠', 'Building villas today 🏗️', 'Coffee and crush it ☕', 'Look at that style 🎨', 'A perfect 10 🔟', "You're on camera 📸", 'Island vibes 🏝️', 'You drive this team 🔧', 'Bring the attitude 😏', 'Pro-level smile 🤩'];
+const SMILE_RO = ['Zâmbește! 😄', 'Zi "Bali" 🌴', 'Arăți grozav 😎', 'Poți s-o faci 🔥', 'Vibe bun ✨', 'Strălucește ☀️', 'Echipa Unreal 💪', 'Arăți bine! 😍', 'Energie de top ⚡', 'Zâmbet de campion 🏆', 'Mod legendă 🦸', 'Vibe pur 🌊', "Hai s-o facem 🚀", 'Campion la pontaj ⏱️', 'Zâmbetul casei 🏠', 'Azi construim vile 🏗️', 'Cafea și spor ☕', 'Ce stil 🎨', 'Un 10 perfect 🔟', 'Ești în poză 📸', 'Vibe de insulă 🏝️', 'Tu miști echipa 🔧', 'Atitudine, te rog 😏', 'Zâmbet de pro 🤩'];
+const SMILE_ID = ['Senyum! 😄', 'Bilang "Bali" 🌴', 'Keren banget 😎', 'Kamu pasti bisa 🔥', 'Vibes positif ✨', 'Bersinar ☀️', 'Tim Unreal 💪', 'Ganteng/cantik! 😍', 'Energi top ⚡', 'Senyum juara 🏆', 'Mode legenda 🦸', 'Vibes murni 🌊', 'Ayo gas 🚀', 'Jagoan absen ⏱️', 'Senyum khas 🏠', 'Hari ini bangun vila 🏗️', 'Kopi dulu, gas ☕', 'Lihat gayanya 🎨', 'Nilai 10 🔟', 'Lagi difoto! 📸', 'Vibes pulau 🏝️', 'Penggerak tim 🔧', 'Tunjukkan sikapmu 😏', 'Senyum level pro 🤩'];
+function smileList(lang: string): string[] {
+  const l = (lang || 'es').slice(0, 2);
+  if (l === 'es') return SMILE_ES;
+  if (l === 'ro') return SMILE_RO;
+  if (l === 'id') return SMILE_ID;
+  return SMILE_EN;
+}
+// Elige una frase evitando las últimas mostradas (sin repetir "un montón"); persiste
+// por dispositivo en localStorage, así cada persona ve una secuencia distinta.
+const SMILE_RECENT_KEY = 'unreal_smile_recent';
+function pickSmile(lang: string): string {
+  const list = smileList(lang);
+  if (!list.length) return '';
+  let recent: string[] = [];
+  try { const raw = localStorage.getItem(SMILE_RECENT_KEY); if (raw) recent = JSON.parse(raw); } catch { recent = []; }
+  const k = Math.max(1, list.length - 4); // deja al menos 4 candidatas
+  const avoid = new Set(recent.slice(-k));
+  let pool = list.filter((p) => !avoid.has(p));
+  if (!pool.length) pool = list.filter((p) => p !== recent[recent.length - 1]);
+  if (!pool.length) pool = list;
+  const choice = pool[Math.floor(Math.random() * pool.length)];
+  recent.push(choice);
+  if (recent.length > 60) recent = recent.slice(-60);
+  try { localStorage.setItem(SMILE_RECENT_KEY, JSON.stringify(recent)); } catch { /* noop */ }
+  return choice;
+}
 
 const EmpleadosDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -153,12 +182,9 @@ const EmpleadosDashboard: React.FC = () => {
     void supabase.rpc('employee_set_language', { p_lang: i18n.language });
   }, [i18n.language, employee?.id]);
 
-  // Frase divertida en pantalla mientras hacen la foto (cambia cada vez que abren la cámara).
-  const smileMsg = useMemo(() => {
-    if (!capture) return '';
-    const list = (i18n.language || 'es').startsWith('es') ? SMILE_ES : SMILE_EN;
-    return list[Math.floor(Math.random() * list.length)];
-  }, [capture, i18n.language]);
+  // Frase divertida en pantalla mientras hacen la foto. Se elige una NUEVA (sin repetir
+  // las últimas) cada vez que se abre la cámara, en startCapture().
+  const [smileMsg, setSmileMsg] = useState('');
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -188,6 +214,7 @@ const EmpleadosDashboard: React.FC = () => {
     // la cámara queda "ocupada" y getUserMedia falla en el 2º intento.
     stopCamera();
     setCapture(type);
+    setSmileMsg(pickSmile(i18n.language)); // frase nueva sin repetir en cada apertura
     navigator.geolocation?.getCurrentPosition(
       (pos) => {
         geoRef.current = {
