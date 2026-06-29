@@ -55,37 +55,40 @@ const TEAM_QUOTES: Quote[] = [
   { es: 'Recuerda: tú haces que esto funcione. Gracias por ello.', en: 'Remember: you make this work. Thank you for that.', ro: 'Ține minte: tu faci ca asta să meargă. Mulțumim.', id: 'Ingat: kamu yang membuat ini berjalan. Terima kasih.' },
 ];
 function quoteLang(l: string): keyof Quote { return (['es', 'en', 'ro', 'id'].includes(l) ? l : 'es') as keyof Quote; }
-// Frases cortas para la pantalla de la cámara (que sonrían). Variadas y SIN repetir:
-// el selector pickSmile() evita las últimas vistas (por dispositivo, vía localStorage).
-const SMILE_ES = ['¡Sonríe! 😄', 'Di "Bali" 🌴', 'Cara de crack 😎', 'Hoy lo petas 🔥', 'Buen rollito ✨', 'A brillar ☀️', 'Equipo Unreal 💪', '¡Guapo/a! 😍', 'Energía top ⚡', 'Sonrisa de campeón 🏆', 'Modo leyenda 🦸', 'Pura vibra 🌊', 'A por todas 🚀', 'Crack del fichaje ⏱️', 'Sonrisa marca de la casa 🏠', 'Hoy construyes villas 🏗️', 'Café y a darlo todo ☕', 'Mírate, qué arte 🎨', 'Día de 10 🔟', '¡Sales en la foto! 📸', 'Vibras de isla 🏝️', 'Motor del equipo 🔧', 'Que se note la actitud 😏', 'Sonrisa nivel pro 🤩'];
-const SMILE_EN = ['Smile! 😄', 'Say "Bali" 🌴', 'Looking great 😎', "You've got this 🔥", 'Good vibes ✨', 'Shine on ☀️', 'Team Unreal 💪', 'Lookin\' good! 😍', 'Top energy ⚡', "Champion's smile 🏆", 'Legend mode 🦸', 'Pure vibes 🌊', "Let's go 🚀", 'Clock-in champ ⏱️', 'Signature smile 🏠', 'Building villas today 🏗️', 'Coffee and crush it ☕', 'Look at that style 🎨', 'A perfect 10 🔟', "You're on camera 📸", 'Island vibes 🏝️', 'You drive this team 🔧', 'Bring the attitude 😏', 'Pro-level smile 🤩'];
-const SMILE_RO = ['Zâmbește! 😄', 'Zi "Bali" 🌴', 'Arăți grozav 😎', 'Poți s-o faci 🔥', 'Vibe bun ✨', 'Strălucește ☀️', 'Echipa Unreal 💪', 'Arăți bine! 😍', 'Energie de top ⚡', 'Zâmbet de campion 🏆', 'Mod legendă 🦸', 'Vibe pur 🌊', "Hai s-o facem 🚀", 'Campion la pontaj ⏱️', 'Zâmbetul casei 🏠', 'Azi construim vile 🏗️', 'Cafea și spor ☕', 'Ce stil 🎨', 'Un 10 perfect 🔟', 'Ești în poză 📸', 'Vibe de insulă 🏝️', 'Tu miști echipa 🔧', 'Atitudine, te rog 😏', 'Zâmbet de pro 🤩'];
-const SMILE_ID = ['Senyum! 😄', 'Bilang "Bali" 🌴', 'Keren banget 😎', 'Kamu pasti bisa 🔥', 'Vibes positif ✨', 'Bersinar ☀️', 'Tim Unreal 💪', 'Ganteng/cantik! 😍', 'Energi top ⚡', 'Senyum juara 🏆', 'Mode legenda 🦸', 'Vibes murni 🌊', 'Ayo gas 🚀', 'Jagoan absen ⏱️', 'Senyum khas 🏠', 'Hari ini bangun vila 🏗️', 'Kopi dulu, gas ☕', 'Lihat gayanya 🎨', 'Nilai 10 🔟', 'Lagi difoto! 📸', 'Vibes pulau 🏝️', 'Penggerak tim 🔧', 'Tunjukkan sikapmu 😏', 'Senyum level pro 🤩'];
-function smileList(lang: string): string[] {
+// Frases de la cámara de fichaje. Se generan combinando una BASE de frases por
+// idioma (~42) con una rotación de emojis (24) → 1.008 combinaciones DISTINTAS.
+// Salen EN ORDEN (índice global del servidor; local si offline), así no se repiten
+// ni entre personas hasta agotar las 1.000+.
+const SMILE_CORE_ES = ['¡Sonríe!', 'Di "Bali"', 'Cara de crack', 'Hoy lo petas', 'Buen rollito', 'A brillar', 'Equipo Unreal', '¡Guapo/a!', 'Energía top', 'Sonrisa de campeón', 'Modo leyenda', 'Pura vibra', 'A por todas', 'Crack del fichaje', 'Marca de la casa', 'Hoy construyes villas', 'Café y a darlo todo', 'Mírate, qué arte', 'Día de 10', '¡Sales en la foto!', 'Vibras de isla', 'Motor del equipo', 'Pura actitud', 'Nivel pro', 'Hoy se brilla', 'El mejor del turno', 'Imparable', 'Pura buena onda', 'Sonríe a la cámara', 'Actitud Unreal', 'Más cerca de la villa', 'Profesional y con flow', 'Buenos días, fenómeno', 'Tu mejor versión', 'Energía de obra', 'Sonrisa de portada', '¡Vamos, equipo!', 'A comerse el día', 'Eres clave', 'Crack total', 'Bali te espera', 'Sonríe, que mola'];
+const SMILE_CORE_EN = ['Smile!', 'Say "Bali"', 'Looking great', "You've got this", 'Good vibes', 'Shine on', 'Team Unreal', "Lookin' good!", 'Top energy', "Champion's smile", 'Legend mode', 'Pure vibes', "Let's go", 'Clock-in champ', 'Signature look', 'Building villas today', 'Coffee and crush it', 'Look at that style', 'A perfect 10', "You're on camera", 'Island vibes', 'You drive this team', 'Pure attitude', 'Pro level', 'Time to shine', 'Best of the shift', 'Unstoppable', 'Good energy only', 'Smile for the cam', 'Unreal attitude', 'Closer to the villa', 'Pro with flow', 'Hey there, star', 'Your best self', 'Build-site energy', 'Cover-shot smile', "Let's go, team!", 'Own the day', "You're key", 'Total legend', 'Bali awaits', 'Smile, it rules'];
+const SMILE_CORE_RO = ['Zâmbește!', 'Zi "Bali"', 'Arăți grozav', 'Poți s-o faci', 'Vibe bun', 'Strălucește', 'Echipa Unreal', 'Arăți bine!', 'Energie de top', 'Zâmbet de campion', 'Mod legendă', 'Vibe pur', "Hai s-o facem", 'Campion la pontaj', 'Marca casei', 'Azi construim vile', 'Cafea și spor', 'Ce stil', 'Zi de 10', 'Ești în poză', 'Vibe de insulă', 'Tu miști echipa', 'Pură atitudine', 'Nivel pro', 'Azi străluciți', 'Cel mai bun din tură', 'De neoprit', 'Numai energie bună', 'Zâmbește la cameră', 'Atitudine Unreal', 'Mai aproape de vilă', 'Profesionist cu stil', 'Salut, vedetă', 'Cea mai bună versiune', 'Energie de șantier', 'Zâmbet de copertă', 'Hai, echipă!', 'Cucerește ziua', 'Ești esențial', 'Legendă totală', 'Bali te așteaptă', 'Zâmbește, e tare'];
+const SMILE_CORE_ID = ['Senyum!', 'Bilang "Bali"', 'Keren banget', 'Kamu pasti bisa', 'Vibes positif', 'Bersinar', 'Tim Unreal', 'Ganteng/cantik!', 'Energi top', 'Senyum juara', 'Mode legenda', 'Vibes murni', 'Ayo gas', 'Jagoan absen', 'Ciri khas', 'Hari ini bangun vila', 'Kopi dulu, gas', 'Lihat gayanya', 'Hari nilai 10', 'Lagi difoto!', 'Vibes pulau', 'Penggerak tim', 'Penuh sikap', 'Level pro', 'Saatnya bersinar', 'Terbaik di shift', 'Tak terhentikan', 'Energi positif aja', 'Senyum ke kamera', 'Sikap Unreal', 'Makin dekat ke vila', 'Profesional dan keren', 'Halo, bintang', 'Versi terbaikmu', 'Energi proyek', 'Senyum sampul', 'Ayo, tim!', 'Taklukkan hari ini', 'Kamu kunci', 'Legenda total', 'Bali menanti', 'Senyum, mantap'];
+const SMILE_EMOJIS = ['😄', '🌴', '😎', '🔥', '✨', '☀️', '💪', '😍', '⚡', '🏆', '🦸', '🌊', '🚀', '⏱️', '🏠', '🏗️', '☕', '🎨', '🔟', '📸', '🏝️', '🔧', '😏', '🤩'];
+function smileCores(lang: string): string[] {
   const l = (lang || 'es').slice(0, 2);
-  if (l === 'es') return SMILE_ES;
-  if (l === 'ro') return SMILE_RO;
-  if (l === 'id') return SMILE_ID;
-  return SMILE_EN;
+  if (l === 'es') return SMILE_CORE_ES;
+  if (l === 'ro') return SMILE_CORE_RO;
+  if (l === 'id') return SMILE_CORE_ID;
+  return SMILE_CORE_EN;
 }
-// Elige una frase evitando las últimas mostradas (sin repetir "un montón"); persiste
-// por dispositivo en localStorage, así cada persona ve una secuencia distinta.
-const SMILE_RECENT_KEY = 'unreal_smile_recent';
-function pickSmile(lang: string): string {
-  const list = smileList(lang);
-  if (!list.length) return '';
-  let recent: string[] = [];
-  try { const raw = localStorage.getItem(SMILE_RECENT_KEY); if (raw) recent = JSON.parse(raw); } catch { recent = []; }
-  const k = Math.max(1, list.length - 4); // deja al menos 4 candidatas
-  const avoid = new Set(recent.slice(-k));
-  let pool = list.filter((p) => !avoid.has(p));
-  if (!pool.length) pool = list.filter((p) => p !== recent[recent.length - 1]);
-  if (!pool.length) pool = list;
-  const choice = pool[Math.floor(Math.random() * pool.length)];
-  recent.push(choice);
-  if (recent.length > 60) recent = recent.slice(-60);
-  try { localStorage.setItem(SMILE_RECENT_KEY, JSON.stringify(recent)); } catch { /* noop */ }
-  return choice;
+// Frase nº `idx` (en orden): cambia la base en cada paso y el emoji cada ~42 → 1.008
+// combinaciones distintas antes de repetir.
+function smilePhrase(lang: string, idx: number): string {
+  const cores = smileCores(lang);
+  if (!cores.length) return '';
+  const i = ((Math.floor(idx) % (cores.length * SMILE_EMOJIS.length)) + (cores.length * SMILE_EMOJIS.length)) % (cores.length * SMILE_EMOJIS.length);
+  const core = cores[i % cores.length];
+  const emoji = SMILE_EMOJIS[Math.floor(i / cores.length) % SMILE_EMOJIS.length];
+  return `${core} ${emoji}`;
+}
+// Contador LOCAL por dispositivo (fallback si el global del servidor no responde).
+const SMILE_IDX_KEY = 'unreal_smile_idx';
+function nextLocalSmileIdx(): number {
+  let n = 0;
+  try { n = parseInt(localStorage.getItem(SMILE_IDX_KEY) || '0', 10) || 0; } catch { n = 0; }
+  const next = n + 1;
+  try { localStorage.setItem(SMILE_IDX_KEY, String(next)); } catch { /* noop */ }
+  return next;
 }
 
 const EmpleadosDashboard: React.FC = () => {
@@ -214,7 +217,20 @@ const EmpleadosDashboard: React.FC = () => {
     // la cámara queda "ocupada" y getUserMedia falla en el 2º intento.
     stopCamera();
     setCapture(type);
-    setSmileMsg(pickSmile(i18n.language)); // frase nueva sin repetir en cada apertura
+    // Frase EN ORDEN sin repetir: pide el índice GLOBAL al servidor (no se repite ni
+    // entre personas); si tarda >800ms o no hay red, usa el contador local. No bloquea
+    // la apertura de la cámara.
+    (async () => {
+      let idx: number | null = null;
+      try {
+        const to = new Promise<null>((res) => setTimeout(() => res(null), 800));
+        const r: any = await Promise.race([supabase.rpc('next_smile_index'), to]);
+        const n = r && r.data != null ? Number(r.data) : NaN;
+        if (Number.isFinite(n)) idx = n;
+      } catch { /* offline */ }
+      if (idx == null) idx = nextLocalSmileIdx();
+      setSmileMsg(smilePhrase(i18n.language, idx));
+    })();
     navigator.geolocation?.getCurrentPosition(
       (pos) => {
         geoRef.current = {
