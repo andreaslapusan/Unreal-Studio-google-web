@@ -132,6 +132,36 @@ async function main() {
   }
   const template = readFileSync(TEMPLATE, "utf8");
 
+  // ---- HOME por idioma (independiente de Supabase) ----
+  // El dominio a secas (/) usa dist/index.html, que ya está en INGLÉS por defecto.
+  // Para /es /en /ro /id generamos dist/<prefix>.html con su OG (nginx: try_files
+  // $uri.html). Copy estático de marketing (no viene de BD).
+  const HOME = [
+    { prefix: "en", ogLocale: "en_US", title: "Unreal Studio Bali | Real estate investment in Bali from €75k", desc: "Real estate developer in Bali for international investors. Villas, lofts and apartments in Uluwatu, Canggu and Tabanan from €75,000. Projected ROI 15-28% per year. Remote purchase with POA. Offices in Madrid & Bali.", alt: "Investment villa in Bali — Unreal Studio" },
+    { prefix: "es", ogLocale: "es_ES", title: "Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€", desc: "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. ROI proyectado 15-28% anual. Compra remota con POA. Sede en Madrid + Bali.", alt: "Villa de inversión en Bali — Unreal Studio" },
+    { prefix: "ro", ogLocale: "ro_RO", title: "Unreal Studio Bali | Investiții imobiliare în Bali de la 75k€", desc: "Dezvoltator imobiliar în Bali pentru investitori internaționali. Vile, lofturi și apartamente în Uluwatu, Canggu și Tabanan de la 75.000€. ROI estimat 15-28% pe an. Achiziție la distanță cu POA. Birouri în Madrid și Bali.", alt: "Vilă de investiție în Bali — Unreal Studio" },
+    { prefix: "id", ogLocale: "id_ID", title: "Unreal Studio Bali | Investasi properti di Bali mulai €75rb", desc: "Pengembang properti di Bali untuk investor internasional. Vila, loft, dan apartemen di Uluwatu, Canggu, dan Tabanan mulai €75.000. Proyeksi ROI 15-28% per tahun. Pembelian jarak jauh dengan POA. Kantor di Madrid & Bali.", alt: "Vila investasi di Bali — Unreal Studio" },
+  ];
+  let homeCount = 0;
+  for (const h of HOME) {
+    const url = `${ORIGIN}/${h.prefix}`;
+    let html = template;
+    html = setTitle(html, h.title);
+    html = setMeta(html, "description", h.desc, "name");
+    html = setMeta(html, "og:type", "website");
+    html = setMeta(html, "og:title", h.title);
+    html = setMeta(html, "og:description", h.desc);
+    html = setMeta(html, "og:image:alt", h.alt);
+    html = setMeta(html, "og:url", url);
+    html = setMeta(html, "og:locale", h.ogLocale);
+    html = setMeta(html, "twitter:title", h.title, "name");
+    html = setMeta(html, "twitter:description", h.desc, "name");
+    html = setCanonical(html, url);
+    writeFileSync(resolve(DIST, `${h.prefix}.html`), html, "utf8");
+    homeCount++;
+  }
+  console.log(`[prerender-og] Home por idioma: ${homeCount} ficheros (dist/<lang>.html).`);
+
   const sb = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
   let projects = [];
   try {
