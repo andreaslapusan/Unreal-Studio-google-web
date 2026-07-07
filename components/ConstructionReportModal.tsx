@@ -15,6 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useEscapeKey } from '../lib/useEscapeKey';
+import { compressPdf } from '../lib/compressPdf';
 
 interface ProjectOpt { id: string; name: string; }
 
@@ -60,8 +61,11 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
     if (!projectId || !file) { setError(t('empleados.reportModal.pickBoth')); return; }
     setState('sending'); setError('');
     try {
+      // Comprime el PDF si es pesado (baja ~40MB a ~5-8MB, calidad buena). Si falla
+      // o ya es ligero, sube el original — nunca bloquea.
+      const toUpload = await compressPdf(file);
       const path = `property-updates/${projectId}/${Date.now()}.pdf`;
-      const up = await supabase.storage.from('images').upload(path, file, { contentType: 'application/pdf', upsert: false });
+      const up = await supabase.storage.from('images').upload(path, toUpload, { contentType: 'application/pdf', upsert: false });
       if (up.error) throw up.error;
       const { data: pub } = supabase.storage.from('images').getPublicUrl(path);
       const { data: res, error: rpcErr } = await supabase.rpc('employee_post_construction_report', {
@@ -70,7 +74,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
         p_pdf_url: pub.publicUrl,
         p_path: path,
         p_file_name: file.name,
-        p_file_size: file.size,
+        p_file_size: toUpload.size,
       });
       if (rpcErr) throw rpcErr;
       if (res && res.success === false) throw new Error(res.error || 'error');
