@@ -758,25 +758,9 @@ const ClientDashboard: React.FC = () => {
                       );
                     })()}
 
-                    {Array.isArray(proj.holder_participants) && proj.holder_participants.length > 0 && (() => {
-                      const hs = (client as any).holders || [];
-                      const nameOf = (em: string) => { const m = hs.find((h: any) => (h?.email || '').trim().toLowerCase() === (em || '').trim().toLowerCase()); return (m?.name || '').trim() || em; };
-                      const anyPct = proj.holder_participants.some((x: any) => x?.pct != null);
-                      return (
-                        <div className="mt-3 bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-4">
-                          <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.coOwnersTitle', { defaultValue: 'Titulares de esta propiedad' })}</p>
-                          <div className="space-y-1">
-                            {proj.holder_participants.map((hp: any, k: number) => (
-                              <div key={k} className="flex items-center justify-between gap-3 text-sm text-primary">
-                                <span className="font-medium truncate">{nameOf(hp.email)}</span>
-                                {hp.pct != null && <span className="font-black">{Number(hp.pct).toFixed(Number.isInteger(Number(hp.pct)) ? 0 : 4)}%</span>}
-                              </div>
-                            ))}
-                          </div>
-                          {anyPct && <p className="text-[10px] text-primary/40 mt-2">{t('admin.clientDash.coOwnersNote', { defaultValue: 'Tu participación en esta propiedad.' })}</p>}
-                        </div>
-                      );
-                    })()}
+                    {/* Bloque "Titulares de esta propiedad" (% por titular) RETIRADO del
+                        portal cliente por decisión de Andreas (2026-07-07): los % de
+                        participación son SOLO para admin, el cliente no debe verlos. */}
 
                     {proj.delivery_date && (() => {
                       const dl = new Date(new Date(proj.delivery_date).getTime() + 14 * 86400000);
