@@ -1865,12 +1865,29 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
                 )}
                 <div className="mt-1 space-y-0.5">
-                  {((client as any).password_plain || client.temp_password) && (
-                    <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block break-all" onClick={() => {navigator.clipboard.writeText((client as any).password_plain || client.temp_password); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>
-                      <span className="material-symbols-outlined text-xs align-middle">key</span> {(client as any).password_plain || client.temp_password}
-                      {client.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
-                    </p>
-                  )}
+                  {(() => {
+                    // Contraseña POR titular: cada email tiene la suya (independiente).
+                    const hs = Array.isArray((client as any).holders) ? (client as any).holders.filter((h: any) => (h?.email || '').trim()) : [];
+                    const perHolder = hs.filter((h: any) => h?.password_plain || h?.temp_password);
+                    if (perHolder.length > 1) {
+                      return perHolder.map((h: any, i: number) => {
+                        const pw = h.password_plain || h.temp_password;
+                        return (
+                          <p key={i} className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block break-all" onClick={() => { navigator.clipboard.writeText(pw); alert(t('admin.dash.passwordCopied')); }} title={t('admin.dash.clickToCopy')}>
+                            <span className="material-symbols-outlined text-xs align-middle">key</span> <span className="text-gray-400">{h.email}:</span> {pw}
+                            {h.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
+                          </p>
+                        );
+                      });
+                    }
+                    const pw = (client as any).password_plain || client.temp_password;
+                    return pw ? (
+                      <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block break-all" onClick={() => { navigator.clipboard.writeText(pw); alert(t('admin.dash.passwordCopied')); }} title={t('admin.dash.clickToCopy')}>
+                        <span className="material-symbols-outlined text-xs align-middle">key</span> {pw}
+                        {client.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
+                      </p>
+                    ) : null;
+                  })()}
                   {isSuperAdmin && (client as any).password_hash && (
                     <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>
                       🔒 {(client as any).password_hash.substring(0, 20)}...
