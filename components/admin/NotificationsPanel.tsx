@@ -13,7 +13,7 @@
  * Fuente: RPCs SECURITY DEFINER admin_notifications_* + admin_attention_panel
  * (overdue_payments, construction_alerts, clients_no_property).
  */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { uiLocale } from '../../lib/dateLocale';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -97,6 +97,8 @@ const NotificationsPanel: React.FC = () => {
   const [actType, setActType] = useState<string>('all');
   const [actSearch, setActSearch] = useState('');
   const [actOrder, setActOrder] = useState<'recent' | 'old'>('recent');
+  const [actLimit, setActLimit] = useState(20); // scroll infinito: cuántas mostrar
+  const sentinelRef = useRef<HTMLLIElement | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -135,6 +137,21 @@ const NotificationsPanel: React.FC = () => {
     arr = [...arr].sort((a, b) => actOrder === 'recent' ? b.created_at.localeCompare(a.created_at) : a.created_at.localeCompare(b.created_at));
     return arr;
   }, [items, actType, actSearch, actOrder]);
+
+  // Al cambiar de filtro/orden/pestaña, reinicia la ventana de scroll infinito.
+  useEffect(() => { setActLimit(20); }, [actType, actSearch, actOrder, tab]);
+
+  // Scroll infinito: al llegar al fondo del feed, carga más automáticamente (hasta el máximo).
+  useEffect(() => {
+    if (tab !== 'activity') return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) setActLimit((n) => (n < activity.length ? n + 20 : n));
+    }, { rootMargin: '300px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [tab, activity.length]);
 
   const obraCount = missingReports.length + staleProps.length;
   const cobrosCount = overdue.length + claims.length;
@@ -302,7 +319,7 @@ const NotificationsPanel: React.FC = () => {
             <p className="text-center text-primary/40 py-12">{t('admin.notif.noActivity', { defaultValue: 'Sin actividad reciente.' })}</p>
           ) : (
             <ul className="space-y-2">
-              {activity.map((n) => {
+              {activity.slice(0, actLimit).map((n) => {
                 const m = INFO_META[n.type] || INFO_META.generic;
                 const who = n.actor_name || n.title;
                 return (
@@ -320,7 +337,15 @@ const NotificationsPanel: React.FC = () => {
                   </li>
                 );
               })}
+              <li ref={sentinelRef} className="h-px list-none" aria-hidden />
             </ul>
+          )}
+          {activity.length > 0 && (
+            <p className="text-center text-primary/30 py-4 text-xs">
+              {actLimit < activity.length
+                ? t('admin.notif.loadingMore', { defaultValue: 'Cargando más…' })
+                : t('admin.notif.endOfList', { defaultValue: '— No hay más —' })}
+            </p>
           )}
         </>
       )}
