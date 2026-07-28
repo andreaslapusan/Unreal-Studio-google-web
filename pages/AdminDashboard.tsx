@@ -228,12 +228,56 @@ const AMENITIES_LIST = [
   }, []);
   // Modal de alta/edición de empleado: null = cerrado, {emp:null} = nuevo, {emp:row} = editar.
   const [empModal, setEmpModal] = useState<{ emp: EmployeeRow | null } | null>(null);
-  // Redactar correo manual al equipo (empleados), igual que a clientes.
-  const [teamCompose, setTeamCompose] = useState<null | { recipients: { email: string; name: string; lang: string }[]; selected: string[]; subject: string; body: string; sending: boolean }>(null);
+  // Redactar correo manual al equipo (empleados), igual que a clientes: cada
+  // destinatario recibe el correo EN SU IDIOMA (como los emails de cliente).
+  // Plantillas multiidioma; al enviar, si hay plantilla elegida se renderiza en
+  // el idioma de cada destinatario; si el admin edita el texto, se manda tal cual.
+  const TEAM_TPLS: Record<string, { subject: Record<string, string>; body: Record<string, string> }> = {
+    welcome: {
+      subject: { es: 'Bienvenido/a al equipo de Unreal Studio', en: 'Welcome to the Unreal Studio team', ro: 'Bine ai venit în echipa Unreal Studio', id: 'Selamat datang di tim Unreal Studio' },
+      body: {
+        es: 'Te damos la bienvenida al equipo de Unreal Studio.\n\nTu portal de empleado está listo: https://unrealstudiobali.com/empleados\nDesde ahí fichas tu entrada/salida, ves tu horario y pides vacaciones.\n\nCualquier duda, aquí estamos. ¡Bienvenido/a!',
+        en: 'Welcome to the Unreal Studio team.\n\nYour employee portal is ready: https://unrealstudiobali.com/empleados\nFrom there you can clock in/out, check your schedule and request time off.\n\nIf you have any questions, we\'re here. Welcome aboard!',
+        ro: 'Bine ai venit în echipa Unreal Studio.\n\nPortalul tău de angajat este gata: https://unrealstudiobali.com/empleados\nDe acolo poți ponta intrarea/ieșirea, îți vezi programul și ceri concediu.\n\nDacă ai întrebări, suntem aici. Bine ai venit!',
+        id: 'Selamat datang di tim Unreal Studio.\n\nPortal karyawan Anda sudah siap: https://unrealstudiobali.com/empleados\nDi sana Anda dapat mencatat kehadiran (masuk/keluar), melihat jadwal, dan mengajukan cuti.\n\nJika ada pertanyaan, kami siap membantu. Selamat bergabung!',
+      },
+    },
+    checkin: {
+      subject: { es: 'Recordatorio: ficha tu entrada y salida', en: 'Reminder: clock in and out', ro: 'Reminder: pontează intrarea și ieșirea', id: 'Pengingat: catat kehadiran masuk dan keluar' },
+      body: {
+        es: 'Un recordatorio rápido: acuérdate de fichar tu entrada, pausas y salida cada día desde el portal:\nhttps://unrealstudiobali.com/empleados\n\nSi un día olvidas fichar algo, puedes registrarlo igualmente cuando te acuerdes.\n\nGracias.',
+        en: 'A quick reminder: remember to clock in, log your breaks and clock out every day from the portal:\nhttps://unrealstudiobali.com/empleados\n\nIf you forget to log something one day, you can still record it when you remember.\n\nThank you.',
+        ro: 'Un scurt reminder: nu uita să pontezi intrarea, pauzele și ieșirea în fiecare zi din portal:\nhttps://unrealstudiobali.com/empleados\n\nDacă uiți să pontezi ceva într-o zi, poți înregistra oricând, când îți amintești.\n\nMulțumim.',
+        id: 'Pengingat singkat: jangan lupa mencatat kehadiran masuk, istirahat, dan keluar setiap hari melalui portal:\nhttps://unrealstudiobali.com/empleados\n\nJika suatu hari lupa mencatat, Anda tetap bisa mencatatnya saat ingat.\n\nTerima kasih.',
+      },
+    },
+    meeting: {
+      subject: { es: 'Reunión de equipo', en: 'Team meeting', ro: 'Ședință de echipă', id: 'Rapat tim' },
+      body: {
+        es: 'Hola,\n\nConvocamos una reunión de equipo el [DÍA] a las [HORA] en [LUGAR / enlace].\n\nTemas a tratar:\n- \n- \n\nPor favor confirma tu asistencia. Gracias.',
+        en: 'Hi,\n\nWe\'re calling a team meeting on [DAY] at [TIME] at [PLACE / link].\n\nTopics:\n- \n- \n\nPlease confirm your attendance. Thank you.',
+        ro: 'Salut,\n\nConvocăm o ședință de echipă pe [ZIUA] la [ORA] la [LOC / link].\n\nSubiecte:\n- \n- \n\nTe rugăm să confirmi prezența. Mulțumim.',
+        id: 'Halo,\n\nKami mengadakan rapat tim pada [HARI] pukul [JAM] di [TEMPAT / tautan].\n\nTopik:\n- \n- \n\nMohon konfirmasi kehadiran Anda. Terima kasih.',
+      },
+    },
+    notice: {
+      subject: { es: 'Aviso importante', en: 'Important notice', ro: 'Anunț important', id: 'Pemberitahuan penting' },
+      body: {
+        es: 'Hola,\n\nQueremos informarte de lo siguiente:\n\n[ESCRIBE AQUÍ EL AVISO]\n\nGracias por tu atención.',
+        en: 'Hi,\n\nWe\'d like to inform you of the following:\n\n[WRITE THE NOTICE HERE]\n\nThank you for your attention.',
+        ro: 'Salut,\n\nDorim să te informăm despre următoarele:\n\n[SCRIE AICI ANUNȚUL]\n\nÎți mulțumim pentru atenție.',
+        id: 'Halo,\n\nKami ingin memberitahukan hal berikut:\n\n[TULIS PEMBERITAHUAN DI SINI]\n\nTerima kasih atas perhatian Anda.',
+      },
+    },
+  };
+  const teamTplNames: Record<string, string> = { welcome: 'Bienvenida', checkin: 'Fichaje', meeting: 'Reunión', notice: 'Aviso' };
+  const [teamCompose, setTeamCompose] = useState<null | { recipients: { email: string; name: string; lang: string }[]; selected: string[]; subject: string; body: string; sending: boolean; tplKey: string | null }>(null);
+  // Idioma de vista previa = el del primer destinatario seleccionado (así ves el correo tal como le llegará).
+  const teamPreviewLang = (tc: { recipients: { email: string; lang: string }[]; selected: string[] }) => (tc.recipients.find((r) => r.email === tc.selected[0])?.lang || 'es');
   const openTeamCompose = (only?: { email: string; name: string }) => {
     const active = employees.filter((e) => e.active && (e.email || '').includes('@')).map((e) => ({ email: e.email, name: e.full_name || e.email, lang: (e.preferred_language || 'es') }));
     const recips = only ? active.filter((r) => r.email === only.email) : active;
-    setTeamCompose({ recipients: recips, selected: recips.map((r) => r.email), subject: '', body: '', sending: false });
+    setTeamCompose({ recipients: recips, selected: recips.map((r) => r.email), subject: '', body: '', sending: false, tplKey: null });
   };
   const sendTeamCompose = async () => {
     if (!teamCompose) return;
@@ -247,9 +291,13 @@ const AMENITIES_LIST = [
     for (const to of tc.selected) {
       const r = tc.recipients.find((x) => x.email === to);
       const name = r?.name || ''; const lg = r?.lang || 'es';
-      const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${i18n.getFixedT(lg)('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name })}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap">${esc(tc.body)}</div>`;
+      // Si hay plantilla elegida (y el admin no la ha editado), cada destinatario la recibe EN SU IDIOMA.
+      const tp = tc.tplKey ? TEAM_TPLS[tc.tplKey] : null;
+      const subj = tp ? (tp.subject[lg] || tp.subject.es) : tc.subject;
+      const bodyText = tp ? (tp.body[lg] || tp.body.es) : tc.body;
+      const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${i18n.getFixedT(lg)('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name })}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap">${esc(bodyText)}</div>`;
       try {
-        const { data, error } = await invokeSendEmail({ adminUserId: userId, to, lang: lg, subject: tc.subject, html });
+        const { data, error } = await invokeSendEmail({ adminUserId: userId, to, lang: lg, subject: subj, html });
         if (error || !data?.success) fail++; else ok++;
       } catch { fail++; }
     }
@@ -1823,7 +1871,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <option value="amount_asc">{t('admin.clientsTab.sortAmountAsc')}</option>
         <option value="recent">{t('admin.clientsTab.sortRecent')}</option>
       </select>
-      {(clientFilterProjects.length || clientFilterCurrency || clientSearch || clientFilterStatus || clientFilterPerms.length) && (
+      {!!(clientFilterProjects.length || clientFilterCurrency || clientSearch || clientFilterStatus || clientFilterPerms.length) && (
         <button onClick={() => { setClientFilterProjects([]); setClientFilterCurrency(''); setClientSearch(''); setClientFilterStatus(''); setClientFilterPerms([]); }} className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary px-2">{t('admin.clientsTab.clear')}</button>
       )}
       <span className="text-[10px] font-black uppercase tracking-widest text-primary/30 ml-auto">{t('admin.clientsTab.clientCount', { n: filteredClients.length })}</span>
@@ -2272,52 +2320,39 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </button>
               </div>
             </div>
-            <div className="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase tracking-widest">
-                  <tr>
-                    <th className="text-left px-4 py-3">{t('admin.dash.thName')}</th>
-                    <th className="text-left px-4 py-3">{t('admin.dash.thEmail')}</th>
-                    <th className="text-left px-4 py-3">{t('fix.adm.thPermissions')}</th>
-                    <th className="text-left px-4 py-3">{t('admin.dash.thSchedule')}</th>
-                    <th className="text-left px-4 py-3">{t('admin.dash.thStatus')}</th>
-                    <th className="text-right px-4 py-3">{t('fix.adm.thActions')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.map((e) => {
-                    const nPerms = EMPLOYEE_PERMISSIONS.filter((p) => hasPermission(e, p.key)).length;
-                    const sched = (e.work_start_time && e.work_end_time) ? `${e.work_start_time.slice(0,5)}–${e.work_end_time.slice(0,5)}` : '—';
-                    return (
-                      <tr key={e.id} className="border-t border-gray-50">
-                        <td className="px-4 py-3 font-bold text-primary">{e.full_name || '—'}</td>
-                        <td className="px-4 py-3 text-gray-600">{e.email}</td>
-                        <td className="px-4 py-3 text-gray-500 text-xs">{nPerms} / {EMPLOYEE_PERMISSIONS.length}</td>
-                        <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{sched}</td>
-                        <td className="px-4 py-3">
-                          <button onClick={() => toggleEmployeeActive(e.id, !e.active)}
-                            className={`px-3 py-1 rounded-full text-xs font-bold transition ${e.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-                            {e.active ? t('admin.dash.activeStatus') : t('admin.dash.inactiveStatus')}
-                          </button>
-                        </td>
-                        <td className="px-4 py-3 text-right whitespace-nowrap">
-                          {(e.email || '').includes('@') && (
-                            <button onClick={() => openTeamCompose({ email: e.email, name: e.full_name || e.email })} title={t('admin.dash.emailEmployee', { defaultValue: 'Enviar email' })} className="text-primary/50 hover:text-primary mr-3 inline-flex items-center">
-                              <span className="material-symbols-outlined text-sm">mail</span>
-                            </button>
-                          )}
-                          <button onClick={() => setEmpModal({ emp: e as EmployeeRow })} className="text-primary/60 hover:text-primary text-xs font-bold uppercase tracking-widest inline-flex items-center gap-1">
-                            <span className="material-symbols-outlined text-sm">edit</span> {t('fix.adm.edit')}
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                  {employees.length === 0 && (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">{t('admin.dash.noEmployees')}</td></tr>
-                  )}
-                </tbody>
-              </table>
+            {/* Tarjetas de empleados — mismo formato que la vista de clientes (legible en móvil) */}
+            <div className="space-y-3">
+              {employees.map((e) => {
+                const nPerms = EMPLOYEE_PERMISSIONS.filter((p) => hasPermission(e, p.key)).length;
+                const sched = (e.work_start_time && e.work_end_time) ? `${e.work_start_time.slice(0,5)}–${e.work_end_time.slice(0,5)}` : '—';
+                return (
+                  <div key={e.id} className="bg-[#f7f1ea] rounded-2xl border border-[#e4d8c9] shadow-sm p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h3 className="text-base sm:text-lg font-bold text-primary break-words">{e.full_name || e.email}</h3>
+                        <button onClick={() => toggleEmployeeActive(e.id, !e.active)}
+                          className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full transition ${e.active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                          {e.active ? t('admin.dash.activeStatus') : t('admin.dash.inactiveStatus')}
+                        </button>
+                      </div>
+                      <p className="text-sm text-gray-500 break-words">{e.email}</p>
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary/50 bg-primary/5 px-2 py-0.5 rounded">{t('fix.adm.thPermissions')}: {nPerms}/{EMPLOYEE_PERMISSIONS.length}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary/50 bg-primary/5 px-2 py-0.5 rounded inline-flex items-center gap-1"><span className="material-symbols-outlined text-xs align-middle">schedule</span>{sched}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-1.5 shrink-0 flex-wrap justify-end">
+                      {(e.email || '').includes('@') && (
+                        <button onClick={() => openTeamCompose({ email: e.email, name: e.full_name || e.email })} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.emailEmployee', { defaultValue: 'Enviar email' })}><span className="material-symbols-outlined text-sm">mail</span></button>
+                      )}
+                      <button onClick={() => setEmpModal({ emp: e as EmployeeRow })} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('fix.adm.edit')}><span className="material-symbols-outlined text-sm">edit</span></button>
+                    </div>
+                  </div>
+                );
+              })}
+              {employees.length === 0 && (
+                <div className="px-4 py-8 text-center text-gray-400 bg-white rounded-2xl border border-gray-100">{t('admin.dash.noEmployees')}</div>
+              )}
             </div>
             {empModal && (
               <EmployeeEditModal emp={empModal.emp} onClose={() => setEmpModal(null)} onSaved={() => void loadEmployees()} />
@@ -2343,18 +2378,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <div className="p-5 space-y-3 overflow-y-auto">
                     <div className="flex flex-wrap gap-1.5">
                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 self-center mr-1">{t('admin.dash.emailTemplates', { defaultValue: 'Plantillas' })}:</span>
-                      {([
-                        { k: 'welcome', n: 'Bienvenida', s: 'Bienvenido/a al equipo de Unreal Studio', b: 'Te damos la bienvenida al equipo de Unreal Studio.\n\nTu portal de empleado está listo: https://unrealstudiobali.com/empleados\nDesde ahí fichas tu entrada/salida, ves tu horario y pides vacaciones.\n\nCualquier duda, aquí estamos. ¡Bienvenido/a!' },
-                        { k: 'checkin', n: 'Fichaje', s: 'Recordatorio: ficha tu entrada y salida', b: 'Un recordatorio rápido: acuérdate de fichar tu entrada, pausas y salida cada día desde el portal:\nhttps://unrealstudiobali.com/empleados\n\nSi un día olvidas fichar algo, puedes registrarlo igualmente cuando te acuerdes.\n\nGracias.' },
-                        { k: 'meeting', n: 'Reunión', s: 'Reunión de equipo', b: 'Hola,\n\nConvocamos una reunión de equipo el [DÍA] a las [HORA] en [LUGAR / enlace].\n\nTemas a tratar:\n- \n- \n\nPor favor confirma tu asistencia. Gracias.' },
-                        { k: 'notice', n: 'Aviso', s: 'Aviso importante', b: 'Hola,\n\nQueremos informarte de lo siguiente:\n\n[ESCRIBE AQUÍ EL AVISO]\n\nGracias por tu atención.' },
-                      ] as { k: string; n: string; s: string; b: string }[]).map((tpl) => (
-                        <button key={tpl.k} type="button" onClick={() => setTeamCompose((p) => p ? { ...p, subject: tpl.s, body: tpl.b } : p)} className="text-[11px] font-bold px-2.5 py-1 rounded-full border border-gray-200 text-primary/70 hover:border-primary/40 hover:bg-primary/5 transition">{t('admin.dash.tpl_' + tpl.k, { defaultValue: tpl.n })}</button>
+                      {Object.keys(TEAM_TPLS).map((k) => (
+                        <button key={k} type="button" onClick={() => setTeamCompose((p) => { if (!p) return p; const lg = teamPreviewLang(p); const tp = TEAM_TPLS[k]; return { ...p, subject: tp.subject[lg] || tp.subject.es, body: tp.body[lg] || tp.body.es, tplKey: k }; })} className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${teamCompose.tplKey === k ? 'bg-primary text-white border-primary' : 'border-gray-200 text-primary/70 hover:border-primary/40 hover:bg-primary/5'}`}>{t('admin.dash.tpl_' + k, { defaultValue: teamTplNames[k] })}</button>
                       ))}
                     </div>
-                    <input value={teamCompose.subject} onChange={(e) => setTeamCompose((p) => p ? { ...p, subject: e.target.value } : p)} placeholder={t('admin.dash.emailSubjectPh', { defaultValue: 'Asunto' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm" />
-                    <textarea value={teamCompose.body} onChange={(e) => setTeamCompose((p) => p ? { ...p, body: e.target.value } : p)} placeholder={t('admin.dash.emailBodyPh', { defaultValue: 'Escribe el mensaje…' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium text-sm h-48 resize-none" />
-                    <p className="text-[11px] text-gray-400">{t('admin.dash.emailTeamHint', { defaultValue: 'Se envía con la plantilla de marca Unreal Studio, un correo por destinatario, saludándole por su nombre.' })}</p>
+                    <input value={teamCompose.subject} onChange={(e) => setTeamCompose((p) => p ? { ...p, subject: e.target.value, tplKey: null } : p)} placeholder={t('admin.dash.emailSubjectPh', { defaultValue: 'Asunto' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm" />
+                    <textarea value={teamCompose.body} onChange={(e) => setTeamCompose((p) => p ? { ...p, body: e.target.value, tplKey: null } : p)} placeholder={t('admin.dash.emailBodyPh', { defaultValue: 'Escribe el mensaje…' })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium text-sm h-48 resize-none" />
+                    <p className="text-[11px] text-gray-400">{teamCompose.tplKey
+                      ? t('admin.dash.emailTeamHintTpl', { defaultValue: 'Cada persona recibirá esta plantilla EN SU IDIOMA. Arriba la ves en el idioma del primer destinatario. Si editas el texto, se enviará tal cual a todos.' })
+                      : t('admin.dash.emailTeamHint', { defaultValue: 'Se envía con la plantilla de marca Unreal Studio, un correo por destinatario, saludándole por su nombre.' })}</p>
                   </div>
                   <div className="flex gap-2 p-4 border-t">
                     <button onClick={() => setTeamCompose(null)} disabled={teamCompose.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
