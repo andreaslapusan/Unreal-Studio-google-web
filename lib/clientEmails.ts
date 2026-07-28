@@ -25,11 +25,13 @@ export function welcomeEmailHtml(d: WelcomeEmailData): string {
   const t = i18n.getFixedT(d.lang || 'es');
   const name = (d.firstName || '').trim();
   const hi = name ? t('emails.welcome.greetingName', { name }) : t('emails.welcome.greeting');
+  const cell = 'padding-right:14px;color:rgba(63,35,5,.55);vertical-align:top';
+  const val = 'word-break:break-all;overflow-wrap:anywhere';
   const creds = `
-    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px 0;font-size:14px;line-height:1.9;color:${BROWN}">
-      <tr><td style="padding-right:14px;color:rgba(63,35,5,.55)">${t('emails.welcome.access')}</td><td><a href="${d.portalUrl}" style="color:${BROWN};font-weight:700">${d.portalUrl}</a></td></tr>
-      <tr><td style="padding-right:14px;color:rgba(63,35,5,.55)">${t('emails.welcome.emailLabel')}</td><td><b>${d.email}</b></td></tr>
-      ${d.tempPassword ? `<tr><td style="padding-right:14px;color:rgba(63,35,5,.55)">${t('emails.welcome.tempPassword')}</td><td><b>${d.tempPassword}</b></td></tr>` : ''}
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:18px 0;font-size:14px;line-height:1.9;color:${BROWN}">
+      <tr><td style="${cell}">${t('emails.welcome.access')}</td><td style="${val}"><a href="${d.portalUrl}" style="color:${BROWN};font-weight:700;${val}">${d.portalUrl}</a></td></tr>
+      <tr><td style="${cell}">${t('emails.welcome.emailLabel')}</td><td style="${val}"><b>${d.email}</b></td></tr>
+      ${d.tempPassword ? `<tr><td style="${cell}">${t('emails.welcome.tempPassword')}</td><td style="${val}"><b>${d.tempPassword}</b></td></tr>` : ''}
     </table>`;
   return `
     <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;margin:0 0 14px;color:${BROWN}">${hi}</h1>

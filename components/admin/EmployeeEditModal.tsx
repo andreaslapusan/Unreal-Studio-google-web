@@ -121,7 +121,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
               <>
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelFullName')}</span>
-                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" autoFocus />
+                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelEmail')}</span>
