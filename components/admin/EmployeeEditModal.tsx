@@ -21,6 +21,7 @@ export interface EmployeeRow {
   work_end_time: string | null;
   work_days: number[] | null;
   late_margin_min: number | null;
+  phone?: string | null;
 }
 
 type Tab = 'datos' | 'permisos' | 'horario';
@@ -35,6 +36,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
   const [tab, setTab] = useState<Tab>('datos');
   const [fullName, setFullName] = useState(emp?.full_name ?? '');
   const [email, setEmail] = useState(emp?.email ?? '');
+  const [phone, setPhone] = useState((emp as any)?.phone ?? '');
   const [password, setPassword] = useState(isNew ? genPassword() : '');
   const [active, setActive] = useState(emp?.active ?? true);
   const [lang, setLang] = useState<string>((emp as any)?.preferred_language ?? 'es');
@@ -69,6 +71,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
       p_work_days: days.length ? days : null,
       p_late_margin: margin,
       p_lang: lang || 'es',
+      p_phone: phone.trim() || null,
     });
     setSaving(false);
     if (error) {
@@ -126,6 +129,10 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelEmail')}</span>
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelPhone', { defaultValue: 'Teléfono (WhatsApp)' })}</span>
+                  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+62..." className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelPassword')} {isNew ? '' : t('fix.emp.labelPasswordHint')}</span>
