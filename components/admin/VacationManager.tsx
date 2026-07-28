@@ -133,16 +133,16 @@ const VacationManager: React.FC = () => {
     <div>
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
         <h2 className="text-3xl font-serif text-primary">{t('admin.vac.title')}</h2>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Selector de empleado */}
-          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="pl-4 pr-8 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
+          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="flex-1 sm:flex-none min-w-0 pl-4 pr-8 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
             <option value="all">{t('admin.vac.allEmployees')}</option>
             {employees.map((e) => <option key={e.id} value={e.email}>{e.full_name || e.email}</option>)}
           </select>
-          <div className="flex items-center gap-2">
-            <button onClick={() => { if (viewMonth === 0) { setViewMonth(11); setYear((y) => y - 1); } else setViewMonth(viewMonth - 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_left</span></button>
-            <span className="text-base font-bold text-primary capitalize min-w-[150px] text-center">{new Date(year, viewMonth, 1).toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric' })}</span>
-            <button onClick={() => { if (viewMonth === 11) { setViewMonth(0); setYear((y) => y + 1); } else setViewMonth(viewMonth + 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition"><span className="material-symbols-outlined">chevron_right</span></button>
+          <div className="flex items-center justify-center gap-2">
+            <button onClick={() => { if (viewMonth === 0) { setViewMonth(11); setYear((y) => y - 1); } else setViewMonth(viewMonth - 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition shrink-0"><span className="material-symbols-outlined">chevron_left</span></button>
+            <span className="text-base font-bold text-primary capitalize min-w-[130px] text-center">{new Date(year, viewMonth, 1).toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric' })}</span>
+            <button onClick={() => { if (viewMonth === 11) { setViewMonth(0); setYear((y) => y + 1); } else setViewMonth(viewMonth + 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition shrink-0"><span className="material-symbols-outlined">chevron_right</span></button>
           </div>
         </div>
       </div>
