@@ -218,11 +218,11 @@ const AMENITIES_LIST = [
       setSearchParams(sp, { replace: true });
     }
   }, [searchParams, setSearchParams]);
-  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null; preferred_language?: string | null }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null; preferred_language?: string | null; welcomed_at?: string | null }>>([]);
   const loadEmployees = useCallback(async () => {
     const { data } = await supabase
       .from('employees')
-      .select('id, email, full_name, password, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days, late_margin_min, preferred_language')
+      .select('id, email, full_name, password, active, can_upload_reports, permissions, work_start_time, work_end_time, work_days, late_margin_min, preferred_language, welcomed_at')
       .order('full_name');
     setEmployees((data as typeof employees) ?? []);
   }, []);
@@ -363,8 +363,33 @@ const AMENITIES_LIST = [
     void loadEmployees();
   }, [activeView, loadEmployees]);
   // Toggle del estado activo/inactivo del empleado.
+  // Email de bienvenida al empleado (portal + credenciales) EN SU IDIOMA, igual que
+  // a clientes. Solo una vez (welcomed_at) y solo si está activo con email real.
+  const maybeSendEmployeeWelcome = async (emp?: { id: string; email: string; full_name: string | null; password: string | null; active: boolean; preferred_language?: string | null; welcomed_at?: string | null } | null) => {
+    if (!emp || !emp.active || !(emp.email || '').includes('@') || emp.welcomed_at) return;
+    const userId = getAdminUserId();
+    if (!userId) return;
+    const lg = (['es', 'en', 'ro', 'id'].includes(emp.preferred_language || '') ? emp.preferred_language : 'es') as string;
+    const esc = (s: string) => (s || '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] as string));
+    const et = i18n.getFixedT(lg);
+    const portalUrl = 'https://unrealstudiobali.com/empleados';
+    const greeting = et('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name: emp.full_name || '' });
+    const body = esc(TEAM_TPLS.welcome.body[lg] || TEAM_TPLS.welcome.body.es);
+    const cellS = 'padding-right:14px;color:rgba(63,35,5,.55);vertical-align:top';
+    const valS = 'word-break:break-all;overflow-wrap:anywhere';
+    const creds = `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:16px 0;font-size:14px;line-height:1.9;color:#3F2305"><tr><td style="${cellS}">${et('emails.welcome.access')}</td><td style="${valS}"><a href="${portalUrl}" style="color:#3F2305;font-weight:700;${valS}">${portalUrl}</a></td></tr><tr><td style="${cellS}">${et('emails.welcome.emailLabel')}</td><td style="${valS}"><b>${esc(emp.email)}</b></td></tr>${emp.password ? `<tr><td style="${cellS}">${et('emails.welcome.tempPassword')}</td><td style="${valS}"><b>${esc(emp.password)}</b></td></tr>` : ''}</table>`;
+    const cta = `<p style="text-align:center;margin:22px 0 6px"><a href="${portalUrl}" style="background:#3F2305;color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:12px;display:inline-block;font-size:14px">${et('emails.welcome.cta')}</a></p>`;
+    const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${greeting}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap;word-break:break-word">${body}</div>${creds}${cta}`;
+    const subject = TEAM_TPLS.welcome.subject[lg] || TEAM_TPLS.welcome.subject.es;
+    const { data, error } = await invokeSendEmail({ adminUserId: userId, to: emp.email, lang: lg, subject, html });
+    if (!error && data?.success) await supabase.from('employees').update({ welcomed_at: new Date().toISOString() }).eq('id', emp.id);
+  };
   const toggleEmployeeActive = async (id: string, value: boolean) => {
     await supabase.from('employees').update({ active: value }).eq('id', id);
+    if (value) {
+      const { data: emp } = await supabase.from('employees').select('id, email, full_name, password, active, preferred_language, welcomed_at').eq('id', id).maybeSingle();
+      await maybeSendEmployeeWelcome(emp as any);
+    }
     await loadEmployees();
   };
   // Borrar empleado desde la tarjeta (mismo estándar que clientes: confirmar).
@@ -2363,7 +2388,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               )}
             </div>
             {empModal && (
-              <EmployeeEditModal emp={empModal.emp} onClose={() => setEmpModal(null)} onSaved={() => void loadEmployees()} />
+              <EmployeeEditModal emp={empModal.emp} onClose={() => setEmpModal(null)} onSaved={async (info) => { await loadEmployees(); if (info?.active && info.email) { const { data: emp } = await supabase.from('employees').select('id, email, full_name, password, active, preferred_language, welcomed_at').ilike('email', info.email).maybeSingle(); await maybeSendEmployeeWelcome(emp as any); } }} />
             )}
             {teamCompose && (
               <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(ev) => { if (ev.target === ev.currentTarget && !teamCompose.sending) setTeamCompose(null); }}>

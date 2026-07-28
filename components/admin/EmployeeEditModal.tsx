@@ -27,7 +27,7 @@ type Tab = 'datos' | 'permisos' | 'horario';
 const DAYS: [string, number][] = [['L', 1], ['M', 2], ['X', 3], ['J', 4], ['V', 5], ['S', 6], ['D', 7]];
 const genPassword = () => Math.random().toString(36).slice(2, 6) + Math.random().toString(36).slice(2, 6);
 
-interface Props { emp: EmployeeRow | null; onClose: () => void; onSaved: () => void; }
+interface Props { emp: EmployeeRow | null; onClose: () => void; onSaved: (info?: { email: string; active: boolean }) => void; }
 
 export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
   const { t } = useTranslation();
@@ -75,7 +75,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
       setErr(error.message?.includes('email_exists') ? t('fix.emp.errEmailExists') : (error.message || t('fix.emp.errSave')));
       return;
     }
-    onSaved();
+    onSaved({ email: email.trim(), active });
     onClose();
   };
 
