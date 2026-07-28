@@ -407,6 +407,20 @@ const AMENITIES_LIST = [
     if (sErr || !sent?.success) { alert(t('admin.dash.resetError', { error: sent?.error || sErr?.message || 'error' })); return; }
     alert(t('admin.dash.resetSent', { email }));
   };
+  // Recordatorio de fichaje — email fijo (en su idioma) con la previsualización de marca.
+  const sendEmployeeCheckin = (emp: any) => {
+    const email = (emp.email || '').trim();
+    if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+    const userId = getAdminUserId();
+    if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+    const lg = employeeLangOf(emp);
+    const esc = (s: string) => (s || '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] as string));
+    const et = i18n.getFixedT(lg);
+    const greeting = et('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name: emp.full_name || '' });
+    const body = esc(TEAM_TPLS.checkin.body[lg] || TEAM_TPLS.checkin.body.es);
+    const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${greeting}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap;word-break:break-word">${body}</div>`;
+    openEmailPreview({ to: email, subject: TEAM_TPLS.checkin.subject[lg] || TEAM_TPLS.checkin.subject.es, html, sentMsg: (ems) => t('admin.dash.welcomeSent', { email: ems.join(', ') }), userId, lang: lg });
+  };
   const toggleEmployeeActive = async (id: string, value: boolean) => {
     await supabase.from('employees').update({ active: value }).eq('id', id);
     if (value) {
@@ -2430,14 +2444,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   </div>
                   <div className="space-y-3">
                     {[
-                      { icon: 'waving_hand', titleKey: 'admin.dash.mailWelcome', descKey: 'admin.dash.mailWelcomeDesc', run: () => sendEmployeeWelcome(mailEmployee) },
-                      { icon: 'lock_reset', titleKey: 'admin.dash.mailReset', descKey: 'admin.dash.mailResetDesc', run: () => sendEmployeeReset(mailEmployee) },
+                      { icon: 'waving_hand', title: t('admin.dash.mailWelcome', { defaultValue: 'Bienvenida' }), desc: t('admin.dash.mailWelcomeDesc', { defaultValue: 'Acceso al portal + contraseña temporal' }), run: () => sendEmployeeWelcome(mailEmployee) },
+                      { icon: 'schedule', title: t('admin.dash.mailCheckin', { defaultValue: 'Recordatorio de fichaje' }), desc: t('admin.dash.mailCheckinDesc', { defaultValue: 'Recuérdale fichar entrada, pausas y salida' }), run: () => sendEmployeeCheckin(mailEmployee) },
+                      { icon: 'lock_reset', title: t('admin.dash.mailReset', { defaultValue: 'Recuperar contraseña' }), desc: t('admin.dash.mailResetEmp', { defaultValue: 'Enlace para crear una nueva contraseña' }), run: () => sendEmployeeReset(mailEmployee) },
                     ].map((m, idx) => (
                       <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
                         <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
                         <span className="min-w-0">
-                          <span className="block font-bold text-primary text-sm mb-0.5">{t(m.titleKey)}</span>
-                          <span className="block text-xs text-gray-400">{t(m.descKey)}</span>
+                          <span className="block font-bold text-primary text-sm mb-0.5">{m.title}</span>
+                          <span className="block text-xs text-gray-400">{m.desc}</span>
                         </span>
                       </button>
                     ))}
