@@ -181,10 +181,10 @@ const Projects: React.FC = () => {
       {/* Redesigned Filter Bar for Consistency and Modern Look */}
       <div className="px-4 md:px-12 relative z-30 -mt-12 mb-16 max-w-7xl mx-auto">
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center">
-            
+          <div className="grid grid-cols-2 md:flex md:flex-row items-stretch md:items-center">
+
             {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
@@ -206,7 +206,7 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
@@ -231,7 +231,7 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
