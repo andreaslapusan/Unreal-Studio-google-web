@@ -243,29 +243,29 @@ const LandingGlobalitae: React.FC = () => {
 
       {/* DATOS CLAVE */}
       <section className="relative z-20 -mt-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl p-6 md:p-10 grid grid-cols-2 md:flex md:flex-row justify-between items-center gap-6 md:gap-4 md:divide-x divide-gray-100">
-          <div className="px-2 md:px-4 md:first:pl-0 text-center md:text-left w-full md:w-auto">
+        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl p-6 md:p-10 grid grid-cols-2 lg:flex lg:flex-row justify-between items-center gap-6 md:gap-4 lg:divide-x divide-gray-100">
+          <div className="px-2 md:px-4 lg:first:pl-0 text-center lg:text-left w-full lg:w-auto">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.roiRental')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">
               {project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('fix.lg.consult')}
               <span className="text-[10px] md:text-xs font-sans opacity-80 ml-1 block md:inline">{t('fix.lg.grossPerYear')}</span>
             </p>
           </div>
-          <div className="px-2 md:px-4 text-center md:text-left w-full md:w-auto">
+          <div className="px-2 md:px-4 text-center lg:text-left w-full lg:w-auto">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.roiResale')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">
               {project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('fix.lg.consult')}
             </p>
           </div>
-          <div className="px-2 md:px-4 text-center md:text-left w-full md:w-auto">
+          <div className="px-2 md:px-4 text-center lg:text-left w-full lg:w-auto">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.investorPrice')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">{formatPrice(project.investor_price, project.price_currency)}</p>
           </div>
-          <div className="px-2 md:px-4 text-center md:text-left w-full md:w-auto">
+          <div className="px-2 md:px-4 text-center lg:text-left w-full lg:w-auto">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.marketPrice')}</p>
             <p className="text-2xl md:text-3xl font-serif line-through opacity-40 text-primary">{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
-          <div className="px-2 md:px-4 md:border-r-0 text-center md:text-left w-full md:w-auto col-span-2 md:col-span-1 mt-4 md:mt-0">
+          <div className="px-2 md:px-4 lg:border-r-0 text-center lg:text-left w-full lg:w-auto col-span-2 lg:col-span-1 mt-4 lg:mt-0">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.status')}</p>
             <p className="text-lg md:text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter text-primary">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
