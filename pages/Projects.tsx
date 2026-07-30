@@ -270,7 +270,7 @@ const Projects: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
             {filteredProjects.map((proj, idx) => (
               <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
-                <div className="relative h-32 md:h-80 overflow-hidden">
+                <div className="relative h-52 sm:h-56 md:h-80 overflow-hidden">
                   <img
                     loading={idx === 0 ? "eager" : "lazy"}
                     fetchPriority={idx === 0 ? "high" : "auto"}
@@ -286,7 +286,7 @@ const Projects: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
-                  <h3 className="text-sm md:text-3xl font-serif text-primary mb-2 md:mb-3 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
+                  <h3 className="text-base md:text-3xl font-serif text-primary mb-2 md:mb-3 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
                   {proj.completion_percent > 0 && (
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
@@ -307,7 +307,7 @@ const Projects: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      <span className="flex items-center gap-1 text-[9px] md:text-xs font-black uppercase tracking-widest text-primary group-hover:gap-2 transition-all whitespace-nowrap">
+                      <span className="flex items-center gap-1 text-xs md:text-xs font-black uppercase tracking-widest text-primary group-hover:gap-2 transition-all whitespace-nowrap bg-primary/5 rounded-full px-3 py-1.5 md:px-0 md:py-0 md:bg-transparent">
                         {t('projects.card.viewDetails', 'Ver detalles')}
                         <span className="material-symbols-outlined text-sm md:text-xl">arrow_forward</span>
                       </span>
@@ -330,7 +330,7 @@ const Projects: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 opacity-70">
               {soldProjects.map((proj, idx) => (
                 <div key={proj.id} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-white/50 flex flex-col h-full grayscale-[0.5]">
-                  <div className="relative h-32 md:h-80 overflow-hidden">
+                  <div className="relative h-52 sm:h-56 md:h-80 overflow-hidden">
                     <img
                       loading="lazy"
                       alt={proj.name}
@@ -345,7 +345,7 @@ const Projects: React.FC = () => {
                     </div>
                   </div>
                   <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
-                    <h3 className="text-sm md:text-3xl font-serif text-primary mb-2 md:mb-3 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
+                    <h3 className="text-base md:text-3xl font-serif text-primary mb-2 md:mb-3 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
                     <div className="mt-auto">
                       <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
                         <div>

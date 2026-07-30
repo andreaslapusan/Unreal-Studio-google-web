@@ -741,7 +741,7 @@ const Home: React.FC = () => {
           </Link>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
           {blogs.map((post) => (
             <Link key={post.id} to={`/blog/${post.slug}`} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
               {/* Imagen */}

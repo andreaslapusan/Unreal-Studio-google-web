@@ -338,8 +338,8 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
               inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="nombre@unrealstudiobali.com"
-              className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none"
+              placeholder="tu@email.com"
+              className="w-full px-4 sm:px-5 py-4 bg-gray-50 rounded-2xl font-bold text-sm sm:text-base border border-gray-200 focus:border-primary focus:outline-none"
             />
           </div>
 

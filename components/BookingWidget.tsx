@@ -109,20 +109,20 @@ export default function BookingWidget({ url, propertySlug, widgetId }: Props) {
           })}
         </p>
 
-        <div className="bg-white rounded-3xl shadow-xl border border-primary/5 overflow-hidden" style={{ minHeight: 720 }}>
+        <div className="bg-white rounded-3xl shadow-xl border border-primary/5 overflow-hidden" style={{ minHeight: 560 }}>
           {visible ? (
             <iframe
               ref={iframeRef}
               id={id}
               src={finalUrl}
               title={t("fix.book.iframeTitle")}
-              style={{ width: "100%", border: 0, overflow: "hidden", minHeight: 720 }}
+              style={{ width: "100%", border: 0, overflow: "hidden", minHeight: 560 }}
               scrolling="no"
               loading="lazy"
               allow="payment *; geolocation *"
             />
           ) : (
-            <div className="flex items-center justify-center" style={{ minHeight: 720 }}>
+            <div className="flex items-center justify-center" style={{ minHeight: 560 }}>
               <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
             </div>
           )}
