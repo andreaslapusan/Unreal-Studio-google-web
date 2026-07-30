@@ -514,7 +514,7 @@
       "clients": "Clientes",
       "users": "Administradores",
       "config": "Configuración",
-      "calendar": "Calendario",
+      "calendar": "Vacaciones",
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agencias",
@@ -530,7 +530,8 @@
       "faqs": "FAQs",
       "agenciesMgmt": "Agencias",
       "agencyPacks": "Packs Agencia",
-      "arquitectura": "Arquitectura"
+      "arquitectura": "Arquitectura",
+      "agenda": "Calendario"
     },
     "clientLogin": {
       "title": "Portal Inversor",

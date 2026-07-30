@@ -514,7 +514,7 @@
       "clients": "Clienți",
       "users": "Administratori",
       "config": "Setări",
-      "calendar": "Calendar",
+      "calendar": "Concedii",
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agenții",
@@ -530,7 +530,8 @@
       "faqs": "Întrebări",
       "agenciesMgmt": "Agenții",
       "agencyPacks": "Pachete Agenție",
-      "arquitectura": "Arhitectură"
+      "arquitectura": "Arhitectură",
+      "agenda": "Calendar"
     },
     "clientLogin": {
       "title": "Portal Investitor",

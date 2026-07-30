@@ -514,7 +514,7 @@
       "clients": "Clients",
       "users": "Administrators",
       "config": "Settings",
-      "calendar": "Calendar",
+      "calendar": "Holidays",
       "marketing": "Marketing",
       "portalManager": "Portal Manager",
       "agencias": "Agencies",
@@ -530,7 +530,8 @@
       "faqs": "FAQs",
       "agenciesMgmt": "Agencies",
       "agencyPacks": "Agency Packs",
-      "arquitectura": "Architecture"
+      "arquitectura": "Architecture",
+      "agenda": "Calendar"
     },
     "clientLogin": {
       "title": "Investor Portal",

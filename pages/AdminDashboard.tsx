@@ -13,6 +13,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import EmployeeEditModal, { EmployeeRow } from '../components/admin/EmployeeEditModal';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
+import EventsCalendar from '../components/admin/EventsCalendar';
 import AsyncButton from '../components/AsyncButton';
 import CobrosPanel from '../components/admin/CobrosPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
@@ -28,8 +29,8 @@ import { portalPath } from '../lib/portalUrls';
 import i18n from '../lib/i18n';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'cobros' | 'calendar' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'cobros', 'calendar', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
+type AdminView = 'dashboard' | 'projects' | 'blogs' | 'config' | 'users' | 'clients' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'blogs', 'config', 'users', 'clients', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
 
 // Titulares que PARTICIPAN en una propiedad concreta (+ % opcional). Si la
 // propiedad no tiene participantes definidos (null/[]), participan TODOS los
@@ -315,6 +316,7 @@ const AMENITIES_LIST = [
     { key: 'notifications', view: 'notifications' },
     { key: 'cobros', view: 'cobros' },
     { key: 'projects', view: 'projects' },
+    { key: 'agenda', view: 'agenda' },
     { key: 'calendar', view: 'calendar' },
     { key: 'clients', view: 'clients' },
     { key: 'arquitectura', view: 'arquitectura' },
@@ -2464,6 +2466,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </div>
         )}
 
+        {activeView === 'agenda' && <EventsCalendar adminUserId={getAdminUserId()} />}
         {activeView === 'calendar' && <VacationManager />}
       </main>
 

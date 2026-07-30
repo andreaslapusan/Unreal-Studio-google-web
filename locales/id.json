@@ -622,7 +622,7 @@
       "clients": "Klien",
       "users": "Administrator",
       "config": "Konfigurasi",
-      "calendar": "Kalender",
+      "calendar": "Cuti",
       "marketing": "Pemasaran",
       "portalManager": "Portal Manager",
       "agencias": "Agen",
@@ -634,7 +634,8 @@
       "faqs": "FAQ",
       "agenciesMgmt": "Agensi",
       "agencyPacks": "Paket Agensi",
-      "arquitectura": "Arsitektur"
+      "arquitectura": "Arsitektur",
+      "agenda": "Kalender"
     },
     "common": {
       "save": "Simpan",
