@@ -2,13 +2,24 @@
  * EventsCalendar — menú "Calendario": muestra TODOS los eventos guardados
  * (cobros de clientes + vacaciones del equipo) en un calendario mensual, y debajo
  * una lista configurable por tipo y orden (p.ej. Cobros + ascendente = próximos cobros).
+ *
+ * Al PULSAR un día se abre un detalle con los eventos de esa fecha y accesos
+ * directos: "abrir calendario de pagos" y "ver ficha cliente" (reutilizan el
+ * mismo flujo que Cobros vía las callbacks onOpenPayments / onOpenClient).
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 
 type EvType = 'cobro' | 'vacacion';
-interface Ev { date: string; end?: string; type: EvType; title: string; sub?: string; amount?: number; currency?: string; }
+interface Ev {
+  date: string; end?: string; type: EvType; title: string; sub?: string; amount?: number; currency?: string;
+  // Datos crudos del cobro para los accesos directos (solo eventos 'cobro')
+  clientId?: string; clientName?: string; clientEmail?: string; projectName?: string; unitNumber?: string | number | null;
+}
+
+// Fila con la forma que espera onOpenPayments (igual que CobrosPanel)
+export interface PayRowLite { client_id: string; client_name: string; client_email: string; project_name: string; unit_number: string | number | null; }
 
 const money = (n: number, c: string) => {
   try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0 }).format(n); }
@@ -19,7 +30,11 @@ const TYPE_META: Record<EvType, { label: string; dot: string; badge: string }> =
   vacacion: { label: 'Vacaciones', dot: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700' },
 };
 
-export default function EventsCalendar({ adminUserId }: { adminUserId: string | null }) {
+export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClient }: {
+  adminUserId: string | null;
+  onOpenPayments?: (row: PayRowLite) => void;
+  onOpenClient?: (clientName: string) => void;
+}) {
   const { t } = useTranslation();
   const [events, setEvents] = useState<Ev[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +43,7 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
   const [filterType, setFilterType] = useState<'all' | EvType>('all');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [futureOnly, setFutureOnly] = useState(true);
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
   useEffect(() => { void load(); /* eslint-disable-next-line */ }, []);
   async function load() {
@@ -41,7 +57,9 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
         evs.push({ date: String(p.due_date).slice(0, 10), type: 'cobro',
           title: `${p.client_name || '—'} · ${p.label || ''}`.trim(),
           sub: [p.project_name, p.unit_number].filter(Boolean).join(' · ') || undefined,
-          amount: Number(p.amount) || 0, currency: p.currency || 'EUR' });
+          amount: Number(p.amount) || 0, currency: p.currency || 'EUR',
+          clientId: p.client_id, clientName: p.client_name, clientEmail: p.client_email,
+          projectName: p.project_name, unitNumber: p.unit_number ?? null });
       }
     } catch { /* ignore */ }
     try {
@@ -57,6 +75,12 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
     } catch { /* ignore */ }
     setEvents(evs); setLoading(false);
   }
+
+  // ¿el evento cae en el día ds? (los rangos de vacaciones cubren todo el intervalo)
+  const eventOnDay = (e: Ev, ds: string) => {
+    if (e.type === 'vacacion' && e.end && e.end !== e.date) return ds >= e.date && ds <= e.end;
+    return e.date === ds;
+  };
 
   // Marcadores por día (expande rangos de vacaciones)
   const dayMap = useMemo(() => {
@@ -80,12 +104,18 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
     return l;
   }, [events, filterType, order, futureOnly, todayStr]);
 
+  // Eventos del día seleccionado (para el detalle)
+  const selectedEvents = useMemo(() => selectedDay ? events.filter((e) => eventOnDay(e, selectedDay)) : [], [events, selectedDay]);
+  const selectedLabel = useMemo(() => selectedDay
+    ? new Date(selectedDay + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    : '', [selectedDay]);
+
   // Rejilla del mes
   const monthLabel = new Date(cur.y, cur.m, 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
   const firstDow = (new Date(cur.y, cur.m, 1).getDay() + 6) % 7; // Lunes=0
   const daysInMonth = new Date(cur.y, cur.m + 1, 0).getDate();
   const cells: (number | null)[] = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
-  const step = (d: number) => setCur((c) => { const nm = c.m + d; return { y: c.y + Math.floor(nm / 12), m: ((nm % 12) + 12) % 12 }; });
+  const step = (d: number) => { setSelectedDay(null); setCur((c) => { const nm = c.m + d; return { y: c.y + Math.floor(nm / 12), m: ((nm % 12) + 12) % 12 }; }); };
   const dstr = (day: number) => `${cur.y}-${String(cur.m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
   return (
@@ -107,10 +137,11 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
         {(Object.keys(TYPE_META) as EvType[]).map((k) => (
           <span key={k} className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500"><span className={`w-2.5 h-2.5 rounded-full ${TYPE_META[k].dot}`} />{TYPE_META[k].label}</span>
         ))}
+        <span className="text-[11px] text-gray-300 ml-auto self-center hidden sm:inline">{t('admin.agenda.tapHint', { defaultValue: 'Pulsa un día para ver su detalle' })}</span>
       </div>
 
       {/* Rejilla del mes */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-4 mb-6">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-4 mb-4">
         <div className="grid grid-cols-7 text-center text-[10px] font-black uppercase tracking-widest text-gray-300 mb-1">
           {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d, i) => <div key={i} className="py-1">{d}</div>)}
         </div>
@@ -118,20 +149,79 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
           {cells.map((day, i) => {
             if (day === null) return <div key={i} />;
             const ds = dstr(day); const ev = dayMap[ds]; const isToday = ds === todayStr;
+            const isSel = ds === selectedDay; const has = !!ev;
             return (
-              <div key={i} className={`aspect-square rounded-lg border text-[11px] p-1 flex flex-col ${isToday ? 'border-primary bg-primary/5' : 'border-gray-100'}`}>
-                <span className={`font-bold ${isToday ? 'text-primary' : 'text-gray-500'}`}>{day}</span>
+              <button
+                key={i}
+                type="button"
+                onClick={() => setSelectedDay(isSel ? null : ds)}
+                aria-pressed={isSel}
+                aria-label={`${day}${has ? ` · ${(ev!.cobro + ev!.vacacion)} evento(s)` : ''}`}
+                className={`aspect-square rounded-lg border text-[11px] p-1 flex flex-col text-left transition
+                  ${isSel ? 'border-primary ring-2 ring-primary/40 bg-primary/10'
+                    : isToday ? 'border-primary bg-primary/5' : 'border-gray-100'}
+                  ${has ? 'hover:border-primary/60 hover:bg-primary/5 cursor-pointer' : 'hover:bg-gray-50 cursor-pointer'}`}
+              >
+                <span className={`font-bold ${isSel || isToday ? 'text-primary' : 'text-gray-500'}`}>{day}</span>
                 {ev && (
                   <span className="mt-auto flex flex-wrap gap-0.5 justify-center">
                     {ev.cobro > 0 && <span className={`w-1.5 h-1.5 rounded-full ${TYPE_META.cobro.dot}`} title={`${ev.cobro} cobro(s)`} />}
                     {ev.vacacion > 0 && <span className={`w-1.5 h-1.5 rounded-full ${TYPE_META.vacacion.dot}`} title={`${ev.vacacion} vacacion(es)`} />}
                   </span>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
       </div>
+
+      {/* Detalle del día seleccionado */}
+      {selectedDay && (
+        <div className="bg-white rounded-2xl border border-primary/20 shadow-sm p-4 sm:p-5 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <h3 className="text-base font-bold text-primary capitalize">{selectedLabel}</h3>
+            <button onClick={() => setSelectedDay(null)} className="p-1.5 -m-1 text-gray-400 hover:text-primary hover:bg-gray-100 rounded-lg transition shrink-0" aria-label={t('admin.common.close', { defaultValue: 'Cerrar' })}><span className="material-symbols-outlined text-xl leading-none">close</span></button>
+          </div>
+          {selectedEvents.length === 0 ? (
+            <div className="py-6 text-center text-gray-400 text-sm">{t('admin.agenda.dayEmpty', { defaultValue: 'No hay eventos este día.' })}</div>
+          ) : (
+            <div className="space-y-2.5">
+              {selectedEvents.map((e, i) => (
+                <div key={i} className="rounded-xl border border-gray-100 p-3">
+                  <div className="flex items-start gap-2 flex-wrap">
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge} shrink-0`}>{TYPE_META[e.type].label}</span>
+                    <span className="text-sm font-bold text-primary break-words flex-1 min-w-0">{e.title}</span>
+                    {e.type === 'cobro' && e.amount != null && (
+                      <span className="text-sm font-black text-primary shrink-0 whitespace-nowrap">{money(e.amount, e.currency || 'EUR')}</span>
+                    )}
+                  </div>
+                  {e.sub && <div className="text-xs text-gray-400 break-words mt-0.5">{e.sub}</div>}
+                  {e.type === 'cobro' && e.clientId && (
+                    <div className="flex flex-wrap gap-2 mt-2.5">
+                      {onOpenPayments && (
+                        <button
+                          onClick={() => onOpenPayments({ client_id: e.clientId!, client_name: e.clientName || '', client_email: e.clientEmail || '', project_name: e.projectName || '', unit_number: e.unitNumber ?? null })}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/5 hover:bg-primary/15 transition px-3 py-2 rounded-lg">
+                          <span className="material-symbols-outlined text-base leading-none">event</span>
+                          {t('admin.agenda.openPayments', { defaultValue: 'Calendario de pagos' })}
+                        </button>
+                      )}
+                      {onOpenClient && e.clientName && (
+                        <button
+                          onClick={() => onOpenClient(e.clientName!)}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-gray-50 hover:bg-gray-100 transition px-3 py-2 rounded-lg">
+                          <span className="material-symbols-outlined text-base leading-none">person</span>
+                          {t('admin.agenda.openClient', { defaultValue: 'Ficha cliente' })}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Lista configurable */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
@@ -159,7 +249,7 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
         ) : (
           <div className="divide-y divide-gray-50">
             {list.map((e, i) => (
-              <div key={i} className="py-3 flex items-start gap-3">
+              <button key={i} type="button" onClick={() => { setSelectedDay(e.date); setCur({ y: Number(e.date.slice(0, 4)), m: Number(e.date.slice(5, 7)) - 1 }); }} className="w-full py-3 flex items-start gap-3 text-left hover:bg-gray-50/70 -mx-2 px-2 rounded-lg transition">
                 <div className="text-center shrink-0 w-12">
                   <div className="text-lg font-bold text-primary leading-none">{new Date(e.date + 'T00:00:00').getDate()}</div>
                   <div className="text-[10px] uppercase text-gray-400">{new Date(e.date + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short' })}</div>
@@ -174,7 +264,7 @@ export default function EventsCalendar({ adminUserId }: { adminUserId: string | 
                 {e.type === 'cobro' && e.amount != null && (
                   <div className="text-sm font-black text-primary shrink-0 whitespace-nowrap">{money(e.amount, e.currency || 'EUR')}</div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         )}
