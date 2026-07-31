@@ -404,7 +404,7 @@ const ProjectDetail: React.FC = () => {
       )}
 
       <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 md:divide-x divide-white/10">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
           <div className="px-4 first:pl-0 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
             <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
@@ -421,7 +421,7 @@ const ProjectDetail: React.FC = () => {
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiMarketPrice')}</p>
             <p className="text-3xl font-serif line-through opacity-40">{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
-          <div className="px-4 border-r-0 text-center md:text-left">
+          <div className="px-4 border-r-0 text-center md:text-left col-span-2 md:col-span-1">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
             <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
@@ -639,9 +639,10 @@ const ProjectDetail: React.FC = () => {
                 const query = encodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
                 return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${query}`;
               }
-              const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+              const coordMatch = url.match(/@?(-?\d+\.\d+),(-?\d+\.\d+)/);
               if (coordMatch) {
-                return `https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=${coordMatch[1]},${coordMatch[2]}&zoom=15`;
+                // modo 'place' con q=lat,lng SÍ pinta el pin; 'view' con center= NO lo pintaba.
+                return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${coordMatch[1]},${coordMatch[2]}&zoom=16`;
               }
               const qMatch = url.match(/[?&]q=([^&]+)/);
               if (qMatch) {
