@@ -886,7 +886,15 @@
       "poolTitle": "Investment pool",
       "welcome": "Welcome to Unreal Studio",
       "coOwnersTitle": "Holders of this property",
-      "coOwnersNote": "Your share in this property."
+      "coOwnersNote": "Your share in this property.",
+      "status": {
+        "active": "Active",
+        "reserved": "Reserved",
+        "paid": "Paid",
+        "inProgress": "In progress",
+        "completed": "Completed",
+        "pending": "Pending"
+      }
     },
     "agencias": {
       "title": "Agency Pack",

@@ -985,7 +985,15 @@
       "poolTitle": "Pool investasi",
       "welcome": "Selamat datang di Unreal Studio",
       "coOwnersTitle": "Pemilik properti ini",
-      "coOwnersNote": "Bagian Anda di properti ini."
+      "coOwnersNote": "Bagian Anda di properti ini.",
+      "status": {
+        "active": "Aktif",
+        "reserved": "Dipesan",
+        "paid": "Lunas",
+        "inProgress": "Dalam proses",
+        "completed": "Selesai",
+        "pending": "Menunggu"
+      }
     },
     "agencias": {
       "title": "Paket untuk Agen",

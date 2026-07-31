@@ -886,7 +886,15 @@
       "poolTitle": "Fond de investiții",
       "welcome": "Bun venit la Unreal Studio",
       "coOwnersTitle": "Titularii acestei proprietăți",
-      "coOwnersNote": "Cota ta în această proprietate."
+      "coOwnersNote": "Cota ta în această proprietate.",
+      "status": {
+        "active": "Activ",
+        "reserved": "Rezervat",
+        "paid": "Plătit",
+        "inProgress": "În curs",
+        "completed": "Finalizat",
+        "pending": "În așteptare"
+      }
     },
     "agencias": {
       "title": "Pack pentru Agenții",

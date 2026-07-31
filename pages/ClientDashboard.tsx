@@ -383,6 +383,14 @@ const ClientDashboard: React.FC = () => {
   // cliente (override por cliente solo puede RESTRINGIR, nunca activar lo global-OFF).
   const feat = (k: string) => features[k] !== false && ((clientData as any)?.client?.feature_overrides?.[k] !== false);
 
+  // Etiqueta traducida del estado del proyecto (el badge salía en español crudo
+  // aunque el portal estuviera en otro idioma). El color sigue usando el valor crudo.
+  const statusLabel = (s?: string) => {
+    const map: Record<string, string> = { active: 'active', Activo: 'active', Reserva: 'reserved', Pagado: 'paid', 'En proceso': 'inProgress', 'En construcción': 'inProgress', Completado: 'completed', Pendiente: 'pending' };
+    const k = s ? map[s] : undefined;
+    return k ? t('admin.clientDash.status.' + k, { defaultValue: s }) : (s || '');
+  };
+
   // Sirve reportes/brochures a través de nuestro dominio (/r/…, proxy nginx a
   // Supabase Storage) para no exponer supabase.co en la barra del navegador.
   // Streaming directo → misma velocidad que el enlace directo.
@@ -716,7 +724,7 @@ const ClientDashboard: React.FC = () => {
                         </h3>
                         <p className="text-sm text-primary/50">{proj.project_location}</p>
                       </div>
-                      <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full ${proj.status === 'Completado' ? 'bg-green-50 text-green-600' : proj.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{proj.status}</span>
+                      <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full ${proj.status === 'Completado' ? 'bg-green-50 text-green-600' : proj.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{statusLabel(proj.status)}</span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                       {proj.unit_number && (

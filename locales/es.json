@@ -886,7 +886,15 @@
       "poolTitle": "Pool de inversión",
       "welcome": "Bienvenido a Unreal Studio",
       "coOwnersTitle": "Titulares de esta propiedad",
-      "coOwnersNote": "Tu participación en esta propiedad."
+      "coOwnersNote": "Tu participación en esta propiedad.",
+      "status": {
+        "active": "Activo",
+        "reserved": "Reserva",
+        "paid": "Pagado",
+        "inProgress": "En proceso",
+        "completed": "Completado",
+        "pending": "Pendiente"
+      }
     },
     "agencias": {
       "title": "Pack para Agencias",
