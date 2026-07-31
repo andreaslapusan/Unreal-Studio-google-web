@@ -383,23 +383,6 @@ const ClientDashboard: React.FC = () => {
   // cliente (override por cliente solo puede RESTRINGIR, nunca activar lo global-OFF).
   const feat = (k: string) => features[k] !== false && ((clientData as any)?.client?.feature_overrides?.[k] !== false);
 
-  // Abre un fichero (reporte, brochure) SIN exponer el dominio de Supabase en la
-  // barra del navegador: lo descarga como blob y abre un blob: URL (queda como
-  // blob:https://unrealstudiobali.com/…). Más limpio y no revela el backend.
-  const openHidden = async (path?: string | null) => {
-    const url = getImageUrl(path || '');
-    if (!url) return;
-    const w = window.open('about:blank', '_blank'); // apertura síncrona (evita bloqueo de pop-ups)
-    try {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      if (w) w.location.href = blobUrl; else window.location.href = blobUrl;
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-    } catch {
-      if (w) w.location.href = url; else window.open(url, '_blank'); // fallback
-    }
-  };
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
@@ -795,15 +778,15 @@ const ClientDashboard: React.FC = () => {
                     {(brochureFor(proj, i18n.language) || proj.construction_update_url || proj.project_slug) && (
                       <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
                           {brochureFor(proj, i18n.language) && feat('brochure') && (
-                              <button type="button" onClick={() => openHidden(brochureFor(proj, i18n.language))} className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
+                              <a href={getImageUrl(brochureFor(proj, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">download</span> {t('admin.clientDash.btnBrochure')}
-                              </button>
+                              </a>
                           )}
                           {proj.construction_update_url && feat('construction') && (
-                              <button type="button" onClick={() => openHidden(proj.construction_update_url)} className="flex items-center gap-2 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
+                              <a href={getImageUrl(proj.construction_update_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">construction</span> {t('admin.clientDash.btnConstructionReport')}
                                   {proj.construction_update_date && <span className="text-[8px] opacity-70 ml-1">({formatDate(proj.construction_update_date)})</span>}
-                              </button>
+                              </a>
                           )}
                           {proj.project_slug && feat('viewProject') && (
                               <Link to={`/proyecto/${proj.project_slug}`} className="flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/20 text-primary text-xs font-bold uppercase hover:bg-primary hover:text-white transition">
