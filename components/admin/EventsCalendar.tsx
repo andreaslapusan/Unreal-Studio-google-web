@@ -33,10 +33,13 @@ const TYPE_META: Record<EvType, { label: string; dot: string; badge: string }> =
   vacacion: { label: 'Vacaciones', dot: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700' },
 };
 
-export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClient }: {
+const fmtDate = (ds: string) => new Date(ds + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+
+export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClient, onOpenVacations }: {
   adminUserId: string | null;
   onOpenPayments?: (row: PayRowLite) => void;
   onOpenClient?: (clientName: string) => void;
+  onOpenVacations?: () => void;
 }) {
   const { t } = useTranslation();
   const [events, setEvents] = useState<Ev[]>([]);
@@ -72,8 +75,7 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
       for (const v of (data as any[] || [])) {
         if (!v.start_date) continue;
         evs.push({ date: String(v.start_date).slice(0, 10), end: v.end_date ? String(v.end_date).slice(0, 10) : undefined,
-          type: 'vacacion', title: `${v.employee_name || '—'}`,
-          sub: v.start_date === v.end_date ? (v.type || 'vacaciones') : `${v.type || 'vacaciones'} · hasta ${String(v.end_date).slice(0, 10)}` });
+          type: 'vacacion', title: `${v.employee_name || '—'}`, sub: v.type || 'Vacaciones' });
       }
     } catch { /* ignore */ }
     setEvents(evs); setLoading(false);
@@ -208,27 +210,43 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
                       <span className="text-sm font-black text-primary shrink-0 whitespace-nowrap">{money(e.amount, e.currency || 'EUR')}</span>
                     )}
                   </div>
-                  {e.sub && <div className="text-xs text-gray-400 break-words mt-0.5">{e.sub}</div>}
-                  {e.type === 'cobro' && e.clientId && (
-                    <div className="flex flex-wrap gap-2 mt-2.5">
-                      {onOpenPayments && (
-                        <button
-                          onClick={() => onOpenPayments({ client_id: e.clientId!, client_name: e.clientName || '', client_email: e.clientEmail || '', project_name: e.projectName || '', unit_number: e.unitNumber ?? null })}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/5 hover:bg-primary/15 transition px-3 py-2 rounded-lg">
-                          <span className="material-symbols-outlined text-base leading-none">event</span>
-                          {t('admin.agenda.openPayments', { defaultValue: 'Calendario de pagos' })}
-                        </button>
-                      )}
-                      {onOpenClient && e.clientName && (
-                        <button
-                          onClick={() => onOpenClient(e.clientName!)}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-gray-50 hover:bg-gray-100 transition px-3 py-2 rounded-lg">
-                          <span className="material-symbols-outlined text-base leading-none">person</span>
-                          {t('admin.agenda.openClient', { defaultValue: 'Ficha cliente' })}
-                        </button>
-                      )}
+                  {/* Vacaciones: rango del X al Y + descripción */}
+                  {e.type === 'vacacion' && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      <span className="font-semibold text-gray-600">
+                        {e.end && e.end !== e.date ? `Del ${fmtDate(e.date)} al ${fmtDate(e.end)}` : fmtDate(e.date)}
+                      </span>
+                      {e.sub && <span className="text-gray-400"> · {e.sub}</span>}
                     </div>
                   )}
+                  {e.type === 'cobro' && e.sub && <div className="text-xs text-gray-400 break-words mt-0.5">{e.sub}</div>}
+                  {/* Botones de acción */}
+                  <div className="flex flex-wrap gap-2 mt-2.5">
+                    {e.type === 'cobro' && e.clientId && onOpenPayments && (
+                      <button
+                        onClick={() => onOpenPayments({ client_id: e.clientId!, client_name: e.clientName || '', client_email: e.clientEmail || '', project_name: e.projectName || '', unit_number: e.unitNumber ?? null })}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/5 hover:bg-primary/15 transition px-3 py-2 rounded-lg">
+                        <span className="material-symbols-outlined text-base leading-none">event</span>
+                        {t('admin.agenda.openPayments', { defaultValue: 'Calendario de pagos' })}
+                      </button>
+                    )}
+                    {e.type === 'cobro' && e.clientName && onOpenClient && (
+                      <button
+                        onClick={() => onOpenClient(e.clientName!)}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-gray-50 hover:bg-gray-100 transition px-3 py-2 rounded-lg">
+                        <span className="material-symbols-outlined text-base leading-none">person</span>
+                        {t('admin.agenda.openClient', { defaultValue: 'Ficha cliente' })}
+                      </button>
+                    )}
+                    {e.type === 'vacacion' && onOpenVacations && (
+                      <button
+                        onClick={onOpenVacations}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/5 hover:bg-primary/15 transition px-3 py-2 rounded-lg">
+                        <span className="material-symbols-outlined text-base leading-none">beach_access</span>
+                        {t('admin.agenda.openVacations', { defaultValue: 'Ver menú de vacaciones' })}
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -261,24 +279,35 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
           <div className="py-10 text-center text-gray-400 text-sm">{t('admin.agenda.empty', { defaultValue: 'No hay eventos.' })}</div>
         ) : (
           <div className="divide-y divide-gray-50">
-            {list.map((e, i) => (
-              <button key={i} type="button" onClick={() => { setSelectedDay(e.date); setCur({ y: Number(e.date.slice(0, 4)), m: Number(e.date.slice(5, 7)) - 1 }); }} className="w-full py-3 flex items-start gap-3 text-left hover:bg-gray-50/70 -mx-2 px-2 rounded-lg transition">
-                <div className="text-center shrink-0 w-12">
-                  <div className="text-lg font-bold text-primary leading-none">{new Date(e.date + 'T00:00:00').getDate()}</div>
-                  <div className="text-[10px] uppercase text-gray-400">{new Date(e.date + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short' })}</div>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge}`}>{TYPE_META[e.type].label}</span>
-                    <span className="text-sm font-bold text-primary break-words">{e.title}</span>
+            {list.map((e, i) => {
+              const openDay = () => { setSelectedDay(e.date); setCur({ y: Number(e.date.slice(0, 4)), m: Number(e.date.slice(5, 7)) - 1 }); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }); };
+              return (
+                <div key={i} className="py-3">
+                  <div className="flex items-start gap-3">
+                    <div className="text-center shrink-0 w-12">
+                      <div className="text-lg font-bold text-primary leading-none">{new Date(e.date + 'T00:00:00').getDate()}</div>
+                      <div className="text-[10px] uppercase text-gray-400">{new Date(e.date + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short' })}</div>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge}`}>{TYPE_META[e.type].label}</span>
+                        <span className="text-sm font-bold text-primary break-words">{e.title}</span>
+                      </div>
+                      {e.sub && <div className="text-xs text-gray-400 break-words">{e.sub}</div>}
+                    </div>
+                    {e.type === 'cobro' && e.amount != null && (
+                      <div className="text-sm font-black text-primary shrink-0 whitespace-nowrap">{money(e.amount, e.currency || 'EUR')}</div>
+                    )}
                   </div>
-                  {e.sub && <div className="text-xs text-gray-400 break-words">{e.sub}</div>}
+                  <div className="flex justify-end mt-1.5">
+                    <button type="button" onClick={openDay} className="inline-flex items-center gap-1 text-xs font-bold text-primary bg-primary/5 hover:bg-primary/15 transition px-3 py-1.5 rounded-lg">
+                      {t('admin.agenda.viewDetail', { defaultValue: 'Ver detalle' })}
+                      <span className="material-symbols-outlined text-sm leading-none">chevron_right</span>
+                    </button>
+                  </div>
                 </div>
-                {e.type === 'cobro' && e.amount != null && (
-                  <div className="text-sm font-black text-primary shrink-0 whitespace-nowrap">{money(e.amount, e.currency || 'EUR')}</div>
-                )}
-              </button>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

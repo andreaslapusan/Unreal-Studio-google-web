@@ -2471,6 +2471,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             adminUserId={getAdminUserId()}
             onOpenPayments={(r) => { setPaymentsFilter({ name: r.project_name || '', unit: r.unit_number ?? null }); setPaymentsClient({ id: r.client_id, name: r.client_name, email: r.client_email } as any); }}
             onOpenClient={(name) => setSearchParams({ view: 'clients', q: name })}
+            onOpenVacations={() => setSearchParams({ view: 'calendar' })}
           />
         )}
         {activeView === 'calendar' && <VacationManager />}
