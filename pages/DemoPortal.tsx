@@ -48,7 +48,14 @@ function Bar({ pct }: { pct: number }) {
 
 export default function DemoPortal() {
   const [lightbox, setLightbox] = useState<string | null>(null);
-  useEffect(() => { document.title = 'Demo del portal · Unreal Studio'; }, []);
+  useEffect(() => {
+    document.title = 'Demo del portal · Unreal Studio';
+    // Oculta la demo del público: no indexar en buscadores (solo review interno por ahora).
+    const m = document.createElement('meta');
+    m.name = 'robots'; m.content = 'noindex, nofollow';
+    document.head.appendChild(m);
+    return () => { document.head.removeChild(m); };
+  }, []);
   const paid = useMemo(() => PAYMENTS.filter(p => p.paid).reduce((s, p) => s + p.amount, 0), []);
   const total = useMemo(() => PAYMENTS.reduce((s, p) => s + p.amount, 0), []);
 
