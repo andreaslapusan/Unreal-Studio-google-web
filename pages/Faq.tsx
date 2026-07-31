@@ -95,12 +95,12 @@ export default function Faq() {
           .from("faqs")
           .select("id, question, answer, category, tags, project_filter, sort_order")
           .eq("is_published", true)
-          .eq("language", i18n.language.startsWith("en") ? "en" : i18n.language.startsWith("id") ? "id" : "es")
+          .eq("language", (["en", "id", "ro"].includes(i18n.language.slice(0, 2)) ? i18n.language.slice(0, 2) : "es"))
           .order("sort_order", { ascending: true });
         if (!error && data) {
-          // Fallback: if no rows in current language, show ES (so EN/ID
-          // visitors still see content while translations are pending).
-          if (data.length === 0 && (i18n.language.startsWith("en") || i18n.language.startsWith("id"))) {
+          // Fallback: si no hay filas en el idioma actual, mostrar ES (para
+          // cualquier idioma no-ES cuya traducción aún no esté cargada).
+          if (data.length === 0 && i18n.language.slice(0, 2) !== "es") {
             const { data: esData } = await supabase
               .from("faqs")
               .select("id, question, answer, category, tags, project_filter, sort_order")
