@@ -1229,7 +1229,16 @@
       "tpl_notice": "Aviso",
       "holderPhonePh": "Teléfono",
       "participantsLabel": "Titulares que participan en esta propiedad",
-      "participantsHint": "Marca quién participa y, si quieres, su %. Solo verán esta propiedad y recibirán sus emails los marcados. Si dejas todos marcados, participan todos."
+      "participantsHint": "Marca quién participa y, si quieres, su %. Solo verán esta propiedad y recibirán sus emails los marcados. Si dejas todos marcados, participan todos.",
+      "applyParticipantsAll": "¿Repartir la participación a partes iguales ({{p}}% cada uno, {{n}} titulares) en las {{c}} propiedades asignadas? Aceptar = aplicar en todas; Cancelar = lo pones tú a mano por propiedad.",
+      "applyParticipantsErr": "No se pudieron aplicar los participantes a todas las propiedades.",
+      "applyParticipantsOk": "Participación aplicada en {{c}} propiedades.",
+      "mailCheckin": "Recordatorio de fichaje",
+      "mailCheckinDesc": "Recuérdale fichar entrada, pausas y salida",
+      "mailResetEmp": "Enlace para crear una nueva contraseña",
+      "reportNoRecipients": "No hay destinatarios seleccionados.",
+      "reportPickPickProject": "Selecciona alguna propiedad para ver sus destinatarios.",
+      "reportPickRecipients": "Destinatarios"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -1401,7 +1410,10 @@
       "t_paymentClaim": "{{name}} dice que ya pagó",
       "vtype_vacaciones": "vacaciones",
       "vtype_enfermedad": "enfermedad",
-      "vtype_personal": "personal"
+      "vtype_personal": "personal",
+      "b_clientPwChange": "Ha cambiado su contraseña",
+      "endOfList": "— No hay más —",
+      "loadingMore": "Cargando más…"
     },
     "vac": {
       "confirmDelete": "¿Eliminar esta solicitud de vacaciones?",
@@ -1497,6 +1509,25 @@
       "pendingCount": "{{n}} solicitud(es) pendiente(s)",
       "applications": "Solicitudes",
       "activePartners": "Agencias activas"
+    },
+    "agenda": {
+      "title": "Calendario",
+      "hint": "Todos los eventos: cobros y vacaciones del equipo.",
+      "tapHint": "Pulsa los días marcados",
+      "listOf": "Lista",
+      "allTypes": "Todos",
+      "asc": "Ascendente (próximos)",
+      "desc": "Descendente",
+      "futureOnly": "Solo próximos",
+      "empty": "No hay eventos.",
+      "dayEmpty": "No hay eventos este día.",
+      "openPayments": "Calendario de pagos",
+      "openClient": "Ficha cliente",
+      "openVacations": "Ver menú de vacaciones",
+      "viewDetail": "Ver detalle",
+      "cobro": "Cobro",
+      "vacacion": "Vacaciones",
+      "rangeFromTo": "Del {{from}} al {{to}}"
     }
   },
   "footer": {
@@ -1931,7 +1962,8 @@
       "cancel": "Cancelar",
       "saving": "Guardando…",
       "save": "Guardar",
-      "language": "Idioma preferido"
+      "language": "Idioma preferido",
+      "labelPhone": "Teléfono (WhatsApp)"
     },
     "vac": {
       "printTitleYear": "Calendario de vacaciones {{year}}",

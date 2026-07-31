@@ -1229,7 +1229,16 @@
       "tpl_notice": "Notice",
       "holderPhonePh": "Phone",
       "participantsLabel": "Holders participating in this property",
-      "participantsHint": "Tick who participates and, optionally, their %. Only the ticked ones will see this property and receive its emails. If you leave all ticked, everyone participates."
+      "participantsHint": "Tick who participates and, optionally, their %. Only the ticked ones will see this property and receive its emails. If you leave all ticked, everyone participates.",
+      "applyParticipantsAll": "Split ownership equally ({{p}}% each, {{n}} holders) across the {{c}} assigned properties? OK = apply to all; Cancel = set it manually per property.",
+      "applyParticipantsErr": "Could not apply participants to all properties.",
+      "applyParticipantsOk": "Ownership applied to {{c}} properties.",
+      "mailCheckin": "Check-in reminder",
+      "mailCheckinDesc": "Remind them to clock in, breaks and out",
+      "mailResetEmp": "Link to create a new password",
+      "reportNoRecipients": "No recipients selected.",
+      "reportPickPickProject": "Select a property to see its recipients.",
+      "reportPickRecipients": "Recipients"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",
@@ -1401,7 +1410,10 @@
       "t_paymentClaim": "{{name}} says they have paid",
       "vtype_vacaciones": "holiday",
       "vtype_enfermedad": "sick leave",
-      "vtype_personal": "personal"
+      "vtype_personal": "personal",
+      "b_clientPwChange": "Changed their password",
+      "endOfList": "— No more —",
+      "loadingMore": "Loading more…"
     },
     "vac": {
       "confirmDelete": "Delete this vacation request?",
@@ -1497,6 +1509,25 @@
       "pendingCount": "{{n}} pending application(s)",
       "applications": "Applications",
       "activePartners": "Active agencies"
+    },
+    "agenda": {
+      "title": "Calendar",
+      "hint": "All events: payments and team holidays.",
+      "tapHint": "Tap the marked days",
+      "listOf": "List",
+      "allTypes": "All",
+      "asc": "Ascending (upcoming)",
+      "desc": "Descending",
+      "futureOnly": "Only upcoming",
+      "empty": "No events.",
+      "dayEmpty": "No events on this day.",
+      "openPayments": "Payment calendar",
+      "openClient": "Client profile",
+      "openVacations": "View holidays menu",
+      "viewDetail": "View detail",
+      "cobro": "Payment",
+      "vacacion": "Holidays",
+      "rangeFromTo": "From {{from}} to {{to}}"
     }
   },
   "footer": {
@@ -1931,7 +1962,8 @@
       "cancel": "Cancel",
       "saving": "Saving…",
       "save": "Save",
-      "language": "Preferred language"
+      "language": "Preferred language",
+      "labelPhone": "Phone (WhatsApp)"
     },
     "vac": {
       "printTitleYear": "Vacation calendar {{year}}",

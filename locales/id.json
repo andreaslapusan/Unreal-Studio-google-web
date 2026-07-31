@@ -1328,7 +1328,16 @@
       "tpl_notice": "Pemberitahuan",
       "holderPhonePh": "Telepon",
       "participantsLabel": "Pemilik yang berpartisipasi di properti ini",
-      "participantsHint": "Centang siapa yang ikut serta dan, jika mau, persentasenya. Hanya yang dicentang yang akan melihat properti ini dan menerima emailnya. Jika semua dicentang, semua ikut serta."
+      "participantsHint": "Centang siapa yang ikut serta dan, jika mau, persentasenya. Hanya yang dicentang yang akan melihat properti ini dan menerima emailnya. Jika semua dicentang, semua ikut serta.",
+      "applyParticipantsAll": "Bagi kepemilikan secara merata ({{p}}% masing-masing, {{n}} pemilik) di {{c}} properti yang ditetapkan? OK = terapkan ke semua; Batal = atur manual per properti.",
+      "applyParticipantsErr": "Tidak dapat menerapkan peserta ke semua properti.",
+      "applyParticipantsOk": "Kepemilikan diterapkan pada {{c}} properti.",
+      "mailCheckin": "Pengingat absensi",
+      "mailCheckinDesc": "Ingatkan untuk absen masuk, istirahat, dan keluar",
+      "mailResetEmp": "Tautan untuk membuat kata sandi baru",
+      "reportNoRecipients": "Tidak ada penerima yang dipilih.",
+      "reportPickPickProject": "Pilih properti untuk melihat penerimanya.",
+      "reportPickRecipients": "Penerima"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -1500,7 +1509,10 @@
       "t_paymentClaim": "{{name}} mengatakan sudah membayar",
       "vtype_vacaciones": "cuti",
       "vtype_enfermedad": "cuti sakit",
-      "vtype_personal": "pribadi"
+      "vtype_personal": "pribadi",
+      "b_clientPwChange": "Mengubah kata sandinya",
+      "endOfList": "— Tidak ada lagi —",
+      "loadingMore": "Memuat lebih banyak…"
     },
     "vac": {
       "confirmDelete": "Hapus permintaan cuti ini?",
@@ -1596,6 +1608,25 @@
       "pendingCount": "{{n}} aplikasi tertunda",
       "applications": "Aplikasi",
       "activePartners": "Agen aktif"
+    },
+    "agenda": {
+      "title": "Kalender",
+      "hint": "Semua acara: pembayaran dan cuti tim.",
+      "tapHint": "Ketuk hari yang ditandai",
+      "listOf": "Daftar",
+      "allTypes": "Semua",
+      "asc": "Menaik (mendatang)",
+      "desc": "Menurun",
+      "futureOnly": "Hanya mendatang",
+      "empty": "Tidak ada acara.",
+      "dayEmpty": "Tidak ada acara di hari ini.",
+      "openPayments": "Kalender pembayaran",
+      "openClient": "Profil klien",
+      "openVacations": "Lihat menu cuti",
+      "viewDetail": "Lihat detail",
+      "cobro": "Pembayaran",
+      "vacacion": "Cuti",
+      "rangeFromTo": "Dari {{from}} sampai {{to}}"
     }
   },
   "footer": {
@@ -1932,7 +1963,8 @@
       "cancel": "Batal",
       "saving": "Menyimpan…",
       "save": "Simpan",
-      "language": "Bahasa pilihan"
+      "language": "Bahasa pilihan",
+      "labelPhone": "Telepon (WhatsApp)"
     },
     "vac": {
       "printTitleYear": "Kalender Liburan {{year}}",

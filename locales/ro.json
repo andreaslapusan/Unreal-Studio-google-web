@@ -1229,7 +1229,16 @@
       "tpl_notice": "Anunț",
       "holderPhonePh": "Telefon",
       "participantsLabel": "Titularii care participă la această proprietate",
-      "participantsHint": "Bifează cine participă și, opțional, procentul. Doar cei bifați vor vedea această proprietate și vor primi emailurile ei. Dacă lași toți bifați, participă toți."
+      "participantsHint": "Bifează cine participă și, opțional, procentul. Doar cei bifați vor vedea această proprietate și vor primi emailurile ei. Dacă lași toți bifați, participă toți.",
+      "applyParticipantsAll": "Împarți participația în mod egal ({{p}}% fiecare, {{n}} titulari) în cele {{c}} proprietăți alocate? OK = aplică la toate; Anulează = o setezi manual pe fiecare proprietate.",
+      "applyParticipantsErr": "Nu s-au putut aplica participanții la toate proprietățile.",
+      "applyParticipantsOk": "Participație aplicată în {{c}} proprietăți.",
+      "mailCheckin": "Memento de pontaj",
+      "mailCheckinDesc": "Amintește-i să ponteze intrarea, pauzele și ieșirea",
+      "mailResetEmp": "Link pentru a crea o parolă nouă",
+      "reportNoRecipients": "Niciun destinatar selectat.",
+      "reportPickPickProject": "Selectează o proprietate pentru a-i vedea destinatarii.",
+      "reportPickRecipients": "Destinatari"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -1401,7 +1410,10 @@
       "t_paymentClaim": "{{name}} spune că a plătit",
       "vtype_vacaciones": "concediu",
       "vtype_enfermedad": "concediu medical",
-      "vtype_personal": "personal"
+      "vtype_personal": "personal",
+      "b_clientPwChange": "Și-a schimbat parola",
+      "endOfList": "— Nu mai sunt —",
+      "loadingMore": "Se încarcă mai mult…"
     },
     "vac": {
       "confirmDelete": "Ștergeți această solicitare de vacanță?",
@@ -1497,6 +1509,25 @@
       "pendingCount": "{{n}} cerere(i) în așteptare",
       "applications": "Cereri",
       "activePartners": "Agenții active"
+    },
+    "agenda": {
+      "title": "Calendar",
+      "hint": "Toate evenimentele: încasări și concediile echipei.",
+      "tapHint": "Apasă zilele marcate",
+      "listOf": "Listă",
+      "allTypes": "Toate",
+      "asc": "Crescător (următoarele)",
+      "desc": "Descrescător",
+      "futureOnly": "Doar următoarele",
+      "empty": "Nu există evenimente.",
+      "dayEmpty": "Niciun eveniment în această zi.",
+      "openPayments": "Calendar de plăți",
+      "openClient": "Fișă client",
+      "openVacations": "Vezi meniul de concedii",
+      "viewDetail": "Vezi detaliul",
+      "cobro": "Încasare",
+      "vacacion": "Concediu",
+      "rangeFromTo": "Din {{from}} până la {{to}}"
     }
   },
   "footer": {
@@ -1931,7 +1962,8 @@
       "cancel": "Anulează",
       "saving": "Se salvează…",
       "save": "Salvează",
-      "language": "Limbă preferată"
+      "language": "Limbă preferată",
+      "labelPhone": "Telefon (WhatsApp)"
     },
     "vac": {
       "printTitleYear": "Calendar de vacanță {{year}}",

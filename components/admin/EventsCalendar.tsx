@@ -28,12 +28,15 @@ const money = (n: number, c: string) => {
 // Fecha local YYYY-MM-DD SIN pasar por UTC (toISOString desplazaba un día en móviles
 // con huso horario +, haciendo que el punto y su detalle cayeran en días distintos).
 const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const TYPE_META: Record<EvType, { label: string; dot: string; badge: string }> = {
-  cobro: { label: 'Cobro', dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700' },
-  vacacion: { label: 'Vacaciones', dot: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700' },
+const TYPE_META: Record<EvType, { dot: string; badge: string }> = {
+  cobro: { dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700' },
+  vacacion: { dot: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700' },
 };
+// Locale de fechas según el idioma activo (antes iba fijo a 'es-ES' → meses/días
+// salían en español aunque la web estuviera en inglés).
+const DATE_LOCALE: Record<string, string> = { es: 'es-ES', en: 'en-GB', ro: 'ro-RO', id: 'id-ID' };
 
-const fmtDate = (ds: string) => new Date(ds + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+const fmtDate = (ds: string, dl = 'es-ES') => new Date(ds + 'T00:00:00').toLocaleDateString(dl, { day: 'numeric', month: 'short', year: 'numeric' });
 
 export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClient, onOpenVacations }: {
   adminUserId: string | null;
@@ -41,7 +44,9 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
   onOpenClient?: (clientName: string) => void;
   onOpenVacations?: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dl = DATE_LOCALE[i18n.language] || 'es-ES';
+  const typeLabel = (tp: EvType) => t(`admin.agenda.${tp}`, { defaultValue: tp === 'cobro' ? 'Cobro' : 'Vacaciones' });
   const [events, setEvents] = useState<Ev[]>([]);
   const [loading, setLoading] = useState(true);
   const today = new Date();
@@ -112,11 +117,11 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
   // Eventos del día seleccionado (para el detalle)
   const selectedEvents = useMemo(() => selectedDay ? events.filter((e) => eventOnDay(e, selectedDay)) : [], [events, selectedDay]);
   const selectedLabel = useMemo(() => selectedDay
-    ? new Date(selectedDay + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(selectedDay + 'T00:00:00').toLocaleDateString(dl, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
     : '', [selectedDay]);
 
   // Rejilla del mes
-  const monthLabel = new Date(cur.y, cur.m, 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+  const monthLabel = new Date(cur.y, cur.m, 1).toLocaleDateString(dl, { month: 'long', year: 'numeric' });
   const firstDow = (new Date(cur.y, cur.m, 1).getDay() + 6) % 7; // Lunes=0
   const daysInMonth = new Date(cur.y, cur.m + 1, 0).getDate();
   const cells: (number | null)[] = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
@@ -140,7 +145,7 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
       {/* Leyenda */}
       <div className="flex flex-wrap gap-3 mb-3">
         {(Object.keys(TYPE_META) as EvType[]).map((k) => (
-          <span key={k} className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500"><span className={`w-2.5 h-2.5 rounded-full ${TYPE_META[k].dot}`} />{TYPE_META[k].label}</span>
+          <span key={k} className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500"><span className={`w-2.5 h-2.5 rounded-full ${TYPE_META[k].dot}`} />{typeLabel(k)}</span>
         ))}
         <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary/50 ml-auto self-center"><span className="material-symbols-outlined leading-none" style={{ fontSize: '14px' }}>touch_app</span>{t('admin.agenda.tapHint', { defaultValue: 'Pulsa los días marcados' })}</span>
       </div>
@@ -204,7 +209,7 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
               {selectedEvents.map((e, i) => (
                 <div key={i} className="rounded-xl border border-gray-100 p-3">
                   <div className="flex items-start gap-2 flex-wrap">
-                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge} shrink-0`}>{TYPE_META[e.type].label}</span>
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge} shrink-0`}>{typeLabel(e.type)}</span>
                     <span className="text-sm font-bold text-primary break-words flex-1 min-w-0">{e.title}</span>
                     {e.type === 'cobro' && e.amount != null && (
                       <span className="text-sm font-black text-primary shrink-0 whitespace-nowrap">{money(e.amount, e.currency || 'EUR')}</span>
@@ -214,7 +219,7 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
                   {e.type === 'vacacion' && (
                     <div className="text-xs text-gray-500 mt-1">
                       <span className="font-semibold text-gray-600">
-                        {e.end && e.end !== e.date ? `Del ${fmtDate(e.date)} al ${fmtDate(e.end)}` : fmtDate(e.date)}
+                        {e.end && e.end !== e.date ? t('admin.agenda.rangeFromTo', { from: fmtDate(e.date, dl), to: fmtDate(e.end, dl), defaultValue: `Del ${fmtDate(e.date, dl)} al ${fmtDate(e.end, dl)}` }) : fmtDate(e.date, dl)}
                       </span>
                       {e.sub && <span className="text-gray-400"> · {e.sub}</span>}
                     </div>
@@ -286,11 +291,11 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
                   <div className="flex items-start gap-3">
                     <div className="text-center shrink-0 w-12">
                       <div className="text-lg font-bold text-primary leading-none">{new Date(e.date + 'T00:00:00').getDate()}</div>
-                      <div className="text-[10px] uppercase text-gray-400">{new Date(e.date + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short' })}</div>
+                      <div className="text-[10px] uppercase text-gray-400">{new Date(e.date + 'T00:00:00').toLocaleDateString(dl, { month: 'short' })}</div>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge}`}>{TYPE_META[e.type].label}</span>
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge}`}>{typeLabel(e.type)}</span>
                         <span className="text-sm font-bold text-primary break-words">{e.title}</span>
                       </div>
                       {e.sub && <div className="text-xs text-gray-400 break-words">{e.sub}</div>}
