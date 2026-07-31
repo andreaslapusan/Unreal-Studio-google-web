@@ -280,7 +280,12 @@
     "shareBody": "Compártelo con otros inversores interesados en el mercado internacional.",
     "metaDescription": "Guías y novedades sobre invertir en propiedades en Bali: leasehold, rentabilidad, zonas y proceso de compra para inversores.",
     "copyLink": "Copiar enlace",
-    "share": "Compartir"
+    "share": "Compartir",
+    "cat": {
+      "market": "MERCADO",
+      "investment": "INVERSIÓN",
+      "legal": "LEGAL"
+    }
   },
   "agenciasPartnership": {
     "tag": "Programa de Agencias Colaboradoras",
@@ -2474,5 +2479,12 @@
   "notFound": {
     "msg": "Esta página no existe o ha sido movida.",
     "back": "Volver al inicio"
+  },
+  "authFinish": {
+    "validating": "Validando tu enlace mágico.",
+    "backLogin": "Volver al login"
+  },
+  "errorBoundary": {
+    "msg": "Esta página tuvo un error. Puedes volver al inicio y seguir usando la web."
   }
 }

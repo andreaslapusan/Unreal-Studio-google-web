@@ -8,6 +8,7 @@
  * parse it explicitly to be defensive and to strip the fragment after use so
  * a refresh doesn't re-process a consumed token.
  */
+import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
@@ -25,6 +26,7 @@ function extractOAuthTokens(href: string): { access_token: string; refresh_token
 }
 
 export default function AuthFinish() {
+  const { t } = useTranslation();
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
   const [errored, setErrored] = useState(false);
@@ -125,7 +127,7 @@ export default function AuthFinish() {
         {!errored && (
           <>
             <h1 className="text-3xl font-serif text-primary mb-4">Iniciando sesión…</h1>
-            <p>Validando tu enlace mágico.</p>
+            <p>{t('authFinish.validating', { defaultValue: 'Validando tu enlace mágico.' })}</p>
           </>
         )}
         {errored && (
@@ -133,7 +135,7 @@ export default function AuthFinish() {
             <h1 className="text-3xl font-serif text-primary mb-4">Algo no va bien</h1>
             <p className="text-red-700">El enlace ha expirado o ya se usó.</p>
             <a href="/agencias" className="inline-block mt-4 underline text-primary">
-              Volver al login
+              {t('authFinish.backLogin', { defaultValue: 'Volver al login' })}
             </a>
           </>
         )}

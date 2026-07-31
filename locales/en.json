@@ -280,7 +280,12 @@
     "shareBody": "Share it with other investors interested in international real estate.",
     "metaDescription": "Guides and news on investing in Bali property: leasehold, returns, areas and the buying process for investors.",
     "copyLink": "Copy link",
-    "share": "Share"
+    "share": "Share",
+    "cat": {
+      "market": "MARKET",
+      "investment": "INVESTMENT",
+      "legal": "LEGAL"
+    }
   },
   "agenciasPartnership": {
     "tag": "Partner Agencies Program",
@@ -2474,5 +2479,12 @@
   "notFound": {
     "msg": "This page doesn't exist or has been moved.",
     "back": "Back to home"
+  },
+  "authFinish": {
+    "validating": "Validating your magic link.",
+    "backLogin": "Back to login"
+  },
+  "errorBoundary": {
+    "msg": "This page had an error. You can go back home and keep using the site."
   }
 }

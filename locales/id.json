@@ -280,7 +280,12 @@
     "shareBody": "Bagikan dengan investor lain yang tertarik pada real estate internasional.",
     "metaDescription": "Panduan dan berita tentang investasi properti di Bali: leasehold, imbal hasil, area, dan proses pembelian untuk investor.",
     "copyLink": "Salin tautan",
-    "share": "Bagikan"
+    "share": "Bagikan",
+    "cat": {
+      "market": "PASAR",
+      "investment": "INVESTASI",
+      "legal": "HUKUM"
+    }
   },
   "agenciasPartnership": {
     "tag": "Program Mitra Listing",
@@ -2475,5 +2480,12 @@
   "notFound": {
     "msg": "Halaman ini tidak ada atau telah dipindahkan.",
     "back": "Kembali ke beranda"
+  },
+  "authFinish": {
+    "validating": "Memvalidasi tautan ajaib Anda.",
+    "backLogin": "Kembali ke login"
+  },
+  "errorBoundary": {
+    "msg": "Halaman ini mengalami kesalahan. Anda bisa kembali ke beranda dan melanjutkan."
   }
 }

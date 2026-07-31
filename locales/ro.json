@@ -280,7 +280,12 @@
     "shareBody": "Distribuie-l altor investitori interesați de piața internațională.",
     "metaDescription": "Ghiduri și noutăți despre investiții în proprietăți în Bali: leasehold, randament, zone și procesul de achiziție pentru investitori.",
     "copyLink": "Copiază linkul",
-    "share": "Distribuie"
+    "share": "Distribuie",
+    "cat": {
+      "market": "PIAȚĂ",
+      "investment": "INVESTIȚIE",
+      "legal": "LEGAL"
+    }
   },
   "agenciasPartnership": {
     "tag": "Program Agenții Partenere",
@@ -2474,5 +2479,12 @@
   "notFound": {
     "msg": "Această pagină nu există sau a fost mutată.",
     "back": "Înapoi la pagina principală"
+  },
+  "authFinish": {
+    "validating": "Se validează linkul tău magic.",
+    "backLogin": "Înapoi la autentificare"
+  },
+  "errorBoundary": {
+    "msg": "Această pagină a avut o eroare. Poți reveni la pagina principală și continua."
   }
 }

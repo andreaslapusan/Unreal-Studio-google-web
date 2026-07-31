@@ -11,6 +11,7 @@ const ALL_TAG = '__all__'; // sentinel — preserved across language switches
 
 const Blog: React.FC = () => {
   const { t } = useTranslation();
+  const catLabel = (tag) => { const k = { 'MERCADO':'market', 'INVERSIÓN':'investment', 'LEGAL':'legal' }[tag]; return k ? t('blog.cat.'+k, { defaultValue: tag }) : tag; };
   usePageMeta({ title: t('blog.title'), description: t('blog.metaDescription') });
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,7 +118,7 @@ const Blog: React.FC = () => {
                     : 'bg-white text-primary/50 hover:text-primary border border-primary/5'
                 }`}
               >
-                {tag === ALL_TAG ? t('blog.all') : tag}
+                {tag === ALL_TAG ? t('blog.all') : catLabel(tag)}
               </button>
             ))}
 
@@ -159,7 +160,7 @@ const Blog: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{post.tag}</span>
+                    <span className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{catLabel(post.tag)}</span>
                     <span className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">{formatDate(post.published_date)}</span>
                   </div>
                   <h3 className="text-2xl font-bold text-primary mb-3 leading-snug group-hover:text-primary/70 transition">{post.title}</h3>
