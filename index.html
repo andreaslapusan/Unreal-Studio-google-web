@@ -28,7 +28,7 @@
     <!-- Fondo crema + spinner de arranque desde el primer pintado. color-scheme:light
          evita que el navegador/WebView en modo oscuro pinte NEGRO mientras el HTML
          aún carga (conexión lenta): se ve crema con la ruedecita desde el inicio. -->
-    <style>html{color-scheme:light}html,body{background:#F3E5D8;margin:0}@keyframes appspin{to{transform:rotate(360deg)}}#app-boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#F3E5D8;z-index:1}#app-boot>div{width:42px;height:42px;border:4px solid rgba(63,35,5,.15);border-top-color:#3F2305;border-radius:50%;animation:appspin .8s linear infinite}</style>
+    <style>html{color-scheme:light}html,body{background:#F3E5D8;margin:0}@keyframes appspin{to{transform:rotate(360deg)}}#app-boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#F3E5D8;z-index:2147483647;transition:opacity .25s ease}#app-boot>div{width:42px;height:42px;border:4px solid rgba(63,35,5,.15);border-top-color:#3F2305;border-radius:50%;animation:appspin .8s linear infinite}</style>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
     <meta name="apple-mobile-web-app-title" content="Unreal Bali"/>
@@ -239,7 +239,16 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NHNQM6VG"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <div id="root"><div id="app-boot"><div></div></div></div>
+    <div id="root"></div>
+    <!-- Capa de arranque (crema + ruedecita) FUERA de #root para que React no la
+         borre antes de tiempo: tapa la pantalla hasta que el CSS de la app carga
+         (evita flash sin estilos). Se quita al cargar el CSS o, por seguridad, a los 12s. -->
+    <div id="app-boot"><div></div></div>
+    <script>
+      window.__hideBoot = function(){ var b=document.getElementById('app-boot'); if(b){ b.style.opacity='0'; setTimeout(function(){ b && b.remove(); }, 250); } };
+      window.addEventListener('load', window.__hideBoot);
+      setTimeout(window.__hideBoot, 12000);
+    </script>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>

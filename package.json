@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/generate-version.mjs && node scripts/generate-sitemap.mjs && node scripts/gen-icons.mjs",
-    "build": "vite build && node scripts/prerender-og.mjs",
+    "build": "vite build && node scripts/prerender-og.mjs && node scripts/defer-css.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
