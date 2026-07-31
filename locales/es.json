@@ -2470,5 +2470,9 @@
     "kpiMarket": "Valor mercado",
     "globalNote": "Convertido a {{cur}} (tasas actuales de la web). Detalle por moneda abajo.",
     "kpiGlobal": "Global"
+  },
+  "notFound": {
+    "msg": "Esta página no existe o ha sido movida.",
+    "back": "Volver al inicio"
   }
 }

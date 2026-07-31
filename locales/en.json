@@ -2470,5 +2470,9 @@
     "kpiMarket": "Market value",
     "globalNote": "Converted to {{cur}} (current website rates). Breakdown by currency below.",
     "kpiGlobal": "Global"
+  },
+  "notFound": {
+    "msg": "This page doesn't exist or has been moved.",
+    "back": "Back to home"
   }
 }

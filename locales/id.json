@@ -2471,5 +2471,9 @@
     "kpiMarket": "Nilai pasar",
     "globalNote": "Dikonversi ke {{cur}} (kurs situs web saat ini). Rincian per mata uang di bawah.",
     "kpiGlobal": "Global"
+  },
+  "notFound": {
+    "msg": "Halaman ini tidak ada atau telah dipindahkan.",
+    "back": "Kembali ke beranda"
   }
 }

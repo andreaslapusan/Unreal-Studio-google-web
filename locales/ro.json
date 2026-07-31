@@ -2470,5 +2470,9 @@
     "kpiMarket": "Valoare piață",
     "globalNote": "Convertit în {{cur}} (cursurile actuale ale site-ului). Detaliu pe monede mai jos.",
     "kpiGlobal": "Global"
+  },
+  "notFound": {
+    "msg": "Această pagină nu există sau a fost mutată.",
+    "back": "Înapoi la pagina principală"
   }
 }

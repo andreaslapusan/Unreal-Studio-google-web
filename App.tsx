@@ -8,6 +8,7 @@ import GlobalLoading from './components/GlobalLoading';
 import LocaleSeo from './components/LocaleSeo';
 // FloatingWhatsApp importado bajo demanda (ver Layout); desactivado por defecto.
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
+import NotFound from './components/NotFound';
 import { PORTAL_SEGMENTS, portalPath, matchPortalPath, type Portal } from './lib/portalUrls';
 // Home is eagerly imported because it's the landing route — lazy() would
 // add a needless extra round-trip on first paint. Everything else is split:
@@ -230,6 +231,7 @@ const App: React.FC = () => {
   const PUBLIC: { path: string; element: React.ReactNode }[] = [
     { path: '', element: <Home /> },
     { path: 'proyectos', element: <Projects /> },
+    { path: 'projects', element: <Projects /> },
     { path: 'proyecto/:slug', element: <ProjectDetail /> },
     { path: 'blog', element: <Blog /> },
     { path: 'blog/:slug', element: <BlogDetail /> },
@@ -238,6 +240,7 @@ const App: React.FC = () => {
     { path: 'agendar', element: <Booking /> },
     { path: 'booking', element: <Booking /> },
     { path: 'contacto', element: <Contact /> },
+    { path: 'contact', element: <Contact /> },
     { path: 'privacidad', element: <Privacy /> },
     { path: 'terminos', element: <Terms /> },
     { path: 'agencias', element: <AgenciasPartnership /> },
@@ -318,15 +321,7 @@ const App: React.FC = () => {
               <Route key={`pl-${L}-adm`} path={`/${L}/admin/login`} element={<LangSetter lang={L}><AdminLogin /></LangSetter>} />,
             ])}
 
-            <Route path="*" element={
-              <div className="min-h-screen flex flex-col items-center justify-center bg-almond px-6 text-center">
-                <h1 className="text-8xl font-serif text-primary mb-4">404</h1>
-                <p className="text-2xl text-primary/70 mb-8">Esta página no existe o ha sido movida.</p>
-                <a href="/" className="bg-primary text-white px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition">
-                  Volver al inicio
-                </a>
-              </div>
-            } />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
         </Layout>
