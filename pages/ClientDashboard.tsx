@@ -383,6 +383,17 @@ const ClientDashboard: React.FC = () => {
   // cliente (override por cliente solo puede RESTRINGIR, nunca activar lo global-OFF).
   const feat = (k: string) => features[k] !== false && ((clientData as any)?.client?.feature_overrides?.[k] !== false);
 
+  // Sirve reportes/brochures a través de nuestro dominio (/r/…, proxy nginx a
+  // Supabase Storage) para no exponer supabase.co en la barra del navegador.
+  // Streaming directo → misma velocidad que el enlace directo.
+  const proxied = (raw?: string | null): string => {
+    const v = raw || '';
+    if (!v) return '';
+    if (v.includes('/storage/v1/object/public/images/')) return '/r/' + v.split('/storage/v1/object/public/images/')[1];
+    if (/^https?:\/\//i.test(v)) return v; // URL externa (p.ej. Drive) → tal cual
+    return '/r/' + v.replace(/^\/+/, ''); // ruta relativa del bucket
+  };
+
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
@@ -778,12 +789,12 @@ const ClientDashboard: React.FC = () => {
                     {(brochureFor(proj, i18n.language) || proj.construction_update_url || proj.project_slug) && (
                       <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
                           {brochureFor(proj, i18n.language) && feat('brochure') && (
-                              <a href={getImageUrl(brochureFor(proj, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
+                              <a href={proxied(brochureFor(proj, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">download</span> {t('admin.clientDash.btnBrochure')}
                               </a>
                           )}
                           {proj.construction_update_url && feat('construction') && (
-                              <a href={getImageUrl(proj.construction_update_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
+                              <a href={proxied(proj.construction_update_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">construction</span> {t('admin.clientDash.btnConstructionReport')}
                                   {proj.construction_update_date && <span className="text-[8px] opacity-70 ml-1">({formatDate(proj.construction_update_date)})</span>}
                               </a>
