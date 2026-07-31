@@ -83,7 +83,14 @@
     "v2Body": "Prețuri ajustate față de piață",
     "v3Title": "Plusvaloare imediată",
     "v3Body": "Cumperi la prețul dezvoltatorului. Tu câștigi diferența față de piață.",
-    "metaDescription": "Dezvoltator imobiliar în Bali pentru investitori. Vile, lofturi și studiouri de la 75.000€, ROI 15-28% anual. Achiziție directă, fără intermediari."
+    "metaDescription": "Dezvoltator imobiliar în Bali pentru investitori. Vile, lofturi și studiouri de la 75.000€, ROI 15-28% anual. Achiziție directă, fără intermediari.",
+    "profit": {
+      "immediateGain": "Plusvaloare Imediată",
+      "estimatedGain": "Câștig Estimat",
+      "calcNote": "Calculat pe un model de vânzare pe plan într-o zonă cu cerere mare.",
+      "ctaQuestion": "Vrei să investești într-o unitate cu această rentabilitate?",
+      "seeFeatured": "Vezi proprietatea recomandată"
+    }
   },
   "projects": {
     "title": "Proiecte | Unreal Studio Madrid",

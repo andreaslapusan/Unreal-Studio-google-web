@@ -83,7 +83,14 @@
     "v2Body": "Harga yang disesuaikan dengan pasar",
     "v3Title": "Plusvalía Langsung",
     "v3Body": "Membeli dengan harga promotor. Anda mendapatkan perbedaan di pasar.",
-    "metaDescription": "Pengembang properti di Bali untuk investor. Vila, loft, dan studio mulai €75.000, ROI 15-28% per tahun. Pembelian langsung tanpa perantara."
+    "metaDescription": "Pengembang properti di Bali untuk investor. Vila, loft, dan studio mulai €75.000, ROI 15-28% per tahun. Pembelian langsung tanpa perantara.",
+    "profit": {
+      "immediateGain": "Keuntungan Modal Langsung",
+      "estimatedGain": "Perkiraan Keuntungan",
+      "calcNote": "Dihitung berdasarkan model penjualan off-plan di area permintaan tinggi.",
+      "ctaQuestion": "Ingin berinvestasi di unit dengan imbal hasil ini?",
+      "seeFeatured": "Lihat properti unggulan"
+    }
   },
   "projects": {
     "title": "Proyek | Unreal Studio Madrid",

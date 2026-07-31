@@ -671,11 +671,11 @@ const Home: React.FC = () => {
                   
                   <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-50">
                     <div className="text-left">
-                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">Plusvalía Inmediata</p>
+                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">{t('home.profit.immediateGain', { defaultValue: 'Plusvalía Inmediata' })}</p>
                       <p className="text-4xl font-serif text-green-600 font-bold">+{profitabilityData.gainPercent}%</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">Ganancia Estimada</p>
+                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">{t('home.profit.estimatedGain', { defaultValue: 'Ganancia Estimada' })}</p>
                       <p className="text-4xl font-serif text-primary font-bold">
                         {formatPrice(profitabilityData.capitalGain, profitabilityData.currency)}
                       </p>
@@ -683,15 +683,15 @@ const Home: React.FC = () => {
                   </div>
                   
                   <div className="space-y-4 pt-2">
-                    <p className="text-[10px] text-gray-400 font-medium italic">Calculado sobre modelo de venta sobre plano en zona de alta demanda.</p>
+                    <p className="text-[10px] text-gray-400 font-medium italic">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
                     <div className="space-y-4 text-center">
-                      <p className="text-primary font-bold text-sm">¿Quieres invertir en una unidad con esta rentabilidad?</p>
+                      <p className="text-primary font-bold text-sm">{t('home.profit.ctaQuestion', { defaultValue: '¿Quieres invertir en una unidad con esta rentabilidad?' })}</p>
                       {featuredProject && (
                         <Link
                           to={projectPath(featuredProject)}
                           className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2 mx-auto w-fit"
                         >
-                          Ver propiedad destacada <span className="material-symbols-outlined">arrow_forward</span>
+                          {t('home.profit.seeFeatured', { defaultValue: 'Ver propiedad destacada' })} <span className="material-symbols-outlined">arrow_forward</span>
                         </Link>
                       )}
                     </div>

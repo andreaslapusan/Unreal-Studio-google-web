@@ -83,7 +83,14 @@
     "v2Body": "Precios ajustados frente al mercado",
     "v3Title": "Plusvalía Inmediata",
     "v3Body": "Compras a precio de promotor. Tú capturas la diferencia sobre mercado.",
-    "metaDescription": "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y estudios desde 75.000€, ROI 15-28% anual. Compra directa, sin intermediarios."
+    "metaDescription": "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y estudios desde 75.000€, ROI 15-28% anual. Compra directa, sin intermediarios.",
+    "profit": {
+      "immediateGain": "Plusvalía Inmediata",
+      "estimatedGain": "Ganancia Estimada",
+      "calcNote": "Calculado sobre modelo de venta sobre plano en zona de alta demanda.",
+      "ctaQuestion": "¿Quieres invertir en una unidad con esta rentabilidad?",
+      "seeFeatured": "Ver propiedad destacada"
+    }
   },
   "projects": {
     "title": "Proyectos | Unreal Studio Madrid",

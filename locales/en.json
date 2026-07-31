@@ -83,7 +83,14 @@
     "v2Body": "Prices adjusted against the market",
     "v3Title": "Immediate capital gain",
     "v3Body": "You buy at developer price. You capture the difference over market value.",
-    "metaDescription": "Real estate developer in Bali for international investors. Villas, lofts and studios from €75,000, 15-28% annual ROI. Direct purchase, no middlemen."
+    "metaDescription": "Real estate developer in Bali for international investors. Villas, lofts and studios from €75,000, 15-28% annual ROI. Direct purchase, no middlemen.",
+    "profit": {
+      "immediateGain": "Immediate Capital Gain",
+      "estimatedGain": "Estimated Gain",
+      "calcNote": "Based on an off-plan sale model in a high-demand area.",
+      "ctaQuestion": "Want to invest in a unit with this return?",
+      "seeFeatured": "See featured property"
+    }
   },
   "projects": {
     "title": "Projects | Unreal Studio Madrid",
