@@ -25,6 +25,9 @@ const money = (n: number, c: string) => {
   try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0 }).format(n); }
   catch { return `${c} ${Math.round(n).toLocaleString('es-ES')}`; }
 };
+// Fecha local YYYY-MM-DD SIN pasar por UTC (toISOString desplazaba un día en móviles
+// con huso horario +, haciendo que el punto y su detalle cayeran en días distintos).
+const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const TYPE_META: Record<EvType, { label: string; dot: string; badge: string }> = {
   cobro: { label: 'Cobro', dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700' },
   vacacion: { label: 'Vacaciones', dot: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700' },
@@ -90,13 +93,13 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
       if (e.type === 'vacacion' && e.end && e.end !== e.date) {
         let d = new Date(e.date + 'T00:00:00'); const end = new Date(e.end + 'T00:00:00');
         let guard = 0;
-        while (d <= end && guard++ < 400) { add(d.toISOString().slice(0, 10), 'vacacion'); d.setDate(d.getDate() + 1); }
+        while (d <= end && guard++ < 400) { add(ymd(d), 'vacacion'); d.setDate(d.getDate() + 1); }
       } else add(e.date, e.type);
     }
     return map;
   }, [events]);
 
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = ymd(today);
   const list = useMemo(() => {
     let l = events.filter((e) => filterType === 'all' || e.type === filterType);
     if (futureOnly) l = l.filter((e) => e.date >= todayStr);
@@ -137,7 +140,7 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
         {(Object.keys(TYPE_META) as EvType[]).map((k) => (
           <span key={k} className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500"><span className={`w-2.5 h-2.5 rounded-full ${TYPE_META[k].dot}`} />{TYPE_META[k].label}</span>
         ))}
-        <span className="text-[11px] text-gray-300 ml-auto self-center hidden sm:inline">{t('admin.agenda.tapHint', { defaultValue: 'Pulsa un día para ver su detalle' })}</span>
+        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary/50 ml-auto self-center"><span className="material-symbols-outlined leading-none" style={{ fontSize: '14px' }}>touch_app</span>{t('admin.agenda.tapHint', { defaultValue: 'Pulsa los días marcados' })}</span>
       </div>
 
       {/* Rejilla del mes */}
@@ -150,25 +153,35 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
             if (day === null) return <div key={i} />;
             const ds = dstr(day); const ev = dayMap[ds]; const isToday = ds === todayStr;
             const isSel = ds === selectedDay; const has = !!ev;
+            const count = ev ? ev.cobro + ev.vacacion : 0;
+            // Solo los días CON eventos son pulsables (afordancia clara tipo botón).
+            // Los días vacíos son celdas inertes → así se sabe qué tiene acción y qué no.
+            if (!has) {
+              return (
+                <div key={i} className={`aspect-square rounded-lg border text-[11px] p-1 flex flex-col ${isToday ? 'border-primary/50' : 'border-gray-100'}`}>
+                  <span className={`font-bold ${isToday ? 'text-primary' : 'text-gray-300'}`}>{day}</span>
+                </div>
+              );
+            }
             return (
               <button
                 key={i}
                 type="button"
                 onClick={() => setSelectedDay(isSel ? null : ds)}
                 aria-pressed={isSel}
-                aria-label={`${day}${has ? ` · ${(ev!.cobro + ev!.vacacion)} evento(s)` : ''}`}
-                className={`aspect-square rounded-lg border text-[11px] p-1 flex flex-col text-left transition
-                  ${isSel ? 'border-primary ring-2 ring-primary/40 bg-primary/10'
-                    : isToday ? 'border-primary bg-primary/5' : 'border-gray-100'}
-                  ${has ? 'hover:border-primary/60 hover:bg-primary/5 cursor-pointer' : 'hover:bg-gray-50 cursor-pointer'}`}
+                aria-label={`${day}: ${count} evento(s). Pulsa para ver el detalle.`}
+                className={`aspect-square rounded-lg border-2 text-[11px] p-1 flex flex-col text-left cursor-pointer transition active:scale-95
+                  ${isSel ? 'border-primary ring-2 ring-primary/30 bg-primary/10 shadow-sm'
+                    : 'border-primary/30 bg-primary/[0.055] hover:bg-primary/10 hover:border-primary/60 shadow-sm'}`}
               >
-                <span className={`font-bold ${isSel || isToday ? 'text-primary' : 'text-gray-500'}`}>{day}</span>
-                {ev && (
-                  <span className="mt-auto flex flex-wrap gap-0.5 justify-center">
+                <span className="font-black text-primary">{day}</span>
+                <span className="mt-auto flex items-center justify-between gap-0.5">
+                  <span className="flex gap-0.5">
                     {ev.cobro > 0 && <span className={`w-1.5 h-1.5 rounded-full ${TYPE_META.cobro.dot}`} title={`${ev.cobro} cobro(s)`} />}
                     {ev.vacacion > 0 && <span className={`w-1.5 h-1.5 rounded-full ${TYPE_META.vacacion.dot}`} title={`${ev.vacacion} vacacion(es)`} />}
                   </span>
-                )}
+                  <span className="material-symbols-outlined text-primary/50 leading-none" style={{ fontSize: '13px' }}>chevron_right</span>
+                </span>
               </button>
             );
           })}
