@@ -175,9 +175,9 @@
     },
     "metaDescription": "Contactează Unreal Studio. Răspundem întrebărilor tale despre investiții în Bali și programăm un apel fără obligații.",
     "successTitle": "Perfect! Ți-am primit datele.",
-    "successBody": "Am deschis WhatsApp pentru a finaliza. Dacă nu s-a deschis, folosește butonul:",
-    "successBlocked": "Browserul tău a blocat WhatsApp. Apasă butonul pentru a deschide conversația:",
-    "openWhatsapp": "Deschide WhatsApp"
+    "successBody": "Ți-am deschis aplicația de email pentru a ne trimite datele. Dacă nu s-a deschis, folosește butonul:",
+    "successBlocked": "Browserul nu a putut deschide aplicația de email. Apasă butonul pentru a-l trimite:",
+    "openWhatsapp": "Deschide email"
   },
   "bookingWidget": {
     "tag": "PROGRAMEAZĂ APEL",

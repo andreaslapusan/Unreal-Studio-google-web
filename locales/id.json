@@ -175,9 +175,9 @@
     },
     "metaDescription": "Hubungi Unreal Studio. Kami menjawab pertanyaan Anda tentang investasi properti di Bali dan menjadwalkan panggilan tanpa komitmen.",
     "successTitle": "Bagus! Data Anda sudah kami terima.",
-    "successBody": "Kami membuka WhatsApp untuk menyelesaikan. Jika tidak terbuka, gunakan tombol:",
-    "successBlocked": "Browser Anda memblokir WhatsApp. Ketuk tombol untuk membuka obrolan:",
-    "openWhatsapp": "Buka WhatsApp"
+    "successBody": "Kami telah membuka aplikasi email Anda untuk mengirimkan datanya. Jika tidak terbuka, gunakan tombol:",
+    "successBlocked": "Browser Anda tidak dapat membuka aplikasi email. Ketuk tombol untuk mengirimkannya:",
+    "openWhatsapp": "Buka email"
   },
   "bookingWidget": {
     "tag": "JADWALKAN PANGGILAN",

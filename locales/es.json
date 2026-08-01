@@ -175,9 +175,9 @@
     },
     "metaDescription": "Contacta con Unreal Studio. Resolvemos tus dudas sobre invertir en propiedades en Bali y agendamos una llamada sin compromiso.",
     "successTitle": "¡Perfecto! Hemos recibido tus datos.",
-    "successBody": "Te hemos abierto WhatsApp para terminar. Si no se abrió, usa el botón:",
-    "successBlocked": "Tu navegador bloqueó WhatsApp. Toca el botón para abrir la conversación:",
-    "openWhatsapp": "Abrir WhatsApp"
+    "successBody": "Te hemos abierto tu correo para enviarnos los datos. Si no se abrió, usa el botón:",
+    "successBlocked": "Tu navegador no pudo abrir el correo. Toca el botón para enviárnoslo:",
+    "openWhatsapp": "Abrir correo"
   },
   "bookingWidget": {
     "tag": "AGENDAR LLAMADA",

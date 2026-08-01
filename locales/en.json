@@ -175,9 +175,9 @@
     },
     "metaDescription": "Contact Unreal Studio. We answer your questions about investing in Bali property and schedule a no-commitment call.",
     "successTitle": "Great! We've received your details.",
-    "successBody": "We've opened WhatsApp to finish. If it didn't open, use the button:",
-    "successBlocked": "Your browser blocked WhatsApp. Tap the button to open the chat:",
-    "openWhatsapp": "Open WhatsApp"
+    "successBody": "We've opened your email app to send us the details. If it didn't open, use the button:",
+    "successBlocked": "Your browser couldn't open your email app. Tap the button to send it:",
+    "openWhatsapp": "Open email"
   },
   "bookingWidget": {
     "tag": "BOOK A CALL",

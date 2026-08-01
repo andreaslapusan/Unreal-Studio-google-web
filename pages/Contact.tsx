@@ -103,11 +103,11 @@ const Contact: React.FC = () => {
                     </p>
                     <p className="text-sm text-green-700/80 mt-1">
                       {sent.blocked
-                        ? t('contact.successBlocked', 'Tu navegador bloqueó WhatsApp. Toca el botón para abrir la conversación:')
-                        : t('contact.successBody', 'Te hemos abierto WhatsApp para terminar. Si no se abrió, usa el botón:')}
+                        ? t('contact.successBlocked', 'Tu navegador no pudo abrir el correo. Toca el botón para enviárnoslo:')
+                        : t('contact.successBody', 'Te hemos abierto tu correo para enviarnos los datos. Si no se abrió, usa el botón:')}
                     </p>
                     <a href={sent.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-3 bg-green-600 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-green-700 transition">
-                      <span className="material-symbols-outlined text-base">chat</span>{t('contact.openWhatsapp', 'Abrir WhatsApp')}
+                      <span className="material-symbols-outlined text-base">mail</span>{t('contact.openWhatsapp', 'Abrir correo')}
                     </a>
                   </div>
                 )}
