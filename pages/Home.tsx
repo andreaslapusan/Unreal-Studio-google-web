@@ -466,8 +466,8 @@ const Home: React.FC = () => {
                 <div className="relative">
                   <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
-                    <option>Co-Inversión</option>
-                    <option>Propiedad Única</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Loft">Loft</option>
                     {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
