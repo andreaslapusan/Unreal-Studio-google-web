@@ -1534,6 +1534,13 @@
       "endOfList": "— Tidak ada lagi —",
       "loadingMore": "Memuat lebih banyak…"
     },
+    "perms": {
+      "check_in": "Absen masuk/keluar",
+      "upload_reports": "Unggah laporan konstruksi",
+      "request_vacation": "Ajukan cuti",
+      "view_team_calendar": "Lihat kalender tim",
+      "edit_properties": "Edit data properti (progres konstruksi, data, galeri…)"
+    },
     "vac": {
       "confirmDelete": "Hapus permintaan cuti ini?",
       "endBeforeStart": "Tanggal akhir tidak bisa sebelum tanggal awal.",

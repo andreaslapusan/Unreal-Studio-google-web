@@ -1435,6 +1435,13 @@
       "endOfList": "— No more —",
       "loadingMore": "Loading more…"
     },
+    "perms": {
+      "check_in": "Clock in/out",
+      "upload_reports": "Upload construction reports",
+      "request_vacation": "Request vacation",
+      "view_team_calendar": "View team calendar",
+      "edit_properties": "Edit property listings (construction progress, data, gallery…)"
+    },
     "vac": {
       "confirmDelete": "Delete this vacation request?",
       "endBeforeStart": "End date cannot be before start date.",

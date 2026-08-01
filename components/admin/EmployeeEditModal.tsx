@@ -158,9 +158,9 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
                 {EMPLOYEE_PERMISSIONS.map((p) => {
                   const on = perms[p.key];
                   return (
-                    <button key={p.key} title={p.description || p.label} onClick={() => setPerms((m) => ({ ...m, [p.key]: !on }))}
+                    <button key={p.key} title={t('admin.perms.' + p.key, p.description || p.label)} onClick={() => setPerms((m) => ({ ...m, [p.key]: !on }))}
                       className={`px-3 py-1.5 rounded-full text-[12px] font-bold transition ${on ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
-                      <span className="material-symbols-outlined text-[14px] align-middle mr-1">{on ? 'check_circle' : 'radio_button_unchecked'}</span>{p.label}
+                      <span className="material-symbols-outlined text-[14px] align-middle mr-1">{on ? 'check_circle' : 'radio_button_unchecked'}</span>{t('admin.perms.' + p.key, p.label)}
                     </button>
                   );
                 })}

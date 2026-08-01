@@ -1435,6 +1435,13 @@
       "endOfList": "— Nu mai sunt —",
       "loadingMore": "Se încarcă mai mult…"
     },
+    "perms": {
+      "check_in": "Pontaj intrare/ieșire",
+      "upload_reports": "Încarcă rapoarte de șantier",
+      "request_vacation": "Solicită concediu",
+      "view_team_calendar": "Vezi calendarul echipei",
+      "edit_properties": "Editează fișele proprietăților (progres șantier, date, galerie…)"
+    },
     "vac": {
       "confirmDelete": "Ștergeți această solicitare de vacanță?",
       "endBeforeStart": "Data de sfârșit nu poate fi anterioară datei inițiale.",

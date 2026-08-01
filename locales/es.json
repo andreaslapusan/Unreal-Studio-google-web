@@ -1435,6 +1435,13 @@
       "endOfList": "— No hay más —",
       "loadingMore": "Cargando más…"
     },
+    "perms": {
+      "check_in": "Fichar entrada/salida",
+      "upload_reports": "Subir reportes de obra",
+      "request_vacation": "Solicitar vacaciones",
+      "view_team_calendar": "Ver calendario del equipo",
+      "edit_properties": "Editar fichas de propiedades (avance de obra, datos, galería…)"
+    },
     "vac": {
       "confirmDelete": "¿Eliminar esta solicitud de vacaciones?",
       "endBeforeStart": "La fecha fin no puede ser anterior a la inicial.",
