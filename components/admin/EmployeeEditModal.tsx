@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { EMPLOYEE_PERMISSIONS, hasPermission } from '../../lib/permissions';
+import { uiLocale, weekdaysFor } from '../../lib/dateLocale';
 
 export interface EmployeeRow {
   id: string;
@@ -184,11 +185,11 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
                 <div>
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest block mb-1.5">{t('fix.emp.workDays')}</span>
                   <div className="flex gap-1.5">
-                    {DAYS.map(([lbl, dow]) => {
+                    {DAYS.map(([, dow]) => {
                       const on = days.includes(dow);
                       return (
                         <button key={dow} onClick={() => setDays((d) => on ? d.filter((x) => x !== dow) : [...d, dow].sort())}
-                          className={`w-8 h-8 rounded-lg text-xs font-bold transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>{lbl}</button>
+                          className={`w-8 h-8 rounded-lg text-xs font-bold transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>{weekdaysFor(uiLocale())[dow-1]}</button>
                       );
                     })}
                   </div>

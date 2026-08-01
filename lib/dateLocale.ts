@@ -23,3 +23,12 @@ export function uiLocale(): string {
   const l = (i18n.language || 'es').slice(0, 2);
   return DATE_LOCALE[l] || 'es-ES';
 }
+
+/**
+ * Iniciales de los 7 días de la semana (lunes primero) en el idioma activo.
+ * Reemplaza los arrays fijos ['L','M','X','J','V','S','D'] que salían en español
+ * en EN/RO/ID. weekdaysFor('en-GB') → ['M','T','W','T','F','S','S'], etc.
+ */
+export const weekdaysFor = (locale: string): string[] =>
+  Array.from({ length: 7 }, (_, i) =>
+    new Date(2024, 0, 1 + i).toLocaleDateString(locale, { weekday: 'narrow' }).toUpperCase());

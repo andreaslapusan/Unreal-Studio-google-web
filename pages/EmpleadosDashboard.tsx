@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 import { hasPermission } from '../lib/permissions';
+import { uiLocale, weekdaysFor } from '../lib/dateLocale';
 import { realEmailOf } from '../lib/portalAuth';
 import { baliTime, baliToday, baliDayStartISO } from '../lib/timezone';
 import VacationCalendar from '../components/VacationCalendar';
@@ -470,7 +471,7 @@ const EmpleadosDashboard: React.FC = () => {
               <span>
                 {t('empleados.yourSchedule', 'Tu horario')}: <b className="text-primary/70">{(employee.work_start_time || '').slice(0,5)}{employee.work_end_time ? `–${(employee.work_end_time||'').slice(0,5)}` : ''}</b>
                 {employee.work_days && employee.work_days.length > 0 && (
-                  <> · {employee.work_days.map((d) => ['','L','M','X','J','V','S','D'][d]).join(' ')}</>
+                  <> · {employee.work_days.map((d) => weekdaysFor(uiLocale())[d-1]).join(' ')}</>
                 )}
               </span>
             </div>

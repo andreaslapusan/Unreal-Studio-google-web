@@ -7,7 +7,7 @@
  * modificar / borrar cada solicitud. Datos en `employees` + `employee_vacations`.
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { uiLocale } from '../../lib/dateLocale';
+import { uiLocale, weekdaysFor } from '../../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { useEscapeKey } from '../../lib/useEscapeKey';
@@ -200,7 +200,7 @@ const VacationManager: React.FC = () => {
             const firstDayOfWeek = (monthDate.getDay() + 6) % 7;
             return (
               <div className="grid grid-cols-7 gap-1.5 text-center">
-                {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d) => <span key={d} className="text-[11px] font-bold text-primary/30 pb-1">{d}</span>)}
+                {weekdaysFor(uiLocale()).map((d) => <span key={d} className="text-[11px] font-bold text-primary/30 pb-1">{d}</span>)}
                 {Array.from({ length: firstDayOfWeek }, (_, i) => <span key={`e${i}`} />)}
                 {Array.from({ length: daysInMonth }, (_, dayIdx) => {
                   const day = dayIdx + 1;
