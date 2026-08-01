@@ -1544,6 +1544,7 @@
       "reject": "Tolak",
       "modify": "Ubah",
       "statusApproved": "disetujui",
+      "statusRejected": "ditolak",
       "statusPending": "menunggu",
       "requestsAllTeam": "Permintaan cuti tim {{year}}",
       "requests": "Permintaan cuti {{year}}",

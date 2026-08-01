@@ -25,6 +25,11 @@ interface Step { title: string; body: string }
 
 export default function AgenciasPartnership() {
   const { t } = useTranslation();
+  const statusLabel = (st?: string) => {
+    const map: Record<string, string> = { active: 'active', Activo: 'active', Reserva: 'reserved', Reservado: 'reserved', Pagado: 'paid', 'En proceso': 'inProgress', 'En construcción': 'inProgress', Completado: 'completed', Pendiente: 'pending' };
+    const k = map[String(st || '')];
+    return k ? t('admin.clientDash.status.' + k) : String(st || '');
+  };
   const [projects, setProjects] = useState<ProjectCard[]>([]);
 
   // benefits/steps vienen del namespace i18n (es/en/ro) como arrays.
@@ -123,7 +128,7 @@ export default function AgenciasPartnership() {
                 <div className="p-5">
                   <h3 className="font-serif text-lg leading-tight">{p.name}</h3>
                   {p.zone && <p className="text-xs text-primary/60 mt-1">{p.zone}</p>}
-                  {p.status && <p className="text-xs text-primary/50 mt-1">{p.status}</p>}
+                  {p.status && <p className="text-xs text-primary/50 mt-1">{statusLabel(p.status)}</p>}
                 </div>
               </article>
             ))}

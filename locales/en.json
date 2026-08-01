@@ -1445,6 +1445,7 @@
       "reject": "Reject",
       "modify": "Modify",
       "statusApproved": "approved",
+      "statusRejected": "rejected",
       "statusPending": "pending",
       "requestsAllTeam": "All Team Requests {{year}}",
       "requests": "Requests {{year}}",

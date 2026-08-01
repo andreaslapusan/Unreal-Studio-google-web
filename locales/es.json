@@ -1445,6 +1445,7 @@
       "reject": "Rechazar",
       "modify": "Modificar",
       "statusApproved": "aprobada",
+      "statusRejected": "rechazada",
       "statusPending": "pendiente",
       "requestsAllTeam": "Solicitudes de todo el equipo {{year}}",
       "requests": "Solicitudes {{year}}",

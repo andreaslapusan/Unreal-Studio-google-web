@@ -40,6 +40,15 @@ function eachDay(start: string, end: string): string[] {
 
 const VacationManager: React.FC = () => {
   const { t } = useTranslation();
+  const statusLabel = (st: string) => isApproved(st) ? t('admin.vac.statusApproved')
+    : (st === 'rechazada' || st === 'rejected') ? t('admin.vac.statusRejected')
+    : t('admin.vac.statusPending');
+  const typeLabel = (ty: string) => {
+    const k = String(ty || '').toLowerCase();
+    if (k === 'baja' || k === 'sick' || k === 'sickleave' || k === 'sick_leave') return t('admin.vac.typeSickLeave');
+    if (k === 'personal') return t('admin.vac.typePersonal');
+    return t('admin.vac.typeVacation');
+  };
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [vacations, setVacations] = useState<Vacation[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -59,7 +68,7 @@ const VacationManager: React.FC = () => {
     }
     return m;
   }, [payDue]);
-  const fmtMoney = (n: number, c: string) => { try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0 } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
+  const fmtMoney = (n: number, c: string) => { try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : uiLocale(), { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0 } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -167,7 +176,7 @@ const VacationManager: React.FC = () => {
               <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-xl px-4 py-3 border border-amber-100">
                 <div className="min-w-0">
                   <p className="font-bold text-primary text-sm">{nameFor(v)}</p>
-                  <p className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}{v.note ? ` · ${v.note}` : ''}</p>
+                  <p className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {typeLabel(v.type)}{v.note ? ` · ${v.note}` : ''}</p>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <AsyncButton onClick={() => setStatus(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">{t('admin.vac.approve')}</AsyncButton>
@@ -234,8 +243,8 @@ const VacationManager: React.FC = () => {
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: colorOf(v.employee_email) }} />
                   <span className="font-medium text-primary text-sm">{nameFor(v)}</span>
-                  <span className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {v.type}</span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{v.status}</span>
+                  <span className="text-xs text-gray-500">{v.start_date} → {v.end_date} · {typeLabel(v.type)}</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{statusLabel(v.status)}</span>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   {!isApproved(v.status) && <AsyncButton onClick={() => setStatus(v.id, 'aprobada')} className="text-[10px] font-bold text-green-700 hover:underline">{t('admin.vac.approve')}</AsyncButton>}
@@ -285,9 +294,9 @@ const VacationManager: React.FC = () => {
               <li key={i} className="flex items-start gap-2">
                 <span className="w-2.5 h-2.5 rounded-full mt-0.5 shrink-0" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
                 <div className="min-w-0">
-                  <p className="font-bold text-primary">{nameFor(v)} <span className="font-normal text-primary/40">· {isApproved(v.status) ? t('admin.vac.statusApproved') : t('admin.vac.statusPending')}</span></p>
+                  <p className="font-bold text-primary">{nameFor(v)} <span className="font-normal text-primary/40">· {statusLabel(v.status)}</span></p>
                   <p className="text-primary/60">{v.start_date} → {v.end_date} · {t('admin.vac.daysTotal', { n: dayCount(v.start_date, v.end_date) })}</p>
-                  <p className="text-primary/50 capitalize">{v.type}{v.note ? ` · ${t('admin.vac.reason')}: ${v.note}` : ''}</p>
+                  <p className="text-primary/50 capitalize">{typeLabel(v.type)}{v.note ? ` · ${t('admin.vac.reason')}: ${v.note}` : ''}</p>
                 </div>
               </li>
             ))}
@@ -341,9 +350,9 @@ const VacationManager: React.FC = () => {
                     <li key={i} className="flex items-start gap-2">
                       <span className="w-2.5 h-2.5 rounded-full mt-1 shrink-0" style={{ background: colorOf(v.employee_email), opacity: isApproved(v.status) ? 1 : 0.4 }} />
                       <div className="min-w-0">
-                        <p className="font-bold text-primary text-sm">{nameFor(v)} <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{isApproved(v.status) ? t('admin.vac.statusApproved') : t('admin.vac.statusPending')}</span></p>
+                        <p className="font-bold text-primary text-sm">{nameFor(v)} <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{statusLabel(v.status)}</span></p>
                         <p className="text-xs text-primary/60">{v.start_date} → {v.end_date} · {t('admin.vac.daysTotal', { n: dayCount(v.start_date, v.end_date) })}</p>
-                        <p className="text-xs text-primary/50 capitalize">{v.type}{v.note ? ` · ${t('admin.vac.reason')}: ${v.note}` : ''}</p>
+                        <p className="text-xs text-primary/50 capitalize">{typeLabel(v.type)}{v.note ? ` · ${t('admin.vac.reason')}: ${v.note}` : ''}</p>
                       </div>
                     </li>
                   ))}

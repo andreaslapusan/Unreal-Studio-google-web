@@ -29,7 +29,7 @@ interface PartnerRow {
 }
 
 const fmtEUR = (n: number) =>
-  new Intl.NumberFormat("es-ES", {
+  new Intl.NumberFormat(uiLocale(), {
     style: "currency",
     currency: "EUR",
     maximumFractionDigits: 0,

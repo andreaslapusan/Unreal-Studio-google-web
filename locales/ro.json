@@ -1445,6 +1445,7 @@
       "reject": "Respinge",
       "modify": "Modifică",
       "statusApproved": "aprobate",
+      "statusRejected": "respinsă",
       "statusPending": "în așteptare",
       "requestsAllTeam": "Solicitări ale întregii echipe {{year}}",
       "requests": "Solicitări {{year}}",
