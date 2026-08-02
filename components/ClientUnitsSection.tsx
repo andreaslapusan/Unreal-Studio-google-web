@@ -10,6 +10,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { uiLocale } from '../lib/dateLocale';
 
 interface ClientUnit {
   investor_unit_id: string;
@@ -67,7 +68,7 @@ const ClientUnitsSection: React.FC<{ clientId: string }> = ({ clientId }) => {
             {
               label: t('inversoresDashboard.labelContractSigned'),
               done: Boolean(u.contract_signed_at),
-              value: u.contract_signed_at ? new Date(u.contract_signed_at).toLocaleDateString() : undefined,
+              value: u.contract_signed_at ? new Date(u.contract_signed_at).toLocaleDateString(uiLocale()) : undefined,
             },
             { label: t('inversoresDashboard.labelDelivery'), done: false, value: u.delivery_date || undefined },
           ];
