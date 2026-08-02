@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
+import { translateProjectTerm } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -543,7 +544,7 @@ const ProjectDetail: React.FC = () => {
                   return (
                     <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
                       <span className="material-symbols-outlined text-primary/40">{icons[amenity] || 'check_circle'}</span>
-                      <span className="text-sm font-medium text-primary">{amenity}</span>
+                      <span className="text-sm font-medium text-primary">{translateProjectTerm(amenity, i18n.language)}</span>
                     </div>
                   );
                 })}
@@ -575,13 +576,13 @@ const ProjectDetail: React.FC = () => {
                       <div key={catName}>
                         <div className="flex items-center gap-2 mb-3">
                           <span className="material-symbols-outlined text-primary/30">{cat.icon}</span>
-                          <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">{catName}</p>
+                          <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">{translateProjectTerm(catName, i18n.language)}</p>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                           {activeItems.map((item, idx) => (
                             <div key={idx} className="flex items-center gap-2 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
                               <span className="material-symbols-outlined text-primary/30 text-sm">check_circle</span>
-                              <span className="text-sm font-medium text-primary">{item}</span>
+                              <span className="text-sm font-medium text-primary">{translateProjectTerm(item, i18n.language)}</span>
                             </div>
                           ))}
                         </div>
