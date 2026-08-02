@@ -1981,7 +1981,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
                 <p className="text-sm text-gray-500 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}{client.phone && ` · ${client.phone}`}</p>
                 {(client as any).last_login && (
-                  <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
+                  <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
                 )}
                 <div className="mt-1 space-y-0.5">
                   {(() => {

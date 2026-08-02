@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
+import { uiLocale } from '../lib/dateLocale';
 import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
@@ -354,7 +355,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
 const ClientDashboard: React.FC = () => {
   const { t, i18n } = useTranslation();
   useEffect(() => { document.title = t('admin.clientDash.pageTitle'); }, [t]);
-  const dateLocale = i18n.language === 'en' ? 'en-GB' : i18n.language === 'ro' ? 'ro-RO' : 'es-ES';
+  const dateLocale = uiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { formatMoney } = useCurrency();
