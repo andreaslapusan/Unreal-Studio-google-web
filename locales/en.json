@@ -718,6 +718,7 @@
     },
     "equipoUpload": {
       "title": "Upload construction report",
+      "fileRejected": "{{n}} invalid file(s) were ignored (only images, videos or PDF, max 200 MB).",
       "accessRestrictedTitle": "Restricted access",
       "accessRestrictedBody": "Internal team only.",
       "labelProject": "Project *",

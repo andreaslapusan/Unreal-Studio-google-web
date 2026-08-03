@@ -718,6 +718,7 @@
     },
     "equipoUpload": {
       "title": "Încarcă update șantier",
+      "fileRejected": "{{n}} fișier(e) invalid(e) au fost ignorate (doar imagini, videoclipuri sau PDF, max 200 MB).",
       "accessRestrictedTitle": "Acces restricționat",
       "accessRestrictedBody": "Doar pentru echipa internă.",
       "labelProject": "Proiect *",

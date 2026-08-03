@@ -718,6 +718,7 @@
     },
     "equipoUpload": {
       "title": "Subir update de obra",
+      "fileRejected": "Se ignoraron {{n}} archivo(s) no válidos (solo imágenes, vídeos o PDF, máx. 200 MB).",
       "accessRestrictedTitle": "Acceso restringido",
       "accessRestrictedBody": "Solo para equipo interno.",
       "labelProject": "Proyecto *",

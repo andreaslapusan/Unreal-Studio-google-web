@@ -817,6 +817,7 @@
     },
     "equipoUpload": {
       "title": "Unggah update proyek",
+      "fileRejected": "{{n}} berkas tidak valid diabaikan (hanya gambar, video, atau PDF, maks 200 MB).",
       "accessRestrictedTitle": "Akses terbatas",
       "accessRestrictedBody": "Hanya untuk tim internal.",
       "labelProject": "Proyek *",

@@ -116,9 +116,27 @@ export default function EquipoUpload() {
     }
   }
 
+  // Validación de subida: solo imágenes/vídeos/PDF y máx 200 MB. El `accept` del
+  // input solo filtra el diálogo nativo y NO aplica al drag-drop → validamos aquí
+  // para no colar ficheros erróneos/enormes al bucket.
+  const MAX_UPLOAD_BYTES = 200 * 1024 * 1024;
+  const isAllowedFile = (f: File) =>
+    (f.type.startsWith("image/") || f.type.startsWith("video/") || f.type === "application/pdf") &&
+    f.size <= MAX_UPLOAD_BYTES;
+
   const handleFilesAdded = (incoming: FileList | null) => {
     if (!incoming) return;
-    const arr: QueuedFile[] = Array.from(incoming).map((f) => ({
+    const all = Array.from(incoming);
+    const valid = all.filter(isAllowedFile);
+    const rejected = all.length - valid.length;
+    if (rejected > 0) {
+      setSubmitError(t("admin.equipoUpload.fileRejected", {
+        defaultValue: "Se ignoraron {{n}} archivo(s) no válidos (solo imágenes, vídeos o PDF, máx. 200 MB).",
+        n: rejected,
+      }));
+    }
+    if (valid.length === 0) return;
+    const arr: QueuedFile[] = valid.map((f) => ({
       file: f,
       previewUrl: f.type.startsWith("image/") ? URL.createObjectURL(f) : undefined,
     }));
