@@ -107,7 +107,7 @@ const AdminSidebar: React.FC = () => {
   );
 
   return (
-    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-[#1f2430] text-white h-screen sticky top-0 self-start overflow-y-auto">
+    <aside className="hidden lg:flex flex-col w-60 shrink-0 bg-primary text-white h-screen sticky top-0 self-start overflow-y-auto">
       <Link to="/admin?view=dashboard" className="px-5 py-6 border-b border-white/10 block">
         <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="font-serif text-xl tracking-tight text-white" />
         <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{t('admin.nav.panel', 'Panel de administración')}</span>

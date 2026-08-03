@@ -28,7 +28,7 @@ const AdminMobileNav: React.FC = () => {
   };
 
   return (
-    <div className="md:hidden sticky top-0 z-30 bg-[#1f2430] text-white border-b border-white/10">
+    <div className="lg:hidden sticky top-0 z-30 bg-primary text-white border-b border-white/10">
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-xs font-bold text-white/70">Unreal · Admin</span>
         <button onClick={() => setOpen((o) => !o)} aria-label="Menú" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center active:scale-95 transition">
@@ -37,12 +37,12 @@ const AdminMobileNav: React.FC = () => {
       </div>
       {open && (
         <div className="fixed inset-0 z-40" onClick={() => setOpen(false)}>
-          <div className="absolute right-3 top-12 bg-[#262c3a] rounded-2xl shadow-xl border border-white/10 p-3 w-[210px] flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
+          <div className="absolute right-3 top-12 bg-[#4a2b0c] rounded-2xl shadow-xl border border-white/10 p-3 w-[210px] flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
             {links.map((it) => {
               const active = it.match(location.pathname);
               return (
                 <Link key={it.key} to={it.to} onClick={() => setOpen(false)}
-                  className={`px-3 py-2 rounded-xl text-sm font-bold transition ${active ? 'bg-amber-400 text-[#1f2430]' : 'text-white/80 hover:bg-white/10'}`}>
+                  className={`px-3 py-2 rounded-xl text-sm font-bold transition ${active ? 'bg-amber-400 text-primary' : 'text-white/80 hover:bg-white/10'}`}>
                   {it.label}
                 </Link>
               );

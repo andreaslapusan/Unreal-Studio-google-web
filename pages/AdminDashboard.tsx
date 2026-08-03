@@ -1731,23 +1731,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <Link to="/"><BrandLogo imgClassName="h-8 md:h-10 w-auto object-contain" textClassName="font-serif text-primary text-lg md:text-2xl tracking-tight" /></Link>
         </div>
         <div className="flex items-center gap-2 md:gap-3 flex-wrap justify-end">
-          <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="hidden md:block bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
+          <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="hidden lg:block bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
             {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
           </select>
-          <div className="hidden md:block"><LanguageSwitcher /></div>
-          <button onClick={() => setWalkthroughStep(0)} className="hidden md:flex text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition items-center gap-1">
+          <div className="hidden lg:block"><LanguageSwitcher /></div>
+          <button onClick={() => setWalkthroughStep(0)} className="hidden lg:flex text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition items-center gap-1">
              <span className="material-symbols-outlined text-xs">help</span> {t('admin.common.viewGuide')}
           </button>
-          <button onClick={handleLogout} className="hidden md:block bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
-          {/* Bocadillo (tres rayitas) en móvil: todos los menús + idioma/divisa/guía/salir */}
-          <button onClick={() => setAdminMenuOpen((o) => !o)} aria-label={t('fix.adm.menuAria')} className="md:hidden w-10 h-10 rounded-full bg-gray-100 text-primary flex items-center justify-center active:scale-95 transition">
+          <button onClick={handleLogout} className="hidden lg:block bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
+          {/* Bocadillo (tres rayitas) en móvil y horizontal: todos los menús + idioma/divisa/guía/salir */}
+          <button onClick={() => setAdminMenuOpen((o) => !o)} aria-label={t('fix.adm.menuAria')} className="lg:hidden w-10 h-10 rounded-full bg-gray-100 text-primary flex items-center justify-center active:scale-95 transition">
             <span className="material-symbols-outlined text-[22px]">{adminMenuOpen ? 'close' : 'menu'}</span>
           </button>
         </div>
       </header>
 
       {adminMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
+        <div className="lg:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
           <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-1 mb-2">
               {ADMIN_MOBILE_NAV.map((it) => (
