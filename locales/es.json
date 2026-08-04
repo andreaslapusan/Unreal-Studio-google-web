@@ -1205,6 +1205,8 @@
       "brochureByLang": "Brochure por idioma",
       "brochureByLangHint": "Sube un PDF por idioma. Si un idioma no tiene, se usa el de inglés (ENG) por defecto.",
       "addHolder": "Añadir titular",
+      "holderMoveUp": "Subir",
+      "holderMoveDown": "Bajar",
       "bulkDeleteConfirm": "¿Borrar {{n}} cliente(s)? No se puede deshacer.",
       "bulkError": "Error en la acción en bloque",
       "clientStatus": "Estado del cliente",

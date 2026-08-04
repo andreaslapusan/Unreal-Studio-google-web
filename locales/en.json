@@ -1205,6 +1205,8 @@
       "brochureByLang": "Brochure by language",
       "brochureByLangHint": "Upload a PDF per language. If a language is not available, English (ENG) is used by default.",
       "addHolder": "Add holder",
+      "holderMoveUp": "Move up",
+      "holderMoveDown": "Move down",
       "bulkDeleteConfirm": "Delete {{n}} client(s)? This cannot be undone.",
       "bulkError": "Error in the bulk action",
       "clientStatus": "Client status",

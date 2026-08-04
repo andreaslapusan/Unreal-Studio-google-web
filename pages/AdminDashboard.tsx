@@ -3041,7 +3041,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                           <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
                         </select>
                       </div>
-                      {hs.length > 1 && <button type="button" onClick={() => setH(hs.filter((_, j) => j !== i))} className="px-2 py-3 text-red-400 hover:text-red-600"><span className="material-symbols-outlined">close</span></button>}
+                      {hs.length > 1 && (
+                        <div className="flex flex-col items-center shrink-0">
+                          <button type="button" disabled={i === 0} onClick={() => { const n = [...hs]; const tmp = n[i - 1]; n[i - 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-gray-400 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveUp', { defaultValue: 'Subir' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_up</span></button>
+                          <button type="button" disabled={i === hs.length - 1} onClick={() => { const n = [...hs]; const tmp = n[i + 1]; n[i + 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-gray-400 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveDown', { defaultValue: 'Bajar' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_down</span></button>
+                          <button type="button" onClick={() => setH(hs.filter((_, j) => j !== i))} className="p-1 text-red-400 hover:text-red-600" aria-label={t('admin.common.delete', { defaultValue: 'Eliminar' })}><span className="material-symbols-outlined text-lg">close</span></button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

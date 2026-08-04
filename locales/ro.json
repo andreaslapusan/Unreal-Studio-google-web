@@ -1205,6 +1205,8 @@
       "brochureByLang": "Broșură pe limbă",
       "brochureByLangHint": "Încărcați un PDF pe limbă. Dacă o limbă nu are, se utilizează limba engleză (ENG) implicit.",
       "addHolder": "Adaugă titular",
+      "holderMoveUp": "Mută sus",
+      "holderMoveDown": "Mută jos",
       "bulkDeleteConfirm": "Ștergi {{n}} client(i)? Nu se poate anula.",
       "bulkError": "Eroare la acțiunea în masă",
       "clientStatus": "Status client",

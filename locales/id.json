@@ -1304,6 +1304,8 @@
       "brochureByLang": "Brosur berdasarkan bahasa",
       "brochureByLangHint": "Unggah PDF per bahasa. Jika tidak ada bahasa, maka bahasa Inggris (ENG) digunakan sebagai default.",
       "addHolder": "Tambah pemegang",
+      "holderMoveUp": "Naikkan",
+      "holderMoveDown": "Turunkan",
       "bulkDeleteConfirm": "Hapus {{n}} klien? Tindakan ini tidak dapat dibatalkan.",
       "bulkError": "Kesalahan pada tindakan massal",
       "clientStatus": "Status klien",
