@@ -260,7 +260,7 @@ const VacationManager: React.FC = () => {
       {/* Modal modificar */}
       {editing && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto overscroll-contain">
             <h3 className="text-xl font-serif text-primary mb-4">{t('admin.vac.modifyTitle', { name: nameFor(editing) })}</h3>
             <div className="space-y-3">
               <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.from')}</span>

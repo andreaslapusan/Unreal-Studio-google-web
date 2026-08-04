@@ -108,9 +108,9 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
           <button onClick={onClose} className="text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
         </div>
 
-        <div className="flex flex-1 min-h-0">
+        <div className="flex flex-col sm:flex-row flex-1 min-h-0">
           {/* Submenú lateral */}
-          <nav className="w-40 shrink-0 border-r border-gray-100 p-3 flex flex-col gap-1 bg-gray-50/50">
+          <nav className="w-full sm:w-40 shrink-0 border-b sm:border-r border-gray-100 p-3 flex flex-row sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible bg-gray-50/50">
             {TABS.map(([k, label, icon]) => (
               <button key={k} onClick={() => setTab(k)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold text-left transition ${tab === k ? 'bg-primary text-white' : 'text-primary/60 hover:bg-gray-100'}`}>
