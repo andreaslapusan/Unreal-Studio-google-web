@@ -2906,15 +2906,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {/* Pop-up de PREVIEW del email antes de enviar (calendario, recordatorio, etc.) */}
 {reportPicker && (
   <div className="fixed inset-0 z-[165] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setReportPicker(null); }}>
-    <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+    <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
         <div>
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.reportPickTitle', { defaultValue: 'Aviso de obra — proyectos y destinatarios' })}</h3>
           <p className="text-xs text-gray-400 mt-0.5 truncate">{reportPicker.client.name}</p>
         </div>
         <button onClick={() => setReportPicker(null)} className="p-2 text-gray-400 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
-      <div className="p-4 space-y-2">
+      <div className="p-4 space-y-2 overflow-y-auto">
         <label className="flex items-center gap-2 px-2 pb-1 cursor-pointer select-none">
           <input type="checkbox" className="rounded" checked={reportPicker.selected.length === reportPicker.projs.length} onChange={(e) => setReportPicker((p) => p ? { ...p, selected: e.target.checked ? p.projs.map((x: any) => x.id) : [] } : p)} />
           <span className="text-[10px] font-black uppercase tracking-widest text-primary/50">{t('admin.dash.selectAll', { defaultValue: 'Seleccionar todos' })}</span>
