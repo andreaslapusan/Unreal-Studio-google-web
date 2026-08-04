@@ -2906,7 +2906,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {/* Pop-up de PREVIEW del email antes de enviar (calendario, recordatorio, etc.) */}
 {reportPicker && (
   <div className="fixed inset-0 z-[165] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setReportPicker(null); }}>
-    <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
         <div>
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.reportPickTitle', { defaultValue: 'Aviso de obra — proyectos y destinatarios' })}</h3>
@@ -2962,7 +2962,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
 {emailPreview && (
   <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget && !emailPreview.sending) setEmailPreview(null); }}>
-    <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+    <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
         <div className="min-w-0">
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailPreviewTitle', { defaultValue: 'Previsualización del email' })}</h3>
@@ -2989,10 +2989,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
         <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
-      <div className="overflow-y-auto p-5 bg-[#F3E5D8]">
-        <div className="max-w-xl mx-auto">
+      <div className="overflow-auto p-5 bg-[#F3E5D8]">
+        <div className="max-w-3xl mx-auto min-w-0">
           <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>
-          <div className="bg-white rounded-2xl p-6 shadow-sm" dangerouslySetInnerHTML={{ __html: emailPreview.html }} />
+          <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm overflow-x-auto" dangerouslySetInnerHTML={{ __html: emailPreview.html }} />
         </div>
       </div>
       <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
