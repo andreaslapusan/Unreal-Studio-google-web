@@ -35,7 +35,7 @@ const AgencyApplications: React.FC = () => {
   const who = user?.email ?? user?.id ?? 'admin';
 
   const handleApprove = async (app: any) => {
-    if (!confirm(`¿Aprobar a ${app.agency_name}? Crea la agencia y se le manda acceso por email.`)) return;
+    if (!confirm(t('admin.agencyApps.confirmApprove', { name: app.agency_name, defaultValue: '¿Aprobar a {{name}}? Crea la agencia y se le manda acceso por email.' }))) return;
     try {
       const { error: insErr } = await supabase.from('listing_partners').insert({
         agency_name: app.agency_name, manager_name: app.manager_name, email: app.email,
@@ -46,26 +46,36 @@ const AgencyApplications: React.FC = () => {
       await supabase.from('listing_partner_applications').update({ status: 'approved', reviewed_by: who, reviewed_at: new Date().toISOString() }).eq('id', app.id);
       await supabase.functions.invoke('send-magic-link', { body: { email: app.email, portal: 'agencias', lang: (typeof localStorage !== 'undefined' && localStorage.getItem('_unreal_lang')) || 'es', redirectTo: `${window.location.origin}/auth/finish` } });
       await reload();
-      alert('Agencia aprobada + acceso enviado por email.');
+      alert(t('admin.agencyApps.approveOk', { defaultValue: 'Agencia aprobada + acceso enviado por email.' }));
     } catch (err) {
-      alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      alert(t('admin.agencyApps.actionError', { msg: (err instanceof Error ? err.message : String(err)), defaultValue: 'Error: {{msg}}' }));
     }
   };
 
   const handleReject = async (app: any) => {
-    if (!confirm(`¿Rechazar ${app.agency_name}?`)) return;
-    await supabase.from('listing_partner_applications').update({ status: 'rejected', reviewed_by: who, reviewed_at: new Date().toISOString() }).eq('id', app.id);
-    await reload();
+    if (!confirm(t('admin.agencyApps.confirmReject', { name: app.agency_name, defaultValue: '¿Rechazar {{name}}?' }))) return;
+    try {
+      const { error } = await supabase.from('listing_partner_applications').update({ status: 'rejected', reviewed_by: who, reviewed_at: new Date().toISOString() }).eq('id', app.id);
+      if (error) throw error;
+      await reload();
+    } catch (err) {
+      alert(t('admin.agencyApps.actionError', { msg: (err instanceof Error ? err.message : String(err)), defaultValue: 'Error: {{msg}}' }));
+    }
   };
 
   const handleAssign = async (partner: any) => {
     const current: string[] = partner.projects_assigned ?? [];
     const list = properties.map((p) => `${current.includes(p.id) ? '[x]' : '[ ]'} ${p.name} (${p.id.slice(0, 8)})`).join('\n');
-    const input = prompt(`Proyectos asignados a ${partner.agency_name}.\nActual:\n${list}\n\nPega los IDs (uno por línea, completos):`, current.join('\n'));
+    const input = prompt(t('admin.agencyApps.assignPrompt', { name: partner.agency_name, list, defaultValue: 'Proyectos asignados a {{name}}.\nActual:\n{{list}}\n\nPega los IDs (uno por línea, completos):' }), current.join('\n'));
     if (input === null) return;
     const newIds = input.split('\n').map((s) => s.trim()).filter(Boolean);
-    await supabase.from('listing_partners').update({ projects_assigned: newIds }).eq('id', partner.id);
-    await reload();
+    try {
+      const { error } = await supabase.from('listing_partners').update({ projects_assigned: newIds }).eq('id', partner.id);
+      if (error) throw error;
+      await reload();
+    } catch (err) {
+      alert(t('admin.agencyApps.actionError', { msg: (err instanceof Error ? err.message : String(err)), defaultValue: 'Error: {{msg}}' }));
+    }
   };
 
   if (loading) return <div className="py-12 text-center text-primary/40"><span className="material-symbols-outlined animate-spin text-3xl">refresh</span></div>;

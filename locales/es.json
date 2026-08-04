@@ -1537,7 +1537,12 @@
       "title": "Agencias",
       "pendingCount": "{{n}} solicitud(es) pendiente(s)",
       "applications": "Solicitudes",
-      "activePartners": "Agencias activas"
+      "activePartners": "Agencias activas",
+      "confirmApprove": "¿Aprobar a {{name}}? Crea la agencia y se le manda acceso por email.",
+      "approveOk": "Agencia aprobada + acceso enviado por email.",
+      "actionError": "Error: {{msg}}",
+      "confirmReject": "¿Rechazar {{name}}?",
+      "assignPrompt": "Proyectos asignados a {{name}}.\nActual:\n{{list}}\n\nPega los IDs (uno por línea, completos):"
     },
     "agenda": {
       "title": "Calendario",

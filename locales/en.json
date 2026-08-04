@@ -1537,7 +1537,12 @@
       "title": "Agencies",
       "pendingCount": "{{n}} pending application(s)",
       "applications": "Applications",
-      "activePartners": "Active agencies"
+      "activePartners": "Active agencies",
+      "confirmApprove": "Approve {{name}}? This creates the agency and sends access by email.",
+      "approveOk": "Agency approved + access sent by email.",
+      "actionError": "Error: {{msg}}",
+      "confirmReject": "Reject {{name}}?",
+      "assignPrompt": "Projects assigned to {{name}}.\nCurrent:\n{{list}}\n\nPaste the IDs (one per line, full):"
     },
     "agenda": {
       "title": "Calendar",

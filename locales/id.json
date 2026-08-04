@@ -1636,7 +1636,12 @@
       "title": "Agen",
       "pendingCount": "{{n}} aplikasi tertunda",
       "applications": "Aplikasi",
-      "activePartners": "Agen aktif"
+      "activePartners": "Agen aktif",
+      "confirmApprove": "Setujui {{name}}? Ini membuat agensi dan mengirim akses lewat email.",
+      "approveOk": "Agensi disetujui + akses dikirim lewat email.",
+      "actionError": "Kesalahan: {{msg}}",
+      "confirmReject": "Tolak {{name}}?",
+      "assignPrompt": "Proyek yang ditugaskan ke {{name}}.\nSaat ini:\n{{list}}\n\nTempel ID (satu per baris, lengkap):"
     },
     "agenda": {
       "title": "Kalender",

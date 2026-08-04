@@ -1537,7 +1537,12 @@
       "title": "Agenții",
       "pendingCount": "{{n}} cerere(i) în așteptare",
       "applications": "Cereri",
-      "activePartners": "Agenții active"
+      "activePartners": "Agenții active",
+      "confirmApprove": "Aprobi {{name}}? Se creează agenția și i se trimite accesul pe email.",
+      "approveOk": "Agenție aprobată + acces trimis pe email.",
+      "actionError": "Eroare: {{msg}}",
+      "confirmReject": "Respingi {{name}}?",
+      "assignPrompt": "Proiecte alocate lui {{name}}.\nActual:\n{{list}}\n\nLipește ID-urile (unul pe linie, complete):"
     },
     "agenda": {
       "title": "Calendar",
