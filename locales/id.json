@@ -506,7 +506,13 @@
     },
     "reports": {
       "title": "Laporan konstruksi",
-      "subtitle": "Unggah kemajuan proyek"
+      "subtitle": "Unggah kemajuan proyek",
+      "close": "Tutup",
+      "loading": "Memuat laporan…",
+      "empty": "Belum ada laporan yang diunggah untuk proyek ini.",
+      "count": "{{n}} laporan",
+      "superseded": "{{n}} versi lama disembunyikan",
+      "progress": "Progres"
     },
     "reportModal": {
       "title": "Laporan konstruksi",

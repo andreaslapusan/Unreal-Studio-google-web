@@ -23,6 +23,7 @@ import { useEscapeKey } from '../lib/useEscapeKey';
 import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import DashboardOverview from '../components/admin/DashboardOverview';
+import PropertyReportsModal from '../components/admin/PropertyReportsModal';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import { welcomeEmailHtml } from '../lib/clientEmails';
 import { portalPath } from '../lib/portalUrls';
@@ -157,6 +158,7 @@ const AMENITIES_LIST = [
   'Spa', 'Sala de juegos', 'Servicio de limpieza', 'Alquiler de motos'
 ];
   const [projects, setProjects] = useState<Project[]>([]);
+  const [reportsProject, setReportsProject] = useState<{ id: string; name: string } | null>(null);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
   // Firma PERSONAL del admin logueado (cada admin tiene la suya; no es de empresa).
@@ -1819,8 +1821,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
                       <p className="font-bold text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
                       <div className="flex gap-2">
-                        <button onClick={() => openEditProject(proj)} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95"><span className="material-symbols-outlined text-sm">edit</span></button>
-                        <button onClick={() => handleDeleteProject(proj.id)} className="p-2 text-red-600 bg-red-50 rounded-xl hover:bg-red-600 hover:text-white"><span className="material-symbols-outlined text-sm">delete</span></button>
+                        <button onClick={() => setReportsProject({ id: proj.id, name: proj.name })} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95" title={t('empleados.reports.title')} aria-label={t('empleados.reports.title')}><span className="material-symbols-outlined text-sm">description</span></button>
+                        <button onClick={() => openEditProject(proj)} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95" title={t('fix.apm.edit')}><span className="material-symbols-outlined text-sm">edit</span></button>
+                        <button onClick={() => handleDeleteProject(proj.id)} className="p-2 text-red-600 bg-red-50 rounded-xl hover:bg-red-600 hover:text-white" title={t('fix.apm.delete')}><span className="material-symbols-outlined text-sm">delete</span></button>
                       </div>
                     </div>
                   </div>
@@ -2901,6 +2904,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </form>
     </div>
   </div>
+)}
+
+{/* Visor de reportes de obra subidos a un proyecto (botón "Reportes" en la tarjeta) */}
+{reportsProject && (
+  <PropertyReportsModal propertyId={reportsProject.id} propertyName={reportsProject.name} onClose={() => setReportsProject(null)} />
 )}
 
 {/* Pop-up de PREVIEW del email antes de enviar (calendario, recordatorio, etc.) */}

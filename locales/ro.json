@@ -1772,7 +1772,13 @@
     "help": "Apasă, fă o poză cu locul unde ești și gata. Ora și locația se salvează singure. Dacă uiți să marchezi ceva, poți pontați oricând dorești.",
     "reports": {
       "title": "Rapoarte de șantier",
-      "subtitle": "Încarcă progresul pe proiect"
+      "subtitle": "Încarcă progresul pe proiect",
+      "close": "Închide",
+      "loading": "Se încarcă rapoartele…",
+      "empty": "Încă nu există rapoarte încărcate pentru acest proiect.",
+      "count": "{{n}} raport(oarte)",
+      "superseded": "{{n}} versiune(i) veche(i) ascunsă(e)",
+      "progress": "Progres"
     },
     "camera": {
       "takePhotoSuffix": "Fă poza",

@@ -1772,7 +1772,13 @@
     "help": "Tap, take a photo of where you are and you're done. The time and location are saved automatically. If you forget to log something, you can still clock it in whenever you want.",
     "reports": {
       "title": "Construction reports",
-      "subtitle": "Upload progress by project"
+      "subtitle": "Upload progress by project",
+      "close": "Close",
+      "loading": "Loading reports…",
+      "empty": "No reports uploaded for this project yet.",
+      "count": "{{n}} report(s)",
+      "superseded": "{{n}} older version(s) hidden",
+      "progress": "Progress"
     },
     "camera": {
       "takePhotoSuffix": "Take the photo",

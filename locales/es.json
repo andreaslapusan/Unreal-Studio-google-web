@@ -1772,7 +1772,13 @@
     "help": "Pulsa, haz una foto de dónde estás y listo. La hora y la ubicación se guardan solas. Si olvidas marcar algo, puedes ficharlo igualmente cuando quieras.",
     "reports": {
       "title": "Reportes de obra",
-      "subtitle": "Sube el avance por proyecto"
+      "subtitle": "Sube el avance por proyecto",
+      "close": "Cerrar",
+      "loading": "Cargando reportes…",
+      "empty": "Aún no hay reportes subidos para este proyecto.",
+      "count": "{{n}} reporte(s)",
+      "superseded": "{{n}} versión(es) anterior(es) ocultada(s)",
+      "progress": "Progreso"
     },
     "camera": {
       "takePhotoSuffix": "Haz la foto",
