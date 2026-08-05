@@ -1372,7 +1372,9 @@
       "currencyFromSale": "La divisa la fija la venta de la propiedad",
       "fillRequired": "Rellena concepto, importe, divisa y fecha límite.",
       "kwitansiSendTitle": "Enviar recibí al cliente",
-      "receivedAmtLabel": "recibido"
+      "receivedAmtLabel": "recibido",
+      "receivedPendingTotal": "Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}",
+      "diffLabel": "diferencia"
     },
     "notif": {
       "title": "Notificaciones",

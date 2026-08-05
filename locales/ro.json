@@ -1372,7 +1372,9 @@
       "currencyFromSale": "Moneda este stabilită de vânzarea proprietății",
       "fillRequired": "Completează conceptul, suma, moneda și data limită.",
       "kwitansiSendTitle": "Trimite chitanța clientului",
-      "receivedAmtLabel": "primit"
+      "receivedAmtLabel": "primit",
+      "receivedPendingTotal": "Primit {{recv}} · De primit {{pending}} · Total {{total}}",
+      "diffLabel": "diferență"
     },
     "notif": {
       "title": "Notificări",

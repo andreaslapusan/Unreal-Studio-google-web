@@ -340,12 +340,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           {units.filter((u) => filterName === undefined || ((u.project_name || '').trim().toLowerCase() === (filterName || '').trim().toLowerCase() && (filterUnit === undefined || (u.unit_number || '').trim().toLowerCase() === (filterUnit || '').trim().toLowerCase()))).map((u) => {
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
             const recv = u.payments.filter((p) => p.received).reduce((s, p) => s + ((p as any).received_amount != null ? Number((p as any).received_amount) : Number(p.amount)), 0);
+            const pending = Math.max(0, total - recv);
             return (
               <div key={u.client_project_id} className="border border-gray-100 rounded-2xl overflow-hidden">
                 <div className="bg-gray-50 px-5 py-3 flex justify-between items-center">
                   <div>
                     <p className="font-bold text-primary">{u.project_name}{u.unit_number && <span className="text-gray-400 font-normal"> · {u.unit_number}</span>}</p>
-                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedOfTotal', { recv: fmt(recv, u.currency), total: fmt(total, u.currency) })}</p>
+                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedPendingTotal', { recv: fmt(recv, u.currency), pending: fmt(pending, u.currency), total: fmt(total, u.currency), defaultValue: 'Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}' })}</p>
                   </div>
                   <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...emptyPayment(u.currency), position: u.payments.length } })}
                     className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-lg flex items-center gap-1 hover:bg-black">
@@ -370,9 +371,16 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                         </div>
                         <div className="text-right shrink-0">
                           <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
-                          {p.received && (p as any).received_amount != null && Number((p as any).received_amount) !== Number(p.amount) && (
-                            <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(Number((p as any).received_amount), p.currency)}</span>
-                          )}
+                          {p.received && (p as any).received_amount != null && Number((p as any).received_amount) !== Number(p.amount) && (() => {
+                            const recvAmt = Number((p as any).received_amount);
+                            const diff = Number(p.amount) - recvAmt; // >0 = recibido de menos (comision/parcial)
+                            return (
+                              <>
+                                <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(recvAmt, p.currency)}</span>
+                                <span className={`block text-[10px] font-bold whitespace-nowrap ${diff > 0 ? 'text-red-500' : 'text-primary/50'}`}>{t('admin.pay.diffLabel', { defaultValue: 'diferencia' })}: {diff > 0 ? '-' : diff < 0 ? '+' : ''}{fmt(Math.abs(diff), p.currency)}</span>
+                              </>
+                            );
+                          })()}
                         </div>
                         {/* Estado del pago: SOLO recibido / vencido / pendiente (convencion
                             unica del sistema, igual que CobrosPanel). Un pago RECIBIDO = el

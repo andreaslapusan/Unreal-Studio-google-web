@@ -1477,7 +1477,9 @@
       "currencyFromSale": "Mata uang ditentukan oleh penjualan properti",
       "fillRequired": "Isi keterangan, jumlah, mata uang, dan tanggal jatuh tempo.",
       "kwitansiSendTitle": "Kirim tanda terima ke klien",
-      "receivedAmtLabel": "diterima"
+      "receivedAmtLabel": "diterima",
+      "receivedPendingTotal": "Diterima {{recv}} · Belum {{pending}} · Total {{total}}",
+      "diffLabel": "selisih"
     },
     "notif": {
       "title": "Pemberitahuan",

@@ -1372,7 +1372,9 @@
       "currencyFromSale": "The currency is set by the property sale",
       "fillRequired": "Fill in concept, amount, currency and due date.",
       "kwitansiSendTitle": "Send receipt to client",
-      "receivedAmtLabel": "received"
+      "receivedAmtLabel": "received",
+      "receivedPendingTotal": "Received {{recv}} · Pending {{pending}} · Total {{total}}",
+      "diffLabel": "difference"
     },
     "notif": {
       "title": "Notifications",
