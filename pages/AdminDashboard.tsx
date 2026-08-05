@@ -1375,6 +1375,24 @@ const sendReportForProjects = async (client: Client, cps: any[], allowed?: strin
 const sendReportEmail = async (client: Client) => {
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  // FIX raíz: la lista de destinatarios sale de holder_participants / holders, que
+  // están en la caché de `clients` (RPC admin_list_clients) y NO se refrescaban al
+  // añadir un titular hasta recargar la página (el acceso directo a las tablas está
+  // bloqueado por RLS; todo va por RPC). Antes de abrir el selector, re-ejecutamos
+  // admin_list_clients y usamos la ficha FRESCA, para que un titular recién añadido
+  // aparezca SIN tener que refrescar. Si falla, seguimos con la caché.
+  try {
+    const uid = getAdminUserId();
+    if (uid) {
+      const { data } = await supabase.rpc('admin_list_clients', { p_user_id: uid });
+      if ((data as any)?.success && Array.isArray((data as any).clients)) {
+        const fresh = (data as any).clients;
+        setClients(fresh);
+        const updated = fresh.find((c: any) => c.id === (client as any).id);
+        if (updated) client = updated;
+      }
+    }
+  } catch { /* seguimos con la caché */ }
   const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
   if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
   // El admin elige PARA CUÁLES propiedades y A QUIÉN va el aviso, si hay más de una
