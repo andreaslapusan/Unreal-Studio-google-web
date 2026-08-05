@@ -173,7 +173,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
         {shown.map((u) => {
           const pays = [...u.payments].sort(byDate);
           const total = pays.reduce((s, p) => s + Number(p.amount), 0);
-          const recv = pays.filter((p) => p.received).reduce((s, p) => s + Number(p.amount), 0);
+          const recv = pays.reduce((s, p) => s + recvOf(p), 0); // importe REAL recibido (parcial) = coherente con el pie
           const pct = total > 0 ? Math.round((recv / total) * 100) : 0;
           return (
             <div key={u.client_project_id}>
@@ -280,7 +280,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
         {shown.map((u) => {
           const pays = [...u.payments].sort(byDate);
           const total = pays.reduce((s, p) => s + Number(p.amount), 0);
-          const recv = pays.filter((p) => p.received).reduce((s, p) => s + Number(p.amount), 0);
+          const recv = pays.reduce((s, p) => s + recvOf(p), 0); // importe REAL recibido (parcial) = coherente con el pie
           const pct = total > 0 ? Math.round((recv / total) * 100) : 0;
           return (
             <article key={u.client_project_id} className="bg-white rounded-2xl border border-primary/5 shadow-sm p-6">
