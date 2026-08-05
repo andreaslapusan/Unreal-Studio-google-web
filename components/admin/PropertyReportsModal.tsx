@@ -81,7 +81,7 @@ const PropertyReportsModal: React.FC<{ propertyId: string; propertyName: string;
           <button onClick={onClose} aria-label={t('empleados.reports.close')} className="text-primary/40 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
         </div>
 
-        <div className="overflow-y-auto overscroll-contain p-6 space-y-4">
+        <div className="overflow-y-auto overscroll-contain">
           {loading ? (
             <p className="text-center text-gray-400 py-10">{t('empleados.reports.loading')}</p>
           ) : reports.length === 0 ? (
@@ -91,43 +91,42 @@ const PropertyReportsModal: React.FC<{ propertyId: string; propertyName: string;
             </div>
           ) : (
             <>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400 px-6 pt-4 pb-2">
                 {t('empleados.reports.count', { n: reports.length })}
                 {supersededCount > 0 && <span className="text-gray-300"> · {t('empleados.reports.superseded', { n: supersededCount })}</span>}
               </p>
-              {reports.map((r) => (
-                <div key={r.id} className="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-bold text-primary">{r.title}</h3>
-                    {r.pct_progress_at_update != null && (
-                      <span className="shrink-0 text-[10px] font-black uppercase bg-almond text-primary px-2.5 py-1 rounded-lg">{t('empleados.reports.progress')} {r.pct_progress_at_update}%</span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-gray-400 mt-1">
-                    {fmtDate(r.posted_at)}{r.posted_by ? ` · ${r.posted_by}` : ''}
-                  </p>
-                  {r.summary && <p className="text-sm text-gray-600 mt-2 whitespace-pre-wrap">{r.summary}</p>}
-                  {r._assets.length > 0 && (
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-3">
-                      {r._assets.map((a, i) => (
-                        <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer"
-                          className="relative block aspect-square rounded-xl overflow-hidden border border-gray-200 bg-white hover:ring-2 hover:ring-primary/40 transition group/asset"
-                          title={a.file_name}>
-                          {a.asset_type === 'image' ? (
-                            <img src={a.external_url} className="w-full h-full object-cover" loading="lazy" />
-                          ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center text-primary/50 gap-1 p-1">
-                              <span className="material-symbols-outlined">{icon(a.asset_type)}</span>
-                              <span className="text-[8px] text-center truncate w-full px-1">{a.file_name}</span>
-                            </div>
-                          )}
-                          <span className="absolute bottom-1 right-1 bg-black/60 text-white rounded-full p-0.5 opacity-0 group-hover/asset:opacity-100 transition"><span className="material-symbols-outlined text-[14px] leading-none">open_in_new</span></span>
-                        </a>
-                      ))}
+              <ul className="divide-y divide-gray-100">
+                {reports.map((r) => (
+                  <li key={r.id} className="px-6 py-3 hover:bg-gray-50/60 transition">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-primary text-sm">{r.title}</span>
+                      {r.pct_progress_at_update != null && (
+                        <span className="shrink-0 text-[9px] font-black uppercase bg-almond text-primary px-2 py-0.5 rounded">{r.pct_progress_at_update}%</span>
+                      )}
+                      <span className="text-[11px] text-gray-400 ml-auto shrink-0">{fmtDate(r.posted_at)}{r.posted_by ? ` · ${r.posted_by}` : ''}</span>
                     </div>
-                  )}
-                </div>
-              ))}
+                    {r.summary && <p className="text-[11px] text-gray-500 mt-0.5">{r.summary}</p>}
+                    {/* Ficheros: chip clicable con icono + NOMBRE del documento */}
+                    {r._assets.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {r._assets.map((a, i) => (
+                          <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 max-w-full bg-gray-50 border border-gray-200 rounded-lg pl-1.5 pr-2 py-1 hover:ring-2 hover:ring-primary/40 transition group/asset"
+                            title={a.file_name}>
+                            {a.asset_type === 'image' ? (
+                              <img src={a.external_url} className="w-6 h-6 rounded object-cover shrink-0" loading="lazy" />
+                            ) : (
+                              <span className="material-symbols-outlined text-[18px] text-primary/60 shrink-0">{icon(a.asset_type)}</span>
+                            )}
+                            <span className="text-[11px] text-gray-600 truncate">{a.file_name}</span>
+                            <span className="material-symbols-outlined text-[13px] text-gray-300 group-hover/asset:text-primary shrink-0">open_in_new</span>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </>
           )}
         </div>
