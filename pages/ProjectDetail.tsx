@@ -162,7 +162,7 @@ const ProjectDetail: React.FC = () => {
               } catch {
                 // schema may not be migrated yet on this Supabase project — that's fine
               }
-              document.title = `${loadedProject.name} | Unreal Studio Madrid`;
+              document.title = `${loadedProject.name} | Unreal Studio Bali`;
 
               // Dynamic OG meta tags
               const setMeta = (property: string, content: string) => {
@@ -175,11 +175,11 @@ const ProjectDetail: React.FC = () => {
                   document.head.appendChild(el);
                 }
               };
-              setMeta('og:title', `${loadedProject.name} | Unreal Studio Madrid`);
+              setMeta('og:title', `${loadedProject.name} | Unreal Studio Bali`);
               setMeta('og:description', loadedProject.description?.substring(0, 160) || '');
               setMeta('og:image', getImageUrl(loadedProject.image));
               setMeta('og:url', window.location.href);
-              setMeta('twitter:title', `${loadedProject.name} | Unreal Studio Madrid`);
+              setMeta('twitter:title', `${loadedProject.name} | Unreal Studio Bali`);
               setMeta('twitter:description', loadedProject.description?.substring(0, 160) || '');
               setMeta('twitter:image', getImageUrl(loadedProject.image));
 
@@ -407,12 +407,12 @@ const ProjectDetail: React.FC = () => {
       <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
           <div className="px-4 first:pl-0 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
-            <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.labelAvailableUnits')}</p>
+            <p className="text-3xl font-serif">{project.available_units != null ? project.available_units : t('projectDetail.consult')}</p>
           </div>
           <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
-            <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.labelConstructionProgress')}</p>
+            <p className="text-3xl font-serif">{project.completion_percent != null ? project.completion_percent + '%' : t('projectDetail.consult')}</p>
           </div>
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
@@ -791,12 +791,8 @@ const ProjectDetail: React.FC = () => {
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                    <span>{t('projectDetail.kpiRoiRental')}</span>
-                    <span className="text-primary">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
-                  </div>
-                  <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                    <span>{t('projectDetail.kpiRoiResale')}</span>
-                    <span className="text-primary">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
+                    <span>{t('projectDetail.labelAvailableUnits')}</span>
+                    <span className="text-primary">{project.available_units != null ? project.available_units : '—'}</span>
                   </div>
                 </div>
 

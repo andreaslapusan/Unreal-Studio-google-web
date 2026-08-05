@@ -198,12 +198,6 @@ const Home: React.FC = () => {
         return a.sort_order - b.sort_order;
       }
       
-      if (filters.sort === 'roi') {
-        const roiA = a.annual_rental_projection && a.investor_price ? a.annual_rental_projection / a.investor_price : 0;
-        const roiB = b.annual_rental_projection && b.investor_price ? b.annual_rental_projection / b.investor_price : 0;
-        return roiB - roiA;
-      }
-
       const rates = config.exchangeRates;
       const currentRate = rates[currency] || 1;
       
@@ -409,7 +403,6 @@ const Home: React.FC = () => {
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
                   >
                     <option value="featured">{t('projects.sort.featured')}</option>
-                    <option value="roi">{t('projects.sort.roi')}</option>
                     <option value="asc">{t('projects.sort.asc')}</option>
                     <option value="desc">{t('projects.sort.desc')}</option>
                   </select>
@@ -596,7 +589,7 @@ const Home: React.FC = () => {
               </div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:bottom-10 md:translate-y-0 bg-primary p-6 md:p-8 rounded-3xl shadow-2xl text-left min-w-[200px] md:min-w-[280px] z-10 border border-white/10 backdrop-blur-md bg-primary/95">
                 <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-almond/40 mb-1 md:mb-2">{t('home.roiAvgTag')}</p>
-                <p className="text-4xl md:text-6xl text-almond font-serif mb-1 md:mb-2 leading-none">28%</p>
+                <p className="text-4xl md:text-6xl text-almond font-serif mb-1 md:mb-2 leading-none">€75K</p>
                 <p className="text-[8px] md:text-[10px] font-bold text-almond/60 uppercase tracking-wider">{t('home.roiAvgFooter')}</p>
               </div>
             </div>
