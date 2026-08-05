@@ -371,13 +371,14 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                         </div>
                         <div className="text-right shrink-0">
                           <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
-                          {p.received && (p as any).received_amount != null && Number((p as any).received_amount) !== Number(p.amount) && (() => {
-                            const recvAmt = Number((p as any).received_amount);
-                            const diff = Number(p.amount) - recvAmt; // >0 = recibido de menos (comision/parcial)
+                          {(() => {
+                            const recvAmt = p.received ? ((p as any).received_amount != null ? Number((p as any).received_amount) : Number(p.amount)) : 0;
+                            const balance = Number(p.amount) - recvAmt; // lo que queda por recibir de ESTE pago (0 = completo)
+                            const showRecv = p.received && (p as any).received_amount != null && recvAmt !== Number(p.amount);
                             return (
                               <>
-                                <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(recvAmt, p.currency)}</span>
-                                <span className={`block text-[10px] font-bold whitespace-nowrap ${diff > 0 ? 'text-red-500' : 'text-primary/50'}`}>{t('admin.pay.diffLabel', { defaultValue: 'diferencia' })}: {diff > 0 ? '-' : diff < 0 ? '+' : ''}{fmt(Math.abs(diff), p.currency)}</span>
+                                {showRecv && <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(recvAmt, p.currency)}</span>}
+                                <span className={`block text-[10px] font-bold whitespace-nowrap ${balance > 0 ? 'text-red-500' : 'text-green-600'}`}>{t('admin.pay.balanceLabel', { defaultValue: 'Balance' })}: {fmt(balance, p.currency)}</span>
                               </>
                             );
                           })()}

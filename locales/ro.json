@@ -1374,7 +1374,8 @@
       "kwitansiSendTitle": "Trimite chitanța clientului",
       "receivedAmtLabel": "primit",
       "receivedPendingTotal": "Primit {{recv}} · De primit {{pending}} · Total {{total}}",
-      "diffLabel": "diferență"
+      "diffLabel": "diferență",
+      "balanceLabel": "Sold"
     },
     "notif": {
       "title": "Notificări",

@@ -1479,7 +1479,8 @@
       "kwitansiSendTitle": "Kirim tanda terima ke klien",
       "receivedAmtLabel": "diterima",
       "receivedPendingTotal": "Diterima {{recv}} · Belum {{pending}} · Total {{total}}",
-      "diffLabel": "selisih"
+      "diffLabel": "selisih",
+      "balanceLabel": "Saldo"
     },
     "notif": {
       "title": "Pemberitahuan",

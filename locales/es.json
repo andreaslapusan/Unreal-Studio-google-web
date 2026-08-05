@@ -1374,7 +1374,8 @@
       "kwitansiSendTitle": "Enviar recibí al cliente",
       "receivedAmtLabel": "recibido",
       "receivedPendingTotal": "Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}",
-      "diffLabel": "diferencia"
+      "diffLabel": "diferencia",
+      "balanceLabel": "Balance"
     },
     "notif": {
       "title": "Notificaciones",
