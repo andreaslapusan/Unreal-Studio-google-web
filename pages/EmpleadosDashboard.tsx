@@ -427,7 +427,7 @@ const EmpleadosDashboard: React.FC = () => {
 
       {showChangePassword && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowChangePassword(false); }}>
-          <div className="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl">
+          <div className="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl max-h-[90vh] overflow-y-auto overscroll-contain">
             <h2 className="text-xl font-serif text-primary mb-6">{t('fix.empd.changePasswordTitle')}</h2>
             <form onSubmit={handleChangePassword} className="space-y-4">
               <input type="password" autoComplete="new-password" required placeholder={t('fix.empd.newPasswordPlaceholder')} value={pw.newPass}
@@ -621,7 +621,7 @@ const EmpleadosDashboard: React.FC = () => {
       {/* Instrucciones */}
       {showInstructions && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center p-4" onClick={() => setShowInstructions(false)}>
-          <div className="bg-white rounded-3xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto overscroll-contain" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-serif text-primary">{t('empleados.instructions.title')}</h2>
               <button onClick={() => setShowInstructions(false)} aria-label={t('empleados.instructions.close')}>

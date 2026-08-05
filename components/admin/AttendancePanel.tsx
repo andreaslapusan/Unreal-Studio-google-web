@@ -17,14 +17,19 @@ interface Emp { email: string; name: string; work_start_time: string | null; wor
 type Ev = { ts: string; lat: number | null; lng: number | null; photo: string | null };
 interface DayRow { key: string; name: string; email: string; day: string; check_in?: Ev; break_start?: Ev; break_end?: Ev; check_out?: Ev; }
 
-const COLS: [keyof DayRow, string][] = [['check_in', 'Entrada'], ['break_start', 'Pausa (in)'], ['break_end', 'Pausa (out)'], ['check_out', 'Salida']];
-const ANCHORS: [number, number, string][] = [[-8.799, 115.1334, 'Golf Bay · Balangan'], [-8.6386, 115.1045, 'Oficina · Cemagi']];
+const COLS: (keyof DayRow)[] = ['check_in', 'break_start', 'break_end', 'check_out'];
+// label = texto fijo (nombre propio); labelKey = clave i18n + suffix para el prefijo traducible.
+const ANCHORS: { lat: number; lng: number; label?: string; labelKey?: string; suffix?: string }[] = [
+  { lat: -8.799, lng: 115.1334, label: 'Golf Bay · Balangan' },
+  { lat: -8.6386, lng: 115.1045, labelKey: 'fix.att.locOffice', suffix: ' · Cemagi' },
+];
 function distM(a: number, b: number, c: number, d: number) { const R = 6371000, r = Math.PI / 180; const x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); }
-function locLabel(lat: number | null, lng: number | null): string {
+function locLabel(lat: number | null, lng: number | null, t: (k: string) => string): string {
   if (lat == null || lng == null) return '';
-  let best: [number, string] | null = null;
-  for (const [alat, alng, lbl] of ANCHORS) { const dd = distM(lat, lng, alat, alng); if (dd <= 60 && (!best || dd < best[0])) best = [dd, lbl]; }
-  return best ? best[1] : `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  let best: [number, (typeof ANCHORS)[number]] | null = null;
+  for (const a of ANCHORS) { const dd = distM(lat, lng, a.lat, a.lng); if (dd <= 60 && (!best || dd < best[0])) best = [dd, a]; }
+  if (best) { const a = best[1]; return a.label ?? `${t(a.labelKey!)}${a.suffix ?? ''}`; }
+  return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 }
 function isoDaysAgo(n: number): string { const d = new Date(`${baliToday()}T12:00:00Z`); d.setUTCDate(d.getUTCDate() - n); return d.toISOString().slice(0, 10); }
 const fmtTime = (iso: string) => baliTime(iso);
@@ -100,7 +105,7 @@ const AttendancePanel: React.FC = () => {
   const cellHtml = (ev?: Ev) => {
     if (!ev) return '<div style="height:108px;display:flex;align-items:flex-start;color:#cbb">—</div>';
     const url = ev.photo ? photoUrls[ev.photo] : '';
-    const loc = ev.lat != null ? locLabel(ev.lat, ev.lng) : '';
+    const loc = ev.lat != null ? locLabel(ev.lat, ev.lng, t) : '';
     return `<div style="line-height:1.4">`
       + `<div style="height:16px;font-weight:700">${fmtTime(ev.ts)}</div>`
       + `<div style="height:14px;font-size:10px;color:#8a7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px">${loc}</div>`
@@ -113,11 +118,11 @@ const AttendancePanel: React.FC = () => {
   const downloadPdf = async () => {
     setDownloading(true);
     try {
-      const head = `<tr style="background:#3F2305;color:#fff"><th>${t('fix.att.employee')}</th><th>${t('fix.att.date')}</th>${COLS.map(([k]) => `<th>${t(`fix.att.col_${k}`)}</th>`).join('')}<th>${t('fix.att.total')}</th><th>${t('fix.att.diff')}</th></tr>`;
+      const head = `<tr style="background:#3F2305;color:#fff"><th>${t('fix.att.employee')}</th><th>${t('fix.att.date')}</th>${COLS.map((k) => `<th>${t(`fix.att.col_${k}`)}</th>`).join('')}<th>${t('fix.att.total')}</th><th>${t('fix.att.diff')}</th></tr>`;
       const body = dayRows.map((d) => {
         const w = worked(d); const asg = schedule[d.email]; const diff = (w != null && asg != null) ? w - asg : null;
         return `<tr><td><b>${d.name}</b><br><span style="font-size:10px;color:#888">${d.email}</span></td><td>${fmtDay(d.day)}</td>` +
-          COLS.map(([k]) => `<td style="text-align:center">${cellHtml(d[k] as Ev | undefined)}</td>`).join('') +
+          COLS.map((k) => `<td style="text-align:center">${cellHtml(d[k] as Ev | undefined)}</td>`).join('') +
           `<td style="text-align:center"><b>${w != null ? hm(w) : '—'}</b></td><td style="text-align:center;color:${diff != null && diff < 0 ? '#c00' : '#070'}">${diff != null ? hm(diff) : '—'}</td></tr>`;
       }).join('');
       const inner = `<style>h1{font-size:18px;margin:0 0 12px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #e4d9cc;padding:5px;text-align:left;vertical-align:top}</style>`
@@ -140,7 +145,7 @@ const AttendancePanel: React.FC = () => {
         <div className="h-3.5 overflow-hidden">
           {ev.lat != null && (
             <a href={`https://maps.google.com/?q=${ev.lat},${ev.lng}`} target="_blank" rel="noreferrer" className="text-[10px] text-primary/50 hover:text-primary inline-flex items-center gap-0.5 max-w-[92px] truncate">
-              <span className="material-symbols-outlined text-[12px]">location_on</span>{locLabel(ev.lat, ev.lng)}
+              <span className="material-symbols-outlined text-[12px]">location_on</span>{locLabel(ev.lat, ev.lng, t)}
             </a>
           )}
         </div>
@@ -189,7 +194,7 @@ const AttendancePanel: React.FC = () => {
               <tr>
                 <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3 w-[110px]">{t('fix.att.employee')}</th>
                 <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-2 py-3 w-[70px]">{t('fix.att.date')}</th>
-                {COLS.map(([k]) => <th key={k as string} className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3">{t(`fix.att.col_${k}`)}</th>)}
+                {COLS.map((k) => <th key={k as string} className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3">{t(`fix.att.col_${k}`)}</th>)}
                 <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.total')}</th>
                 <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.diff')}</th>
               </tr>
@@ -201,7 +206,7 @@ const AttendancePanel: React.FC = () => {
                   <tr key={d.key} className="border-t border-gray-50 align-top">
                     <td className="px-3 py-3"><div className="font-bold text-primary text-xs leading-tight">{d.name}</div><div className="text-[9px] text-gray-400 truncate max-w-[100px]">{d.email}</div></td>
                     <td className="px-2 py-3 text-primary/70 text-xs whitespace-nowrap capitalize">{fmtDay(d.day)}</td>
-                    {COLS.map(([k]) => <td key={k as string} className="px-3 py-3"><Cell ev={d[k] as Ev | undefined} /></td>)}
+                    {COLS.map((k) => <td key={k as string} className="px-3 py-3"><Cell ev={d[k] as Ev | undefined} /></td>)}
                     <td className="px-2 py-3 text-center font-bold text-primary whitespace-nowrap">{w != null ? hm(w) : '—'}</td>
                     <td className={`px-2 py-3 text-center font-bold whitespace-nowrap ${diff != null && diff < 0 ? 'text-red-600' : 'text-green-600'}`}>{diff != null ? hm(diff) : '—'}</td>
                   </tr>

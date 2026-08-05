@@ -73,7 +73,7 @@ const weekdaysFor = (locale: string) => Array.from({ length: 7 }, (_, i) =>
 
 // Rejilla de un mes (lunes primero). Pinta un punto por cada vacación que cubre
 // el día; al pasar el ratón muestra los nombres.
-const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail: string; weekdays: string[]; compact?: boolean }> = ({ y, m, vacations, myEmail, weekdays, compact }) => {
+const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail: string; weekdays: string[]; compact?: boolean; tooltipFor?: (v: Vacation) => string }> = ({ y, m, vacations, myEmail, weekdays, compact, tooltipFor }) => {
   const first = new Date(y, m, 1);
   const lead = (first.getDay() + 6) % 7; // 0 = lunes
   const days = new Date(y, m + 1, 0).getDate();
@@ -93,7 +93,7 @@ const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail
           const k = iso(y, m, d);
           const isToday = k === todayIso;
           return (
-            <div key={i} title={vs.map((v) => `${v.employee_name || v.employee_email} — ${typeMetaKey(v.type)} (${v.status})`).join('\n')}
+            <div key={i} title={vs.map((v) => tooltipFor ? tooltipFor(v) : `${v.employee_name || v.employee_email} — ${typeMetaKey(v.type)} (${v.status})`).join('\n')}
               className={`rounded ${compact ? 'min-h-[26px] p-0.5' : 'min-h-[46px] p-1'} border ${isToday ? 'border-primary' : 'border-gray-100'} ${vs.length ? 'bg-almond/40' : 'bg-white'}`}>
               <div className={`text-right ${compact ? 'text-[8px]' : 'text-[10px]'} font-bold ${isToday ? 'text-primary' : 'text-primary/40'}`}>{d}</div>
               <div className="flex flex-wrap gap-0.5 mt-0.5">
@@ -333,13 +333,13 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
       ) : (
         <div ref={calRef}>
           {view === 'mes' ? (
-            <MonthGrid y={cursor.y} m={cursor.m} vacations={vacations} myEmail={employeeEmail} weekdays={WEEK} />
+            <MonthGrid y={cursor.y} m={cursor.m} vacations={vacations} myEmail={employeeEmail} weekdays={WEEK} tooltipFor={(v) => `${v.employee_name || v.employee_email} — ${typeLabel(v.type)} (${statusLabel(v.status)})`} />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {Array.from({ length: 12 }, (_, m) => (
                 <div key={m}>
                   <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-1">{MONTHS[m]}</p>
-                  <MonthGrid y={cursor.y} m={m} vacations={vacations} myEmail={employeeEmail} weekdays={WEEK} compact />
+                  <MonthGrid y={cursor.y} m={m} vacations={vacations} myEmail={employeeEmail} weekdays={WEEK} compact tooltipFor={(v) => `${v.employee_name || v.employee_email} — ${typeLabel(v.type)} (${statusLabel(v.status)})`} />
                 </div>
               ))}
             </div>

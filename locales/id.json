@@ -1968,7 +1968,8 @@
       "col_check_in": "Masuk",
       "col_break_start": "Jeda (masuk)",
       "col_break_end": "Jeda (keluar)",
-      "col_check_out": "Keluar"
+      "col_check_out": "Keluar",
+      "locOffice": "Kantor"
     },
     "emp": {
       "errNameRequired": "Nama wajib diisi.",

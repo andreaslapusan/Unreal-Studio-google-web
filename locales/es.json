@@ -1967,7 +1967,8 @@
       "col_check_in": "Entrada",
       "col_break_start": "Pausa (in)",
       "col_break_end": "Pausa (out)",
-      "col_check_out": "Salida"
+      "col_check_out": "Salida",
+      "locOffice": "Oficina"
     },
     "emp": {
       "errNameRequired": "El nombre es obligatorio.",

@@ -91,7 +91,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
 
   return (
     <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl">
+      <div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto overscroll-contain">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-xl font-serif text-primary flex items-center gap-2">
             <span className="material-symbols-outlined">description</span> {t('empleados.reportModal.title')}

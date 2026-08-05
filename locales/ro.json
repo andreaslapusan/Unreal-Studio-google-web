@@ -1967,7 +1967,8 @@
       "col_check_in": "Intrare",
       "col_break_start": "Pauză (intrare)",
       "col_break_end": "Pauză (ieșire)",
-      "col_check_out": "Ieșire"
+      "col_check_out": "Ieșire",
+      "locOffice": "Birou"
     },
     "emp": {
       "errNameRequired": "Numele este obligatoriu.",

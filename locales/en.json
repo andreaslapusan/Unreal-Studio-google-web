@@ -1967,7 +1967,8 @@
       "col_check_in": "Check-in",
       "col_break_start": "Break (in)",
       "col_break_end": "Break (out)",
-      "col_check_out": "Check-out"
+      "col_check_out": "Check-out",
+      "locOffice": "Office"
     },
     "emp": {
       "errNameRequired": "Name is required.",
