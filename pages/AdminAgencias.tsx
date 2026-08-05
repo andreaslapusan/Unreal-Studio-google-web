@@ -255,7 +255,7 @@ const AdminAgencias: React.FC = () => {
                                       href={it.href}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-blue-600 underline"
+                                      className="text-primary underline hover:text-primary/70"
                                     >
                                       {String(it.value).length > 60
                                         ? `${String(it.value).slice(0, 60)}…`

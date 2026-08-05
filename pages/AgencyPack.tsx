@@ -217,7 +217,7 @@ const AgencyPack: React.FC = () => {
             <Field label={t('agencyPack.fieldLastUpdate')}>{project.construction_update_date}</Field>
             <Field label={t('agencyPack.fieldGooglePin')}>
               {project.google_maps_url ? (
-                <a className="text-blue-600 underline" href={project.google_maps_url} target="_blank" rel="noopener noreferrer">
+                <a className="text-primary underline hover:text-primary/70" href={project.google_maps_url} target="_blank" rel="noopener noreferrer">
                   {t('agencyPack.viewMap')}
                 </a>
               ) : null}
