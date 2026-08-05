@@ -341,12 +341,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
             const recv = u.payments.filter((p) => p.received).reduce((s, p) => s + ((p as any).received_amount != null ? Number((p as any).received_amount) : Number(p.amount)), 0);
             const pending = Math.max(0, total - recv);
+            const overpaid = Math.max(0, recv - total); // sobrepago (recibido de mas)
             return (
               <div key={u.client_project_id} className="border border-gray-100 rounded-2xl overflow-hidden">
                 <div className="bg-gray-50 px-5 py-3 flex justify-between items-center">
                   <div>
                     <p className="font-bold text-primary">{u.project_name}{u.unit_number && <span className="text-gray-400 font-normal"> · {u.unit_number}</span>}</p>
-                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedPendingTotal', { recv: fmt(recv, u.currency), pending: fmt(pending, u.currency), total: fmt(total, u.currency), defaultValue: 'Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}' })}</p>
+                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedPendingTotal', { recv: fmt(recv, u.currency), pending: fmt(pending, u.currency), total: fmt(total, u.currency), defaultValue: 'Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}' })}{overpaid > 0 && <span className="text-green-600 font-bold"> · {t('admin.pay.overpaidLabel', { defaultValue: 'Excedente' })} {fmt(overpaid, u.currency)}</span>}</p>
                   </div>
                   <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...emptyPayment(u.currency), position: u.payments.length } })}
                     className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-lg flex items-center gap-1 hover:bg-black">
@@ -479,7 +480,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                 <div className="space-y-2">
                   <AsyncButton onClick={() => downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> {t('fix.cpp.downloadPdf')}</AsyncButton>
                   <p className="text-[11px] text-gray-400 text-center">{t('fix.cpp.stepsInOrder')}</p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <button disabled={kw.sending} onClick={markReceived}
                       className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-60 ${kwReceived ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-primary text-white hover:bg-black'}`}>
                       {kwReceived ? t('fix.cpp.step1Received') : t('fix.cpp.step1MarkReceived')}

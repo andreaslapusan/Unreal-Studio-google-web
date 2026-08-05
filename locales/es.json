@@ -1375,7 +1375,8 @@
       "receivedAmtLabel": "recibido",
       "receivedPendingTotal": "Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}",
       "diffLabel": "diferencia",
-      "balanceLabel": "Balance"
+      "balanceLabel": "Balance",
+      "overpaidLabel": "Excedente"
     },
     "notif": {
       "title": "Notificaciones",

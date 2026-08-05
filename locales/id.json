@@ -1480,7 +1480,8 @@
       "receivedAmtLabel": "diterima",
       "receivedPendingTotal": "Diterima {{recv}} · Belum {{pending}} · Total {{total}}",
       "diffLabel": "selisih",
-      "balanceLabel": "Saldo"
+      "balanceLabel": "Saldo",
+      "overpaidLabel": "Kelebihan"
     },
     "notif": {
       "title": "Pemberitahuan",

@@ -1375,7 +1375,8 @@
       "receivedAmtLabel": "primit",
       "receivedPendingTotal": "Primit {{recv}} · De primit {{pending}} · Total {{total}}",
       "diffLabel": "diferență",
-      "balanceLabel": "Sold"
+      "balanceLabel": "Sold",
+      "overpaidLabel": "Excedent"
     },
     "notif": {
       "title": "Notificări",

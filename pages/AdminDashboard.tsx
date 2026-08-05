@@ -2074,7 +2074,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                       {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
-                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-50 text-green-600' : cp.status === 'Pagado' ? 'bg-blue-50 text-blue-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-100 text-green-700' : cp.status === 'Pagado' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
                     </div>
                     <div className="flex gap-1.5 shrink-0 items-center">
                         {cp.drive_folder_url && <a href={cp.drive_folder_url} target="_blank" rel="noopener noreferrer" className="text-amber-700 bg-amber-50 hover:bg-amber-100 transition p-2 rounded-lg" title={t('admin.dash.driveFolder', { defaultValue: 'Carpeta de documentación (Drive)' })}><span className="material-symbols-outlined text-xl leading-none">folder</span></a>}
@@ -2471,7 +2471,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       { icon: 'schedule', title: t('admin.dash.mailCheckin', { defaultValue: 'Recordatorio de fichaje' }), desc: t('admin.dash.mailCheckinDesc', { defaultValue: 'Recuérdale fichar entrada, pausas y salida' }), run: () => sendEmployeeCheckin(mailEmployee) },
                       { icon: 'lock_reset', title: t('admin.dash.mailReset', { defaultValue: 'Recuperar contraseña' }), desc: t('admin.dash.mailResetEmp', { defaultValue: 'Enlace para crear una nueva contraseña' }), run: () => sendEmployeeReset(mailEmployee) },
                     ].map((m, idx) => (
-                      <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
+                      <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
                         <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
                         <span className="min-w-0">
                           <span className="block font-bold text-primary text-sm mb-0.5">{m.title}</span>
@@ -3361,7 +3361,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           { icon: 'description', titleKey: 'admin.dash.mailReport', descKey: 'admin.dash.mailReportDesc', run: () => sendReportEmail(mailClient) },
           { icon: 'event_note', titleKey: 'admin.dash.mailCalendar', descKey: 'admin.dash.mailCalendarDesc', run: () => sendCalendarEmail(mailClient) },
         ].map((m, idx) => (
-          <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-blue-50 rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-blue-200 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
+          <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
             <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
             <span className="min-w-0">
               <span className="block font-bold text-primary text-sm mb-0.5">{t(m.titleKey)}</span>
