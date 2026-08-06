@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Project } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
+import { translateStatus } from '../lib/statusI18n';
 
 const LandingGlobalitae: React.FC = () => {
   const { t } = useTranslation();
@@ -269,7 +270,7 @@ const LandingGlobalitae: React.FC = () => {
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.status')}</p>
             <p className="text-lg md:text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter text-primary">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-              {project.status}
+              {translateStatus(project.status, t)}
             </p>
           </div>
         </div>
