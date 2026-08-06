@@ -13,6 +13,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { uiLocale } from '../lib/dateLocale';
 import { supabase } from '../lib/supabase';
 import { useEscapeKey } from '../lib/useEscapeKey';
 import { compressPdf } from '../lib/compressPdf';
@@ -116,7 +117,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
             ) : last?.url ? (
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-primary flex items-center gap-1"><span className="material-symbols-outlined text-green-600 text-base leading-none">check_circle</span>{last.date || '—'}</p>
+                  <p className="text-sm font-bold text-primary flex items-center gap-1"><span className="material-symbols-outlined text-green-600 text-base leading-none">check_circle</span>{(() => { try { return last.date ? new Date(last.date + 'T00:00:00').toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; } catch { return last.date || '—'; } })()}</p>
                 </div>
                 <a href={last.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-black bg-primary text-white px-3 py-2 rounded-xl">
                   <span className="material-symbols-outlined text-base leading-none">picture_as_pdf</span> {t('empleados.reportModal.viewPdf', { defaultValue: 'Ver PDF' })}
