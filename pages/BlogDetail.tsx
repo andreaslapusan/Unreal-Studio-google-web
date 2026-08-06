@@ -67,7 +67,7 @@ const BlogDetail: React.FC = () => {
 
         if (data) {
             setPost(data as unknown as BlogPost);
-            document.title = `${(data as unknown as BlogPost).title} | Unreal Studio Bali`;
+            document.title = `${(data as unknown as BlogPost).title} | Unreal Studio Madrid`;
         } else if (error) {
             console.error('Error fetching post:', error);
         }
