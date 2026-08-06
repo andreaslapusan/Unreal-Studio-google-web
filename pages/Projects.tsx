@@ -108,12 +108,6 @@ const Projects: React.FC = () => {
         return a.sort_order - b.sort_order;
       }
       
-      if (filters.sort === 'roi') {
-        const roiA = a.annual_rental_projection && a.investor_price ? a.annual_rental_projection / a.investor_price : 0;
-        const roiB = b.annual_rental_projection && b.investor_price ? b.annual_rental_projection / b.investor_price : 0;
-        return roiB - roiA;
-      }
-
       const rates = config.exchangeRates;
       const currentRate = rates[currency] || 1;
       
@@ -196,7 +190,6 @@ const Projects: React.FC = () => {
                     className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
                   >
                     <option value="featured">{t('projects.sort.featured')}</option>
-                    <option value="roi">{t('projects.sort.roi')}</option>
                     <option value="asc">{t('projects.sort.asc')}</option>
                     <option value="desc">{t('projects.sort.desc')}</option>
                   </select>
