@@ -2039,7 +2039,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
             <div className="flex gap-1.5 shrink-0 flex-wrap justify-end">
               <button onClick={() => openEditClient(client)} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData')}><span className="material-symbols-outlined text-sm">edit</span></button>
-              <button onClick={() => setMailClient(client)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.mailCenter')}><span className="material-symbols-outlined text-sm">mail</span></button>
+              <button onClick={() => setMailClient(client)} className="p-2.5 bg-almond text-primary rounded-xl hover:brightness-95 transition" title={t('admin.dash.mailCenter')}><span className="material-symbols-outlined text-sm">mail</span></button>
               <button onClick={() => setWhatsappClient(client)} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></button>
               <button onClick={() => handleDeleteClient(client.id)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title={t('admin.dash.deleteClientTitle')}><span className="material-symbols-outlined text-sm">delete</span></button>
             </div>
@@ -2433,7 +2433,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="flex gap-1.5 shrink-0 flex-wrap justify-end">
                       <button onClick={() => setEmpModal({ emp: e as EmployeeRow })} className="p-2.5 text-primary bg-almond rounded-xl hover:brightness-95 transition" title={t('admin.dash.editData', { defaultValue: 'Editar' })}><span className="material-symbols-outlined text-sm">edit</span></button>
                       {(e.email || '').includes('@') && (
-                        <button onClick={() => setMailEmployee(e)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition" title={t('admin.dash.mailCenter')}><span className="material-symbols-outlined text-sm">mail</span></button>
+                        <button onClick={() => setMailEmployee(e)} className="p-2.5 bg-almond text-primary rounded-xl hover:brightness-95 transition" title={t('admin.dash.mailCenter')}><span className="material-symbols-outlined text-sm">mail</span></button>
                       )}
                       <button onClick={() => { const ph = ((e as any).phone || '').replace(/[^0-9]/g, ''); if (ph) window.open('https://wa.me/' + ph, '_blank'); else setEmpModal({ emp: e as EmployeeRow }); }} className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title={t('admin.dash.sendWhatsapp', { defaultValue: 'WhatsApp' })}><span className="material-symbols-outlined text-sm">chat</span></button>
                       <button onClick={() => deleteEmployee(e)} className="p-2.5 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition" title={t('fix.emp.delete', { defaultValue: 'Borrar' })}><span className="material-symbols-outlined text-sm">delete</span></button>
@@ -2472,7 +2472,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       { icon: 'lock_reset', title: t('admin.dash.mailReset', { defaultValue: 'Recuperar contraseña' }), desc: t('admin.dash.mailResetEmp', { defaultValue: 'Enlace para crear una nueva contraseña' }), run: () => sendEmployeeReset(mailEmployee) },
                     ].map((m, idx) => (
                       <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
-                        <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
+                        <span className="material-symbols-outlined text-primary shrink-0">{m.icon}</span>
                         <span className="min-w-0">
                           <span className="block font-bold text-primary text-sm mb-0.5">{m.title}</span>
                           <span className="block text-xs text-gray-400">{m.desc}</span>
@@ -2637,7 +2637,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
 <div className="border-t border-gray-100 pt-8 mt-8">
   <h3 className="text-lg font-serif text-primary mb-6">{t('admin.props.propertyDetails')}</h3>
-  <div className="grid grid-cols-3 gap-6 mb-6">
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><input type="number" value={currentProject.bedrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bedrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><input type="number" value={currentProject.bathrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bathrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><input type="number" value={currentProject.area_m2 || 0} onChange={(e) => setCurrentProject({...currentProject, area_m2: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
@@ -3362,7 +3362,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           { icon: 'event_note', titleKey: 'admin.dash.mailCalendar', descKey: 'admin.dash.mailCalendarDesc', run: () => sendCalendarEmail(mailClient) },
         ].map((m, idx) => (
           <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
-            <span className="material-symbols-outlined text-blue-600 shrink-0">{m.icon}</span>
+            <span className="material-symbols-outlined text-primary shrink-0">{m.icon}</span>
             <span className="min-w-0">
               <span className="block font-bold text-primary text-sm mb-0.5">{t(m.titleKey)}</span>
               <span className="block text-xs text-gray-400">{t(m.descKey)}</span>

@@ -30,7 +30,7 @@ const money = (n: number, c: string) => {
 const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const TYPE_META: Record<EvType, { dot: string; badge: string }> = {
   cobro: { dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700' },
-  vacacion: { dot: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700' },
+  vacacion: { dot: 'bg-primary', badge: 'bg-almond text-primary' },
 };
 // Locale de fechas según el idioma activo (antes iba fijo a 'es-ES' → meses/días
 // salían en español aunque la web estuviera en inglés).
