@@ -245,15 +245,16 @@ const LandingGlobalitae: React.FC = () => {
       <section className="relative z-20 -mt-12 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl p-6 md:p-10 grid grid-cols-2 lg:flex lg:flex-row justify-between items-center gap-6 md:gap-4 lg:divide-x divide-gray-100">
           <div className="px-2 md:px-4 lg:first:pl-0 text-center lg:text-left w-full lg:w-auto">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.availableUnits')}</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.roiRental')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">
-              {project.available_units != null ? project.available_units : t('fix.lg.consult')}
+              {project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('fix.lg.consult')}
+              <span className="text-[10px] md:text-xs font-sans opacity-80 ml-1 block md:inline">{t('fix.lg.grossPerYear')}</span>
             </p>
           </div>
           <div className="px-2 md:px-4 text-center lg:text-left w-full lg:w-auto">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.constructionProgress')}</p>
+            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.roiResale')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">
-              {project.completion_percent != null ? project.completion_percent + '%' : t('fix.lg.consult')}
+              {project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('fix.lg.consult')}
             </p>
           </div>
           <div className="px-2 md:px-4 text-center lg:text-left w-full lg:w-auto">

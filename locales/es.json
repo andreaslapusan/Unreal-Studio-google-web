@@ -2330,7 +2330,7 @@
       "yes": "Sí",
       "no": "No",
       "completion": "Finalización",
-      "constructionProgress": "Progreso de obra",
+      "constructionProgress": "Progreso Obra",
       "contractYearsShort": "{{years}} + {{ext}} años",
       "viewConstructionReport": "Ver Informe de Obra",
       "projectGallery": "Galería del Proyecto",
@@ -2341,8 +2341,7 @@
       "requestInfoThisProject": "Solicita información de este proyecto",
       "requestInfoSubtitle": "Déjanos tus datos y un asesor se pondrá en contacto contigo a la brevedad.",
       "footerCopyright": "© 2026 Unreal Studio × Globalitae. Inversión inmobiliaria en Bali.",
-      "galleryLightboxAlt": "Galería",
-      "availableUnits": "Unidades disponibles"
+      "galleryLightboxAlt": "Galería"
     },
     "book": {
       "iframeTitle": "Calendario de reservas"

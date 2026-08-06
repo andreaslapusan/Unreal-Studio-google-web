@@ -2345,7 +2345,7 @@
       "yes": "Ya",
       "no": "Tidak",
       "completion": "Penyelesaian",
-      "constructionProgress": "Progres konstruksi",
+      "constructionProgress": "Kemajuan Pembangunan",
       "contractYearsShort": "{{years}} + {{ext}} tahun",
       "viewConstructionReport": "Lihat Laporan Pembangunan",
       "projectGallery": "Galeri Proyek",
@@ -2356,8 +2356,7 @@
       "requestInfoThisProject": "Minta informasi tentang proyek ini",
       "requestInfoSubtitle": "Berikan data Anda dan konsultan kami akan menghubungi Anda secepatnya.",
       "footerCopyright": " 2026 Unreal Studio × Globalitae. Investasi Properti di Bali.",
-      "galleryLightboxAlt": "Galeri",
-      "availableUnits": "Unit tersedia"
+      "galleryLightboxAlt": "Galeri"
     },
     "book": {
       "iframeTitle": "Kalender Pemesanan"

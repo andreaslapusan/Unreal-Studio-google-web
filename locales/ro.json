@@ -2330,7 +2330,7 @@
       "yes": "Da",
       "no": "Nu",
       "completion": "Finalizare",
-      "constructionProgress": "Progres construcție",
+      "constructionProgress": "Progres lucrări",
       "contractYearsShort": "{{years}} + {{ext}} ani",
       "viewConstructionReport": "Vizualizează raportul de lucrări",
       "projectGallery": "Galeria proiectului",
@@ -2341,8 +2341,7 @@
       "requestInfoThisProject": "Cere informații despre acest proiect",
       "requestInfoSubtitle": "Lasă-ne datele tale și un consultant se va lua în contact cu tine în cel mai scurt timp.",
       "footerCopyright": "© 2026 Unreal Studio × Globalitae. Investiții imobiliare în Bali.",
-      "galleryLightboxAlt": "Galerie",
-      "availableUnits": "Unități disponibile"
+      "galleryLightboxAlt": "Galerie"
     },
     "book": {
       "iframeTitle": "Calendar de rezervări"

@@ -2330,7 +2330,7 @@
       "yes": "Yes",
       "no": "No",
       "completion": "Completion",
-      "constructionProgress": "Construction progress",
+      "constructionProgress": "Construction Progress",
       "contractYearsShort": "{{years}} + {{ext}} years",
       "viewConstructionReport": "View Construction Report",
       "projectGallery": "Project Gallery",
@@ -2341,8 +2341,7 @@
       "requestInfoThisProject": "Request information about this project",
       "requestInfoSubtitle": "Leave your details and an advisor will contact you as soon as possible.",
       "footerCopyright": "© 2026 Unreal Studio × Globalitae. Real Estate Investment in Bali.",
-      "galleryLightboxAlt": "Gallery",
-      "availableUnits": "Available units"
+      "galleryLightboxAlt": "Gallery"
     },
     "book": {
       "iframeTitle": "Booking Calendar"
