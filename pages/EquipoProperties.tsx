@@ -98,7 +98,13 @@ const EquipoProperties: React.FC = () => {
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-10">
-        {!current && (
+        {!current && sorted.length === 0 && (
+          <div className="text-center py-16">
+            <span className="material-symbols-outlined text-4xl text-primary/20">apartment</span>
+            <p className="text-primary/50 mt-2 text-sm">{t('fix.eqp.empty')}</p>
+          </div>
+        )}
+        {!current && sorted.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-4">
             {sorted.map((p) => (
               <button key={p.id} onClick={() => openEdit(p)} className="text-left bg-white rounded-2xl p-5 border border-primary/5 shadow-sm hover:shadow-md hover:border-primary/30 transition">

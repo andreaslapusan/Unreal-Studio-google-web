@@ -2275,7 +2275,8 @@
       "hiddenOnWeb": "Oculto en la web pública",
       "cancel": "Cancelar",
       "saving": "Guardando…",
-      "save": "Guardar"
+      "save": "Guardar",
+      "empty": "No tienes obras asignadas todavía."
     },
     "rp": {
       "linkExpired": "El enlace ha expirado o ya se usó.",

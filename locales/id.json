@@ -2276,7 +2276,8 @@
       "hiddenOnWeb": "Tersembunyi di web publik",
       "cancel": "Batal",
       "saving": "Menyimpan…",
-      "save": "Simpan"
+      "save": "Simpan",
+      "empty": "Belum ada proyek yang ditugaskan."
     },
     "pd": {
       "wrongCredentials": "Kredential salah.",

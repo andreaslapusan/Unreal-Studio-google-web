@@ -2275,7 +2275,8 @@
       "hiddenOnWeb": "Hidden on public web",
       "cancel": "Cancel",
       "saving": "Saving…",
-      "save": "Save"
+      "save": "Save",
+      "empty": "No projects assigned to you yet."
     },
     "rp": {
       "linkExpired": "The link has expired or has already been used.",

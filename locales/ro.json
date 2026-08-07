@@ -2275,7 +2275,8 @@
       "hiddenOnWeb": "Ascuns pe web public",
       "cancel": "Anula",
       "saving": "Se salvează…",
-      "save": "Salvează"
+      "save": "Salvează",
+      "empty": "Nu ai încă proiecte alocate."
     },
     "rp": {
       "linkExpired": "Legătura a expirat sau a fost deja utilizată.",

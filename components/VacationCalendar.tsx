@@ -156,17 +156,6 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
     void load();
   }, [load]);
 
-  const grouped = useMemo(() => {
-    const map = new Map<string, Vacation[]>();
-    for (const v of vacations) {
-      const key = monthKey(v.start_date);
-      const arr = map.get(key) ?? [];
-      arr.push(v);
-      map.set(key, arr);
-    }
-    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
-  }, [vacations]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
