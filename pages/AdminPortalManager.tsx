@@ -521,7 +521,7 @@ function UnitsTab({ data, properties, onChange }: { data: Unit[]; properties: Pr
   };
 
   const fmt = (n: number | null | undefined) =>
-    typeof n === "number" ? new Intl.NumberFormat("es-ES").format(n) : "—";
+    typeof n === "number" ? new Intl.NumberFormat(uiLocale()).format(n) : "—";
 
   return (
     <div>
@@ -793,9 +793,7 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
             className="rounded-lg border border-primary/20 px-3 py-1.5 text-sm bg-white"
           >
             <option value="all">{t('fix.apm.allCategories')}</option>
-            {FAQ_CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
+            {FAQ_CATEGORIES.map((c) => (<option key={c} value={c}>{t("faq.categories."+c,{defaultValue:c})}</option>))}
           </select>
           <span className="text-xs text-primary/50">{t('fix.apm.filteredCount', { shown: filtered.length, total: data.length })}</span>
         </div>
@@ -812,7 +810,7 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
         </button>
       </div>
 
-      <div className="bg-white rounded-xl overflow-hidden border border-primary/5">
+      <div className="bg-white rounded-xl overflow-x-auto border border-primary/5">
         <table className="w-full text-sm">
           <thead className="bg-almond text-left text-[11px] uppercase tracking-widest text-primary/60">
             <tr>
@@ -838,7 +836,7 @@ export function FaqsTab({ data, onChange }: { data: Faq[]; onChange: () => Promi
                   <div className="font-medium text-primary line-clamp-2">{f.question}</div>
                   <div className="text-[11px] text-primary/50 line-clamp-1 mt-1">{f.answer}</div>
                 </td>
-                <td className="p-3 text-xs">{f.category}</td>
+                <td className="p-3 text-xs">{t("faq.categories."+f.category,{defaultValue:f.category})}</td>
                 <td className="p-3 text-xs uppercase">{f.language}</td>
                 <td className="p-3 text-xs">{f.sort_order}</td>
                 <td className="p-3">
@@ -971,7 +969,7 @@ function FaqEditor({ faq, onClose, onSaved }: { faq: Faq; onClose: () => void; o
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
                 className="mt-1 block w-full rounded-lg border border-primary/20 px-3 py-2.5 outline-none bg-white"
               >
-                {FAQ_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                {FAQ_CATEGORIES.map((c) => <option key={c} value={c}>{t("faq.categories."+c,{defaultValue:c})}</option>)}
               </select>
             </label>
             <label className="block">
@@ -1045,7 +1043,7 @@ export function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange:
         {t('fix.apm.timelinesIntro')}
       </p>
 
-      <div className="bg-white rounded-xl overflow-hidden border border-primary/5">
+      <div className="bg-white rounded-xl overflow-x-auto border border-primary/5">
         <table className="w-full text-sm">
           <thead className="bg-almond text-left text-[11px] uppercase tracking-widest text-primary/60">
             <tr>
@@ -1418,6 +1416,7 @@ function EquipoTab() {
             {t('fix.apm.editProfilesPermissions')}
           </Link>
         </div>
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-xs uppercase tracking-widest text-primary/50">
             <tr>
@@ -1449,6 +1448,7 @@ function EquipoTab() {
             )}
           </tbody>
         </table>
+        </div>
       </section>
 
       {/* Próximas vacaciones aprobadas */}
