@@ -90,7 +90,8 @@
       "calcNote": "Calculat pe un model de vânzare pe plan într-o zonă cu cerere mare.",
       "ctaQuestion": "Vrei să investești într-o unitate cu această rentabilitate?",
       "seeFeatured": "Vezi proprietatea recomandată"
-    }
+    },
+    "videoUnsupported": "Browserul tău nu acceptă video HTML5."
   },
   "projects": {
     "title": "Proiecte | Unreal Studio Madrid",
@@ -1892,7 +1893,7 @@
     "heroTitle": "Rezervă un apel cu un consilier",
     "heroSubtitle": "30 de minute prin apel video cu echipa noastră. Îți trimitem dosarele actualizate ale proiectelor care se potrivesc cel mai bine profilului tău.",
     "altCta": "Dacă preferi, ne poți și",
-    "altCtaLink": "scrie pe WhatsApp"
+    "altCtaLink": "scrie-ne"
   },
   "agencyPack": {
     "loading": "Se încarcă…",

@@ -90,7 +90,8 @@
       "calcNote": "Based on an off-plan sale model in a high-demand area.",
       "ctaQuestion": "Want to invest in a unit with this return?",
       "seeFeatured": "See featured property"
-    }
+    },
+    "videoUnsupported": "Your browser does not support HTML5 video."
   },
   "projects": {
     "title": "Projects | Unreal Studio Madrid",
@@ -1892,7 +1893,7 @@
     "heroTitle": "Book a call with an advisor",
     "heroSubtitle": "30 minutes by video call with our team. We'll send you up-to-date dossiers for the projects that best match your profile.",
     "altCta": "If you prefer, you can also",
-    "altCtaLink": "message us on WhatsApp"
+    "altCtaLink": "message us"
   },
   "agencyPack": {
     "loading": "Loading…",

@@ -282,7 +282,7 @@ const Home: React.FC = () => {
                  }
                }}
              >
-               Tu navegador no soporta video HTML5.
+               {t("home.videoUnsupported", { defaultValue: "Tu navegador no soporta video HTML5." })}
              </video>
           </div>
         </div>

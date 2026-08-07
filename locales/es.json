@@ -90,7 +90,8 @@
       "calcNote": "Calculado sobre modelo de venta sobre plano en zona de alta demanda.",
       "ctaQuestion": "¿Quieres invertir en una unidad con esta rentabilidad?",
       "seeFeatured": "Ver propiedad destacada"
-    }
+    },
+    "videoUnsupported": "Tu navegador no soporta video HTML5."
   },
   "projects": {
     "title": "Proyectos | Unreal Studio Madrid",
@@ -1892,7 +1893,7 @@
     "heroTitle": "Reserva una llamada con un asesor",
     "heroSubtitle": "30 minutos por videollamada con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
     "altCta": "Si prefieres, también puedes",
-    "altCtaLink": "escribirnos por WhatsApp"
+    "altCtaLink": "escribirnos"
   },
   "agencyPack": {
     "loading": "Cargando…",

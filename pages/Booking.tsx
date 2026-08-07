@@ -62,7 +62,7 @@ export default function Booking() {
       <p className="text-center text-xs text-primary/50 mt-6 px-6">
         {t("booking.altCta", { defaultValue: "Si prefieres, también puedes" })}{" "}
         <Link to="/contacto" className="underline">
-          {t("booking.altCtaLink", { defaultValue: "escribirnos por WhatsApp" })}
+          {t("booking.altCtaLink", { defaultValue: "escribirnos" })}
         </Link>
         .
       </p>

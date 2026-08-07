@@ -90,7 +90,8 @@
       "calcNote": "Dihitung berdasarkan model penjualan off-plan di area permintaan tinggi.",
       "ctaQuestion": "Ingin berinvestasi di unit dengan imbal hasil ini?",
       "seeFeatured": "Lihat properti unggulan"
-    }
+    },
+    "videoUnsupported": "Browser Anda tidak mendukung video HTML5."
   },
   "projects": {
     "title": "Proyek | Unreal Studio Madrid",
@@ -1874,7 +1875,7 @@
     "heroTitle": "Reservasi panggilan dengan konsultan",
     "heroSubtitle": "30 menit per videopanggilan dengan tim kami. Kami mengirimkan dossiers terbaru dari proyek yang paling sesuai dengan profil Anda.",
     "altCta": "Jika Anda lebih suka, Anda juga bisa",
-    "altCtaLink": "menulis kepada kami melalui WhatsApp"
+    "altCtaLink": "menulis kepada kami"
   },
   "agencyPack": {
     "loading": "Memuat…",
