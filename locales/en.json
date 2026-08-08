@@ -2383,6 +2383,9 @@
       "constructionProgressAlt": "Construction progress {{n}}",
       "galleryImageAlt": "{{name}} - Image {{n}}",
       "requestProjectInfo": "Request project info"
+    },
+    "kwit": {
+      "receiptTitle": "Receipt No. {{no}}"
     }
   },
   "emails": {

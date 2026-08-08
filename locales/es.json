@@ -2385,6 +2385,9 @@
       "constructionProgressAlt": "Avance de obra {{n}}",
       "galleryImageAlt": "{{name}} - Imagen {{n}}",
       "requestProjectInfo": "Solicitar info de este proyecto"
+    },
+    "kwit": {
+      "receiptTitle": "Recibo Nº {{no}}"
     }
   },
   "emails": {

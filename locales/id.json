@@ -2384,6 +2384,9 @@
       "baliCity": "Bali, Indonesia",
       "baliAddressLine1": "Jl. Pratu Rai Madra No.15, Cemagi, Kec. Mengwi",
       "baliAddressLine2": "Kabupaten Badung, Bali, Indonesia"
+    },
+    "kwit": {
+      "receiptTitle": "Kwitansi No. {{no}}"
     }
   },
   "emails": {

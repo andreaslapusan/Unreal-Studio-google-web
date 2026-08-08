@@ -37,7 +37,8 @@ const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }>
   const view = (k: Kwitansi) => {
     const w = window.open('', '_blank');
     if (!w) return;
-    w.document.write(`<html><head><title>Recibo Nº ${k.no_seq}</title></head><body style="margin:0;padding:24px;background:#fff">${k.html}</body></html>`);
+    const title = t('fix.kwit.receiptTitle', { no: k.no_seq, defaultValue: 'Recibo Nº {{no}}' });
+    w.document.write(`<html><head><title>${title}</title></head><body style="margin:0;padding:24px;background:#fff">${k.html}</body></html>`);
     w.document.close();
   };
 

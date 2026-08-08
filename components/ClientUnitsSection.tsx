@@ -70,7 +70,7 @@ const ClientUnitsSection: React.FC<{ clientId: string }> = ({ clientId }) => {
               done: Boolean(u.contract_signed_at),
               value: u.contract_signed_at ? new Date(u.contract_signed_at).toLocaleDateString(uiLocale()) : undefined,
             },
-            { label: t('inversoresDashboard.labelDelivery'), done: false, value: u.delivery_date || undefined },
+            { label: t('inversoresDashboard.labelDelivery'), done: false, value: u.delivery_date ? new Date(u.delivery_date).toLocaleDateString(uiLocale()) : undefined },
           ];
           return (
             <article key={u.investor_unit_id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-primary/5">

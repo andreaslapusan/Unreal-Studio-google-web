@@ -2383,6 +2383,9 @@
       "constructionProgressAlt": "Progresul lucrărilor {{n}}",
       "galleryImageAlt": "{{name}} - Imaginea {{n}}",
       "requestProjectInfo": "Cereți informații despre acest proiect"
+    },
+    "kwit": {
+      "receiptTitle": "Chitanță nr. {{no}}"
     }
   },
   "emails": {
