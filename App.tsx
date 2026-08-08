@@ -6,7 +6,7 @@ import ManifestSwitcher from './components/ManifestSwitcher';
 import PullToRefresh from './components/PullToRefresh';
 import GlobalLoading from './components/GlobalLoading';
 import LocaleSeo from './components/LocaleSeo';
-// FloatingWhatsApp importado bajo demanda (ver Layout); desactivado por defecto.
+import FloatingWhatsApp from './components/FloatingWhatsApp';
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
 import NotFound from './components/NotFound';
 import { PORTAL_SEGMENTS, portalPath, matchPortalPath, type Portal } from './lib/portalUrls';
@@ -147,10 +147,9 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
       {!isHiddenPath && <Navbar />}
       <main className="flex-grow">{children}</main>
       {!isHiddenPath && <Footer />}
-      {/* FloatingWhatsApp listo pero DESACTIVADO: la web ya tiene un CTA flotante
-          (botón "Agendar" del Navbar). Activar solo si Andreas lo aprueba, para no
-          meter 2 botones flotantes en su diseño sin su visto bueno.
-          {!isHiddenPath && <FloatingWhatsApp />} */}
+      {/* FloatingWhatsApp: activado por Andreas (2026-08-09). Bottom-right, no colisiona
+          con el CTA "Agendar" (bottom-center). Manda al +34 625710770 (WHATSAPP_URL). */}
+      {!isHiddenPath && <FloatingWhatsApp />}
     </div>
   );
 };

@@ -8,7 +8,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../lib/supabase';
 
-const WA = 'https://wa.me/6285217790692?text=' + encodeURIComponent('Hola, he visto la demo del portal y me interesa reservar una unidad en Unreal Studio.');
+// Número único de la web: +34 625710770 (Andreas 2026-08-09, quitado el +62).
+const WA = 'https://wa.me/34625710770?text=' + encodeURIComponent('Hola, he visto la demo del portal y me interesa reservar una unidad en Unreal Studio.');
 
 // Imágenes reales de marketing (proyecto Deseo) para que la demo se vea auténtica.
 const HERO = 'projects/1773625025637-jazay02l7.webp';

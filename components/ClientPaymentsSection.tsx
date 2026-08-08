@@ -184,7 +184,69 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
               <div className="h-2 bg-primary/10 rounded-full overflow-hidden mb-4">
                 <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
               </div>
-              <div className="overflow-x-auto rounded-xl border border-primary/10">
+              {/* Móvil: tarjetas condensadas (evita el scroll horizontal de 8 columnas). */}
+              <div className="sm:hidden space-y-3">
+                {pays.map((p) => {
+                  const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
+                  const received = recvOf(p);
+                  const balance = Number(p.amount) - received;
+                  const claimed = claimedIds.has(p.id);
+                  return (
+                    <div key={p.id} className={`rounded-xl p-3.5 border ${p.received ? 'bg-green-50 border-green-200' : overdue ? 'bg-red-50 border-red-200' : 'bg-white border-primary/10'}`}>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="font-bold text-primary text-sm min-w-0">{p.label}</div>
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full shrink-0 ${p.received ? 'bg-green-100 text-green-700' : overdue ? 'bg-red-100 text-red-600' : 'bg-almond text-primary/50'}`}>
+                          <span className="material-symbols-outlined text-sm">{p.received ? 'check_circle' : overdue ? 'warning' : 'schedule'}</span>
+                          {p.received ? t('fix.pay.statusReceived') : overdue ? t('fix.pay.statusOverdue') : t('fix.pay.statusPending')}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+                        <div className="text-primary/50">{t('fix.pay.colDueDate')}</div>
+                        <div className="text-right text-primary/80 font-medium">{fmtDate(p.due_date)}</div>
+                        <div className="text-primary/50">{t('fix.pay.colAmount')}</div>
+                        <div className="text-right font-bold text-primary">{fmt(Number(p.amount), p.currency)}</div>
+                        <div className="text-primary/50">{t('fix.pay.colReceived')}</div>
+                        <div className="text-right text-green-700 font-medium">{received > 0 ? `${fmt(received, p.currency)} · ${fmtDate(p.paid_at)}` : '—'}</div>
+                        <div className="text-primary/50">{t('fix.pay.colBalance')}</div>
+                        <div className={`text-right font-bold ${balance > 0 ? 'text-red-600' : 'text-green-700'}`}>{fmt(balance, p.currency)}</div>
+                      </div>
+                      <div className="mt-3 flex items-center justify-between gap-2">
+                        {receipts[p.id] ? (
+                          <button onClick={() => setPreview({ kw: receipts[p.id], payId: p.id })} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
+                            <span className="material-symbols-outlined text-sm">visibility</span>{t('fix.pay.receipt')}
+                          </button>
+                        ) : <span />}
+                        {!p.received && (
+                          claimed ? (
+                            <span className="text-[11px] font-bold text-green-700">{t('fix.pay.noticeSent')}</span>
+                          ) : claimingId === p.id ? (
+                            <div className="flex items-center gap-1">
+                              <input type="text" value={claimNote} onChange={(e) => setClaimNote(e.target.value)} placeholder={t('fix.pay.referenceOptional')} className="rounded border border-primary/15 px-2 py-1 text-[11px] bg-white w-24" />
+                              <button onClick={() => void submitClaim(p.id)} disabled={sending} className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded disabled:opacity-50">{sending ? '…' : t('fix.pay.confirm')}</button>
+                              <button onClick={() => { setClaimingId(null); setClaimNote(''); }} className="text-[10px] text-primary/50 px-1">×</button>
+                            </div>
+                          ) : (
+                            <button onClick={() => { setClaimingId(p.id); setClaimNote(''); }} className="text-[10px] font-bold text-primary border border-primary/20 rounded-full px-2 py-0.5 hover:bg-primary hover:text-white transition">{t('fix.pay.alreadyPaid')}</button>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                {(() => {
+                  const tRecv = pays.reduce((s, p) => s + recvOf(p), 0);
+                  const tBal = total - tRecv;
+                  return (
+                    <div className="rounded-xl p-3.5 bg-almond/60 border-2 border-primary/15 text-sm">
+                      <div className="flex items-center justify-between font-bold text-primary"><span>{t('fix.pay.total')}</span><span>{fmt(total, u.currency)}</span></div>
+                      <div className="flex items-center justify-between text-xs mt-1"><span className="text-primary/50">{t('fix.pay.colReceived')}</span><span className="text-green-700 font-bold">{fmt(tRecv, u.currency)}</span></div>
+                      <div className="flex items-center justify-between text-xs mt-1"><span className="text-primary/50">{t('fix.pay.colBalance')}</span><span className={`font-bold ${tBal > 0 ? 'text-red-600' : 'text-green-700'}`}>{fmt(tBal, u.currency)}</span></div>
+                    </div>
+                  );
+                })()}
+              </div>
+              {/* Desktop: tabla completa. */}
+              <div className="hidden sm:block overflow-x-auto rounded-xl border border-primary/10">
                 <table className="w-full text-sm min-w-[760px]">
                   <thead className="bg-almond/50 text-[10px] uppercase tracking-widest text-primary/50">
                     <tr>

@@ -157,6 +157,12 @@ async function main() {
     html = setMeta(html, "twitter:title", h.title, "name");
     html = setMeta(html, "twitter:description", h.desc, "name");
     html = setCanonical(html, url);
+    // Instagram por idioma: @unrealstudiomadrid solo en español (contenido ES);
+    // el resto de idiomas usan @unrealstudiobali (contenido en inglés). El template
+    // base ya trae "bali", así que solo hay que reescribir para /es.
+    if (h.prefix === "es") {
+      html = html.replace("https://instagram.com/unrealstudiobali", "https://instagram.com/unrealstudiomadrid");
+    }
     writeFileSync(resolve(DIST, `${h.prefix}.html`), html, "utf8");
     homeCount++;
   }
