@@ -2052,7 +2052,8 @@
       "dueDateLabel": "Fecha límite: {{date}}",
       "popupBlocked": "Permite las ventanas emergentes para ver/descargar el recibí.",
       "generating": "Generando…",
-      "downloadPdf": "Descargar PDF"
+      "downloadPdf": "Descargar PDF",
+      "cancel": "Cancelar"
     },
     "empd": {
       "passMismatch": "Las contraseñas no coinciden.",

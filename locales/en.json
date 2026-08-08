@@ -2050,7 +2050,8 @@
       "dueDateLabel": "Due date: {{date}}",
       "popupBlocked": "Allow pop-ups to view/download the receipt.",
       "generating": "Generating…",
-      "downloadPdf": "Download PDF"
+      "downloadPdf": "Download PDF",
+      "cancel": "Cancel"
     },
     "empd": {
       "passMismatch": "Passwords do not match.",

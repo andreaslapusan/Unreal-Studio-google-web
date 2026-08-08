@@ -63,7 +63,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
   // Preview del recibí en un pop-up antes de descargar (evita que el navegador
   // —p.ej. Brave— bloquee la descarga directa sin avisar; el botón "Descargar"
   // del pop-up es un gesto de usuario claro).
-  const [preview, setPreview] = useState<{ kw: any; payId: string } | null>(null);
+  const [preview, setPreview] = useState<{ kw: any; payId: string; imgs?: string[] } | null>(null);
 
   useEffect(() => {
     if (!clientId) return;
@@ -101,12 +101,35 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
     finally { setDownloadingId(null); }
   };
 
+  // Extrae las URLs de imagen (sello, firma) del html firmado y almacenado.
+  const extractSrcs = (html: string): string[] => {
+    const srcs: string[] = []; const re = /<img[^>]+src="([^"]+)"/g; let m;
+    while ((m = re.exec(html || ''))) srcs.push(m[1]);
+    return srcs;
+  };
+
+  // Abre el preview del recibí. Muestra el pop-up al instante con las URLs
+  // remotas y, en paralelo, INCRUSTA sello y firma como dataURL (igual que el
+  // PDF) para que no dependan de una carga en vivo que en móvil/PWA a veces
+  // falla (síntoma de Andreas: "sale el logo y la firma como imagen rota").
+  const openReceipt = (kw: any, payId: string) => {
+    const srcs = extractSrcs(kw.html || '');
+    setPreview({ kw, payId, imgs: srcs });
+    void Promise.all(srcs.map(async (u) => {
+      try {
+        const res = await fetch(u, { mode: 'cors' });
+        const blob = await res.blob();
+        return await new Promise<string>((ok) => { const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = () => ok(u); r.readAsDataURL(blob); });
+      } catch { return u; }
+    })).then((imgs) => setPreview((pv) => (pv && pv.payId === payId ? { ...pv, imgs } : pv)));
+  };
+
   // HTML del preview: lo RE-RENDERIZAMOS con los datos del recibí (incluida la
   // fecha de vencimiento) en vez de usar el html almacenado, que en recibís
-  // antiguos se firmó sin esa línea. Sello/firma se extraen del html guardado.
-  const previewHtml = (kw: any): string => {
-    const srcs: string[] = []; const re = /<img[^>]+src="([^"]+)"/g; let m;
-    while ((m = re.exec(kw.html || ''))) srcs.push(m[1]);
+  // antiguos se firmó sin esa línea. Sello/firma = dataURL ya incrustadas.
+  const previewHtml = (pv: { kw: any; imgs?: string[] }): string => {
+    const kw = pv.kw;
+    const srcs: string[] = (pv.imgs && pv.imgs.length) ? pv.imgs : extractSrcs(kw.html || '');
     const hasLogo = srcs.length >= 3; // [logo?, sello, firma]
     return renderKwitansiHtml({
       no: kw.display_no || kw.no_seq,
@@ -132,7 +155,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
           <h3 className="font-serif text-lg text-primary">{t('fix.pay.receipt')}</h3>
           <button onClick={() => setPreview(null)} className="text-primary/40 hover:text-primary p-1"><span className="material-symbols-outlined">close</span></button>
         </div>
-        <div className="overflow-y-auto p-4" dangerouslySetInnerHTML={{ __html: previewHtml(preview.kw) }} />
+        <div className="overflow-y-auto p-4" dangerouslySetInnerHTML={{ __html: previewHtml(preview) }} />
         <div className="px-5 py-3 border-t border-primary/10 shrink-0">
           <button
             onClick={() => void viewReceipt(preview.kw, preview.payId)}
@@ -210,26 +233,30 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                         <div className="text-primary/50">{t('fix.pay.colBalance')}</div>
                         <div className={`text-right font-bold ${balance > 0 ? 'text-red-600' : 'text-green-700'}`}>{fmt(balance, p.currency)}</div>
                       </div>
-                      <div className="mt-3 flex items-center justify-between gap-2">
-                        {receipts[p.id] ? (
-                          <button onClick={() => setPreview({ kw: receipts[p.id], payId: p.id })} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
-                            <span className="material-symbols-outlined text-sm">visibility</span>{t('fix.pay.receipt')}
-                          </button>
-                        ) : <span />}
-                        {!p.received && (
-                          claimed ? (
+                      {/* Acciones. En edición, el campo "referencia" ocupa toda la fila
+                          para que se lea bien en móvil (antes iba apretado y cortado). */}
+                      {!p.received && claimingId === p.id ? (
+                        <div className="mt-3">
+                          <input type="text" value={claimNote} onChange={(e) => setClaimNote(e.target.value)} placeholder={t('fix.pay.referenceOptional')} className="w-full rounded-lg border border-primary/15 px-3 py-2 text-xs bg-white mb-2" />
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => void submitClaim(p.id)} disabled={sending} className="flex-1 bg-primary text-white text-[11px] font-black uppercase tracking-widest py-2 rounded-lg disabled:opacity-50">{sending ? '…' : t('fix.pay.confirm')}</button>
+                            <button onClick={() => { setClaimingId(null); setClaimNote(''); }} className="text-xs text-primary/60 px-4 py-2 border border-primary/15 rounded-lg">{t('fix.pay.cancel', { defaultValue: 'Cancelar' })}</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-3 flex items-center justify-between gap-2">
+                          {receipts[p.id] ? (
+                            <button onClick={() => openReceipt(receipts[p.id], p.id)} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
+                              <span className="material-symbols-outlined text-sm">visibility</span>{t('fix.pay.receipt')}
+                            </button>
+                          ) : <span />}
+                          {!p.received && (claimed ? (
                             <span className="text-[11px] font-bold text-green-700">{t('fix.pay.noticeSent')}</span>
-                          ) : claimingId === p.id ? (
-                            <div className="flex items-center gap-1">
-                              <input type="text" value={claimNote} onChange={(e) => setClaimNote(e.target.value)} placeholder={t('fix.pay.referenceOptional')} className="rounded border border-primary/15 px-2 py-1 text-[11px] bg-white w-24" />
-                              <button onClick={() => void submitClaim(p.id)} disabled={sending} className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded disabled:opacity-50">{sending ? '…' : t('fix.pay.confirm')}</button>
-                              <button onClick={() => { setClaimingId(null); setClaimNote(''); }} className="text-[10px] text-primary/50 px-1">×</button>
-                            </div>
                           ) : (
-                            <button onClick={() => { setClaimingId(p.id); setClaimNote(''); }} className="text-[10px] font-bold text-primary border border-primary/20 rounded-full px-2 py-0.5 hover:bg-primary hover:text-white transition">{t('fix.pay.alreadyPaid')}</button>
-                          )
-                        )}
-                      </div>
+                            <button onClick={() => { setClaimingId(p.id); setClaimNote(''); }} className="text-[11px] font-bold text-primary border border-primary/20 rounded-full px-3 py-1 hover:bg-primary hover:text-white transition">{t('fix.pay.alreadyPaid')}</button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -297,7 +324,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                           </td>
                           <td className="px-4 py-3 text-right whitespace-nowrap">
                             {receipts[p.id] ? (
-                              <button onClick={() => setPreview({ kw: receipts[p.id], payId: p.id })} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
+                              <button onClick={() => openReceipt(receipts[p.id], p.id)} className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-black transition">
                                 <span className="material-symbols-outlined text-sm">visibility</span>{t('fix.pay.receipt')}
                               </button>
                             ) : <span className="text-[11px] text-primary/30">—</span>}

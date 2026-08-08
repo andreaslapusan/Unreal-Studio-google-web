@@ -2050,7 +2050,8 @@
       "dueDateLabel": "Data scadentă: {{date}}",
       "popupBlocked": "Permite ferestrele pop-up pentru a vizualiza/descărca chitanța.",
       "generating": "Se generează…",
-      "downloadPdf": "Descarcă PDF"
+      "downloadPdf": "Descarcă PDF",
+      "cancel": "Anulează"
     },
     "empd": {
       "passMismatch": "Parolele nu corespund.",

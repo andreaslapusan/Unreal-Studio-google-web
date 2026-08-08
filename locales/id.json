@@ -2051,7 +2051,8 @@
       "dueDateLabel": "Tanggal Jatuh Tempo: {{date}}",
       "popupBlocked": "Izinkan pop-up untuk melihat/mengunduh bukti pembayaran.",
       "generating": "Membuat…",
-      "downloadPdf": "Unduh PDF"
+      "downloadPdf": "Unduh PDF",
+      "cancel": "Batal"
     },
     "empd": {
       "passMismatch": "Kata sandi tidak cocok.",
