@@ -489,7 +489,9 @@ const AMENITIES_LIST = [
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
     try {
-        return new Date(dateString).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const d = new Date(dateString);
+        if (isNaN(d.getTime())) return dateString; // fecha inválida: no pintar "Invalid Date"
+        return d.toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }

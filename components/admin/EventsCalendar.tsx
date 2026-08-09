@@ -265,8 +265,8 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.agenda.listOf', { defaultValue: 'Lista' })}:</span>
           <select value={filterType} onChange={(e) => setFilterType(e.target.value as any)} className="bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-primary">
             <option value="all">{t('admin.agenda.allTypes', { defaultValue: 'Todos' })}</option>
-            <option value="cobro">Cobros</option>
-            <option value="vacacion">Vacaciones</option>
+            <option value="cobro">{t('admin.agenda.cobro')}</option>
+            <option value="vacacion">{t('admin.agenda.vacacion')}</option>
           </select>
           <select value={order} onChange={(e) => setOrder(e.target.value as any)} className="bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-primary">
             <option value="asc">{t('admin.agenda.asc', { defaultValue: 'Ascendente (próximos)' })}</option>

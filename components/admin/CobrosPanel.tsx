@@ -14,6 +14,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { baliToday } from '../../lib/timezone';
+import { uiLocale } from '../../lib/dateLocale';
+
+// Fecha de vencimiento formateada según el idioma de la UI (evita ISO en crudo).
+const fmtDue = (s: string | null): string => {
+  if (!s) return '—';
+  try { const d = new Date(s + 'T00:00:00'); return isNaN(d.getTime()) ? s : d.toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric' }); }
+  catch { return s; }
+};
 
 interface Pay {
   id: string; label: string; amount: number; currency: string; due_date: string | null;
@@ -330,7 +338,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
                   <td className="px-4 py-3 text-primary/70 whitespace-nowrap">{r.project_name}{r.unit_number ? ` · ${r.unit_number}` : ''}</td>
                   <td className="px-4 py-3 text-primary/60">{r.label}</td>
                   <td className="px-4 py-3 text-right font-bold whitespace-nowrap">{fmt(r.amount, r.currency)}</td>
-                  <td className="px-4 py-3 text-primary/60 whitespace-nowrap">{r.due_date || '—'}</td>
+                  <td className="px-4 py-3 text-primary/60 whitespace-nowrap">{fmtDue(r.due_date)}</td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">{r.received ? '—' : dd == null ? '—' : dd < 0 ? <span className="text-red-600 font-bold">{t('cobros.overdueD', { n: Math.abs(dd) })}</span> : <span className="text-primary/60">{t('cobros.leftD', { n: dd })}</span>}</td>
                   <td className="px-4 py-3"><span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${STATE_CLS[st]}`}>{t('cobros.st' + st.charAt(0).toUpperCase() + st.slice(1))}</span></td>
                   <td className={`px-4 py-3 text-right font-bold whitespace-nowrap ${bal > 0 && !r.received ? 'text-red-500' : 'text-primary/40'}`}>{fmt(bal, r.currency)}</td>
