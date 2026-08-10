@@ -87,11 +87,78 @@ const CURRENCY_WORD: Record<string, Record<string, string>> = {
   id: { IDR: 'Rupiah', EUR: 'Euro', USD: 'Dolar' },
 };
 
+// ---------- Cantidad en letras (inglés) ----------
+const EN_U = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+  'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const EN_T = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+function enHundreds(n: number): string {
+  if (n === 0) return '';
+  let out = '';
+  const c = Math.floor(n / 100), r = n % 100;
+  if (c) out += `${EN_U[c]} hundred${r ? ' ' : ''}`;
+  if (r) {
+    if (r < 20) out += EN_U[r];
+    else { const d = Math.floor(r / 10), u = r % 10; out += EN_T[d] + (u ? '-' + EN_U[u] : ''); }
+  }
+  return out.trim();
+}
+export function numberToWordsEN(num: number): string {
+  num = Math.floor(Math.abs(num));
+  if (num === 0) return 'zero';
+  const millones = Math.floor(num / 1_000_000);
+  const miles = Math.floor((num % 1_000_000) / 1000);
+  const cientos = num % 1000;
+  const parts: string[] = [];
+  if (millones) parts.push(`${enHundreds(millones)} million`);
+  if (miles) parts.push(`${enHundreds(miles)} thousand`);
+  if (cientos) parts.push(enHundreds(cientos));
+  return parts.join(' ').replace(/\s+/g, ' ').trim();
+}
+
+// ---------- Localización del "concepto" del recibí (for_payment) ----------
+// El concepto se genera y almacena en el idioma del admin (español): p.ej.
+// "Deseo Studio · Unidad Unit 2 — Reserva". Cuando el recibí se muestra a un
+// cliente en otro idioma, traducimos las palabras conocidas (unidad, reserva,
+// ordinales de pago/aportación) para que no salga español mezclado.
+const CONCEPT_ORD_ES: Record<string, number> = {
+  primer: 1, primera: 1, segundo: 2, segunda: 2, tercer: 3, tercero: 3, tercera: 3,
+  cuarto: 4, cuarta: 4, quinto: 5, quinta: 5, sexto: 6, sexta: 6, septimo: 7, séptimo: 7,
+  septima: 7, séptima: 7, octavo: 8, octava: 8, noveno: 9, novena: 9, decimo: 10, décimo: 10, decima: 10, décima: 10,
+};
+const CONCEPT_WORDS: Record<string, { unit: string; payment: string; contribution: string; reserva: string; entrega: string; ord: string[]; ordAfter: boolean }> = {
+  en: { unit: 'Unit', payment: 'Payment', contribution: 'Contribution', reserva: 'Reservation', entrega: 'Delivery', ord: ['', 'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth'], ordAfter: false },
+  ro: { unit: 'Unitatea', payment: 'Plata', contribution: 'Contribuția', reserva: 'Rezervare', entrega: 'Predare', ord: ['', 'întâi', 'a doua', 'a treia', 'a patra', 'a cincea', 'a șasea', 'a șaptea', 'a opta', 'a noua', 'a zecea'], ordAfter: true },
+  id: { unit: 'Unit', payment: 'Pembayaran', contribution: 'Kontribusi', reserva: 'Reservasi', entrega: 'Serah terima', ord: ['', 'Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh'], ordAfter: true },
+};
+export function localizeConcept(text: string | undefined, lang = 'es'): string {
+  if (!text || lang === 'es' || !CONCEPT_WORDS[lang]) return text || '';
+  const C = CONCEPT_WORDS[lang];
+  let out = text;
+  // Ordinal + Pago/Aportación → "First Payment" (en) / "Plata întâi" (ro) / "Pembayaran Pertama" (id)
+  out = out.replace(/\b([A-Za-zÁÉÍÓÚáéíóúñÑ]+)\s+(Pago|Aportaci[oó]n)\b/gi, (m, ord, kind) => {
+    const idx = CONCEPT_ORD_ES[ord.toLowerCase()];
+    if (!idx) return m;
+    const w = /aport/i.test(kind) ? C.contribution : C.payment;
+    return C.ordAfter ? `${w} ${C.ord[idx]}` : `${C.ord[idx]} ${w}`;
+  });
+  // "Pago N" y "Nº pago"
+  out = out.replace(/\bPago\s+(\d+)\b/gi, (_m, n) => C.ordAfter ? `${C.payment} ${n}` : `${C.payment} ${n}`);
+  out = out.replace(/\b(\d+)\s*[ºo°]\s*pago\b/gi, (_m, n) => `${C.payment} ${n}`);
+  // Palabras sueltas
+  out = out.replace(/\bUnidad\b/gi, C.unit);
+  out = out.replace(/\bReserva\b/gi, C.reserva);
+  out = out.replace(/\bEntrega\b/gi, C.entrega);
+  // Colapsar "Unit Unit" (el unit_number ya suele traer "Unit")
+  out = out.replace(new RegExp(`\\b${C.unit}\\s+Unit\\b`, 'g'), C.unit);
+  return out;
+}
+
 /** Cantidad en letras + divisa, capitalizado. */
 export function amountInWords(amount: number, currency = 'IDR', lang = 'es'): string {
   let words: string;
   if (lang === 'id') words = terbilang(amount);
-  else words = numeroALetras(amount); // es/en/ro -> usamos español (marca ES)
+  else if (lang === 'en') words = numberToWordsEN(amount);
+  else words = numeroALetras(amount); // es/ro -> español (marca ES)
   // apócope final antes de la divisa: "...uno euros" -> "...un euro"? mantenemos plural "euros"
   words = words.replace(/\buno$/, 'un');
   const cur = (CURRENCY_WORD[lang] || CURRENCY_WORD.es)[currency] ?? currency;
@@ -174,7 +241,7 @@ export function renderKwitansiHtml(d: KwitansiData): string {
       <tr><td style="color:rgba(63,35,5,.6);vertical-align:top">${esc(L.amount)}</td>
           <td style="font-style:italic;border-bottom:1px dotted rgba(63,35,5,.35)">${esc(words)}</td></tr>
       <tr><td style="color:rgba(63,35,5,.6);vertical-align:top">${esc(L.concept)}</td>
-          <td style="border-bottom:1px dotted rgba(63,35,5,.35)">${esc(d.forPayment)}</td></tr>
+          <td style="border-bottom:1px dotted rgba(63,35,5,.35)">${esc(localizeConcept(d.forPayment, lang))}</td></tr>
     </table>
 
     <table style="width:100%;margin-top:30px"><tr>

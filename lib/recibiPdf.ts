@@ -10,7 +10,7 @@
  * "Fecha de vencimiento del pago" cuando viene informada.
  */
 import { jsPDF } from 'jspdf';
-import { amountInWords, formatFigure } from './kwitansi';
+import { amountInWords, formatFigure, localizeConcept } from './kwitansi';
 
 export interface RecibiPdfData {
   no: string | number;
@@ -117,7 +117,7 @@ export async function downloadRecibiPdf(d: RecibiPdfData): Promise<void> {
   };
   row(L.from, d.receivedFrom, 'bold');
   row(L.amount, amountInWords(d.amount, d.currency, lang), 'italic');
-  row(L.concept, d.forPayment, 'normal');
+  row(L.concept, localizeConcept(d.forPayment, lang), 'normal');
 
   // ---- Lugar + fecha + vencimiento (derecha, centrado sobre la firma) ----
   const SCX = 134; // centro de la columna derecha (firma)
