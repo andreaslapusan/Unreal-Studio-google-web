@@ -370,6 +370,9 @@ const ClientDashboard: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [walkthroughStep, setWalkthroughStep] = useState<number | null>(null);
+  // Buscador + orden de la lista de propiedades del cliente.
+  const [propSearch, setPropSearch] = useState('');
+  const [propSort, setPropSort] = useState<'recent' | 'oldest' | 'az' | 'za' | 'invhigh' | 'invlow'>('recent');
   const [calculatorProject, setCalculatorProject] = useState<any>(null);
   const [paymentsProj, setPaymentsProj] = useState<any>(null);
   // Funciones visibles del portal (admin las activa/desactiva en Configuración).
@@ -595,6 +598,26 @@ const ClientDashboard: React.FC = () => {
       };
   });
   
+  // Lista de propiedades filtrada por texto y ordenada según el criterio elegido.
+  const displayedProjects = (() => {
+    const q = propSearch.trim().toLowerCase();
+    const amt = (p: any) => Number(p.investment_amount) || 0;
+    const dt = (p: any) => (p.purchase_date ? new Date(p.purchase_date).getTime() : 0);
+    const nm = (p: any) => (p.project_name || '').toLowerCase();
+    const filtered = projects.filter((p: any) =>
+      !q || `${p.project_name || ''} ${p.project_location || ''} ${p.unit_number || ''}`.toLowerCase().includes(q));
+    return [...filtered].sort((a: any, b: any) => {
+      switch (propSort) {
+        case 'az': return nm(a).localeCompare(nm(b));
+        case 'za': return nm(b).localeCompare(nm(a));
+        case 'invhigh': return amt(b) - amt(a);
+        case 'invlow': return amt(a) - amt(b);
+        case 'oldest': return dt(a) - dt(b);
+        case 'recent': default: return dt(b) - dt(a);
+      }
+    });
+  })();
+
   const getTotalConverted = () => {
     // Suma por divisa, SIN convertir: cada inversión se queda en su moneda.
     // Si el cliente invirtió en varias divisas, se muestran sumadas por separado
@@ -701,15 +724,47 @@ const ClientDashboard: React.FC = () => {
 
         {/* Proyectos */}
         <h2 className="text-xl md:text-2xl font-serif text-primary mb-5 md:mb-8">{t('admin.clientDash.myInvestments')}</h2>
+        {/* Buscador + orden (solo si hay más de una propiedad). */}
+        {projects.length > 1 && (
+          <div className="flex flex-col sm:flex-row gap-2 mb-5">
+            <div className="relative flex-1">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/30 text-lg">search</span>
+              <input
+                type="text"
+                value={propSearch}
+                onChange={(e) => setPropSearch(e.target.value)}
+                placeholder={t('fix.cdash.searchPlaceholder', { defaultValue: 'Buscar propiedad…' })}
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-primary focus:outline-none focus:border-primary/30"
+              />
+            </div>
+            <select
+              value={propSort}
+              onChange={(e) => setPropSort(e.target.value as any)}
+              className="py-2.5 pl-3 pr-8 rounded-xl bg-white border border-primary/10 text-sm font-bold text-primary focus:outline-none focus:border-primary/30"
+            >
+              <option value="recent">{t('fix.cdash.sortRecent', { defaultValue: 'Más recientes' })}</option>
+              <option value="oldest">{t('fix.cdash.sortOldest', { defaultValue: 'Más antiguas' })}</option>
+              <option value="az">{t('fix.cdash.sortAz', { defaultValue: 'Nombre A-Z' })}</option>
+              <option value="za">{t('fix.cdash.sortZa', { defaultValue: 'Nombre Z-A' })}</option>
+              <option value="invhigh">{t('fix.cdash.sortInvHigh', { defaultValue: 'Mayor inversión' })}</option>
+              <option value="invlow">{t('fix.cdash.sortInvLow', { defaultValue: 'Menor inversión' })}</option>
+            </select>
+          </div>
+        )}
         {projects.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center border border-primary/5">
             <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">home_work</span>
             <p className="text-primary/40 font-bold">{t('admin.clientDash.noProjectsTitle')}</p>
             <p className="text-primary/30 text-sm mt-2">{t('admin.clientDash.noProjectsBody')}</p>
           </div>
+        ) : displayedProjects.length === 0 ? (
+          <div className="bg-white rounded-2xl p-10 text-center border border-primary/5">
+            <span className="material-symbols-outlined text-3xl text-primary/20 mb-2">search_off</span>
+            <p className="text-primary/40 text-sm">{t('fix.cdash.noMatches', { defaultValue: 'No hay propiedades que coincidan con tu búsqueda.' })}</p>
+          </div>
         ) : (
           <div className="space-y-6">
-            {projects.map((proj: any, idx: number) => (
+            {displayedProjects.map((proj: any, idx: number) => (
               <div key={idx} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-primary/5">
                 <div className="flex flex-col lg:flex-row">
                   {proj.project_image && (

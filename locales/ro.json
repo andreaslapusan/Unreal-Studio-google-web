@@ -2387,6 +2387,16 @@
     },
     "kwit": {
       "receiptTitle": "Chitanță nr. {{no}}"
+    },
+    "cdash": {
+      "searchPlaceholder": "Caută proprietate…",
+      "sortRecent": "Cele mai recente",
+      "sortOldest": "Cele mai vechi",
+      "sortAz": "Nume A-Z",
+      "sortZa": "Nume Z-A",
+      "sortInvHigh": "Investiție mare",
+      "sortInvLow": "Investiție mică",
+      "noMatches": "Nicio proprietate nu se potrivește căutării."
     }
   },
   "emails": {

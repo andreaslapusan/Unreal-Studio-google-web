@@ -2388,6 +2388,16 @@
     },
     "kwit": {
       "receiptTitle": "Kwitansi No. {{no}}"
+    },
+    "cdash": {
+      "searchPlaceholder": "Cari properti…",
+      "sortRecent": "Terbaru",
+      "sortOldest": "Terlama",
+      "sortAz": "Nama A-Z",
+      "sortZa": "Nama Z-A",
+      "sortInvHigh": "Investasi tertinggi",
+      "sortInvLow": "Investasi terendah",
+      "noMatches": "Tidak ada properti yang cocok dengan pencarian Anda."
     }
   },
   "emails": {

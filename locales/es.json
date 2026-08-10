@@ -2389,6 +2389,16 @@
     },
     "kwit": {
       "receiptTitle": "Recibo Nº {{no}}"
+    },
+    "cdash": {
+      "searchPlaceholder": "Buscar propiedad…",
+      "sortRecent": "Más recientes",
+      "sortOldest": "Más antiguas",
+      "sortAz": "Nombre A-Z",
+      "sortZa": "Nombre Z-A",
+      "sortInvHigh": "Mayor inversión",
+      "sortInvLow": "Menor inversión",
+      "noMatches": "No hay propiedades que coincidan con tu búsqueda."
     }
   },
   "emails": {

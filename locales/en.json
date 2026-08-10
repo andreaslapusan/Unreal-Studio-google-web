@@ -2387,6 +2387,16 @@
     },
     "kwit": {
       "receiptTitle": "Receipt No. {{no}}"
+    },
+    "cdash": {
+      "searchPlaceholder": "Search property…",
+      "sortRecent": "Most recent",
+      "sortOldest": "Oldest",
+      "sortAz": "Name A-Z",
+      "sortZa": "Name Z-A",
+      "sortInvHigh": "Highest investment",
+      "sortInvLow": "Lowest investment",
+      "noMatches": "No properties match your search."
     }
   },
   "emails": {
