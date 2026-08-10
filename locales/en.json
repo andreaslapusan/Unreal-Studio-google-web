@@ -2397,6 +2397,9 @@
       "sortInvHigh": "Highest investment",
       "sortInvLow": "Lowest investment",
       "noMatches": "No properties match your search."
+    },
+    "report": {
+      "uploadFailed": "The report could not be uploaded. Please try again."
     }
   },
   "emails": {

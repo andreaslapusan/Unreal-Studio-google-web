@@ -102,6 +102,8 @@ const EmpleadosDashboard: React.FC = () => {
   const [today, setToday] = useState<TodayRow[]>([]);
   const [canUploadReports, setCanUploadReports] = useState(false);
   const [canEditProperties, setCanEditProperties] = useState(false);
+  const [canViewCalendar, setCanViewCalendar] = useState(true);
+  const [canRequestVacation, setCanRequestVacation] = useState(true);
   const [employee, setEmployee] = useState<{ id: string; full_name: string | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null } | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -163,6 +165,8 @@ const EmpleadosDashboard: React.FC = () => {
       }
       setCanUploadReports(hasPermission(data, 'upload_reports'));
       setCanEditProperties(hasPermission(data, 'edit_properties'));
+      setCanViewCalendar(hasPermission(data, 'view_team_calendar'));
+      setCanRequestVacation(hasPermission(data, 'request_vacation'));
       // Idioma del empleado: al entrar, mostrar el portal en SU idioma preferido.
       const elang = (data as any).preferred_language;
       if (elang && ['es', 'en', 'ro', 'id'].includes(elang)) {
@@ -535,13 +539,15 @@ const EmpleadosDashboard: React.FC = () => {
           {t('empleados.help')}
         </p>
 
-        {/* Calendario de vacaciones del equipo (visible para todos) */}
-        {employee && (
+        {/* Calendario de vacaciones del equipo (respeta el permiso view_team_calendar;
+            el formulario de solicitar respeta request_vacation). */}
+        {employee && canViewCalendar && (
           <div className="mt-8">
             <VacationCalendar
               employeeId={employee.id}
               employeeEmail={realEmailOf(user)}
               employeeName={employee.full_name ?? realEmailOf(user)}
+              canRequest={canRequestVacation}
             />
           </div>
         )}

@@ -8,7 +8,7 @@
  * Datos en la tabla `employee_vacations`. Se muestra como lista agrupada por mes
  * con chips por empleado, coloreados por `type` y con indicador de `status`.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -30,6 +30,7 @@ interface VacationCalendarProps {
   employeeId: string;
   employeeEmail: string;
   employeeName: string;
+  canRequest?: boolean; // permiso request_vacation; si false, oculta el formulario de solicitar
 }
 
 type VacationType = 'vacaciones' | 'baja' | 'personal';
@@ -110,7 +111,7 @@ const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail
   );
 };
 
-const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employeeEmail, employeeName }) => {
+const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employeeEmail, employeeName, canRequest = true }) => {
   const { t, i18n } = useTranslation();
   const locale = i18n.language || 'es';
   const MONTHS = monthsFor(locale);
@@ -219,13 +220,15 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
     <section className="bg-white rounded-3xl p-5 shadow-sm border border-primary/5">
       <div className="flex items-center justify-between mb-1">
         <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">{t('vacaciones.sectionLabel')}</p>
-        <button
-          onClick={() => { setShowForm((s) => !s); setError(null); }}
-          className="text-xs font-bold text-primary flex items-center gap-1 hover:underline"
-        >
-          <span className="material-symbols-outlined text-base">{showForm ? 'close' : 'add'}</span>
-          {showForm ? t('vacaciones.close') : t('vacaciones.request')}
-        </button>
+        {canRequest && (
+          <button
+            onClick={() => { setShowForm((s) => !s); setError(null); }}
+            className="text-xs font-bold text-primary flex items-center gap-1 hover:underline"
+          >
+            <span className="material-symbols-outlined text-base">{showForm ? 'close' : 'add'}</span>
+            {showForm ? t('vacaciones.close') : t('vacaciones.request')}
+          </button>
+        )}
       </div>
       <h2 className="text-lg font-serif text-primary mb-4">{t('vacaciones.title')}</h2>
 

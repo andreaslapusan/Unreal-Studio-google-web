@@ -2397,6 +2397,9 @@
       "sortInvHigh": "Investiție mare",
       "sortInvLow": "Investiție mică",
       "noMatches": "Nicio proprietate nu se potrivește căutării."
+    },
+    "report": {
+      "uploadFailed": "Raportul nu a putut fi încărcat. Încearcă din nou."
     }
   },
   "emails": {

@@ -2398,6 +2398,9 @@
       "sortInvHigh": "Investasi tertinggi",
       "sortInvLow": "Investasi terendah",
       "noMatches": "Tidak ada properti yang cocok dengan pencarian Anda."
+    },
+    "report": {
+      "uploadFailed": "Laporan tidak dapat diunggah. Silakan coba lagi."
     }
   },
   "emails": {

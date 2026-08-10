@@ -85,8 +85,11 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
       // fijado (lo que ven los clientes). No cerramos solos: que lo vea él.
       void loadLast(projectId);
     } catch (e) {
+      // No mostramos el error crudo de Postgres/RLS al usuario (idioma/internals);
+      // mensaje genérico traducido y el detalle a consola.
+      console.error('[ConstructionReportModal] upload failed:', e);
       setState('error');
-      setError(e instanceof Error ? e.message : String(e));
+      setError(t('fix.report.uploadFailed', { defaultValue: 'No se pudo subir el reporte. Inténtalo de nuevo.' }));
     }
   };
 

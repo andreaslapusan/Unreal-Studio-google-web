@@ -2399,6 +2399,9 @@
       "sortInvHigh": "Mayor inversión",
       "sortInvLow": "Menor inversión",
       "noMatches": "No hay propiedades que coincidan con tu búsqueda."
+    },
+    "report": {
+      "uploadFailed": "No se pudo subir el reporte. Inténtalo de nuevo."
     }
   },
   "emails": {
