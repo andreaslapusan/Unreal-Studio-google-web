@@ -75,12 +75,14 @@ export default function AgenciasStats() {
         if (ids.length) {
           const { data: units } = await supabase
             .from("property_units")
-            .select("price_agencia, commission_default_pct, available, sold")
+            .select("price_agencia, commission_default_pct, commission_per_partner, available, sold")
             .in("property_id", ids);
           let pot = 0;
           for (const u of units ?? []) {
             if (u.available && !u.sold && u.price_agencia) {
-              const pct = u.commission_default_pct ?? 5;
+              // Aplica el override por agencia (commission_per_partner) con fallback al
+              // default, igual que RolePricingBadge → cifras coherentes en ambos sitios.
+              const pct = (u.commission_per_partner?.[pData.id]) ?? u.commission_default_pct ?? 5;
               pot += (u.price_agencia * pct) / 100;
             }
           }

@@ -2402,6 +2402,17 @@
     },
     "report": {
       "uploadFailed": "No se pudo subir el reporte. Inténtalo de nuevo."
+    },
+    "pricing": {
+      "investorPrice": "Tu precio inversor",
+      "agencyPrice": "Precio agencia",
+      "commissionLabel": "Comisión {{pct}}%",
+      "perClosedUnit": "por unidad cerrada",
+      "adminAllChannels": "Pricing admin (todos los canales)",
+      "public": "Público",
+      "investor": "Inversor",
+      "agency": "Agencia",
+      "default": "por defecto"
     }
   },
   "emails": {

@@ -2400,6 +2400,17 @@
     },
     "report": {
       "uploadFailed": "Raportul nu a putut fi încărcat. Încearcă din nou."
+    },
+    "pricing": {
+      "investorPrice": "Prețul tău de investitor",
+      "agencyPrice": "Preț agenție",
+      "commissionLabel": "Comision {{pct}}%",
+      "perClosedUnit": "pe unitate vândută",
+      "adminAllChannels": "Prețuri admin (toate canalele)",
+      "public": "Public",
+      "investor": "Investitor",
+      "agency": "Agenție",
+      "default": "implicit"
     }
   },
   "emails": {

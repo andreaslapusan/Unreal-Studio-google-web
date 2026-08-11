@@ -2401,6 +2401,17 @@
     },
     "report": {
       "uploadFailed": "Laporan tidak dapat diunggah. Silakan coba lagi."
+    },
+    "pricing": {
+      "investorPrice": "Harga investor Anda",
+      "agencyPrice": "Harga agensi",
+      "commissionLabel": "Komisi {{pct}}%",
+      "perClosedUnit": "per unit terjual",
+      "adminAllChannels": "Harga admin (semua kanal)",
+      "public": "Publik",
+      "investor": "Investor",
+      "agency": "Agensi",
+      "default": "bawaan"
     }
   },
   "emails": {

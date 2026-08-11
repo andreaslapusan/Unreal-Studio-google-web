@@ -2400,6 +2400,17 @@
     },
     "report": {
       "uploadFailed": "The report could not be uploaded. Please try again."
+    },
+    "pricing": {
+      "investorPrice": "Your investor price",
+      "agencyPrice": "Agency price",
+      "commissionLabel": "Commission {{pct}}%",
+      "perClosedUnit": "per closed unit",
+      "adminAllChannels": "Admin pricing (all channels)",
+      "public": "Public",
+      "investor": "Investor",
+      "agency": "Agency",
+      "default": "default"
     }
   },
   "emails": {
