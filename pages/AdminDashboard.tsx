@@ -2812,7 +2812,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     ['water_supply',t('admin.dash.fldWaterSupply'),'text'],['land_size_m2',t('admin.dash.fldLandSize'),'number'],
                     ['pool_size_m2',t('admin.dash.fldPoolSize'),'number'],['parking',t('admin.dash.fldParking'),'text'],['view',t('admin.dash.fldView'),'text'],
                     ['living_room_style',t('admin.dash.fldLivingStyle'),'text'],['furnishing_pack_cost_usd',t('admin.dash.fldFurnishPack'),'number'],
-                    ['timeline',t('admin.dash.fldTimeline'),'text'],['booking_widget_url',t('admin.dash.fldBookingWidget'),'text'],
+                    ['booking_widget_url',t('admin.dash.fldBookingWidget'),'text'],
                     ['video_url',t('admin.dash.fldVideoUrl'),'text'],['drive_renders_url',t('admin.dash.fldDriveRenders'),'text'],
                     ['drive_2d_plans_url',t('admin.dash.fldDrive2dPlans'),'text'],['drive_permits_url',t('admin.dash.fldDrivePermits'),'text'],
                     ['drive_legal_url',t('admin.dash.fldDriveLegal'),'text'],['drive_brochure_folder_url',t('admin.dash.fldDriveBrochure'),'text'],
