@@ -383,14 +383,18 @@ const ProjectDetail: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
         <div className="absolute bottom-12 left-6 md:left-12 max-w-md w-full">
           <div className="bg-white/95 backdrop-blur-md p-8 rounded-xl shadow-2xl border-l-4 border-primary">
-            <span className="bg-primary text-white text-[10px] uppercase font-bold px-3 py-2 rounded tracking-wide mb-4 inline-block">
-              {project.property_type}
-            </span>
+            {project.property_type && (
+              <span className="bg-primary text-white text-[10px] uppercase font-bold px-3 py-2 rounded tracking-wide mb-4 inline-block">
+                {project.property_type}
+              </span>
+            )}
             <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}</h1>
-            <div className="flex items-center text-gray-500 text-sm font-medium text-left">
-              <span className="material-symbols-outlined text-base mr-1">location_on</span>
-              {project.location}
-            </div>
+            {project.location && (
+              <div className="flex items-center text-gray-500 text-sm font-medium text-left">
+                <span className="material-symbols-outlined text-base mr-1">location_on</span>
+                {project.location}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -436,25 +440,33 @@ const ProjectDetail: React.FC = () => {
         <div className="lg:col-span-8 space-y-20">
           <section>
             <h2 className="text-4xl text-primary mb-8">{t('projectDetail.sectionProject')}</h2>
-            <div className="prose prose-lg text-primary/80 font-light space-y-6 mb-12">
-              <p>{localizedDescription()}</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {[
-                { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
-                { icon: 'history', label: t('projectDetail.labelYearsContract'), value: t('projectDetail.yearsExtValue', { base: project.years_contract, ext: project.years_extension }) },
-                { icon: 'apartment', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
-                { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) }
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-primary/5">
-                  <div className="bg-almond p-3 rounded-xl"><span className="material-symbols-outlined text-primary">{item.icon}</span></div>
-                  <div>
-                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-widest">{item.label}</p>
-                    <p className="font-bold text-primary text-sm">{item.value}</p>
-                  </div>
+            {localizedDescription() && (
+              <div className="prose prose-lg text-primary/80 font-light space-y-6 mb-12">
+                <p>{localizedDescription()}</p>
+              </div>
+            )}
+            {(() => {
+              // Regla del dueño: un campo sin valor NO se muestra (ni card ni label).
+              const specs = [
+                project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
+                project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: project.years_extension ? t('projectDetail.yearsExtValue', { base: project.years_contract, ext: project.years_extension }) : String(project.years_contract) },
+                project.available_units && { icon: 'apartment', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
+                (project.completion_percent > 0) && { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) },
+              ].filter(Boolean) as { icon: string; label: string; value: string }[];
+              return specs.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {specs.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-primary/5">
+                      <div className="bg-almond p-3 rounded-xl"><span className="material-symbols-outlined text-primary">{item.icon}</span></div>
+                      <div>
+                        <p className="text-[9px] uppercase font-black text-gray-400 tracking-widest">{item.label}</p>
+                        <p className="font-bold text-primary text-sm">{item.value}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              ) : null;
+            })()}
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
               {project.bedrooms > 0 && (
@@ -769,6 +781,7 @@ const ProjectDetail: React.FC = () => {
             <div className="bg-white p-8 rounded-2xl shadow-2xl border border-primary/5 text-left">
               <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">{t('projectDetail.assetSummary')}</h3>
               <div className="space-y-8 mb-10">
+                {project.completion_percent > 0 && (
                 <div>
                   <div className="flex justify-between text-[11px] font-bold text-gray-500 mb-3 uppercase tracking-wider">
                     <span>{t('projectDetail.labelConstructionProgress')}</span>
@@ -778,7 +791,8 @@ const ProjectDetail: React.FC = () => {
                     <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${project.completion_percent}%` }}></div>
                   </div>
                 </div>
-                
+                )}
+
                 {/* Nuevo bloque de datos extra en sidebar */}
                 <div>
                     {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
@@ -789,16 +803,26 @@ const ProjectDetail: React.FC = () => {
                     {project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                    <span>{t('projectDetail.kpiRoiRental')}</span>
-                    <span className="text-primary">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
-                  </div>
-                  <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                    <span>{t('projectDetail.kpiRoiResale')}</span>
-                    <span className="text-primary">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : '—'}</span>
-                  </div>
-                </div>
+                {(() => {
+                  const rental = (project.annual_rental_projection && project.investor_price) ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : null;
+                  const resale = (project.market_price && project.investor_price && project.investor_price > 0) ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : null;
+                  return (rental || resale) ? (
+                    <div className="space-y-3">
+                      {rental && (
+                        <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                          <span>{t('projectDetail.kpiRoiRental')}</span>
+                          <span className="text-primary">{rental}</span>
+                        </div>
+                      )}
+                      {resale && (
+                        <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                          <span>{t('projectDetail.kpiRoiResale')}</span>
+                          <span className="text-primary">{resale}</span>
+                        </div>
+                      )}
+                    </div>
+                  ) : null;
+                })()}
 
                 {/* Botones en Sidebar */}
                 {brochureFor(project, i18n.language) && (
@@ -813,7 +837,7 @@ const ProjectDetail: React.FC = () => {
                 )}
               </div>
               <a
-                href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(`Información: ${project.name}`)}&body=${encodeURIComponent(`Hola, me interesa el proyecto "${project.name}" en ${project.location}. Me gustaría recibir más información y agendar una reunión.`)}`}
+                href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(t('fix.pd.mailSubject', { name: project.name, defaultValue: 'Información: {{name}}' }))}&body=${encodeURIComponent(t('fix.pd.mailBody', { name: project.name, location: project.location, defaultValue: 'Hola, me interesa el proyecto "{{name}}" en {{location}}. Me gustaría recibir más información y agendar una reunión.' }))}`}
                 className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"
               >
                 {t('fix.pd.requestProjectInfo')}

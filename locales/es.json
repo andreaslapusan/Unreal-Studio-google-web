@@ -2385,7 +2385,9 @@
       "accessReport": "Acceder al informe",
       "constructionProgressAlt": "Avance de obra {{n}}",
       "galleryImageAlt": "{{name}} - Imagen {{n}}",
-      "requestProjectInfo": "Solicitar info de este proyecto"
+      "requestProjectInfo": "Solicitar info de este proyecto",
+      "mailSubject": "Información: {{name}}",
+      "mailBody": "Hola, me interesa el proyecto \"{{name}}\" en {{location}}. Me gustaría recibir más información y agendar una reunión."
     },
     "kwit": {
       "receiptTitle": "Recibo Nº {{no}}"

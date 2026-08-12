@@ -2383,7 +2383,9 @@
       "accessReport": "Accesați raportul",
       "constructionProgressAlt": "Progresul lucrărilor {{n}}",
       "galleryImageAlt": "{{name}} - Imaginea {{n}}",
-      "requestProjectInfo": "Cereți informații despre acest proiect"
+      "requestProjectInfo": "Cereți informații despre acest proiect",
+      "mailSubject": "Informații: {{name}}",
+      "mailBody": "Bună, sunt interesat de proiectul \"{{name}}\" din {{location}}. Aș dori mai multe informații și să programez o întâlnire."
     },
     "kwit": {
       "receiptTitle": "Chitanță nr. {{no}}"

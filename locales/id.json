@@ -2293,7 +2293,9 @@
       "accessReport": "Akses Laporan",
       "constructionProgressAlt": "Kemajuan konstruksi {{n}}",
       "galleryImageAlt": "{{name}} - Gambar {{n}}",
-      "requestProjectInfo": "Minta info proyek ini"
+      "requestProjectInfo": "Minta info proyek ini",
+      "mailSubject": "Informasi: {{name}}",
+      "mailBody": "Halo, saya tertarik dengan proyek \"{{name}}\" di {{location}}. Saya ingin informasi lebih lanjut dan menjadwalkan pertemuan."
     },
     "rp": {
       "linkExpired": "Tautan telah kedaluwarsa atau sudah digunakan.",

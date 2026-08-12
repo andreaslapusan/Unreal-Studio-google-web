@@ -2383,7 +2383,9 @@
       "accessReport": "Access report",
       "constructionProgressAlt": "Construction progress {{n}}",
       "galleryImageAlt": "{{name}} - Image {{n}}",
-      "requestProjectInfo": "Request project info"
+      "requestProjectInfo": "Request project info",
+      "mailSubject": "Information: {{name}}",
+      "mailBody": "Hi, I'm interested in the project \"{{name}}\" in {{location}}. I'd like more information and to schedule a meeting."
     },
     "kwit": {
       "receiptTitle": "Receipt No. {{no}}"
