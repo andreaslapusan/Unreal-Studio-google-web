@@ -166,7 +166,7 @@ const Home: React.FC = () => {
       if (p.is_hidden) return false; // Hide hidden projects from main list
       
       // Filtro de Zona
-      const zoneMatch = filters.zone === ANY_ZONE || p.location.toLowerCase().includes(filters.zone.toLowerCase());
+      const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());
       // Filtro de Tipo
       const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
       

@@ -80,7 +80,7 @@ const Projects: React.FC = () => {
     let result = projects.filter(p => {
       if (p.is_hidden) return false; // Hide hidden projects from main list
       
-      const zoneMatch = filters.zone === ANY_ZONE || p.location.toLowerCase().includes(filters.zone.toLowerCase());
+      const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());
       const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
       
       const rates = config.exchangeRates;
@@ -129,7 +129,7 @@ const Projects: React.FC = () => {
   }, [projects, filters, currency, config]);
 
   const soldProjects = useMemo(() => {
-    return projects.filter(p => p.is_hidden && (p.status.toLowerCase() === 'vendido' || p.status.toLowerCase() === 'sold'));
+    return projects.filter(p => p.is_hidden && ((p.status || '').toLowerCase() === 'vendido' || (p.status || '').toLowerCase() === 'sold'));
   }, [projects]);
 
   const handleFilterChange = (key: string, value: string) => {
