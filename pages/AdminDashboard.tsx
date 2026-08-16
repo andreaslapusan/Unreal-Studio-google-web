@@ -1046,7 +1046,7 @@ const filteredClients = clients
   .filter((c: any) => {
     if (clientSearch.trim()) {
       const q = clientSearch.toLowerCase();
-      if (!(c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.phone?.toLowerCase().includes(q))) return false;
+      if (!((c.name || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q) || c.phone?.toLowerCase().includes(q))) return false;
     }
     if (clientFilterProjects.length && !(c.projects || []).some((cp: any) => clientFilterProjects.includes(cp.project_name || cp.project_id))) return false;
     if (clientFilterCurrency && !(c.projects || []).some((cp: any) => cp.currency === clientFilterCurrency)) return false;
@@ -1060,7 +1060,7 @@ const filteredClients = clients
     return true;
   })
   .sort((a: any, b: any) => {
-    if (clientSort === 'name') return a.name.localeCompare(b.name);
+    if (clientSort === 'name') return (a.name || '').localeCompare(b.name || '');
     if (clientSort === 'amount_desc') return clientTotalEur(b) - clientTotalEur(a);
     if (clientSort === 'amount_asc') return clientTotalEur(a) - clientTotalEur(b);
     if (clientSort === 'recent') {
