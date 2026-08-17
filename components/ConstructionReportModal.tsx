@@ -14,6 +14,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { uiLocale } from '../lib/dateLocale';
+import { baliToday } from '../lib/timezone';
 import { supabase } from '../lib/supabase';
 import { useEscapeKey } from '../lib/useEscapeKey';
 import { compressPdf } from '../lib/compressPdf';
@@ -24,7 +25,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
   const { t } = useTranslation();
   const [projects, setProjects] = useState<ProjectOpt[]>([]);
   const [projectId, setProjectId] = useState('');
-  const [reportDate, setReportDate] = useState(new Date().toISOString().slice(0, 10));
+  const [reportDate, setReportDate] = useState(baliToday());
   const [file, setFile] = useState<File | null>(null);
   const [state, setState] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [error, setError] = useState('');

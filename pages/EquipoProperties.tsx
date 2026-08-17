@@ -126,7 +126,7 @@ const EquipoProperties: React.FC = () => {
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
               <label className={labelCls}>{t('fix.eqp.labelProgress')}</label>
               <input type="number" min={0} max={100} className={field} value={current.completion_percent ?? 0}
-                onChange={(e) => setCurrent({ ...current, completion_percent: parseInt(e.target.value) || 0 })} />
+                onChange={(e) => setCurrent({ ...current, completion_percent: Math.min(100, Math.max(0, parseInt(e.target.value) || 0)) })} />
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">

@@ -166,7 +166,7 @@ export default function EquipoUpload() {
           property_id: propertyId,
           title: title.trim(),
           summary: summary.trim() || null,
-          pct_progress_at_update: pctProgress ? Number(pctProgress) : null,
+          pct_progress_at_update: pctProgress ? Math.min(100, Math.max(0, Number(pctProgress) || 0)) : null,
           posted_by: realEmailOf(user) || user.id,
           visibility,
         })
