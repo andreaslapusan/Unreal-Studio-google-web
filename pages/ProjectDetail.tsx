@@ -8,7 +8,7 @@ import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
-import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import BookingWidget from '../components/BookingWidget';
@@ -360,7 +360,7 @@ const ProjectDetail: React.FC = () => {
           <button onClick={prevSlide} className="absolute left-4 md:left-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
             <span className="material-symbols-outlined text-4xl">arrow_back</span>
           </button>
-          <img src={allImages[lightbox.index]} className="max-w-full max-h-[90vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300" />
+          <img src={allImages[lightbox.index]} alt={project.name} onError={imgFallback(allImages[lightbox.index])} className="max-w-full max-h-[90vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300" />
           <button onClick={nextSlide} className="absolute right-4 md:right-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
             <span className="material-symbols-outlined text-4xl">arrow_forward</span>
           </button>
@@ -379,6 +379,7 @@ const ProjectDetail: React.FC = () => {
           sizes="100vw"
           loading="eager"
           fetchPriority="high"
+          onError={imgFallback(getImageUrl(project.image))}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
         <div className="absolute bottom-12 left-6 md:left-12 max-w-md w-full">
@@ -730,6 +731,7 @@ const ProjectDetail: React.FC = () => {
                         src={imgSrc(getImageUrl(img), 600)}
                         srcSet={imgSrcSet(getImageUrl(img), [320, 600, 900])}
                         sizes="(max-width: 768px) 50vw, 33vw"
+                        onError={imgFallback(getImageUrl(img))}
                       />
                       <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
@@ -757,6 +759,7 @@ const ProjectDetail: React.FC = () => {
                     src={imgSrc(img, 800)}
                     srcSet={imgSrcSet(img, [400, 800, 1200])}
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    onError={imgFallback(img)}
                   />
                   <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                     <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
@@ -860,6 +863,7 @@ const ProjectDetail: React.FC = () => {
                   src={imgSrc(getImageUrl(similar.image), 500)}
                   srcSet={imgSrcSet(getImageUrl(similar.image), [320, 500, 800])}
                   sizes="(max-width: 768px) 50vw, 33vw"
+                  onError={imgFallback(getImageUrl(similar.image))}
                 />
                 <span className="absolute top-3 left-3 bg-primary/80 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg">{translateStatus(similar.status, t)}</span>
               </div>
