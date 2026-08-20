@@ -205,7 +205,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                 <span className="text-xs font-bold text-primary">{t('fix.pay.pctReceived', { pct })} · {fmt(recv, u.currency)} / {fmt(total, u.currency)}</span>
               </div>
               <div className="h-2 bg-primary/10 rounded-full overflow-hidden mb-4">
-                <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
+                <div className="h-full bg-green-500 transition-all" style={{ width: `${Math.min(100, pct)}%` }} />
               </div>
               {/* Móvil: tarjetas condensadas (evita el scroll horizontal de 8 columnas). */}
               <div className="sm:hidden space-y-3">
@@ -378,7 +378,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                 <span className="text-xs font-bold text-primary">{pct}% · {fmt(recv, u.currency)} / {fmt(total, u.currency)}</span>
               </div>
               <div className="h-2 bg-primary/10 rounded-full overflow-hidden mb-4">
-                <div className="h-full bg-green-500 transition-all" style={{ width: `${pct}%` }} />
+                <div className="h-full bg-green-500 transition-all" style={{ width: `${Math.min(100, pct)}%` }} />
               </div>
               <ul className="space-y-2">
                 {pays.map((p) => {
