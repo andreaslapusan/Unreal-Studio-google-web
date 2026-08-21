@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
+import { imgFallback } from '../lib/imageOptimize';
 import { uiLocale } from '../lib/dateLocale';
 import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
@@ -769,7 +770,7 @@ const ClientDashboard: React.FC = () => {
                 <div className="flex flex-col lg:flex-row">
                   {proj.project_image && (
                     <div className="w-full lg:w-64 h-48 lg:h-auto shrink-0">
-                      <img src={getImageUrl(proj.project_image)} className="w-full h-full object-cover" alt={proj.project_name} />
+                      <img src={getImageUrl(proj.project_image)} onError={imgFallback(getImageUrl(proj.project_image))} className="w-full h-full object-cover" alt={proj.project_name} />
                     </div>
                   )}
                   <div className="p-6 md:p-8 flex-1">
