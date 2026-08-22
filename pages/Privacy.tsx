@@ -20,7 +20,7 @@ const Privacy: React.FC = () => {
           <section>
             <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.whoWeAreH')}</h2>
             <p>
-              {t('privacy.whoWeArePre')} <a href="https://unrealstudio.es" className="underline font-medium">https://unrealstudio.es</a>{t('privacy.whoWeArePost')}
+              {t('privacy.whoWeArePre')} <a href="https://unrealstudiobali.com" className="underline font-medium">https://unrealstudiobali.com</a>{t('privacy.whoWeArePost')}
             </p>
           </section>
 
@@ -123,7 +123,7 @@ const Privacy: React.FC = () => {
             <p>{t('privacy.contactP')}</p>
             <div className="mt-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
               <p className="font-bold text-primary">{t('privacy.contactName')}</p>
-              <p className="text-sm">{t('privacy.contactWebsiteLabel')} <a href="https://unrealstudio.es" className="underline">https://unrealstudio.es</a></p>
+              <p className="text-sm">{t('privacy.contactWebsiteLabel')} <a href="https://unrealstudiobali.com" className="underline">https://unrealstudiobali.com</a></p>
             </div>
           </section>
 

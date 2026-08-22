@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
-import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { usePageMeta } from '../components/PageMeta';
 
 const ALL_TAG = '__all__'; // sentinel — preserved across language switches
@@ -154,6 +154,7 @@ const Blog: React.FC = () => {
                     src={imgSrc(getImageUrl(post.image), 600)}
                     srcSet={imgSrcSet(getImageUrl(post.image), [320, 600, 900])}
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    onError={imgFallback(getImageUrl(post.image))}
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-105"
                     alt={post.title}
                   />

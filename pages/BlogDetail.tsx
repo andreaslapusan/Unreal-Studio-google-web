@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
-import { imgSrc, imgSrcSet } from '../lib/imageOptimize';
+import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { usePageMeta } from '../components/PageMeta';
 import DOMPurify from 'dompurify';
 
@@ -67,7 +67,7 @@ const BlogDetail: React.FC = () => {
 
         if (data) {
             setPost(data as unknown as BlogPost);
-            document.title = `${(data as unknown as BlogPost).title} | Unreal Studio Madrid`;
+            // El título/OG lo gestiona usePageMeta (arriba); no pisar con un document.title fijo.
         } else if (error) {
             console.error('Error fetching post:', error);
         }
@@ -106,6 +106,7 @@ const BlogDetail: React.FC = () => {
              src={imgSrc(getImageUrl(post.image), 1600)}
              srcSet={imgSrcSet(getImageUrl(post.image), [600, 1000, 1400, 1800])}
              sizes="100vw"
+             onError={imgFallback(getImageUrl(post.image))}
              className="w-full h-full object-cover"
              alt={post.title}
              loading="eager"
