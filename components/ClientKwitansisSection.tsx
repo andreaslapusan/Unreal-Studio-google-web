@@ -7,6 +7,7 @@
  * la sesión Supabase Auth).
  */
 import React, { useEffect, useState } from 'react';
+import DOMPurify from 'dompurify';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -38,7 +39,7 @@ const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }>
     const w = window.open('', '_blank');
     if (!w) return;
     const title = t('fix.kwit.receiptTitle', { no: k.no_seq, defaultValue: 'Recibo Nº {{no}}' });
-    w.document.write(`<html><head><title>${title}</title></head><body style="margin:0;padding:24px;background:#fff">${k.html}</body></html>`);
+    w.document.write(`<html><head><title>${title}</title></head><body style="margin:0;padding:24px;background:#fff">${DOMPurify.sanitize(k.html)}</body></html>`);
     w.document.close();
   };
 
