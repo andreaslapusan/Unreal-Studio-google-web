@@ -754,7 +754,13 @@
       "addPlan": "Tambah",
       "planDrive": "Denah (Google Drive)",
       "planUrlPlaceholder": "atau tempel tautan (Drive / PDF)…",
-      "uploadPdf": "Unggah PDF"
+      "uploadPdf": "Unggah PDF",
+      "secBasics": "Dasar",
+      "secMedia": "Media",
+      "secSpecs": "Spesifikasi",
+      "secCommercial": "Komersial",
+      "secConstruction": "Konstruksi & dokumen",
+      "secVisibility": "Visibilitas"
     },
     "blogTab": {
       "title": "Artikel Blog",

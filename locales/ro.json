@@ -622,7 +622,13 @@
       "addPlan": "Adaugă",
       "planDrive": "Plan (Google Drive)",
       "planUrlPlaceholder": "sau lipește un link (Drive / PDF)…",
-      "uploadPdf": "Încarcă PDF"
+      "uploadPdf": "Încarcă PDF",
+      "secBasics": "De bază",
+      "secMedia": "Media",
+      "secSpecs": "Specificații",
+      "secCommercial": "Comercial",
+      "secConstruction": "Construcție și documente",
+      "secVisibility": "Vizibilitate"
     },
     "blogTab": {
       "title": "Articole Blog",

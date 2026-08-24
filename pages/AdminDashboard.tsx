@@ -832,6 +832,20 @@ const AMENITIES_LIST = [
   const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uploading) return;
+    // Red de seguridad: si un campo required HTML5 es inválido y está dentro de un
+    // <details> plegado, ábrelo para que sea visible antes de que el navegador reporte.
+    const formEl = e.currentTarget as HTMLFormElement;
+    if (formEl && typeof formEl.querySelectorAll === 'function') {
+      const invalid = formEl.querySelector(':invalid') as HTMLElement | null;
+      if (invalid) {
+        let d = invalid.closest('details') as HTMLDetailsElement | null;
+        while (d) { d.open = true; d = d.parentElement?.closest('details') as HTMLDetailsElement | null; }
+        if (!formEl.checkValidity()) {
+          invalid.focus?.();
+          return; // el navegador mostrará el mensaje nativo del required
+        }
+      }
+    }
     setUploading(true);
 
     let newGalleryImages: string[] = [];
@@ -2509,27 +2523,55 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}</h2>
               <button onClick={() => setIsEditing(false)} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
-            <form onSubmit={handleSaveProject} className="space-y-8 pb-10">
-               {/* ... form content ... */}
-               <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex justify-between items-center">
-                <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.props.highlightHome')}</span>
-                <button type="button" onClick={() => setCurrentProject({...currentProject, is_featured: !currentProject.is_featured})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_featured ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
-              </div>
-              <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex justify-between items-center">
-                <div>
-                  <span className="text-[10px] font-black uppercase text-primary/60 block mb-1">{t('admin.props.hideFromPublic')}</span>
-                  <span className="text-[9px] text-gray-400">{t('admin.props.hideFromPublicHint')}</span>
+            <form onSubmit={handleSaveProject} className="space-y-3 pb-10">
+               {/* ===== A. BÁSICOS ===== */}
+               <details name="propedit" open className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+                  <span className="text-lg font-serif text-primary">{t('admin.props.secBasics')}</span>
+                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.name')}</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.location')}</label><select value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{config.customZones.map(z => <option key={z} value={z}>{z}</option>)}</select></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.type', 'Tipo')}</label><select value={currentProject.property_type || ''} onChange={(e) => setCurrentProject({...currentProject, property_type: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}</select></div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.status')}</label>
+                      <select value={currentProject.status || config.customStatuses[0] || ''} onChange={(e) => setCurrentProject({...currentProject, status: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">
+                          {/* Incluye el estado actual del proyecto aunque no esté en la lista de
+                              estados configurados, para no mostrar uno equivocado ni sobreescribirlo. */}
+                          {(currentProject.status && !config.customStatuses.includes(currentProject.status)
+                            ? [currentProject.status, ...config.customStatuses]
+                            : config.customStatuses
+                          ).map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.description')}</label><textarea rows={3} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><input type="number" value={currentProject.investor_price || 0} onChange={(e) => setCurrentProject({...currentProject, investor_price: parseFloat(e.target.value) || 0})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><input type="number" value={currentProject.market_price || 0} onChange={(e) => setCurrentProject({...currentProject, market_price: parseFloat(e.target.value) || 0})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-4 py-3 bg-primary text-white rounded-2xl font-bold">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investmentTiers')}</label>
+                    <textarea rows={3} value={tiersInput} onChange={(e) => setTiersInput(e.target.value)} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" />
+                  </div>
                 </div>
-                <button type="button" onClick={() => setCurrentProject({...currentProject, is_hidden: !currentProject.is_hidden})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_hidden ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
-              </div>
-              
-              <div className="space-y-6">
-                {/* ... Image Uploads ... */}
+               </details>
+
+               {/* ===== B. MULTIMEDIA ===== */}
+               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+                  <span className="text-lg font-serif text-primary">{t('admin.props.secMedia')}</span>
+                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1 space-y-4">
                 <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.mainImage')}</label>
                    <div className="flex gap-2">
-                       <input type="text" value={currentProject.image || ''} onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})} placeholder={t('admin.props.mainImagePlaceholder')} className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20" />
-                       <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                       <input type="text" value={currentProject.image || ''} onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})} placeholder={t('admin.props.mainImagePlaceholder')} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20" />
+                       <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_main')} disabled={uploading} />
                        </label>
@@ -2540,8 +2582,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.gallery')}</label>
                    <div className="flex gap-2 mb-4">
-                       <input type="text" value={galleryInput} onChange={(e) => setGalleryInput(e.target.value)} placeholder={t('admin.props.extraUrl')} className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20" />
-                       <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                       <input type="text" value={galleryInput} onChange={(e) => setGalleryInput(e.target.value)} placeholder={t('admin.props.extraUrl')} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20" />
+                       <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">add_photo_alternate</span>}
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_gallery')} disabled={uploading} />
                        </label>
@@ -2562,10 +2604,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    </div>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.constructionPhotos')}</label>
                    <div className="flex gap-2 mb-4">
-                       <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                       <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">add_photo_alternate</span>}
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_construction_gallery')} disabled={uploading} />
                        </label>
@@ -2585,19 +2628,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.projectPlans')}</label>
                    <div className="flex gap-2 mb-2">
-                       <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`} title={t('admin.props.uploadPdf', { defaultValue: 'Subir PDF' })}>
+                       <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`} title={t('admin.props.uploadPdf', { defaultValue: 'Subir PDF' })}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
                            <input type="file" className="hidden" accept=".pdf" onChange={(e) => handleFileUpload(e, 'project_floor_plans')} disabled={uploading} />
                        </label>
                    </div>
                    {/* …o pegar un enlace (Google Drive / PDF) */}
                    <div className="flex gap-2 mb-4">
-                       <input type="url" value={floorPlanUrl} onChange={(e) => setFloorPlanUrl(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addFloorPlanUrl(); } }} placeholder={t('admin.props.planUrlPlaceholder', { defaultValue: 'o pega un enlace (Drive / PDF)…' })} className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:border-primary/30 focus:outline-none" />
+                       <input type="url" value={floorPlanUrl} onChange={(e) => setFloorPlanUrl(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addFloorPlanUrl(); } }} placeholder={t('admin.props.planUrlPlaceholder', { defaultValue: 'o pega un enlace (Drive / PDF)…' })} className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:border-primary/30 focus:outline-none" />
                        <button type="button" onClick={addFloorPlanUrl} className="bg-primary/10 text-primary px-4 rounded-2xl text-sm font-bold hover:bg-primary/20 transition">{t('admin.props.addPlan', { defaultValue: 'Añadir' })}</button>
                    </div>
                    <div className="flex flex-col gap-2">
                        {(currentProject.floor_plans || []).map((pdf, idx) => (
-                           <div key={idx} className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                           <div key={idx} className="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100">
                                <div className="flex items-center gap-3 overflow-hidden">
                                    <span className="material-symbols-outlined text-gray-400">picture_as_pdf</span>
                                    <span className="text-sm font-medium truncate">{pdf.includes('drive.google.com') ? t('admin.props.planDrive', { defaultValue: 'Plano (Google Drive)' }) : (pdf.split('/').pop() || 'Plano')}</span>
@@ -2607,61 +2650,44 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                        ))}
                    </div>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.name')}</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-                  <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.location')}</label><select value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">{config.customZones.map(z => <option key={z} value={z}>{z}</option>)}</select></div>
-                  <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.type', 'Tipo')}</label><select value={currentProject.property_type || ''} onChange={(e) => setCurrentProject({...currentProject, property_type: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">{config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}</select></div>
-                  <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.status')}</label>
-                    <select value={currentProject.status || config.customStatuses[0] || ''} onChange={(e) => setCurrentProject({...currentProject, status: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">
-                        {/* Incluye el estado actual del proyecto aunque no esté en la lista de
-                            estados configurados, para no mostrar uno equivocado ni sobreescribirlo. */}
-                        {(currentProject.status && !config.customStatuses.includes(currentProject.status)
-                          ? [currentProject.status, ...config.customStatuses]
-                          : config.customStatuses
-                        ).map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
                 </div>
-                <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.description')}</label><textarea rows={4} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
-                
-                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><input type="number" value={currentProject.investor_price || 0} onChange={(e) => setCurrentProject({...currentProject, investor_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><input type="number" value={currentProject.market_price || 0} onChange={(e) => setCurrentProject({...currentProject, market_price: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-5 py-4 bg-primary text-white rounded-2xl font-bold h-[58px]">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
                 </div>
-                
-                 <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investmentTiers')}</label>
-                    <textarea rows={4} value={tiersInput} onChange={(e) => setTiersInput(e.target.value)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
-                 </div>
+               </details>
 
-<div className="border-t border-gray-100 pt-8 mt-8">
-  <h3 className="text-lg font-serif text-primary mb-6">{t('admin.props.propertyDetails')}</h3>
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><input type="number" value={currentProject.bedrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bedrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><input type="number" value={currentProject.bathrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bathrooms: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><input type="number" value={currentProject.area_m2 || 0} onChange={(e) => setCurrentProject({...currentProject, area_m2: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+               {/* ===== C. ESPECIFICACIONES ===== */}
+               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+                  <span className="text-lg font-serif text-primary">{t('admin.props.secSpecs')}</span>
+                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1 space-y-4">
+  <div className="grid grid-cols-3 gap-3">
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><input type="number" value={currentProject.bedrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bedrooms: parseInt(e.target.value) || 0})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><input type="number" value={currentProject.bathrooms || 0} onChange={(e) => setCurrentProject({...currentProject, bathrooms: parseInt(e.target.value) || 0})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><input type="number" value={currentProject.area_m2 || 0} onChange={(e) => setCurrentProject({...currentProject, area_m2: parseInt(e.target.value) || 0})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
-  <div className="grid grid-cols-2 gap-6 mb-6">
+  <div className="grid grid-cols-2 gap-3">
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.furnishing')}</label>
-      <select value={currentProject.furnishing || ''} onChange={(e) => setCurrentProject({...currentProject, furnishing: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold">
+      <select value={currentProject.furnishing || ''} onChange={(e) => setCurrentProject({...currentProject, furnishing: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">
         <option value="">{t('admin.props.furnishNone')}</option>
         <option value="Sin amueblar">{t('admin.props.furnishUnfurnished')}</option>
         <option value="Semi-amueblado">{t('admin.props.furnishSemi')}</option>
         <option value="Totalmente amueblado">{t('admin.props.furnishFull')}</option>
       </select>
     </div>
-    <div className="flex items-center gap-4 pt-6">
+    <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl">
       <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.hasPool')}</span>
       <button type="button" onClick={() => setCurrentProject({...currentProject, has_pool: !currentProject.has_pool})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.has_pool ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
     </div>
   </div>
 
-  <div className="mb-6">
-    <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.props.equipment')}</label>
+  <details className="group/eq rounded-xl bg-white border border-gray-100">
+    <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+      <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.props.equipment')}</span>
+      <span className="material-symbols-outlined text-gray-400 transition-transform group-open/eq:rotate-180">expand_more</span>
+    </summary>
+    <div className="px-4 pb-4 pt-1">
     {[
       { category: 'Baño', items: ['Ducha', 'Grifería', 'Lavabo', 'Espejo de baño', 'Toallero', 'Mampara'] },
       { category: 'Instalaciones', items: ['Iluminación', 'Enchufes', 'Interruptores', 'Aire acondicionado', 'Ventilador de techo', 'Puertas', 'Topes de puerta'] },
@@ -2673,14 +2699,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     ].map(group => (
       <div key={group.category} className="mb-4">
         <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest mb-2">{group.category}</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="flex flex-wrap gap-2">
           {group.items.map(item => (
-            <label key={item} className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100 cursor-pointer hover:bg-gray-100 transition text-xs">
-              <input 
-                type="checkbox" 
+            <label key={item} className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 cursor-pointer hover:bg-gray-100 transition text-xs">
+              <input
+                type="checkbox"
                 checked={(currentProject.furnishing_items || []).includes(item)}
                 onChange={(e) => {
-                  const newItems = e.target.checked 
+                  const newItems = e.target.checked
                     ? [...(currentProject.furnishing_items || []), item]
                     : (currentProject.furnishing_items || []).filter(i => i !== item);
                   setCurrentProject({...currentProject, furnishing_items: newItems});
@@ -2693,13 +2719,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
       </div>
     ))}
-  </div>
+    </div>
+  </details>
 
-  <div className="mb-6">
-    <label className="block text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.props.amenities')}</label>
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+  <details className="group/am rounded-xl bg-white border border-gray-100">
+    <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+      <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.props.amenities')}</span>
+      <span className="material-symbols-outlined text-gray-400 transition-transform group-open/am:rotate-180">expand_more</span>
+    </summary>
+    <div className="px-4 pb-4 pt-1 flex flex-wrap gap-2">
       {AMENITIES_LIST.map(a => (
-        <label key={a} className="flex items-center gap-2 p-2 rounded-xl hover:bg-gray-50 cursor-pointer">
+        <label key={a} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-100 hover:bg-gray-50 cursor-pointer">
           <input type="checkbox" checked={(currentProject.amenities || []).includes(a)} onChange={(e) => {
             const current = currentProject.amenities || [];
             setCurrentProject({...currentProject, amenities: e.target.checked ? [...current, a] : current.filter(x => x !== a)});
@@ -2708,57 +2738,63 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </label>
       ))}
     </div>
-  </div>
-</div>
+  </details>
+                </div>
+               </details>
 
-<div className="border-t border-gray-100 pt-8 mt-8">
-  <h3 className="text-lg font-serif text-primary mb-6">{t('admin.props.profitTitle')}</h3>
-  <div className="grid grid-cols-2 gap-6 mb-6">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.annualRentalProjection', { cur: currentProject.price_currency || 'EUR' })}</label><input type="number" value={currentProject.annual_rental_projection || 0} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-    
-    <div>
-      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.landRatio')}</label>
-      <div className="flex items-center gap-3">
-        <input type="range" min={0} max={100} value={currentProject.land_ratio || 30} onChange={(e) => setCurrentProject({...currentProject, land_ratio: parseInt(e.target.value)})} className="flex-1" />
-        <span className="text-lg font-bold text-primary w-16 text-right">{currentProject.land_ratio || 30}%</span>
-      </div>
-      <div className="flex justify-between text-[9px] text-primary/40 mt-1">
-        <span>{t('admin.dash.landLabel')}: {formatPrice((currentProject.market_price || 0) * ((currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
-        <span>{t('admin.dash.buildingLabel')}: {formatPrice((currentProject.market_price || 0) * (1 - (currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
-      </div>
-    </div>
-
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder={t('admin.dash.beachDistancePh')} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" /></div>
-    </div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.contractYears')}</label><input type="number" value={currentProject.years_contract || 25} onChange={(e) => setCurrentProject({...currentProject, years_contract: parseInt(e.target.value) || 25})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.extensionYears')}</label><input type="number" value={currentProject.years_extension || 0} onChange={(e) => setCurrentProject({...currentProject, years_extension: parseInt(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-    </div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.progressPct')}</label><div className="flex items-center gap-3"><input type="range" min={0} max={100} value={currentProject.completion_percent || 0} onChange={(e) => setCurrentProject({...currentProject, completion_percent: parseInt(e.target.value)})} className="flex-1" /><span className="text-lg font-bold text-primary w-16 text-right">{currentProject.completion_percent || 0}%</span></div></div>
-
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.adminDash.completionDateLabel')}</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+               {/* ===== D. COMERCIAL ===== */}
+               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+                  <span className="text-lg font-serif text-primary">{t('admin.props.secCommercial')}</span>
+                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1 space-y-4">
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.annualRentalProjection', { cur: currentProject.price_currency || 'EUR' })}</label><input type="number" value={currentProject.annual_rental_projection || 0} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: parseFloat(e.target.value) || 0})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder={t('admin.dash.beachDistancePh')} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.contractYears')}</label><input type="number" value={currentProject.years_contract || 25} onChange={(e) => setCurrentProject({...currentProject, years_contract: parseInt(e.target.value) || 25})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.extensionYears')}</label><input type="number" value={currentProject.years_extension || 0} onChange={(e) => setCurrentProject({...currentProject, years_extension: parseInt(e.target.value) || 0})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.adminDash.completionDateLabel')}</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
-  <div className="bg-gray-50 p-6 rounded-2xl mb-6">
+  <div className="md:col-span-2">
+    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.landRatio')}</label>
+    <div className="flex items-center gap-3">
+      <input type="range" min={0} max={100} value={currentProject.land_ratio || 30} onChange={(e) => setCurrentProject({...currentProject, land_ratio: parseInt(e.target.value)})} className="flex-1" />
+      <span className="text-lg font-bold text-primary w-16 text-right">{currentProject.land_ratio || 30}%</span>
+    </div>
+    <div className="flex justify-between text-[9px] text-primary/40 mt-1">
+      <span>{t('admin.dash.landLabel')}: {formatPrice((currentProject.market_price || 0) * ((currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
+      <span>{t('admin.dash.buildingLabel')}: {formatPrice((currentProject.market_price || 0) * (1 - (currentProject.land_ratio || 30) / 100), currentProject.price_currency || 'EUR')}</span>
+    </div>
+  </div>
+
+  <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.progressPct')}</label><div className="flex items-center gap-3"><input type="range" min={0} max={100} value={currentProject.completion_percent || 0} onChange={(e) => setCurrentProject({...currentProject, completion_percent: parseInt(e.target.value)})} className="flex-1" /><span className="text-lg font-bold text-primary w-16 text-right">{currentProject.completion_percent || 0}%</span></div></div>
+
+  <div className="bg-white p-4 rounded-2xl">
     <p className="text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.dash.roiCalculated')}</p>
     <div className="grid grid-cols-2 gap-4">
-      <div className="bg-white p-4 rounded-xl">
+      <div className="bg-gray-50 p-4 rounded-xl">
         <p className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.roiRental')}</p>
         <p className="text-2xl font-serif text-primary">{currentProject.investor_price && currentProject.annual_rental_projection ? ((currentProject.annual_rental_projection / currentProject.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
       </div>
-      <div className="bg-white p-4 rounded-xl">
+      <div className="bg-gray-50 p-4 rounded-xl">
         <p className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.roiResale')}</p>
         <p className="text-2xl font-serif text-primary">{currentProject.investor_price && currentProject.market_price && currentProject.market_price > currentProject.investor_price ? (((currentProject.market_price - currentProject.investor_price) / currentProject.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
       </div>
     </div>
   </div>
-</div>
+                </div>
+               </details>
 
-<div className="border-t border-gray-100 pt-8 mt-8">
-  <h3 className="text-lg font-serif text-primary mb-6">{t('admin.dash.linksDocs')}</h3>
-  <div className="space-y-4">
+               {/* ===== E. OBRA Y DOCUMENTOS ===== */}
+               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+                  <span className="text-lg font-serif text-primary">{t('admin.props.secConstruction')}</span>
+                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1 space-y-4">
     <div>
         <label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t('admin.dash.brochureByLang')}</label>
         <p className="text-[10px] text-gray-400 mb-3">{t('admin.dash.brochureByLangHint')}</p>
@@ -2778,31 +2814,54 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           })}
         </div>
     </div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div>
          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.constructionReportUrl')}</label>
          <div className="flex gap-2">
-             <input type="text" value={currentProject.construction_update_url || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_url: e.target.value})} placeholder="https://..." className="flex-grow px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
-             <label className={`cursor-pointer bg-primary text-white px-5 py-4 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+             <input type="text" value={currentProject.construction_update_url || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_url: e.target.value})} placeholder="https://..." className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium" />
+             <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                  {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
                  <input type="file" className="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" onChange={(e) => handleFileUpload(e, 'project_construction_update')} disabled={uploading} />
              </label>
          </div>
       </div>
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.reportDate')}</label><input type="date" value={currentProject.construction_update_date || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.reportDate')}</label><input type="date" value={currentProject.construction_update_date || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+      <div className="md:col-span-2">
+        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.googleMapsUrl')}</label>
+        <input type="text" value={currentProject.google_maps_url || ''} onChange={(e) => setCurrentProject({...currentProject, google_maps_url: e.target.value})} placeholder={t('admin.dash.googleMapsPh')} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" />
+        <p className="text-[8px] text-primary/30 mt-1">{t('admin.dash.googleMapsHint')}</p>
+      </div>
     </div>
-    <div>
-      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.googleMapsUrl')}</label>
-      <input type="text" value={currentProject.google_maps_url || ''} onChange={(e) => setCurrentProject({...currentProject, google_maps_url: e.target.value})} placeholder={t('admin.dash.googleMapsPh')} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium" />
-      <p className="text-[8px] text-primary/30 mt-1">{t('admin.dash.googleMapsHint')}</p>
-    </div>
-  </div>
-</div>
+                </div>
+               </details>
 
-              </div>
+               {/* ===== F. VISIBILIDAD ===== */}
+               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+                  <span className="text-lg font-serif text-primary">{t('admin.props.secVisibility')}</span>
+                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl">
+                      <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.props.highlightHome')}</span>
+                      <button type="button" onClick={() => setCurrentProject({...currentProject, is_featured: !currentProject.is_featured})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_featured ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+                    </div>
+                    <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl">
+                      <div>
+                        <span className="text-[10px] font-black uppercase text-primary/60 block mb-1">{t('admin.props.hideFromPublic')}</span>
+                        <span className="text-[9px] text-gray-400">{t('admin.props.hideFromPublicHint')}</span>
+                      </div>
+                      <button type="button" onClick={() => setCurrentProject({...currentProject, is_hidden: !currentProject.is_hidden})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_hidden ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+                    </div>
+                  </div>
+                </div>
+               </details>
+
               {/* Ficha extendida: datos de agencia / legal / drive / vídeo (los usan los packs de agencia). */}
-              <details className="border-t border-gray-100 pt-6">
-                <summary className="cursor-pointer select-none mb-4"><span className="text-lg font-serif text-primary">{t('admin.dash.agencyLegalExtra')}</span><span className="block text-xs text-gray-400">{t('admin.dash.agencyLegalHint')}</span></summary>
+              <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.agencyLegalExtra')}</span><span className="block text-xs text-gray-400">{t('admin.dash.agencyLegalHint')}</span></span><span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
+                <div className="px-4 pb-4 pt-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {([
                     ['zone',t('admin.dash.fldZone'),'text'],['owner_name',t('admin.dash.fldOwner'),'text'],['lease_end_date',t('admin.dash.fldLeaseEnd'),'text'],
@@ -2832,11 +2891,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </label>
                   ))}
                 </div>
+                </div>
               </details>
               {/* Traducciones (EN/ID) de los campos que aparecen en los packs de agencia. */}
-              <details className="border-t border-gray-100 pt-6">
-                <summary className="cursor-pointer select-none mb-4"><span className="text-lg font-serif text-primary">{t('admin.dash.packTranslations')}</span><span className="block text-xs text-gray-400">{t('admin.dash.packTranslationsHint')}</span></summary>
-                <div className="space-y-3">
+              <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.packTranslations')}</span><span className="block text-xs text-gray-400">{t('admin.dash.packTranslationsHint')}</span></span><span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
+                <div className="px-4 pb-4 pt-1 space-y-3">
                   {([
                     ['description',t('admin.dash.trDescription')],['status',t('admin.dash.trStatus')],['completion_date',t('admin.dash.trCompletionDate')],
                     ['distance_beach',t('admin.dash.trDistanceBeach')],['view',t('admin.dash.trView')],['parking',t('admin.dash.trParking')],
