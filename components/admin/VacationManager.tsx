@@ -30,11 +30,14 @@ const isPending = (s: string) => s === 'pendiente' || s === 'pending';
 // Paleta por empleado (color estable por índice) para distinguirlos en el grid.
 const PALETTE = ['#3F2305', '#1d4ed8', '#15803d', '#b45309', '#7c3aed', '#be185d', '#0e7490', '#4d7c0f'];
 
+// Clave YYYY-MM-DD en hora LOCAL (nunca UTC). Usar toISOString() aquí desfasaba
+// -1 día en zonas por delante de UTC (Bali/Rumanía): una vacación del 25 se pintaba el 24.
+const localKey = (dt: Date) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
 function eachDay(start: string, end: string): string[] {
   const out: string[] = [];
-  let d = new Date(`${start}T00:00:00`);
+  const d = new Date(`${start}T00:00:00`);
   const e = new Date(`${end}T00:00:00`);
-  while (d <= e) { out.push(d.toISOString().slice(0, 10)); d = new Date(d.getTime() + 86400000); }
+  while (d <= e) { out.push(localKey(d)); d.setDate(d.getDate() + 1); }
   return out;
 }
 
@@ -115,7 +118,7 @@ const VacationManager: React.FC = () => {
     const d = new Date(dateStr + 'T00:00:00');
     const monday = new Date(d); monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
     let total = 0;
-    for (let i = 0; i < 7; i++) { const dd = new Date(monday); dd.setDate(monday.getDate() + i); total += (dayMap.get(dd.toISOString().slice(0, 10))?.length ?? 0); }
+    for (let i = 0; i < 7; i++) { const dd = new Date(monday); dd.setDate(monday.getDate() + i); total += (dayMap.get(localKey(dd))?.length ?? 0); }
     return total;
   };
 
@@ -210,7 +213,7 @@ const VacationManager: React.FC = () => {
                   const offs = dayMap.get(dateStr) ?? [];
                   const pays = payDayMap.get(dateStr) ?? [];
                   const hasAny = offs.length > 0 || pays.length > 0;
-                  const isToday = dateStr === new Date().toISOString().slice(0, 10);
+                  const isToday = dateStr === localKey(new Date());
                   return (
                     <div key={day}
                       onMouseEnter={hasAny ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
