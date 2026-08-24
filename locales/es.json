@@ -622,7 +622,13 @@
       "addPlan": "Añadir",
       "planDrive": "Plano (Google Drive)",
       "planUrlPlaceholder": "o pega un enlace (Drive / PDF)…",
-      "uploadPdf": "Subir PDF"
+      "uploadPdf": "Subir PDF",
+      "secBasics": "Básicos",
+      "secMedia": "Multimedia",
+      "secSpecs": "Especificaciones",
+      "secCommercial": "Comercial",
+      "secConstruction": "Obra y documentos",
+      "secVisibility": "Visibilidad"
     },
     "blogTab": {
       "title": "Artículos del Blog",
