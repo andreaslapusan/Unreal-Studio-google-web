@@ -26,6 +26,17 @@ export function baliDayStartISO(baliYmd: string): string {
   return new Date(`${baliYmd}T00:00:00+08:00`).toISOString();
 }
 
+/**
+ * Normaliza una fecha para `new Date(...)` de VISUALIZACIÓN sin desfase.
+ * Un string date-only ("YYYY-MM-DD", columnas tipo `date`) se parsea como UTC por
+ * spec → en zonas por detrás de UTC (América) mostraba el día anterior. Le añadimos
+ * "T00:00:00" para parsearlo en hora LOCAL. Los timestamps (con hora) se dejan igual.
+ * Uso: new Date(dateOnly(x)).toLocaleDateString(...)
+ */
+export function dateOnly(s: string | null | undefined): string {
+  return (typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? `${s}T00:00:00` : (s || '');
+}
+
 /** Hora HH:MM en Bali de un instante. */
 export function baliTime(iso: string): string {
   try {

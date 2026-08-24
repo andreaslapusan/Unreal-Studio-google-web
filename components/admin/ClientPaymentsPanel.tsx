@@ -12,6 +12,7 @@
  */
 import React, { useEffect, useState, useCallback } from 'react';
 import { uiLocale } from '../../lib/dateLocale';
+import { baliToday , dateOnly} from '../../lib/timezone';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { renderKwitansiHtml, formatFigure } from '../../lib/kwitansi';
@@ -62,7 +63,7 @@ const emptyPayment = (cur: string): Partial<Payment> => ({
   label: '', amount: 0, currency: cur || 'IDR', due_date: null, paid_at: null,
   received: false, payment_method: '', reference: '', notes: '', position: 0,
 });
-const todayISO = () => new Date().toISOString().slice(0, 10);
+const todayISO = () => baliToday(); // hora de Bali, no UTC (evitaba registrar el dia anterior por las mananas)
 
 // Prefijo del nº de kwitansi a partir del nombre de proyecto: iniciales de las
 // palabras antes de "(" o "-". "Deseo Studio (Tipo B) - 1bd" → "DS".
@@ -260,14 +261,14 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     const et = i18n.getFixedT(loc); // email en el idioma del CLIENTE
     const kwUnit = units.find((u) => (u.payments || []).some((p: any) => p.id === kw.payId));
     const kwPay = units.flatMap((u) => u.payments).find((p) => p.id === kw.payId);
-    const dueStr = kwPay?.due_date ? new Date(kwPay.due_date).toLocaleDateString(loc) : '';
-    const paidStr = kw.date ? new Date(kw.date).toLocaleDateString(loc) : '';
+    const dueStr = kwPay?.due_date ? new Date(dateOnly(kwPay.due_date)).toLocaleDateString(loc) : '';
+    const paidStr = kw.date ? new Date(dateOnly(kw.date)).toLocaleDateString(loc) : '';
     const fig = formatFigure(kw.amount, kw.currency);
     // Cuerpo PERSONALIZADO por destinatario: su nombre Y su idioma.
     const buildBody = (em: string) => {
       const lg = holderLangByEmail(em); const e2 = i18n.getFixedT(lg);
-      const dueS = kwPay?.due_date ? new Date(kwPay.due_date).toLocaleDateString(lg) : '';
-      const paidS = kw.date ? new Date(kw.date).toLocaleDateString(lg) : '';
+      const dueS = kwPay?.due_date ? new Date(dateOnly(kwPay.due_date)).toLocaleDateString(lg) : '';
+      const paidS = kw.date ? new Date(dateOnly(kw.date)).toLocaleDateString(lg) : '';
       return `
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:#3F2305">${e2('emails.recibi.title')}</h1>
       <p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#3F2305">${e2('emails.recibi.hi', { name: holderNameByEmail(em) })}</p>
@@ -366,8 +367,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                         <div className="flex-1 min-w-[140px]">
                           <p className="font-semibold text-sm text-primary">{p.label || t('admin.pay.noLabel')}</p>
                           <p className="text-[11px] text-gray-400">
-                            {p.due_date ? t('admin.pay.deadline', { date: new Date(p.due_date).toLocaleDateString(uiLocale()) }) : t('admin.pay.noDate')}
-                            {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(p.paid_at).toLocaleDateString(uiLocale()) })}`}
+                            {p.due_date ? t('admin.pay.deadline', { date: new Date(dateOnly(p.due_date)).toLocaleDateString(uiLocale()) }) : t('admin.pay.noDate')}
+                            {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(dateOnly(p.paid_at)).toLocaleDateString(uiLocale()) })}`}
                           </p>
                         </div>
                         <div className="text-right shrink-0">

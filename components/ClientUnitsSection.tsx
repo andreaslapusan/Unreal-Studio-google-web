@@ -8,6 +8,7 @@
  * datos vive en el RPC; aquí solo se presenta.
  */
 import React, { useEffect, useState } from 'react';
+import { dateOnly } from '../lib/timezone';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { uiLocale } from '../lib/dateLocale';
@@ -68,9 +69,9 @@ const ClientUnitsSection: React.FC<{ clientId: string }> = ({ clientId }) => {
             {
               label: t('inversoresDashboard.labelContractSigned'),
               done: Boolean(u.contract_signed_at),
-              value: u.contract_signed_at ? new Date(u.contract_signed_at).toLocaleDateString(uiLocale()) : undefined,
+              value: u.contract_signed_at ? new Date(dateOnly(u.contract_signed_at)).toLocaleDateString(uiLocale()) : undefined,
             },
-            { label: t('inversoresDashboard.labelDelivery'), done: false, value: u.delivery_date ? new Date(u.delivery_date).toLocaleDateString(uiLocale()) : undefined },
+            { label: t('inversoresDashboard.labelDelivery'), done: false, value: u.delivery_date ? new Date(dateOnly(u.delivery_date)).toLocaleDateString(uiLocale()) : undefined },
           ];
           return (
             <article key={u.investor_unit_id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-primary/5">

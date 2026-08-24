@@ -8,6 +8,7 @@
  */
 import React, { useEffect, useMemo, useState } from "react";
 import { uiLocale } from '../lib/dateLocale';
+import { baliToday } from '../lib/timezone';
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
@@ -1312,7 +1313,7 @@ function EquipoTab() {
     void reload();
   }, []);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = baliToday();
   const pending = vacations.filter((v) => isPendingStatus(v.status));
   const onLeaveNow = vacations.filter(
     (v) => isApprovedStatus(v.status) && v.start_date <= today && v.end_date >= today
