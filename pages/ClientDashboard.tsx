@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgFallback } from '../lib/imageOptimize';
 import { uiLocale } from '../lib/dateLocale';
+import { dateOnly } from '../lib/timezone';
 import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
@@ -411,7 +412,7 @@ const ClientDashboard: React.FC = () => {
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
     try {
-        return new Date(dateString).toLocaleDateString(dateLocale, { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return new Date(dateOnly(dateString)).toLocaleDateString(dateLocale, { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }

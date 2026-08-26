@@ -11,7 +11,7 @@
  * Sin emojis (regla de marca): estados con iconos Material Symbols.
  */
 import React, { useEffect, useState } from 'react';
-import { dateOnly } from '../lib/timezone';
+import { dateOnly, baliToday } from '../lib/timezone';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -211,7 +211,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
               {/* Móvil: tarjetas condensadas (evita el scroll horizontal de 8 columnas). */}
               <div className="sm:hidden space-y-3">
                 {pays.map((p) => {
-                  const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
+                  const overdue = !p.received && p.due_date && p.due_date < baliToday();
                   const received = recvOf(p);
                   const balance = Number(p.amount) - received;
                   const claimed = claimedIds.has(p.id);
@@ -290,7 +290,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                   </thead>
                   <tbody>
                     {pays.map((p) => {
-                      const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
+                      const overdue = !p.received && p.due_date && p.due_date < baliToday();
                       const received = recvOf(p);
                       const balance = Number(p.amount) - received;
                       const claimed = claimedIds.has(p.id);
@@ -383,7 +383,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
               </div>
               <ul className="space-y-2">
                 {pays.map((p) => {
-                  const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
+                  const overdue = !p.received && p.due_date && p.due_date < baliToday();
                   const icon = p.received ? 'check_circle' : overdue ? 'warning' : 'schedule';
                   const iconColor = p.received ? 'text-green-600' : overdue ? 'text-red-500' : 'text-primary/40';
                   return (

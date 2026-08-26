@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { uiLocale } from '../lib/dateLocale';
+import { dateOnly } from '../lib/timezone';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
@@ -47,7 +48,7 @@ const BlogDetail: React.FC = () => {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     try {
-        return new Date(dateString).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return new Date(dateOnly(dateString)).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }

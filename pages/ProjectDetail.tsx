@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
+import { dateOnly } from '../lib/timezone';
 import { translateProjectTerm } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
@@ -56,7 +57,7 @@ const ProjectDetail: React.FC = () => {
         // If it's already in DD/MM/YYYY format (from admin free text input for completion date), return as is
         if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) return dateString;
         
-        return new Date(dateString).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return new Date(dateOnly(dateString)).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }
