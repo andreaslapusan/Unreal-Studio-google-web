@@ -226,7 +226,7 @@ const NotificationsPanel: React.FC = () => {
                       actions={<PrimaryBtn onClick={() => navigate(`/admin?view=clients&q=${encodeURIComponent(o.client_name || '')}`)} label={t('admin.notif.actViewPayment', { defaultValue: 'Ver cobro' })} />}>
                       <p className="font-bold text-primary text-sm">{o.client_name}</p>
                       <p className="text-sm text-primary/70">{o.label} · <span className="text-red-600 font-bold">{fmtMoney(Number(o.amount), o.currency)}</span></p>
-                      <p className="text-[11px] text-red-500 mt-0.5">{t('admin.notif.expiredOn', { date: new Date(o.due_date).toLocaleDateString(uiLocale()) })}</p>
+                      <p className="text-[11px] text-red-500 mt-0.5">{t('admin.notif.expiredOn', { date: d(o.due_date) })}</p>
                     </Row>
                   ))}
                   {claims.map((n) => (
@@ -282,7 +282,7 @@ const NotificationsPanel: React.FC = () => {
                     <Row key={v.id} icon="beach_access" color="text-amber-600 bg-amber-50"
                       actions={<PrimaryBtn onClick={() => navigate('/admin?view=calendar')} label={t('admin.notif.actApprove', { defaultValue: 'Aprobar / Rechazar' })} />}>
                       <p className="font-bold text-primary text-sm">{v.employee_name || '—'}</p>
-                      <p className="text-sm text-primary/70">{new Date(v.start_date).toLocaleDateString(uiLocale())} → {new Date(v.end_date).toLocaleDateString(uiLocale())}{v.type ? ` · ${v.type}` : ''}</p>
+                      <p className="text-sm text-primary/70">{d(v.start_date)} → {d(v.end_date)}{v.type ? ` · ${v.type}` : ''}</p>
                       {v.note && <p className="text-[12px] text-primary/50 mt-0.5">{v.note}</p>}
                     </Row>
                   ))}
