@@ -19,7 +19,7 @@ interface Kwitansi {
 }
 
 const fmt = (n: number, c: string) => {
-  try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
+  try { return new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
   catch { return `${c} ${n}`; }
 };
 

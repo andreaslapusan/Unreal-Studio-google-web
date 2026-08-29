@@ -35,7 +35,7 @@ interface Milestone {
 
 const fmtEUR = (n: number | null | undefined) =>
   typeof n === 'number'
-    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n)
+    ? new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n)
     : '—';
 
 const ClientUnitsSection: React.FC<{ clientId: string }> = ({ clientId }) => {

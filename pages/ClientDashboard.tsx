@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgFallback } from '../lib/imageOptimize';
 import { uiLocale } from '../lib/dateLocale';
-import { dateOnly } from '../lib/timezone';
+import { dateOnly, baliToday } from '../lib/timezone';
 import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
@@ -841,8 +841,10 @@ const ClientDashboard: React.FC = () => {
                         participación son SOLO para admin, el cliente no debe verlos. */}
 
                     {proj.delivery_date && (() => {
-                      const dl = new Date(new Date(proj.delivery_date).getTime() + 14 * 86400000);
-                      const days = Math.ceil((dl.getTime() - Date.now()) / 86400000);
+                      const dl = new Date(dateOnly(proj.delivery_date));
+                      dl.setDate(dl.getDate() + 14);
+                      const today = new Date(dateOnly(baliToday()));
+                      const days = Math.round((dl.getTime() - today.getTime()) / 86400000);
                       const open = days > 0;
                       return (
                         <div className={`mt-3 rounded-2xl px-4 py-3 text-xs ${open ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-gray-50 text-gray-500 border border-gray-200'}`}>
