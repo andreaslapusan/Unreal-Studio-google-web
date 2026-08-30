@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { useEscapeKey } from '../../lib/useEscapeKey';
 import AsyncButton from '../AsyncButton';
+import { baliToday } from '../../lib/timezone';
 
 interface Employee { id: string; full_name: string | null; email: string; }
 interface Vacation {
@@ -213,7 +214,7 @@ const VacationManager: React.FC = () => {
                   const offs = dayMap.get(dateStr) ?? [];
                   const pays = payDayMap.get(dateStr) ?? [];
                   const hasAny = offs.length > 0 || pays.length > 0;
-                  const isToday = dateStr === localKey(new Date());
+                  const isToday = dateStr === baliToday();
                   return (
                     <div key={day}
                       onMouseEnter={hasAny ? (e) => setHoverDay({ date: dateStr, x: e.clientX, y: e.clientY }) : undefined}
