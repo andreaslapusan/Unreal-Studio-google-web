@@ -260,7 +260,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     const loc = clientLang || 'es';
     const et = i18n.getFixedT(loc); // email en el idioma del CLIENTE
     const kwUnit = units.find((u) => (u.payments || []).some((p: any) => p.id === kw.payId));
-    const kwPay = units.flatMap((u) => u.payments).find((p) => p.id === kw.payId);
+    const kwPay = units.flatMap((u) => u.payments || []).find((p) => p?.id === kw.payId);
     const dueStr = kwPay?.due_date ? new Date(dateOnly(kwPay.due_date)).toLocaleDateString(loc) : '';
     const paidStr = kw.date ? new Date(dateOnly(kw.date)).toLocaleDateString(loc) : '';
     const fig = formatFigure(kw.amount, kw.currency);
