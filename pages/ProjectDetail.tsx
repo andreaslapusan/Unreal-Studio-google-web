@@ -420,14 +420,18 @@ const ProjectDetail: React.FC = () => {
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
             <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
           </div>
+          {(project.investor_price ?? 0) > 0 && (
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
             <p className="text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
           </div>
+          )}
+          {(project.market_price ?? 0) > 0 && (
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiMarketPrice')}</p>
             <p className="text-3xl font-serif line-through opacity-40">{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
+          )}
           <div className="px-4 border-r-0 text-center md:text-left col-span-2 md:col-span-1">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
             <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
@@ -872,7 +876,7 @@ const ProjectDetail: React.FC = () => {
                 <h4 className="text-lg font-bold text-primary mb-2 truncate">{similar.name}</h4>
                 <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">{similar.location}</p>
                 <div className="flex justify-between items-center pt-4 border-t border-gray-50">
-                  <p className="font-bold text-primary">{formatPrice(similar.investor_price, similar.price_currency)}</p>
+                  <p className="font-bold text-primary">{(similar.investor_price ?? 0) > 0 ? formatPrice(similar.investor_price, similar.price_currency) : t('projectDetail.consult')}</p>
                   <span className="material-symbols-outlined text-primary group-hover:translate-x-1 transition">arrow_forward</span>
                 </div>
               </div>
