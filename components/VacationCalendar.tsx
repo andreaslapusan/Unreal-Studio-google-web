@@ -133,12 +133,41 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // id de la solicitud propia que se está editando (null = creando una nueva).
+  const [editingId, setEditingId] = useState<string | null>(null);
+  // ¿la solicitud en edición estaba ya aprobada? (para avisar de la re-aprobación).
+  const [editingWasApproved, setEditingWasApproved] = useState(false);
+  // id en proceso de cancelación (para deshabilitar su botón).
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
 
   const today = baliToday();
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
   const [type, setType] = useState<VacationType>('vacaciones');
   const [note, setNote] = useState('');
+
+  // ¿es esta solicitud del empleado logueado? (para mostrar editar/cancelar).
+  const isMine = (v: Vacation) => v.employee_email.toLowerCase() === employeeEmail.toLowerCase();
+
+  const resetForm = useCallback(() => {
+    setEditingId(null);
+    setEditingWasApproved(false);
+    setNote('');
+    setType('vacaciones');
+    setStartDate(today);
+    setEndDate(today);
+  }, [today]);
+
+  // Traduce el código de error del RPC a un mensaje i18n claro.
+  const rpcError = useCallback((code: string | null | undefined): string => {
+    switch (code) {
+      case 'overlap': return t('vacaciones.errors.overlap');
+      case 'end before start': return t('vacaciones.errors.endBeforeStart');
+      case 'dates required': return t('vacaciones.errors.datesRequired');
+      case 'not found or not yours': return t('vacaciones.errors.notYours');
+      default: return t('vacaciones.errors.submitFailed');
+    }
+  }, [t]);
 
   const load = useCallback(async () => {
     const { data, error: err } = await supabase
@@ -170,27 +199,68 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
     }
     setSaving(true);
     try {
-      const { error: err } = await supabase.from('employee_vacations').insert({
-        employee_id: employeeId || null,
-        employee_email: employeeEmail,
-        employee_name: employeeName || employeeEmail,
-        start_date: startDate,
-        end_date: endDate,
-        type,
-        status: 'pendiente',
-        note: note.trim() || null,
-      });
+      // Todo el trabajo (candado anti-solape + gating por sesión) va en el RPC.
+      const { data, error: err } = editingId
+        ? await supabase.rpc('employee_update_vacation', {
+            p_id: editingId,
+            p_start_date: startDate,
+            p_end_date: endDate,
+            p_type: type,
+            p_note: note.trim() || null,
+          })
+        : await supabase.rpc('employee_request_vacation', {
+            p_start_date: startDate,
+            p_end_date: endDate,
+            p_type: type,
+            p_note: note.trim() || null,
+          });
       if (err) throw err;
+      const res = data as { success?: boolean; error?: string } | null;
+      if (!res?.success) {
+        setError(rpcError(res?.error));
+        return;
+      }
       setShowForm(false);
-      setNote('');
-      setType('vacaciones');
-      setStartDate(today);
-      setEndDate(today);
+      resetForm();
       await load();
     } catch {
       setError(t('vacaciones.errors.submitFailed'));
     } finally {
       setSaving(false);
+    }
+  };
+
+  // Abrir el formulario para EDITAR una solicitud propia.
+  const startEdit = (v: Vacation) => {
+    setError(null);
+    setEditingId(v.id);
+    setEditingWasApproved(v.status === 'aprobada');
+    setStartDate(v.start_date);
+    setEndDate(v.end_date);
+    setType(typeMetaKey(v.type));
+    setNote(v.note ?? '');
+    setShowForm(true);
+  };
+
+  // Cancelar (borrar) una solicitud propia.
+  const cancelVacation = async (v: Vacation) => {
+    if (!window.confirm(t('vacaciones.confirmCancel'))) return;
+    setError(null);
+    setCancelingId(v.id);
+    try {
+      const { data, error: err } = await supabase.rpc('employee_cancel_vacation', { p_id: v.id });
+      if (err) throw err;
+      const res = data as { success?: boolean; error?: string } | null;
+      if (!res?.success) {
+        setError(rpcError(res?.error));
+        return;
+      }
+      if (editingId === v.id) { setShowForm(false); resetForm(); }
+      await load();
+    } catch {
+      setError(t('vacaciones.errors.submitFailed'));
+    } finally {
+      setCancelingId(null);
     }
   };
 
@@ -222,7 +292,7 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
         <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">{t('vacaciones.sectionLabel')}</p>
         {canRequest && (
           <button
-            onClick={() => { setShowForm((s) => !s); setError(null); }}
+            onClick={() => { setShowForm((s) => { const next = !s; if (!next) resetForm(); return next; }); setError(null); }}
             className="text-xs font-bold text-primary flex items-center gap-1 hover:underline"
           >
             <span className="material-symbols-outlined text-base">{showForm ? 'close' : 'add'}</span>
@@ -242,9 +312,17 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
         ))}
       </div>
 
-      {/* Formulario de solicitud */}
+      {/* Formulario de solicitud / edición */}
       {showForm && (
         <form onSubmit={handleSubmit} className="mb-5 p-4 rounded-2xl bg-almond border border-primary/10 space-y-3">
+          <p className="text-[11px] font-black uppercase tracking-widest text-primary/50">
+            {editingId ? t('vacaciones.form.editTitle') : t('vacaciones.form.newTitle')}
+          </p>
+          {editingId && editingWasApproved && (
+            <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5">
+              {t('vacaciones.mine.editRevertsApproved')}
+            </p>
+          )}
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
               <span className="block text-[11px] font-bold text-primary/60 mb-1">{t('vacaciones.form.from')}</span>
@@ -290,18 +368,70 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
               placeholder={t('vacaciones.form.notePlaceholder')}
             />
           </label>
-          <button
-            type="submit"
-            disabled={saving}
-            className="w-full bg-primary text-white rounded-xl py-2.5 font-bold text-sm uppercase tracking-wide hover:bg-black transition disabled:opacity-60 flex items-center justify-center gap-2"
-          >
-            {saving && <span className="material-symbols-outlined animate-spin text-base">refresh</span>}
-            {t('vacaciones.form.submit')}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 bg-primary text-white rounded-xl py-2.5 font-bold text-sm uppercase tracking-wide hover:bg-black transition disabled:opacity-60 flex items-center justify-center gap-2"
+            >
+              {saving && <span className="material-symbols-outlined animate-spin text-base">refresh</span>}
+              {editingId ? t('vacaciones.form.saveChanges') : t('vacaciones.form.submit')}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={() => { setShowForm(false); resetForm(); setError(null); }}
+                className="px-4 rounded-xl bg-white border border-primary/15 text-primary font-bold text-sm uppercase tracking-wide hover:bg-gray-50 transition"
+              >
+                {t('vacaciones.form.discard')}
+              </button>
+            )}
+          </div>
         </form>
       )}
 
       {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
+
+      {/* Mis solicitudes: editar / cancelar (solo las propias). */}
+      {canRequest && (() => {
+        const mine = vacations
+          .filter(isMine)
+          .slice()
+          .sort((a, b) => (a.start_date < b.start_date ? 1 : -1));
+        if (mine.length === 0) return null;
+        return (
+          <div className="mb-5 rounded-2xl border border-primary/10 bg-white/60 p-3">
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2">{t('vacaciones.mine.title')}</p>
+            <ul className="space-y-1.5">
+              {mine.map((v) => (
+                <li key={v.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 bg-almond/50 border border-primary/5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${TYPE_META[typeMetaKey(v.type)].dot}`} />
+                    <span className="text-sm font-medium text-primary truncate">{fmtRange(v.start_date, v.end_date)}</span>
+                    <span className="text-[11px] text-primary/50">· {typeLabel(v.type)}</span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{statusLabel(v.status)}</span>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => startEdit(v)}
+                      className="text-[11px] font-bold text-primary/70 hover:text-primary hover:underline flex items-center gap-0.5"
+                    >
+                      <span className="material-symbols-outlined text-sm">edit</span>{t('vacaciones.mine.edit')}
+                    </button>
+                    <button
+                      onClick={() => cancelVacation(v)}
+                      disabled={cancelingId === v.id}
+                      className="text-[11px] font-bold text-red-600 hover:underline disabled:opacity-50 flex items-center gap-0.5"
+                    >
+                      <span className="material-symbols-outlined text-sm">{cancelingId === v.id ? 'refresh' : 'delete'}</span>{t('vacaciones.mine.cancel')}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })()}
 
       {/* Controles: Mes/Año · navegación · imprimir */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">

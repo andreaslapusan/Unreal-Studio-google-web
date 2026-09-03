@@ -1872,7 +1872,11 @@
       "type": "Tipo",
       "note": "Nota (opcional)",
       "notePlaceholder": "Motivo o detalle…",
-      "submit": "Enviar solicitud"
+      "submit": "Enviar solicitud",
+      "newTitle": "Nueva solicitud",
+      "editTitle": "Editar solicitud",
+      "saveChanges": "Guardar cambios",
+      "discard": "Descartar"
     },
     "empty": "Aún no hay vacaciones registradas. Sé el primero en solicitar.",
     "you": "(TÚ)",
@@ -1880,7 +1884,16 @@
       "loadFailed": "No se pudieron cargar las vacaciones.",
       "datesRequired": "Indica fecha de inicio y fin.",
       "endBeforeStart": "La fecha de fin no puede ser anterior a la de inicio.",
-      "submitFailed": "No se pudo enviar la solicitud. Reintenta."
+      "submitFailed": "No se pudo enviar la solicitud. Reintenta.",
+      "overlap": "Ya tienes una solicitud en esas fechas.",
+      "notYours": "No se encontró la solicitud o no es tuya."
+    },
+    "confirmCancel": "¿Cancelar esta solicitud de vacaciones?",
+    "mine": {
+      "title": "Mis solicitudes",
+      "edit": "Editar",
+      "cancel": "Cancelar",
+      "editRevertsApproved": "Si editas una solicitud ya aprobada, volverá a quedar pendiente de aprobación."
     }
   },
   "paymentTimeline": {

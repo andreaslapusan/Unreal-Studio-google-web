@@ -1854,7 +1854,11 @@
       "type": "Jenis",
       "note": "Catatan (opsional)",
       "notePlaceholder": "Alasan atau detail…",
-      "submit": "Kirim permintaan"
+      "submit": "Kirim permintaan",
+      "newTitle": "Permohonan baru",
+      "editTitle": "Ubah permohonan",
+      "saveChanges": "Simpan perubahan",
+      "discard": "Batalkan"
     },
     "empty": "Belum ada liburan yang terdaftar. Jadi yang pertama untuk meminta.",
     "you": "(KAMU)",
@@ -1862,7 +1866,16 @@
       "loadFailed": "Gagal memuat liburan.",
       "datesRequired": "Tentukan tanggal mulai dan akhir.",
       "endBeforeStart": "Tanggal akhir tidak bisa sebelum tanggal mulai.",
-      "submitFailed": "Gagal mengirim permintaan. Coba lagi."
+      "submitFailed": "Gagal mengirim permintaan. Coba lagi.",
+      "overlap": "Anda sudah memiliki permohonan pada tanggal tersebut.",
+      "notYours": "Permohonan tidak ditemukan atau bukan milik Anda."
+    },
+    "confirmCancel": "Batalkan permohonan cuti ini?",
+    "mine": {
+      "title": "Permohonan saya",
+      "edit": "Ubah",
+      "cancel": "Batalkan",
+      "editRevertsApproved": "Mengubah permohonan yang sudah disetujui akan membuatnya menunggu persetujuan lagi."
     }
   },
   "paymentTimeline": {

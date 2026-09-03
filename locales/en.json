@@ -1872,7 +1872,11 @@
       "type": "Type",
       "note": "Note (optional)",
       "notePlaceholder": "Reason or detail…",
-      "submit": "Send request"
+      "submit": "Send request",
+      "newTitle": "New request",
+      "editTitle": "Edit request",
+      "saveChanges": "Save changes",
+      "discard": "Discard"
     },
     "empty": "No vacations recorded yet. Be the first to request one.",
     "you": "(YOU)",
@@ -1880,7 +1884,16 @@
       "loadFailed": "Could not load the vacations.",
       "datesRequired": "Enter a start and end date.",
       "endBeforeStart": "The end date can't be earlier than the start date.",
-      "submitFailed": "Couldn't send the request. Try again."
+      "submitFailed": "Couldn't send the request. Try again.",
+      "overlap": "You already have a request on those dates.",
+      "notYours": "Request not found or not yours."
+    },
+    "confirmCancel": "Cancel this vacation request?",
+    "mine": {
+      "title": "My requests",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "editRevertsApproved": "Editing an already approved request will make it pending approval again."
     }
   },
   "paymentTimeline": {

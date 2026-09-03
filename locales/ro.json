@@ -1872,7 +1872,11 @@
       "type": "Tip",
       "note": "Notă (opțional)",
       "notePlaceholder": "Motiv sau detaliu…",
-      "submit": "Trimite cererea"
+      "submit": "Trimite cererea",
+      "newTitle": "Cerere nouă",
+      "editTitle": "Editează cererea",
+      "saveChanges": "Salvează modificările",
+      "discard": "Renunță"
     },
     "empty": "Încă nu există concedii înregistrate. Fii primul care solicită.",
     "you": "(TU)",
@@ -1880,7 +1884,16 @@
       "loadFailed": "Nu s-au putut încărca concediile.",
       "datesRequired": "Indică data de început și de sfârșit.",
       "endBeforeStart": "Data de sfârșit nu poate fi anterioară celei de început.",
-      "submitFailed": "Nu s-a putut trimite cererea. Încearcă din nou."
+      "submitFailed": "Nu s-a putut trimite cererea. Încearcă din nou.",
+      "overlap": "Ai deja o cerere pentru acele date.",
+      "notYours": "Cererea nu a fost găsită sau nu îți aparține."
+    },
+    "confirmCancel": "Anulezi această cerere de concediu?",
+    "mine": {
+      "title": "Cererile mele",
+      "edit": "Editează",
+      "cancel": "Anulează",
+      "editRevertsApproved": "Dacă editezi o cerere deja aprobată, aceasta va reveni în așteptarea aprobării."
     }
   },
   "paymentTimeline": {
