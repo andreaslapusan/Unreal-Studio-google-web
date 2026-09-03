@@ -359,7 +359,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                 <div className="divide-y divide-gray-50">
                   {u.payments.length === 0 && <p className="px-5 py-4 text-xs text-gray-300 italic">{t('admin.pay.noPayments')}</p>}
                   {u.payments.map((p) => {
-                    const overdue = !p.received && p.due_date && new Date(p.due_date) < new Date();
+                    const overdue = !p.received && p.due_date && p.due_date.slice(0, 10) < baliToday();
                     return (
                       <div key={p.id} className="px-5 py-3 flex items-center gap-3 flex-wrap">
                         <AsyncButton onClick={() => toggleReceived(p)} title={t('admin.pay.markReceived')}
