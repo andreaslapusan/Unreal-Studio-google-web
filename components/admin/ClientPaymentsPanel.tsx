@@ -338,7 +338,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           {loading && <p className="text-sm text-gray-400">{t('admin.pay.loading')}</p>}
           {!loading && units.length === 0 && <p className="text-sm text-gray-400 italic">{t('admin.pay.noUnits')}</p>}
 
-          {units.filter((u) => filterName === undefined || ((u.project_name || '').trim().toLowerCase() === (filterName || '').trim().toLowerCase() && (filterUnit === undefined || (u.unit_number || '').trim().toLowerCase() === (filterUnit || '').trim().toLowerCase()))).map((u) => {
+          {units.filter((u) => filterName === undefined || ((u.project_name || '').trim().toLowerCase() === (filterName || '').trim().toLowerCase() && (filterUnit === undefined || String(u.unit_number ?? '').trim().toLowerCase() === String(filterUnit ?? '').trim().toLowerCase()))).map((u) => {
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
             const recv = u.payments.filter((p) => p.received).reduce((s, p) => s + ((p as any).received_amount != null ? Number((p as any).received_amount) : Number(p.amount)), 0);
             const pending = Math.max(0, total - recv);
