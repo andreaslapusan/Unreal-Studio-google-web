@@ -10,6 +10,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
+import { baliToday } from '../../lib/timezone';
 
 type EvType = 'cobro' | 'vacacion';
 interface Ev {
@@ -106,7 +107,7 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
     return map;
   }, [events]);
 
-  const todayStr = ymd(today);
+  const todayStr = baliToday(); // hora de Bali, no del navegador (evita desfase del filtro "próximos")
   const list = useMemo(() => {
     let l = events.filter((e) => filterType === 'all' || e.type === filterType);
     if (futureOnly) l = l.filter((e) => e.date >= todayStr);
