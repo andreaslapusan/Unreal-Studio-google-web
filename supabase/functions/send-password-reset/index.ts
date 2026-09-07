@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
   const supabase = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
   const portal = String(p.portal||"").toLowerCase();
   const member = await (async () => { try {
-    if (portal==="cliente"){ const {data}=await supabase.from("clients").select("id").ilike("email",email).limit(1); return !!(data&&data.length); }
+    if (portal==="cliente"){ const {data}=await supabase.rpc("client_login_email_exists",{p_email:email}); if (data===true) return true; const {data:d0}=await supabase.from("clients").select("id").ilike("email",email).limit(1); return !!(d0&&d0.length); }
     if (["empleados","equipo","manager"].includes(portal)){ const {data}=await supabase.from("employees").select("id").ilike("email",email).eq("active",true).limit(1); return !!(data&&data.length); }
     if (portal==="admin"){ const {data}=await supabase.from("admin_users").select("id").ilike("username",email).eq("is_active",true).limit(1); return !!(data&&data.length); }
     if (portal==="agencias"){ const {data}=await supabase.from("listing_partners").select("id").ilike("email",email).limit(1); return !!(data&&data.length); }
