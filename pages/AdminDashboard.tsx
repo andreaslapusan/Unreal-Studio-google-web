@@ -1236,14 +1236,21 @@ const sendWelcome = async (client: Client) => {
 
 // Recuperación de contraseña manual (te llaman "perdí la clave" → se la mandas tú).
 const sendResetEmail = async (client: Client) => {
-  const email = (client.email || '').trim();
-  if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
-  if (!window.confirm(t('admin.dash.resetConfirm', { email }))) return;
-  const { data: sent, error: sErr } = await supabase.functions.invoke('send-password-reset', {
-    body: { email, lang: clientLangOf(client), portal: 'cliente' },
-  });
-  if (sErr || !sent?.success) { alert(t('admin.dash.resetError', { error: sent?.error || sErr?.message || 'error' })); return; }
-  alert(t('admin.dash.resetSent', { email }));
+  // Manda la recuperación a TODOS los titulares del perfil (cada uno tiene su propio
+  // login), no solo al primero. emailsOf reúne email principal + extra_emails + holders.
+  const emails = emailsOf(client);
+  if (!emails.length) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  if (!window.confirm(t('admin.dash.resetConfirm', { email: emails.join(', ') }))) return;
+  const lang = clientLangOf(client);
+  const ok: string[] = []; const failed: string[] = [];
+  for (const email of emails) {
+    const { data: sent, error: sErr } = await supabase.functions.invoke('send-password-reset', {
+      body: { email, lang, portal: 'cliente' },
+    });
+    if (sErr || !sent?.success) failed.push(email); else ok.push(email);
+  }
+  if (ok.length) alert(t('admin.dash.resetSent', { email: ok.join(', ') }) + (failed.length ? `\n⚠️ ${failed.join(', ')}` : ''));
+  else alert(t('admin.dash.resetError', { error: failed.join(', ') }));
 };
 
 // Recordatorio de pago manual: coge el pago pendiente más relevante del cliente
