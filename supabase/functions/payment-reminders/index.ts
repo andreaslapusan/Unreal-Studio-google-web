@@ -58,6 +58,13 @@ function stageFor(daysUntil, lang) {
   return null;
 }
 
+const DISCLAIMER = {
+  es: "Aviso importante: los retrasos en la recepción de los pagos por parte de Unreal Studio conllevan penalizaciones por demora y pueden poner en riesgo la cancelación del contrato.",
+  en: "Important notice: delays in Unreal Studio receiving payments incur late-payment penalties and may put the contract at risk of cancellation.",
+  ro: "Notă importantă: întârzierile în primirea plăților de către Unreal Studio implică penalități de întârziere și pot pune în pericol anularea contractului.",
+  id: "Pemberitahuan penting: keterlambatan penerimaan pembayaran oleh Unreal Studio dikenakan denda keterlambatan dan dapat menempatkan kontrak pada risiko pembatalan.",
+};
+
 function reminderHtml(r, st, lang) {
   const unit = r.unit_number ? ` · ${esc(r.unit_number)}` : "";
   const name = esc(r.client_name || "");
@@ -82,7 +89,7 @@ function reminderHtml(r, st, lang) {
       <div style="font-size:13px;font-weight:700;margin-top:8px;color:${alert ? "#c0392b" : "#3F2305"}">${st.when}</div>
     </div>
     <p style="font-size:13px;line-height:1.6;color:rgba(63,35,5,.7);margin:0 0 4px">${tr(lang,"recommendation")}</p>
-    ${obra}
+    ${alert ? `<p style="font-size:12px;line-height:1.55;color:#a94442;background:#fbeaea;border:1px solid #e6c9c9;border-radius:10px;padding:12px 14px;margin:14px 0 0"><b>${DISCLAIMER[lang] || DISCLAIMER.es}</b></p>` : ""}
     <div style="text-align:center;margin-top:26px"><a href="${PORTAL_BASE}/cliente" style="display:inline-block;background:#3F2305;color:#fff;text-decoration:none;padding:13px 28px;border-radius:99px;font-weight:700;font-size:14px">${tr(lang,"cta")}</a></div>
   </div>
   <div style="text-align:center;font-size:11px;color:rgba(63,35,5,.5);margin-top:16px">Unreal Studio · Bali, Indonesia<br>${tr(lang,"footer")}</div>
