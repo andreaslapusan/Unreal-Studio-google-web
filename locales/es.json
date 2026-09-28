@@ -250,7 +250,10 @@
     "unitsValue": "{{count}} Unidades",
     "completedValue": "{{pct}}% Completado",
     "downloadBrochure": "Descargar Brochure",
-    "constructionProgressTitle": "Avance de Obra"
+    "constructionProgressTitle": "Avance de Obra",
+    "labelLandArea": "Terreno",
+    "labelView": "Vistas",
+    "videoTourBtn": "Ver vídeo / tour"
   },
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",

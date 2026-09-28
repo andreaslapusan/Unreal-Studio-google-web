@@ -250,7 +250,10 @@
     "unitsValue": "{{count}} Units",
     "completedValue": "{{pct}}% Completed",
     "downloadBrochure": "Download Brochure",
-    "constructionProgressTitle": "Construction Progress"
+    "constructionProgressTitle": "Construction Progress",
+    "labelLandArea": "Land",
+    "labelView": "View",
+    "videoTourBtn": "Watch video / tour"
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",

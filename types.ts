@@ -63,6 +63,9 @@ export interface Project {
   has_real_photos?: boolean;
   is_listed?: boolean;
   ref_code?: string;
+  land_area_m2?: number;
+  view_type?: string;
+  walkthrough_url?: string;
 }
 
 export interface BlogPost {

@@ -503,11 +503,25 @@ const ProjectDetail: React.FC = () => {
                   <p className="text-lg font-bold text-primary">{project.furnishing}</p>
                 </div>
               )}
+              {Number((project as any).land_area_m2) > 0 && (
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
+                  <span className="material-symbols-outlined text-primary/40 text-2xl">landscape</span>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelLandArea')}</p>
+                  <p className="text-lg font-bold text-primary">{(project as any).land_area_m2} m²</p>
+                </div>
+              )}
+              {(project as any).view_type && (
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
+                  <span className="material-symbols-outlined text-primary/40 text-2xl">visibility</span>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelView')}</p>
+                  <p className="text-lg font-bold text-primary">{(project as any).view_type}</p>
+                </div>
+              )}
             </div>
           </section>
 
           {/* Botones de Descarga en Columna Principal - MOVIDO AQUÍ PARA MAYOR VISIBILIDAD */}
-          {(brochureFor(project, i18n.language) || (project.floor_plans && project.floor_plans.length > 0)) && (
+          {(brochureFor(project, i18n.language) || (project.floor_plans && project.floor_plans.length > 0) || (project as any).walkthrough_url) && (
             <section className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm">
                 <h3 className="text-2xl font-serif text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
                 <div className="flex flex-wrap gap-4">
@@ -515,6 +529,12 @@ const ProjectDetail: React.FC = () => {
                     <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
                       <span className="material-symbols-outlined">download</span>
                       {t('fix.pd.downloadBrochure')}
+                    </a>
+                  )}
+                  {(project as any).walkthrough_url && (
+                    <a href={(project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-almond text-primary border border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-primary hover:text-white transition">
+                      <span className="material-symbols-outlined">smart_display</span>
+                      {t('projectDetail.videoTourBtn')}
                     </a>
                   )}
                   {/* Reporte de obra: NO se expone en la página pública (es privado y

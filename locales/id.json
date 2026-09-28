@@ -250,7 +250,10 @@
     "unitsValue": "{{count}} Unit",
     "completedValue": "{{pct}}% Selesai",
     "downloadBrochure": "Unduh Brosur",
-    "constructionProgressTitle": "Kemajuan Konstruksi"
+    "constructionProgressTitle": "Kemajuan Konstruksi",
+    "labelLandArea": "Tanah",
+    "labelView": "Pemandangan",
+    "videoTourBtn": "Tonton video / tur"
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",

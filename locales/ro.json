@@ -250,7 +250,10 @@
     "unitsValue": "{{count}} Unități",
     "completedValue": "{{pct}}% Finalizat",
     "downloadBrochure": "Descarcă Broșura",
-    "constructionProgressTitle": "Progres Construcție"
+    "constructionProgressTitle": "Progres Construcție",
+    "labelLandArea": "Teren",
+    "labelView": "Priveliște",
+    "videoTourBtn": "Vezi video / tur"
   },
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",
