@@ -554,7 +554,8 @@
       "agenciesMgmt": "Agencias",
       "agencyPacks": "Packs Agencia",
       "arquitectura": "Arquitectura",
-      "agenda": "Calendario"
+      "agenda": "Calendario",
+      "intakes": "Enlaces de listing"
     },
     "clientLogin": {
       "title": "Portal Inversor",
@@ -1587,6 +1588,29 @@
       "cobro": "Cobro",
       "vacacion": "Vacaciones",
       "rangeFromTo": "Del {{from}} al {{to}}"
+    },
+    "intakes": {
+      "title": "Enlaces de listing",
+      "subtitle": "Crea un enlace privado para que un propietario suba su propiedad (fotos, planos, datos). Entra como borrador oculto y la revisas antes de publicarla.",
+      "newLink": "Nuevo enlace",
+      "propTitle": "Título de la propiedad",
+      "owner": "Propietario",
+      "contact": "Contacto (opcional)",
+      "create": "Crear enlace",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "statusCreated": "Sin enviar",
+      "statusSubmitted": "Pendiente de revisar",
+      "statusPublished": "Publicado",
+      "publish": "Publicar",
+      "view": "Abrir formulario",
+      "delete": "Eliminar",
+      "empty": "Aún no has creado ningún enlace.",
+      "publishedNote": "Creado como borrador OCULTO en Proyectos. Actívalo cuando quieras desde Proyectos.",
+      "confirmDelete": "¿Eliminar este enlace?",
+      "createdAt": "Creado",
+      "errorCreate": "No se pudo crear el enlace.",
+      "errorPublish": "No se pudo publicar."
     }
   },
   "footer": {
@@ -2586,5 +2610,36 @@
   },
   "errorBoundary": {
     "msg": "Esta página tuvo un error. Puedes volver al inicio y seguir usando la web."
+  },
+  "listingIntake": {
+    "kicker": "Alta de propiedad",
+    "intro": "Sube la información y las fotos de tu propiedad. La revisaremos antes de publicarla.",
+    "invalidTitle": "Enlace no válido",
+    "invalidBody": "Este enlace no existe o ha caducado. Pide uno nuevo a Unreal Studio.",
+    "thanksTitle": "¡Recibido, gracias!",
+    "thanksBody": "Hemos recibido tu propiedad. La revisaremos y te avisaremos antes de publicarla.",
+    "publishedBody": "Esta propiedad ya ha sido publicada. Contacta con Unreal Studio si necesitas cambiar algo.",
+    "photosTitle": "Fotos y renders",
+    "photosHint": "Añade todas las fotos o renders de la propiedad. La primera será la portada.",
+    "specsTitle": "Datos de la propiedad",
+    "type": "Tipo",
+    "tenure": "Tenencia",
+    "bedrooms": "Habitaciones",
+    "bathrooms": "Baños",
+    "area": "Superficie (m²)",
+    "zone": "Zona",
+    "zonePh": "Ej. Uluwatu, Bali",
+    "price": "Precio",
+    "currency": "Moneda",
+    "details": "Detalles",
+    "detailsPh": "Describe la propiedad: qué incluye, amueblado, piscina, vistas, extras…",
+    "plansTitle": "Planos",
+    "plansHint": "Sube los planos (imagen o PDF), si los tienes.",
+    "add": "Añadir",
+    "uploading": "Subiendo…",
+    "sending": "Enviando…",
+    "submit": "Enviar propiedad",
+    "canEditLater": "Puedes volver a este enlace más tarde para editar lo que enviaste.",
+    "errorSave": "No se pudo guardar. Inténtalo de nuevo."
   }
 }

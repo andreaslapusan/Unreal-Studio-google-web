@@ -42,11 +42,15 @@ const AdminSidebar: React.FC = () => {
 
   // Contador de notificaciones sin leer (badge). Refresca cada 60s.
   const [unread, setUnread] = useState(0);
+  // Listings pendientes de revisar (propietarios que subieron su propiedad).
+  const [intakesPending, setIntakesPending] = useState(0);
   useEffect(() => {
     let alive = true;
     const fetchUnread = async () => {
       const { data } = await supabase.rpc('admin_unread_count');
       if (alive && typeof data === 'number') setUnread(data);
+      const { data: ip } = await supabase.rpc('admin_intake_pending_count');
+      if (alive && typeof ip === 'number') setIntakesPending(ip);
     };
     void fetchUnread();
     const iv = setInterval(fetchUnread, 60000);
@@ -59,6 +63,7 @@ const AdminSidebar: React.FC = () => {
     { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'cobros', icon: 'payments', label: t('admin.nav.cobros'), to: '/admin?view=cobros', view: 'cobros' },
     { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
+    { key: 'intakes', icon: 'add_home_work', label: t('admin.nav.intakes', 'Enlaces de listing'), to: '/admin?view=intakes', view: 'intakes' },
     { key: 'agenda', icon: 'calendar_month', label: t('admin.nav.agenda', 'Calendario'), to: '/admin?view=agenda', view: 'agenda' },
     { key: 'calendar', icon: 'beach_access', label: t('admin.nav.calendar', 'Vacaciones'), to: '/admin?view=calendar', view: 'calendar' },
     { key: 'clients', icon: 'person', label: t('admin.nav.clients'), to: '/admin?view=clients', view: 'clients' },
@@ -101,6 +106,11 @@ const AdminSidebar: React.FC = () => {
       {it.key === 'notifications' && unread > 0 && (
         <span className="ml-auto bg-red-500 text-white text-[10px] font-black rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
           {unread > 99 ? '99+' : unread}
+        </span>
+      )}
+      {it.key === 'intakes' && intakesPending > 0 && (
+        <span className="ml-auto bg-amber-500 text-white text-[10px] font-black rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+          {intakesPending > 99 ? '99+' : intakesPending}
         </span>
       )}
     </Link>

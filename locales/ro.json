@@ -554,7 +554,8 @@
       "agenciesMgmt": "Agenții",
       "agencyPacks": "Pachete Agenție",
       "arquitectura": "Arhitectură",
-      "agenda": "Calendar"
+      "agenda": "Calendar",
+      "intakes": "Linkuri de listare"
     },
     "clientLogin": {
       "title": "Portal Investitor",
@@ -1587,6 +1588,29 @@
       "cobro": "Încasare",
       "vacacion": "Concediu",
       "rangeFromTo": "Din {{from}} până la {{to}}"
+    },
+    "intakes": {
+      "title": "Linkuri de listare",
+      "subtitle": "Creează un link privat prin care un proprietar își încarcă proprietatea (poze, planuri, detalii). Ajunge ca ciornă ascunsă pe care o revizuiești înainte de publicare.",
+      "newLink": "Link nou",
+      "propTitle": "Titlul proprietății",
+      "owner": "Proprietar",
+      "contact": "Contact (opțional)",
+      "create": "Creează link",
+      "copy": "Copiază",
+      "copied": "Copiat!",
+      "statusCreated": "Netrimis",
+      "statusSubmitted": "De revizuit",
+      "statusPublished": "Publicat",
+      "publish": "Publică",
+      "view": "Deschide formularul",
+      "delete": "Șterge",
+      "empty": "Încă nu ai creat niciun link.",
+      "publishedNote": "Creat ca ciornă ASCUNSĂ în Proiecte. Activeaz-o când vrei din Proiecte.",
+      "confirmDelete": "Ștergi acest link?",
+      "createdAt": "Creat",
+      "errorCreate": "Nu s-a putut crea linkul.",
+      "errorPublish": "Nu s-a putut publica."
     }
   },
   "footer": {
@@ -2584,5 +2608,36 @@
   },
   "errorBoundary": {
     "msg": "Această pagină a avut o eroare. Poți reveni la pagina principală și continua."
+  },
+  "listingIntake": {
+    "kicker": "Adaugă proprietatea",
+    "intro": "Încarcă detaliile și fotografiile proprietății. O vom verifica înainte de publicare.",
+    "invalidTitle": "Link invalid",
+    "invalidBody": "Acest link nu există sau a expirat. Cere unul nou de la Unreal Studio.",
+    "thanksTitle": "Primit, mulțumim!",
+    "thanksBody": "Am primit proprietatea ta. O vom verifica și te vom anunța înainte de publicare.",
+    "publishedBody": "Această proprietate a fost deja publicată. Contactează Unreal Studio dacă vrei să modifici ceva.",
+    "photosTitle": "Fotografii și randări",
+    "photosHint": "Adaugă toate fotografiile sau randările proprietății. Prima va fi coperta.",
+    "specsTitle": "Detaliile proprietății",
+    "type": "Tip",
+    "tenure": "Regim",
+    "bedrooms": "Dormitoare",
+    "bathrooms": "Băi",
+    "area": "Suprafață (m²)",
+    "zone": "Zonă",
+    "zonePh": "ex. Uluwatu, Bali",
+    "price": "Preț",
+    "currency": "Monedă",
+    "details": "Detalii",
+    "detailsPh": "Descrie proprietatea: ce include, mobilată, piscină, priveliști, extra…",
+    "plansTitle": "Planuri",
+    "plansHint": "Încarcă planurile (imagine sau PDF), dacă le ai.",
+    "add": "Adaugă",
+    "uploading": "Se încarcă…",
+    "sending": "Se trimite…",
+    "submit": "Trimite proprietatea",
+    "canEditLater": "Poți reveni la acest link mai târziu pentru a edita ce ai trimis.",
+    "errorSave": "Nu s-a putut salva. Încearcă din nou."
   }
 }

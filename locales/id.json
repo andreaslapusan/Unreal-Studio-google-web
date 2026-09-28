@@ -664,7 +664,8 @@
       "agenciesMgmt": "Agensi",
       "agencyPacks": "Paket Agensi",
       "arquitectura": "Arsitektur",
-      "agenda": "Kalender"
+      "agenda": "Kalender",
+      "intakes": "Tautan listing"
     },
     "common": {
       "save": "Simpan",
@@ -1692,6 +1693,29 @@
       "cobro": "Pembayaran",
       "vacacion": "Cuti",
       "rangeFromTo": "Dari {{from}} sampai {{to}}"
+    },
+    "intakes": {
+      "title": "Tautan listing",
+      "subtitle": "Buat tautan privat agar pemilik mengunggah propertinya (foto, denah, detail). Masuk sebagai draf tersembunyi yang Anda tinjau sebelum dipublikasikan.",
+      "newLink": "Tautan baru",
+      "propTitle": "Judul properti",
+      "owner": "Pemilik",
+      "contact": "Kontak (opsional)",
+      "create": "Buat tautan",
+      "copy": "Salin",
+      "copied": "Tersalin!",
+      "statusCreated": "Belum dikirim",
+      "statusSubmitted": "Menunggu tinjauan",
+      "statusPublished": "Dipublikasikan",
+      "publish": "Publikasikan",
+      "view": "Buka formulir",
+      "delete": "Hapus",
+      "empty": "Anda belum membuat tautan apa pun.",
+      "publishedNote": "Dibuat sebagai draf TERSEMBUNYI di Proyek. Aktifkan kapan saja dari Proyek.",
+      "confirmDelete": "Hapus tautan ini?",
+      "createdAt": "Dibuat",
+      "errorCreate": "Gagal membuat tautan.",
+      "errorPublish": "Gagal mempublikasikan."
     }
   },
   "footer": {
@@ -2585,5 +2609,36 @@
   },
   "errorBoundary": {
     "msg": "Halaman ini mengalami kesalahan. Anda bisa kembali ke beranda dan melanjutkan."
+  },
+  "listingIntake": {
+    "kicker": "Daftarkan properti",
+    "intro": "Unggah detail dan foto properti Anda. Kami akan meninjaunya sebelum dipublikasikan.",
+    "invalidTitle": "Tautan tidak valid",
+    "invalidBody": "Tautan ini tidak ada atau sudah kedaluwarsa. Minta yang baru ke Unreal Studio.",
+    "thanksTitle": "Diterima, terima kasih!",
+    "thanksBody": "Kami telah menerima properti Anda. Kami akan meninjau dan memberi tahu sebelum dipublikasikan.",
+    "publishedBody": "Properti ini sudah dipublikasikan. Hubungi Unreal Studio jika perlu mengubah sesuatu.",
+    "photosTitle": "Foto & render",
+    "photosHint": "Tambahkan semua foto atau render properti. Yang pertama menjadi sampul.",
+    "specsTitle": "Detail properti",
+    "type": "Tipe",
+    "tenure": "Kepemilikan",
+    "bedrooms": "Kamar tidur",
+    "bathrooms": "Kamar mandi",
+    "area": "Luas (m²)",
+    "zone": "Area/Zona",
+    "zonePh": "mis. Uluwatu, Bali",
+    "price": "Harga",
+    "currency": "Mata uang",
+    "details": "Detail",
+    "detailsPh": "Jelaskan properti: apa yang termasuk, berperabot, kolam, pemandangan, ekstra…",
+    "plansTitle": "Denah",
+    "plansHint": "Unggah denah (gambar atau PDF), jika ada.",
+    "add": "Tambah",
+    "uploading": "Mengunggah…",
+    "sending": "Mengirim…",
+    "submit": "Kirim properti",
+    "canEditLater": "Anda dapat kembali ke tautan ini nanti untuk mengubah yang telah dikirim.",
+    "errorSave": "Gagal menyimpan. Silakan coba lagi."
   }
 }

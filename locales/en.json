@@ -554,7 +554,8 @@
       "agenciesMgmt": "Agencies",
       "agencyPacks": "Agency Packs",
       "arquitectura": "Architecture",
-      "agenda": "Calendar"
+      "agenda": "Calendar",
+      "intakes": "Listing links"
     },
     "clientLogin": {
       "title": "Investor Portal",
@@ -1587,6 +1588,29 @@
       "cobro": "Payment",
       "vacacion": "Holidays",
       "rangeFromTo": "From {{from}} to {{to}}"
+    },
+    "intakes": {
+      "title": "Listing links",
+      "subtitle": "Create a private link for an owner to upload their property (photos, plans, details). It arrives as a hidden draft you review before publishing.",
+      "newLink": "New link",
+      "propTitle": "Property title",
+      "owner": "Owner",
+      "contact": "Contact (optional)",
+      "create": "Create link",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "statusCreated": "Not sent",
+      "statusSubmitted": "Pending review",
+      "statusPublished": "Published",
+      "publish": "Publish",
+      "view": "Open form",
+      "delete": "Delete",
+      "empty": "You have not created any links yet.",
+      "publishedNote": "Created as a HIDDEN draft in Projects. Activate it whenever you want from Projects.",
+      "confirmDelete": "Delete this link?",
+      "createdAt": "Created",
+      "errorCreate": "Could not create the link.",
+      "errorPublish": "Could not publish."
     }
   },
   "footer": {
@@ -2584,5 +2608,36 @@
   },
   "errorBoundary": {
     "msg": "This page had an error. You can go back home and keep using the site."
+  },
+  "listingIntake": {
+    "kicker": "List your property",
+    "intro": "Upload your property details and photos. We will review it before publishing.",
+    "invalidTitle": "Invalid link",
+    "invalidBody": "This link does not exist or has expired. Ask Unreal Studio for a new one.",
+    "thanksTitle": "Received, thank you!",
+    "thanksBody": "We got your property. We will review it and let you know before publishing.",
+    "publishedBody": "This property has already been published. Contact Unreal Studio if you need to change anything.",
+    "photosTitle": "Photos & renders",
+    "photosHint": "Add all photos or renders of the property. The first one is the cover.",
+    "specsTitle": "Property details",
+    "type": "Type",
+    "tenure": "Tenure",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "area": "Area (m²)",
+    "zone": "Area/Zone",
+    "zonePh": "e.g. Uluwatu, Bali",
+    "price": "Price",
+    "currency": "Currency",
+    "details": "Details",
+    "detailsPh": "Describe the property: what it includes, furnished, pool, views, extras…",
+    "plansTitle": "Floor plans",
+    "plansHint": "Upload the floor plans (image or PDF), if you have them.",
+    "add": "Add",
+    "uploading": "Uploading…",
+    "sending": "Sending…",
+    "submit": "Submit property",
+    "canEditLater": "You can come back to this link later to edit what you sent.",
+    "errorSave": "Could not save. Please try again."
   }
 }

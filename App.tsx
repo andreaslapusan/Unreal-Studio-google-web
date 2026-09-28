@@ -66,6 +66,7 @@ const EmpleadosDashboard = lazyWithReload(() => import('./pages/EmpleadosDashboa
 const AdminPortalManager = lazyWithReload(() => import('./pages/AdminPortalManager'));
 const AdminAgencias = lazyWithReload(() => import('./pages/AdminAgencias'));
 const AgencyPack = lazyWithReload(() => import('./pages/AgencyPack'));
+const ListingIntake = lazyWithReload(() => import('./pages/ListingIntake'));
 import AdminShell from './components/AdminShell';
 import { AuthProvider, useAuth } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
@@ -305,6 +306,7 @@ const App: React.FC = () => {
             <Route path="/admin/portal" element={<ProtectedRoute><AdminShell><AdminPortalManager /></AdminShell></ProtectedRoute>} />
             <Route path="/admin/agencias" element={<ProtectedRoute><AdminShell><AdminAgencias /></AdminShell></ProtectedRoute>} />
             <Route path="/agencias/:slug" element={<AgencyPack />} />
+            <Route path="/listing/:token" element={<ListingIntake />} />
             <Route path="/demo" element={<DemoPortal />} />
             <Route path="/cliente" element={<Navigate to={portalPath('cliente')} replace />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />
