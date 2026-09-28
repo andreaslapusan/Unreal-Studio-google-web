@@ -25,8 +25,15 @@ const STATUS_GROUPS: Record<string, string[]> = {
   ultimas_unidades: ['últimas unidades', 'ultimas unidades'],
 };
 
+const localizedCompletion = (p: Project, lang: string): string => {
+  const l = (lang || 'es').slice(0, 2);
+  if (l === 'en') return (p as any).completion_date_en || p.completion_date || '';
+  if (l === 'id') return (p as any).completion_date_id || p.completion_date || '';
+  return p.completion_date || '';
+};
+
 const Projects: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   usePageMeta({ title: t('projects.title'), description: t('projects.metaDescription') });
   const [searchParams, setSearchParams] = useSearchParams();
   // SWR — repeat visitors see the catalogue instantly from localStorage; we
@@ -376,10 +383,10 @@ const Projects: React.FC = () => {
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
                     )}
                   </div>
-                  {proj.completion_date && (
+                  {localizedCompletion(proj, i18n.language) && (
                     <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1">
                       <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
-                      {t('projects.card.delivery')}: {proj.completion_date}
+                      {t('projects.card.delivery')}: {localizedCompletion(proj, i18n.language)}
                     </p>
                   )}
                   {proj.completion_percent > 0 && proj.completion_percent < 100 && (
