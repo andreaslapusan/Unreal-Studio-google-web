@@ -105,7 +105,11 @@
       "min": "Min",
       "max": "Max",
       "anyZone": "Cualquier zona",
-      "anyType": "Cualquier tipo"
+      "anyType": "Cualquier tipo",
+      "status": "Estado",
+      "anyStatus": "Cualquier estado",
+      "bedrooms": "Habitaciones",
+      "anyBeds": "Cualquiera"
     },
     "sort": {
       "featured": "Destacados",
@@ -117,7 +121,13 @@
       "from": "Desde",
       "work": "Obra",
       "finalPrice": "Precio Final",
-      "viewDetails": "Ver detalles"
+      "viewDetails": "Ver detalles",
+      "realPhotos": "Fotos reales",
+      "delivery": "Entrega",
+      "tenure": {
+        "leasehold": "Leasehold",
+        "freehold": "Freehold"
+      }
     },
     "noResults": "No se encontraron resultados",
     "clearFilters": "Limpiar filtros",

@@ -105,7 +105,11 @@
       "min": "Min",
       "max": "Max",
       "anyZone": "Semua zona",
-      "anyType": "Semua tipe"
+      "anyType": "Semua tipe",
+      "status": "Status",
+      "anyStatus": "Semua status",
+      "bedrooms": "Kamar tidur",
+      "anyBeds": "Semua"
     },
     "sort": {
       "featured": "Unggulan",
@@ -117,7 +121,13 @@
       "from": "Mulai",
       "work": "Konstruksi",
       "finalPrice": "Harga Final",
-      "viewDetails": "Lihat detail"
+      "viewDetails": "Lihat detail",
+      "realPhotos": "Foto asli",
+      "delivery": "Serah terima",
+      "tenure": {
+        "leasehold": "Hak Sewa",
+        "freehold": "Hak Milik"
+      }
     },
     "noResults": "Tidak ada hasil",
     "clearFilters": "Hapus filter",

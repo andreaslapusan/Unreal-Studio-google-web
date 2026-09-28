@@ -9,10 +9,21 @@ import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { translateStatus } from '../lib/statusI18n';
+import { statusBadgeClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
+const ANY_STATUS = 'Cualquier estado';
+const ANY_BEDS = 'any';
+
+// Buckets of raw status strings the admin uses, grouped for the filter.
+const STATUS_GROUPS: Record<string, string[]> = {
+  entregado: ['entregado', 'listo para entrar', 'finalizado'],
+  en_construccion: ['en construcción', 'en construccion', 'estructura completa'],
+  pre_venta: ['pre-venta', 'pre venta', 'en pre-venta', 'en pre venta', 'pre-construcción', 'pre-construccion'],
+  ultimas_unidades: ['últimas unidades', 'ultimas unidades'],
+};
 
 const Projects: React.FC = () => {
   const { t } = useTranslation();
@@ -36,6 +47,8 @@ const Projects: React.FC = () => {
     minPrice: formatInitialPrice(searchParams.get('minPrice')),
     maxPrice: formatInitialPrice(searchParams.get('maxPrice')),
     type: searchParams.get('type') || ANY_TYPE,
+    status: searchParams.get('status') || ANY_STATUS,
+    beds: searchParams.get('beds') || ANY_BEDS,
     sort: searchParams.get('sort') || 'asc'
   });
 
@@ -79,10 +92,21 @@ const Projects: React.FC = () => {
   const filteredProjects = useMemo(() => {
     let result = projects.filter(p => {
       if (p.is_hidden) return false; // Hide hidden projects from main list
-      
+      if (p.is_listed === false) return false; // Explicitly unlisted
+
       const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());
       const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
-      
+
+      const statusMatch = filters.status === ANY_STATUS || (() => {
+        const raw = (p.status || '').toLowerCase().trim();
+        const group = STATUS_GROUPS[filters.status] || [];
+        return group.some(s => raw.includes(s));
+      })();
+
+      const bedsMatch = filters.beds === ANY_BEDS || (
+        filters.beds === '3' ? Number(p.bedrooms) >= 3 : Number(p.bedrooms) === Number(filters.beds)
+      );
+
       const rates = config.exchangeRates;
       const projectRate = rates[p.price_currency] || 1;
       const currentRate = rates[currency] || 1;
@@ -98,7 +122,7 @@ const Projects: React.FC = () => {
       
       const priceMatch = priceInCurrentCurrency >= min && priceInCurrentCurrency <= max;
 
-      return zoneMatch && priceMatch && typeMatch;
+      return zoneMatch && priceMatch && typeMatch && statusMatch && bedsMatch;
     });
 
     result.sort((a, b) => {
@@ -140,6 +164,8 @@ const Projects: React.FC = () => {
     const params = new URLSearchParams();
     if (newFilters.zone !== ANY_ZONE) params.append('zone', newFilters.zone);
     if (newFilters.type !== ANY_TYPE) params.append('type', newFilters.type);
+    if (newFilters.status !== ANY_STATUS) params.append('status', newFilters.status);
+    if (newFilters.beds !== ANY_BEDS) params.append('beds', newFilters.beds);
     if (newFilters.minPrice) params.append('minPrice', newFilters.minPrice.replace(/\./g, ''));
     if (newFilters.maxPrice) params.append('maxPrice', newFilters.maxPrice.replace(/\./g, ''));
     params.append('sort', newFilters.sort);
@@ -246,7 +272,7 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Type Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
@@ -256,6 +282,41 @@ const Projects: React.FC = () => {
                     <option value="Villa">Villa</option>
                     <option value="Loft">Loft</option>
                     {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Status Filter */}
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">verified</span>
+              <div className="flex-1 text-left">
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.status')}</label>
+                <div className="relative">
+                  <select aria-label={t('projects.filters.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                    <option value={ANY_STATUS}>{t('projects.filters.anyStatus')}</option>
+                    <option value="entregado">{t('admin.statusBadge.entregado')}</option>
+                    <option value="en_construccion">{t('admin.statusBadge.en_construccion')}</option>
+                    <option value="pre_venta">{t('admin.statusBadge.pre_venta')}</option>
+                    <option value="ultimas_unidades">{t('admin.statusBadge.ultimas_unidades')}</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bedrooms Filter */}
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 group">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">bed</span>
+              <div className="flex-1 text-left">
+                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.bedrooms')}</label>
+                <div className="relative">
+                  <select aria-label={t('projects.filters.bedrooms')} value={filters.beds} onChange={(e) => handleFilterChange('beds', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                    <option value={ANY_BEDS}>{t('projects.filters.anyBeds')}</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3+</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
@@ -282,12 +343,46 @@ const Projects: React.FC = () => {
                     onError={imgFallback(getImageUrl(proj.image))}
                   />
                   <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
-                    <span className="bg-primary/90 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{translateStatus(proj.status, t)}</span>
+                    <span className={`${statusBadgeClass(proj.status)} text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg`}>{translateStatus(proj.status, t)}</span>
                   </div>
+                  {proj.has_real_photos && (
+                    <div className="absolute top-2 right-2 md:top-5 md:right-5 z-10">
+                      <span className="flex items-center gap-1 bg-white/95 text-emerald-700 text-[8px] md:text-[9px] font-black px-2 py-1 md:px-3 md:py-1.5 uppercase rounded-md md:rounded-full shadow-lg">
+                        <span className="material-symbols-outlined text-[11px] md:text-sm">photo_camera</span>{t('projects.card.realPhotos')}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
-                  <h3 className="text-base md:text-3xl font-serif text-primary mb-2 md:mb-3 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
-                  {proj.completion_percent > 0 && (
+                  <h3 className="text-base md:text-3xl font-serif text-primary mb-1 md:mb-2 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
+                  {proj.location && (
+                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-2">
+                      <span className="material-symbols-outlined text-[13px] md:text-base">location_on</span>
+                      <span className="truncate">{proj.location}</span>
+                    </p>
+                  )}
+                  {/* Key specs row — beds / baths / area / tenure, like the top Bali agencies */}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] md:text-[11px] font-bold text-primary/70 mb-2">
+                    {Number(proj.bedrooms) > 0 && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bed</span>{proj.bedrooms}</span>
+                    )}
+                    {Number(proj.bathrooms) > 0 && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bathtub</span>{proj.bathrooms}</span>
+                    )}
+                    {Number(proj.area_m2) > 0 && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">square_foot</span>{proj.area_m2} m²</span>
+                    )}
+                    {proj.tenure && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
+                    )}
+                  </div>
+                  {proj.completion_date && (
+                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1">
+                      <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
+                      {t('projects.card.delivery')}: {proj.completion_date}
+                    </p>
+                  )}
+                  {proj.completion_percent > 0 && proj.completion_percent < 100 && (
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
                       <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
@@ -320,7 +415,7 @@ const Projects: React.FC = () => {
         ) : (
           <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
             <h3 className="text-2xl text-primary font-serif">{t('projects.noResults')}</h3>
-            <button onClick={() => setFilters({zone:ANY_ZONE, minPrice:'', maxPrice:'', type:ANY_TYPE, sort:'featured'})} className="mt-6 text-primary font-bold border-b border-primary">{t('projects.clearFilters')}</button>
+            <button onClick={() => setFilters({zone:ANY_ZONE, minPrice:'', maxPrice:'', type:ANY_TYPE, status:ANY_STATUS, beds:ANY_BEDS, sort:'featured'})} className="mt-6 text-primary font-bold border-b border-primary">{t('projects.clearFilters')}</button>
           </div>
         )}
 

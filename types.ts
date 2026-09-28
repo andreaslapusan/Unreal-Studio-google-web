@@ -59,6 +59,10 @@ export interface Project {
   construction_gallery?: string[];
   furnishing_items?: string[];
   is_hidden?: boolean;
+  tenure?: string;
+  has_real_photos?: boolean;
+  is_listed?: boolean;
+  ref_code?: string;
 }
 
 export interface BlogPost {

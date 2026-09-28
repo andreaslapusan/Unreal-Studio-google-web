@@ -105,7 +105,11 @@
       "min": "Min",
       "max": "Max",
       "anyZone": "Any zone",
-      "anyType": "Any type"
+      "anyType": "Any type",
+      "status": "Status",
+      "anyStatus": "Any status",
+      "bedrooms": "Bedrooms",
+      "anyBeds": "Any"
     },
     "sort": {
       "featured": "Featured",
@@ -117,7 +121,13 @@
       "from": "From",
       "work": "Build",
       "finalPrice": "Final price",
-      "viewDetails": "View details"
+      "viewDetails": "View details",
+      "realPhotos": "Real photos",
+      "delivery": "Delivery",
+      "tenure": {
+        "leasehold": "Leasehold",
+        "freehold": "Freehold"
+      }
     },
     "noResults": "No results found",
     "clearFilters": "Clear filters",

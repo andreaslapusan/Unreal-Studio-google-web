@@ -105,7 +105,11 @@
       "min": "Min",
       "max": "Max",
       "anyZone": "Orice zonă",
-      "anyType": "Orice tip"
+      "anyType": "Orice tip",
+      "status": "Stare",
+      "anyStatus": "Orice stare",
+      "bedrooms": "Dormitoare",
+      "anyBeds": "Oricâte"
     },
     "sort": {
       "featured": "Recomandate",
@@ -117,7 +121,13 @@
       "from": "De la",
       "work": "Construcție",
       "finalPrice": "Preț Final",
-      "viewDetails": "Vezi detalii"
+      "viewDetails": "Vezi detalii",
+      "realPhotos": "Poze reale",
+      "delivery": "Predare",
+      "tenure": {
+        "leasehold": "Leasehold",
+        "freehold": "Freehold"
+      }
     },
     "noResults": "Nu s-au găsit rezultate",
     "clearFilters": "Șterge filtrele",
