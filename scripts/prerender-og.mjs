@@ -168,6 +168,30 @@ async function main() {
   }
   console.log(`[prerender-og] Home por idioma: ${homeCount} ficheros (dist/<lang>.html).`);
 
+  // ---- Enlaces de auto-alta (/listing/:token) ----
+  // Son enlaces PRIVADOS que Andreas manda a un propietario para que suba su
+  // propiedad. NO deben mostrar el preview de marketing del site (ROI, precios)
+  // ni indexarse. Generamos dist/listing.html con OG neutro + noindex; nginx lo
+  // sirve para cualquier /listing/<token> (la SPA lee el token del path igual).
+  {
+    const lTitle = "List your property · Unreal Studio Bali";
+    const lDesc = "Private link to upload your property (photos, plans and details) for review by Unreal Studio.";
+    let html = template;
+    html = setTitle(html, lTitle);
+    html = setMeta(html, "description", lDesc, "name");
+    html = setMeta(html, "robots", "noindex, nofollow", "name");
+    html = setMeta(html, "og:type", "website");
+    html = setMeta(html, "og:title", lTitle);
+    html = setMeta(html, "og:description", lDesc);
+    html = setMeta(html, "og:image:alt", "Unreal Studio Bali");
+    html = setMeta(html, "og:url", `${ORIGIN}/listing`);
+    html = setMeta(html, "twitter:title", lTitle, "name");
+    html = setMeta(html, "twitter:description", lDesc, "name");
+    html = setCanonical(html, `${ORIGIN}/listing`);
+    writeFileSync(resolve(DIST, "listing.html"), html, "utf8");
+    console.log("[prerender-og] listing.html (OG neutro + noindex) generado.");
+  }
+
   const sb = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
   let projects = [];
   try {
