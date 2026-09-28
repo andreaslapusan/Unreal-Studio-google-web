@@ -17,12 +17,12 @@ const ANY_TYPE = 'Cualquier tipo';
 const ANY_STATUS = 'Cualquier estado';
 const ANY_BEDS = 'any';
 
-// Buckets of raw status strings the admin uses, grouped for the filter.
+// The 3 canonical states (2026-09-28). Each bucket also catches legacy raw
+// labels so an un-migrated row still filters into the right group.
 const STATUS_GROUPS: Record<string, string[]> = {
-  entregado: ['entregado', 'listo para entrar', 'finalizado'],
-  en_construccion: ['en construcción', 'en construccion', 'estructura completa'],
-  pre_venta: ['pre-venta', 'pre venta', 'en pre-venta', 'en pre venta', 'pre-construcción', 'pre-construccion'],
-  ultimas_unidades: ['últimas unidades', 'ultimas unidades'],
+  off_plan: ['off plan', 'sobre plano', 'pre-venta', 'pre venta', 'en pre-venta', 'en pre venta', 'pre-construcción', 'pre-construccion'],
+  en_construccion: ['en construcción', 'en construccion', 'estructura completa', 'últimas unidades', 'ultimas unidades'],
+  obra_finalizada: ['obra finalizada', 'finalizado', 'entregado', 'listo para entrar', 'terminad'],
 };
 
 const localizedCompletion = (p: Project, lang: string): string => {
@@ -303,10 +303,9 @@ const Projects: React.FC = () => {
                 <div className="relative">
                   <select aria-label={t('projects.filters.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_STATUS}>{t('projects.filters.anyStatus')}</option>
-                    <option value="entregado">{t('admin.statusBadge.entregado')}</option>
+                    <option value="off_plan">{t('admin.statusBadge.off_plan')}</option>
                     <option value="en_construccion">{t('admin.statusBadge.en_construccion')}</option>
-                    <option value="pre_venta">{t('admin.statusBadge.pre_venta')}</option>
-                    <option value="ultimas_unidades">{t('admin.statusBadge.ultimas_unidades')}</option>
+                    <option value="obra_finalizada">{t('admin.statusBadge.obra_finalizada')}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>

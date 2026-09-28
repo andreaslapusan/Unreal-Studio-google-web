@@ -587,7 +587,9 @@
       "ultimas_unidades": "Últimas Unidades",
       "vendido_lista_espera": "Vendido (lista de espera)",
       "oportunidad_co_inversion": "Oportunidad de Co-inversión",
-      "listo_para_entrar": "Listo para Entrar"
+      "listo_para_entrar": "Listo para Entrar",
+      "off_plan": "Sobre Plano",
+      "obra_finalizada": "Obra Finalizada"
     },
     "props": {
       "mgmtTitle": "Gestión de Propiedades",

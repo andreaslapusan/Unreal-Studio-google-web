@@ -587,7 +587,9 @@
       "ultimas_unidades": "Ultimele Unități",
       "vendido_lista_espera": "Vândut (listă de așteptare)",
       "oportunidad_co_inversion": "Oportunitate de Co-investiție",
-      "listo_para_entrar": "Gata de mutat"
+      "listo_para_entrar": "Gata de mutat",
+      "off_plan": "Off Plan",
+      "obra_finalizada": "Finalizat"
     },
     "props": {
       "mgmtTitle": "Gestionare Proprietăți",

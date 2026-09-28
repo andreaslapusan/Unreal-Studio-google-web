@@ -587,7 +587,9 @@
       "ultimas_unidades": "Last Units",
       "vendido_lista_espera": "Sold (waiting list)",
       "oportunidad_co_inversion": "Co-investment opportunity",
-      "listo_para_entrar": "Move-in Ready"
+      "listo_para_entrar": "Move-in Ready",
+      "off_plan": "Off Plan",
+      "obra_finalizada": "Completed"
     },
     "props": {
       "mgmtTitle": "Properties Management",

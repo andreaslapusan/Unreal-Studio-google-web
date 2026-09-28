@@ -719,7 +719,9 @@
       "ultimas_unidades": "Unit Terakhir",
       "vendido_lista_espera": "Terjual (daftar tunggu)",
       "oportunidad_co_inversion": "Kesempatan Co-Investasi",
-      "listo_para_entrar": "Siap untuk Masuk"
+      "listo_para_entrar": "Siap untuk Masuk",
+      "off_plan": "Inden",
+      "obra_finalizada": "Selesai Dibangun"
     },
     "props": {
       "mgmtTitle": "Manajemen Properti",

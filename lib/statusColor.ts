@@ -16,18 +16,18 @@ function normalize(raw: string): string {
 
 export function statusBadgeClass(raw: string | null | undefined): string {
   const n = normalize(raw || "");
-  // Delivered / ready to move in → green
-  if (n.startsWith("entregado") || n.startsWith("listo_para_entrar") || n.startsWith("finalizado") || n.includes("terminad"))
+  // Completed / delivered / ready to move in → green
+  if (n.startsWith("obra_finalizada") || n.startsWith("entregado") || n.startsWith("listo_para_entrar") || n.startsWith("finalizado") || n.includes("terminad"))
     return "bg-emerald-600 text-white";
   // Sold / waiting list → red
   if (n.startsWith("vendido") || n === "sold")
     return "bg-red-600 text-white";
+  // Off plan / pre-sale / pre-construction → amber
+  if (n.startsWith("off_plan") || n.startsWith("sobre_plano") || n.startsWith("pre_venta") || n.startsWith("en_pre_venta") || n.startsWith("pre_construccion"))
+    return "bg-amber-500 text-white";
   // Last units → orange (urgency)
   if (n.startsWith("ultimas_unidades"))
     return "bg-orange-500 text-white";
-  // Pre-sale / pre-construction → amber
-  if (n.startsWith("pre_venta") || n.startsWith("en_pre_venta") || n.startsWith("pre_construccion"))
-    return "bg-amber-500 text-white";
   // Under construction / structure complete → teal
   if (n.startsWith("en_construccion") || n.startsWith("estructura_completa"))
     return "bg-teal-600 text-white";
