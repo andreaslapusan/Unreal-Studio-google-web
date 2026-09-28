@@ -644,7 +644,11 @@
       "secSpecs": "Specs",
       "secCommercial": "Commercial",
       "secConstruction": "Construction & docs",
-      "secVisibility": "Visibility"
+      "secVisibility": "Visibility",
+      "driveUrlPh": "Paste a Google Drive folder link…",
+      "driveImport": "Import from Drive",
+      "driveImporting": "Importing…",
+      "driveError": "Could not import the photos from Drive."
     },
     "blogTab": {
       "title": "Blog Articles",
@@ -2681,6 +2685,11 @@
       "coworking": "Coworking",
       "cleaning": "Cleaning"
     },
-    "turnkey": "Turnkey"
+    "turnkey": "Turnkey",
+    "driveTitle": "Import from Google Drive",
+    "driveHint": "Got the photos in a Drive folder? Paste the link (public or shared) and we upload them for you.",
+    "driveImport": "Import from Drive",
+    "driveImporting": "Importing…",
+    "driveError": "Could not import the photos. Make sure the folder is accessible."
   }
 }

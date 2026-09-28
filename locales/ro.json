@@ -644,7 +644,11 @@
       "secSpecs": "Specificații",
       "secCommercial": "Comercial",
       "secConstruction": "Construcție și documente",
-      "secVisibility": "Vizibilitate"
+      "secVisibility": "Vizibilitate",
+      "driveUrlPh": "Lipește un link de folder Google Drive…",
+      "driveImport": "Importă din Drive",
+      "driveImporting": "Se importă…",
+      "driveError": "Nu s-au putut importa pozele din Drive."
     },
     "blogTab": {
       "title": "Articole Blog",
@@ -2681,6 +2685,11 @@
       "coworking": "Coworking",
       "cleaning": "Curățenie"
     },
-    "turnkey": "La cheie"
+    "turnkey": "La cheie",
+    "driveTitle": "Importă din Google Drive",
+    "driveHint": "Ai pozele într-un folder Drive? Lipește linkul (public sau partajat) și le încărcăm noi.",
+    "driveImport": "Importă din Drive",
+    "driveImporting": "Se importă…",
+    "driveError": "Nu s-au putut importa pozele. Verifică dacă folderul este accesibil."
   }
 }

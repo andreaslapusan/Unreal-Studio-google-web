@@ -644,7 +644,11 @@
       "secSpecs": "Especificaciones",
       "secCommercial": "Comercial",
       "secConstruction": "Obra y documentos",
-      "secVisibility": "Visibilidad"
+      "secVisibility": "Visibilidad",
+      "driveUrlPh": "Pega el link de una carpeta de Google Drive…",
+      "driveImport": "Importar de Drive",
+      "driveImporting": "Importando…",
+      "driveError": "No se pudieron importar las fotos de Drive."
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -2683,6 +2687,11 @@
       "coworking": "Coworking",
       "cleaning": "Limpieza"
     },
-    "turnkey": "Llave en mano"
+    "turnkey": "Llave en mano",
+    "driveTitle": "Importar desde Google Drive",
+    "driveHint": "¿Tienes las fotos en una carpeta de Drive? Pega el link (pública o compartida) y las subimos por ti.",
+    "driveImport": "Importar de Drive",
+    "driveImporting": "Importando…",
+    "driveError": "No se pudieron importar las fotos. Revisa que la carpeta sea accesible."
   }
 }

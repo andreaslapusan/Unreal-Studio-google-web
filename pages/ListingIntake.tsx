@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase, SUPABASE_URL } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
+import { runDriveImport } from "../lib/driveImport";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 interface Asset { url: string; name: string; }
@@ -51,6 +52,21 @@ export default function ListingIntake() {
   });
   const [photos, setPhotos] = useState<Asset[]>([]);
   const [plans, setPlans] = useState<Asset[]>([]);
+  const [driveUrl, setDriveUrl] = useState("");
+  const [driveBusy, setDriveBusy] = useState(false);
+
+  const importDrive = async () => {
+    if (!driveUrl.trim()) return;
+    setDriveBusy(true);
+    const res = await runDriveImport("intake", token, driveUrl.trim());
+    setDriveBusy(false);
+    if (res.urls.length) {
+      setPhotos((prev) => [...prev, ...res.urls.map((u, i) => ({ url: u, name: `drive-${i + 1}` }))]);
+      setDriveUrl("");
+    } else {
+      alert(t("listingIntake.driveError"));
+    }
+  };
 
   const photoInput = useRef<HTMLInputElement>(null);
   const planInput = useRef<HTMLInputElement>(null);
@@ -195,6 +211,20 @@ export default function ListingIntake() {
             </button>
           </div>
           <input ref={photoInput} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && uploadFiles(e.target.files, "photos")} />
+
+          {/* Import from a Google Drive folder */}
+          <div className="bg-almond/60 rounded-2xl p-4 mb-5 border border-primary/5">
+            <p className="text-[11px] uppercase text-primary/40 font-black tracking-widest mb-2">{t("listingIntake.driveTitle")}</p>
+            <p className="text-sm text-primary/50 mb-3">{t("listingIntake.driveHint")}</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input type="url" value={driveUrl} onChange={(e) => setDriveUrl(e.target.value)} placeholder="https://drive.google.com/drive/folders/…" disabled={driveBusy} className="flex-1 px-4 py-3 bg-white rounded-xl border border-primary/10 font-semibold text-primary focus:ring-2 focus:ring-primary/30 outline-none disabled:opacity-60" />
+              <button onClick={importDrive} disabled={driveBusy || !driveUrl.trim()} className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 disabled:opacity-40 transition whitespace-nowrap">
+                <span className="material-symbols-outlined text-base">{driveBusy ? "hourglass_top" : "cloud_download"}</span>
+                {driveBusy ? t("listingIntake.driveImporting") : t("listingIntake.driveImport")}
+              </button>
+            </div>
+          </div>
+
           <p className="text-sm text-primary/50 mb-3">{t("listingIntake.plansHint")}</p>
           <div className="flex flex-wrap gap-3 mb-5">
             {plans.map((a, i) => (

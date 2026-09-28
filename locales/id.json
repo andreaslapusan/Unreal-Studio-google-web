@@ -776,7 +776,11 @@
       "secSpecs": "Spesifikasi",
       "secCommercial": "Komersial",
       "secConstruction": "Konstruksi & dokumen",
-      "secVisibility": "Visibilitas"
+      "secVisibility": "Visibilitas",
+      "driveUrlPh": "Tempel tautan folder Google Drive…",
+      "driveImport": "Impor dari Drive",
+      "driveImporting": "Mengimpor…",
+      "driveError": "Gagal mengimpor foto dari Drive."
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -2682,6 +2686,11 @@
       "coworking": "Coworking",
       "cleaning": "Kebersihan"
     },
-    "turnkey": "Siap huni"
+    "turnkey": "Siap huni",
+    "driveTitle": "Impor dari Google Drive",
+    "driveHint": "Punya foto di folder Drive? Tempel tautannya (publik atau dibagikan) dan kami unggahkan.",
+    "driveImport": "Impor dari Drive",
+    "driveImporting": "Mengimpor…",
+    "driveError": "Gagal mengimpor foto. Pastikan folder dapat diakses."
   }
 }

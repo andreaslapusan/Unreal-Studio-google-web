@@ -6,6 +6,7 @@ import { DEFAULT_CONFIG, CURRENCIES } from '../constants';
 import { Project, AppConfig, BlogPost, User, Client, ClientProject } from '../types';
 import { useCurrency } from '../App';
 import { supabase, uploadImage, getImageUrl, parseJsonField } from '../lib/supabase';
+import { runDriveImport } from '../lib/driveImport';
 import Footer from '../components/Footer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
@@ -479,6 +480,20 @@ const AMENITIES_LIST = [
   const [blogSortOrder, setBlogSortOrder] = useState<'newest' | 'oldest'>('newest');
   
   const [galleryInput, setGalleryInput] = useState('');
+  const [driveUrlAdmin, setDriveUrlAdmin] = useState('');
+  const [driveBusyAdmin, setDriveBusyAdmin] = useState(false);
+  const importGalleryFromDrive = async () => {
+    if (!driveUrlAdmin.trim()) return;
+    setDriveBusyAdmin(true);
+    const res = await runDriveImport('admin', null, driveUrlAdmin.trim());
+    setDriveBusyAdmin(false);
+    if (res.urls.length) {
+      setCurrentProject(prev => ({ ...prev, gallery: [...(prev.gallery || []), ...res.urls] }));
+      setDriveUrlAdmin('');
+    } else {
+      alert(t('admin.props.driveError', { defaultValue: 'No se pudieron importar las fotos de Drive.' }));
+    }
+  };
   const [tiersInput, setTiersInput] = useState('');
 
   const [optionManager, setOptionManager] = useState<{ field: keyof AppConfig | null, title: string } | null>(null);
@@ -2598,6 +2613,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">add_photo_alternate</span>}
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_gallery')} disabled={uploading} />
                        </label>
+                   </div>
+                   {/* Importar galería desde una carpeta de Google Drive */}
+                   <div className="flex flex-col sm:flex-row gap-2 mb-4 bg-almond/50 p-3 rounded-2xl border border-primary/5">
+                       <input type="url" value={driveUrlAdmin} onChange={(e) => setDriveUrlAdmin(e.target.value)} placeholder={t('admin.props.driveUrlPh', { defaultValue: 'Pega el link de una carpeta de Google Drive…' })} disabled={driveBusyAdmin} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20 disabled:opacity-60" />
+                       <button type="button" onClick={importGalleryFromDrive} disabled={driveBusyAdmin || !driveUrlAdmin.trim()} className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-40 whitespace-nowrap">
+                           <span className="material-symbols-outlined text-base">{driveBusyAdmin ? 'hourglass_top' : 'cloud_download'}</span>
+                           {driveBusyAdmin ? t('admin.props.driveImporting', { defaultValue: 'Importando…' }) : t('admin.props.driveImport', { defaultValue: 'Importar de Drive' })}
+                       </button>
                    </div>
                    <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
                        {(currentProject.gallery || []).map((img, idx) => (
