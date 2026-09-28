@@ -1,9 +1,12 @@
 /**
  * /listing/:token — Public, no-login form for a property owner to self-upload
- * their listing (photos, plans, specs). Saved as a DRAFT in the admin (via the
- * intake_submit RPC). One token = one property. The owner can re-open the same
- * link to edit what they already sent. See admin IntakeLinksPanel to create
- * links and publish submissions.
+ * their listing. Andreas doesn't know third-party properties, so the OWNER
+ * fills the MAXIMUM detail — the same public fields the top Bali agencies show
+ * (FazWaz, Bali Home Immo, Propertia, Bali Exception, Kibarer): type, status,
+ * beds/baths, built + land m², tenure + lease years, price, handover date,
+ * furnishing, view, amenities, expected rent, media. Organized in collapsible
+ * sections so it isn't one endless scroll. Saved via intake_submit; published
+ * into a hidden project draft (admin keeps the commercial tiers/ROI).
  */
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
@@ -13,8 +16,19 @@ import { compressImage } from "../lib/imageCompress";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 interface Asset { url: string; name: string; }
-
 const BUCKET = "intake-uploads";
+const AMENITIES = ["privatePool", "sharedPool", "garden", "parking", "security", "gym", "kitchen", "ac", "wifi", "rooftop", "oceanView", "nearBeach", "coworking", "cleaning"];
+
+// Collapsible section — keeps the form clean (no kilometric scroll).
+const Section: React.FC<{ title: string; open: boolean; onToggle: () => void; children: React.ReactNode }> = ({ title, open, onToggle, children }) => (
+  <section className="bg-white/60 rounded-3xl mb-4 border border-primary/5 overflow-hidden">
+    <button onClick={onToggle} className="w-full flex items-center justify-between px-5 md:px-7 py-4 text-left">
+      <span className="font-black text-primary">{title}</span>
+      <span className={`material-symbols-outlined text-primary/40 transition-transform ${open ? "rotate-180" : ""}`}>expand_more</span>
+    </button>
+    {open && <div className="px-5 md:px-7 pb-6">{children}</div>}
+  </section>
+);
 
 export default function ListingIntake() {
   const { token = "" } = useParams();
@@ -26,17 +40,14 @@ export default function ListingIntake() {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [openSection, setOpenSection] = useState<string>("media");
 
-  const [form, setForm] = useState({
-    property_type: "Villa",
-    bedrooms: "",
-    bathrooms: "",
-    area_m2: "",
-    zone: "",
-    price: "",
-    currency: "EUR",
-    tenure: "Leasehold",
-    details: "",
+  const [form, setForm] = useState<Record<string, any>>({
+    property_type: "Villa", status: "off_plan",
+    bedrooms: "", bathrooms: "", area_m2: "", land_area_m2: "", zone: "",
+    tenure: "Leasehold", lease_years: "", price: "", currency: "EUR",
+    completion_date: "", furnishing: "", view: "", has_pool: false,
+    amenities: [] as string[], expected_rent: "", video_url: "", details: "",
   });
   const [photos, setPhotos] = useState<Asset[]>([]);
   const [plans, setPlans] = useState<Asset[]>([]);
@@ -55,13 +66,23 @@ export default function ListingIntake() {
       setForm((f) => ({
         ...f,
         property_type: p.property_type || "Villa",
+        status: p.status || "off_plan",
         bedrooms: p.bedrooms != null ? String(p.bedrooms) : "",
         bathrooms: p.bathrooms != null ? String(p.bathrooms) : "",
         area_m2: p.area_m2 != null ? String(p.area_m2) : "",
+        land_area_m2: p.land_area_m2 != null ? String(p.land_area_m2) : "",
         zone: p.zone || "",
+        tenure: p.tenure || "Leasehold",
+        lease_years: p.lease_years != null ? String(p.lease_years) : "",
         price: p.price != null ? String(p.price) : "",
         currency: p.currency || "EUR",
-        tenure: p.tenure || "Leasehold",
+        completion_date: p.completion_date || "",
+        furnishing: p.furnishing || "",
+        view: p.view || "",
+        has_pool: !!p.has_pool,
+        amenities: Array.isArray(p.amenities) ? p.amenities : [],
+        expected_rent: p.expected_rent != null ? String(p.expected_rent) : "",
+        video_url: p.video_url || "",
         details: p.details || "",
       }));
       if (Array.isArray(p.photos)) setPhotos(p.photos.map((u: string, i: number) => ({ url: u, name: `foto-${i + 1}` })));
@@ -70,7 +91,9 @@ export default function ListingIntake() {
     })();
   }, [token]);
 
-  const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
+  const toggleSection = (s: string) => setOpenSection((cur) => (cur === s ? "" : s));
+  const toggleAmenity = (a: string) => setForm((f) => ({ ...f, amenities: f.amenities.includes(a) ? f.amenities.filter((x: string) => x !== a) : [...f.amenities, a] }));
 
   const uploadFiles = useCallback(async (files: FileList, kind: "photos" | "plans") => {
     setUploading(true);
@@ -83,8 +106,7 @@ export default function ListingIntake() {
         const path = `${token}/${kind}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
         const { error } = await supabase.storage.from(BUCKET).upload(path, blob, { upsert: false, contentType: file.type || undefined });
         if (error) { console.error(error); continue; }
-        const url = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
-        added.push({ url, name: file.name });
+        added.push({ url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`, name: file.name });
       } catch (e) { console.error(e); }
     }
     if (kind === "photos") setPhotos((prev) => [...prev, ...added]);
@@ -99,18 +121,20 @@ export default function ListingIntake() {
 
   const submit = async () => {
     setSaving(true);
+    const num = (v: any) => (v !== "" && v != null ? Number(v) : null);
     const payload = {
-      property_type: form.property_type,
-      bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
-      bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
-      area_m2: form.area_m2 ? Number(form.area_m2) : null,
-      zone: form.zone.trim(),
-      price: form.price ? Number(form.price) : null,
-      currency: form.currency,
-      tenure: form.tenure,
-      details: form.details.trim(),
-      photos: photos.map((a) => a.url),
-      plans: plans.map((a) => a.url),
+      property_type: form.property_type, status: form.status,
+      bedrooms: num(form.bedrooms), bathrooms: num(form.bathrooms),
+      area_m2: num(form.area_m2), land_area_m2: num(form.land_area_m2),
+      zone: (form.zone || "").trim(),
+      tenure: form.tenure, lease_years: num(form.lease_years),
+      price: num(form.price), currency: form.currency,
+      completion_date: (form.completion_date || "").trim(),
+      furnishing: form.furnishing, view: (form.view || "").trim(),
+      has_pool: !!form.has_pool, amenities: form.amenities,
+      expected_rent: num(form.expected_rent), video_url: (form.video_url || "").trim(),
+      details: (form.details || "").trim(),
+      photos: photos.map((a) => a.url), plans: plans.map((a) => a.url),
     };
     const { data, error } = await supabase.rpc("intake_submit", { p_token: token, p_payload: payload });
     setSaving(false);
@@ -119,13 +143,8 @@ export default function ListingIntake() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-almond flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
+    return <div className="min-h-screen bg-almond flex items-center justify-center"><div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
   }
-
   if (!valid) {
     return (
       <div className="min-h-screen bg-almond flex flex-col items-center justify-center text-center px-6">
@@ -135,7 +154,6 @@ export default function ListingIntake() {
       </div>
     );
   }
-
   if (done || published) {
     return (
       <div className="min-h-screen bg-almond flex flex-col items-center justify-center text-center px-6">
@@ -148,100 +166,37 @@ export default function ListingIntake() {
 
   const inputCls = "w-full px-4 py-3 bg-white rounded-2xl border border-primary/10 font-semibold text-primary focus:ring-2 focus:ring-primary/30 outline-none";
   const labelCls = "block text-[11px] uppercase text-primary/40 font-black tracking-widest mb-1.5";
+  const field = (label: string, node: React.ReactNode) => (<div><label className={labelCls}>{label}</label>{node}</div>);
 
   return (
     <div className="min-h-screen bg-almond pb-24">
-      <header className="px-5 md:px-10 pt-5 flex items-center justify-end max-w-3xl mx-auto">
-        <LanguageSwitcher />
-      </header>
+      <header className="px-5 md:px-10 pt-5 flex items-center justify-end max-w-3xl mx-auto"><LanguageSwitcher /></header>
 
       <div className="max-w-3xl mx-auto px-5 md:px-10 pt-4">
         <div className="mb-8">
           <p className="text-[11px] uppercase text-primary/40 font-black tracking-widest mb-1">{t("listingIntake.kicker")}</p>
           <h1 className="text-3xl md:text-4xl font-serif text-primary leading-tight">{title}</h1>
-          <p className="text-primary/60 mt-2">{t("listingIntake.intro")}</p>
+          <p className="text-primary/60 mt-2">{t("listingIntake.introFull")}</p>
         </div>
 
-        {/* Photos */}
-        <section className="bg-white/60 rounded-3xl p-5 md:p-7 mb-6 border border-primary/5">
-          <h2 className="font-black text-primary mb-1">{t("listingIntake.photosTitle")}</h2>
+        {/* 1 · Media */}
+        <Section title={t("listingIntake.photosTitle")} open={openSection === "media"} onToggle={() => toggleSection("media")}>
           <p className="text-sm text-primary/50 mb-4">{t("listingIntake.photosHint")}</p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-5">
             {photos.map((a, i) => (
-              <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
+              <div key={i} className="relative aspect-square rounded-xl overflow-hidden">
                 <img src={a.url} alt={a.name} className="w-full h-full object-cover" />
                 <button onClick={() => removeAsset("photos", i)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">✕</button>
               </div>
             ))}
-            <button onClick={() => photoInput.current?.click()} className="aspect-square rounded-xl border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-primary/40 hover:border-primary/40 hover:text-primary/60 transition">
+            <button onClick={() => photoInput.current?.click()} className="aspect-square rounded-xl border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-primary/40 hover:border-primary/40 transition">
               <span className="material-symbols-outlined">add_photo_alternate</span>
               <span className="text-[10px] font-bold mt-1">{t("listingIntake.add")}</span>
             </button>
           </div>
           <input ref={photoInput} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && uploadFiles(e.target.files, "photos")} />
-        </section>
-
-        {/* Specs */}
-        <section className="bg-white/60 rounded-3xl p-5 md:p-7 mb-6 border border-primary/5 space-y-4">
-          <h2 className="font-black text-primary">{t("listingIntake.specsTitle")}</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelCls}>{t("listingIntake.type")}</label>
-              <select value={form.property_type} onChange={(e) => set("property_type", e.target.value)} className={inputCls}>
-                <option value="Villa">Villa</option>
-                <option value="Loft">Loft</option>
-                <option value="Apartment">Apartment</option>
-                <option value="Land">Land</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelCls}>{t("listingIntake.tenure")}</label>
-              <select value={form.tenure} onChange={(e) => set("tenure", e.target.value)} className={inputCls}>
-                <option value="Leasehold">Leasehold</option>
-                <option value="Freehold">Freehold</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelCls}>{t("listingIntake.bedrooms")}</label>
-              <input type="number" min="0" value={form.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>{t("listingIntake.bathrooms")}</label>
-              <input type="number" min="0" value={form.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>{t("listingIntake.area")}</label>
-              <input type="number" min="0" value={form.area_m2} onChange={(e) => set("area_m2", e.target.value)} className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>{t("listingIntake.zone")}</label>
-              <input type="text" value={form.zone} onChange={(e) => set("zone", e.target.value)} placeholder={t("listingIntake.zonePh")} className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>{t("listingIntake.price")}</label>
-              <input type="number" min="0" value={form.price} onChange={(e) => set("price", e.target.value)} className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>{t("listingIntake.currency")}</label>
-              <select value={form.currency} onChange={(e) => set("currency", e.target.value)} className={inputCls}>
-                <option value="EUR">EUR €</option>
-                <option value="USD">USD $</option>
-                <option value="IDR">IDR Rp</option>
-                <option value="AUD">AUD $</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label className={labelCls}>{t("listingIntake.details")}</label>
-            <textarea value={form.details} onChange={(e) => set("details", e.target.value)} rows={5} placeholder={t("listingIntake.detailsPh")} className={inputCls} />
-          </div>
-        </section>
-
-        {/* Plans */}
-        <section className="bg-white/60 rounded-3xl p-5 md:p-7 mb-6 border border-primary/5">
-          <h2 className="font-black text-primary mb-1">{t("listingIntake.plansTitle")}</h2>
-          <p className="text-sm text-primary/50 mb-4">{t("listingIntake.plansHint")}</p>
-          <div className="flex flex-wrap gap-3">
+          <p className="text-sm text-primary/50 mb-3">{t("listingIntake.plansHint")}</p>
+          <div className="flex flex-wrap gap-3 mb-5">
             {plans.map((a, i) => (
               <div key={i} className="flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-primary/10">
                 <span className="material-symbols-outlined text-primary/40 text-lg">description</span>
@@ -250,18 +205,90 @@ export default function ListingIntake() {
               </div>
             ))}
             <button onClick={() => planInput.current?.click()} className="flex items-center gap-2 rounded-xl border-2 border-dashed border-primary/20 px-4 py-2 text-primary/40 hover:border-primary/40 transition">
-              <span className="material-symbols-outlined text-lg">upload_file</span>
-              <span className="text-xs font-bold">{t("listingIntake.add")}</span>
+              <span className="material-symbols-outlined text-lg">upload_file</span><span className="text-xs font-bold">{t("listingIntake.add")}</span>
             </button>
           </div>
           <input ref={planInput} type="file" accept="image/*,application/pdf" multiple className="hidden" onChange={(e) => e.target.files && uploadFiles(e.target.files, "plans")} />
-        </section>
+          {field(t("listingIntake.videoUrl"), <input type="url" value={form.video_url} onChange={(e) => set("video_url", e.target.value)} placeholder="https://…" className={inputCls} />)}
+        </Section>
 
-        <button
-          onClick={submit}
-          disabled={saving || uploading}
-          className="w-full bg-primary text-white font-black uppercase tracking-widest py-4 rounded-2xl shadow-xl hover:brightness-110 disabled:opacity-50 transition flex items-center justify-center gap-2"
-        >
+        {/* 2 · Basics */}
+        <Section title={t("listingIntake.basicsTitle")} open={openSection === "basics"} onToggle={() => toggleSection("basics")}>
+          <div className="grid grid-cols-2 gap-4">
+            {field(t("listingIntake.type"), (
+              <select value={form.property_type} onChange={(e) => set("property_type", e.target.value)} className={inputCls}>
+                <option value="Villa">Villa</option><option value="Loft">Loft</option><option value="Apartment">Apartment</option><option value="Land">Land</option>
+              </select>
+            ))}
+            {field(t("listingIntake.statusLabel"), (
+              <select value={form.status} onChange={(e) => set("status", e.target.value)} className={inputCls}>
+                <option value="off_plan">{t("admin.statusBadge.off_plan")}</option>
+                <option value="en_construccion">{t("admin.statusBadge.en_construccion")}</option>
+                <option value="obra_finalizada">{t("admin.statusBadge.obra_finalizada")}</option>
+              </select>
+            ))}
+            {field(t("listingIntake.bedrooms"), <input type="number" min="0" value={form.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} className={inputCls} />)}
+            {field(t("listingIntake.bathrooms"), <input type="number" min="0" value={form.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} className={inputCls} />)}
+            {field(t("listingIntake.builtArea"), <input type="number" min="0" value={form.area_m2} onChange={(e) => set("area_m2", e.target.value)} className={inputCls} />)}
+            {field(t("listingIntake.landArea"), <input type="number" min="0" value={form.land_area_m2} onChange={(e) => set("land_area_m2", e.target.value)} className={inputCls} />)}
+          </div>
+          <div className="mt-4">{field(t("listingIntake.zone"), <input type="text" value={form.zone} onChange={(e) => set("zone", e.target.value)} placeholder={t("listingIntake.zonePh")} className={inputCls} />)}</div>
+        </Section>
+
+        {/* 3 · Tenure & price */}
+        <Section title={t("listingIntake.tenurePriceTitle")} open={openSection === "tenure"} onToggle={() => toggleSection("tenure")}>
+          <div className="grid grid-cols-2 gap-4">
+            {field(t("listingIntake.tenure"), (
+              <select value={form.tenure} onChange={(e) => set("tenure", e.target.value)} className={inputCls}>
+                <option value="Leasehold">Leasehold</option><option value="Freehold">Freehold</option>
+              </select>
+            ))}
+            {field(t("listingIntake.leaseYears"), <input type="number" min="0" value={form.lease_years} onChange={(e) => set("lease_years", e.target.value)} className={inputCls} />)}
+            {field(t("listingIntake.price"), <input type="number" min="0" value={form.price} onChange={(e) => set("price", e.target.value)} className={inputCls} />)}
+            {field(t("listingIntake.currency"), (
+              <select value={form.currency} onChange={(e) => set("currency", e.target.value)} className={inputCls}>
+                <option value="EUR">EUR €</option><option value="USD">USD $</option><option value="IDR">IDR Rp</option><option value="AUD">AUD $</option>
+              </select>
+            ))}
+          </div>
+          <div className="mt-4">{field(t("listingIntake.deliveryDate"), <input type="text" value={form.completion_date} onChange={(e) => set("completion_date", e.target.value)} placeholder={t("listingIntake.deliveryPh")} className={inputCls} />)}</div>
+        </Section>
+
+        {/* 4 · Features */}
+        <Section title={t("listingIntake.featuresTitle")} open={openSection === "features"} onToggle={() => toggleSection("features")}>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {field(t("listingIntake.furnishing"), (
+              <select value={form.furnishing} onChange={(e) => set("furnishing", e.target.value)} className={inputCls}>
+                <option value="">—</option>
+                <option value="furnished">{t("listingIntake.furnished")}</option>
+                <option value="semi">{t("listingIntake.semiFurnished")}</option>
+                <option value="unfurnished">{t("listingIntake.unfurnished")}</option>
+              </select>
+            ))}
+            {field(t("listingIntake.viewField"), <input type="text" value={form.view} onChange={(e) => set("view", e.target.value)} placeholder={t("listingIntake.viewPh")} className={inputCls} />)}
+          </div>
+          <label className={labelCls}>{t("listingIntake.amenities")}</label>
+          <div className="flex flex-wrap gap-2">
+            {AMENITIES.map((a) => (
+              <button key={a} onClick={() => toggleAmenity(a)} className={`text-xs font-bold px-3 py-2 rounded-full border transition ${form.amenities.includes(a) ? "bg-primary text-white border-primary" : "bg-white text-primary/60 border-primary/15 hover:border-primary/40"}`}>
+                {t(`listingIntake.amenity.${a}`)}
+              </button>
+            ))}
+          </div>
+        </Section>
+
+        {/* 5 · Rental (optional) */}
+        <Section title={t("listingIntake.rentalTitle")} open={openSection === "rental"} onToggle={() => toggleSection("rental")}>
+          <p className="text-sm text-primary/50 mb-4">{t("listingIntake.rentalHint")}</p>
+          {field(t("listingIntake.expectedRent"), <input type="number" min="0" value={form.expected_rent} onChange={(e) => set("expected_rent", e.target.value)} placeholder={t("listingIntake.expectedRentPh")} className={inputCls} />)}
+        </Section>
+
+        {/* 6 · Description */}
+        <Section title={t("listingIntake.descTitle")} open={openSection === "desc"} onToggle={() => toggleSection("desc")}>
+          <textarea value={form.details} onChange={(e) => set("details", e.target.value)} rows={6} placeholder={t("listingIntake.detailsPh")} className={inputCls} />
+        </Section>
+
+        <button onClick={submit} disabled={saving || uploading} className="w-full bg-primary text-white font-black uppercase tracking-widest py-4 rounded-2xl shadow-xl hover:brightness-110 disabled:opacity-50 transition flex items-center justify-center gap-2 mt-4">
           {uploading ? t("listingIntake.uploading") : saving ? t("listingIntake.sending") : t("listingIntake.submit")}
         </button>
         <p className="text-center text-[11px] text-primary/40 mt-3">{t("listingIntake.canEditLater")}</p>
