@@ -780,7 +780,8 @@
       "driveUrlPh": "Tempel tautan folder Google Drive…",
       "driveImport": "Impor dari Drive",
       "driveImporting": "Mengimpor…",
-      "driveError": "Gagal mengimpor foto dari Drive."
+      "driveError": "Gagal mengimpor foto dari Drive.",
+      "driveHint": "Jika Anda menempel tautan folder Google Drive, kami otomatis mengimpor semua foto di folder itu ke galeri."
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -2688,7 +2689,7 @@
     },
     "turnkey": "Siap huni",
     "driveTitle": "Impor dari Google Drive",
-    "driveHint": "Punya foto di folder Drive? Tempel tautannya (publik atau dibagikan) dan kami unggahkan.",
+    "driveHint": "Jika Anda menempel tautan folder Google Drive (publik atau dibagikan), kami otomatis mengimpor semua fotonya.",
     "driveImport": "Impor dari Drive",
     "driveImporting": "Mengimpor…",
     "driveError": "Gagal mengimpor foto. Pastikan folder dapat diakses."

@@ -648,7 +648,8 @@
       "driveUrlPh": "Lipește un link de folder Google Drive…",
       "driveImport": "Importă din Drive",
       "driveImporting": "Se importă…",
-      "driveError": "Nu s-au putut importa pozele din Drive."
+      "driveError": "Nu s-au putut importa pozele din Drive.",
+      "driveHint": "Dacă lipești un link de folder Google Drive, importăm automat toate pozele din folder în galerie."
     },
     "blogTab": {
       "title": "Articole Blog",
@@ -2687,7 +2688,7 @@
     },
     "turnkey": "La cheie",
     "driveTitle": "Importă din Google Drive",
-    "driveHint": "Ai pozele într-un folder Drive? Lipește linkul (public sau partajat) și le încărcăm noi.",
+    "driveHint": "Dacă lipești un link de folder Google Drive (public sau partajat), importăm automat toate pozele.",
     "driveImport": "Importă din Drive",
     "driveImporting": "Se importă…",
     "driveError": "Nu s-au putut importa pozele. Verifică dacă folderul este accesibil."

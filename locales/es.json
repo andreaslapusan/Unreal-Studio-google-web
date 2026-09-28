@@ -648,7 +648,8 @@
       "driveUrlPh": "Pega el link de una carpeta de Google Drive…",
       "driveImport": "Importar de Drive",
       "driveImporting": "Importando…",
-      "driveError": "No se pudieron importar las fotos de Drive."
+      "driveError": "No se pudieron importar las fotos de Drive.",
+      "driveHint": "Si pegas un enlace de una carpeta de Google Drive, importaremos automáticamente todas las fotos de la carpeta a la galería."
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -2689,7 +2690,7 @@
     },
     "turnkey": "Llave en mano",
     "driveTitle": "Importar desde Google Drive",
-    "driveHint": "¿Tienes las fotos en una carpeta de Drive? Pega el link (pública o compartida) y las subimos por ti.",
+    "driveHint": "Si pegas un enlace de una carpeta de Google Drive (pública o compartida), importaremos automáticamente todas sus fotos.",
     "driveImport": "Importar de Drive",
     "driveImporting": "Importando…",
     "driveError": "No se pudieron importar las fotos. Revisa que la carpeta sea accesible."

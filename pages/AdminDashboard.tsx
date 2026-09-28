@@ -2615,12 +2615,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                        </label>
                    </div>
                    {/* Importar galería desde una carpeta de Google Drive */}
-                   <div className="flex flex-col sm:flex-row gap-2 mb-4 bg-almond/50 p-3 rounded-2xl border border-primary/5">
-                       <input type="url" value={driveUrlAdmin} onChange={(e) => setDriveUrlAdmin(e.target.value)} placeholder={t('admin.props.driveUrlPh', { defaultValue: 'Pega el link de una carpeta de Google Drive…' })} disabled={driveBusyAdmin} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20 disabled:opacity-60" />
-                       <button type="button" onClick={importGalleryFromDrive} disabled={driveBusyAdmin || !driveUrlAdmin.trim()} className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-40 whitespace-nowrap">
-                           <span className="material-symbols-outlined text-base">{driveBusyAdmin ? 'hourglass_top' : 'cloud_download'}</span>
-                           {driveBusyAdmin ? t('admin.props.driveImporting', { defaultValue: 'Importando…' }) : t('admin.props.driveImport', { defaultValue: 'Importar de Drive' })}
-                       </button>
+                   <div className="mb-4 bg-almond/50 p-3 rounded-2xl border border-primary/5">
+                       <p className="text-[11px] text-primary/50 font-semibold mb-2 flex items-start gap-1.5"><span className="material-symbols-outlined text-sm text-primary/40">info</span>{t('admin.props.driveHint')}</p>
+                       <div className="flex flex-col sm:flex-row gap-2">
+                           <input type="url" value={driveUrlAdmin} onChange={(e) => setDriveUrlAdmin(e.target.value)} placeholder={t('admin.props.driveUrlPh', { defaultValue: 'Pega el link de una carpeta de Google Drive…' })} disabled={driveBusyAdmin} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20 disabled:opacity-60" />
+                           <button type="button" onClick={importGalleryFromDrive} disabled={driveBusyAdmin || !driveUrlAdmin.trim()} className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-40 whitespace-nowrap">
+                               <span className="material-symbols-outlined text-base">{driveBusyAdmin ? 'hourglass_top' : 'cloud_download'}</span>
+                               {driveBusyAdmin ? t('admin.props.driveImporting', { defaultValue: 'Importando…' }) : t('admin.props.driveImport', { defaultValue: 'Importar de Drive' })}
+                           </button>
+                       </div>
                    </div>
                    <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
                        {(currentProject.gallery || []).map((img, idx) => (
