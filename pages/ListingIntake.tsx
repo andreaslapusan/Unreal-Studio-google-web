@@ -260,9 +260,9 @@ export default function ListingIntake() {
             {field(t("listingIntake.furnishing"), (
               <select value={form.furnishing} onChange={(e) => set("furnishing", e.target.value)} className={inputCls}>
                 <option value="">—</option>
-                <option value="furnished">{t("listingIntake.furnished")}</option>
                 <option value="semi">{t("listingIntake.semiFurnished")}</option>
-                <option value="unfurnished">{t("listingIntake.unfurnished")}</option>
+                <option value="furnished">{t("listingIntake.furnished")}</option>
+                <option value="turnkey">{t("listingIntake.turnkey")}</option>
               </select>
             ))}
             {field(t("listingIntake.viewField"), <input type="text" value={form.view} onChange={(e) => set("view", e.target.value)} placeholder={t("listingIntake.viewPh")} className={inputCls} />)}

@@ -33,6 +33,17 @@ const ProjectDetail: React.FC = () => {
     if (lang === 'id') return p.description_id || p.description || '';
     return p.description || '';
   };
+  // Amueblado: traduce las claves del formulario de auto-alta (semi/furnished/turnkey);
+  // si es texto libre de un proyecto antiguo, lo muestra tal cual.
+  const fmtFurnishing = (v: string) => {
+    const map: Record<string, string> = {
+      semi: t('listingIntake.semiFurnished'),
+      furnished: t('listingIntake.furnished'),
+      turnkey: t('listingIntake.turnkey'),
+      unfurnished: t('listingIntake.unfurnished'),
+    };
+    return map[String(v).toLowerCase()] || v;
+  };
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [similarProjects, setSimilarProjects] = useState<Project[]>([]);
@@ -500,7 +511,7 @@ const ProjectDetail: React.FC = () => {
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">chair</span>
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelFurnishing')}</p>
-                  <p className="text-lg font-bold text-primary">{project.furnishing}</p>
+                  <p className="text-lg font-bold text-primary">{fmtFurnishing(project.furnishing)}</p>
                 </div>
               )}
               {Number((project as any).land_area_m2) > 0 && (
@@ -826,7 +837,7 @@ const ProjectDetail: React.FC = () => {
                     {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
                     {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
                     {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
-                    {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{project.furnishing}</span></div>}
+                    {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
                     <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{project.has_pool ? t('projectDetail.yes') : t('projectDetail.no')}</span></div>
                     {project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
                 </div>
