@@ -838,7 +838,7 @@ const ProjectDetail: React.FC = () => {
                     {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
                     {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
                     {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
-                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{project.has_pool ? t('projectDetail.yes') : t('projectDetail.no')}</span></div>
+                    {project.has_pool && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}
                     {project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
                 </div>
 
@@ -876,7 +876,7 @@ const ProjectDetail: React.FC = () => {
                 )}
               </div>
               <a
-                href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(t('fix.pd.mailSubject', { name: project.name, defaultValue: 'Información: {{name}}' }))}&body=${encodeURIComponent(t('fix.pd.mailBody', { name: project.name, location: project.location, defaultValue: 'Hola, me interesa el proyecto "{{name}}" en {{location}}. Me gustaría recibir más información y agendar una reunión.' }))}`}
+                href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(t('fix.pd.mailSubject', { name: project.name, defaultValue: 'Información: {{name}}' }))}&body=${encodeURIComponent(t('fix.pd.mailBody', { name: project.name, location: project.location || '', defaultValue: 'Hola, me interesa el proyecto "{{name}}" en {{location}}. Me gustaría recibir más información y agendar una reunión.' }))}`}
                 className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"
               >
                 {t('fix.pd.requestProjectInfo')}

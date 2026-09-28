@@ -34,6 +34,7 @@ const KNOWN_STATUS_KEYS: Record<string, string> = {
   listo_para_entrar: "obra_finalizada",
   finalizado: "obra_finalizada",
   estructura_completa_finishing_en_curso: "en_construccion",
+  estructura_completa: "en_construccion",
   ultimas_unidades: "en_construccion",
   vendido_lista_de_espera: "vendido_lista_espera",
   oportunidad_de_co_inversion: "oportunidad_co_inversion",
