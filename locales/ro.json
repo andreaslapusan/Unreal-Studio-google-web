@@ -1468,7 +1468,8 @@
       "vtype_personal": "personal",
       "b_clientPwChange": "Și-a schimbat parola",
       "endOfList": "— Nu mai sunt —",
-      "loadingMore": "Se încarcă mai mult…"
+      "loadingMore": "Se încarcă mai mult…",
+      "typeListingIntake": "Listare nouă"
     },
     "perms": {
       "check_in": "Pontaj intrare/ieșire",

@@ -1468,7 +1468,8 @@
       "vtype_personal": "personal",
       "b_clientPwChange": "Ha cambiado su contraseña",
       "endOfList": "— No hay más —",
-      "loadingMore": "Cargando más…"
+      "loadingMore": "Cargando más…",
+      "typeListingIntake": "Nuevo listing"
     },
     "perms": {
       "check_in": "Fichar entrada/salida",

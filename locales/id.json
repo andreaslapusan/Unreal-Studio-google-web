@@ -1573,7 +1573,8 @@
       "vtype_personal": "pribadi",
       "b_clientPwChange": "Mengubah kata sandinya",
       "endOfList": "— Tidak ada lagi —",
-      "loadingMore": "Memuat lebih banyak…"
+      "loadingMore": "Memuat lebih banyak…",
+      "typeListingIntake": "Listing baru"
     },
     "perms": {
       "check_in": "Absen masuk/keluar",

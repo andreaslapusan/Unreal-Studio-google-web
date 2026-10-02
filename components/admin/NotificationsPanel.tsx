@@ -33,16 +33,18 @@ interface PendingVacation { id: string; employee_name: string | null; start_date
 
 // Tipos que van al feed de ACTIVIDAD (info). vacation_request es solo log: la TAREA
 // de aprobar se calcula de employee_vacations (pendientes), no de la notificación.
-const INFO_TYPES = new Set(['client_login', 'client_password_change', 'late_checkin', 'generic', 'vacation_request']);
+const INFO_TYPES = new Set(['client_login', 'client_password_change', 'late_checkin', 'generic', 'vacation_request', 'listing_intake']);
 const INFO_META: Record<string, { icon: string; labelKey: string; def: string; color: string }> = {
   client_login: { icon: 'login', labelKey: 'admin.notif.typeClientLogin', def: 'Acceso de cliente', color: 'text-primary bg-almond' },
   client_password_change: { icon: 'key', labelKey: 'admin.notif.typeClientPwChange', def: 'Cambio de contraseña', color: 'text-amber-700 bg-amber-50' },
   late_checkin: { icon: 'schedule', labelKey: 'admin.notif.typeLateCheckin', def: 'Fichaje tarde', color: 'text-orange-600 bg-orange-50' },
   vacation_request: { icon: 'beach_access', labelKey: 'admin.notif.typeVacation', def: 'Solicitud de vacaciones', color: 'text-amber-600 bg-amber-50' },
+  listing_intake: { icon: 'add_home_work', labelKey: 'admin.notif.typeListingIntake', def: 'Nuevo listing', color: 'text-emerald-700 bg-emerald-50' },
   generic: { icon: 'notifications', labelKey: 'admin.notif.typeGeneric', def: 'Aviso', color: 'text-gray-600 bg-gray-100' },
 };
 const ACT_FILTERS: { value: string; def: string }[] = [
   { value: 'all', def: 'Todo' },
+  { value: 'listing_intake', def: 'Nuevos listings' },
   { value: 'client_login', def: 'Accesos de clientes' },
   { value: 'client_password_change', def: 'Cambios de contraseña' },
   { value: 'late_checkin', def: 'Fichajes tarde' },
