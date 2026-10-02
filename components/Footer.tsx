@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
                 </a>
               );
             })}
-            <Link to="/contacto" className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300" aria-label="Agendar Videollamada">
+            <Link to="/contacto" className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300" aria-label={t('footer.scheduleVideocall')}>
               <span className="material-symbols-outlined text-xl">videocam</span>
             </Link>
           </div>
