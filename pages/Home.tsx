@@ -358,7 +358,10 @@ const Home: React.FC = () => {
                 
                 <div className="p-4 md:p-8 lg:p-12 w-[60%] md:w-full flex flex-col justify-center text-left">
                   <p className="text-[9px] md:text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 md:mb-4 truncate">{featuredProject.location}</p>
-                  <h3 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-10 text-primary leading-tight line-clamp-2">{featuredProject.name}</h3>
+                  <h3 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-primary leading-tight line-clamp-2">{featuredProject.name}</h3>
+                  {featuredProject.tenure && (
+                    <span className={`inline-flex w-fit items-center gap-1 text-[9px] md:text-[11px] font-black uppercase px-2.5 py-1 rounded-full mb-3 md:mb-8 ${(featuredProject.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[13px] md:text-base">key</span>{t(`projects.card.tenure.${(featuredProject.tenure||'').toLowerCase()}`, featuredProject.tenure)}</span>
+                  )}
                   
                   <div className="mt-auto pt-3 md:pt-10 border-t border-gray-100 flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-4">
                     <div>
@@ -506,7 +509,10 @@ const Home: React.FC = () => {
               </div>
               <div className="p-4 md:p-8 flex-grow flex flex-col text-left">
                 <p className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 md:mb-2 truncate">{proj.location}</p>
-                <h3 className="text-sm md:text-2xl font-bold mb-3 md:mb-6 text-primary line-clamp-2 md:line-clamp-none leading-tight">{proj.name}</h3>
+                <h3 className="text-sm md:text-2xl font-bold mb-2 md:mb-3 text-primary line-clamp-2 md:line-clamp-none leading-tight">{proj.name}</h3>
+                {proj.tenure && (
+                  <span className={`inline-flex w-fit items-center gap-1 text-[8px] md:text-[10px] font-black uppercase px-2 py-0.5 rounded-full mb-2 ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[12px] md:text-sm">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
+                )}
                 {proj.completion_percent > 0 && (
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>

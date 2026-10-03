@@ -406,6 +406,9 @@ const ProjectDetail: React.FC = () => {
               </span>
             )}
             <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}</h1>
+            {project.tenure && (
+              <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
+            )}
             {project.location && (
               <div className="flex items-center text-gray-500 text-sm font-medium text-left">
                 <span className="material-symbols-outlined text-base mr-1">location_on</span>
