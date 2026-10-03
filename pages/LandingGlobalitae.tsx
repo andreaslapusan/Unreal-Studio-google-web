@@ -5,6 +5,7 @@ import { Project } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { translateStatus } from '../lib/statusI18n';
+import { imgFallback } from '../lib/imageOptimize';
 
 const LandingGlobalitae: React.FC = () => {
   const { t } = useTranslation();
@@ -215,8 +216,9 @@ const LandingGlobalitae: React.FC = () => {
       <section className="relative h-screen min-h-[600px] flex items-end pb-24 pt-40 px-6 md:px-12">
         <div className="absolute inset-0 z-0">
           <img 
-            src={getImageUrl(project.image)} 
-            alt={project.name} 
+            src={getImageUrl(project.image)}
+            onError={imgFallback(getImageUrl(project.image))}
+            alt={project.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
@@ -413,7 +415,7 @@ const LandingGlobalitae: React.FC = () => {
                 className="aspect-square rounded-2xl overflow-hidden cursor-pointer group relative"
                 onClick={() => setLightbox({ open: true, index: idx + 1 })}
               >
-                <img src={getImageUrl(img)} alt={t('fix.lg.galleryAlt', { num: idx + 1 })} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                <img src={getImageUrl(img)} onError={imgFallback(getImageUrl(img))} alt={t('fix.lg.galleryAlt', { num: idx + 1 })} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                 <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition duration-300 flex items-center justify-center">
                   <span className="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 transition-opacity transform scale-50 group-hover:scale-100 duration-300">zoom_in</span>
                 </div>
@@ -516,7 +518,8 @@ const LandingGlobalitae: React.FC = () => {
           
           <div className="w-full max-w-6xl px-4 md:px-24 h-[80vh] flex items-center justify-center">
             <img 
-              src={allImages[lightbox.index]} 
+              src={allImages[lightbox.index]}
+              onError={imgFallback(allImages[lightbox.index])}
               alt={t('fix.lg.galleryLightboxAlt')}
               className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
             />

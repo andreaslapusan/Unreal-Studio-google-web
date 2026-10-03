@@ -65,10 +65,14 @@ const ProjectDetail: React.FC = () => {
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
     try {
-        // If it's already in DD/MM/YYYY format (from admin free text input for completion date), return as is
+        // Free text from admin (e.g. "Diciembre 2027", "DD/MM/YYYY") is shown as-is.
+        // Only ISO-like dates (YYYY-MM-DD…) are reformatted; never parse free text
+        // (that turned "Diciembre 2027" into 01/01/2027).
         if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) return dateString;
-        
-        return new Date(dateOnly(dateString)).toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
+        if (!/^\d{4}-\d{2}-\d{2}/.test(dateString)) return dateString;
+        const d = new Date(dateOnly(dateString));
+        if (isNaN(d.getTime())) return dateString;
+        return d.toLocaleDateString(uiLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return dateString;
     }
@@ -402,6 +406,9 @@ const ProjectDetail: React.FC = () => {
               </span>
             )}
             <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}</h1>
+            {project.tenure && (
+              <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
+            )}
             {project.location && (
               <div className="flex items-center text-gray-500 text-sm font-medium text-left">
                 <span className="material-symbols-outlined text-base mr-1">location_on</span>
@@ -466,7 +473,7 @@ const ProjectDetail: React.FC = () => {
               // Regla del dueño: un campo sin valor NO se muestra (ni card ni label).
               const specs = [
                 project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
-                project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: project.years_extension ? t('projectDetail.yearsExtValue', { base: project.years_contract, ext: project.years_extension }) : String(project.years_contract) },
+                project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: project.years_extension ? t('projectDetail.yearsExtValue', { base: project.years_contract, ext: project.years_extension }) : String(project.years_contract) },
                 project.available_units && { icon: 'apartment', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
                 (project.completion_percent > 0) && { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) },
               ].filter(Boolean) as { icon: string; label: string; value: string }[];
