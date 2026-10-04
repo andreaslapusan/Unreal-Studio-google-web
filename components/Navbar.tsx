@@ -19,7 +19,10 @@ const Navbar: React.FC = () => {
   const { user, role, signOut } = useAuth();
 
   // Páginas con hero a sangre: el nav se superpone transparente con texto claro.
-  const heroOverlay = location.pathname === '/' || location.pathname.startsWith('/proyecto/');
+  // Las públicas llevan prefijo de idioma (/es, /en/proyecto/…), así que
+  // detectamos home (raíz o /xx) y cualquier ficha de proyecto.
+  const _pn = location.pathname.replace(/\/+$/, '');
+  const heroOverlay = _pn === '' || /^\/[a-z]{2}$/.test(_pn) || _pn.includes('/proyecto/');
 
   // Para admin/team mandamos al hub /admin desde donde se accede a Marketing,
   // Portal Manager, propiedades, blog, etc. Solo lister/investor tienen
