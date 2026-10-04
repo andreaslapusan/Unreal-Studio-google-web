@@ -45,11 +45,12 @@ export default function Booking() {
 
   return (
     <div className="bg-almond min-h-screen pb-16">
-      <header className="px-6 md:px-12 pt-16 pb-8 max-w-4xl mx-auto text-center">
-        <h1 className="text-4xl md:text-6xl text-primary font-serif mb-4 leading-tight">
+      <header className="px-6 md:px-12 pt-16 pb-8 max-w-4xl mx-auto text-center space-y-6">
+        <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/35"></span></span>
+        <h1 className="text-4xl md:text-6xl text-primary font-serif leading-[1.05] tracking-[-0.02em]">
           {t("booking.heroTitle", { defaultValue: "Reserva una llamada con un asesor" })}
         </h1>
-        <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed font-light">
           {t("booking.heroSubtitle", {
             defaultValue:
               "30 minutos por videollamada con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
