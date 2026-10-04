@@ -106,26 +106,26 @@ export default function DemoPortal() {
 
         {/* Obra en vivo */}
         <section className="mt-8">
-          <h2 className="font-serif text-xl text-primary mb-1">Obra en vivo</h2>
-          <p className="text-sm text-gray-500 mb-4">Fotos reales fechadas de tu construcción. Transparencia total, sin sorpresas.</p>
+          <h2 className="flex items-center gap-2.5 before:content-[''] before:h-px before:w-6 before:bg-primary/30 font-serif text-xl md:text-2xl tracking-[-0.01em] text-primary mb-1">Obra en vivo</h2>
+          <p className="text-sm text-primary/55 mb-4">Fotos reales fechadas de tu construcción. Transparencia total, sin sorpresas.</p>
           <div className="space-y-4">
             {UPDATES.map((u, i) => (
-              <article key={i} className="rounded-3xl bg-white shadow-sm p-4">
+              <article key={i} className="rounded-3xl bg-white shadow-sm p-4 border border-primary/5 hover:shadow-md hover:border-primary/10 transition-all duration-300">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <div className="text-sm font-bold text-primary">{u.title}</div>
-                    <div className="text-xs text-gray-400">{u.date}</div>
+                    <div className="text-xs text-primary/45">{u.date}</div>
                   </div>
                   <span className="text-xs font-black text-primary bg-primary/5 rounded-full px-3 py-1">{u.progress}%</span>
                 </div>
                 <div className={`grid gap-2 ${u.shots.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
                   {u.shots.map((s, j) => (
-                    <button key={j} onClick={() => setLightbox(getImageUrl(s))} className="block rounded-2xl overflow-hidden aspect-[4/3] bg-gray-100">
+                    <button key={j} onClick={() => setLightbox(getImageUrl(s))} className="block rounded-2xl overflow-hidden aspect-[4/3] bg-primary/5">
                       <img src={getImageUrl(s)} alt={u.title} className="w-full h-full object-cover hover:scale-105 transition duration-500" loading="lazy" />
                     </button>
                   ))}
                 </div>
-                <p className="text-sm text-gray-500 mt-3">{u.note}</p>
+                <p className="text-sm text-primary/55 mt-3">{u.note}</p>
               </article>
             ))}
           </div>
@@ -133,8 +133,8 @@ export default function DemoPortal() {
 
         {/* Calendario de pagos */}
         <section className="mt-8">
-          <h2 className="font-serif text-xl text-primary mb-1">Tu calendario de pagos</h2>
-          <p className="text-sm text-gray-500 mb-4">Siempre sabes qué has pagado y qué falta. Cero letra pequeña.</p>
+          <h2 className="flex items-center gap-2.5 before:content-[''] before:h-px before:w-6 before:bg-primary/30 font-serif text-xl md:text-2xl tracking-[-0.01em] text-primary mb-1">Tu calendario de pagos</h2>
+          <p className="text-sm text-primary/55 mb-4">Siempre sabes qué has pagado y qué falta. Cero letra pequeña.</p>
           <div className="rounded-3xl bg-white shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -147,17 +147,17 @@ export default function DemoPortal() {
               </div>
             </div>
             <Bar pct={Math.round((paid / total) * 100)} />
-            <div className="mt-5 divide-y divide-gray-50">
+            <div className="mt-5 divide-y divide-primary/10">
               {PAYMENTS.map((p) => (
                 <div key={p.n} className="py-3 flex items-center gap-3">
-                  <span className={`material-symbols-outlined text-xl leading-none ${p.paid ? 'text-green-600' : 'text-gray-300'}`}>{p.paid ? 'check_circle' : 'schedule'}</span>
+                  <span className={`material-symbols-outlined text-xl leading-none ${p.paid ? 'text-emerald-600' : 'text-primary/25'}`}>{p.paid ? 'check_circle' : 'schedule'}</span>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-bold text-primary">{p.label}</div>
-                    <div className="text-xs text-gray-400">Vence {p.due}</div>
+                    <div className="text-xs text-primary/45">Vence {p.due}</div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-sm font-black text-primary">{money(p.amount)}</div>
-                    <div className={`text-[10px] font-black uppercase ${p.paid ? 'text-green-600' : 'text-gray-400'}`}>{p.paid ? 'Recibido' : 'Pendiente'}</div>
+                    <div className={`text-[10px] font-black uppercase ${p.paid ? 'text-emerald-600' : 'text-primary/40'}`}>{p.paid ? 'Recibido' : 'Pendiente'}</div>
                   </div>
                 </div>
               ))}
@@ -167,15 +167,15 @@ export default function DemoPortal() {
 
         {/* Recibo */}
         <section className="mt-8">
-          <h2 className="font-serif text-xl text-primary mb-1">Recibos al instante</h2>
-          <p className="text-sm text-gray-500 mb-4">Cada pago genera su recibo oficial (kwitansi), descargable al momento.</p>
+          <h2 className="flex items-center gap-2.5 before:content-[''] before:h-px before:w-6 before:bg-primary/30 font-serif text-xl md:text-2xl tracking-[-0.01em] text-primary mb-1">Recibos al instante</h2>
+          <p className="text-sm text-primary/55 mb-4">Cada pago genera su recibo oficial (kwitansi), descargable al momento.</p>
           <div className="rounded-3xl bg-white shadow-sm p-5 flex items-center gap-4">
             <div className="w-14 h-16 rounded-xl bg-primary/5 flex items-center justify-center shrink-0">
               <span className="material-symbols-outlined text-primary text-3xl">receipt_long</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-bold text-primary">Recibo DEMO-02 · Firma de contrato</div>
-              <div className="text-xs text-gray-400">15 Abr 2026 · {money(46250)}</div>
+              <div className="text-xs text-primary/45">15 Abr 2026 · {money(46250)}</div>
             </div>
             <span className="text-xs font-black text-primary bg-primary/5 rounded-full px-3 py-2 whitespace-nowrap">PDF</span>
           </div>
@@ -191,7 +191,7 @@ export default function DemoPortal() {
           <div className="mt-4 text-xs opacity-70"><Link to="/proyectos" className="underline">Ver todos los proyectos</Link></div>
         </section>
 
-        <p className="text-center text-[11px] text-gray-400 mt-8">Demo con datos de ejemplo · Unreal Studio</p>
+        <p className="text-center text-[11px] text-primary/40 mt-8">Demo con datos de ejemplo · Unreal Studio</p>
       </main>
 
       {/* Lightbox */}
