@@ -553,7 +553,7 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-20 items-center">
           <div className="lg:w-1/2 space-y-5 md:space-y-8 text-left">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section1Tag')}</p>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl text-primary leading-tight">{t('home.section1Title')}</h2>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl text-primary leading-[1.05] tracking-[-0.015em]">{t('home.section1Title')}</h2>
             <p className="text-base md:text-lg text-primary/60 font-light leading-relaxed max-w-xl">
               {t('home.section1Body')}
             </p>
@@ -615,7 +615,7 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
           <div className="lg:w-1/2 text-left space-y-5 md:space-y-8">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section2Tag')}</p>
-            <h2 className="text-3xl md:text-5xl text-primary leading-tight">{t('home.section2Title')}</h2>
+            <h2 className="text-3xl md:text-5xl text-primary leading-[1.05] tracking-[-0.015em]">{t('home.section2Title')}</h2>
             <p className="text-base md:text-lg text-primary/70 font-light leading-relaxed max-w-lg">
               {t('home.section2Body')}
             </p>
@@ -718,7 +718,7 @@ const Home: React.FC = () => {
            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] border border-white rounded-full translate-y-1/2 -translate-x-1/2"></div>
         </div>
         <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-          <h2 className="text-6xl md:text-8xl text-almond font-serif leading-none">{t('home.ctaSectionTitle')}</h2>
+          <h2 className="text-6xl md:text-8xl text-almond font-serif leading-none tracking-[-0.02em]">{t('home.ctaSectionTitle')}</h2>
           <p className="text-lg md:text-xl text-almond/70 font-light max-w-2xl mx-auto leading-relaxed px-4">
             {t('home.ctaSectionBody')}
           </p>
@@ -740,7 +740,7 @@ const Home: React.FC = () => {
       <section className="py-12 md:py-24 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="flex justify-between items-end mb-8 md:mb-12 border-b border-primary/5 pb-5 md:pb-8">
           <div className="text-left">
-            <h2 className="text-4xl md:text-5xl text-primary font-serif">{t('home.blogTitle')}</h2>
+            <h2 className="text-4xl md:text-5xl text-primary font-serif tracking-[-0.015em]">{t('home.blogTitle')}</h2>
           </div>
           <Link to="/blog" className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group">
             {t('home.blogCta')} <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
