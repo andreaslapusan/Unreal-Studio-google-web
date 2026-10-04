@@ -562,7 +562,7 @@ const Home: React.FC = () => {
       <section className="py-12 md:py-24 bg-white px-6 md:px-12">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-20 items-center">
           <div className="lg:w-1/2 space-y-5 md:space-y-8 text-left">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section1Tag')}</p>
+            <p className="inline-flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>{t('home.section1Tag')}</p>
             <h2 className="text-3xl md:text-5xl lg:text-6xl text-primary leading-[1.05] tracking-[-0.015em]">{t('home.section1Title')}</h2>
             <p className="text-base md:text-lg text-primary/60 font-light leading-relaxed max-w-xl">
               {t('home.section1Body')}
@@ -624,7 +624,7 @@ const Home: React.FC = () => {
       <section className="py-12 md:py-24 bg-[#F3E5D8] px-6 md:px-12">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
           <div className="lg:w-1/2 text-left space-y-5 md:space-y-8">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section2Tag')}</p>
+            <p className="inline-flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>{t('home.section2Tag')}</p>
             <h2 className="text-3xl md:text-5xl text-primary leading-[1.05] tracking-[-0.015em]">{t('home.section2Title')}</h2>
             <p className="text-base md:text-lg text-primary/70 font-light leading-relaxed max-w-lg">
               {t('home.section2Body')}
