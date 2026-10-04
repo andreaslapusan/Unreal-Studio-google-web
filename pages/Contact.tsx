@@ -66,8 +66,9 @@ const Contact: React.FC = () => {
   return (
     <div className="bg-almond transition-colors duration-300 min-h-screen">
       <main className="px-6 md:px-12 pt-16 pb-24">
-        <div className="max-w-4xl mx-auto text-center mb-20">
-          <h1 className="text-5xl md:text-7xl leading-tight text-primary mb-8">
+        <div className="max-w-4xl mx-auto text-center mb-20 space-y-7">
+          <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/35"></span></span>
+          <h1 className="text-5xl md:text-7xl leading-[1.04] text-primary tracking-[-0.02em]">
             {t('contact.heroTitle1')} <br className="hidden md:block" />{t('contact.heroTitle2')}
           </h1>
           <p className="text-lg md:text-xl text-primary/70 font-light max-w-2xl mx-auto leading-relaxed">
@@ -88,7 +89,7 @@ const Contact: React.FC = () => {
                     </div>
                     <h2 className="text-2xl md:text-3xl text-primary font-serif">{t('contact.formTitle')}</h2>
                 </div>
-                <p className="text-sm text-gray-500 font-medium mb-8">
+                <p className="text-sm text-primary/55 font-medium mb-8">
                   {t('contact.formIntro')}
                 </p>
 
@@ -120,7 +121,7 @@ const Contact: React.FC = () => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder={t('contact.fullNamePlaceholder')}
-                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
+                        className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition"
                       />
                     </div>
                     <div className="space-y-2">
@@ -132,7 +133,7 @@ const Contact: React.FC = () => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder={t('fix.contact.emailPlaceholder')}
-                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
+                        className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition"
                       />
                     </div>
                   </div>
@@ -146,7 +147,7 @@ const Contact: React.FC = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder={t('fix.contact.phonePlaceholder')}
-                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition"
+                        className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition"
                       />
                     </div>
                     <div className="space-y-2">
@@ -157,14 +158,14 @@ const Contact: React.FC = () => {
                             name="reason"
                             value={formData.reason}
                             onChange={handleChange}
-                            className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition appearance-none cursor-pointer bg-none"
+                            className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition appearance-none cursor-pointer bg-none"
                         >
                           <option>{t('contact.reasons.diversify')}</option>
                           <option>{t('contact.reasons.roi')}</option>
                           <option>{t('contact.reasons.vacation')}</option>
                           <option>{t('contact.reasons.retirement')}</option>
                         </select>
-                        <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                        <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
                       </div>
                     </div>
                   </div>
@@ -178,7 +179,7 @@ const Contact: React.FC = () => {
                             name="budget"
                             value={formData.budget}
                             onChange={handleChange}
-                            className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition appearance-none cursor-pointer bg-none"
+                            className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition appearance-none cursor-pointer bg-none"
                          >
                            <option>{t('contact.budgets.under50')}</option>
                            <option>{t('contact.budgets.b50to100')}</option>
@@ -186,7 +187,7 @@ const Contact: React.FC = () => {
                            <option>{t('contact.budgets.b250to500')}</option>
                            <option>{t('contact.budgets.over500')}</option>
                          </select>
-                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
                        </div>
                     </div>
                     <div className="space-y-2">
@@ -197,14 +198,14 @@ const Contact: React.FC = () => {
                             name="timeframe"
                             value={formData.timeframe}
                             onChange={handleChange}
-                            className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/20 outline-none transition appearance-none cursor-pointer bg-none"
+                            className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition appearance-none cursor-pointer bg-none"
                          >
                            <option>{t('contact.tf.asap')}</option>
                            <option>{t('contact.tf.m1')}</option>
                            <option>{t('contact.tf.m3')}</option>
                            <option>{t('contact.tf.exploring')}</option>
                          </select>
-                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
                        </div>
                     </div>
                   </div>
@@ -217,7 +218,7 @@ const Contact: React.FC = () => {
                       onChange={handleChange}
                       placeholder={t('contact.messagePlaceholder')}
                       rows={3}
-                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-primary font-medium focus:ring-2 focus:ring-primary/20 outline-none transition resize-none"
+                      className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-medium focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition resize-none"
                     />
                   </div>
 
@@ -230,7 +231,7 @@ const Contact: React.FC = () => {
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                   </button>
                   
-                  <p className="text-[10px] text-center text-gray-400">
+                  <p className="text-[10px] text-center text-primary/40">
                     {t('contact.privacyNote')}
                   </p>
                 </form>
@@ -249,7 +250,7 @@ const Contact: React.FC = () => {
                     <span className="material-symbols-outlined text-xl">mail</span>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-500">{t('contact.emailLabel')}</p>
+                    <p className="text-[10px] uppercase font-bold text-primary/50">{t('contact.emailLabel')}</p>
                     <span className="font-medium text-primary">hello@unrealstudiobali.com</span>
                   </div>
                 </a>
@@ -261,13 +262,13 @@ const Contact: React.FC = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h4 className="font-bold text-xl text-primary">{t('fix.contact.madridCity')}</h4>
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">{t('contact.hqLabel')}</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-primary/40 mt-1">{t('contact.hqLabel')}</p>
                 </div>
-                <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-primary/10 shadow-sm">
                   <img alt="Madrid" className="w-full h-full object-cover grayscale opacity-80" src="https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&q=80&w=200&h=200" />
                 </div>
               </div>
-              <p className="text-sm text-gray-500 font-light mb-6 leading-relaxed">
+              <p className="text-sm text-primary/55 font-light mb-6 leading-relaxed">
 {t('fix.contact.madridAddressLine1')}<br />{t('fix.contact.madridAddressLine2')}
               </p>
               <a 
@@ -285,13 +286,13 @@ const Contact: React.FC = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h4 className="font-bold text-xl text-primary">{t('fix.contact.baliCity')}</h4>
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">{t('contact.asiaLabel')}</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-primary/40 mt-1">{t('contact.asiaLabel')}</p>
                 </div>
-                <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-primary/10 shadow-sm">
                   <img alt="Bali" className="w-full h-full object-cover grayscale opacity-80" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=200&h=200" />
                 </div>
               </div>
-              <p className="text-sm text-gray-500 font-light mb-6 leading-relaxed">
+              <p className="text-sm text-primary/55 font-light mb-6 leading-relaxed">
 {t('fix.contact.baliAddressLine1')}<br />{t('fix.contact.baliAddressLine2')}
               </p>
               <a 
