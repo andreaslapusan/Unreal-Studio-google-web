@@ -222,9 +222,9 @@ const Contact: React.FC = () => {
                     />
                   </div>
 
-                  <button 
+                  <button
                     type="submit"
-                    className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-4 rounded-xl font-bold text-sm uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02]"
+                    className="w-full bg-primary hover:bg-black text-white py-4 rounded-xl font-bold text-sm uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-primary/30"
                   >
                     <span>{t('contact.submit')}</span>
                     {/* SVG Send Icon */}
