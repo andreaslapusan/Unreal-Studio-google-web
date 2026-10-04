@@ -293,7 +293,7 @@ const Home: React.FC = () => {
       <header className="px-6 md:px-12 pb-24 md:pb-32 pt-4 md:pt-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
         <div className="space-y-8 md:space-y-10 z-10">
           <div className="max-w-xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl leading-[1.1] text-primary mb-8">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl leading-[1.03] tracking-[-0.02em] text-primary mb-8">
               <Trans
                 i18nKey="home.heroTitle"
                 values={{ price: minPriceDisplay }}
@@ -323,13 +323,9 @@ const Home: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-4 pl-1">
-             <div className="flex -space-x-3">
-               <img loading="lazy" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 1" />
-               <img loading="lazy" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 2" />
-               <img loading="lazy" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 3" />
-             </div>
-             <p className="text-[11px] font-black uppercase tracking-widest text-primary/40">{t('home.investorsCount')}</p>
+          <div className="flex items-center gap-3 pl-1">
+             <span className="h-px w-10 bg-primary/30"></span>
+             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary/50">{t('home.investorsCount')}</p>
           </div>
         </div>
         
