@@ -237,7 +237,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   return (
     <div className="animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 gap-3">
-        <h1 className="text-lg sm:text-2xl font-black uppercase tracking-wide sm:tracking-widest text-primary/20">{t('cobros.title')}</h1>
+        <h1 className="text-lg sm:text-2xl font-black uppercase tracking-wide sm:tracking-widest text-primary/60">{t('cobros.title')}</h1>
         <span className="text-[11px] font-bold text-primary/40">{t('cobros.pendingCount', { n: kpis.pendCount })} · {t('cobros.overdueCount', { n: kpis.overdueCount })}</span>
       </div>
 

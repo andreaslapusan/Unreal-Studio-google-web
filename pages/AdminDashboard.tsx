@@ -1860,7 +1860,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
-              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.props.mgmtTitle')}</h1>
+              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/60">{t('admin.props.mgmtTitle')}</h1>
               <button onClick={() => openEditProject()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">add</span> {t('admin.props.newBtn')}
               </button>
@@ -1899,7 +1899,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'blogs' && (
           <div className="animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
-              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.blogTab.title')}</h1>
+              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/60">{t('admin.blogTab.title')}</h1>
               <button onClick={() => openEditBlog()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">post_add</span> {t('admin.blogTab.newBtn')}
               </button>
@@ -1947,7 +1947,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {activeView === 'clients' && (
   <div className="animate-in fade-in duration-500">
     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
-      <h1 className="text-lg sm:text-2xl font-black uppercase tracking-wide sm:tracking-widest text-primary/20 break-words">{t('admin.clientsTab.title')}</h1>
+      <h1 className="text-lg sm:text-2xl font-black uppercase tracking-wide sm:tracking-widest text-primary/60 break-words">{t('admin.clientsTab.title')}</h1>
       <button onClick={() => openEditClient()} className="w-full sm:w-auto justify-center bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition shrink-0">
         <span className="material-symbols-outlined text-base">person_add</span> {t('admin.clientsTab.newClient')}
       </button>
@@ -2149,7 +2149,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <div className="animate-in fade-in duration-500">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
                 <div>
-                  <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.nav.arquitectura', 'Arquitectura')}</h1>
+                  <h1 className="text-2xl font-black uppercase tracking-widest text-primary/60">{t('admin.nav.arquitectura', 'Arquitectura')}</h1>
                   <p className="text-xs text-gray-400 mt-1">{t('admin.arch.subtitle', { defaultValue: 'Proyectos de arquitectura: documentación (Drive) y plan de pagos por cliente.' })}</p>
                 </div>
                 <button onClick={() => navigate('/admin?view=clients')} className="bg-primary text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
@@ -2205,7 +2205,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'users' && (
           <div className="animate-in fade-in duration-500">
              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
-              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.usersTab.title')}</h1>
+              <h1 className="text-2xl font-black uppercase tracking-widest text-primary/60">{t('admin.usersTab.title')}</h1>
               <button onClick={() => openEditUser()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">person_add</span> {t('admin.dash.new')}
               </button>

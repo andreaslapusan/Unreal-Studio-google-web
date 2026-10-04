@@ -91,7 +91,7 @@ const IntakeLinksPanel: React.FC = () => {
   return (
     <div className="animate-in fade-in duration-500">
       <div className="mb-6">
-        <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t("admin.intakes.title")}</h1>
+        <h1 className="text-2xl font-black uppercase tracking-widest text-primary/60">{t("admin.intakes.title")}</h1>
         <p className="text-primary/60 mt-2 max-w-2xl">{t("admin.intakes.subtitle")}</p>
       </div>
 

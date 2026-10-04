@@ -195,7 +195,7 @@ const NotificationsPanel: React.FC = () => {
   return (
     <div className="animate-in fade-in duration-500">
       <div className="mb-5">
-        <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.notif.title')}</h1>
+        <h1 className="text-2xl font-black uppercase tracking-widest text-primary/60">{t('admin.notif.title')}</h1>
         <p className="text-xs text-primary/50 mt-1">
           {taskCount > 0
             ? `${t('admin.notif.startDay', { defaultValue: 'Para hoy' })}: ${summaryParts.join(' · ')}`
