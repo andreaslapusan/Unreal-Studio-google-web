@@ -14,7 +14,7 @@ interface Stats {
   pending_applications: number; unread: number; tasks: number; pending_vacations: number; overdue: number;
 }
 
-const card = "bg-white rounded-2xl p-5 shadow-sm border border-primary/5 text-left w-full hover:border-primary/20 transition";
+const card = "group bg-white rounded-2xl p-5 shadow-sm border border-primary/5 text-left w-full hover:border-primary/15 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300";
 
 const DashboardOverview: React.FC = () => {
   const navigate = useNavigate();
@@ -31,10 +31,12 @@ const DashboardOverview: React.FC = () => {
   const Stat = ({ icon, label, value, to, alert }: { icon: string; label: string; value: number; to: string; alert?: boolean }) => (
     <button onClick={() => navigate(to)} className={card}>
       <div className="flex items-center justify-between">
-        <span className={`material-symbols-outlined text-2xl ${alert && value > 0 ? 'text-red-500' : 'text-primary/40'}`}>{icon}</span>
-        <span className={`text-3xl font-black ${alert && value > 0 ? 'text-red-600' : 'text-primary'}`}>{s ? value : '—'}</span>
+        <span className={`flex items-center justify-center w-10 h-10 rounded-xl transition-colors ${alert && value > 0 ? 'bg-red-500/10 text-red-500' : 'bg-primary/5 text-primary/50 group-hover:bg-primary/10 group-hover:text-primary'}`}>
+          <span className="material-symbols-outlined text-xl">{icon}</span>
+        </span>
+        <span className={`font-serif text-4xl leading-none tracking-[-0.02em] ${alert && value > 0 ? 'text-red-600' : 'text-primary'}`}>{s ? value : '—'}</span>
       </div>
-      <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mt-3">{label}</p>
+      <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mt-4">{label}</p>
     </button>
   );
 
@@ -43,7 +45,10 @@ const DashboardOverview: React.FC = () => {
 
   return (
     <div className="animate-in fade-in duration-500">
-      <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20 mb-6">{t('admin.overview.title', { defaultValue: 'Resumen' })}</h1>
+      <div className="mb-8">
+        <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.28em] text-primary/40 mb-2"><span className="h-px w-7 bg-primary/30" />Unreal Studio · Admin</span>
+        <h1 className="font-serif text-4xl md:text-5xl text-primary tracking-[-0.02em] leading-none">{t('admin.overview.title', { defaultValue: 'Resumen' })}</h1>
+      </div>
 
       {/* Requiere atención */}
       {s && attention > 0 && (
