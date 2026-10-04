@@ -18,6 +18,9 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, role, signOut } = useAuth();
 
+  // Páginas con hero a sangre: el nav se superpone transparente con texto claro.
+  const heroOverlay = location.pathname === '/' || location.pathname.startsWith('/proyecto/');
+
   // Para admin/team mandamos al hub /admin desde donde se accede a Marketing,
   // Portal Manager, propiedades, blog, etc. Solo lister/investor tienen
   // dashboards monolíticos directos.
@@ -82,24 +85,24 @@ const Navbar: React.FC = () => {
     <>
       {/* Header Fijo con efecto de desvanecimiento */}
       <nav 
-        className={`fixed top-0 left-0 right-0 w-full px-4 py-4 md:px-12 md:py-6 flex justify-between items-center z-50 bg-almond transition-all duration-500 ease-in-out ${
-          isScrolled 
-            ? 'opacity-0 -translate-y-4 blur-sm pointer-events-none' 
+        className={`fixed top-0 left-0 right-0 w-full px-4 py-4 md:px-12 md:py-6 flex justify-between items-center z-50 transition-all duration-500 ease-in-out ${heroOverlay ? 'bg-gradient-to-b from-black/55 via-black/20 to-transparent' : 'bg-almond/80 backdrop-blur-xl border-b border-primary/5'} ${
+          isScrolled
+            ? 'opacity-0 -translate-y-4 blur-sm pointer-events-none'
             : 'opacity-100 translate-y-0'
         }`}
       >
         <Link to="/" className="flex items-center shrink-0">
-          <BrandLogo imgClassName="h-9 md:h-11 w-auto object-contain" textClassName="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter" />
+          <BrandLogo imgClassName="h-9 md:h-11 w-auto object-contain" textClassName={`font-serif text-2xl md:text-3xl font-bold tracking-tighter ${heroOverlay ? 'text-almond drop-shadow' : 'text-primary'}`} />
         </Link>
 
         {/* Menu Links - Hidden on Mobile AND Tablet, Visible on Large Screens */}
-        <div className="hidden lg:flex items-center space-x-10 text-xs font-bold uppercase tracking-widest text-primary/70">
+        <div className={`hidden lg:flex items-center space-x-10 text-xs font-bold uppercase tracking-widest ${heroOverlay ? 'text-almond/80' : 'text-primary/70'}`}>
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`hover:text-primary transition pb-1 ${
-                isActive(link.path) ? 'text-primary border-b-2 border-primary' : ''
+              className={`transition pb-1 ${heroOverlay ? 'hover:text-almond' : 'hover:text-primary'} ${
+                isActive(link.path) ? (heroOverlay ? 'text-almond border-b-2 border-almond' : 'text-primary border-b-2 border-primary') : ''
               }`}
             >
               {link.name}
@@ -114,7 +117,7 @@ const Navbar: React.FC = () => {
               type="button"
               onClick={() => setSettingsOpen(!settingsOpen)}
               onBlur={() => setTimeout(() => setSettingsOpen(false), 150)}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-white/60 hover:bg-white border border-primary/10 text-primary transition"
+              className={`w-9 h-9 flex items-center justify-center rounded-full border transition ${heroOverlay ? 'bg-white/15 hover:bg-white/25 border-white/25 text-almond backdrop-blur-sm' : 'bg-white/60 hover:bg-white border-primary/10 text-primary'}`}
               title={t('fix.nav.languageAndCurrency')}
               aria-label={t('fix.nav.languageAndCurrency')}
             >
@@ -148,7 +151,7 @@ const Navbar: React.FC = () => {
             href={bookingLink({ medium: 'cta_navbar' })}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-primary text-white rounded-full font-bold uppercase tracking-widest hover:bg-opacity-90 transition shadow-xl whitespace-nowrap flex items-center justify-center px-4 py-2 md:px-7 md:py-3"
+            className={`rounded-full font-bold uppercase tracking-widest transition shadow-xl whitespace-nowrap flex items-center justify-center px-4 py-2 md:px-7 md:py-3 ${heroOverlay ? 'bg-almond text-primary hover:bg-white' : 'bg-primary text-white hover:bg-opacity-90'}`}
           >
             {/* Versión Móvil: Texto apilado y más pequeño */}
             <div className="flex flex-col items-center leading-[0.9] md:hidden">
@@ -161,7 +164,7 @@ const Navbar: React.FC = () => {
           {/* Hamburger Menu - Visible on Mobile AND Tablet (Hidden on LG+) */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden flex items-center justify-center p-2 text-primary"
+            className={`lg:hidden flex items-center justify-center p-2 ${heroOverlay ? 'text-almond' : 'text-primary'}`}
           >
             <span className="material-symbols-outlined text-3xl">menu</span>
           </button>
@@ -227,8 +230,8 @@ const Navbar: React.FC = () => {
         </div>
       )}
 
-      {/* Espaciador para compensar el header fijo */}
-      <div className="h-28 w-full bg-almond transition-colors duration-300"></div>
+      {/* Espaciador para compensar el header fijo (no en páginas con hero a sangre, donde el nav se superpone) */}
+      {!heroOverlay && <div className="h-28 w-full bg-almond transition-colors duration-300"></div>}
 
       {/* Botón Flotante Permanente (Aparece al bajar) */}
       <div 
