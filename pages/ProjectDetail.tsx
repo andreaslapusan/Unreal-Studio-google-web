@@ -430,34 +430,34 @@ const ProjectDetail: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
-          <div className="px-4 first:pl-0 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
-            <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
-          </div>
-          <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
-            <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
-          </div>
+      <div className="bg-almond border-y border-primary/10 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-7 md:py-10 flex flex-col md:flex-row md:items-center gap-7 md:gap-0">
           {(project.investor_price ?? 0) > 0 && (
-          <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
-            <p className="text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
-          </div>
+            <div className="md:pr-12 md:mr-12 md:border-r border-primary/10 shrink-0">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiInvestorPrice')}</p>
+              <div className="flex items-baseline gap-3">
+                <p className="text-4xl md:text-[3.25rem] leading-none font-serif text-primary tracking-[-0.02em]">{formatPrice(project.investor_price, project.price_currency)}</p>
+                {(project.market_price ?? 0) > Number(project.investor_price) && (
+                  <p className="text-base md:text-xl font-serif text-primary/30 line-through">{formatPrice(project.market_price, project.price_currency)}</p>
+                )}
+              </div>
+            </div>
           )}
-          {(project.market_price ?? 0) > 0 && (
-          <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiMarketPrice')}</p>
-            <p className="text-3xl font-serif line-through opacity-40">{formatPrice(project.market_price, project.price_currency)}</p>
-          </div>
-          )}
-          <div className="px-4 border-r-0 text-center md:text-left col-span-2 md:col-span-1">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
-            <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
-              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-              {translateStatus(project.status, t)}
-            </p>
+          <div className="grid grid-cols-3 gap-5 md:gap-12 flex-1">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiRoiRental')}</p>
+              <p className="text-2xl md:text-[1.9rem] font-serif text-primary leading-none">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : (project.roi || '—')}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiRoiResale')}</p>
+              <p className="text-2xl md:text-[1.9rem] font-serif text-primary leading-none">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiStatus')}</p>
+              <span className="inline-flex items-center gap-2 text-xs md:text-sm font-black uppercase tracking-wide text-primary leading-none pt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{translateStatus(project.status, t)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
