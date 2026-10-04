@@ -209,16 +209,16 @@ const Projects: React.FC = () => {
         </div>
       </header>
 
-      {/* Redesigned Filter Bar for Consistency and Modern Look */}
-      <div className="px-4 md:px-12 relative z-30 -mt-12 mb-16 max-w-7xl mx-auto">
-        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
+      {/* Editorial filter bar — hairline brand borders, cream tones, no glossy SaaS pill */}
+      <div className="px-4 md:px-12 relative z-30 -mt-10 mb-16 max-w-6xl mx-auto">
+        <div className="bg-white/85 backdrop-blur-md rounded-2xl shadow-[0_16px_48px_-24px_rgba(63,35,5,0.28)] border border-primary/10 p-1.5 md:p-2.5">
           <div className="grid grid-cols-2 md:flex md:flex-row items-stretch md:items-center">
 
             {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
+                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
                 <div className="relative">
                   <select
                     aria-label={t('projects.filters.sortBy')}
@@ -237,35 +237,35 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
-                <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
+                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
+                <div className="flex items-center gap-2 bg-almond/50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
                   <input
                     type="text"
                     placeholder={t('projects.filters.min')}
                     value={filters.minPrice}
                     onChange={(e) => handlePriceChange('minPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
+                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-primary/30 text-center"
                   />
-                  <span className="text-gray-300 text-[10px]">•</span>
+                  <span className="text-primary/25 text-[10px]">•</span>
                   <input
                     type="text"
                     placeholder={t('projects.filters.max')}
                     value={filters.maxPrice}
                     onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
+                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-primary/30 text-center"
                   />
                 </div>
               </div>
             </div>
 
             {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
+                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
                   <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => handleFilterChange('zone', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
@@ -277,10 +277,10 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Type Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
+                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
                   <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
@@ -294,10 +294,10 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Status Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">verified</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.status')}</label>
+                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.status')}</label>
                 <div className="relative">
                   <select aria-label={t('projects.filters.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_STATUS}>{t('projects.filters.anyStatus')}</option>
@@ -314,7 +314,7 @@ const Projects: React.FC = () => {
             <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">bed</span>
               <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.bedrooms')}</label>
+                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.bedrooms')}</label>
                 <div className="relative">
                   <select aria-label={t('projects.filters.bedrooms')} value={filters.beds} onChange={(e) => handleFilterChange('beds', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_BEDS}>{t('projects.filters.anyBeds')}</option>
@@ -389,7 +389,7 @@ const Projects: React.FC = () => {
                   {proj.completion_percent > 0 && proj.completion_percent < 100 && (
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
-                      <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="flex-1 bg-primary/10 rounded-full h-1.5 overflow-hidden">
                         <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
                       </div>
                       <span className="text-[10px] font-bold text-primary">{proj.completion_percent}%</span>
@@ -402,7 +402,7 @@ const Projects: React.FC = () => {
                         <div className="flex items-baseline gap-2">
                           <p className="font-extrabold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
                           {Number(proj.market_price) > Number(proj.investor_price) && (
-                            <p className="text-[10px] md:text-xs text-gray-400 line-through font-bold">{formatPrice(Number(proj.market_price), proj.price_currency)}</p>
+                            <p className="text-[10px] md:text-xs text-primary/40 line-through font-bold">{formatPrice(Number(proj.market_price), proj.price_currency)}</p>
                           )}
                         </div>
                       </div>
