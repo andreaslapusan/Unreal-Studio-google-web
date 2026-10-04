@@ -228,7 +228,7 @@ const LandingGlobalitae: React.FC = () => {
           <div className="inline-block bg-white text-primary text-[10px] md:text-xs font-black px-4 py-2 uppercase tracking-widest rounded-full mb-6 shadow-lg">
             {t('fix.lg.lastUnits')}
           </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-4 leading-[1.1] drop-shadow-lg">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-4 leading-[1.05] tracking-[-0.02em] drop-shadow-lg">
             {project.name}
           </h1>
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 text-white/90">
@@ -246,7 +246,7 @@ const LandingGlobalitae: React.FC = () => {
 
       {/* DATOS CLAVE */}
       <section className="relative z-20 -mt-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl p-6 md:p-10 grid grid-cols-2 lg:flex lg:flex-row justify-between items-center gap-6 md:gap-4 lg:divide-x divide-gray-100">
+        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl p-6 md:p-10 grid grid-cols-2 lg:flex lg:flex-row justify-between items-center gap-6 md:gap-4 lg:divide-x divide-primary/10">
           <div className="px-2 md:px-4 lg:first:pl-0 text-center lg:text-left w-full lg:w-auto">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('fix.lg.roiRental')}</p>
             <p className="text-2xl md:text-3xl font-serif text-primary">
@@ -393,7 +393,7 @@ const LandingGlobalitae: React.FC = () => {
                   href={getImageUrl(project.construction_update_url)} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-full bg-white text-primary border border-primary/10 px-8 py-5 rounded-2xl font-bold hover:bg-gray-50 transition flex items-center justify-center gap-3 shadow-sm"
+                  className="w-full bg-white text-primary border border-primary/10 px-8 py-5 rounded-2xl font-bold hover:bg-almond/50 transition flex items-center justify-center gap-3 shadow-sm"
                 >
                   <span className="material-symbols-outlined">analytics</span>
                   {t('fix.lg.viewConstructionReport')}
