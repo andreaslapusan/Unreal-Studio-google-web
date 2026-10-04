@@ -293,6 +293,9 @@ const Home: React.FC = () => {
       <header className="px-6 md:px-12 pb-24 md:pb-32 pt-4 md:pt-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
         <div className="space-y-8 md:space-y-10 z-10">
           <div className="max-w-xl">
+            <p className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/50 mb-6">
+              <span className="h-px w-8 bg-primary/40"></span>{t('home.heroEyebrow')}
+            </p>
             <h1 className="text-5xl md:text-6xl lg:text-7xl leading-[1.03] tracking-[-0.02em] text-primary mb-8">
               <Trans
                 i18nKey="home.heroTitle"
