@@ -1687,7 +1687,9 @@
     "noAccessHere": "Tu cuenta no tiene acceso a este portal.",
     "verifyError": "No se pudo verificar tu acceso. Inténtalo de nuevo.",
     "noAccessPortal": "Esta cuenta no tiene acceso al portal de {{portal}}.",
-    "loadingSession": "Iniciando sesión…"
+    "loadingSession": "Iniciando sesión…",
+    "portalHeroTitle": "Arquitectura e inversión, por diseño.",
+    "portalHeroSubtitle": "Villas y residencias a medida en la costa sur de Bali — diseñadas, entregadas y gestionadas de principio a fin."
   },
   "privacy": {
     "docTitle": "Política de Privacidad | Unreal Studio Madrid",

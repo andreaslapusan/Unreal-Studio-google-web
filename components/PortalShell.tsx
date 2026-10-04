@@ -7,6 +7,7 @@
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import Footer from './Footer';
 import BrandLogo from './BrandLogo';
@@ -21,6 +22,7 @@ interface PortalShellProps {
 const PORTAL_VISUAL = '/img/The%20Nook/1-04.webp';
 
 const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[1.05fr_1fr] bg-almond">
       {/* Panel visual editorial — solo desktop. Foto a sangre + overlay marrón
@@ -40,10 +42,10 @@ const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => 
           </span>
           <div className="space-y-5 max-w-md">
             <h2 className="font-serif text-almond text-4xl xl:text-5xl leading-[1.08] tracking-[-0.01em]">
-              Architecture &amp; investment, by design.
+              {t('auth.portalHeroTitle')}
             </h2>
             <p className="text-almond/70 text-sm font-light leading-relaxed">
-              Bespoke villas and residences on Bali's southern coast — crafted, delivered and managed end to end.
+              {t('auth.portalHeroSubtitle')}
             </p>
           </div>
         </div>

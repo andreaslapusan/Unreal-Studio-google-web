@@ -1687,7 +1687,9 @@
     "noAccessHere": "Contul tău nu are acces la acest portal.",
     "verifyError": "Nu s-a putut verifica accesul. Încearcă din nou.",
     "noAccessPortal": "Acest cont nu are acces la portalul {{portal}}.",
-    "loadingSession": "Încărcarea sesiunii…"
+    "loadingSession": "Încărcarea sesiunii…",
+    "portalHeroTitle": "Arhitectură și investiție, prin design.",
+    "portalHeroSubtitle": "Vile și reședințe la comandă pe coasta de sud a Bali — proiectate, livrate și gestionate de la cap la coadă."
   },
   "privacy": {
     "docTitle": "Politica de Confidențialitate | Unreal Studio Madrid",

@@ -1792,7 +1792,9 @@
     "noAccessHere": "Akun Anda tidak memiliki akses ke portal ini.",
     "verifyError": "Tidak dapat memverifikasi akses Anda. Coba lagi.",
     "noAccessPortal": "Akun ini tidak memiliki akses ke portal {{portal}}.",
-    "loadingSession": "Menginisialisasi sesi…"
+    "loadingSession": "Menginisialisasi sesi…",
+    "portalHeroTitle": "Arsitektur dan investasi, dengan desain.",
+    "portalHeroSubtitle": "Vila dan hunian custom di pesisir selatan Bali — dirancang, diserahkan, dan dikelola sepenuhnya."
   },
   "privacy": {
     "collectList1": [
