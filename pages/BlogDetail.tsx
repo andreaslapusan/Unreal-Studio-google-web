@@ -108,38 +108,39 @@ const BlogDetail: React.FC = () => {
              srcSet={imgSrcSet(getImageUrl(post.image), [600, 1000, 1400, 1800])}
              sizes="100vw"
              onError={imgFallback(getImageUrl(post.image))}
-             className="w-full h-full object-cover"
+             className="w-full h-full object-cover scale-105 motion-safe:animate-[portalPan_42s_ease-in-out_infinite_alternate]"
              alt={post.title}
              loading="eager"
              fetchPriority="high"
            />
            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-20 max-w-7xl mx-auto">
-               <span className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-lg w-fit mb-6 shadow-xl">{post.tag}</span>
-               <h1 className="text-4xl md:text-6xl lg:text-7xl text-white font-serif leading-tight max-w-5xl">{post.title}</h1>
+               <span className="inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-[0.22em] px-4 py-2 rounded-full w-fit mb-6 shadow-xl">{post.tag}</span>
+               <h1 className="text-4xl md:text-6xl lg:text-7xl text-white font-serif leading-[1.05] tracking-[-0.02em] max-w-5xl">{post.title}</h1>
            </div>
        </div>
 
        <div className="max-w-6xl mx-auto px-4 md:px-12 -mt-16 relative z-10">
            <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 lg:p-20 shadow-2xl border border-primary/5">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-16 border-b border-gray-100 pb-8 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-16 border-b border-primary/10 pb-8 gap-4 max-w-3xl mx-auto w-full">
                     <div className="flex items-center gap-3">
                         <span className="material-symbols-outlined text-primary/30">calendar_today</span>
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{formatDate(post.published_date)}</span>
+                        <span className="text-xs font-bold text-primary/45 uppercase tracking-widest">{formatDate(post.published_date)}</span>
                     </div>
                     <Link to="/blog" className="text-[10px] font-black text-primary uppercase tracking-widest hover:translate-x-[-4px] transition-transform flex items-center gap-2">
                         <span className="material-symbols-outlined text-sm">arrow_back</span> {t('blog.backToBlog')}
                     </Link>
                 </div>
-                
+
                 {/* Renderizado de HTML enriquecido para SEO. Saneado con DOMPurify:
-                    permite formato del blog pero elimina scripts/eventos (anti-XSS). */}
+                    permite formato del blog pero elimina scripts/eventos (anti-XSS).
+                    Medida de lectura acotada (~70ch) para confort editorial. */}
                 <div
-                  className="prose prose-lg md:prose-xl max-w-none prose-p:text-primary/70 prose-p:font-light prose-headings:text-primary prose-headings:font-serif prose-strong:text-primary prose-strong:font-bold prose-img:rounded-3xl"
+                  className="prose prose-lg md:prose-xl max-w-3xl mx-auto prose-p:text-primary/75 prose-p:font-light prose-p:leading-relaxed prose-headings:text-primary prose-headings:font-serif prose-headings:tracking-[-0.01em] prose-headings:mt-12 prose-strong:text-primary prose-strong:font-bold prose-a:text-primary prose-a:underline-offset-4 prose-li:text-primary/75 prose-li:font-light prose-blockquote:border-primary prose-blockquote:text-primary/80 prose-blockquote:font-serif prose-blockquote:italic prose-img:rounded-3xl prose-img:shadow-lg"
                   dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content, { ADD_ATTR: ['target'] }) }}
                 />
 
-                <div className="mt-20 pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div className="mt-20 pt-12 border-t border-primary/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-3xl mx-auto w-full">
                     <div>
                         <h4 className="text-xl font-bold text-primary mb-2">{t('blog.shareTitle')}</h4>
                         <p className="text-sm text-primary/50 font-medium">{t('blog.shareBody')}</p>
@@ -149,7 +150,7 @@ const BlogDetail: React.FC = () => {
                             type="button"
                             title={t('blog.copyLink', 'Copiar enlace')}
                             onClick={() => { try { navigator.clipboard?.writeText(window.location.href); } catch { /* ignore */ } }}
-                            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
+                            className="w-12 h-12 rounded-full bg-almond/60 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
                             <span className="material-symbols-outlined text-base group-hover:scale-110 transition">link</span>
                         </button>
                         <button
@@ -160,7 +161,7 @@ const BlogDetail: React.FC = () => {
                                 if (navigator.share) { void navigator.share(data).catch(() => {}); }
                                 else { try { navigator.clipboard?.writeText(window.location.href); } catch { /* ignore */ } }
                             }}
-                            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
+                            className="w-12 h-12 rounded-full bg-almond/60 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
                             <span className="material-symbols-outlined text-base group-hover:scale-110 transition">share</span>
                         </button>
                     </div>
