@@ -435,13 +435,13 @@ const EmpleadosDashboard: React.FC = () => {
             <h2 className="text-xl font-serif text-primary mb-6">{t('fix.empd.changePasswordTitle')}</h2>
             <form onSubmit={handleChangePassword} className="space-y-4">
               <input type="password" autoComplete="new-password" required placeholder={t('fix.empd.newPasswordPlaceholder')} value={pw.newPass}
-                onChange={(e) => setPw({ ...pw, newPass: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
+                onChange={(e) => setPw({ ...pw, newPass: e.target.value })} className="w-full px-4 py-3 bg-almond/40 border border-primary/10 rounded-xl text-sm text-primary focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/15 outline-none transition" />
               <input type="password" autoComplete="new-password" required placeholder={t('fix.empd.repeatPasswordPlaceholder')} value={pw.confirm}
-                onChange={(e) => setPw({ ...pw, confirm: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
+                onChange={(e) => setPw({ ...pw, confirm: e.target.value })} className="w-full px-4 py-3 bg-almond/40 border border-primary/10 rounded-xl text-sm text-primary focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/15 outline-none transition" />
               {pwErr && <p className="text-red-600 text-sm">{pwErr}</p>}
               {pwOk && <p className="text-green-600 text-sm">{pwOk}</p>}
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-400 text-xs font-black uppercase tracking-widest hover:bg-gray-50">{t('fix.empd.cancel')}</button>
+                <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 py-3 rounded-xl border border-primary/15 text-primary/50 text-xs font-black uppercase tracking-widest hover:bg-primary/5 hover:text-primary transition">{t('fix.empd.cancel')}</button>
                 <button type="submit" disabled={pwBusy} className="flex-1 py-3 rounded-xl bg-primary text-white text-xs font-black uppercase tracking-widest hover:bg-black transition disabled:opacity-50 inline-flex items-center justify-center gap-1.5">
                   {pwBusy && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}{pwBusy ? t('fix.empd.saving') : t('fix.empd.save')}
                 </button>
@@ -464,7 +464,7 @@ const EmpleadosDashboard: React.FC = () => {
         })()}
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-primary/5 mb-6">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">{t('empleados.today.title')}</p>
+            <p className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary/40"><span className="h-px w-5 bg-primary/30" />{t('empleados.today.title')}</p>
             {onBreak && (
               <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-1 rounded-full">{t('empleados.today.onBreak')}</span>
             )}
