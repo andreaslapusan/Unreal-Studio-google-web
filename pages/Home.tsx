@@ -290,51 +290,59 @@ const Home: React.FC = () => {
       )}
 
       {/* Hero Section */}
-      <header className="px-6 md:px-12 pb-24 md:pb-32 pt-4 md:pt-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
+      <header className="relative overflow-hidden pt-28 md:pt-40 pb-20 md:pb-28 min-h-[86vh] flex items-center">
+        {featuredProject && (
+          <div className="absolute inset-0 z-0" aria-hidden="true">
+            <img src={imgSrc(getImageUrl(featuredProject.image), 1920)} srcSet={imgSrcSet(getImageUrl(featuredProject.image), [900, 1400, 1920])} sizes="100vw" className="w-full h-full object-cover scale-105" alt="" onError={imgFallback(getImageUrl(featuredProject.image))} />
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#241402]/95 via-[#241402]/78 to-[#241402]/35"></div>
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-almond to-transparent"></div>
+          </div>
+        )}
+        <div className="relative z-10 w-full px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
         <div className="space-y-8 md:space-y-10 z-10">
           <div className="max-w-xl">
-            <p className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/50 mb-6">
-              <span className="h-px w-8 bg-primary/40"></span>{t('home.heroEyebrow')}
+            <p className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-almond/70 mb-6">
+              <span className="h-px w-8 bg-almond/50"></span>{t('home.heroEyebrow')}
             </p>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl leading-[1.03] tracking-[-0.02em] text-primary mb-8">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.25rem] leading-[1.0] tracking-[-0.025em] text-almond mb-8 drop-shadow-sm">
               <Trans
                 i18nKey="home.heroTitle"
                 values={{ price: minPriceDisplay }}
                 components={{ i: <span className="italic font-extralight" /> }}
               />
             </h1>
-            <p className="text-lg md:text-xl text-primary/70 mb-10 leading-relaxed font-medium">
-              <Trans i18nKey="home.heroBody" components={{ b: <span className="font-bold" /> }} />
+            <p className="text-lg md:text-xl text-almond/85 mb-10 leading-relaxed font-medium max-w-lg">
+              <Trans i18nKey="home.heroBody" components={{ b: <span className="font-bold text-almond" /> }} />
             </p>
             <div className="flex flex-col sm:flex-row gap-5">
               <a 
                 href={WHATSAPP_URL} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="bg-primary text-white px-10 py-5 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2"
+                className="bg-almond text-primary px-10 py-5 rounded-full font-bold shadow-2xl hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] transition-all duration-300 flex items-center justify-center gap-2"
               >
                 {t('home.ctaMeeting')} <span className="material-symbols-outlined">arrow_forward</span>
               </a>
               {(config as any).brand?.intro_video_url && (
                 <button
                   onClick={() => setIsVideoOpen(true)}
-                  className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border border-primary/20 font-bold text-primary hover:bg-white transition text-sm cursor-pointer"
+                  className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border border-almond/40 font-bold text-almond hover:bg-almond/10 transition text-sm cursor-pointer backdrop-blur-sm"
                 >
-                  <span className="material-symbols-outlined text-primary">play_circle</span> {t('home.ctaVideo')}
+                  <span className="material-symbols-outlined text-almond">play_circle</span> {t('home.ctaVideo')}
                 </button>
               )}
             </div>
           </div>
           
           <div className="flex items-center gap-3 pl-1">
-             <span className="h-px w-10 bg-primary/30"></span>
-             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary/50">{t('home.investorsCount')}</p>
+             <span className="h-px w-10 bg-almond/40"></span>
+             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-almond/70">{t('home.investorsCount')}</p>
           </div>
         </div>
         
         {/* Featured Project Card */}
         <div className="w-full">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4 text-left">{t('home.featuredTag')}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-almond/60 mb-4 text-left">{t('home.featuredTag')}</p>
           {featuredProject ? (
               <Link to={projectPath(featuredProject)} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden ring-1 ring-primary/5 shadow-[0_30px_60px_-20px_rgba(63,35,5,0.28)] hover:shadow-[0_40px_80px_-24px_rgba(63,35,5,0.36)] hover:-translate-y-1 transition-all duration-500 flex flex-row md:flex-col group h-full md:h-auto items-stretch">
                 <div className="w-[40%] md:w-full relative md:h-[500px] shrink-0 overflow-hidden">
@@ -391,6 +399,7 @@ const Home: React.FC = () => {
                  <p className="text-primary/40 font-bold uppercase tracking-widest text-xs">{t('home.comingSoon')}</p>
              </div>
           )}
+        </div>
         </div>
       </header>
 
