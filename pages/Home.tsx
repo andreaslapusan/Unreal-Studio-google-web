@@ -503,21 +503,22 @@ const Home: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {filteredGridProjects.slice(0, 3).map((proj) => (
             <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_12px_30px_-16px_rgba(63,35,5,0.18)] hover:shadow-[0_24px_48px_-20px_rgba(63,35,5,0.28)] hover:-translate-y-1 transition-all duration-500 flex flex-col group border border-primary/5">
-              <div className="h-32 md:h-64 relative overflow-hidden">
+              <div className="h-44 md:h-80 relative overflow-hidden">
                 <img
                   loading="lazy"
                   src={imgSrc(getImageUrl(proj.image), 600)}
                   srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                  className="w-full h-full object-cover group-hover:scale-[1.06] transition duration-[1200ms] ease-out"
                   onError={imgFallback(getImageUrl(proj.image))}
                   alt={proj.name}
                 />
-                <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-lg shadow-xl">{translateStatus(proj.status, t)}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70"></div>
+                <span className="absolute top-3 left-3 md:top-5 md:left-5 bg-black/25 backdrop-blur-md text-white border border-white/25 text-[8px] md:text-[10px] font-black px-3 py-1.5 uppercase tracking-[0.15em] rounded-full">{translateStatus(proj.status, t)}</span>
               </div>
               <div className="p-4 md:p-8 flex-grow flex flex-col text-left">
-                <p className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 md:mb-2 truncate">{proj.location}</p>
-                <h3 className="text-sm md:text-2xl font-bold mb-2 md:mb-3 text-primary line-clamp-2 md:line-clamp-none leading-tight">{proj.name}</h3>
+                <p className="text-[9px] md:text-[10px] font-black text-primary/40 uppercase tracking-[0.2em] mb-2 md:mb-3 truncate">{proj.location}</p>
+                <h3 className="font-serif font-normal text-xl md:text-[1.9rem] mb-2 md:mb-3 text-primary line-clamp-2 md:line-clamp-none leading-[1.05] tracking-[-0.01em]">{proj.name}</h3>
                 {proj.tenure && (
                   <span className={`inline-flex w-fit items-center gap-1 text-[8px] md:text-[10px] font-black uppercase px-2 py-0.5 rounded-full mb-2 ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[12px] md:text-sm">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
                 )}
