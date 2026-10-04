@@ -102,3 +102,9 @@ select {
   from { transform: scale(1.05) translate3d(0, 0, 0); }
   to   { transform: scale(1.12) translate3d(-1.5%, -2%, 0); }
 }
+
+/* Entrada sutil hacia arriba (404 y otros estados). */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
