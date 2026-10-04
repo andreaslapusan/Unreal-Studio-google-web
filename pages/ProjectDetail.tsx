@@ -465,7 +465,7 @@ const ProjectDetail: React.FC = () => {
       <main className="max-w-7xl mx-auto px-6 md:px-12 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-8 space-y-20">
           <section>
-            <h2 className="text-4xl text-primary mb-8">{t('projectDetail.sectionProject')}</h2>
+            <h2 className="text-4xl md:text-5xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.sectionProject')}</h2>
             {localizedDescription() && (
               <div className="prose prose-lg text-primary/80 font-light space-y-6 mb-12">
                 <p>{localizedDescription()}</p>
@@ -586,7 +586,7 @@ const ProjectDetail: React.FC = () => {
 
           {project.amenities && project.amenities.length > 0 && (
             <section>
-              <h2 className="text-3xl text-primary mb-8">{t('projectDetail.servicesTitle')}</h2>
+              <h2 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.servicesTitle')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {project.amenities.map((amenity, idx) => {
                   const icons: Record<string, string> = {
@@ -755,7 +755,7 @@ const ProjectDetail: React.FC = () => {
 
           {project.construction_gallery && project.construction_gallery.length > 0 && (
             <section>
-              <h3 className="text-3xl text-primary mb-8 text-left flex items-center gap-3">
+              <h3 className="text-3xl md:text-4xl text-primary mb-8 text-left tracking-[-0.02em] flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary/40 text-4xl">construction</span>
                 {t('projectDetail.constructionProgressTitle')}
               </h3>
@@ -778,8 +778,8 @@ const ProjectDetail: React.FC = () => {
                         sizes="(max-width: 768px) 50vw, 33vw"
                         onError={imgFallback(getImageUrl(img))}
                       />
-                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                        <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
+                      <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-end p-3">
+                        <span className="material-symbols-outlined text-white/95 text-lg bg-white/15 backdrop-blur-md rounded-full p-1.5 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">zoom_in</span>
                       </div>
                     </div>
                   );
@@ -789,25 +789,25 @@ const ProjectDetail: React.FC = () => {
           )}
 
           <section>
-            <h3 className="text-3xl text-primary mb-8 text-left">{t('projectDetail.galleryTitle')}</h3>
+            <h3 className="text-3xl md:text-4xl text-primary mb-8 text-left tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.galleryTitle')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allImages.map((img, idx) => (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   onClick={() => setLightbox({ open: true, index: idx })}
                   className={`relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${idx === 0 ? 'md:col-span-2 md:row-span-2 aspect-video' : 'aspect-square'}`}
                 >
                   <img
                     loading="lazy"
                     alt={t('fix.pd.galleryImageAlt', { name: project.name, n: idx + 1 })}
-                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover transition duration-[900ms] ease-out group-hover:scale-[1.06]"
                     src={imgSrc(img, 800)}
                     srcSet={imgSrcSet(img, [400, 800, 1200])}
                     sizes="(max-width: 768px) 100vw, 50vw"
                     onError={imgFallback(img)}
                   />
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-end p-4">
+                    <span className="material-symbols-outlined text-white/95 text-xl bg-white/15 backdrop-blur-md rounded-full p-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">zoom_in</span>
                   </div>
                 </div>
               ))}
