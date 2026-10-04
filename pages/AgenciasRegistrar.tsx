@@ -121,13 +121,15 @@ export default function AgenciasRegistrar() {
   if (submitted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-almond px-6 py-16">
-        <div className="max-w-md text-center glass-card rounded-2xl p-10 shadow-xl">
-          <div className="text-5xl mb-4">✅</div>
-          <h1 className="text-3xl font-serif text-primary mb-3">{t('agenciasRegistrar.successTitle')}</h1>
-          <p className="text-primary/70 mb-6">{t('agenciasRegistrar.successBody')}</p>
+        <div className="max-w-md text-center glass-card rounded-3xl p-10 shadow-[0_24px_64px_-32px_rgba(63,35,5,0.4)]">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+            <span className="material-symbols-outlined text-4xl">check_circle</span>
+          </div>
+          <h1 className="text-3xl font-serif text-primary tracking-[-0.01em] mb-3">{t('agenciasRegistrar.successTitle')}</h1>
+          <p className="text-primary/70 font-light mb-6 leading-relaxed">{t('agenciasRegistrar.successBody')}</p>
           <button
             onClick={() => navigate("/")}
-            className="bg-primary text-white px-6 py-3 rounded-full font-bold"
+            className="bg-primary text-white px-7 py-3.5 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition"
           >{t('agenciasRegistrar.backHome')}</button>
         </div>
       </div>
@@ -137,72 +139,73 @@ export default function AgenciasRegistrar() {
   return (
     <div className="min-h-screen bg-almond px-6 py-16">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-serif text-primary mb-3">{t('agenciasRegistrar.title')}</h1>
-        <p className="text-primary/70 mb-8">{t('agenciasRegistrar.intro')}</p>
+        <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45 mb-5"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Partners</span>
+        <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-[-0.02em] leading-[1.05] mb-4">{t('agenciasRegistrar.title')}</h1>
+        <p className="text-primary/70 mb-8 font-light leading-relaxed max-w-xl">{t('agenciasRegistrar.intro')}</p>
 
-        <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-2xl p-8 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-3xl p-8 md:p-10 shadow-[0_24px_64px_-32px_rgba(63,35,5,0.4)]">
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.agencyName')}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.agencyName')}</span>
               <input
                 type="text" required value={form.agency_name}
                 onChange={(e) => update("agency_name", e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
+                className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
               />
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.managerName')}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.managerName')}</span>
               <input
                 type="text" value={form.manager_name}
                 onChange={(e) => update("manager_name", e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
+                className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
               />
             </label>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.email')}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.email')}</span>
               <input
                 type="email" required value={form.email}
                 onChange={(e) => update("email", e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
+                className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
               />
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.whatsapp')}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.whatsapp')}</span>
               <input
                 type="tel" value={form.whatsapp}
                 onChange={(e) => update("whatsapp", e.target.value)}
                 placeholder="+62 812..."
-                className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
+                className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
               />
             </label>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.country')}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.country')}</span>
               <input
                 type="text" value={form.country}
                 onChange={(e) => update("country", e.target.value)}
                 placeholder={t('agenciasRegistrar.countryPlaceholder')}
-                className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
+                className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
               />
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.website')}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.website')}</span>
               <input
                 type="url" value={form.website}
                 onChange={(e) => update("website", e.target.value)}
                 placeholder="https://"
-                className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
+                className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
               />
             </label>
           </div>
 
           <div>
-            <span className="text-sm font-medium text-primary block mb-2">{t('agenciasRegistrar.projectsInterest')}</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-primary/55 block mb-2">{t('agenciasRegistrar.projectsInterest')}</span>
             <div className="flex flex-wrap gap-2">
               {PROJECTS.map((p) => {
                 const checked = form.projects_interested.includes(p);
@@ -214,7 +217,7 @@ export default function AgenciasRegistrar() {
                     className={`text-xs px-3 py-2 rounded-full border transition ${
                       checked
                         ? "bg-primary text-white border-primary"
-                        : "bg-white border-primary/20 text-primary hover:bg-primary/5"
+                        : "bg-white border-primary/15 text-primary/70 hover:text-primary hover:border-primary/30"
                     }`}
                   >
                     {p}
@@ -225,12 +228,12 @@ export default function AgenciasRegistrar() {
           </div>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.monthlyVolume')}</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.monthlyVolume')}</span>
             <select
               aria-label={t('agenciasRegistrar.monthlyVolume')}
               value={form.monthly_volume}
               onChange={(e) => update("monthly_volume", e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none"
+              className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
             >
               <option value="">{t('agenciasRegistrar.volumeSelect')}</option>
               <option>{t('agenciasRegistrar.vol1')}</option>
@@ -242,39 +245,39 @@ export default function AgenciasRegistrar() {
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.experience')}</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.experience')}</span>
             <textarea
               value={form.experience}
               onChange={(e) => update("experience", e.target.value)}
               rows={3}
-              className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none"
+              className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
             />
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.howKnow')}</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.howKnow')}</span>
             <input
               type="text" value={form.source}
               onChange={(e) => update("source", e.target.value)}
               placeholder={t('agenciasRegistrar.sourcePlaceholder')}
-              className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none"
+              className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
             />
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.notes')}</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.notes')}</span>
             <textarea
               value={form.notes}
               onChange={(e) => update("notes", e.target.value)}
               rows={2}
-              className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none"
+              className="mt-1 block w-full rounded-xl bg-almond/40 border border-primary/10 px-4 py-2.5 text-primary outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/15"
             />
           </label>
 
           <button
             type="submit"
             disabled={submitting || !form.agency_name || !form.email}
-            className="w-full bg-primary text-white py-3 rounded-lg font-bold hover:translate-y-[-2px] transition disabled:opacity-50"
+            className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black hover:-translate-y-0.5 transition disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary/30"
           >
             {submitting ? t('agenciasRegistrar.submitting') : t('agenciasRegistrar.submit')}
           </button>
