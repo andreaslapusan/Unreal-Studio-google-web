@@ -86,9 +86,10 @@ const Blog: React.FC = () => {
   return (
     <div className="bg-almond min-h-screen pt-20 pb-24 px-6 md:px-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="text-5xl md:text-7xl text-primary font-serif mb-6">{t('blog.heroTitle')}</h1>
-          <p className="text-xl text-primary/70 font-light max-w-2xl mx-auto">
+        <header className="mb-12 text-center space-y-6">
+          <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/35"></span></span>
+          <h1 className="text-5xl md:text-7xl text-primary font-serif tracking-[-0.02em] leading-[1.04]">{t('blog.heroTitle')}</h1>
+          <p className="text-xl text-primary/70 font-light max-w-2xl mx-auto leading-relaxed">
             {t('blog.heroSubtitle')}
           </p>
         </header>
@@ -156,17 +157,19 @@ const Blog: React.FC = () => {
                     srcSet={imgSrcSet(getImageUrl(post.image), [320, 600, 900])}
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     onError={imgFallback(getImageUrl(post.image))}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[900ms] ease-out group-hover:scale-[1.06]"
                     alt={post.title}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{catLabel(post.tag)}</span>
+                    <span className="inline-flex items-center gap-2 text-[10px] font-black text-primary/45 uppercase tracking-[0.2em]"><span className="h-px w-5 bg-primary/30" />{catLabel(post.tag)}</span>
                     <span className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">{formatDate(post.published_date)}</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-primary mb-3 leading-snug group-hover:text-primary/70 transition">{post.title}</h3>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed line-clamp-3">{post.description}</p>
+                  <h3 className="text-2xl md:text-[1.6rem] font-serif text-primary mb-3 leading-[1.15] tracking-[-0.01em] group-hover:text-black transition-colors">{post.title}</h3>
+                  <p className="text-sm text-primary/60 font-light leading-relaxed line-clamp-3">{post.description}</p>
+                  <span className="inline-flex items-center gap-1.5 mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-primary/50 group-hover:text-primary transition-colors">{t('blog.readMore', { defaultValue: 'Leer más' })}<span className="material-symbols-outlined text-sm transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span></span>
                 </div>
               </Link>
             ))}
