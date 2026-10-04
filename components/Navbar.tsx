@@ -189,13 +189,17 @@ const Navbar: React.FC = () => {
           
           {/* Contenido del Menú */}
           <div className="flex flex-col items-center justify-start flex-grow pt-10 md:pt-16 pb-10 px-6">
-            <nav className="flex flex-col items-center gap-y-4 md:gap-y-5">
-              {navLinks.map((link) => (
+            <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.3em] text-primary/40 mb-8 motion-safe:animate-[fadeInUp_0.5s_ease-out]">
+              <span className="h-px w-7 bg-primary/30" />Unreal Studio · Bali<span className="h-px w-7 bg-primary/30" />
+            </span>
+            <nav className="flex flex-col items-center gap-y-5 md:gap-y-6">
+              {navLinks.map((link, i) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-xl md:text-2xl font-black uppercase tracking-wider ${isActive(link.path) ? 'text-primary' : 'text-primary/50'} hover:text-primary transition-colors`}
+                  style={{ animationDelay: `${80 + i * 55}ms` }}
+                  className={`font-serif text-4xl md:text-5xl tracking-[-0.01em] leading-none transition-colors motion-safe:animate-[fadeInUp_0.5s_ease-out_both] ${isActive(link.path) ? 'text-primary' : 'text-primary/40'} hover:text-primary`}
                 >
                   {link.name}
                 </Link>
