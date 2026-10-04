@@ -163,11 +163,12 @@ export default function Faq() {
 
   return (
     <div className="bg-almond min-h-screen pb-24">
-      <header className="px-6 md:px-12 pt-20 pb-16 max-w-5xl mx-auto text-center">
-        <h1 className="text-5xl md:text-7xl text-primary font-serif mb-6">
+      <header className="px-6 md:px-12 pt-20 pb-16 max-w-5xl mx-auto text-center space-y-6">
+        <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/35"></span></span>
+        <h1 className="text-5xl md:text-7xl text-primary font-serif tracking-[-0.02em] leading-[1.04]">
           {t("faq.heroTitle")}
         </h1>
-        <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed font-light">
           {t("faq.heroSubtitle")}
         </p>
       </header>
@@ -219,13 +220,13 @@ export default function Faq() {
           {filtered.map((f) => (
             <details
               key={f.id}
-              className="bg-white rounded-2xl border border-primary/5 shadow-sm group"
+              className="bg-white rounded-2xl border border-primary/5 shadow-sm group transition-all duration-300 hover:border-primary/20 hover:shadow-md open:border-primary/15 open:shadow-md"
             >
-              <summary className="cursor-pointer p-6 list-none flex items-start justify-between gap-4">
-                <h2 className="font-serif text-lg md:text-xl text-primary leading-snug">
+              <summary className="cursor-pointer p-6 list-none flex items-start justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 rounded-2xl">
+                <h2 className="font-serif text-lg md:text-xl text-primary leading-snug transition-colors group-hover:text-black">
                   {f.question}
                 </h2>
-                <span className="material-symbols-outlined text-primary/40 group-open:rotate-45 transition shrink-0">
+                <span className="material-symbols-outlined text-primary/40 group-hover:text-primary group-open:rotate-45 transition-transform duration-300 shrink-0">
                   add
                 </span>
               </summary>
