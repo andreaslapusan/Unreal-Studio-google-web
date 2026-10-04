@@ -8,7 +8,8 @@ const Terms: React.FC = () => {
   return (
     <div className="bg-almond min-h-screen pt-16 pb-24 px-6 md:px-12 transition-colors duration-300">
       <div className="max-w-4xl mx-auto bg-white rounded-[3rem] p-10 md:p-20 shadow-xl text-left border border-primary/5">
-        <h1 className="text-5xl text-primary mb-12">{t('terms.title')}</h1>
+        <span className="inline-flex items-center gap-2.5 text-[11px] uppercase tracking-[0.22em] text-primary/40 font-black mb-4"><span className="h-px w-7 bg-primary/30" />Unreal Studio · Bali</span>
+        <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-[-0.02em] leading-[1.05] mb-12">{t('terms.title')}</h1>
 
         <div className="space-y-10 text-primary/70 leading-relaxed font-light text-lg">
           <section>

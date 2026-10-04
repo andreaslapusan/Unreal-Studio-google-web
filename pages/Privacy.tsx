@@ -14,7 +14,8 @@ const Privacy: React.FC = () => {
   return (
     <div className="bg-almond min-h-screen pt-16 pb-24 px-6 md:px-12 transition-colors duration-300">
       <div className="max-w-4xl mx-auto bg-white rounded-[3rem] p-8 md:p-16 lg:p-20 shadow-xl text-left border border-primary/5">
-        <h1 className="text-4xl md:text-5xl text-primary mb-12">{t('privacy.title')}</h1>
+        <span className="inline-flex items-center gap-2.5 text-[11px] uppercase tracking-[0.22em] text-primary/40 font-black mb-4"><span className="h-px w-7 bg-primary/30" />Unreal Studio · Bali</span>
+        <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-[-0.02em] leading-[1.05] mb-12">{t('privacy.title')}</h1>
 
         <div className="space-y-12 text-primary/80 leading-relaxed font-light text-base md:text-lg">
           <section>
@@ -121,7 +122,7 @@ const Privacy: React.FC = () => {
           <section className="pt-10 border-t border-primary/10">
             <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.contactH')}</h2>
             <p>{t('privacy.contactP')}</p>
-            <div className="mt-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+            <div className="mt-4 p-6 bg-almond/50 rounded-2xl border border-primary/10">
               <p className="font-bold text-primary">{t('privacy.contactName')}</p>
               <p className="text-sm">{t('privacy.contactWebsiteLabel')} <a href="https://unrealstudiobali.com" className="underline">https://unrealstudiobali.com</a></p>
             </div>
