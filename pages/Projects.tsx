@@ -197,12 +197,10 @@ const Projects: React.FC = () => {
 
   return (
     <div className="bg-almond transition-colors duration-300">
-      <header className="px-6 md:px-12 pt-20 pb-28 text-center relative overflow-hidden bg-almond">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-10">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary rounded-full blur-[100px]"></div>
-        </div>
-        <div className="relative z-10 max-w-5xl mx-auto space-y-8">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl leading-[1.1] text-primary tracking-tight">
+      <header className="px-6 md:px-12 pt-24 md:pt-28 pb-28 text-center relative overflow-hidden bg-almond">
+        <div className="relative z-10 max-w-5xl mx-auto space-y-7">
+          <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/35"></span></span>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl leading-[1.02] text-primary tracking-[-0.02em]">
             {t('projects.heroTitle')}
           </h1>
           <p className="text-lg md:text-2xl text-primary/70 max-w-3xl mx-auto leading-relaxed font-light">
