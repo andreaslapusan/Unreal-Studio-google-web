@@ -397,24 +397,26 @@ const ProjectDetail: React.FC = () => {
           fetchPriority="high"
           onError={imgFallback(getImageUrl(project.image))}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-        <div className="absolute bottom-12 left-6 md:left-12 max-w-md w-full">
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-xl shadow-2xl border-l-4 border-primary">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/5"></div>
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 pb-10 md:pb-16">
             {project.property_type && (
-              <span className="bg-primary text-white text-[10px] uppercase font-bold px-3 py-2 rounded tracking-wide mb-4 inline-block">
-                {project.property_type}
-              </span>
+              <p className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-almond/80 mb-4">
+                <span className="h-px w-8 bg-almond/50"></span>{project.property_type}
+              </p>
             )}
-            <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}</h1>
-            {project.tenure && (
-              <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
-            )}
-            {project.location && (
-              <div className="flex items-center text-gray-500 text-sm font-medium text-left">
-                <span className="material-symbols-outlined text-base mr-1">location_on</span>
-                {project.location}
-              </div>
-            )}
+            <h1 className="font-serif text-almond text-5xl md:text-7xl leading-[1.0] tracking-[-0.02em] mb-4 drop-shadow-lg max-w-3xl">{project.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+              {project.location && (
+                <div className="flex items-center text-almond/90 text-sm md:text-base font-semibold">
+                  <span className="material-symbols-outlined text-base mr-1">location_on</span>
+                  {project.location}
+                </div>
+              )}
+              {project.tenure && (
+                <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
+              )}
+            </div>
           </div>
         </div>
       </section>
