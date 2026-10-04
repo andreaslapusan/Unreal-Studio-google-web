@@ -95,3 +95,10 @@ select {
   font-weight: 300;
   font-style: italic;
 }
+
+/* Panel visual del login de portales: paneo/zoom lento y sutil de la foto de
+   arquitectura (solo con motion permitido). */
+@keyframes portalPan {
+  from { transform: scale(1.05) translate3d(0, 0, 0); }
+  to   { transform: scale(1.12) translate3d(-1.5%, -2%, 0); }
+}

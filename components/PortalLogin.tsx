@@ -315,10 +315,12 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
 
   return (
     <PortalShell dark={dark}>
-      <div className="bg-white w-full max-w-md rounded-3xl p-8 md:p-10 shadow-2xl border border-primary/5">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif text-primary mb-1">{t(`auth.portal_${portal}`)}</h1>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">{t('auth.subtitle')}</p>
+      <div className="bg-white w-full max-w-md rounded-[1.75rem] p-8 md:p-11 shadow-[0_24px_64px_-28px_rgba(63,35,5,0.4)] border border-primary/10">
+        <div className="mb-8">
+          <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40 mb-3">
+            <span className="h-px w-7 bg-primary/30" />{t('auth.subtitle')}
+          </span>
+          <h1 className="text-[2rem] md:text-4xl font-serif text-primary tracking-[-0.01em] leading-none">{t(`auth.portal_${portal}`)}</h1>
         </div>
 
         <form onSubmit={handlePassword} className="space-y-5">
@@ -326,7 +328,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
           {info && <div className="bg-green-50 text-green-700 text-sm font-bold p-4 rounded-xl text-center">{info}</div>}
 
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
+            <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">
               {t('auth.email')}
             </label>
             <input
@@ -339,12 +341,12 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('fix.contact.emailPlaceholder')}
-              className="w-full px-4 sm:px-5 py-4 bg-gray-50 rounded-2xl font-bold text-sm sm:text-base border border-gray-200 focus:border-primary focus:outline-none"
+              className="w-full px-4 sm:px-5 py-4 bg-almond/40 rounded-2xl font-bold text-sm sm:text-base border border-primary/10 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 focus:outline-none transition"
             />
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
+            <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">
               {t('auth.password')}
             </label>
             <div className="relative">
@@ -356,7 +358,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-4 pr-14 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none"
+                className="w-full px-5 py-4 pr-14 bg-almond/40 rounded-2xl font-bold border border-primary/10 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 focus:outline-none transition"
               />
               <button
                 type="button"
@@ -371,7 +373,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
 
           <div className="flex items-center justify-between text-xs">
             <label className="flex items-center gap-2 cursor-pointer text-primary/60">
-              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="rounded border-gray-300" />
+              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="rounded border-primary/30 text-primary focus:ring-primary/20" />
               {t('auth.remember')}
             </label>
             <button type="button" onClick={handleRecover} className="text-primary/60 hover:text-primary underline">
