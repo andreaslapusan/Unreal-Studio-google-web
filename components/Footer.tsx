@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
   const hoursEntries = Object.entries(hours).filter(([, v]) => v);
 
   return (
-    <footer className="bg-white border-t border-gray-100 pt-10 md:pt-20 pb-24 md:pb-12 px-6 md:px-12 text-sm">
+    <footer className="bg-white border-t border-primary/10 pt-10 md:pt-20 pb-24 md:pb-12 px-6 md:px-12 text-sm">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 md:gap-16 mb-8 md:mb-16 text-left">
         {/* Brand Column */}
         <div className="col-span-2 md:col-span-1">
@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
 
         {/* Menu Column */}
         <div>
-          <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-3">{t('footer.menu')}</h5>
+          <h5 className="inline-flex items-center gap-2 font-black text-xs uppercase tracking-[0.2em] text-primary/70 mb-4 before:content-[''] before:h-px before:w-5 before:bg-primary/30">{t('footer.menu')}</h5>
           <ul className="space-y-2 text-primary/50 text-xs font-bold uppercase tracking-wider">
             <li><Link className="hover:text-primary transition" to="/">{t('footer.home')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
 
         {/* Offices, hours & social (desde Configuración → Datos de empresa) */}
         <div>
-          <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-3">{t('footer.offices')}</h5>
+          <h5 className="inline-flex items-center gap-2 font-black text-xs uppercase tracking-[0.2em] text-primary/70 mb-4 before:content-[''] before:h-px before:w-5 before:bg-primary/30">{t('footer.offices')}</h5>
           <ul className="space-y-3 text-primary/50 text-xs font-bold tracking-wider mb-6">
             {addresses.map((addr, i) => (
               <li key={i}>
@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
                 </a>
               );
             })}
-            <Link to="/contacto" className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300" aria-label={t('footer.scheduleVideocall')}>
+            <Link to="/contacto" className="w-11 h-11 rounded-full bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-300" aria-label={t('footer.scheduleVideocall')}>
               <span className="material-symbols-outlined text-xl">videocam</span>
             </Link>
           </div>
