@@ -163,19 +163,21 @@ export default function ListingIntake() {
   }
   if (!valid) {
     return (
-      <div className="min-h-screen bg-almond flex flex-col items-center justify-center text-center px-6">
-        <span className="material-symbols-outlined text-5xl text-primary/30 mb-4">link_off</span>
-        <h1 className="text-2xl font-serif text-primary mb-2">{t("listingIntake.invalidTitle")}</h1>
-        <p className="text-primary/60 max-w-md">{t("listingIntake.invalidBody")}</p>
+      <div className="min-h-screen bg-almond flex flex-col items-center justify-center text-center px-6 motion-safe:animate-[fadeInUp_0.6s_ease-out]">
+        <span className="inline-flex items-center gap-2.5 text-[11px] font-black uppercase tracking-[0.3em] text-primary/40 mb-6"><span className="h-px w-8 bg-primary/30" />Unreal Studio · Bali<span className="h-px w-8 bg-primary/30" /></span>
+        <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-6"><span className="material-symbols-outlined text-3xl">link_off</span></div>
+        <h1 className="text-3xl md:text-4xl font-serif text-primary tracking-[-0.01em] mb-3">{t("listingIntake.invalidTitle")}</h1>
+        <p className="text-primary/60 font-light max-w-md leading-relaxed mb-8">{t("listingIntake.invalidBody")}</p>
+        <a href="/" className="bg-primary text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition">{t("notFound.back", { defaultValue: "Volver al inicio" })}</a>
       </div>
     );
   }
   if (done || published) {
     return (
-      <div className="min-h-screen bg-almond flex flex-col items-center justify-center text-center px-6">
-        <span className="material-symbols-outlined text-6xl text-emerald-600 mb-4">check_circle</span>
-        <h1 className="text-3xl font-serif text-primary mb-3">{t("listingIntake.thanksTitle")}</h1>
-        <p className="text-primary/60 max-w-md">{published ? t("listingIntake.publishedBody") : t("listingIntake.thanksBody")}</p>
+      <div className="min-h-screen bg-almond flex flex-col items-center justify-center text-center px-6 motion-safe:animate-[fadeInUp_0.6s_ease-out]">
+        <div className="w-16 h-16 rounded-full bg-emerald-600/10 text-emerald-600 flex items-center justify-center mb-6"><span className="material-symbols-outlined text-4xl">check_circle</span></div>
+        <h1 className="text-3xl md:text-4xl font-serif text-primary tracking-[-0.01em] mb-3">{t("listingIntake.thanksTitle")}</h1>
+        <p className="text-primary/60 font-light max-w-md leading-relaxed">{published ? t("listingIntake.publishedBody") : t("listingIntake.thanksBody")}</p>
       </div>
     );
   }
@@ -190,9 +192,9 @@ export default function ListingIntake() {
 
       <div className="max-w-3xl mx-auto px-5 md:px-10 pt-4">
         <div className="mb-8">
-          <p className="text-[11px] uppercase text-primary/40 font-black tracking-widest mb-1">{t("listingIntake.kicker")}</p>
-          <h1 className="text-3xl md:text-4xl font-serif text-primary leading-tight">{title}</h1>
-          <p className="text-primary/60 mt-2">{t("listingIntake.introFull")}</p>
+          <span className="inline-flex items-center gap-2.5 text-[11px] uppercase text-primary/40 font-black tracking-[0.22em] mb-3"><span className="h-px w-7 bg-primary/30" />{t("listingIntake.kicker")}</span>
+          <h1 className="text-3xl md:text-5xl font-serif text-primary leading-[1.05] tracking-[-0.02em]">{title}</h1>
+          <p className="text-primary/60 font-light mt-3 leading-relaxed">{t("listingIntake.introFull")}</p>
         </div>
 
         {/* 1 · Media */}
