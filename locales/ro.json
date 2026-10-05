@@ -254,7 +254,13 @@
     "constructionProgressTitle": "Progres Construcție",
     "labelLandArea": "Teren",
     "labelView": "Priveliște",
-    "videoTourBtn": "Vezi video / tur"
+    "videoTourBtn": "Vezi video / tur",
+    "yearsWord": "ani",
+    "extensionPossible": "(+ extindere posibilă de {{years}} ani pentru {{price}})",
+    "extensionPossibleYears": "(+ extindere posibilă de {{years}} ani)",
+    "alreadyRented": "Închiriat · cu chiriaș",
+    "labelAnnualRent": "Chirie anuală est.",
+    "perYear": "/an"
   },
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",

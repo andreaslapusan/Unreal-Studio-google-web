@@ -2796,6 +2796,33 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.adminDash.completionDateLabel')}</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
+  {/* Divisa de alquiler + "ya alquilado" + opciones de extensión — se MUESTRAN en la ficha pública (petición Andreas 05-oct). */}
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 items-end">
+    <div>
+      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('listingIntake.rentCurrency')}</label>
+      <select value={(currentProject as any).rent_currency || currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, rent_currency: e.target.value} as any)} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">
+        <option value="EUR">EUR €</option><option value="USD">USD $</option><option value="IDR">IDR Rp</option><option value="AUD">AUD $</option>
+      </select>
+    </div>
+    <label className="flex items-center gap-2 cursor-pointer select-none py-3">
+      <input type="checkbox" checked={!!(currentProject as any).already_rented} onChange={(e) => setCurrentProject({...currentProject, already_rented: e.target.checked} as any)} className="w-5 h-5 rounded accent-[#5b4636]" />
+      <span className="text-sm font-bold text-primary">{t('listingIntake.alreadyRented')}</span>
+    </label>
+  </div>
+  <div>
+    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('listingIntake.extensionsTitle')}</label>
+    <div className="space-y-2">
+      {(((currentProject as any).extensions) || []).map((ext: any, i: number) => (
+        <div key={i} className="flex items-center gap-2">
+          <NumberInput value={ext?.years ?? ''} onChangeValue={(v) => { const arr = [...(((currentProject as any).extensions) || [])]; arr[i] = {...arr[i], years: v === '' ? null : (parseInt(v) || 0)}; setCurrentProject({...currentProject, extensions: arr} as any); }} placeholder={t('listingIntake.extensionYears')} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" />
+          <NumberInput decimal value={ext?.price ?? ''} onChangeValue={(v) => { const arr = [...(((currentProject as any).extensions) || [])]; arr[i] = {...arr[i], price: v === '' ? null : (parseFloat(v) || 0)}; setCurrentProject({...currentProject, extensions: arr} as any); }} placeholder={t('listingIntake.extensionPrice')} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" />
+          <button type="button" onClick={() => { const arr = (((currentProject as any).extensions) || []).filter((_: any, idx: number) => idx !== i); setCurrentProject({...currentProject, extensions: arr} as any); }} className="shrink-0 w-11 h-11 rounded-2xl border border-primary/10 bg-white text-primary/50 hover:text-red-600 flex items-center justify-center"><span className="material-symbols-outlined">close</span></button>
+        </div>
+      ))}
+    </div>
+    <button type="button" onClick={() => setCurrentProject({...currentProject, extensions: [...(((currentProject as any).extensions) || []), { years: null, price: null }]} as any)} className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary/70 hover:text-primary"><span className="material-symbols-outlined text-[18px]">add</span>{t('listingIntake.addExtension')}</button>
+  </div>
+
   <div className="md:col-span-2">
     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.landRatio')}</label>
     <div className="flex items-center gap-3">

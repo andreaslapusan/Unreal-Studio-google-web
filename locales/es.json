@@ -254,7 +254,13 @@
     "constructionProgressTitle": "Avance de Obra",
     "labelLandArea": "Terreno",
     "labelView": "Vistas",
-    "videoTourBtn": "Ver vídeo / tour"
+    "videoTourBtn": "Ver vídeo / tour",
+    "yearsWord": "años",
+    "extensionPossible": "(+ extensión posible de {{years}} años por {{price}})",
+    "extensionPossibleYears": "(+ extensión posible de {{years}} años)",
+    "alreadyRented": "Alquilado · con inquilino",
+    "labelAnnualRent": "Renta anual estimada",
+    "perYear": "/año"
   },
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",

@@ -15,6 +15,7 @@ import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import BookingWidget from '../components/BookingWidget';
 import LazyMap from '../components/LazyMap';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
+import { fmtThousands } from '../lib/numberFormat';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent } from '../lib/fbPixel';
 import { gtmViewItem } from '../lib/gtm';
@@ -44,6 +45,33 @@ const ProjectDetail: React.FC = () => {
       unfurnished: t('listingIntake.unfurnished'),
     };
     return map[String(v).toLowerCase()] || v;
+  };
+  // Importe con separador de miles + símbolo de divisa (para extensión y renta).
+  const CUR_SYM: Record<string, string> = { EUR: '€', USD: '$', IDR: 'Rp', AUD: 'A$' };
+  const fmtMoney = (amount: any, cur?: string | null): string => {
+    const c = (cur || 'EUR').toUpperCase();
+    const sym = CUR_SYM[c] || c;
+    return `${fmtThousands(String(amount))} ${sym}`.trim();
+  };
+  // Cláusula de extensión del leasehold en el formato que ve el cliente:
+  // "(+ extensión posible de 15 años por 15.000 €)". Soporta varias extensiones
+  // (array `extensions` del listing) con respaldo al campo único `years_extension`.
+  const extensionClause = (): string => {
+    const p = project as any;
+    if (!p) return '';
+    const cur = p.rent_currency || p.price_currency || 'EUR';
+    const exts = Array.isArray(p.extensions)
+      ? p.extensions.filter((e: any) => e && (e.years != null || e.price != null))
+      : [];
+    if (exts.length) {
+      return exts
+        .map((e: any) => e.price != null
+          ? t('projectDetail.extensionPossible', { years: e.years, price: fmtMoney(e.price, p.price_currency || cur) })
+          : t('projectDetail.extensionPossibleYears', { years: e.years }))
+        .join(' ');
+    }
+    if (p.years_extension) return t('projectDetail.extensionPossibleYears', { years: p.years_extension });
+    return '';
   };
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
@@ -410,6 +438,9 @@ const ProjectDetail: React.FC = () => {
             {project.tenure && (
               <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
             )}
+            {(project as any).already_rented && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ml-2 bg-amber-50 text-amber-700"><span className="material-symbols-outlined text-sm">night_shelter</span>{t('projectDetail.alreadyRented')}</span>
+            )}
             {project.location && (
               <div className="flex items-center text-gray-500 text-sm font-medium text-left">
                 <span className="material-symbols-outlined text-base mr-1">location_on</span>
@@ -474,7 +505,8 @@ const ProjectDetail: React.FC = () => {
               // Regla del dueño: un campo sin valor NO se muestra (ni card ni label).
               const specs = [
                 project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
-                project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: project.years_extension ? t('projectDetail.yearsExtValue', { base: project.years_contract, ext: project.years_extension }) : String(project.years_contract) },
+                project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}${extensionClause() ? ' ' + extensionClause() : ''}` },
+                ((project as any).annual_rental_projection > 0) && { icon: 'payments', label: t('projectDetail.labelAnnualRent'), value: `${fmtMoney((project as any).annual_rental_projection, (project as any).rent_currency || project.price_currency)} ${t('projectDetail.perYear')}` },
                 project.available_units && { icon: 'apartment', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
                 (project.completion_percent > 0) && { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) },
               ].filter(Boolean) as { icon: string; label: string; value: string }[];

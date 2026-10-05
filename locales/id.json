@@ -254,7 +254,13 @@
     "constructionProgressTitle": "Kemajuan Konstruksi",
     "labelLandArea": "Tanah",
     "labelView": "Pemandangan",
-    "videoTourBtn": "Tonton video / tur"
+    "videoTourBtn": "Tonton video / tur",
+    "yearsWord": "tahun",
+    "extensionPossible": "(+ kemungkinan perpanjangan {{years}} tahun seharga {{price}})",
+    "extensionPossibleYears": "(+ kemungkinan perpanjangan {{years}} tahun)",
+    "alreadyRented": "Disewa · ada penyewa",
+    "labelAnnualRent": "Perk. sewa tahunan",
+    "perYear": "/tahun"
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",
