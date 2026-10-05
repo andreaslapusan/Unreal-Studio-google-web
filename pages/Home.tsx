@@ -13,6 +13,7 @@ import { projectPath } from '../lib/projectUrl';
 import { translateStatus } from '../lib/statusI18n';
 import { statusDotClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
+import Reveal from '../components/Reveal';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -759,8 +760,9 @@ const Home: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
-          {blogs.map((post) => (
-            <Link key={post.id} to={`/blog/${post.slug}`} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
+          {blogs.map((post, i) => (
+            <Reveal key={post.id} delay={i * 90} className="h-full">
+            <Link to={`/blog/${post.slug}`} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
               {/* Imagen */}
               <div className="order-1 md:order-2">
                  <div className="aspect-[16/10] rounded-[2rem] overflow-hidden relative shadow-lg">
@@ -782,10 +784,11 @@ const Home: React.FC = () => {
                     <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{post.tag}</p>
                     <p className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">{formatDate(post.published_date)}</p>
                   </div>
-                  <h4 className="text-2xl font-bold text-primary mb-4 leading-snug group-hover:text-primary/70 transition line-clamp-3">{post.title}</h4>
+                  <h4 className="text-2xl font-serif text-primary mb-4 leading-snug tracking-[-0.01em] group-hover:text-black transition line-clamp-3">{post.title}</h4>
                   <p className="text-sm text-primary/60 font-medium leading-relaxed line-clamp-3 flex-grow">{post.description}</p>
               </div>
             </Link>
+            </Reveal>
           ))}
         </div>
       </section>
