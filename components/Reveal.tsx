@@ -7,7 +7,7 @@
  *  - IntersectionObserver: revela cuando entra en viewport y se desconecta.
  *  - `delay` permite escalonar (stagger) varios elementos por índice.
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 
 interface RevealProps {
   children: React.ReactNode;
@@ -21,7 +21,12 @@ const Reveal: React.FC<RevealProps> = ({ children, className = '', delay = 0, as
   const ref = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
 
-  useEffect(() => {
+  // useLayoutEffect: corre ANTES del paint. Así, si el elemento ya está en
+  // viewport al montar (contenido above-the-fold), lo mostramos YA — sin el
+  // flash de opacity-0→fade que daba sensación de "las animaciones no cargan
+  // bien" al entrar. Las animaciones de scroll se mantienen SOLO para lo que
+  // está fuera de pantalla.
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
     // Respetar reduced-motion: aparecer directamente, sin animación.
@@ -30,6 +35,10 @@ const Reveal: React.FC<RevealProps> = ({ children, className = '', delay = 0, as
       setShown(true);
       return;
     }
+    // Ya visible al montar → mostrar inmediatamente (evita el parpadeo inicial).
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    if (rect.top < vh * 0.92 && rect.bottom > 0) { setShown(true); return; }
     if (typeof IntersectionObserver === 'undefined') { setShown(true); return; }
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
