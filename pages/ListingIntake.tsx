@@ -48,7 +48,8 @@ export default function ListingIntake() {
     bedrooms: "", bathrooms: "", area_m2: "", land_area_m2: "", zone: "",
     tenure: "Leasehold", lease_years: "", price: "", currency: "EUR",
     completion_date: "", furnishing: "", view: "", has_pool: false,
-    amenities: [] as string[], expected_rent: "", video_url: "", details: "",
+    amenities: [] as string[], expected_rent: "", rent_currency: "", video_url: "", details: "",
+    extensions: [] as { years: string; price: string }[],
   });
   const [photos, setPhotos] = useState<Asset[]>([]);
   const [plans, setPlans] = useState<Asset[]>([]);
@@ -98,8 +99,12 @@ export default function ListingIntake() {
         has_pool: !!p.has_pool,
         amenities: Array.isArray(p.amenities) ? p.amenities : [],
         expected_rent: p.expected_rent != null ? String(p.expected_rent) : "",
+        rent_currency: p.rent_currency || "",
         video_url: p.video_url || "",
         details: p.details || "",
+        extensions: Array.isArray(p.extensions)
+          ? p.extensions.map((e: any) => ({ years: e?.years != null ? String(e.years) : "", price: e?.price != null ? String(e.price) : "" }))
+          : [],
       }));
       if (Array.isArray(p.photos)) setPhotos(p.photos.map((u: string, i: number) => ({ url: u, name: `foto-${i + 1}` })));
       if (Array.isArray(p.plans)) setPlans(p.plans.map((u: string, i: number) => ({ url: u, name: `plano-${i + 1}` })));
@@ -110,6 +115,10 @@ export default function ListingIntake() {
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
   const toggleSection = (s: string) => setOpenSection((cur) => (cur === s ? "" : s));
   const toggleAmenity = (a: string) => setForm((f) => ({ ...f, amenities: f.amenities.includes(a) ? f.amenities.filter((x: string) => x !== a) : [...f.amenities, a] }));
+  // Opciones de extensión del leasehold (repetibles): cada una es {años, precio}.
+  const addExtension = () => setForm((f) => ({ ...f, extensions: [...(f.extensions || []), { years: "", price: "" }] }));
+  const updExtension = (i: number, k: "years" | "price", v: string) => setForm((f) => ({ ...f, extensions: (f.extensions || []).map((e: any, idx: number) => (idx === i ? { ...e, [k]: v } : e)) }));
+  const rmExtension = (i: number) => setForm((f) => ({ ...f, extensions: (f.extensions || []).filter((_: any, idx: number) => idx !== i) }));
 
   const uploadFiles = useCallback(async (files: FileList, kind: "photos" | "plans") => {
     setUploading(true);
@@ -149,7 +158,11 @@ export default function ListingIntake() {
       completion_date: (form.completion_date || "").trim(),
       furnishing: form.furnishing, view: (form.view || "").trim(),
       has_pool: !!form.has_pool, amenities: form.amenities,
-      expected_rent: num(form.expected_rent), video_url: (form.video_url || "").trim(),
+      expected_rent: num(form.expected_rent), rent_currency: form.rent_currency || form.currency,
+      extensions: (form.extensions || [])
+        .filter((e: { years: string; price: string }) => e.years !== "" || e.price !== "")
+        .map((e: { years: string; price: string }) => ({ years: e.years !== "" ? num(e.years) : null, price: e.price !== "" ? num(e.price) : null })),
+      video_url: (form.video_url || "").trim(),
       details: (form.details || "").trim(),
       photos: photos.map((a) => a.url), plans: plans.map((a) => a.url),
     };
@@ -294,6 +307,25 @@ export default function ListingIntake() {
               </select>
             ))}
           </div>
+          {form.tenure === "Leasehold" && (
+            <div className="mt-6">
+              <label className={labelCls}>{t("listingIntake.extensionsTitle")}</label>
+              <div className="space-y-2">
+                {(form.extensions || []).map((ext: { years: string; price: string }, i: number) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input type="number" min="0" value={ext.years} onChange={(e) => updExtension(i, "years", e.target.value)} placeholder={t("listingIntake.extensionYears")} className={inputCls} />
+                    <input type="number" min="0" value={ext.price} onChange={(e) => updExtension(i, "price", e.target.value)} placeholder={t("listingIntake.extensionPrice")} className={inputCls} />
+                    <button type="button" onClick={() => rmExtension(i)} aria-label="×" className="shrink-0 w-11 h-11 rounded-2xl border border-primary/10 bg-white text-primary/50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center">
+                      <span className="material-symbols-outlined">close</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button type="button" onClick={addExtension} className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary/70 hover:text-primary transition-colors">
+                <span className="material-symbols-outlined text-[18px]">add</span>{t("listingIntake.addExtension")}
+              </button>
+            </div>
+          )}
           <div className="mt-4">{field(t("listingIntake.deliveryDate"), <input type="text" value={form.completion_date} onChange={(e) => set("completion_date", e.target.value)} placeholder={t("listingIntake.deliveryPh")} className={inputCls} />)}</div>
         </Section>
 
@@ -323,7 +355,14 @@ export default function ListingIntake() {
         {/* 5 · Rental (optional) */}
         <Section title={t("listingIntake.rentalTitle")} open={openSection === "rental"} onToggle={() => toggleSection("rental")}>
           <p className="text-sm text-primary/50 mb-4">{t("listingIntake.rentalHint")}</p>
-          {field(t("listingIntake.expectedRent"), <input type="number" min="0" value={form.expected_rent} onChange={(e) => set("expected_rent", e.target.value)} placeholder={t("listingIntake.expectedRentPh")} className={inputCls} />)}
+          <div className="grid grid-cols-2 gap-4">
+            {field(t("listingIntake.expectedRent"), <input type="number" min="0" value={form.expected_rent} onChange={(e) => set("expected_rent", e.target.value)} placeholder={t("listingIntake.expectedRentPh")} className={inputCls} />)}
+            {field(t("listingIntake.rentCurrency"), (
+              <select value={form.rent_currency || form.currency} onChange={(e) => set("rent_currency", e.target.value)} className={inputCls}>
+                <option value="EUR">EUR €</option><option value="USD">USD $</option><option value="IDR">IDR Rp</option><option value="AUD">AUD $</option>
+              </select>
+            ))}
+          </div>
         </Section>
 
         {/* 6 · Description */}

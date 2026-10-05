@@ -2696,6 +2696,11 @@
     "driveImporting": "Se importă…",
     "driveError": "Nu s-au putut importa pozele. Verifică dacă folderul este accesibil.",
     "titleLabel": "Titlul proprietății",
-    "titlePlaceholder": "ex. Melasti Reef — apartament cu 1 dormitor"
+    "titlePlaceholder": "ex. Melasti Reef — apartament cu 1 dormitor",
+    "extensionsTitle": "Opțiuni de extindere",
+    "extensionYears": "Ani",
+    "extensionPrice": "Preț pentru acei ani",
+    "addExtension": "Adaugă altă extindere",
+    "rentCurrency": "Moneda chiriei"
   }
 }

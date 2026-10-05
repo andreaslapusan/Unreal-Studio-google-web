@@ -2697,6 +2697,11 @@
     "driveImporting": "Mengimpor…",
     "driveError": "Gagal mengimpor foto. Pastikan folder dapat diakses.",
     "titleLabel": "Judul properti",
-    "titlePlaceholder": "mis. Melasti Reef — apartemen 1 kamar"
+    "titlePlaceholder": "mis. Melasti Reef — apartemen 1 kamar",
+    "extensionsTitle": "Opsi perpanjangan",
+    "extensionYears": "Tahun",
+    "extensionPrice": "Harga tahun tersebut",
+    "addExtension": "Tambah perpanjangan",
+    "rentCurrency": "Mata uang sewa"
   }
 }

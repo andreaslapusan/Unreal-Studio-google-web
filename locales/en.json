@@ -2696,6 +2696,11 @@
     "driveImporting": "Importing…",
     "driveError": "Could not import the photos. Make sure the folder is accessible.",
     "titleLabel": "Property title",
-    "titlePlaceholder": "e.g. Melasti Reef — 1-bedroom apartment"
+    "titlePlaceholder": "e.g. Melasti Reef — 1-bedroom apartment",
+    "extensionsTitle": "Extension options",
+    "extensionYears": "Years",
+    "extensionPrice": "Price for those years",
+    "addExtension": "Add another extension",
+    "rentCurrency": "Rent currency"
   }
 }
