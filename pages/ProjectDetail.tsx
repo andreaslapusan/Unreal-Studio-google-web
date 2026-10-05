@@ -760,10 +760,11 @@ const ProjectDetail: React.FC = () => {
 
           {tiersArray && tiersArray.length > 0 && (
             <section className="bg-white p-8 md:p-12 rounded-3xl border border-primary/5 shadow-sm">
-              <h3 className="text-3xl text-primary mb-8">{t('projectDetail.investmentStructureTitle')}</h3>
-              <div className="space-y-4">
+              <h3 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.investmentStructureTitle')}</h3>
+              <div className="space-y-1">
                 {tiersArray.map((tier: string, idx: number) => (
-                  <div key={idx} className="flex justify-between items-center py-4 border-b border-primary/10 last:border-0">
+                  <div key={idx} className="flex items-center gap-4 py-4 border-b border-primary/10 last:border-0">
+                    <span className="font-serif text-primary/30 text-lg leading-none tabular-nums shrink-0 w-7">{String(idx + 1).padStart(2, '0')}</span>
                     <span className="text-primary/80 font-medium">{tier}</span>
                   </div>
                 ))}
