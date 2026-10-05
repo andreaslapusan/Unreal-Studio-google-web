@@ -24,6 +24,11 @@ body {
   color: #3f2305;
 }
 
+/* Selección de texto de marca: resaltado marrón cálido (no el azul por defecto),
+   coherente con la paleta almond/marrón. Detalle fino de sitio premium. */
+::selection { background-color: rgba(63, 35, 5, 0.16); color: #3f2305; }
+::-moz-selection { background-color: rgba(63, 35, 5, 0.16); color: #3f2305; }
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "DM Serif Display", serif;
 }
