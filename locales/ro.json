@@ -1902,7 +1902,8 @@
     "props": {
       "title": "Editează proprietăți",
       "subtitle": "Actualizează detaliile, pozele și datele proiectelor."
-    }
+    },
+    "portalEyebrow": "Portal echipă · Unreal Studio"
   },
   "vacaciones": {
     "sectionLabel": "Echipă",

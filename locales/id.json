@@ -616,7 +616,8 @@
     "props": {
       "title": "Edit properti",
       "subtitle": "Perbarui detail, foto, dan data proyek."
-    }
+    },
+    "portalEyebrow": "Portal tim · Unreal Studio"
   },
   "admin": {
     "clientsTab": {

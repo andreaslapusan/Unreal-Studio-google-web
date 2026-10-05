@@ -452,6 +452,12 @@ const EmpleadosDashboard: React.FC = () => {
       )}
       <div className="px-5 py-6 md:py-10">
       <div className="max-w-md mx-auto">
+        {employee?.full_name && (
+          <header className="mb-6">
+            <span className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-primary/40 mb-2"><span className="h-px w-6 bg-primary/30" />{t('empleados.portalEyebrow')}</span>
+            <h1 className="font-serif text-primary text-3xl tracking-[-0.02em] leading-[1.05]">{t('admin.clientDash.greeting')}, {(employee.full_name || '').trim().split(' ')[0]}</h1>
+          </header>
+        )}
         {(() => {
           const q = TEAM_QUOTES[Math.floor(Date.now() / 86400000) % TEAM_QUOTES.length];
           const phrase = q[quoteLang(i18n.language)];

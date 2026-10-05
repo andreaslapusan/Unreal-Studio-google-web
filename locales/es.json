@@ -1902,7 +1902,8 @@
     "props": {
       "title": "Editar propiedades",
       "subtitle": "Actualiza fichas, fotos y datos de los proyectos."
-    }
+    },
+    "portalEyebrow": "Portal del equipo · Unreal Studio"
   },
   "vacaciones": {
     "sectionLabel": "Equipo",
