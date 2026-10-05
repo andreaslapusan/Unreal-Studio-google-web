@@ -589,7 +589,12 @@ const ProjectDetail: React.FC = () => {
             <section>
               <h2 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.servicesTitle')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {project.amenities.map((amenity, idx) => {
+                {(() => {
+                  const intakeKeys = ['privatePool','sharedPool','garden','parking','security','gym','kitchen','ac','wifi','rooftop','oceanView','nearBeach','coworking','cleaning'];
+                  const resolveLabel = (a: string) => (intakeKeys.indexOf(a) >= 0 ? t(`listingIntake.amenity.${a}`) : translateProjectTerm(a, i18n.language));
+                  const seenAmen = new Set<string>();
+                  const uniqueAmenities = (project.amenities as string[]).filter((a) => { const k = String(resolveLabel(a)).trim().toLowerCase(); if (!k || seenAmen.has(k)) return false; seenAmen.add(k); return true; });
+                  return uniqueAmenities.map((amenity, idx) => {
                   const icons: Record<string, string> = {
                     'Piscina privada': 'pool', 'Piscina compartida': 'pool', 'Gimnasio': 'fitness_center',
                     'Coworking': 'desktop_windows', 'Jardín tropical': 'park', 'Terraza': 'deck',
@@ -617,7 +622,8 @@ const ProjectDetail: React.FC = () => {
                       <span className="text-sm font-medium text-primary">{amenityLabel}</span>
                     </div>
                   );
-                })}
+                  });
+                })()}
               </div>
             </section>
           )}
