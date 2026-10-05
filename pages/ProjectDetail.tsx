@@ -485,7 +485,7 @@ const ProjectDetail: React.FC = () => {
                     <div key={idx} className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-primary/5">
                       <div className="bg-almond p-3 rounded-xl"><span className="material-symbols-outlined text-primary">{item.icon}</span></div>
                       <div>
-                        <p className="text-[9px] uppercase font-black text-gray-400 tracking-widest">{item.label}</p>
+                        <p className="text-[9px] uppercase font-black text-primary/45 tracking-widest">{item.label}</p>
                         <p className="font-bold text-primary text-sm">{item.value}</p>
                       </div>
                     </div>
@@ -498,42 +498,42 @@ const ProjectDetail: React.FC = () => {
               {project.bedrooms > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">bed</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelBedrooms')}</p>
+                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelBedrooms')}</p>
                   <p className="text-lg font-bold text-primary">{project.bedrooms}</p>
                 </div>
               )}
               {project.bathrooms > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">shower</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelBathrooms')}</p>
+                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelBathrooms')}</p>
                   <p className="text-lg font-bold text-primary">{project.bathrooms}</p>
                 </div>
               )}
               {project.area_m2 > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">straighten</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelArea')}</p>
+                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelArea')}</p>
                   <p className="text-lg font-bold text-primary">{project.area_m2} m²</p>
                 </div>
               )}
               {project.furnishing && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">chair</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelFurnishing')}</p>
+                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelFurnishing')}</p>
                   <p className="text-lg font-bold text-primary">{fmtFurnishing(project.furnishing)}</p>
                 </div>
               )}
               {Number((project as any).land_area_m2) > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">landscape</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelLandArea')}</p>
+                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelLandArea')}</p>
                   <p className="text-lg font-bold text-primary">{(project as any).land_area_m2} m²</p>
                 </div>
               )}
               {(project as any).view_type && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">visibility</span>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelView')}</p>
+                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelView')}</p>
                   <p className="text-lg font-bold text-primary">{(project as any).view_type}</p>
                 </div>
               )}
@@ -563,19 +563,19 @@ const ProjectDetail: React.FC = () => {
                 </div>
                 
                 {project.floor_plans && project.floor_plans.length > 0 && (
-                  <div className="mt-8 pt-8 border-t border-gray-100">
+                  <div className="mt-8 pt-8 border-t border-primary/10">
                     <h4 className="text-lg font-serif text-primary mb-4">{t('projectDetail.plansTitle')}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {project.floor_plans.map((pdf, idx) => (
-                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:bg-gray-100 transition group">
+                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-almond/50 p-4 rounded-2xl border border-primary/10 hover:bg-primary/10 transition group">
                           <div className="bg-red-100 text-red-500 p-2 rounded-xl group-hover:scale-110 transition">
                             <span className="material-symbols-outlined">picture_as_pdf</span>
                           </div>
                           <div className="flex-1 overflow-hidden">
                             <p className="text-sm font-bold text-primary truncate">{pdf.split('/').pop()}</p>
-                            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">{t('projectDetail.viewPdf')}</p>
+                            <p className="text-[10px] font-black uppercase text-primary/45 tracking-widest mt-1">{t('projectDetail.viewPdf')}</p>
                           </div>
-                          <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition">open_in_new</span>
+                          <span className="material-symbols-outlined text-primary/45 group-hover:text-primary transition">open_in_new</span>
                         </a>
                       ))}
                     </div>
@@ -663,13 +663,13 @@ const ProjectDetail: React.FC = () => {
                     {loginError && <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl mb-4 text-center">{loginError}</div>}
                     <form onSubmit={handleClientLoginForDoc} className="space-y-4">
                         <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
-                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                            <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
+                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.password')}</label>
+                            <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">{t('projectDetail.password')}</label>
                             <div className="relative">
-                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-almond/50 border border-primary/15 rounded-2xl font-bold focus:border-primary focus:outline-none" />
                               <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? t('fix.pd.hidePassword') : t('fix.pd.showPassword')} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
                                 <span className="material-symbols-outlined text-xl">{showLoginPw ? 'visibility_off' : 'visibility'}</span>
                               </button>
@@ -722,7 +722,7 @@ const ProjectDetail: React.FC = () => {
                     className="rounded-2xl overflow-hidden shadow-lg border border-primary/5"
                   />
                 ) : (
-                  <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5 bg-gray-100 flex items-center justify-center" style={{height: '400px'}}>
+                  <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5 bg-primary/10 flex items-center justify-center" style={{height: '400px'}}>
                     <a href={project.google_maps_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-3 text-primary/50 hover:text-primary transition">
                       <span className="material-symbols-outlined text-4xl">map</span>
                       <span className="text-sm font-bold uppercase tracking-widest">{t('projectDetail.viewOnMaps')}</span>
@@ -745,7 +745,7 @@ const ProjectDetail: React.FC = () => {
               <h3 className="text-3xl text-primary mb-8">{t('projectDetail.investmentStructureTitle')}</h3>
               <div className="space-y-4">
                 {tiersArray.map((tier: string, idx: number) => (
-                  <div key={idx} className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0">
+                  <div key={idx} className="flex justify-between items-center py-4 border-b border-primary/10 last:border-0">
                     <span className="text-primary/80 font-medium">{tier}</span>
                   </div>
                 ))}
@@ -767,7 +767,7 @@ const ProjectDetail: React.FC = () => {
                     <div 
                       key={idx} 
                       onClick={() => globalIdx !== -1 && setLightbox({ open: true, index: globalIdx })}
-                      className="relative rounded-2xl overflow-hidden shadow-sm group cursor-pointer aspect-square border border-gray-100"
+                      className="relative rounded-2xl overflow-hidden shadow-sm group cursor-pointer aspect-square border border-primary/10"
                     >
                       <img
                         loading="lazy"
@@ -827,15 +827,15 @@ const ProjectDetail: React.FC = () => {
               element's bottom never enters view before the parent ends. */}
           <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-6 [scrollbar-width:thin]">
             <div className="bg-white p-8 rounded-2xl shadow-2xl border border-primary/5 text-left">
-              <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">{t('projectDetail.assetSummary')}</h3>
+              <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-primary/10">{t('projectDetail.assetSummary')}</h3>
               <div className="space-y-8 mb-10">
                 {project.completion_percent > 0 && (
                 <div>
-                  <div className="flex justify-between text-[11px] font-bold text-gray-500 mb-3 uppercase tracking-wider">
+                  <div className="flex justify-between text-[11px] font-bold text-primary/55 mb-3 uppercase tracking-wider">
                     <span>{t('projectDetail.labelConstructionProgress')}</span>
                     <span className="text-primary">{project.completion_percent}%</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-primary/10 rounded-full h-2.5 overflow-hidden">
                     <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${project.completion_percent}%` }}></div>
                   </div>
                 </div>
@@ -843,12 +843,12 @@ const ProjectDetail: React.FC = () => {
 
                 {/* Nuevo bloque de datos extra en sidebar */}
                 <div>
-                    {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
-                    {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
-                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
-                    {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
-                    {project.has_pool && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}
-                    {project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
+                    {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
+                    {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
+                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
+                    {project.furnishing && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
+                    {project.has_pool && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}
+                    {project.completion_date && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
                 </div>
 
                 {(() => {
@@ -857,13 +857,13 @@ const ProjectDetail: React.FC = () => {
                   return (rental || resale) ? (
                     <div className="space-y-3">
                       {rental && (
-                        <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                        <div className="flex justify-between text-[11px] font-bold text-primary/55 uppercase tracking-wider">
                           <span>{t('projectDetail.kpiRoiRental')}</span>
                           <span className="text-primary">{rental}</span>
                         </div>
                       )}
                       {resale && (
-                        <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                        <div className="flex justify-between text-[11px] font-bold text-primary/55 uppercase tracking-wider">
                           <span>{t('projectDetail.kpiRoiResale')}</span>
                           <span className="text-primary">{resale}</span>
                         </div>
@@ -874,9 +874,9 @@ const ProjectDetail: React.FC = () => {
 
                 {/* Botones en Sidebar */}
                 {brochureFor(project, i18n.language) && (
-                  <div className="pt-6 border-t border-gray-100 space-y-3">
+                  <div className="pt-6 border-t border-primary/10 space-y-3">
                     {brochureFor(project, i18n.language) && (
-                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
+                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-almond/50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
                         <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}
@@ -914,8 +914,8 @@ const ProjectDetail: React.FC = () => {
               </div>
               <div className="p-6 text-left">
                 <h4 className="text-lg font-bold text-primary mb-2 truncate">{similar.name}</h4>
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">{similar.location}</p>
-                <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                <p className="text-[10px] font-black uppercase text-primary/45 tracking-widest mb-4">{similar.location}</p>
+                <div className="flex justify-between items-center pt-4 border-t border-primary/10">
                   <p className="font-bold text-primary">{(similar.investor_price ?? 0) > 0 ? formatPrice(similar.investor_price, similar.price_currency) : t('projectDetail.consult')}</p>
                   <span className="material-symbols-outlined text-primary group-hover:translate-x-1 transition">arrow_forward</span>
                 </div>
