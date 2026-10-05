@@ -2702,6 +2702,7 @@
     "extensionYears": "Tahun",
     "extensionPrice": "Harga tahun tersebut",
     "addExtension": "Tambah perpanjangan",
-    "rentCurrency": "Mata uang sewa"
+    "rentCurrency": "Mata uang sewa",
+    "alreadyRented": "Sudah disewa (ada penyewa)"
   }
 }

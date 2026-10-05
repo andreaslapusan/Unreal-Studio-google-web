@@ -47,7 +47,7 @@ export default function ListingIntake() {
     property_type: "Villa", status: "off_plan",
     bedrooms: "", bathrooms: "", area_m2: "", land_area_m2: "", zone: "",
     tenure: "Leasehold", lease_years: "", price: "", currency: "EUR",
-    completion_date: "", furnishing: "", view: "", has_pool: false,
+    completion_date: "", furnishing: "", view: "", has_pool: false, already_rented: false,
     amenities: [] as string[], expected_rent: "", rent_currency: "", video_url: "", details: "",
     extensions: [] as { years: string; price: string }[],
   });
@@ -96,7 +96,7 @@ export default function ListingIntake() {
         completion_date: p.completion_date || "",
         furnishing: p.furnishing || "",
         view: p.view || "",
-        has_pool: !!p.has_pool,
+        has_pool: !!p.has_pool, already_rented: !!p.already_rented,
         amenities: Array.isArray(p.amenities) ? p.amenities : [],
         expected_rent: p.expected_rent != null ? String(p.expected_rent) : "",
         rent_currency: p.rent_currency || "",
@@ -157,7 +157,7 @@ export default function ListingIntake() {
       price: num(form.price), currency: form.currency,
       completion_date: (form.completion_date || "").trim(),
       furnishing: form.furnishing, view: (form.view || "").trim(),
-      has_pool: !!form.has_pool, amenities: form.amenities,
+      has_pool: !!form.has_pool, already_rented: !!form.already_rented, amenities: form.amenities,
       expected_rent: num(form.expected_rent), rent_currency: form.rent_currency || form.currency,
       extensions: (form.extensions || [])
         .filter((e: { years: string; price: string }) => e.years !== "" || e.price !== "")
@@ -289,6 +289,10 @@ export default function ListingIntake() {
             {field(t("listingIntake.landArea"), <input type="number" min="0" value={form.land_area_m2} onChange={(e) => set("land_area_m2", e.target.value)} className={inputCls} />)}
           </div>
           <div className="mt-4">{field(t("listingIntake.zone"), <input type="text" value={form.zone} onChange={(e) => set("zone", e.target.value)} placeholder={t("listingIntake.zonePh")} className={inputCls} />)}</div>
+          <label className="mt-4 flex items-center gap-3 cursor-pointer select-none">
+            <input type="checkbox" checked={!!form.already_rented} onChange={(e) => set("already_rented", e.target.checked)} className="w-5 h-5 rounded-md border-primary/20 text-primary focus:ring-primary/30 accent-[#5b4636]" />
+            <span className="text-sm font-semibold text-primary">{t("listingIntake.alreadyRented")}</span>
+          </label>
         </Section>
 
         {/* 3 · Tenure & price */}

@@ -2703,6 +2703,7 @@
     "extensionYears": "Años",
     "extensionPrice": "Precio de esos años",
     "addExtension": "Añadir otra extensión",
-    "rentCurrency": "Divisa del alquiler"
+    "rentCurrency": "Divisa del alquiler",
+    "alreadyRented": "Ya alquilado (inquilino dentro)"
   }
 }

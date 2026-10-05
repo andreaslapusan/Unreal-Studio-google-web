@@ -2701,6 +2701,7 @@
     "extensionYears": "Ani",
     "extensionPrice": "Preț pentru acei ani",
     "addExtension": "Adaugă altă extindere",
-    "rentCurrency": "Moneda chiriei"
+    "rentCurrency": "Moneda chiriei",
+    "alreadyRented": "Deja închiriat (chiriaș prezent)"
   }
 }
