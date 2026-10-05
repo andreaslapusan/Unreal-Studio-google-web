@@ -130,19 +130,19 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-white ust-modal rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-        <div className="px-6 py-4 md:px-8 md:py-5 border-b border-gray-100 flex justify-between items-center bg-white z-10 shrink-0">
+        <div className="px-6 py-4 md:px-8 md:py-5 border-b border-primary/10 flex justify-between items-center bg-white z-10 shrink-0">
           <div>
             <h2 className="text-lg md:text-xl font-serif text-primary">{t('admin.clientDash.calcTitle')}</h2>
             <p className="text-xs md:text-sm text-primary/50">{project.project_name}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-primary transition">
+          <button onClick={onClose} className="text-primary/45 hover:text-primary transition">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
         <div className="p-6 md:p-8 overflow-y-auto">
           <div className="space-y-6">
             <div className="flex justify-center">
-              <div className="bg-gray-100 rounded-full p-1 flex gap-1">
+              <div className="bg-primary/10 rounded-full p-1 flex gap-1">
                 <button onClick={() => setIsAdvanced(false)} className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition ${!isAdvanced ? 'bg-primary text-white shadow' : 'text-primary/50 hover:text-primary'}`}>{t('admin.clientDash.calcSimple')}</button>
                 <button onClick={() => setIsAdvanced(true)} className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition ${isAdvanced ? 'bg-primary text-white shadow' : 'text-primary/50 hover:text-primary'}`}>{t('admin.clientDash.calcAdvanced')}</button>
               </div>
@@ -197,7 +197,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
               </div>
               <div className="relative h-8 flex items-center">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full h-3 rounded-full overflow-hidden bg-gray-100 flex">
+                  <div className="w-full h-3 rounded-full overflow-hidden bg-primary/10 flex">
                     <div className="bg-green-400 h-full" style={{width: `${(baseYears / totalLeaseYears) * 100}%`}}></div>
                     <div className="bg-blue-400 h-full" style={{width: `${(extensionYears / totalLeaseYears) * 100}%`}}></div>
                     {extraYears > 0 && <div className="bg-orange-300 h-full" style={{width: `${(extraYears / totalLeaseYears) * 100}%`}}></div>}
@@ -214,14 +214,14 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
               <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.calcExtraLeaseYears')}</p>
               <div className="flex gap-2">
                 {[0, 5, 10, 15, 20].map(y => (
-                  <button key={y} onClick={() => setExtraYears(y)} className={`px-3 py-2 rounded-lg text-xs font-bold transition ${extraYears === y ? 'bg-primary text-white' : 'bg-gray-100 text-primary/60 hover:bg-gray-200'}`}>+{y}</button>
+                  <button key={y} onClick={() => setExtraYears(y)} className={`px-3 py-2 rounded-lg text-xs font-bold transition ${extraYears === y ? 'bg-primary text-white' : 'bg-primary/10 text-primary/60 hover:bg-primary/15'}`}>+{y}</button>
                 ))}
               </div>
             </div>
 
             {isAdvanced && (
               <div className="space-y-3">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-xl">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-almond/50 rounded-xl">
                   <div>
                     <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-1">{t('admin.clientDash.calcMaxLandAppreciation')}</p>
                     <input type="range" min={0} max={300} step={10} value={maxAppreciation} onChange={(e) => setMaxAppreciation(parseInt(e.target.value))} className="w-full" />
@@ -243,12 +243,12 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
                     <p className="text-xs font-bold text-primary text-center">{opexRate}%</p>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100">
+                <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-primary/10">
                   <div>
                     <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">{t('admin.clientDash.calcIncludeResale')}</p>
                     <p className="text-[8px] text-primary/30">{t('admin.clientDash.calcIncludeResaleHint')}</p>
                   </div>
-                  <button onClick={() => setIncludeResale(!includeResale)} className={`relative w-12 h-6 rounded-full transition-colors ${includeResale ? 'bg-primary' : 'bg-gray-300'}`}>
+                  <button onClick={() => setIncludeResale(!includeResale)} className={`relative w-12 h-6 rounded-full transition-colors ${includeResale ? 'bg-primary' : 'bg-primary/20'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${includeResale ? 'left-7' : 'left-1'}`}></span>
                   </button>
                 </div>
@@ -257,7 +257,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
 
             <div>
               <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-3">{t('admin.clientDash.calcReturnEvolution')}</p>
-              <div className="flex items-end gap-[2px] h-40 bg-gray-50 rounded-xl p-3">
+              <div className="flex items-end gap-[2px] h-40 bg-almond/50 rounded-xl p-3">
                 {yearlyData.map((d, i) => {
                   const rentalH = maxChart > 0 ? (d.cumulativeRentalNet / maxChart) * 100 : 0;
                   const resaleH = includeResale && maxChart > 0 ? (d.resaleValue / maxChart) * 100 : 0;
@@ -291,7 +291,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+            <div className="bg-almond/50 rounded-xl p-4 space-y-2">
               <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.calcBreakdownTitle', { years: displayYears })}</p>
               <div className="flex justify-between text-sm">
                 <span className="text-primary/60">{t('admin.clientDash.calcGrossRentalAccum')}</span>
@@ -311,14 +311,14 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
               </div>
               {includeResale && (
                 <>
-                  <div className="border-t border-gray-200 my-2"></div>
+                  <div className="border-t border-primary/15 my-2"></div>
                   <div className="flex justify-between text-sm">
                     <span className="text-primary/60">{t('admin.clientDash.calcResaleEstimatedYear', { year: displayYears })}</span>
                     <span className="font-bold text-blue-600">{formatMoney(resaleEnd, projCurrency)}</span>
                   </div>
                 </>
               )}
-              <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
+              <div className="flex justify-between text-sm pt-2 border-t border-primary/15">
                 <span className="font-bold text-primary">{t('admin.clientDash.calcNetProfitEstimated')}</span>
                 <span className={`font-black text-lg ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatMoney(totalReturn, projCurrency)}</span>
               </div>
@@ -330,7 +330,7 @@ const CalculatorModal = ({ project, onClose }: { project: any; onClose: () => vo
               )}
               {isAdvanced && includeResale && (
                 <>
-                  <div className="border-t border-gray-200 my-2"></div>
+                  <div className="border-t border-primary/15 my-2"></div>
                   <div className="flex justify-between text-sm">
                     <span className="text-primary/60">{t('admin.clientDash.calcLandYear', { year: displayYears, appr: (getLandAppreciation(displayYears) * 100).toFixed(0), lease: (last ? (last.leaseFactor * 100).toFixed(0) : 0) })}</span>
                     <span className="font-bold text-primary">{formatMoney(last ? last.landVal : 0, projCurrency)}</span>
@@ -664,8 +664,8 @@ const ClientDashboard: React.FC = () => {
 
       {walkthroughStep !== null && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 mx-4 border border-gray-100">
-            <button onClick={() => finishWalkthrough()} className="absolute top-4 right-4 text-gray-400 hover:text-primary transition" title={t('admin.clientDash.closeGuide')}>
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 mx-4 border border-primary/10">
+            <button onClick={() => finishWalkthrough()} className="absolute top-4 right-4 text-primary/45 hover:text-primary transition" title={t('admin.clientDash.closeGuide')}>
               <span className="material-symbols-outlined">close</span>
             </button>
             <div className="mb-6">
@@ -673,10 +673,10 @@ const ClientDashboard: React.FC = () => {
               <h2 className="text-2xl font-serif text-primary mb-4 leading-tight">{t(`admin.clientDash.${CLIENT_GUIDE_KEYS[walkthroughStep]}Title`)}</h2>
               <p className="text-primary/70 text-sm font-medium leading-relaxed">{t(`admin.clientDash.${CLIENT_GUIDE_KEYS[walkthroughStep]}Text`)}</p>
             </div>
-            <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+            <div className="flex justify-between items-center pt-4 border-t border-primary/10">
               <div className="flex gap-2">
                 {CLIENT_GUIDE_KEYS.map((_: any, i: number) => (
-                  <div key={i} className={`w-2 h-2 rounded-full transition-colors duration-300 ${i === walkthroughStep ? 'bg-primary' : 'bg-gray-200'}`} />
+                  <div key={i} className={`w-2 h-2 rounded-full transition-colors duration-300 ${i === walkthroughStep ? 'bg-primary' : 'bg-primary/15'}`} />
                 ))}
               </div>
               <div className="flex gap-3">
@@ -807,7 +807,7 @@ const ClientDashboard: React.FC = () => {
                         <div>
                           <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest">{t('admin.clientDash.labelConstructionProgress')}</p>
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                            <div className="flex-1 bg-primary/10 rounded-full h-2 overflow-hidden">
                               <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
                             </div>
                             <span className="text-sm font-bold text-primary">{proj.completion_percent}%</span>
@@ -847,7 +847,7 @@ const ClientDashboard: React.FC = () => {
                       const days = Math.round((dl.getTime() - today.getTime()) / 86400000);
                       const open = days > 0;
                       return (
-                        <div className={`mt-3 rounded-2xl px-4 py-3 text-xs ${open ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-gray-50 text-gray-500 border border-gray-200'}`}>
+                        <div className={`mt-3 rounded-2xl px-4 py-3 text-xs ${open ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-almond/50 text-primary/55 border border-primary/15'}`}>
                           <p className="font-black uppercase tracking-widest text-[10px] mb-0.5">{t('admin.clientDash.deliveredOn', { date: formatDate(proj.delivery_date) })}</p>
                           <p className="font-bold">{open ? t('admin.clientDash.warrantyDaysLeft', { n: days }) : t('admin.clientDash.warrantyClosed')}</p>
                         </div>
@@ -855,7 +855,7 @@ const ClientDashboard: React.FC = () => {
                     })()}
 
                     {(brochureFor(proj, i18n.language) || proj.construction_update_url || proj.project_slug) && (
-                      <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
+                      <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-primary/10">
                           {brochureFor(proj, i18n.language) && feat('brochure') && (
                               <a href={proxied(brochureFor(proj, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-primary/5 hover:bg-primary hover:text-white text-primary px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">download</span> {t('admin.clientDash.btnBrochure')}
@@ -880,7 +880,7 @@ const ClientDashboard: React.FC = () => {
                       </div>
                     )}
                     {clientId && (
-                      <div className="mt-5 pt-5 border-t border-gray-100 flex flex-wrap gap-3">
+                      <div className="mt-5 pt-5 border-t border-primary/10 flex flex-wrap gap-3">
                         {Number(proj.payments_count) > 0 && (
                           <button onClick={() => setPaymentsProj(proj)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition">
                             <span className="material-symbols-outlined text-sm">event</span> {t('fix.cld.paymentCalendar')}
@@ -938,9 +938,9 @@ const ClientDashboard: React.FC = () => {
             {passwordError && <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl mb-4">{passwordError}</div>}
             {passwordSuccess && <div className="bg-green-50 text-green-600 text-sm font-bold p-3 rounded-xl mb-4">{passwordSuccess}</div>}
             <form onSubmit={handleChangePassword} className="space-y-4">
-              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.clientDash.currentPassword')}</label><input type="password" required value={passwords.current} onChange={(e) => setPasswords({...passwords, current: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.clientDash.newPassword')}</label><input type="password" required value={passwords.newPass} onChange={(e) => setPasswords({...passwords, newPass: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-              <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.clientDash.confirmPassword')}</label><input type="password" required value={passwords.confirm} onChange={(e) => setPasswords({...passwords, confirm: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+              <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.clientDash.currentPassword')}</label><input type="password" required value={passwords.current} onChange={(e) => setPasswords({...passwords, current: e.target.value})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" /></div>
+              <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.clientDash.newPassword')}</label><input type="password" required value={passwords.newPass} onChange={(e) => setPasswords({...passwords, newPass: e.target.value})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" /></div>
+              <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.clientDash.confirmPassword')}</label><input type="password" required value={passwords.confirm} onChange={(e) => setPasswords({...passwords, confirm: e.target.value})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" /></div>
               <div className="flex gap-4 pt-4">
                 <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs">{t('admin.clientDash.changeBtn')}</button>
                 <button type="button" onClick={() => setShowChangePassword(false)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs">{t('admin.clientDash.closeBtn')}</button>
