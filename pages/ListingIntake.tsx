@@ -139,6 +139,7 @@ export default function ListingIntake() {
     setSaving(true);
     const num = (v: any) => (v !== "" && v != null ? Number(v) : null);
     const payload = {
+      property_title: (title || "").trim(),
       property_type: form.property_type, status: form.status,
       bedrooms: num(form.bedrooms), bathrooms: num(form.bathrooms),
       area_m2: num(form.area_m2), land_area_m2: num(form.land_area_m2),
@@ -246,6 +247,10 @@ export default function ListingIntake() {
 
         {/* 2 · Basics */}
         <Section title={t("listingIntake.basicsTitle")} open={openSection === "basics"} onToggle={() => toggleSection("basics")}>
+          <div className="mb-4">
+            <label className={labelCls}>{t("listingIntake.titleLabel")}</label>
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("listingIntake.titlePlaceholder")} className={inputCls} />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             {field(t("listingIntake.type"), (
               <select value={form.property_type} onChange={(e) => set("property_type", e.target.value)} className={inputCls}>

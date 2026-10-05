@@ -2699,6 +2699,8 @@
     "driveHint": "Jika Anda menempel tautan folder Google Drive (publik atau dibagikan), kami otomatis mengimpor semua fotonya.",
     "driveImport": "Impor dari Drive",
     "driveImporting": "Mengimpor…",
-    "driveError": "Gagal mengimpor foto. Pastikan folder dapat diakses."
+    "driveError": "Gagal mengimpor foto. Pastikan folder dapat diakses.",
+    "titleLabel": "Judul properti",
+    "titlePlaceholder": "mis. Melasti Reef — apartemen 1 kamar"
   }
 }
