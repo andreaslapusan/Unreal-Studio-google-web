@@ -56,11 +56,11 @@ const Footer: React.FC = () => {
         <div>
           <h5 className="inline-flex items-center gap-2 font-black text-xs uppercase tracking-[0.2em] text-primary/70 mb-4 before:content-[''] before:h-px before:w-5 before:bg-primary/30">{t('footer.menu')}</h5>
           <ul className="space-y-2 text-primary/50 text-xs font-bold uppercase tracking-wider">
-            <li><Link className="hover:text-primary transition" to="/">{t('footer.home')}</Link></li>
-            <li><Link className="hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
-            <li><Link className="hover:text-primary transition" to="/blog">{t('footer.blog')}</Link></li>
-            <li><Link className="hover:text-primary transition" to="/faq">{t('nav.faq')}</Link></li>
-            <li><Link className="hover:text-primary transition" to="/contacto">{t('footer.contact')}</Link></li>
+            <li><Link className="inline-block py-1 hover:text-primary transition" to="/">{t('footer.home')}</Link></li>
+            <li><Link className="inline-block py-1 hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
+            <li><Link className="inline-block py-1 hover:text-primary transition" to="/blog">{t('footer.blog')}</Link></li>
+            <li><Link className="inline-block py-1 hover:text-primary transition" to="/faq">{t('nav.faq')}</Link></li>
+            <li><Link className="inline-block py-1 hover:text-primary transition" to="/contacto">{t('footer.contact')}</Link></li>
           </ul>
         </div>
 
@@ -104,19 +104,19 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-6">
         <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
-          <Link className="hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
-          <Link className="hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
+          <Link className="inline-block py-1 hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
+          <Link className="inline-block py-1 hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
           {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
               para que al entrar quede fijado el manifest del portal y se pueda instalar
               cada uno como su propia app desde aquí. Ver index.html (script de manifest). */}
-          <a className="hover:text-primary transition flex items-center gap-1" href="/cliente">
+          <a className="py-1 hover:text-primary transition flex items-center gap-1" href="/cliente">
             <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
           </a>
           {/* Agencias OCULTO temporalmente de la web pública (Andreas, 2026-06-18) */}
-          <a className="hover:text-primary transition flex items-center gap-1" href="/empleados">
+          <a className="py-1 hover:text-primary transition flex items-center gap-1" href="/empleados">
             <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
           </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/admin/login">
+          <a className="py-1 hover:text-primary transition flex items-center gap-1" href="/admin/login">
             <span className="material-symbols-outlined text-xs">settings</span> {t('footer.admin')}
           </a>
         </div>
