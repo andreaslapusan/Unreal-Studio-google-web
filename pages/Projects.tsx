@@ -334,7 +334,7 @@ const Projects: React.FC = () => {
         {filteredProjects.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
             {filteredProjects.map((proj, idx) => (
-              <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
+              <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group flex flex-col h-full border border-primary/5 hover:border-primary/10 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-almond">
                 <div className="relative h-52 sm:h-56 md:h-80 overflow-hidden">
                   <img
                     loading={idx === 0 ? "eager" : "lazy"}

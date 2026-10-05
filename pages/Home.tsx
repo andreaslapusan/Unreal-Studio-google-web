@@ -345,7 +345,7 @@ const Home: React.FC = () => {
         <div className="w-full">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-almond/60 mb-4 text-left">{t('home.featuredTag')}</p>
           {featuredProject ? (
-              <Link to={projectPath(featuredProject)} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden ring-1 ring-primary/5 shadow-[0_30px_60px_-20px_rgba(63,35,5,0.28)] hover:shadow-[0_40px_80px_-24px_rgba(63,35,5,0.36)] hover:-translate-y-1 transition-all duration-500 flex flex-row md:flex-col group h-full md:h-auto items-stretch">
+              <Link to={projectPath(featuredProject)} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden ring-1 ring-primary/5 shadow-[0_30px_60px_-20px_rgba(63,35,5,0.28)] hover:shadow-[0_40px_80px_-24px_rgba(63,35,5,0.36)] hover:-translate-y-1 transition-all duration-500 flex flex-row md:flex-col group h-full md:h-auto items-stretch outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-almond">
                 <div className="w-[40%] md:w-full relative md:h-[500px] shrink-0 overflow-hidden">
                   <img
                     src={imgSrc(getImageUrl(featuredProject.image), 1000)}
@@ -503,7 +503,7 @@ const Home: React.FC = () => {
       <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {filteredGridProjects.slice(0, 3).map((proj) => (
-            <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_12px_30px_-16px_rgba(63,35,5,0.18)] hover:shadow-[0_24px_48px_-20px_rgba(63,35,5,0.28)] hover:-translate-y-1 transition-all duration-500 flex flex-col group border border-primary/5">
+            <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_12px_30px_-16px_rgba(63,35,5,0.18)] hover:shadow-[0_24px_48px_-20px_rgba(63,35,5,0.28)] hover:-translate-y-1 transition-all duration-500 flex flex-col group border border-primary/5 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-almond">
               <div className="h-44 md:h-80 relative overflow-hidden">
                 <img
                   loading="lazy"
