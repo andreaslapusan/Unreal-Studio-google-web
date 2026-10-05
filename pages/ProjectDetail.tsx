@@ -711,15 +711,18 @@ const ProjectDetail: React.FC = () => {
               if (url.includes('maps.app.goo.gl') || url.includes('goo.gl/maps')) {
                 return null;
               }
+              // Las COORDENADAS (@lat,lng) mandan: son precisas. Antes se usaba
+              // primero el nombre del sitio (place/The+Nook) y Google no lo
+              // geocodificaba → el mapa salía con el MUNDO ENTERO. Con q=lat,lng
+              // el pin cae exacto. (modo 'place' con q=lat,lng SÍ pinta el pin.)
+              const coordMatch = url.match(/@?(-?\d+\.\d+),(-?\d+\.\d+)/);
+              if (coordMatch) {
+                return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${coordMatch[1]},${coordMatch[2]}&zoom=16`;
+              }
               const placeMatch = url.match(/place\/([^\/]+)/);
               if (placeMatch) {
                 const query = encodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
                 return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${query}`;
-              }
-              const coordMatch = url.match(/@?(-?\d+\.\d+),(-?\d+\.\d+)/);
-              if (coordMatch) {
-                // modo 'place' con q=lat,lng SÍ pinta el pin; 'view' con center= NO lo pintaba.
-                return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${coordMatch[1]},${coordMatch[2]}&zoom=16`;
               }
               const qMatch = url.match(/[?&]q=([^&]+)/);
               if (qMatch) {
