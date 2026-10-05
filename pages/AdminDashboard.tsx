@@ -176,6 +176,10 @@ const AMENITIES_LIST = [
   // Firma PERSONAL del admin logueado (cada admin tiene la suya; no es de empresa).
   const [mySignature, setMySignature] = useState<string>('');
   const [users, setUsers] = useState<User[]>([]);
+  const usersList = useListControls<User>(users, {
+    name: (u: any) => u.name || u.username || '',
+    search: (u: any) => `${u.name || ''} ${u.username || ''}`,
+  }, 'az');
   
   const [clients, setClients] = useState<Client[]>([]);
   const [isEditingClient, setIsEditingClient] = useState(false);
@@ -235,6 +239,10 @@ const AMENITIES_LIST = [
     }
   }, [searchParams, setSearchParams]);
   const [employees, setEmployees] = useState<Array<{ id: string; email: string; full_name: string | null; password: string | null; active: boolean; can_upload_reports: boolean; permissions: Record<string, boolean> | null; work_start_time: string | null; work_end_time: string | null; work_days: number[] | null; late_margin_min: number | null; preferred_language?: string | null; welcomed_at?: string | null; phone?: string | null }>>([]);
+  const employeesList = useListControls(employees, {
+    name: (e: any) => e.full_name || e.email || '',
+    search: (e: any) => `${e.full_name || ''} ${e.email || ''} ${e.phone || ''}`,
+  }, 'az');
   const loadEmployees = useCallback(async () => {
     const { data } = await supabase
       .from('employees')
@@ -2236,6 +2244,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <span className="material-symbols-outlined text-base">person_add</span> {t('admin.dash.new')}
               </button>
             </div>
+             <ListControls
+               query={usersList.query} setQuery={usersList.setQuery}
+               sort={usersList.sort} setSort={usersList.setSort}
+               options={['az', 'za']}
+               count={usersList.result.length}
+             />
              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left min-w-[600px]">
@@ -2243,7 +2257,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       <tr><th className="px-6 py-4">{t('admin.usersTab.thName')}</th><th className="px-6 py-4">{t('admin.usersTab.thUsername')}</th>{isSuperAdmin && <th className="px-6 py-4">{t('admin.usersTab.thPassword')}</th>}<th className="px-6 py-4 text-right">{t('admin.usersTab.thActions')}</th></tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
-                      {users.map(u => (
+                      {usersList.result.map(u => (
                         <tr key={u.id} className="hover:bg-gray-50 transition">
                           <td className="px-6 py-4 font-bold text-primary">{u.name}</td>
                           <td className="px-6 py-4 text-sm text-gray-500">{u.username}</td>
@@ -2477,9 +2491,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </button>
               </div>
             </div>
+            <ListControls
+              query={employeesList.query} setQuery={employeesList.setQuery}
+              sort={employeesList.sort} setSort={employeesList.setSort}
+              options={['az', 'za']}
+              count={employeesList.result.length}
+            />
             {/* Tarjetas de empleados — mismo formato que la vista de clientes (legible en móvil) */}
             <div className="space-y-3">
-              {employees.map((e) => {
+              {employeesList.result.map((e) => {
                 const nPerms = EMPLOYEE_PERMISSIONS.filter((p) => hasPermission(e, p.key)).length;
                 const sched = (e.work_start_time && e.work_end_time) ? `${e.work_start_time.slice(0,5)}–${e.work_end_time.slice(0,5)}` : '—';
                 return (
