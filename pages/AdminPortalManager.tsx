@@ -8,6 +8,7 @@
  */
 import React, { useEffect, useMemo, useState } from "react";
 import { uiLocale } from '../lib/dateLocale';
+import NumberInput from "../components/NumberInput";
 import { baliToday } from '../lib/timezone';
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -724,15 +725,17 @@ function Input({
   onChange: (v: string) => void;
   type?: string;
 }) {
+  const cls = "mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40";
+  const isNum = type === "number";
   return (
     <label className="block">
       <span className="text-sm font-medium">{label}</span>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-1 block w-full rounded-lg border border-primary/20 px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/40"
-      />
+      {isNum ? (
+        // Separador de miles por puntos en todos los campos numéricos (Andreas).
+        <NumberInput value={value} onChangeValue={onChange} decimal className={cls} />
+      ) : (
+        <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className={cls} />
+      )}
     </label>
   );
 }

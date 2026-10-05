@@ -1,3 +1,4 @@
+import NumberInput from "../components/NumberInput";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
@@ -78,7 +79,7 @@ const ParticipantsPicker: React.FC<{ holders: any[]; value: any; onChange: (v: a
               <input type="checkbox" checked={checked} onChange={() => { const n = new Set(checkedSet); if (n.has(emL)) { if (n.size <= 1) return; n.delete(emL); } else n.add(emL); emit(n, curPctMap); }} className="rounded" />
               <span className="flex-1 text-sm font-medium text-primary truncate">{(h.name || '').trim() || em}<span className="text-gray-400 font-normal"> · {em}</span></span>
               <div className="flex items-center gap-1">
-                <input type="number" min="0" max="100" step="0.0001" value={checked ? (curPctMap[emL] ?? '') : ''} disabled={!checked} onChange={(e) => { const pm = { ...curPctMap, [emL]: e.target.value }; emit(new Set(checkedSet), pm); }} placeholder="%" className="w-20 px-2 py-1 bg-white rounded-lg border border-gray-200 text-sm font-bold text-right disabled:opacity-40" />
+                <NumberInput decimal min="0" max="100" step="0.0001" value={checked ? (curPctMap[emL] ?? '') : ''} disabled={!checked} onChangeValue={(v) => { const pm = { ...curPctMap, [emL]: v }; emit(new Set(checkedSet), pm); }} placeholder="%" className="w-20 px-2 py-1 bg-white rounded-lg border border-gray-200 text-sm font-bold text-right disabled:opacity-40" />
                 <span className="text-xs text-gray-400">%</span>
               </div>
             </div>
@@ -2575,8 +2576,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.description')}</label><textarea rows={3} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><input type="number" value={currentProject.investor_price ?? ''} onChange={(e) => setCurrentProject({...currentProject, investor_price: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><input type="number" value={currentProject.market_price ?? ''} onChange={(e) => setCurrentProject({...currentProject, market_price: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><NumberInput decimal value={currentProject.investor_price ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, investor_price: v === '' ? null : (parseFloat(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><NumberInput decimal value={currentProject.market_price ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, market_price: v === '' ? null : (parseFloat(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-4 py-3 bg-primary text-white rounded-2xl font-bold">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
                   </div>
                   <div className="md:col-span-2">
@@ -2699,9 +2700,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
   <div className="grid grid-cols-3 gap-3">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><input type="number" value={currentProject.bedrooms ?? ''} onChange={(e) => setCurrentProject({...currentProject, bedrooms: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><input type="number" value={currentProject.bathrooms ?? ''} onChange={(e) => setCurrentProject({...currentProject, bathrooms: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><input type="number" value={currentProject.area_m2 ?? ''} onChange={(e) => setCurrentProject({...currentProject, area_m2: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><NumberInput value={currentProject.bedrooms ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, bedrooms: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><NumberInput value={currentProject.bathrooms ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, bathrooms: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><NumberInput value={currentProject.area_m2 ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, area_m2: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
   <div className="grid grid-cols-2 gap-3">
@@ -2787,11 +2788,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.annualRentalProjection', { cur: currentProject.price_currency || 'EUR' })}</label><input type="number" value={currentProject.annual_rental_projection ?? ''} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.annualRentalProjection', { cur: currentProject.price_currency || 'EUR' })}</label><NumberInput decimal value={currentProject.annual_rental_projection ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, annual_rental_projection: v === '' ? null : (parseFloat(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder={t('admin.dash.beachDistancePh')} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.contractYears')}</label><input type="number" value={currentProject.years_contract ?? ''} onChange={(e) => setCurrentProject({...currentProject, years_contract: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.extensionYears')}</label><input type="number" value={currentProject.years_extension ?? ''} onChange={(e) => setCurrentProject({...currentProject, years_extension: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.contractYears')}</label><NumberInput value={currentProject.years_contract ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, years_contract: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.extensionYears')}</label><NumberInput value={currentProject.years_extension ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, years_extension: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.adminDash.completionDateLabel')}</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
@@ -3250,7 +3251,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div>
                         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
                         <div className="flex gap-2">
-                            <input type="number" value={editingAssignment.assignment.investment_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_amount: parseFloat(e.target.value) || 0}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
+                            <NumberInput decimal value={editingAssignment.assignment.investment_amount || ''} onChangeValue={(v) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_amount: parseFloat(v) || 0}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
                             <select value={editingAssignment.assignment.currency || 'EUR'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, currency: e.target.value}})} className="px-3 py-4 bg-gray-100 border border-gray-200 rounded-2xl font-bold w-24">
                                 {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
                             </select>
@@ -3289,7 +3290,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 {(editingAssignment.assignment as any).investment_type === 'pool' && (
                   <div>
                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
-                    <input type="number" value={(editingAssignment.assignment as any).pool_total_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, pool_total_amount: parseFloat(e.target.value) || 0} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
+                    <NumberInput decimal value={(editingAssignment.assignment as any).pool_total_amount || ''} onChangeValue={(v) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, pool_total_amount: parseFloat(v) || 0} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
                     {Number((editingAssignment.assignment as any).pool_total_amount) > 0 && (
                       <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(editingAssignment.assignment.investment_amount || 0) / Number((editingAssignment.assignment as any).pool_total_amount)) * 100).toFixed(4)}%</p>
                     )}
@@ -3324,7 +3325,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div>
                         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
                         <div className="flex gap-2">
-                            <input type="number" value={assignForm.investment_amount || ''} onChange={(e) => setAssignForm({...assignForm, investment_amount: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
+                            <NumberInput decimal value={assignForm.investment_amount || ''} onChangeValue={(v) => setAssignForm({...assignForm, investment_amount: parseFloat(v) || 0})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
                             <select value={assignForm.currency} onChange={(e) => setAssignForm({...assignForm, currency: e.target.value})} className="px-3 py-4 bg-gray-100 border border-gray-200 rounded-2xl font-bold w-24">
                                 {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
                             </select>
@@ -3355,7 +3356,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     {(assignForm as any).investment_type === 'pool' && (
                       <div>
                         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
-                        <input type="number" value={(assignForm as any).pool_total || ''} onChange={(e) => setAssignForm({...assignForm, pool_total: parseFloat(e.target.value) || 0} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
+                        <NumberInput decimal value={(assignForm as any).pool_total || ''} onChangeValue={(v) => setAssignForm({...assignForm, pool_total: parseFloat(v) || 0} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
                         {Number((assignForm as any).pool_total) > 0 && Number(assignForm.investment_amount) > 0 && (
                           <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(assignForm.investment_amount) / Number((assignForm as any).pool_total)) * 100).toFixed(4)}%</p>
                         )}

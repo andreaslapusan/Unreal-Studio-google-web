@@ -15,6 +15,7 @@ import { supabase, SUPABASE_URL } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
 import { runDriveImport } from "../lib/driveImport";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import NumberInput from "../components/NumberInput";
 
 interface Asset { url: string; name: string; }
 const BUCKET = "intake-uploads";
@@ -283,10 +284,10 @@ export default function ListingIntake() {
                 <option value="obra_finalizada">{t("admin.statusBadge.obra_finalizada")}</option>
               </select>
             ))}
-            {field(t("listingIntake.bedrooms"), <input type="number" min="0" value={form.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} className={inputCls} />)}
-            {field(t("listingIntake.bathrooms"), <input type="number" min="0" value={form.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} className={inputCls} />)}
-            {field(t("listingIntake.builtArea"), <input type="number" min="0" value={form.area_m2} onChange={(e) => set("area_m2", e.target.value)} className={inputCls} />)}
-            {field(t("listingIntake.landArea"), <input type="number" min="0" value={form.land_area_m2} onChange={(e) => set("land_area_m2", e.target.value)} className={inputCls} />)}
+            {field(t("listingIntake.bedrooms"), <NumberInput min="0" value={form.bedrooms} onChangeValue={(v) => set("bedrooms", v)} className={inputCls} />)}
+            {field(t("listingIntake.bathrooms"), <NumberInput min="0" value={form.bathrooms} onChangeValue={(v) => set("bathrooms", v)} className={inputCls} />)}
+            {field(t("listingIntake.builtArea"), <NumberInput min="0" value={form.area_m2} onChangeValue={(v) => set("area_m2", v)} className={inputCls} />)}
+            {field(t("listingIntake.landArea"), <NumberInput min="0" value={form.land_area_m2} onChangeValue={(v) => set("land_area_m2", v)} className={inputCls} />)}
           </div>
           <div className="mt-4">{field(t("listingIntake.zone"), <input type="text" value={form.zone} onChange={(e) => set("zone", e.target.value)} placeholder={t("listingIntake.zonePh")} className={inputCls} />)}</div>
           <label className="mt-4 flex items-center gap-3 cursor-pointer select-none">
@@ -303,8 +304,8 @@ export default function ListingIntake() {
                 <option value="Leasehold">Leasehold</option><option value="Freehold">Freehold</option>
               </select>
             ))}
-            {field(t("listingIntake.leaseYears"), <input type="number" min="0" value={form.lease_years} onChange={(e) => set("lease_years", e.target.value)} className={inputCls} />)}
-            {field(t("listingIntake.price"), <input type="number" min="0" value={form.price} onChange={(e) => set("price", e.target.value)} className={inputCls} />)}
+            {field(t("listingIntake.leaseYears"), <NumberInput min="0" value={form.lease_years} onChangeValue={(v) => set("lease_years", v)} className={inputCls} />)}
+            {field(t("listingIntake.price"), <NumberInput min="0" value={form.price} onChangeValue={(v) => set("price", v)} className={inputCls} />)}
             {field(t("listingIntake.currency"), (
               <select value={form.currency} onChange={(e) => set("currency", e.target.value)} className={inputCls}>
                 <option value="EUR">EUR €</option><option value="USD">USD $</option><option value="IDR">IDR Rp</option><option value="AUD">AUD $</option>
@@ -317,8 +318,8 @@ export default function ListingIntake() {
               <div className="space-y-2">
                 {(form.extensions || []).map((ext: { years: string; price: string }, i: number) => (
                   <div key={i} className="flex items-center gap-2">
-                    <input type="number" min="0" value={ext.years} onChange={(e) => updExtension(i, "years", e.target.value)} placeholder={t("listingIntake.extensionYears")} className={inputCls} />
-                    <input type="number" min="0" value={ext.price} onChange={(e) => updExtension(i, "price", e.target.value)} placeholder={t("listingIntake.extensionPrice")} className={inputCls} />
+                    <NumberInput min="0" value={ext.years} onChangeValue={(v) => updExtension(i, "years", v)} placeholder={t("listingIntake.extensionYears")} className={inputCls} />
+                    <NumberInput min="0" value={ext.price} onChangeValue={(v) => updExtension(i, "price", v)} placeholder={t("listingIntake.extensionPrice")} className={inputCls} />
                     <button type="button" onClick={() => rmExtension(i)} aria-label="×" className="shrink-0 w-11 h-11 rounded-2xl border border-primary/10 bg-white text-primary/50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center">
                       <span className="material-symbols-outlined">close</span>
                     </button>
@@ -360,7 +361,7 @@ export default function ListingIntake() {
         <Section title={t("listingIntake.rentalTitle")} open={openSection === "rental"} onToggle={() => toggleSection("rental")}>
           <p className="text-sm text-primary/50 mb-4">{t("listingIntake.rentalHint")}</p>
           <div className="grid grid-cols-2 gap-4">
-            {field(t("listingIntake.expectedRent"), <input type="number" min="0" value={form.expected_rent} onChange={(e) => set("expected_rent", e.target.value)} placeholder={t("listingIntake.expectedRentPh")} className={inputCls} />)}
+            {field(t("listingIntake.expectedRent"), <NumberInput min="0" value={form.expected_rent} onChangeValue={(v) => set("expected_rent", v)} placeholder={t("listingIntake.expectedRentPh")} className={inputCls} />)}
             {field(t("listingIntake.rentCurrency"), (
               <select value={form.rent_currency || form.currency} onChange={(e) => set("rent_currency", e.target.value)} className={inputCls}>
                 <option value="EUR">EUR €</option><option value="USD">USD $</option><option value="IDR">IDR Rp</option><option value="AUD">AUD $</option>

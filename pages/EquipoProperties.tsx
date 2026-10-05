@@ -8,6 +8,7 @@
  * Pensado para que el equipo actualice el avance de obra y la ficha completa
  * sin tener que pasar por Andreas.
  */
+import NumberInput from "../components/NumberInput";
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Navigate } from 'react-router-dom';
@@ -125,8 +126,8 @@ const EquipoProperties: React.FC = () => {
 
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
               <label className={labelCls}>{t('fix.eqp.labelProgress')}</label>
-              <input type="number" min={0} max={100} className={field} value={current.completion_percent ?? 0}
-                onChange={(e) => setCurrent({ ...current, completion_percent: Math.min(100, Math.max(0, parseInt(e.target.value) || 0)) })} />
+              <NumberInput min={0} max={100} className={field} value={current.completion_percent ?? 0}
+                onChangeValue={(v) => setCurrent({ ...current, completion_percent: Math.min(100, Math.max(0, parseInt(v) || 0)) })} />
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">
@@ -134,17 +135,17 @@ const EquipoProperties: React.FC = () => {
               <div><label className={labelCls}>{t('fix.eqp.labelStatus')}</label><input className={field} value={current.status || ''} onChange={(e) => setCurrent({ ...current, status: e.target.value })} /></div>
               <div><label className={labelCls}>{t('fix.eqp.labelLocation')}</label><input className={field} value={current.location || ''} onChange={(e) => setCurrent({ ...current, location: e.target.value })} /></div>
               <div><label className={labelCls}>{t('fix.eqp.labelType')}</label><input className={field} value={current.property_type || ''} onChange={(e) => setCurrent({ ...current, property_type: e.target.value })} /></div>
-              <div><label className={labelCls}>{t('fix.eqp.labelInvestorPrice')}</label><input type="number" className={field} value={current.investor_price ?? 0} onChange={(e) => setCurrent({ ...current, investor_price: parseFloat(e.target.value) || 0 })} /></div>
-              <div><label className={labelCls}>{t('fix.eqp.labelMarketPrice')}</label><input type="number" className={field} value={current.market_price ?? 0} onChange={(e) => setCurrent({ ...current, market_price: parseFloat(e.target.value) || 0 })} /></div>
+              <div><label className={labelCls}>{t('fix.eqp.labelInvestorPrice')}</label><NumberInput decimal className={field} value={current.investor_price ?? 0} onChangeValue={(v) => setCurrent({ ...current, investor_price: parseFloat(v) || 0 })} /></div>
+              <div><label className={labelCls}>{t('fix.eqp.labelMarketPrice')}</label><NumberInput decimal className={field} value={current.market_price ?? 0} onChangeValue={(v) => setCurrent({ ...current, market_price: parseFloat(v) || 0 })} /></div>
               <div><label className={labelCls}>{t('fix.eqp.labelCurrency')}</label>
                 <select className={field} value={current.price_currency || 'EUR'} onChange={(e) => setCurrent({ ...current, price_currency: e.target.value })}>
                   <option>EUR</option><option>USD</option><option>IDR</option>
                 </select>
               </div>
               <div><label className={labelCls}>{t('fix.eqp.labelDeliveryDate')}</label><input className={field} value={current.completion_date || ''} onChange={(e) => setCurrent({ ...current, completion_date: e.target.value })} placeholder="Q4 2026" /></div>
-              <div><label className={labelCls}>{t('fix.eqp.labelBedrooms')}</label><input type="number" className={field} value={current.bedrooms ?? 0} onChange={(e) => setCurrent({ ...current, bedrooms: parseInt(e.target.value) || 0 })} /></div>
-              <div><label className={labelCls}>{t('fix.eqp.labelBathrooms')}</label><input type="number" className={field} value={current.bathrooms ?? 0} onChange={(e) => setCurrent({ ...current, bathrooms: parseInt(e.target.value) || 0 })} /></div>
-              <div><label className={labelCls}>{t('fix.eqp.labelArea')}</label><input type="number" className={field} value={current.area_m2 ?? 0} onChange={(e) => setCurrent({ ...current, area_m2: parseInt(e.target.value) || 0 })} /></div>
+              <div><label className={labelCls}>{t('fix.eqp.labelBedrooms')}</label><NumberInput className={field} value={current.bedrooms ?? 0} onChangeValue={(v) => setCurrent({ ...current, bedrooms: parseInt(v) || 0 })} /></div>
+              <div><label className={labelCls}>{t('fix.eqp.labelBathrooms')}</label><NumberInput className={field} value={current.bathrooms ?? 0} onChangeValue={(v) => setCurrent({ ...current, bathrooms: parseInt(v) || 0 })} /></div>
+              <div><label className={labelCls}>{t('fix.eqp.labelArea')}</label><NumberInput className={field} value={current.area_m2 ?? 0} onChangeValue={(v) => setCurrent({ ...current, area_m2: parseInt(v) || 0 })} /></div>
               <div><label className={labelCls}>{t('fix.eqp.labelDistanceBeach')}</label><input className={field} value={current.distance_beach || ''} onChange={(e) => setCurrent({ ...current, distance_beach: e.target.value })} /></div>
               <div><label className={labelCls}>{t('fix.eqp.labelAvailableUnits')}</label><input className={field} value={current.available_units || ''} onChange={(e) => setCurrent({ ...current, available_units: e.target.value })} /></div>
               <div><label className={labelCls}>{t('fix.eqp.labelLastConstructionReportDate')}</label><input className={field} value={current.construction_update_date || ''} onChange={(e) => setCurrent({ ...current, construction_update_date: e.target.value })} /></div>
