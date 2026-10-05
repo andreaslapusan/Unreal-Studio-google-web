@@ -4,6 +4,7 @@ import { dateOnly } from '../lib/timezone';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
+import PageLoader from '../components/PageLoader';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { usePageMeta } from '../components/PageMeta';
@@ -75,12 +76,7 @@ const Blog: React.FC = () => {
   }, [blogs, selectedTag, sortOrder, searchQuery]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-        <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('blog.loading')}</p>
-      </div>
-    );
+    return <PageLoader label={t('blog.loading')} />;
   }
 
   return (

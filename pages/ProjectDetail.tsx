@@ -22,6 +22,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { statusDotClass } from '../lib/statusColor';
 import { useAuth } from '../lib/auth-context';
 import Reveal from '../components/Reveal';
+import PageLoader from '../components/PageLoader';
 
 const ProjectDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -351,12 +352,7 @@ const ProjectDetail: React.FC = () => {
   };
 
   if (loading) {
-      return (
-          <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
-              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('projectDetail.loading')}</p>
-          </div>
-      );
+      return <PageLoader label={t('projectDetail.loading')} />;
   }
 
   if (!project) {

@@ -108,3 +108,21 @@ select {
   from { opacity: 0; transform: translate3d(0, 16px, 0); }
   to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
+
+/* Loader editorial: barra indeterminada que recorre un raíl fino (en vez de una
+   ruedecita genérica). Estética de estudio de arquitectura: una línea que viaja. */
+@keyframes usLoaderBar {
+  0%   { transform: translateX(-120%); }
+  50%  { transform: translateX(120%); }
+  100% { transform: translateX(340%); }
+}
+.us-loader-bar { animation: usLoaderBar 1.5s cubic-bezier(0.645, 0.045, 0.355, 1) infinite; }
+/* Respirar sutil del wordmark mientras carga. */
+@keyframes usLoaderBreathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+.us-loader-breathe { animation: usLoaderBreathe 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .us-loader-bar, .us-loader-breathe { animation: none; }
+}

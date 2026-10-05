@@ -11,6 +11,7 @@ import { readSWR, writeSWR } from '../lib/swrCache';
 import { translateStatus } from '../lib/statusI18n';
 import { statusBadgeClass, statusDotClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
+import PageLoader from '../components/PageLoader';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
 
 const ANY_ZONE = 'Cualquier zona';
@@ -192,12 +193,7 @@ const Projects: React.FC = () => {
   };
 
   if (loading) {
-      return (
-          <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
-              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('common.loading')}</p>
-          </div>
-      );
+      return <PageLoader />;
   }
 
   return (
