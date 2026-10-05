@@ -570,7 +570,7 @@ const Home: React.FC = () => {
               {t('home.section1Body')}
             </p>
             <div className="space-y-5 md:space-y-8">
-              <div className="flex gap-4 items-start">
+              <Reveal delay={0} className="flex gap-4 items-start">
                 <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
                   <span className="material-symbols-outlined text-primary text-2xl">trending_down</span>
                 </div>
@@ -578,8 +578,8 @@ const Home: React.FC = () => {
                   <h4 className="text-xl font-serif text-primary mb-2 tracking-[-0.01em]">{t('home.b1Title')}</h4>
                   <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b1Body')}</p>
                 </div>
-              </div>
-              <div className="flex gap-4 items-start">
+              </Reveal>
+              <Reveal delay={120} className="flex gap-4 items-start">
                 <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
                   <span className="material-symbols-outlined text-primary text-2xl">security</span>
                 </div>
@@ -587,8 +587,8 @@ const Home: React.FC = () => {
                   <h4 className="text-xl font-serif text-primary mb-2 tracking-[-0.01em]">{t('home.b2Title')}</h4>
                   <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b2Body')}</p>
                 </div>
-              </div>
-              <div className="flex gap-4 items-start">
+              </Reveal>
+              <Reveal delay={240} className="flex gap-4 items-start">
                 <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
                   <span className="material-symbols-outlined text-primary text-2xl">public</span>
                 </div>
@@ -596,7 +596,7 @@ const Home: React.FC = () => {
                   <h4 className="text-xl font-serif text-primary mb-2 tracking-[-0.01em]">{t('home.b3Title')}</h4>
                   <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b3Body')}</p>
                 </div>
-              </div>
+              </Reveal>
             </div>
           </div>
           <div className="lg:w-1/2 relative">
