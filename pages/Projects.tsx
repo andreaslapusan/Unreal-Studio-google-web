@@ -11,6 +11,7 @@ import { readSWR, writeSWR } from '../lib/swrCache';
 import { translateStatus } from '../lib/statusI18n';
 import { statusBadgeClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
+import { isFinished, deliveryText } from '../lib/deliveryDate';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -384,10 +385,10 @@ const Projects: React.FC = () => {
                       <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
                     )}
                   </div>
-                  {localizedCompletion(proj, i18n.language) && (
+                  {!isFinished(proj.status) && localizedCompletion(proj, i18n.language) && (
                     <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1">
                       <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
-                      {t('projects.card.delivery')}: {localizedCompletion(proj, i18n.language)}
+                      {t('projects.card.delivery')}: {deliveryText(localizedCompletion(proj, i18n.language), t('projects.card.deliveryFrom'))}
                     </p>
                   )}
                   {proj.completion_percent > 0 && proj.completion_percent < 100 && (

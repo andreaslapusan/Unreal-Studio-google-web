@@ -127,7 +127,8 @@
       "tenure": {
         "leasehold": "Hak Sewa",
         "freehold": "Hak Milik"
-      }
+      },
+      "deliveryFrom": "mulai"
     },
     "noResults": "Tidak ada hasil",
     "clearFilters": "Hapus filter",
