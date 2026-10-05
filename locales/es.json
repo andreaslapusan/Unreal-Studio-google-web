@@ -925,7 +925,10 @@
         "inProgress": "En proceso",
         "completed": "Completado",
         "pending": "Pendiente"
-      }
+      },
+      "portalEyebrow": "Portal de inversión · Unreal Studio",
+      "greeting": "Hola",
+      "welcomeSub": "Tu seguimiento de inversiones, pagos y documentación, en un solo lugar."
     },
     "agencias": {
       "title": "Pack para Agencias",

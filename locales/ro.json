@@ -925,7 +925,10 @@
         "inProgress": "În curs",
         "completed": "Finalizat",
         "pending": "În așteptare"
-      }
+      },
+      "portalEyebrow": "Portal de investiții · Unreal Studio",
+      "greeting": "Salut",
+      "welcomeSub": "Investițiile, plățile și documentele tale — urmărite într-un singur loc."
     },
     "agencias": {
       "title": "Pack pentru Agenții",

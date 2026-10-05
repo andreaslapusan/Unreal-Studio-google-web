@@ -1030,7 +1030,10 @@
         "inProgress": "Dalam proses",
         "completed": "Selesai",
         "pending": "Menunggu"
-      }
+      },
+      "portalEyebrow": "Portal investasi · Unreal Studio",
+      "greeting": "Halo",
+      "welcomeSub": "Investasi, pembayaran, dan dokumen Anda — dalam satu tempat."
     },
     "agencias": {
       "title": "Paket untuk Agen",

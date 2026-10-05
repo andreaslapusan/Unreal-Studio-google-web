@@ -693,32 +693,42 @@ const ClientDashboard: React.FC = () => {
       )}
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
-        <p className="text-sm text-primary/60 font-medium mb-5">
-          {t('admin.clientDash.welcome', 'Bienvenido a Unreal Studio')}, <span className="text-primary font-bold">{(() => {
-            // Saludo personalizado al titular que ha iniciado sesión (independencia
-            // total): si su email coincide con un holder, su nombre; si no, el de la ficha.
-            const hs = (client as any).holders;
-            if (myEmail && Array.isArray(hs)) {
-              const m = hs.find((h: any) => (h?.email || '').trim().toLowerCase() === myEmail.toLowerCase());
-              if (m && (m.name || '').trim()) return (m.name || '').trim();
-            }
-            return (client.name || '').trim();
-          })()}</span>
-        </p>
+        {/* Bienvenida editorial: overline + saludo en serif + subtítulo, al nivel
+            del resto del sitio (hero de login/ficha). Entrada personal y premium. */}
+        <header className="mb-9 md:mb-12">
+          <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40 mb-3">
+            <span className="h-px w-7 bg-primary/30" />{t('admin.clientDash.portalEyebrow')}
+          </span>
+          <h1 className="font-serif text-primary text-[2rem] md:text-5xl tracking-[-0.02em] leading-[1.05]">
+            {t('admin.clientDash.greeting')}, {(() => {
+              // Saludo personalizado al titular que ha iniciado sesión (independencia
+              // total): si su email coincide con un holder, su nombre; si no, el de la ficha.
+              const hs = (client as any).holders;
+              if (myEmail && Array.isArray(hs)) {
+                const m = hs.find((h: any) => (h?.email || '').trim().toLowerCase() === myEmail.toLowerCase());
+                if (m && (m.name || '').trim()) return (m.name || '').trim();
+              }
+              return (client.name || '').trim();
+            })()}
+          </h1>
+          <p className="text-primary/55 text-sm md:text-base font-light mt-3 max-w-xl leading-relaxed">
+            {t('admin.clientDash.welcomeSub')}
+          </p>
+        </header>
         {/* El acceso al Drive de cada proyecto va dentro de su tarjeta (abajo, junto
             al calendario de pagos), no como tarjeta suelta arriba. */}
         {clientId && <ClientUnitsSection clientId={clientId} />}
         {/* Resumen */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12">
-          <div className="bg-white p-5 md:p-8 rounded-2xl shadow-sm border border-primary/5">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiInvested')}</p>
             <p className="text-3xl font-serif text-primary">{getTotalConverted()}</p>
           </div>
-          <div className="bg-white p-5 md:p-8 rounded-2xl shadow-sm border border-primary/5">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiProjects')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length}</p>
           </div>
-          <div className="bg-white p-5 md:p-8 rounded-2xl shadow-sm border border-primary/5">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiStatus')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length > 0 ? t('admin.clientDash.statusActive') : t('admin.clientDash.statusNoInvestments')}</p>
           </div>
