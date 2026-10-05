@@ -40,7 +40,7 @@ const INFO_META: Record<string, { icon: string; labelKey: string; def: string; c
   late_checkin: { icon: 'schedule', labelKey: 'admin.notif.typeLateCheckin', def: 'Fichaje tarde', color: 'text-orange-600 bg-orange-50' },
   vacation_request: { icon: 'beach_access', labelKey: 'admin.notif.typeVacation', def: 'Solicitud de vacaciones', color: 'text-amber-600 bg-amber-50' },
   listing_intake: { icon: 'add_home_work', labelKey: 'admin.notif.typeListingIntake', def: 'Nuevo listing', color: 'text-emerald-700 bg-emerald-50' },
-  generic: { icon: 'notifications', labelKey: 'admin.notif.typeGeneric', def: 'Aviso', color: 'text-gray-600 bg-gray-100' },
+  generic: { icon: 'notifications', labelKey: 'admin.notif.typeGeneric', def: 'Aviso', color: 'text-primary/60 bg-primary/10' },
 };
 const ACT_FILTERS: { value: string; def: string }[] = [
   { value: 'all', def: 'Todo' },
@@ -51,7 +51,7 @@ const ACT_FILTERS: { value: string; def: string }[] = [
   { value: 'vacation_request', def: 'Solicitudes de vacaciones' },
   { value: 'generic', def: 'Avisos' },
 ];
-const SELECT_CLS = 'rounded-lg border border-gray-200 py-1.5 text-sm bg-white';
+const SELECT_CLS = 'rounded-lg border border-primary/15 py-1.5 text-sm bg-white';
 
 // Cuerpo del evento en el IDIOMA del admin, reconstruido desde datos estructurados
 // (actor_name + metadata), en vez del body guardado en español. Cae al body si no
@@ -182,7 +182,7 @@ const NotificationsPanel: React.FC = () => {
     </div>
   );
   const Row: React.FC<{ icon: string; color: string; children: React.ReactNode; actions: React.ReactNode }> = ({ icon, color, children, actions }) => (
-    <li className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-white p-4">
+    <li className="flex items-start gap-3 rounded-2xl border border-primary/10 bg-white p-4">
       <span className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${color}`}><span className="material-symbols-outlined text-[20px]">{icon}</span></span>
       <div className="min-w-0 flex-1">{children}</div>
       <div className="flex flex-col items-end gap-2 shrink-0">{actions}</div>
@@ -204,7 +204,7 @@ const NotificationsPanel: React.FC = () => {
       </div>
 
       {/* Pestañas */}
-      <div className="flex items-center gap-1 mb-6 border-b border-gray-100">
+      <div className="flex items-center gap-1 mb-6 border-b border-primary/10">
         <button onClick={() => setTab('tasks')} className={`relative px-4 py-2.5 text-xs font-black uppercase tracking-widest transition ${tab === 'tasks' ? 'text-primary border-b-2 border-primary' : 'text-primary/40 hover:text-primary/70'}`}>
           {t('admin.notif.tabTasks', { defaultValue: 'Tareas' })}
           {taskCount > 0 && <span className="ml-2 text-[10px] bg-primary text-white rounded-full px-1.5 py-0.5">{taskCount}</span>}
@@ -300,7 +300,7 @@ const NotificationsPanel: React.FC = () => {
                     <p className="text-[11px] font-bold uppercase tracking-widest text-primary/30 mb-2">{t('admin.notif.clientsNoProperty', { count: noProp.length })}</p>
                     <div className="flex flex-wrap gap-2">
                       {noProp.map((c) => (
-                        <button key={c.id} onClick={() => navigate(`/admin?view=clients&q=${encodeURIComponent(c.name || '')}`)} className="text-xs bg-gray-50 text-primary/70 px-3 py-1 rounded-full hover:bg-primary/10">{c.name}</button>
+                        <button key={c.id} onClick={() => navigate(`/admin?view=clients&q=${encodeURIComponent(c.name || '')}`)} className="text-xs bg-almond/50 text-primary/70 px-3 py-1 rounded-full hover:bg-primary/10">{c.name}</button>
                       ))}
                     </div>
                   </div>
@@ -320,7 +320,7 @@ const NotificationsPanel: React.FC = () => {
               <option value="recent">{t('admin.notif.orderRecent', { defaultValue: 'Más recientes' })}</option>
               <option value="old">{t('admin.notif.orderOld', { defaultValue: 'Más antiguas' })}</option>
             </select>
-            <input value={actSearch} onChange={(e) => setActSearch(e.target.value)} placeholder={t('admin.notif.searchActor', { defaultValue: 'Buscar por nombre…' })} className="rounded-lg border border-gray-200 py-1.5 px-3 text-sm bg-white flex-1 min-w-[160px]" />
+            <input value={actSearch} onChange={(e) => setActSearch(e.target.value)} placeholder={t('admin.notif.searchActor', { defaultValue: 'Buscar por nombre…' })} className="rounded-lg border border-primary/15 py-1.5 px-3 text-sm bg-white flex-1 min-w-[160px]" />
             <span className="text-xs text-primary/40 ml-auto">{t('admin.notif.notifCount', { count: activity.length })}</span>
           </div>
           {activity.length === 0 ? (
@@ -331,7 +331,7 @@ const NotificationsPanel: React.FC = () => {
                 const m = INFO_META[n.type] || INFO_META.generic;
                 const who = n.actor_name || n.title;
                 return (
-                  <li key={n.id} className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-white/60 p-3.5">
+                  <li key={n.id} className="flex items-start gap-3 rounded-2xl border border-primary/10 bg-white/60 p-3.5">
                     <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.color}`}><span className="material-symbols-outlined text-[18px]">{m.icon}</span></span>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
