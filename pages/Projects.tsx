@@ -9,7 +9,7 @@ import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { translateStatus } from '../lib/statusI18n';
-import { statusBadgeClass } from '../lib/statusColor';
+import { statusBadgeClass, statusDotClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
 
 const ANY_ZONE = 'Cualquier zona';
@@ -347,7 +347,9 @@ const Projects: React.FC = () => {
                     onError={imgFallback(getImageUrl(proj.image))}
                   />
                   <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
-                    <span className={`${statusBadgeClass(proj.status)} text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg`}>{translateStatus(proj.status, t)}</span>
+                    <span className="inline-flex items-center gap-1.5 md:gap-2 bg-black/35 backdrop-blur-md text-white text-[8px] md:text-[9px] font-black px-2.5 py-1 md:px-3.5 md:py-1.5 uppercase tracking-widest rounded-full border border-white/15 shadow-lg">
+                      <span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(proj.status)}`} />{translateStatus(proj.status, t)}
+                    </span>
                   </div>
                   {proj.has_real_photos && (
                     <div className="absolute top-2 right-2 md:top-5 md:right-5 z-10">

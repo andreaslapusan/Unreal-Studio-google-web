@@ -37,3 +37,25 @@ export function statusBadgeClass(raw: string | null | undefined): string {
   // Fallback → brand primary
   return "bg-primary/90 text-white";
 }
+
+/**
+ * Editorial variant: a neutral glass badge carries the label, and a small
+ * coloured DOT carries the status meaning — more premium on moody photography
+ * than a saturated solid pill. Returns the dot's background colour class.
+ */
+export function statusDotClass(raw: string | null | undefined): string {
+  const n = normalize(raw || "");
+  if (n.startsWith("obra_finalizada") || n.startsWith("entregado") || n.startsWith("listo_para_entrar") || n.startsWith("finalizado") || n.includes("terminad"))
+    return "bg-emerald-400";
+  if (n.startsWith("vendido") || n === "sold")
+    return "bg-red-400";
+  if (n.startsWith("off_plan") || n.startsWith("sobre_plano") || n.startsWith("pre_venta") || n.startsWith("en_pre_venta") || n.startsWith("pre_construccion"))
+    return "bg-amber-400";
+  if (n.startsWith("ultimas_unidades"))
+    return "bg-orange-400";
+  if (n.startsWith("en_construccion") || n.startsWith("estructura_completa"))
+    return "bg-teal-300";
+  if (n.startsWith("oportunidad"))
+    return "bg-indigo-300";
+  return "bg-almond";
+}
