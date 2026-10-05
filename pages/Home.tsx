@@ -632,27 +632,27 @@ const Home: React.FC = () => {
               {t('home.section2Body')}
             </p>
             <div className="space-y-3 md:space-y-4">
-              <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
+              <Reveal delay={0} className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5 hover:border-primary/15 hover:bg-white/60 transition-colors">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">construction</span>
                 <div>
                   <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v1Title')}</h5>
                   <p className="text-xs text-primary/60">{t('home.v1Body')}</p>
                 </div>
-              </div>
-              <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
+              </Reveal>
+              <Reveal delay={120} className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5 hover:border-primary/15 hover:bg-white/60 transition-colors">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">sell</span>
                 <div>
                   <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v2Title')}</h5>
                   <p className="text-xs text-primary/60">{t('home.v2Body')}</p>
                 </div>
-              </div>
-              <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
+              </Reveal>
+              <Reveal delay={240} className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5 hover:border-primary/15 hover:bg-white/60 transition-colors">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">payments</span>
                 <div>
                   <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v3Title')}</h5>
                   <p className="text-xs text-primary/60">{t('home.v3Body')}</p>
                 </div>
-              </div>
+              </Reveal>
             </div>
           </div>
           <div className="lg:w-1/2 w-full">
