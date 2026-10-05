@@ -194,7 +194,19 @@ export default function ListingIntake() {
       <div className="max-w-3xl mx-auto px-5 md:px-10 pt-4">
         <div className="mb-8">
           <span className="inline-flex items-center gap-2.5 text-[11px] uppercase text-primary/40 font-black tracking-[0.22em] mb-3"><span className="h-px w-7 bg-primary/30" />{t("listingIntake.kicker")}</span>
-          <h1 className="text-3xl md:text-5xl font-serif text-primary leading-[1.05] tracking-[-0.02em]">{title}</h1>
+          {/* Título EDITABLE: input que parece la cabecera; el borde inferior y el
+              icono de lápiz indican que se puede editar. Se guarda en el submit. */}
+          <label className="group relative block">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t("listingIntake.titlePlaceholder")}
+              aria-label={t("listingIntake.titleLabel")}
+              className="w-full bg-transparent text-3xl md:text-5xl font-serif text-primary leading-[1.05] tracking-[-0.02em] outline-none border-b border-primary/15 hover:border-primary/30 focus:border-primary/50 transition-colors pb-1 pr-9 placeholder:text-primary/25"
+            />
+            <span className="material-symbols-outlined absolute right-0 bottom-2 text-primary/30 group-hover:text-primary/60 group-focus-within:text-primary text-xl transition-colors pointer-events-none">edit</span>
+          </label>
           <p className="text-primary/60 font-light mt-3 leading-relaxed">{t("listingIntake.introFull")}</p>
         </div>
 
@@ -247,10 +259,6 @@ export default function ListingIntake() {
 
         {/* 2 · Basics */}
         <Section title={t("listingIntake.basicsTitle")} open={openSection === "basics"} onToggle={() => toggleSection("basics")}>
-          <div className="mb-4">
-            <label className={labelCls}>{t("listingIntake.titleLabel")}</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("listingIntake.titlePlaceholder")} className={inputCls} />
-          </div>
           <div className="grid grid-cols-2 gap-4">
             {field(t("listingIntake.type"), (
               <select value={form.property_type} onChange={(e) => set("property_type", e.target.value)} className={inputCls}>
