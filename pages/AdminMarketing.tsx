@@ -182,7 +182,7 @@ export default function AdminMarketing() {
 
   if (authLoading && !authTimedOut) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
+      <div className="min-h-screen flex items-center justify-center text-primary/55">
         {t('admin.mkt.loading')}
       </div>
     );
@@ -199,13 +199,13 @@ export default function AdminMarketing() {
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center max-w-md">
           <h1 className="text-2xl font-semibold mb-2">{t('admin.mkt.restrictedTitle')}</h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-primary/65 mb-6">
             {t('admin.mkt.restrictedBody')}{" "}
             <span className="font-semibold">admin</span>.
           </p>
           <Link
             to="/"
-            className="inline-block px-5 py-2 bg-gray-900 text-white rounded"
+            className="inline-block px-5 py-2 bg-primary text-white rounded"
           >
             {t('admin.mkt.backHome')}
           </Link>
@@ -215,23 +215,23 @@ export default function AdminMarketing() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-almond/50">
+      <header className="bg-white border-b border-primary/15">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-wider text-gray-500">
+            <p className="text-xs uppercase tracking-wider text-primary/55">
               {t('admin.adminMarketing.header')}
             </p>
             <h1 className="text-2xl font-semibold mt-1">{t('admin.adminMarketing.title')}</h1>
             {data && (
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-primary/55 mt-1">
                 {t('admin.adminMarketing.lastUpdate')} {formatDate(data.generatedAt)}
               </p>
             )}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <LanguageSwitcher />
-            <label className="text-sm text-gray-600 flex items-center gap-2">
+            <label className="text-sm text-primary/65 flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={autoRefresh}
@@ -243,7 +243,7 @@ export default function AdminMarketing() {
               type="button"
               onClick={() => void load()}
               disabled={loading}
-              className="px-4 py-2 rounded bg-gray-900 text-white disabled:opacity-50"
+              className="px-4 py-2 rounded bg-primary text-white disabled:opacity-50"
             >
               {loading ? t('admin.adminMarketing.refreshing') : t('admin.adminMarketing.refresh')}
             </button>
@@ -267,8 +267,8 @@ export default function AdminMarketing() {
                 onClick={() => setActivePipeline("all")}
                 className={`px-4 py-2 rounded text-sm ${
                   activePipeline === "all"
-                    ? "bg-gray-900 text-white"
-                    : "bg-white border border-gray-300 text-gray-700"
+                    ? "bg-primary text-white"
+                    : "bg-white border border-primary/20 text-primary/75"
                 }`}
               >
                 {t('admin.mkt.allPipelines')}
@@ -280,8 +280,8 @@ export default function AdminMarketing() {
                   onClick={() => setActivePipeline(p.id)}
                   className={`px-4 py-2 rounded text-sm ${
                     activePipeline === p.id
-                      ? "bg-gray-900 text-white"
-                      : "bg-white border border-gray-300 text-gray-700"
+                      ? "bg-primary text-white"
+                      : "bg-white border border-primary/20 text-primary/75"
                   }`}
                 >
                   {p.name}
@@ -291,22 +291,22 @@ export default function AdminMarketing() {
 
             {/* Headline metrics */}
             <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <p className="text-xs uppercase text-gray-500">
+              <div className="bg-white rounded-lg border border-primary/15 p-5">
+                <p className="text-xs uppercase text-primary/55">
                   {t('admin.mkt.totalLeadsFunnel')}
                 </p>
                 <p className="text-3xl font-semibold mt-2">{totals.count}</p>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <p className="text-xs uppercase text-gray-500">
+              <div className="bg-white rounded-lg border border-primary/15 p-5">
+                <p className="text-xs uppercase text-primary/55">
                   {t('admin.mkt.potentialValue')}
                 </p>
                 <p className="text-3xl font-semibold mt-2">
                   {formatMoney(totals.value)}
                 </p>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <p className="text-xs uppercase text-gray-500">
+              <div className="bg-white rounded-lg border border-primary/15 p-5">
+                <p className="text-xs uppercase text-primary/55">
                   {t('admin.mkt.recentConversations')}
                 </p>
                 <p className="text-3xl font-semibold mt-2">
@@ -318,9 +318,9 @@ export default function AdminMarketing() {
             {/* Pipeline stages */}
             <section>
               <h2 className="text-lg font-semibold mb-3">{t('admin.mkt.funnelByStage')}</h2>
-              <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+              <div className="bg-white rounded-lg border border-primary/15 overflow-x-auto">
                 <table className="min-w-full text-sm">
-                  <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
+                  <thead className="bg-almond/50 text-left text-xs uppercase text-primary/55">
                     <tr>
                       <th className="px-4 py-3">{t('admin.mkt.pipeline')}</th>
                       <th className="px-4 py-3">{t('admin.mkt.stage')}</th>
@@ -332,14 +332,14 @@ export default function AdminMarketing() {
                     {filteredBuckets.map((b) => (
                       <tr
                         key={`${b.pipelineId}-${b.stageId}`}
-                        className="border-t border-gray-100"
+                        className="border-t border-primary/10"
                       >
-                        <td className="px-4 py-2 text-gray-600">
+                        <td className="px-4 py-2 text-primary/65">
                           {b.pipelineName}
                         </td>
                         <td className="px-4 py-2 font-medium">{b.stageName}</td>
                         <td className="px-4 py-2 text-right">{b.count}</td>
-                        <td className="px-4 py-2 text-right text-gray-600">
+                        <td className="px-4 py-2 text-right text-primary/65">
                           {formatMoney(b.totalValue)}
                         </td>
                       </tr>
@@ -348,7 +348,7 @@ export default function AdminMarketing() {
                       <tr>
                         <td
                           colSpan={4}
-                          className="px-4 py-6 text-center text-gray-500"
+                          className="px-4 py-6 text-center text-primary/55"
                         >
                           {t('admin.mkt.noData')}
                         </td>
@@ -364,9 +364,9 @@ export default function AdminMarketing() {
               <h2 className="text-lg font-semibold mb-3">
                 {t('admin.mkt.recentLeads', { count: filteredLeads.length })}
               </h2>
-              <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+              <div className="bg-white rounded-lg border border-primary/15 overflow-x-auto">
                 <table className="min-w-full text-sm">
-                  <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
+                  <thead className="bg-almond/50 text-left text-xs uppercase text-primary/55">
                     <tr>
                       <th className="px-4 py-3">{t('admin.mkt.name')}</th>
                       <th className="px-4 py-3">{t('admin.mkt.pipeline')}</th>
@@ -378,21 +378,21 @@ export default function AdminMarketing() {
                   </thead>
                   <tbody>
                     {filteredLeads.map((l) => (
-                      <tr key={l.id} className="border-t border-gray-100">
+                      <tr key={l.id} className="border-t border-primary/10">
                         <td className="px-4 py-2 font-medium">
                           {l.name || t('admin.mkt.noName')}
                         </td>
-                        <td className="px-4 py-2 text-gray-600">
+                        <td className="px-4 py-2 text-primary/65">
                           {l.pipelineName}
                         </td>
                         <td className="px-4 py-2">{l.stageName}</td>
-                        <td className="px-4 py-2 text-gray-600">
+                        <td className="px-4 py-2 text-primary/65">
                           {l.source ?? "—"}
                         </td>
-                        <td className="px-4 py-2 text-right text-gray-600">
+                        <td className="px-4 py-2 text-right text-primary/65">
                           {formatMoney(l.monetaryValue)}
                         </td>
-                        <td className="px-4 py-2 text-gray-600">
+                        <td className="px-4 py-2 text-primary/65">
                           {formatDate(l.updatedAt)}
                         </td>
                       </tr>
@@ -401,7 +401,7 @@ export default function AdminMarketing() {
                       <tr>
                         <td
                           colSpan={6}
-                          className="px-4 py-6 text-center text-gray-500"
+                          className="px-4 py-6 text-center text-primary/55"
                         >
                           {t('admin.mkt.noLeads')}
                         </td>
@@ -417,7 +417,7 @@ export default function AdminMarketing() {
               <h2 className="text-lg font-semibold mb-3">
                 {t('admin.mkt.recentConversations')}
               </h2>
-              <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+              <div className="bg-white rounded-lg border border-primary/15 divide-y divide-primary/10">
                 {data.conversations.map((c) => (
                   <article
                     key={c.id}
@@ -432,18 +432,18 @@ export default function AdminMarketing() {
                           </span>
                         )}
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5">
+                      <p className="text-xs text-primary/55 mt-0.5">
                         {c.type ?? "—"} · {c.lastMessageDirection ?? "—"} ·{" "}
                         {formatDate(c.lastMessageDate)}
                       </p>
-                      <p className="text-sm text-gray-700 mt-1 line-clamp-2">
+                      <p className="text-sm text-primary/75 mt-1 line-clamp-2">
                         {c.lastMessageBody || t('admin.mkt.noContent')}
                       </p>
                     </div>
                   </article>
                 ))}
                 {data.conversations.length === 0 && (
-                  <p className="px-4 py-6 text-center text-gray-500">
+                  <p className="px-4 py-6 text-center text-primary/55">
                     {t('admin.mkt.noConversations')}
                   </p>
                 )}
@@ -453,7 +453,7 @@ export default function AdminMarketing() {
         )}
 
         {!data && !error && loading && (
-          <p className="text-gray-500">{t('admin.mkt.loadingSnapshot')}</p>
+          <p className="text-primary/55">{t('admin.mkt.loadingSnapshot')}</p>
         )}
       </main>
     </div>
