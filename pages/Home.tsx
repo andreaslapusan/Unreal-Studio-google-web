@@ -11,6 +11,7 @@ import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { projectPath } from '../lib/projectUrl';
 import { translateStatus } from '../lib/statusI18n';
+import { statusDotClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
 
 const ANY_ZONE = 'Cualquier zona';
@@ -357,8 +358,8 @@ const Home: React.FC = () => {
                     fetchPriority="high"
                   />
                   <div className="absolute top-3 left-3 md:top-8 md:left-8">
-                    <span className="bg-primary text-white text-[8px] md:text-[10px] font-black px-3 py-1.5 md:px-6 md:py-3 uppercase rounded-lg md:rounded-2xl shadow-2xl">
-                      {translateStatus(featuredProject.status, t)}
+                    <span className="inline-flex items-center gap-2 bg-black/35 backdrop-blur-md text-white border border-white/20 text-[8px] md:text-[10px] font-black px-3 py-1.5 md:px-5 md:py-2.5 uppercase tracking-[0.15em] rounded-full shadow-xl">
+                      <span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(featuredProject.status)}`} />{translateStatus(featuredProject.status, t)}
                     </span>
                   </div>
                 </div>
@@ -514,7 +515,7 @@ const Home: React.FC = () => {
                   alt={proj.name}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70"></div>
-                <span className="absolute top-3 left-3 md:top-5 md:left-5 bg-black/25 backdrop-blur-md text-white border border-white/25 text-[8px] md:text-[10px] font-black px-3 py-1.5 uppercase tracking-[0.15em] rounded-full">{translateStatus(proj.status, t)}</span>
+                <span className="absolute top-3 left-3 md:top-5 md:left-5 inline-flex items-center gap-2 bg-black/35 backdrop-blur-md text-white border border-white/20 text-[8px] md:text-[10px] font-black px-3 py-1.5 uppercase tracking-[0.15em] rounded-full shadow-lg"><span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(proj.status)}`} />{translateStatus(proj.status, t)}</span>
               </div>
               <div className="p-4 md:p-8 flex-grow flex flex-col text-left">
                 <p className="text-[9px] md:text-[10px] font-black text-primary/40 uppercase tracking-[0.2em] mb-2 md:mb-3 truncate">{proj.location}</p>

@@ -18,6 +18,7 @@ import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projec
 import { trackViewContent } from '../lib/fbPixel';
 import { gtmViewItem } from '../lib/gtm';
 import { translateStatus } from '../lib/statusI18n';
+import { statusDotClass } from '../lib/statusColor';
 import { useAuth } from '../lib/auth-context';
 
 const ProjectDetail: React.FC = () => {
@@ -455,7 +456,7 @@ const ProjectDetail: React.FC = () => {
             <div>
               <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiStatus')}</p>
               <span className="inline-flex items-center gap-2 text-xs md:text-sm font-black uppercase tracking-wide text-primary leading-none pt-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{translateStatus(project.status, t)}
+                <span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(project.status)}`}></span>{translateStatus(project.status, t)}
               </span>
             </div>
           </div>
