@@ -156,14 +156,19 @@ export default function AgenciasDashboard() {
           </div>
         )}
 
+        {!loading && !error && projects.length > 0 && (
+          <h2 className="text-2xl md:text-3xl text-primary tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('agenciasDashboard.yourProjectsTitle')}</h2>
+        )}
         <div className="grid gap-6 md:grid-cols-2">
           {projects.map((p) => (
-            <article key={p.id} className="glass-card rounded-2xl overflow-hidden shadow-sm">
+            <article key={p.id} className="group bg-white rounded-3xl overflow-hidden border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:shadow-[0_28px_60px_-30px_rgba(63,35,5,0.45)] hover:-translate-y-0.5 transition-all duration-300">
               {p.hero_image_url && (
-                <img src={p.hero_image_url} alt={p.name} className="w-full h-48 object-cover" loading="lazy" />
+                <div className="overflow-hidden">
+                  <img src={p.hero_image_url} alt={p.name} className="w-full h-48 object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
+                </div>
               )}
               <div className="p-6">
-                <h2 className="font-serif text-xl text-primary mb-2">{p.name}</h2>
+                <h2 className="font-serif text-xl md:text-2xl text-primary tracking-[-0.01em] mb-2">{p.name}</h2>
                 {p.area && <p className="text-sm text-primary/60">{p.area}</p>}
                 {p.short_pitch && <p className="mt-2 text-sm">{p.short_pitch}</p>}
                 {typeof p.pct_progress === "number" && (

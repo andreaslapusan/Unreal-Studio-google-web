@@ -448,7 +448,8 @@
     "infoStep3": "Usa tu enlace personal para que las visitas y reservas queden atribuidas a tu agencia.",
     "infoStep4": "Revisa tus estadísticas desde el botón de estadísticas del menú superior.",
     "infoTitle": "Cómo usar tu portal de agencia",
-    "instructions": "Instrucciones"
+    "instructions": "Instrucciones",
+    "yourProjectsTitle": "Tus proyectos"
   },
   "agenciasStats": {
     "headerTitle": "Mis estadísticas",

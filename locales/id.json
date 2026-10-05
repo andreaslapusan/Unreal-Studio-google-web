@@ -449,7 +449,8 @@
     "infoStep3": "Gunakan tautan pribadi Anda agar kunjungan dan pemesanan diatribusikan ke agensi Anda.",
     "infoStep4": "Tinjau statistik Anda dari tombol statistik di menu atas.",
     "infoTitle": "Cara menggunakan portal agensi Anda",
-    "instructions": "Petunjuk"
+    "instructions": "Petunjuk",
+    "yourProjectsTitle": "Proyek Anda"
   },
   "agenciasStats": {
     "headerTitle": "Statistik saya",
