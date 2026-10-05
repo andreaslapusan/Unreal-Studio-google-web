@@ -82,6 +82,21 @@ export const geoLanguageDetector: LanguageDetectorAsyncModule = {
       /* ignore */
     }
 
+    // 0.5 Prefijo de idioma en el PATH (/es, /en, /ro, /id) — MANDA sobre
+    //     localStorage y geo (marketing con URL por idioma). Es SÍNCRONO, así
+    //     que resuelve ANTES que el fetch de geo y evita que la detección geo
+    //     async pise el idioma de la URL (bug: la home salía en inglés para un
+    //     visitante nuevo en /es o /ro porque el geo resolvía después).
+    try {
+      const seg = window.location.pathname.split('/')[1];
+      if (seg && ['es', 'en', 'ro', 'id'].includes(seg)) {
+        callback(seg);
+        return seg;
+      }
+    } catch {
+      /* ignore */
+    }
+
     // 1. localStorage override
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
