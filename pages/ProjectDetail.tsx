@@ -600,10 +600,21 @@ const ProjectDetail: React.FC = () => {
                     'Bar': 'local_bar', 'Almacén': 'warehouse', 'Spa': 'spa',
                     'Sala de juegos': 'sports_esports', 'Servicio de limpieza': 'cleaning_services', 'Alquiler de motos': 'two_wheeler'
                   };
+                  // Fichas nuevas (alta por formulario) guardan amenities como CLAVES
+                  // camelCase (privatePool, kitchen, ac…); las antiguas, etiquetas ES.
+                  const intakeIcons = {
+                    privatePool: 'pool', sharedPool: 'pool', garden: 'park', parking: 'local_parking',
+                    security: 'shield', gym: 'fitness_center', kitchen: 'kitchen', ac: 'ac_unit',
+                    wifi: 'wifi', rooftop: 'deck', oceanView: 'water', nearBeach: 'beach_access',
+                    coworking: 'desktop_windows', cleaning: 'cleaning_services',
+                  };
+                  const isIntakeKey = Object.prototype.hasOwnProperty.call(intakeIcons, amenity);
+                  const amenityIcon = isIntakeKey ? intakeIcons[amenity] : (icons[amenity] || 'check_circle');
+                  const amenityLabel = isIntakeKey ? t(`listingIntake.amenity.${amenity}`) : translateProjectTerm(amenity, i18n.language);
                   return (
                     <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
-                      <span className="material-symbols-outlined text-primary/40">{icons[amenity] || 'check_circle'}</span>
-                      <span className="text-sm font-medium text-primary">{translateProjectTerm(amenity, i18n.language)}</span>
+                      <span className="material-symbols-outlined text-primary/40">{amenityIcon}</span>
+                      <span className="text-sm font-medium text-primary">{amenityLabel}</span>
                     </div>
                   );
                 })}
