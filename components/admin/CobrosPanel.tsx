@@ -213,7 +213,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
 
   const STATE_CLS: Record<string, string> = {
     recibido: 'bg-green-50 text-green-700', vencido: 'bg-red-50 text-red-600',
-    pendiente: 'bg-gray-100 text-gray-500',
+    pendiente: 'bg-primary/10 text-primary/55',
   };
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
 
@@ -267,40 +267,40 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
       {/* KPIs por moneda (según el filtro activo) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
         {Object.entries(kpis.byCur).map(([c, k]) => (
-          <div key={c} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+          <div key={c} className="bg-white rounded-2xl border border-primary/10 shadow-sm p-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2">{c}</p>
             <div className="space-y-1 text-sm">
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiTotalSales', { defaultValue: 'Total ventas' })}</span><span className="font-black text-primary">{fmt(k.total, c)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiMarket', { defaultValue: 'Valor mercado' })}</span><span className="font-bold text-primary/80">{fmt(market.byCur[c] || 0, c)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiCollected', { defaultValue: 'Cobrado' })}</span><span className="font-black text-green-700">{fmt(k.collected, c)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiDue')}</span><span className="font-black text-primary">{fmt(k.due, c)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiOverdue')}</span><span className="font-black text-red-600">{fmt(k.overdue, c)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiNext7')}</span><span className="font-bold text-amber-700">{fmt(k.next7, c)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiNext30')}</span><span className="font-bold text-primary/70">{fmt(k.next30, c)}</span></div>
+              <div className="flex justify-between"><span className="text-primary/45">{t('cobros.kpiTotalSales', { defaultValue: 'Total ventas' })}</span><span className="font-black text-primary">{fmt(k.total, c)}</span></div>
+              <div className="flex justify-between"><span className="text-primary/45">{t('cobros.kpiMarket', { defaultValue: 'Valor mercado' })}</span><span className="font-bold text-primary/80">{fmt(market.byCur[c] || 0, c)}</span></div>
+              <div className="flex justify-between"><span className="text-primary/45">{t('cobros.kpiCollected', { defaultValue: 'Cobrado' })}</span><span className="font-black text-green-700">{fmt(k.collected, c)}</span></div>
+              <div className="flex justify-between"><span className="text-primary/45">{t('cobros.kpiDue')}</span><span className="font-black text-primary">{fmt(k.due, c)}</span></div>
+              <div className="flex justify-between"><span className="text-primary/45">{t('cobros.kpiOverdue')}</span><span className="font-black text-red-600">{fmt(k.overdue, c)}</span></div>
+              <div className="flex justify-between"><span className="text-primary/45">{t('cobros.kpiNext7')}</span><span className="font-bold text-amber-700">{fmt(k.next7, c)}</span></div>
+              <div className="flex justify-between"><span className="text-primary/45">{t('cobros.kpiNext30')}</span><span className="font-bold text-primary/70">{fmt(k.next30, c)}</span></div>
             </div>
           </div>
         ))}
-        {Object.keys(kpis.byCur).length === 0 && !loading && <p className="text-sm text-gray-400">{t('cobros.empty')}</p>}
+        {Object.keys(kpis.byCur).length === 0 && !loading && <p className="text-sm text-primary/45">{t('cobros.empty')}</p>}
       </div>
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-2 mb-4">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('cobros.searchPh')} className="flex-1 min-w-[160px] px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('cobros.searchPh')} className="flex-1 min-w-[160px] px-4 py-2.5 bg-almond/50 border border-primary/15 rounded-xl text-sm" />
 
         {/* Multi-selección de proyectos */}
         <div className="relative">
-          <button type="button" onClick={() => setProjOpen((o) => !o)} className="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-primary max-w-[240px]">
+          <button type="button" onClick={() => setProjOpen((o) => !o)} className="flex items-center gap-2 px-3 py-2.5 bg-almond/50 border border-primary/15 rounded-xl text-sm font-bold text-primary max-w-[240px]">
             <span className="truncate">{projBtnLabel}</span>
             <span className="material-symbols-outlined text-base shrink-0">{projOpen ? 'expand_less' : 'expand_more'}</span>
           </button>
           {projOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setProjOpen(false)} />
-              <div className="absolute left-0 mt-1 z-20 w-72 max-h-72 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg p-2">
+              <div className="absolute left-0 mt-1 z-20 w-72 max-h-72 overflow-y-auto bg-white border border-primary/15 rounded-xl shadow-lg p-2">
                 <button type="button" onClick={() => setFProjects([])} className="w-full text-left px-2 py-1.5 text-xs font-bold text-primary/50 hover:text-primary">{t('cobros.allProjects')}</button>
                 {projects.map((p) => (
-                  <label key={p} className="flex items-start gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
-                    <input type="checkbox" checked={fProjects.includes(p)} onChange={() => toggleProject(p)} className="mt-0.5 rounded border-gray-300" />
+                  <label key={p} className="flex items-start gap-2 px-2 py-1.5 rounded-lg hover:bg-almond/50 cursor-pointer text-sm">
+                    <input type="checkbox" checked={fProjects.includes(p)} onChange={() => toggleProject(p)} className="mt-0.5 rounded border-primary/20" />
                     <span className="text-primary/80 leading-tight">{p}</span>
                   </label>
                 ))}
@@ -309,14 +309,14 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
           )}
         </div>
 
-        <select value={fCurrency} onChange={(e) => setFCurrency(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold"><option value="">{t('cobros.allCurrencies')}</option>{currencies.map((c) => <option key={c} value={c}>{c}</option>)}</select>
-        <select value={fState} onChange={(e) => setFState(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold"><option value="">{t('cobros.allStates')}</option><option value="vencido">{t('cobros.stVencido')}</option><option value="pendiente">{t('cobros.stPendiente')}</option><option value="recibido">{t('cobros.stRecibido')}</option></select>
+        <select value={fCurrency} onChange={(e) => setFCurrency(e.target.value)} className="px-3 py-2.5 bg-almond/50 border border-primary/15 rounded-xl text-sm font-bold"><option value="">{t('cobros.allCurrencies')}</option>{currencies.map((c) => <option key={c} value={c}>{c}</option>)}</select>
+        <select value={fState} onChange={(e) => setFState(e.target.value)} className="px-3 py-2.5 bg-almond/50 border border-primary/15 rounded-xl text-sm font-bold"><option value="">{t('cobros.allStates')}</option><option value="vencido">{t('cobros.stVencido')}</option><option value="pendiente">{t('cobros.stPendiente')}</option><option value="recibido">{t('cobros.stRecibido')}</option></select>
       </div>
 
       {/* Tabla */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-primary/10 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="text-left text-[10px] font-black uppercase tracking-widest text-primary/40 border-b border-gray-100">
+          <thead><tr className="text-left text-[10px] font-black uppercase tracking-widest text-primary/40 border-b border-primary/10">
             <th className="sticky left-0 z-20 bg-white px-4 py-3 w-[140px] cursor-pointer select-none hover:text-primary/70" onClick={() => toggleSort('client')}>
               <span className="inline-flex items-center gap-1">{t('cobros.colClient')}{sortKey === 'client' && <span className="text-primary text-[9px]">{sortDir === 'asc' ? '▲' : '▼'}</span>}</span>
             </th>
@@ -333,8 +333,8 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
             {sorted.map((r) => {
               const st = stateOf(r); const dd = daysTo(r.due_date); const bal = r.amount - recvOf(r);
               return (
-                <tr key={r.id} className="group border-b border-gray-50 hover:bg-gray-50/50">
-                  <td className="sticky left-0 z-10 bg-white group-hover:bg-gray-50 px-4 py-3 font-bold text-primary w-[140px] whitespace-normal break-words leading-tight">{r.client_name}</td>
+                <tr key={r.id} className="group border-b border-primary/10 hover:bg-almond/40">
+                  <td className="sticky left-0 z-10 bg-white group-hover:bg-almond/50 px-4 py-3 font-bold text-primary w-[140px] whitespace-normal break-words leading-tight">{r.client_name}</td>
                   <td className="px-4 py-3 text-primary/70 whitespace-nowrap">{r.project_name}{r.unit_number ? ` · ${r.unit_number}` : ''}</td>
                   <td className="px-4 py-3 text-primary/60">{r.label}</td>
                   <td className="px-4 py-3 text-right font-bold whitespace-nowrap">{fmt(r.amount, r.currency)}</td>
@@ -348,8 +348,8 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
                 </tr>
               );
             })}
-            {!loading && sorted.length === 0 && <tr><td colSpan={9} className="px-4 py-8 text-center text-gray-400 text-sm">{t('cobros.empty')}</td></tr>}
-            {loading && <tr><td colSpan={9} className="px-4 py-8 text-center text-gray-300 text-sm">…</td></tr>}
+            {!loading && sorted.length === 0 && <tr><td colSpan={9} className="px-4 py-8 text-center text-primary/45 text-sm">{t('cobros.empty')}</td></tr>}
+            {loading && <tr><td colSpan={9} className="px-4 py-8 text-center text-primary/30 text-sm">…</td></tr>}
           </tbody>
         </table>
       </div>
