@@ -2693,6 +2693,8 @@
     "driveHint": "Dacă lipești un link de folder Google Drive (public sau partajat), importăm automat toate pozele.",
     "driveImport": "Importă din Drive",
     "driveImporting": "Se importă…",
-    "driveError": "Nu s-au putut importa pozele. Verifică dacă folderul este accesibil."
+    "driveError": "Nu s-au putut importa pozele. Verifică dacă folderul este accesibil.",
+    "titleLabel": "Titlul proprietății",
+    "titlePlaceholder": "ex. Melasti Reef — apartament cu 1 dormitor"
   }
 }

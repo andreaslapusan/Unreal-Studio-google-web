@@ -139,6 +139,7 @@ export default function ListingIntake() {
     setSaving(true);
     const num = (v: any) => (v !== "" && v != null ? Number(v) : null);
     const payload = {
+      property_title: (title || "").trim(),
       property_type: form.property_type, status: form.status,
       bedrooms: num(form.bedrooms), bathrooms: num(form.bathrooms),
       area_m2: num(form.area_m2), land_area_m2: num(form.land_area_m2),
@@ -191,7 +192,19 @@ export default function ListingIntake() {
       <div className="max-w-3xl mx-auto px-5 md:px-10 pt-4">
         <div className="mb-8">
           <p className="text-[11px] uppercase text-primary/40 font-black tracking-widest mb-1">{t("listingIntake.kicker")}</p>
-          <h1 className="text-3xl md:text-4xl font-serif text-primary leading-tight">{title}</h1>
+          {/* Título EDITABLE: input que parece la cabecera (borde inferior + icono
+              lápiz indican que se edita). Se guarda en el submit (property_title). */}
+          <label className="group relative block">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t("listingIntake.titlePlaceholder")}
+              aria-label={t("listingIntake.titleLabel")}
+              className="w-full bg-transparent text-3xl md:text-4xl font-serif text-primary leading-tight outline-none border-b border-primary/15 hover:border-primary/30 focus:border-primary/50 transition-colors pb-1 pr-9 placeholder:text-primary/25"
+            />
+            <span className="material-symbols-outlined absolute right-0 bottom-2 text-primary/30 group-hover:text-primary/60 group-focus-within:text-primary text-xl transition-colors pointer-events-none">edit</span>
+          </label>
           <p className="text-primary/60 mt-2">{t("listingIntake.introFull")}</p>
         </div>
 

@@ -2693,6 +2693,8 @@
     "driveHint": "If you paste a Google Drive folder link (public or shared), we automatically import all its photos.",
     "driveImport": "Import from Drive",
     "driveImporting": "Importing…",
-    "driveError": "Could not import the photos. Make sure the folder is accessible."
+    "driveError": "Could not import the photos. Make sure the folder is accessible.",
+    "titleLabel": "Property title",
+    "titlePlaceholder": "e.g. Melasti Reef — 1-bedroom apartment"
   }
 }

@@ -99,7 +99,9 @@ const Projects: React.FC = () => {
   const filteredProjects = useMemo(() => {
     let result = projects.filter(p => {
       if (p.is_hidden) return false; // Hide hidden projects from main list
-      if (p.is_listed === false) return false; // Explicitly unlisted
+      // Quitado el filtro is_listed: una propiedad PÚBLICA (is_hidden=false) debe
+      // salir en /proyectos igual que en el home. is_listed era flag muerto (solo
+      // se leía aquí) y hacía que Amante saliera en home pero no en proyectos.
 
       const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());
       const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
