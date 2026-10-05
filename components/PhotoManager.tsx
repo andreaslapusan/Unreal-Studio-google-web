@@ -14,6 +14,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getImageUrl } from '../lib/supabase';
+import { thumbSrc, imgFallback } from '../lib/imageOptimize';
 
 interface PhotoManagerProps {
   photos: string[];
@@ -69,15 +70,20 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
               onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
               onDragOver={(e) => { e.preventDefault(); if (overIdx !== idx) setOverIdx(idx); }}
               onDrop={() => handleDrop(idx)}
-              className={`relative aspect-square rounded-xl overflow-hidden group border transition-all duration-200 cursor-grab active:cursor-grabbing
+              style={{ contentVisibility: 'auto', containIntrinsicSize: '160px' } as React.CSSProperties}
+              className={`relative aspect-square rounded-xl overflow-hidden group border transition-[border-color,box-shadow,transform,opacity] duration-200 cursor-grab active:cursor-grabbing
                 ${main ? 'border-primary ring-2 ring-primary/40' : 'border-gray-200'}
                 ${overIdx === idx && dragIdx !== idx ? 'ring-2 ring-primary/60 scale-[0.97]' : ''}
                 ${dragIdx === idx ? 'opacity-40' : ''}`}
             >
-              {/* Foto a color real; click para ampliar. */}
+              {/* Miniatura LIGERA (thumbSrc ~400px/~40KB) para no congelar el scroll
+                  con 20-30 fotos grandes; si el proxy falla, cae a la imagen directa.
+                  El lightbox sí usa la original a tamaño/color real. */}
               <img
-                src={getImageUrl(img)}
+                src={thumbSrc(getImageUrl(img), 400)}
+                onError={imgFallback(getImageUrl(img))}
                 loading="lazy"
+                decoding="async"
                 onClick={() => setLightbox(idx)}
                 className="w-full h-full object-cover cursor-zoom-in"
                 alt={main ? t('photoManager.main') : ''}
@@ -136,8 +142,8 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
               </button>
             </>
           )}
-          <img src={getImageUrl(photos[lightbox])} alt="" onClick={(e) => e.stopPropagation()}
-            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200" />
+          <img src={thumbSrc(getImageUrl(photos[lightbox]), 1600)} onError={imgFallback(getImageUrl(photos[lightbox]))} alt="" onClick={(e) => e.stopPropagation()}
+            decoding="async" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200" />
           <span className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-xs font-bold tracking-widest bg-white/10 px-3 py-1.5 rounded-full">
             {lightbox + 1} / {photos.length}
           </span>

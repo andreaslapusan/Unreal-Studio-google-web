@@ -80,6 +80,31 @@ export function imgSrc(url: string | null | undefined, widthOrOpts: number | Img
 }
 
 /**
+ * thumbSrc — miniatura PEQUEÑA para los grids de los editores (galería de fotos
+ * en admin / listing). A diferencia de `imgSrc` (deshabilitado para los heros
+ * públicos por el fallo de Safari móvil), aquí SÍ usamos el proxy wsrv.nl porque:
+ *   - Son miniaturas internas del editor (no el hero crítico above-the-fold).
+ *   - El editor carga 20-30 fotos a la vez; servir las originales (1-4 MB c/u,
+ *     ~4000px) satura memoria/decode y CONGELA el scroll (queja de Andreas
+ *     2026-10-05: "se queda ultra bloqueado deslizando las fotos").
+ *   - Siempre va acompañado de `imgFallback(getImageUrl(url))`: si wsrv falla,
+ *     cae a la imagen directa de Supabase → nunca se rompe.
+ * w=400 → ~30-50 KB webp por miniatura (vs 1-4 MB). ~40x menos decode.
+ */
+export function thumbSrc(url: string | null | undefined, width = 400): string {
+  if (!url) return "";
+  if (url.startsWith("data:")) return url;
+  if (url.includes("wsrv.nl")) return url;
+  if (url.startsWith("/")) return url; // asset local same-origin
+  const params = new URLSearchParams();
+  params.set("url", url);
+  params.set("w", String(width));
+  params.set("q", "72");
+  if (!/\.(webp|avif)$/i.test(url.toLowerCase())) params.set("output", "webp");
+  return `${WSRV_BASE}?${params.toString()}`;
+}
+
+/**
  * Generate a srcSet string with multiple widths for responsive images.
  *
  *   <img

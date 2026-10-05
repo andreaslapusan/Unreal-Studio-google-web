@@ -9,7 +9,7 @@ import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
-import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
+import { imgSrc, imgSrcSet, thumbSrc, imgFallback } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import BookingWidget from '../components/BookingWidget';
@@ -405,7 +405,7 @@ const ProjectDetail: React.FC = () => {
           <button onClick={prevSlide} className="absolute left-4 md:left-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
             <span className="material-symbols-outlined text-4xl">arrow_back</span>
           </button>
-          <img src={allImages[lightbox.index]} alt={project.name} onError={imgFallback(allImages[lightbox.index])} className="max-w-full max-h-[90vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300" />
+          <img src={thumbSrc(allImages[lightbox.index], 1600)} alt={project.name} decoding="async" onError={imgFallback(allImages[lightbox.index])} className="max-w-full max-h-[90vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300" />
           <button onClick={nextSlide} className="absolute right-4 md:right-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
             <span className="material-symbols-outlined text-4xl">arrow_forward</span>
           </button>
@@ -795,17 +795,18 @@ const ProjectDetail: React.FC = () => {
                   // Find the index of this image in the allImages array for the lightbox
                   const globalIdx = allImages.findIndex(url => url === getImageUrl(img));
                   return (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       onClick={() => globalIdx !== -1 && setLightbox({ open: true, index: globalIdx })}
+                      style={{ contentVisibility: 'auto', containIntrinsicSize: '240px' } as React.CSSProperties}
                       className="relative rounded-2xl overflow-hidden shadow-sm group cursor-pointer aspect-square border border-gray-100"
                     >
                       <img
                         loading="lazy"
+                        decoding="async"
                         alt={t('fix.pd.constructionProgressAlt', { n: idx + 1 })}
                         className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
-                        src={imgSrc(getImageUrl(img), 600)}
-                        srcSet={imgSrcSet(getImageUrl(img), [320, 600, 900])}
+                        src={thumbSrc(getImageUrl(img), 700)}
                         sizes="(max-width: 768px) 50vw, 33vw"
                         onError={imgFallback(getImageUrl(img))}
                       />
@@ -823,17 +824,18 @@ const ProjectDetail: React.FC = () => {
             <h3 className="text-3xl text-primary mb-8 text-left">{t('projectDetail.galleryTitle')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allImages.map((img, idx) => (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   onClick={() => setLightbox({ open: true, index: idx })}
+                  style={{ contentVisibility: 'auto', containIntrinsicSize: '320px' } as React.CSSProperties}
                   className={`relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${idx === 0 ? 'md:col-span-2 md:row-span-2 aspect-video' : 'aspect-square'}`}
                 >
                   <img
                     loading="lazy"
+                    decoding="async"
                     alt={t('fix.pd.galleryImageAlt', { name: project.name, n: idx + 1 })}
                     className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
-                    src={imgSrc(img, 800)}
-                    srcSet={imgSrcSet(img, [400, 800, 1200])}
+                    src={thumbSrc(img, idx === 0 ? 1200 : 800)}
                     sizes="(max-width: 768px) 100vw, 50vw"
                     onError={imgFallback(img)}
                   />
