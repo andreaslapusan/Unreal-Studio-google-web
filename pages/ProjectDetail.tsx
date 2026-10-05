@@ -20,6 +20,7 @@ import { gtmViewItem } from '../lib/gtm';
 import { translateStatus } from '../lib/statusI18n';
 import { statusDotClass } from '../lib/statusColor';
 import { useAuth } from '../lib/auth-context';
+import Reveal from '../components/Reveal';
 
 const ProjectDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -810,7 +811,7 @@ const ProjectDetail: React.FC = () => {
             </section>
           )}
 
-          <section>
+          <Reveal as="section">
             <h3 className="text-3xl md:text-4xl text-primary mb-8 text-left tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.galleryTitle')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allImages.map((img, idx) => (
@@ -834,7 +835,7 @@ const ProjectDetail: React.FC = () => {
                 </div>
               ))}
             </div>
-          </section>
+          </Reveal>
 
           {/* Timeline/hitos del proyecto OCULTOS en la web pública (decisión de
               Andreas: las fechas de entrega podían dar a entender compromisos que
