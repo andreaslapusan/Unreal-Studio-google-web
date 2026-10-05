@@ -366,7 +366,7 @@ const Home: React.FC = () => {
                 
                 <div className="p-4 md:p-8 lg:p-12 w-[60%] md:w-full flex flex-col justify-center text-left">
                   <p className="text-[9px] md:text-[11px] font-black text-primary/40 uppercase tracking-[0.2em] mb-2 md:mb-4 truncate">{featuredProject.location}</p>
-                  <h3 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-primary leading-tight line-clamp-2">{featuredProject.name}</h3>
+                  <h3 className="text-xl md:text-4xl lg:text-5xl font-serif tracking-[-0.015em] mb-3 md:mb-4 text-primary leading-[1.08] line-clamp-2">{featuredProject.name}</h3>
                   {featuredProject.tenure && (
                     <span className={`inline-flex w-fit items-center gap-1 text-[9px] md:text-[11px] font-black uppercase px-2.5 py-1 rounded-full mb-3 md:mb-8 ${(featuredProject.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-primary/10 text-primary/70'}`}><span className="material-symbols-outlined text-[13px] md:text-base">key</span>{t(`projects.card.tenure.${(featuredProject.tenure||'').toLowerCase()}`, featuredProject.tenure)}</span>
                   )}
