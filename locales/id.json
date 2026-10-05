@@ -135,7 +135,8 @@
     "clearFilters": "Hapus filter",
     "soldTitle": "Proyek Terjual",
     "statusSold": "TERJUAL",
-    "metaDescription": "Katalog properti investasi di Bali: vila, loft, dan studio di Uluwatu, Canggu, dan Tabanan. Harga, ROI, dan ketersediaan terkini."
+    "metaDescription": "Katalog properti investasi di Bali: vila, loft, dan studio di Uluwatu, Canggu, dan Tabanan. Harga, ROI, dan ketersediaan terkini.",
+    "noResultsHint": "Coba perluas area, rentang harga, atau tipe properti."
   },
   "contact": {
     "title": "Kontak | Unreal Studio Madrid",

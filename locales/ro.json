@@ -135,7 +135,8 @@
     "clearFilters": "Șterge filtrele",
     "soldTitle": "Proiecte Vândute",
     "statusSold": "VÂNDUT",
-    "metaDescription": "Catalog de proprietăți de investiție în Bali: vile, lofturi și studiouri în Uluwatu, Canggu și Tabanan. Prețuri, ROI și disponibilitate actualizate."
+    "metaDescription": "Catalog de proprietăți de investiție în Bali: vile, lofturi și studiouri în Uluwatu, Canggu și Tabanan. Prețuri, ROI și disponibilitate actualizate.",
+    "noResultsHint": "Încearcă să lărgești zona, intervalul de preț sau tipul de proprietate."
   },
   "contact": {
     "title": "Contact | Unreal Studio Madrid",

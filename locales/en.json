@@ -135,7 +135,8 @@
     "clearFilters": "Clear filters",
     "soldTitle": "Sold projects",
     "statusSold": "SOLD",
-    "metaDescription": "Investment property catalogue in Bali: villas, lofts and studios in Uluwatu, Canggu and Tabanan. Live prices, ROI and availability."
+    "metaDescription": "Investment property catalogue in Bali: villas, lofts and studios in Uluwatu, Canggu and Tabanan. Live prices, ROI and availability.",
+    "noResultsHint": "Try widening the area, price range or property type."
   },
   "contact": {
     "title": "Contact | Unreal Studio Madrid",

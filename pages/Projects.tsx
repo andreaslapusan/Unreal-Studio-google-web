@@ -421,9 +421,14 @@ const Projects: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
-            <h3 className="text-2xl text-primary font-serif">{t('projects.noResults')}</h3>
-            <button onClick={() => setFilters({zone:ANY_ZONE, minPrice:'', maxPrice:'', type:ANY_TYPE, status:ANY_STATUS, beds:ANY_BEDS, sort:'featured'})} className="mt-6 text-primary font-bold border-b border-primary">{t('projects.clearFilters')}</button>
+          <div className="bg-white rounded-3xl py-20 px-8 text-center shadow-[0_24px_64px_-40px_rgba(63,35,5,0.3)] border border-primary/5 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <span className="material-symbols-outlined text-primary/25 text-5xl mb-5 block">travel_explore</span>
+            <h3 className="text-3xl md:text-4xl text-primary font-serif mb-3">{t('projects.noResults')}</h3>
+            <p className="text-primary/50 font-medium max-w-md mx-auto mb-8 leading-relaxed">{t('projects.noResultsHint')}</p>
+            <button onClick={() => setFilters({zone:ANY_ZONE, minPrice:'', maxPrice:'', type:ANY_TYPE, status:ANY_STATUS, beds:ANY_BEDS, sort:'featured'})}
+              className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest shadow-lg hover:bg-black hover:gap-3 transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-almond">
+              <span className="material-symbols-outlined text-base">restart_alt</span>{t('projects.clearFilters')}
+            </button>
           </div>
         )}
 
