@@ -2717,6 +2717,6 @@
     "main": "Main",
     "remove": "Remove",
     "enlarge": "Enlarge",
-    "dragHint": "Drag photos to reorder · the 1st is the main one"
+    "dragHint": "Drag to reorder · mark the main photo (cover) with ⭐"
   }
 }

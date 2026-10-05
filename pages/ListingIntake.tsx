@@ -58,6 +58,8 @@ export default function ListingIntake() {
   const [driveUrl, setDriveUrl] = useState("");
   const [driveBusy, setDriveBusy] = useState(false);
   const [driveProgress, setDriveProgress] = useState<{ uploaded: number; total: number } | null>(null);
+  // Foto principal (portada) elegida con la ⭐ — independiente del orden.
+  const [mainPhoto, setMainPhoto] = useState<string>("");
 
   const importDrive = async () => {
     if (!driveUrl.trim()) return;
@@ -112,6 +114,7 @@ export default function ListingIntake() {
           : [],
       }));
       if (Array.isArray(p.photos)) setPhotos(p.photos.map((u: string, i: number) => ({ url: u, name: `foto-${i + 1}` })));
+      if (p.main_photo) setMainPhoto(p.main_photo);
       if (Array.isArray(p.plans)) setPlans(p.plans.map((u: string, i: number) => ({ url: u, name: `plano-${i + 1}` })));
       setLoading(false);
     })();
@@ -170,6 +173,7 @@ export default function ListingIntake() {
       video_url: (form.video_url || "").trim(),
       details: (form.details || "").trim(),
       photos: photos.map((a) => a.url), plans: plans.map((a) => a.url),
+      main_photo: mainPhoto || (photos[0]?.url || ""),
     };
     const { data, error } = await supabase.rpc("intake_submit", { p_token: token, p_payload: payload });
     setSaving(false);
@@ -233,9 +237,9 @@ export default function ListingIntake() {
             <PhotoManager
               photos={photos.map((a) => a.url)}
               onReorder={(next) => setPhotos(next.map((u) => photos.find((a) => a.url === u)).filter(Boolean) as Asset[])}
-              onRemove={(url) => setPhotos((p) => p.filter((a) => a.url !== url))}
-              mainImage={photos[0]?.url}
-              onSetMain={(url) => setPhotos((p) => { const found = p.find((a) => a.url === url); return found ? [found, ...p.filter((a) => a.url !== url)] : p; })}
+              onRemove={(url) => { setPhotos((p) => p.filter((a) => a.url !== url)); if (mainPhoto === url) setMainPhoto(""); }}
+              mainImage={mainPhoto || photos[0]?.url}
+              onSetMain={(url) => setMainPhoto(url)}
               cols={4}
             />
             <button onClick={() => photoInput.current?.click()} className="mt-3 inline-flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-primary/20 text-primary/50 hover:border-primary/40 transition text-sm font-bold">

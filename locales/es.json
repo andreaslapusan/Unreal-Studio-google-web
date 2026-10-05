@@ -2719,6 +2719,6 @@
     "main": "Principal",
     "remove": "Eliminar",
     "enlarge": "Ampliar",
-    "dragHint": "Arrastra las fotos para reordenarlas · la 1ª es la principal"
+    "dragHint": "Arrastra para reordenar · marca con ⭐ la foto principal (portada)"
   }
 }
