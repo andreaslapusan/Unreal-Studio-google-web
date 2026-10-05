@@ -911,7 +911,7 @@ const ProjectDetail: React.FC = () => {
                   sizes="(max-width: 768px) 50vw, 33vw"
                   onError={imgFallback(getImageUrl(similar.image))}
                 />
-                <span className="absolute top-3 left-3 bg-primary/80 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg">{translateStatus(similar.status, t)}</span>
+                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-black/35 backdrop-blur-md text-white border border-white/20 text-[8px] font-black px-3 py-1.5 uppercase tracking-widest rounded-full shadow-lg"><span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(similar.status)}`} />{translateStatus(similar.status, t)}</span>
               </div>
               <div className="p-6 text-left">
                 <h4 className="text-lg font-bold text-primary mb-2 truncate">{similar.name}</h4>
