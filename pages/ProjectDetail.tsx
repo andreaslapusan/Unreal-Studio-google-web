@@ -590,7 +590,7 @@ const ProjectDetail: React.FC = () => {
           {project.amenities && project.amenities.length > 0 && (
             <section>
               <h2 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.servicesTitle')}</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 md:gap-x-14 gap-y-0 border-b border-primary/10">
                 {(() => {
                   const intakeKeys = ['privatePool','sharedPool','garden','parking','security','gym','kitchen','ac','wifi','rooftop','oceanView','nearBeach','coworking','cleaning'];
                   const resolveLabel = (a: string) => (intakeKeys.indexOf(a) >= 0 ? t(`listingIntake.amenity.${a}`) : translateProjectTerm(a, i18n.language));
@@ -619,9 +619,11 @@ const ProjectDetail: React.FC = () => {
                   const amenityIcon = isIntakeKey ? intakeIcons[amenity] : (icons[amenity] || 'check_circle');
                   const amenityLabel = isIntakeKey ? t(`listingIntake.amenity.${amenity}`) : translateProjectTerm(amenity, i18n.language);
                   return (
-                    <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
-                      <span className="material-symbols-outlined text-primary/40">{amenityIcon}</span>
-                      <span className="text-sm font-medium text-primary">{amenityLabel}</span>
+                    // Fila editorial tipo "índice de revista": hairline superior,
+                    // icono en marrón de marca, label refinado, hover cálido (taste §5/§6).
+                    <div key={idx} className="group flex items-center gap-3.5 py-3.5 border-t border-primary/10 transition-colors duration-300 hover:border-primary/25">
+                      <span className="material-symbols-outlined text-[20px] text-primary/50 group-hover:text-primary transition-colors duration-300">{amenityIcon}</span>
+                      <span className="text-[13px] md:text-sm font-medium tracking-tight text-primary/75 group-hover:text-primary transition-colors duration-300">{amenityLabel}</span>
                     </div>
                   );
                   });
@@ -646,7 +648,7 @@ const ProjectDetail: React.FC = () => {
             if (grouped.length === 0) return null;
             return (
               <section>
-                <h2 className="text-3xl text-primary mb-8">{t('projectDetail.equipmentTitle')}</h2>
+                <h2 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.equipmentTitle')}</h2>
                 <div className="space-y-6">
                   {grouped.map(([catName, cat]) => {
                     const activeItems = cat.items.filter(item => project.furnishing_items!.includes(item));
@@ -656,11 +658,11 @@ const ProjectDetail: React.FC = () => {
                           <span className="material-symbols-outlined text-primary/30">{cat.icon}</span>
                           <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">{translateProjectTerm(catName, i18n.language)}</p>
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 md:gap-x-14 gap-y-0 border-b border-primary/10">
                           {activeItems.map((item, idx) => (
-                            <div key={idx} className="flex items-center gap-2 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
-                              <span className="material-symbols-outlined text-primary/30 text-sm">check_circle</span>
-                              <span className="text-sm font-medium text-primary">{translateProjectTerm(item, i18n.language)}</span>
+                            <div key={idx} className="group flex items-center gap-3 py-3 border-t border-primary/10 transition-colors duration-300 hover:border-primary/25">
+                              <span className="material-symbols-outlined text-primary/35 text-[18px] group-hover:text-primary/70 transition-colors duration-300">check_circle</span>
+                              <span className="text-[13px] md:text-sm font-medium tracking-tight text-primary/75 group-hover:text-primary transition-colors duration-300">{translateProjectTerm(item, i18n.language)}</span>
                             </div>
                           ))}
                         </div>
