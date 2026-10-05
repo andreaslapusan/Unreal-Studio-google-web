@@ -18,8 +18,8 @@ import { realEmailOf } from '../lib/portalAuth';
 
 type Project = Record<string, any>;
 
-const field = 'w-full px-4 py-3 bg-gray-50 rounded-xl font-medium border border-gray-200 focus:border-primary focus:outline-none';
-const labelCls = 'block text-[10px] font-black uppercase text-gray-400 mb-1.5';
+const field = 'w-full px-4 py-3 bg-almond/50 rounded-xl font-medium border border-primary/15 focus:border-primary focus:outline-none';
+const labelCls = 'block text-[10px] font-black uppercase text-primary/45 mb-1.5';
 
 const EquipoProperties: React.FC = () => {
   const { t } = useTranslation();
@@ -162,15 +162,15 @@ const EquipoProperties: React.FC = () => {
             <div><label className={labelCls}>{t('fix.eqp.labelGallery')}</label><textarea className={`${field} h-24 resize-none font-mono text-xs`} value={galleryText} onChange={(e) => setGalleryText(e.target.value)} /></div>
             <div><label className={labelCls}>{t('fix.eqp.labelConstructionGallery')}</label><textarea className={`${field} h-24 resize-none font-mono text-xs`} value={conGalleryText} onChange={(e) => setConGalleryText(e.target.value)} /></div>
 
-            <div className="flex items-center justify-between bg-gray-50 rounded-2xl p-4 border border-gray-100">
+            <div className="flex items-center justify-between bg-almond/50 rounded-2xl p-4 border border-primary/10">
               <span className="text-[10px] font-black uppercase text-primary/60">{t('fix.eqp.hiddenOnWeb')}</span>
-              <button type="button" onClick={() => setCurrent({ ...current, is_hidden: !current.is_hidden })} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${current.is_hidden ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+              <button type="button" onClick={() => setCurrent({ ...current, is_hidden: !current.is_hidden })} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${current.is_hidden ? 'bg-primary justify-end' : 'bg-primary/20 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
             </div>
 
             {msg && <p className={`text-sm font-bold ${msgErr ? 'text-red-600' : 'text-green-600'}`}>{msg}</p>}
 
             <div className="flex gap-4 pt-2">
-              <button type="button" onClick={() => setCurrent(null)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50">{t('fix.eqp.cancel')}</button>
+              <button type="button" onClick={() => setCurrent(null)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-primary/15 text-primary/45 hover:bg-almond/50">{t('fix.eqp.cancel')}</button>
               <button type="submit" disabled={saving} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black disabled:opacity-50">{saving ? t('fix.eqp.saving') : t('fix.eqp.save')}</button>
             </div>
           </form>

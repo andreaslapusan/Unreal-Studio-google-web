@@ -104,7 +104,7 @@ const LinkBtn: React.FC<{ href: string | null | undefined; children: React.React
       {children}
     </a>
   ) : (
-    <span className="px-4 py-2 bg-gray-100 text-gray-400 rounded-full text-xs font-bold inline-block cursor-not-allowed">
+    <span className="px-4 py-2 bg-primary/10 text-primary/45 rounded-full text-xs font-bold inline-block cursor-not-allowed">
       {children} ({t('agencyPack.notAvailable')})
     </span>
   );

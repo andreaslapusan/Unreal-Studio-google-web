@@ -43,7 +43,7 @@ const TYPE_META: Record<VacationType, { chip: string; dot: string }> = {
 };
 
 const STATUS_CLS: Record<string, string> = {
-  pendiente: 'bg-gray-100 text-gray-600',
+  pendiente: 'bg-primary/10 text-primary/65',
   aprobada: 'bg-green-100 text-green-700',
   rechazada: 'bg-red-100 text-red-700',
 };
@@ -95,7 +95,7 @@ const MonthGrid: React.FC<{ y: number; m: number; vacations: Vacation[]; myEmail
           const isToday = k === todayIso;
           return (
             <div key={i} title={vs.map((v) => tooltipFor ? tooltipFor(v) : `${v.employee_name || v.employee_email} — ${typeMetaKey(v.type)} (${v.status})`).join('\n')}
-              className={`rounded ${compact ? 'min-h-[26px] p-0.5' : 'min-h-[46px] p-1'} border ${isToday ? 'border-primary' : 'border-gray-100'} ${vs.length ? 'bg-almond/40' : 'bg-white'}`}>
+              className={`rounded ${compact ? 'min-h-[26px] p-0.5' : 'min-h-[46px] p-1'} border ${isToday ? 'border-primary' : 'border-primary/10'} ${vs.length ? 'bg-almond/40' : 'bg-white'}`}>
               <div className={`text-right ${compact ? 'text-[8px]' : 'text-[10px]'} font-bold ${isToday ? 'text-primary' : 'text-primary/40'}`}>{d}</div>
               <div className="flex flex-wrap gap-0.5 mt-0.5">
                 {vs.slice(0, compact ? 3 : 5).map((v) => (
@@ -381,7 +381,7 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
               <button
                 type="button"
                 onClick={() => { setShowForm(false); resetForm(); setError(null); }}
-                className="px-4 rounded-xl bg-white border border-primary/15 text-primary font-bold text-sm uppercase tracking-wide hover:bg-gray-50 transition"
+                className="px-4 rounded-xl bg-white border border-primary/15 text-primary font-bold text-sm uppercase tracking-wide hover:bg-almond/50 transition"
               >
                 {t('vacaciones.form.discard')}
               </button>
@@ -435,7 +435,7 @@ const VacationCalendar: React.FC<VacationCalendarProps> = ({ employeeId, employe
 
       {/* Controles: Mes/Año · navegación · imprimir */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
-        <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+        <div className="flex items-center gap-1 bg-primary/10 rounded-full p-1">
           {(['mes', 'anio'] as const).map((v) => (
             <button key={v} onClick={() => setView(v)} className={`px-3 py-1 rounded-full text-[11px] font-bold transition ${view === v ? 'bg-primary text-white' : 'text-primary/50'}`}>{v === 'mes' ? t('fix.vac.viewMonth') : t('fix.vac.viewYear')}</button>
           ))}

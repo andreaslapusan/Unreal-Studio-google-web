@@ -125,7 +125,7 @@ export default function AgenciasDashboard() {
       {showInfo && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setShowInfo(false)}>
           <div className="ust-modal bg-white rounded-2xl shadow-2xl p-7 relative" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setShowInfo(false)} className="absolute top-4 right-4 text-gray-400 hover:text-primary transition">
+            <button onClick={() => setShowInfo(false)} className="absolute top-4 right-4 text-primary/45 hover:text-primary transition">
               <span className="material-symbols-outlined">close</span>
             </button>
             <h2 className="text-2xl font-serif text-primary mb-4">{t('agenciasDashboard.infoTitle', 'Cómo usar tu portal de agencia')}</h2>

@@ -1068,7 +1068,7 @@ export function TimelinesTab({ data, onChange }: { data: ProjectRow[]; onChange:
                   <td className="p-3 text-xs">{p.completion_percent ?? 0}%</td>
                   <td className="p-3 text-xs">
                     <span className={`inline-block px-2 py-1 rounded-full text-[10px] font-bold ${
-                      phaseCount > 0 ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"
+                      phaseCount > 0 ? "bg-green-100 text-green-800" : "bg-primary/10 text-primary/55"
                     }`}>
                       {phaseCount > 0 ? t('fix.apm.phasesCount', { count: phaseCount }) : t('fix.apm.noTimeline')}
                     </span>
@@ -1438,7 +1438,7 @@ function EquipoTab() {
                 <td className="p-3">{hasPermission(e, "upload_reports") ? "✅" : "—"}</td>
                 <td className="p-3">{hasPermission(e, "edit_properties") ? "✅" : "—"}</td>
                 <td className="p-3">
-                  <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${e.active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"}`}>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${e.active ? "bg-green-100 text-green-800" : "bg-primary/10 text-primary/55"}`}>
                     {e.active ? t('fix.apm.badgeActive') : t('fix.apm.badgeInactive')}
                   </span>
                 </td>

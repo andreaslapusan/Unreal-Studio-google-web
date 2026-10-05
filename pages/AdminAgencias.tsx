@@ -197,7 +197,7 @@ const AdminAgencias: React.FC = () => {
               >
                 <button
                   onClick={() => setExpanded((s) => ({ ...s, [p.id]: !isOpen }))}
-                  className="w-full px-6 md:px-10 py-6 flex items-center justify-between hover:bg-gray-50 transition"
+                  className="w-full px-6 md:px-10 py-6 flex items-center justify-between hover:bg-almond/50 transition"
                 >
                   <div className="flex items-center gap-6 text-left">
                     <span

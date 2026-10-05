@@ -9,7 +9,7 @@ import AdminSidebar from './AdminSidebar';
 import AdminMobileNav from './AdminMobileNav';
 
 const AdminShell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="min-h-screen flex bg-gray-50">
+  <div className="min-h-screen flex bg-almond">
     <AdminSidebar />
     <div className="flex-1 min-w-0">
       <AdminMobileNav />

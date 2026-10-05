@@ -47,7 +47,7 @@ const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }>
   if (loading || rows.length === 0) return null;
 
   return (
-    <section className={embedded ? 'mt-8 pt-6 border-t border-gray-100' : 'mt-10'}>
+    <section className={embedded ? 'mt-8 pt-6 border-t border-primary/10' : 'mt-10'}>
       <h2 className={embedded ? 'text-[10px] font-black uppercase tracking-widest text-primary/40 mb-3' : 'font-serif text-2xl text-primary mb-4'}>{t('admin.clientDash.receiptsTitle', 'Recibos de pago generados')}</h2>
       <div className="space-y-3">
         {rows.map((k) => (
