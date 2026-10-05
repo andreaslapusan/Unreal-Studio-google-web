@@ -2709,5 +2709,12 @@
     "addExtension": "Adaugă altă extindere",
     "rentCurrency": "Moneda chiriei",
     "alreadyRented": "Deja închiriat (chiriaș prezent)"
+  },
+  "photoManager": {
+    "setMain": "Setează ca principală",
+    "main": "Principală",
+    "remove": "Elimină",
+    "enlarge": "Mărește",
+    "dragHint": "Trage pozele pentru a le reordona · prima e cea principală"
   }
 }

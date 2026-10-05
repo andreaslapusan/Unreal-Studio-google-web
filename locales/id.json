@@ -2710,5 +2710,12 @@
     "addExtension": "Tambah perpanjangan",
     "rentCurrency": "Mata uang sewa",
     "alreadyRented": "Sudah disewa (ada penyewa)"
+  },
+  "photoManager": {
+    "setMain": "Jadikan utama",
+    "main": "Utama",
+    "remove": "Hapus",
+    "enlarge": "Perbesar",
+    "dragHint": "Seret foto untuk mengurutkan · yang ke-1 adalah utama"
   }
 }

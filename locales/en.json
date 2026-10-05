@@ -2709,5 +2709,12 @@
     "addExtension": "Add another extension",
     "rentCurrency": "Rent currency",
     "alreadyRented": "Already rented (tenant in place)"
+  },
+  "photoManager": {
+    "setMain": "Set as main",
+    "main": "Main",
+    "remove": "Remove",
+    "enlarge": "Enlarge",
+    "dragHint": "Drag photos to reorder · the 1st is the main one"
   }
 }

@@ -16,6 +16,7 @@ import { compressImage } from "../lib/imageCompress";
 import { runDriveImport } from "../lib/driveImport";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import NumberInput from "../components/NumberInput";
+import PhotoManager from "../components/PhotoManager";
 
 interface Asset { url: string; name: string; }
 const BUCKET = "intake-uploads";
@@ -225,16 +226,17 @@ export default function ListingIntake() {
         {/* 1 · Media */}
         <Section title={t("listingIntake.photosTitle")} open={openSection === "media"} onToggle={() => toggleSection("media")}>
           <p className="text-sm text-primary/50 mb-4">{t("listingIntake.photosHint")}</p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-5">
-            {photos.map((a, i) => (
-              <div key={i} className="relative aspect-square rounded-xl overflow-hidden">
-                <img src={a.url} alt={a.name} className="w-full h-full object-cover" />
-                <button onClick={() => removeAsset("photos", i)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">✕</button>
-              </div>
-            ))}
-            <button onClick={() => photoInput.current?.click()} className="aspect-square rounded-xl border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-primary/40 hover:border-primary/40 transition">
-              <span className="material-symbols-outlined">add_photo_alternate</span>
-              <span className="text-[10px] font-bold mt-1">{t("listingIntake.add")}</span>
+          <div className="mb-5">
+            <PhotoManager
+              photos={photos.map((a) => a.url)}
+              onReorder={(next) => setPhotos(next.map((u) => photos.find((a) => a.url === u)).filter(Boolean) as Asset[])}
+              onRemove={(url) => setPhotos((p) => p.filter((a) => a.url !== url))}
+              mainImage={photos[0]?.url}
+              onSetMain={(url) => setPhotos((p) => { const found = p.find((a) => a.url === url); return found ? [found, ...p.filter((a) => a.url !== url)] : p; })}
+              cols={4}
+            />
+            <button onClick={() => photoInput.current?.click()} className="mt-3 inline-flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-primary/20 text-primary/50 hover:border-primary/40 transition text-sm font-bold">
+              <span className="material-symbols-outlined">add_photo_alternate</span>{t("listingIntake.add")}
             </button>
           </div>
           <input ref={photoInput} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && uploadFiles(e.target.files, "photos")} />

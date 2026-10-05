@@ -1,4 +1,5 @@
 import NumberInput from "../components/NumberInput";
+import PhotoManager from "../components/PhotoManager";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
@@ -792,10 +793,14 @@ const AMENITIES_LIST = [
     if (type === 'main') {
         setCurrentProject(prev => ({ ...prev, image: '' }));
     } else if (type === 'gallery') {
-        setCurrentProject(prev => ({ 
-            ...prev, 
-            gallery: (prev.gallery || []).filter(img => img !== photo) 
-        }));
+        setCurrentProject(prev => {
+            const nextGallery = (prev.gallery || []).filter(img => img !== photo);
+            // Si borramos la foto que era la PRINCIPAL, la principal pasa a ser la
+            // 1ª que quede (evita que quede un render viejo/roto como imagen de la
+            // tarjeta en home/proyectos/admin).
+            const wasMain = getImageUrl(prev.image || '') === getImageUrl(photo);
+            return { ...prev, gallery: nextGallery, image: wasMain ? (nextGallery[0] || '') : prev.image };
+        });
     } else if (type === 'construction_gallery') {
         setCurrentProject(prev => ({ 
             ...prev, 
@@ -874,9 +879,13 @@ const AMENITIES_LIST = [
     // Fix: Save tiers as a simple string, not an array
     const processedTiers = tiersInput.trim();
 
+    const mergedGallery = [...(currentProject.gallery || []), ...newGalleryImages];
     const projectToSave = {
         ...currentProject,
-        gallery: [...(currentProject.gallery || []), ...newGalleryImages],
+        gallery: mergedGallery,
+        // La imagen principal ya no es un campo aparte: se marca desde la galería.
+        // Si no hay ninguna marcada, usamos la 1ª foto de la galería por defecto.
+        image: (currentProject.image && currentProject.image.trim()) ? currentProject.image : (mergedGallery[0] || ''),
         investor_tiers: processedTiers || null
     } as Project;
 
@@ -2595,18 +2604,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.mainImage')}</label>
-                   <div className="flex gap-2">
-                       <input type="text" value={currentProject.image || ''} onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})} placeholder={t('admin.props.mainImagePlaceholder')} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20" />
-                       <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                           {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
-                           <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_main')} disabled={uploading} />
-                       </label>
-                   </div>
-                   {currentProject.image && <div className="mt-4 h-40 rounded-2xl overflow-hidden border border-gray-200"><img src={getImageUrl(currentProject.image)} className="w-full h-full object-cover" /></div>}
-                </div>
-
-                <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.gallery')}</label>
                    <div className="flex gap-2 mb-4">
                        <input type="text" value={galleryInput} onChange={(e) => setGalleryInput(e.target.value)} placeholder={t('admin.props.extraUrl')} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20" />
@@ -2626,20 +2623,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                            </button>
                        </div>
                    </div>
-                   <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
-                       {(currentProject.gallery || []).map((img, idx) => (
-                           <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-gray-200">
-                               <img src={getImageUrl(img)} className="w-full h-full object-cover" />
-                               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2 text-white">
-                                   <div className="flex gap-2">
-                                     <button type="button" onClick={() => moveGalleryImage(idx, -1)} disabled={idx === 0} className="p-1 hover:bg-white/20 rounded disabled:opacity-30"><span className="material-symbols-outlined text-sm">arrow_back</span></button>
-                                     <button type="button" onClick={() => moveGalleryImage(idx, 1)} disabled={idx === (currentProject.gallery?.length || 0) - 1} className="p-1 hover:bg-white/20 rounded disabled:opacity-30"><span className="material-symbols-outlined text-sm">arrow_forward</span></button>
-                                   </div>
-                                   <button type="button" onClick={() => removePhoto(img, 'gallery')} className="p-1 hover:bg-red-500 rounded"><span className="material-symbols-outlined">delete</span></button>
-                               </div>
-                           </div>
-                       ))}
-                   </div>
+                   <PhotoManager
+                     photos={currentProject.gallery || []}
+                     onReorder={(next) => setCurrentProject({ ...currentProject, gallery: next })}
+                     onRemove={(url) => removePhoto(url, 'gallery')}
+                     mainImage={currentProject.image}
+                     onSetMain={(url) => setCurrentProject({ ...currentProject, image: url })}
+                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2651,16 +2641,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_construction_gallery')} disabled={uploading} />
                        </label>
                    </div>
-                   <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
-                       {(currentProject.construction_gallery || []).map((img, idx) => (
-                           <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-gray-200">
-                               <img src={getImageUrl(img)} className="w-full h-full object-cover" />
-                               <button type="button" onClick={() => removePhoto(img, 'construction_gallery')} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                                   <span className="material-symbols-outlined">delete</span>
-                               </button>
-                           </div>
-                       ))}
-                   </div>
+                   <PhotoManager
+                     photos={currentProject.construction_gallery || []}
+                     onReorder={(next) => setCurrentProject({ ...currentProject, construction_gallery: next })}
+                     onRemove={(url) => removePhoto(url, 'construction_gallery')}
+                   />
                 </div>
 
                 <div>

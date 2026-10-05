@@ -2711,5 +2711,12 @@
     "addExtension": "Añadir otra extensión",
     "rentCurrency": "Divisa del alquiler",
     "alreadyRented": "Ya alquilado (inquilino dentro)"
+  },
+  "photoManager": {
+    "setMain": "Marcar como principal",
+    "main": "Principal",
+    "remove": "Eliminar",
+    "enlarge": "Ampliar",
+    "dragHint": "Arrastra las fotos para reordenarlas · la 1ª es la principal"
   }
 }
