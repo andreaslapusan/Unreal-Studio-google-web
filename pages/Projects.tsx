@@ -346,6 +346,7 @@ const Projects: React.FC = () => {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     onError={imgFallback(getImageUrl(proj.image))}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
                   <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
                     <span className="inline-flex items-center gap-1.5 md:gap-2 bg-black/35 backdrop-blur-md text-white text-[8px] md:text-[9px] font-black px-2.5 py-1 md:px-3.5 md:py-1.5 uppercase tracking-widest rounded-full border border-white/15 shadow-lg">
                       <span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(proj.status)}`} />{translateStatus(proj.status, t)}
