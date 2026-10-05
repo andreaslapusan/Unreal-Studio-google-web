@@ -4,6 +4,7 @@ import { dateOnly } from '../lib/timezone';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
+import InlineNotFound from '../components/InlineNotFound';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { usePageMeta } from '../components/PageMeta';
@@ -93,10 +94,12 @@ const BlogDetail: React.FC = () => {
 
   if (!post) {
       return (
-          <div className="h-screen flex flex-col items-center justify-center bg-almond text-primary gap-4">
-              <h1 className="font-serif text-3xl">{t('blog.articleNotFound')}</h1>
-              <Link to="/blog" className="text-xs font-bold uppercase tracking-widest border-b border-primary">{t('blog.backToBlog')}</Link>
-          </div>
+          <InlineNotFound
+            title={t('blog.articleNotFound')}
+            backTo="/blog"
+            backLabel={t('blog.backToBlog')}
+            icon="article"
+          />
       );
   }
 

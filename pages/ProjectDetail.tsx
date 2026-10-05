@@ -23,6 +23,7 @@ import { statusDotClass } from '../lib/statusColor';
 import { useAuth } from '../lib/auth-context';
 import Reveal from '../components/Reveal';
 import PageLoader from '../components/PageLoader';
+import InlineNotFound from '../components/InlineNotFound';
 
 const ProjectDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -357,10 +358,12 @@ const ProjectDetail: React.FC = () => {
 
   if (!project) {
       return (
-          <div className="min-h-screen bg-almond flex flex-col items-center justify-center p-6 text-center">
-              <h1 className="text-4xl font-serif text-primary mb-4">{t('projectDetail.notFound')}</h1>
-              <Link to="/proyectos" className="text-primary font-bold uppercase tracking-widest border-b border-primary text-xs">{t('projectDetail.backToProjects')}</Link>
-          </div>
+          <InlineNotFound
+            title={t('projectDetail.notFound')}
+            backTo="/proyectos"
+            backLabel={t('projectDetail.backToProjects')}
+            icon="villa"
+          />
       );
   }
 
