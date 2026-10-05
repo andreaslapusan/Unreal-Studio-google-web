@@ -2009,7 +2009,9 @@
     "notAvailable": "tidak tersedia",
     "floorPlansTitle": "Rencana lantai",
     "footerLine1": "Pack agen · Unreal Studio Bali · Data langsung dari Supabase",
-    "footerLine2": "Komisi default: 5% sudah termasuk dalam harga. Untuk kesepakatan khusus, hubungi langsung."
+    "footerLine2": "Komisi default: 5% sudah termasuk dalam harga. Untuk kesepakatan khusus, hubungi langsung.",
+    "earningsBody": "Estimasi komisi jika Anda menjual seluruh inventaris tersedia yang ditugaskan kepada Anda:",
+    "earningsHint": "Dihitung 5% dari harga agensi (dapat bervariasi karena penyesuaian individual)."
   },
   "terms": {
     "docTitle": "Syarat dan Ketentuan | Unreal Studio Madrid",

@@ -2027,7 +2027,9 @@
     "notAvailable": "not available",
     "floorPlansTitle": "Floor Plans",
     "footerLine1": "Agency pack · Unreal Studio Bali · Live data from Supabase",
-    "footerLine2": "Default commission: 5% included in the price. For special agreements, contact us directly."
+    "footerLine2": "Default commission: 5% included in the price. For special agreements, contact us directly.",
+    "earningsBody": "Estimated commission if you sell all the available inventory assigned to you:",
+    "earningsHint": "Calculated at 5% on the agency price (may vary due to individual adjustments)."
   },
   "fix": {
     "att": {

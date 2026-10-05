@@ -2027,7 +2027,9 @@
     "notAvailable": "indisponibil",
     "floorPlansTitle": "Planuri",
     "footerLine1": "Pachet agenție · Unreal Studio Bali · Date live din Supabase",
-    "footerLine2": "Comision implicit: 5% inclus în preț. Pentru acorduri speciale, contactează-ne direct."
+    "footerLine2": "Comision implicit: 5% inclus în preț. Pentru acorduri speciale, contactează-ne direct.",
+    "earningsBody": "Comision estimat dacă vinzi tot inventarul disponibil care ți-a fost alocat:",
+    "earningsHint": "Calculată la 5% din prețul de agenție (poate varia în funcție de ajustări individuale)."
   },
   "fix": {
     "att": {
