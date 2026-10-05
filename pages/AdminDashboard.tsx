@@ -484,11 +484,14 @@ const AMENITIES_LIST = [
   const [galleryInput, setGalleryInput] = useState('');
   const [driveUrlAdmin, setDriveUrlAdmin] = useState('');
   const [driveBusyAdmin, setDriveBusyAdmin] = useState(false);
+  const [driveProgress, setDriveProgress] = useState<{ uploaded: number; total: number } | null>(null);
   const importGalleryFromDrive = async () => {
     if (!driveUrlAdmin.trim()) return;
     setDriveBusyAdmin(true);
-    const res = await runDriveImport('admin', null, driveUrlAdmin.trim());
+    setDriveProgress({ uploaded: 0, total: 0 });
+    const res = await runDriveImport('admin', null, driveUrlAdmin.trim(), undefined, (uploaded, total) => setDriveProgress({ uploaded, total }));
     setDriveBusyAdmin(false);
+    setDriveProgress(null);
     if (res.urls.length) {
       setCurrentProject(prev => ({ ...prev, gallery: [...(prev.gallery || []), ...res.urls] }));
       setDriveUrlAdmin('');
@@ -2622,6 +2625,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                                {driveBusyAdmin ? t('admin.props.driveImporting', { defaultValue: 'Importando…' }) : t('admin.props.driveImport', { defaultValue: 'Importar de Drive' })}
                            </button>
                        </div>
+                       {driveBusyAdmin && (
+                         <div className="mt-3">
+                           <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-primary/50 mb-1.5">
+                             <span>{driveProgress && driveProgress.total > 0 ? t('admin.props.driveProgress', { done: driveProgress.uploaded, total: driveProgress.total }) : t('admin.props.driveQueued', { defaultValue: 'Preparando importación…' })}</span>
+                             <span>{driveProgress && driveProgress.total > 0 ? Math.round((driveProgress.uploaded / driveProgress.total) * 100) + '%' : ''}</span>
+                           </div>
+                           <div className="w-full bg-primary/10 rounded-full h-2 overflow-hidden">
+                             <div className={`bg-primary h-full rounded-full transition-all duration-500 ${driveProgress && driveProgress.total > 0 ? '' : 'animate-pulse'}`} style={{ width: driveProgress && driveProgress.total > 0 ? `${(driveProgress.uploaded / driveProgress.total) * 100}%` : '10%' }} />
+                           </div>
+                         </div>
+                       )}
                    </div>
                    <PhotoManager
                      photos={currentProject.gallery || []}

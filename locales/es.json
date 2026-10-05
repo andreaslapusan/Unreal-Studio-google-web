@@ -656,7 +656,9 @@
       "driveImport": "Importar de Drive",
       "driveImporting": "Importando…",
       "driveError": "No se pudieron importar las fotos de Drive.",
-      "driveHint": "Si pegas un enlace de una carpeta de Google Drive, importaremos automáticamente todas las fotos de la carpeta a la galería."
+      "driveHint": "Si pegas un enlace de una carpeta de Google Drive, importaremos automáticamente todas las fotos de la carpeta a la galería.",
+      "driveProgress": "Subiendo {{done}} de {{total}} fotos",
+      "driveQueued": "Preparando importación…"
     },
     "blogTab": {
       "title": "Artículos del Blog",

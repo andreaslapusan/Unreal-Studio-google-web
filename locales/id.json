@@ -788,7 +788,9 @@
       "driveImport": "Impor dari Drive",
       "driveImporting": "Mengimpor…",
       "driveError": "Gagal mengimpor foto dari Drive.",
-      "driveHint": "Jika Anda menempel tautan folder Google Drive, kami otomatis mengimpor semua foto di folder itu ke galeri."
+      "driveHint": "Jika Anda menempel tautan folder Google Drive, kami otomatis mengimpor semua foto di folder itu ke galeri.",
+      "driveProgress": "Mengunggah {{done}} dari {{total}} foto",
+      "driveQueued": "Menyiapkan impor…"
     },
     "blogTab": {
       "title": "Artikel Blog",

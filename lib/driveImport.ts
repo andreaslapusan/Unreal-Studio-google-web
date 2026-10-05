@@ -14,6 +14,7 @@ export async function runDriveImport(
   token: string | null,
   folderUrl: string,
   onStatus?: (s: string) => void,
+  onProgress?: (uploaded: number, total: number) => void,
 ): Promise<DriveImportResult> {
   onStatus?.("queued");
   const { data, error } = await supabase.rpc("request_drive_import", {
@@ -21,13 +22,15 @@ export async function runDriveImport(
   });
   if (error || !data?.ok) return { urls: [], error: data?.error || error?.message || "request_failed" };
   const id = data.id;
-  // Poll up to ~3 min (bot cron runs every minute).
-  for (let i = 0; i < 60; i++) {
+  // Poll up to ~5 min (bot cron runs every minute). Reportamos progreso real
+  // (subidas/total) para pintar la barra de avance.
+  for (let i = 0; i < 100; i++) {
     await new Promise((r) => setTimeout(r, 3000));
     const { data: st } = await supabase.rpc("drive_import_get", { p_id: id });
     if (!st) continue;
     onStatus?.(st.status);
-    if (st.status === "done") return { urls: Array.isArray(st.urls) ? st.urls : [] };
+    if (typeof st.total === "number" && st.total > 0) onProgress?.(st.uploaded || 0, st.total);
+    if (st.status === "done") { onProgress?.(st.count ?? (Array.isArray(st.urls) ? st.urls.length : 0), st.total || st.count || 0); return { urls: Array.isArray(st.urls) ? st.urls : [] }; }
     if (st.status === "error") return { urls: [], error: st.error || "import_error" };
   }
   return { urls: [], error: "timeout" };

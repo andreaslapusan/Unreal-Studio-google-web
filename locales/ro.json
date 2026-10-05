@@ -656,7 +656,9 @@
       "driveImport": "Importă din Drive",
       "driveImporting": "Se importă…",
       "driveError": "Nu s-au putut importa pozele din Drive.",
-      "driveHint": "Dacă lipești un link de folder Google Drive, importăm automat toate pozele din folder în galerie."
+      "driveHint": "Dacă lipești un link de folder Google Drive, importăm automat toate pozele din folder în galerie.",
+      "driveProgress": "Se încarcă {{done}} din {{total}} poze",
+      "driveQueued": "Se pregătește importul…"
     },
     "blogTab": {
       "title": "Articole Blog",

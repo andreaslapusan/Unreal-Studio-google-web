@@ -57,12 +57,15 @@ export default function ListingIntake() {
   const [plans, setPlans] = useState<Asset[]>([]);
   const [driveUrl, setDriveUrl] = useState("");
   const [driveBusy, setDriveBusy] = useState(false);
+  const [driveProgress, setDriveProgress] = useState<{ uploaded: number; total: number } | null>(null);
 
   const importDrive = async () => {
     if (!driveUrl.trim()) return;
     setDriveBusy(true);
-    const res = await runDriveImport("intake", token, driveUrl.trim());
+    setDriveProgress({ uploaded: 0, total: 0 });
+    const res = await runDriveImport("intake", token, driveUrl.trim(), undefined, (uploaded, total) => setDriveProgress({ uploaded, total }));
     setDriveBusy(false);
+    setDriveProgress(null);
     if (res.urls.length) {
       setPhotos((prev) => [...prev, ...res.urls.map((u, i) => ({ url: u, name: `drive-${i + 1}` }))]);
       setDriveUrl("");
@@ -252,6 +255,17 @@ export default function ListingIntake() {
                 {driveBusy ? t("listingIntake.driveImporting") : t("listingIntake.driveImport")}
               </button>
             </div>
+            {driveBusy && (
+              <div className="mt-3">
+                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-primary/50 mb-1.5">
+                  <span>{driveProgress && driveProgress.total > 0 ? t("admin.props.driveProgress", { done: driveProgress.uploaded, total: driveProgress.total }) : t("admin.props.driveQueued", { defaultValue: "Preparando importación…" })}</span>
+                  <span>{driveProgress && driveProgress.total > 0 ? Math.round((driveProgress.uploaded / driveProgress.total) * 100) + "%" : ""}</span>
+                </div>
+                <div className="w-full bg-primary/10 rounded-full h-2 overflow-hidden">
+                  <div className={`bg-primary h-full rounded-full transition-all duration-500 ${driveProgress && driveProgress.total > 0 ? "" : "animate-pulse"}`} style={{ width: driveProgress && driveProgress.total > 0 ? `${(driveProgress.uploaded / driveProgress.total) * 100}%` : "10%" }} />
+                </div>
+              </div>
+            )}
           </div>
 
           <p className="text-sm text-primary/50 mb-3">{t("listingIntake.plansHint")}</p>
