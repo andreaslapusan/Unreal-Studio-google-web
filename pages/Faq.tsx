@@ -230,7 +230,7 @@ export default function Faq() {
                   add
                 </span>
               </summary>
-              <div className="px-6 pb-6 text-primary/80 text-sm md:text-base leading-relaxed">
+              <div className="px-6 pb-6 text-primary/80 text-sm md:text-base leading-relaxed motion-safe:group-open:animate-[fadeInUp_0.35s_ease-out]">
                 {renderAnswer(f.answer)}
               </div>
             </details>
