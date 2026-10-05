@@ -68,18 +68,18 @@ const ParticipantsPicker: React.FC<{ holders: any[]; value: any; onChange: (v: a
   const curPctMap: Record<string, any> = {}; for (const h of hs) curPctMap[(h.email || '').trim().toLowerCase()] = pctOf((h.email || '').trim().toLowerCase());
   return (
     <div>
-      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.participantsLabel', { defaultValue: 'Titulares que participan en esta propiedad' })}</label>
-      <p className="text-[11px] text-gray-400 mb-2">{t('admin.dash.participantsHint', { defaultValue: 'Marca quién participa y, si quieres, su %. Solo verán esta propiedad y recibirán sus emails los marcados. Si dejas todos marcados, participan todos.' })}</p>
+      <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.participantsLabel', { defaultValue: 'Titulares que participan en esta propiedad' })}</label>
+      <p className="text-[11px] text-primary/45 mb-2">{t('admin.dash.participantsHint', { defaultValue: 'Marca quién participa y, si quieres, su %. Solo verán esta propiedad y recibirán sus emails los marcados. Si dejas todos marcados, participan todos.' })}</p>
       <div className="space-y-2">
         {hs.map((h: any, i: number) => {
           const em = (h.email || '').trim(); const emL = em.toLowerCase(); const checked = checkedSet.has(emL);
           return (
-            <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
+            <div key={i} className="flex items-center gap-2 bg-almond/50 rounded-xl px-3 py-2 border border-primary/10">
               <input type="checkbox" checked={checked} onChange={() => { const n = new Set(checkedSet); if (n.has(emL)) { if (n.size <= 1) return; n.delete(emL); } else n.add(emL); emit(n, curPctMap); }} className="rounded" />
-              <span className="flex-1 text-sm font-medium text-primary truncate">{(h.name || '').trim() || em}<span className="text-gray-400 font-normal"> · {em}</span></span>
+              <span className="flex-1 text-sm font-medium text-primary truncate">{(h.name || '').trim() || em}<span className="text-primary/45 font-normal"> · {em}</span></span>
               <div className="flex items-center gap-1">
-                <input type="number" min="0" max="100" step="0.0001" value={checked ? (curPctMap[emL] ?? '') : ''} disabled={!checked} onChange={(e) => { const pm = { ...curPctMap, [emL]: e.target.value }; emit(new Set(checkedSet), pm); }} placeholder="%" className="w-20 px-2 py-1 bg-white rounded-lg border border-gray-200 text-sm font-bold text-right disabled:opacity-40" />
-                <span className="text-xs text-gray-400">%</span>
+                <input type="number" min="0" max="100" step="0.0001" value={checked ? (curPctMap[emL] ?? '') : ''} disabled={!checked} onChange={(e) => { const pm = { ...curPctMap, [emL]: e.target.value }; emit(new Set(checkedSet), pm); }} placeholder="%" className="w-20 px-2 py-1 bg-white rounded-lg border border-primary/15 text-sm font-bold text-right disabled:opacity-40" />
+                <span className="text-xs text-primary/45">%</span>
               </div>
             </div>
           );
@@ -1720,19 +1720,19 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans text-left relative">
+    <div className="min-h-screen bg-almond/50 flex font-sans text-left relative">
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
 
       {/* 5-STEP CENTERED GUIDE OVERLAY */}
       {walkthroughStep !== null && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 mx-4 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 mx-4 border border-primary/10">
             
             {/* Close Button */}
             <button 
               onClick={() => setWalkthroughStep(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-primary transition"
+              className="absolute top-4 right-4 text-primary/45 hover:text-primary transition"
               title={t('admin.dash.closeGuide')}
             >
               <span className="material-symbols-outlined">close</span>
@@ -1750,14 +1750,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               </p>
             </div>
 
-            <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+            <div className="flex justify-between items-center pt-4 border-t border-primary/10">
               {/* Progress Dots */}
               <div className="flex gap-2">
                 {GUIDE_STEPS.map((_, i) => (
                   <div 
                     key={i}
                     className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                      i === walkthroughStep ? 'bg-primary' : 'bg-gray-200'
+                      i === walkthroughStep ? 'bg-primary' : 'bg-primary/10'
                     }`}
                   />
                 ))}
@@ -1786,7 +1786,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
       )}
 
-      <header className="bg-white border-b border-gray-200 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center gap-2">
+      <header className="bg-white border-b border-primary/15 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center gap-2">
         <div className="flex items-center flex-shrink-0">
           <Link to="/"><BrandLogo imgClassName="h-8 md:h-10 w-auto object-contain" textClassName="font-serif text-primary text-lg md:text-2xl tracking-tight" /></Link>
         </div>
@@ -1800,7 +1800,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </button>
           <button onClick={handleLogout} className="hidden lg:block bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
           {/* Bocadillo (tres rayitas) en móvil y horizontal: todos los menús + idioma/divisa/guía/salir */}
-          <button onClick={() => setAdminMenuOpen((o) => !o)} aria-label={t('fix.adm.menuAria')} className="lg:hidden w-10 h-10 rounded-full bg-gray-100 text-primary flex items-center justify-center active:scale-95 transition">
+          <button onClick={() => setAdminMenuOpen((o) => !o)} aria-label={t('fix.adm.menuAria')} className="lg:hidden w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center active:scale-95 transition">
             <span className="material-symbols-outlined text-[22px]">{adminMenuOpen ? 'close' : 'menu'}</span>
           </button>
         </div>
@@ -1808,23 +1808,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       {adminMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
-          <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-primary/10 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-1 mb-2">
               {ADMIN_MOBILE_NAV.map((it) => (
                 <button key={it.key} onClick={() => { if (it.to) navigate(it.to); else setActiveView(it.view as any); setAdminMenuOpen(false); }}
-                  className={`text-left px-3 py-2 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
+                  className={`text-left px-3 py-2 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-primary/10'}`}>
                   {t(`admin.nav.${it.key}`)}
                 </button>
               ))}
             </div>
-            <div className="border-t border-gray-100 pt-2 flex flex-col gap-2">
+            <div className="border-t border-primary/10 pt-2 flex flex-col gap-2">
               <div className="flex flex-col gap-2 px-1">
-                <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-3 pr-9 py-1.5 text-xs font-bold text-primary">
+                <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className="w-full bg-almond/50 border border-primary/15 rounded-lg pl-3 pr-9 py-1.5 text-xs font-bold text-primary">
                   {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
                 </select>
                 <LanguageSwitcher />
               </div>
-              <button onClick={() => { setWalkthroughStep(0); setAdminMenuOpen(false); }} className="text-left px-3 py-2 rounded-xl text-xs font-bold text-primary/60 hover:bg-gray-100 inline-flex items-center gap-1">
+              <button onClick={() => { setWalkthroughStep(0); setAdminMenuOpen(false); }} className="text-left px-3 py-2 rounded-xl text-xs font-bold text-primary/60 hover:bg-primary/10 inline-flex items-center gap-1">
                 <span className="material-symbols-outlined text-sm">help</span> {t('admin.common.viewGuide')}
               </button>
               <button onClick={handleLogout} className="text-left px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
@@ -1867,9 +1867,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {projects.map(proj => (
-                <div key={proj.id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group">
-                  <div className="h-48 relative overflow-hidden bg-gray-100">
-                    {proj.image ? <img src={getImageUrl(proj.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><span className="material-symbols-outlined text-4xl">image</span></div>}
+                <div key={proj.id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-primary/10 flex flex-col group">
+                  <div className="h-48 relative overflow-hidden bg-primary/10">
+                    {proj.image ? <img src={getImageUrl(proj.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-primary/30"><span className="material-symbols-outlined text-4xl">image</span></div>}
                     <div className="absolute top-4 left-4 flex gap-2">
                       <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{translateStatus(proj.status, t)}</div>
                       {proj.is_hidden && <div className="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.hidden')}</div>}
@@ -1877,8 +1877,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   </div>
                   <div className="p-6 flex-grow flex flex-col">
                     <h3 className="text-xl font-bold text-primary mb-1">{proj.name}</h3>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">{proj.location}</p>
-                    <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
+                    <p className="text-[10px] font-black text-primary/45 uppercase tracking-widest mb-4">{proj.location}</p>
+                    <div className="mt-auto pt-4 border-t border-primary/10 flex justify-between items-center">
                       <p className="font-bold text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
                       <div className="flex gap-2">
                         <button onClick={() => setReportsProject({ id: proj.id, name: proj.name })} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95" title={t('empleados.reports.title')} aria-label={t('empleados.reports.title')}><span className="material-symbols-outlined text-sm">description</span></button>
@@ -1906,14 +1906,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
 
             <div className="flex flex-col md:flex-row gap-3 mb-6">
-              <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 flex-1 border border-gray-100">
-                <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
+              <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 flex-1 border border-primary/10">
+                <span className="material-symbols-outlined text-primary/45 text-sm">search</span>
                 <input type="text" placeholder={t('admin.blogTab.search')} value={blogSearch} onChange={(e) => setBlogSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
               </div>
-              <select value={blogTagFilter} onChange={(e) => setBlogTagFilter(e.target.value)} className="bg-white rounded-xl px-4 py-2 text-sm border border-gray-100 outline-none font-bold text-primary cursor-pointer">
+              <select value={blogTagFilter} onChange={(e) => setBlogTagFilter(e.target.value)} className="bg-white rounded-xl px-4 py-2 text-sm border border-primary/10 outline-none font-bold text-primary cursor-pointer">
                 {adminBlogTags.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
-              <select value={blogSortOrder} onChange={(e) => setBlogSortOrder(e.target.value as 'newest' | 'oldest')} className="bg-white rounded-xl px-4 py-2 text-sm border border-gray-100 outline-none font-bold text-primary cursor-pointer">
+              <select value={blogSortOrder} onChange={(e) => setBlogSortOrder(e.target.value as 'newest' | 'oldest')} className="bg-white rounded-xl px-4 py-2 text-sm border border-primary/10 outline-none font-bold text-primary cursor-pointer">
                 <option value="newest">{t('admin.blogTab.sortNewest')}</option>
                 <option value="oldest">{t('admin.blogTab.sortOldest')}</option>
               </select>
@@ -1921,16 +1921,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
             <div className="space-y-4">
               {filteredAdminBlogs.map(post => (
-                <div key={post.id} className="bg-white rounded-2xl p-4 flex gap-4 border border-gray-100 hover:shadow-md transition">
-                  <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 shrink-0">
+                <div key={post.id} className="bg-white rounded-2xl p-4 flex gap-4 border border-primary/10 hover:shadow-md transition">
+                  <div className="w-24 h-24 rounded-xl overflow-hidden bg-primary/10 shrink-0">
                     {post.image && <img src={getImageUrl(post.image)} className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-grow flex flex-col justify-center">
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[10px] font-black uppercase bg-gray-100 px-2 py-1 rounded text-primary/60">{post.tag}</span>
+                        <span className="text-[10px] font-black uppercase bg-primary/10 px-2 py-1 rounded text-primary/60">{post.tag}</span>
                         <h3 className="text-lg font-bold text-primary mt-1">{post.title}</h3>
-                        <p className="text-[10px] text-gray-400 font-bold mt-1">{formatDate(post.published_date)}</p>
+                        <p className="text-[10px] text-primary/45 font-bold mt-1">{formatDate(post.published_date)}</p>
                       </div>
                       <div className="flex gap-2">
                         <button onClick={() => openEditBlog(post)} className="p-2 text-primary bg-almond rounded-xl"><span className="material-symbols-outlined text-sm">edit</span></button>
@@ -1954,26 +1954,26 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
 
     <div className="flex flex-wrap items-center gap-2 mb-6">
-      <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 border border-gray-100 flex-grow min-w-[220px] max-w-md">
-        <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
+      <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 border border-primary/10 flex-grow min-w-[220px] max-w-md">
+        <span className="material-symbols-outlined text-primary/45 text-sm">search</span>
         <input type="text" placeholder={t('admin.adminDash.searchClients')} value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
       </div>
       {/* Filtro por proyecto: multi-selección con checkboxes */}
       <div className="relative">
-        <button type="button" onClick={() => setProjectFilterOpen(o => !o)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary flex items-center gap-2 relative">
+        <button type="button" onClick={() => setProjectFilterOpen(o => !o)} className="bg-white border border-primary/10 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary flex items-center gap-2 relative">
           {clientFilterProjects.length ? `${clientFilterProjects.length} ${t('admin.nav.projects')}` : t('admin.clientsTab.allProjects')}
           <span className="material-symbols-outlined text-sm absolute right-2 top-1/2 -translate-y-1/2 text-primary/40">{projectFilterOpen ? 'expand_less' : 'expand_more'}</span>
         </button>
         {projectFilterOpen && (
           <>
           <div className="fixed inset-0 z-20" onClick={() => setProjectFilterOpen(false)} />
-          <div className="absolute z-30 mt-1 w-64 max-h-64 overflow-auto bg-white border border-gray-100 rounded-xl shadow-xl p-2">
-            {clientProjectOptions.length === 0 && <p className="text-[11px] text-gray-400 px-2 py-1">{t('admin.clientsTab.noProjects')}</p>}
+          <div className="absolute z-30 mt-1 w-64 max-h-64 overflow-auto bg-white border border-primary/10 rounded-xl shadow-xl p-2">
+            {clientProjectOptions.length === 0 && <p className="text-[11px] text-primary/45 px-2 py-1">{t('admin.clientsTab.noProjects')}</p>}
             {clientProjectOptions.map((p) => {
               const val = p as string;
               const checked = clientFilterProjects.includes(val);
               return (
-                <label key={val} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer text-xs font-bold text-primary">
+                <label key={val} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-almond/50 cursor-pointer text-xs font-bold text-primary">
                   <input type="checkbox" checked={checked} onChange={() => setClientFilterProjects(prev => checked ? prev.filter(x => x !== val) : [...prev, val])} className="accent-primary" />
                   <span className="truncate">{val}</span>
                 </label>
@@ -1983,23 +1983,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </>
         )}
       </div>
-      <select value={clientFilterCurrency} onChange={(e) => setClientFilterCurrency(e.target.value)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
+      <select value={clientFilterCurrency} onChange={(e) => setClientFilterCurrency(e.target.value)} className="bg-white border border-primary/10 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
         <option value="">{t('admin.clientsTab.allCurrencies')}</option>
         {clientCurrencyOptions.map((c) => <option key={c as string} value={c as string}>{c as string}</option>)}
       </select>
-      <select value={clientFilterStatus} onChange={(e) => setClientFilterStatus(e.target.value)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
+      <select value={clientFilterStatus} onChange={(e) => setClientFilterStatus(e.target.value)} className="bg-white border border-primary/10 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
         <option value="">{t('admin.clientsTab.allStatuses', { defaultValue: 'Todos los estados' })}</option>
         <option value="active">{t('admin.clientsTab.active')}</option>
         <option value="inactive">{t('admin.clientsTab.inactive')}</option>
         <option value="draft">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</option>
       </select>
       <div className="flex items-center gap-1 flex-wrap">
-        <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">{t('admin.clientsTab.permsFilter', { defaultValue: 'Permisos' })}:</span>
+        <span className="text-[10px] font-black uppercase tracking-widest text-primary/30">{t('admin.clientsTab.permsFilter', { defaultValue: 'Permisos' })}:</span>
         {([['drive', t('fix.adm.featDrive')], ['brochure', t('fix.adm.featBrochure')], ['construction', t('fix.adm.featConstruction')], ['constructionProgress', t('fix.adm.featConstructionProgress', { defaultValue: 'Progreso de obra' })], ['viewProject', t('fix.adm.featViewProject')], ['calculator', t('fix.adm.featCalculator')]] as [string, string][]).map(([k, label]) => (
-          <button key={k} type="button" onClick={() => setClientFilterPerms((p) => p.includes(k) ? p.filter((x) => x !== k) : [...p, k])} className={`text-[10px] font-bold px-2 py-1 rounded-full border transition ${clientFilterPerms.includes(k) ? 'bg-primary text-white border-primary' : 'bg-white text-gray-400 border-gray-200 hover:border-primary/30'}`}>{label}</button>
+          <button key={k} type="button" onClick={() => setClientFilterPerms((p) => p.includes(k) ? p.filter((x) => x !== k) : [...p, k])} className={`text-[10px] font-bold px-2 py-1 rounded-full border transition ${clientFilterPerms.includes(k) ? 'bg-primary text-white border-primary' : 'bg-white text-primary/45 border-primary/15 hover:border-primary/30'}`}>{label}</button>
         ))}
       </div>
-      <select value={clientSort} onChange={(e) => setClientSort(e.target.value as any)} className="bg-white border border-gray-100 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
+      <select value={clientSort} onChange={(e) => setClientSort(e.target.value as any)} className="bg-white border border-primary/10 rounded-xl pl-3 pr-8 py-2 text-xs font-bold text-primary">
         <option value="name">{t('admin.clientsTab.sortName')}</option>
         <option value="amount_desc">{t('admin.clientsTab.sortAmountDesc')}</option>
         <option value="amount_asc">{t('admin.clientsTab.sortAmountAsc')}</option>
@@ -2014,11 +2014,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     {/* Barra de acciones en bloque (selección múltiple) */}
     {filteredClients.length > 0 && (
       <div className="flex items-center gap-3 mb-3 flex-wrap">
-        <label className="flex items-center gap-2 text-xs font-bold text-primary/60 cursor-pointer"><input type="checkbox" checked={allFilteredSelected} onChange={toggleSelectAll} className="rounded border-gray-300" /> {t('admin.clientsTab.selectAll', { defaultValue: 'Seleccionar todos' })}</label>
+        <label className="flex items-center gap-2 text-xs font-bold text-primary/60 cursor-pointer"><input type="checkbox" checked={allFilteredSelected} onChange={toggleSelectAll} className="rounded border-primary/20" /> {t('admin.clientsTab.selectAll', { defaultValue: 'Seleccionar todos' })}</label>
         {selectedClientIds.size > 0 && (
           <div className="flex items-center gap-2 flex-wrap bg-primary/5 rounded-xl px-3 py-2">
             <span className="text-xs font-black text-primary">{t('admin.clientsTab.nSelected', { n: selectedClientIds.size, defaultValue: `${selectedClientIds.size} sel.` })}</span>
-            <span className="text-[10px] text-gray-400">{t('admin.clientsTab.setStatusTo', { defaultValue: 'Estado →' })}</span>
+            <span className="text-[10px] text-primary/45">{t('admin.clientsTab.setStatusTo', { defaultValue: 'Estado →' })}</span>
             <AsyncButton disabled={bulkBusy} onClick={() => bulkClients('status', 'active')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-green-600 text-white disabled:opacity-50">{t('admin.clientsTab.active')}</AsyncButton>
             <AsyncButton disabled={bulkBusy} onClick={() => bulkClients('status', 'inactive')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-gray-400 text-white disabled:opacity-50">{t('admin.clientsTab.inactive')}</AsyncButton>
             <AsyncButton disabled={bulkBusy} onClick={() => bulkClients('status', 'draft')} className="text-[10px] font-black uppercase px-2 py-1 rounded bg-amber-500 text-white disabled:opacity-50">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</AsyncButton>
@@ -2034,15 +2034,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           {/* Header con datos del cliente — layout consistente: casilla + info (izq) + acciones (der/abajo) */}
           <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
             <div className="flex items-start gap-3 flex-1 min-w-0">
-              <input type="checkbox" checked={selectedClientIds.has(client.id)} onChange={() => toggleClientSel(client.id)} className="mt-1.5 rounded border-gray-300 shrink-0" title={t('admin.dash.selectClient', { defaultValue: 'Seleccionar' })} />
+              <input type="checkbox" checked={selectedClientIds.has(client.id)} onChange={() => toggleClientSel(client.id)} className="mt-1.5 rounded border-primary/20 shrink-0" title={t('admin.dash.selectClient', { defaultValue: 'Seleccionar' })} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h3 className="text-base sm:text-lg font-bold text-primary break-words">{client.name}</h3>
                   {(() => { const st = (client as any).status || (client.is_active ? 'active' : 'inactive'); return (
-                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-primary/10 text-primary/45'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
                   ); })()}
                 </div>
-                <p className="text-sm text-gray-500 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}{client.phone && ` · ${client.phone}`}</p>
+                <p className="text-sm text-primary/55 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}{client.phone && ` · ${client.phone}`}</p>
                 {(client as any).last_login && (
                   <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
                 )}
@@ -2056,7 +2056,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         const pw = h.password_plain || h.temp_password;
                         return (
                           <p key={i} className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block break-all" onClick={() => { navigator.clipboard.writeText(pw); alert(t('admin.dash.passwordCopied')); }} title={t('admin.dash.clickToCopy')}>
-                            <span className="material-symbols-outlined text-xs align-middle">key</span> <span className="text-gray-400">{h.email}:</span> {pw}
+                            <span className="material-symbols-outlined text-xs align-middle">key</span> <span className="text-primary/45">{h.email}:</span> {pw}
                             {h.must_change_password && <span className="text-red-400 ml-2">{t('admin.dash.temporary')}</span>}
                           </p>
                         );
@@ -2071,7 +2071,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     ) : null;
                   })()}
                   {isSuperAdmin && (client as any).password_hash && (
-                    <p className="text-[9px] text-gray-300 font-mono truncate max-w-[200px] cursor-pointer hover:bg-gray-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>
+                    <p className="text-[9px] text-primary/30 font-mono truncate max-w-[200px] cursor-pointer hover:bg-almond/50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText((client as any).password_hash); alert(t('admin.dash.hashCopied'));}} title={t('admin.dash.clickToCopyHash')}>
                       🔒 {(client as any).password_hash.substring(0, 20)}...
                     </p>
                   )}
@@ -2088,10 +2088,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </div>
 
           {/* Proyectos asignados */}
-          <div className="border-t border-gray-50 bg-gray-50/50 px-6 py-4">
+          <div className="border-t border-primary/10 bg-almond/40 px-6 py-4">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{t('admin.clientsTab.assignedProjects')} ({(client.projects || []).length})</p>
+                <p className="text-[10px] font-black uppercase text-primary/45 tracking-widest">{t('admin.clientsTab.assignedProjects')} ({(client.projects || []).length})</p>
                 {(() => {
                   const byCur: Record<string, number> = {};
                   (client.projects || []).forEach((cp: any) => { const cur = cp.currency || 'EUR'; byCur[cur] = (byCur[cur] || 0) + (Number(cp.investment_amount) || 0); });
@@ -2110,12 +2110,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             {client.projects && client.projects.length > 0 ? (
               <div className="space-y-2">
                 {client.projects.map((cp: any, cpIdx: number) => (
-                  <div key={cp.id || cpIdx} className="flex justify-between items-center bg-white rounded-xl px-4 py-3 border border-gray-100">
+                  <div key={cp.id || cpIdx} className="flex justify-between items-center bg-white rounded-xl px-4 py-3 border border-primary/10">
                     <div className="flex items-center gap-4 flex-wrap">
                       <span className="font-bold text-primary text-sm">{cp.project_name || cp.project_id}</span>
-                      {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
+                      {cp.unit_number && <span className="text-[10px] bg-primary/10 text-primary/55 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
-                      {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
+                      {cp.purchase_date && <span className="text-[10px] text-primary/45 font-bold">{formatDate(cp.purchase_date)}</span>}
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-100 text-green-700' : cp.status === 'Pagado' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
                     </div>
                     <div className="flex gap-1.5 shrink-0 items-center">
@@ -2128,7 +2128,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-gray-300 italic">{t('admin.clientsTab.noProjects')}</p>
+              <p className="text-xs text-primary/30 italic">{t('admin.clientsTab.noProjects')}</p>
             )}
           </div>
         </div>
@@ -2150,7 +2150,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
                 <div>
                   <h1 className="text-2xl font-black uppercase tracking-widest text-primary/60">{t('admin.nav.arquitectura', 'Arquitectura')}</h1>
-                  <p className="text-xs text-gray-400 mt-1">{t('admin.arch.subtitle', { defaultValue: 'Proyectos de arquitectura: documentación (Drive) y plan de pagos por cliente.' })}</p>
+                  <p className="text-xs text-primary/45 mt-1">{t('admin.arch.subtitle', { defaultValue: 'Proyectos de arquitectura: documentación (Drive) y plan de pagos por cliente.' })}</p>
                 </div>
                 <button onClick={() => navigate('/admin?view=clients')} className="bg-primary text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                   <span className="material-symbols-outlined text-base">person_add</span> {t('admin.arch.associate', { defaultValue: 'Asociar cliente' })}
@@ -2160,7 +2160,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <div className="bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-8 text-center">
                   <span className="material-symbols-outlined text-4xl text-amber-700/40">architecture</span>
                   <p className="text-sm font-bold text-primary mt-2">{t('admin.arch.emptyTitle', { defaultValue: 'Aún no hay clientes de arquitectura' })}</p>
-                  <p className="text-xs text-gray-400 mt-1 max-w-md mx-auto">{t('admin.arch.emptyHint', { defaultValue: 'Para asociar un cliente: Clientes → su ficha → en la propiedad asignada, cambia el tipo de inversión a "Arquitectura". Aparecerá aquí para gestionar su carpeta de Drive y su plan de pagos.' })}</p>
+                  <p className="text-xs text-primary/45 mt-1 max-w-md mx-auto">{t('admin.arch.emptyHint', { defaultValue: 'Para asociar un cliente: Clientes → su ficha → en la propiedad asignada, cambia el tipo de inversión a "Arquitectura". Aparecerá aquí para gestionar su carpeta de Drive y su plan de pagos.' })}</p>
                 </div>
               ) : (
                 <div className="space-y-8">
@@ -2177,15 +2177,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="font-bold text-primary break-words">{client.name}</span>
-                                {cp.unit_number && <span className="text-[10px] bg-white text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
+                                {cp.unit_number && <span className="text-[10px] bg-white text-primary/55 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                                 {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                               </div>
-                              <p className="text-xs text-gray-400 mt-0.5 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}</p>
+                              <p className="text-xs text-primary/45 mt-0.5 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}</p>
                             </div>
                             <div className="flex gap-1.5 shrink-0 flex-wrap items-center justify-end">
                               {cp.drive_folder_url
                                 ? <a href={cp.drive_folder_url} target="_blank" rel="noopener noreferrer" className="text-amber-700 bg-amber-50 hover:bg-amber-100 transition px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-base leading-none">folder</span>{t('admin.arch.driveOpen', { defaultValue: 'Drive' })}</a>
-                                : <span className="text-[10px] text-gray-400 italic px-2">{t('admin.arch.noDrive', { defaultValue: 'Sin carpeta Drive' })}</span>}
+                                : <span className="text-[10px] text-primary/45 italic px-2">{t('admin.arch.noDrive', { defaultValue: 'Sin carpeta Drive' })}</span>}
                               <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary bg-white hover:bg-primary/10 transition px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-base leading-none">payments</span>{t('admin.arch.payments', { defaultValue: 'Pagos' })}</button>
                               <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary bg-white hover:bg-primary/10 transition px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-base leading-none">edit</span>{t('admin.arch.editFolder', { defaultValue: 'Drive / Editar' })}</button>
                             </div>
@@ -2210,17 +2210,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <span className="material-symbols-outlined text-base">person_add</span> {t('admin.dash.new')}
               </button>
             </div>
-             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+             <div className="bg-white rounded-3xl border border-primary/10 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left min-w-[600px]">
-                    <thead className="bg-gray-50 border-b border-gray-100 text-[10px] font-black uppercase text-gray-400 tracking-widest">
+                    <thead className="bg-almond/50 border-b border-primary/10 text-[10px] font-black uppercase text-primary/45 tracking-widest">
                       <tr><th className="px-6 py-4">{t('admin.usersTab.thName')}</th><th className="px-6 py-4">{t('admin.usersTab.thUsername')}</th>{isSuperAdmin && <th className="px-6 py-4">{t('admin.usersTab.thPassword')}</th>}<th className="px-6 py-4 text-right">{t('admin.usersTab.thActions')}</th></tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-primary/10">
                       {users.map(u => (
-                        <tr key={u.id} className="hover:bg-gray-50 transition">
+                        <tr key={u.id} className="hover:bg-almond/50 transition">
                           <td className="px-6 py-4 font-bold text-primary">{u.name}</td>
-                          <td className="px-6 py-4 text-sm text-gray-500">{u.username}</td>
+                          <td className="px-6 py-4 text-sm text-primary/55">{u.username}</td>
                           {isSuperAdmin && (
                             <td className="px-6 py-4">
                               {(() => {
@@ -2232,7 +2232,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                                 if (pw && !isHash) {
                                   return <p className="text-[10px] text-orange-500 font-mono cursor-pointer hover:bg-orange-50 rounded px-1 inline-block" onClick={() => {navigator.clipboard.writeText(pw); alert(t('admin.dash.passwordCopied'));}} title={t('admin.dash.clickToCopy')}>🔑 {pw}</p>;
                                 }
-                                return <p className="text-[10px] text-gray-400 font-mono inline-block px-1" title={t('admin.dash.pwEncryptedHint', { defaultValue: 'Cifrada — no visible. Usa Editar para fijar una nueva.' })}>•••••••• <span className="text-[9px]">({t('admin.dash.pwEncrypted', { defaultValue: 'cifrada' })})</span></p>;
+                                return <p className="text-[10px] text-primary/45 font-mono inline-block px-1" title={t('admin.dash.pwEncryptedHint', { defaultValue: 'Cifrada — no visible. Usa Editar para fijar una nueva.' })}>•••••••• <span className="text-[9px]">({t('admin.dash.pwEncrypted', { defaultValue: 'cifrada' })})</span></p>;
                               })()}
                             </td>
                           )}
@@ -2255,7 +2255,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              <nav className="md:w-48 shrink-0 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible">
                {([['etiquetas',t('fix.adm.cfgTabLabels'),'sell'],['permisos',t('fix.adm.cfgTabPermissions'),'tune'],['marca',t('fix.adm.cfgTabBrand'),'storefront']] as [typeof configTab,string,string][]).map(([k,label,icon]) => (
                  <button key={k} onClick={() => setConfigTab(k)}
-                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition ${configTab === k ? 'bg-primary text-white shadow-sm' : 'text-primary/60 hover:bg-gray-100'}`}>
+                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition ${configTab === k ? 'bg-primary text-white shadow-sm' : 'text-primary/60 hover:bg-primary/10'}`}>
                    <span className="material-symbols-outlined text-[18px]">{icon}</span>{label}
                  </button>
                ))}
@@ -2264,16 +2264,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              <div className="flex-1 min-w-0">
              {configTab === 'etiquetas' && (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-               <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+               <div className="bg-white rounded-3xl p-8 border border-primary/10 shadow-sm">
                  <h3 className="text-xl font-serif text-primary mb-6">{t('admin.configTab.labels')}</h3>
                  <div className="space-y-4">
                    {Object.keys(config.labels).map((key) => (
                      <div key={key}>
-                       <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{key}</label>
+                       <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{key}</label>
                        <input
                          value={(config.labels as any)[key]}
                          onChange={(e) => setConfig({ ...config, labels: { ...config.labels, [key]: e.target.value } })}
-                         className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm"
+                         className="w-full px-4 py-3 bg-almond/50 border rounded-xl font-bold text-primary text-sm"
                        />
                      </div>
                    ))}
@@ -2282,10 +2282,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </div>
                <div className="space-y-6">
                  {['customZones', 'customTypes', 'customStatuses'].map(field => (
-                   <div key={field} className="bg-white rounded-2xl p-6 border border-gray-100 flex items-center justify-between shadow-sm">
+                   <div key={field} className="bg-white rounded-2xl p-6 border border-primary/10 flex items-center justify-between shadow-sm">
                      <div>
                        <h3 className="text-lg font-serif text-primary capitalize">{field.replace('custom', '')}</h3>
-                       <p className="text-[10px] text-gray-400 font-bold uppercase">{t('admin.dash.optionsAvailable', { n: (config as any)[field].length })}</p>
+                       <p className="text-[10px] text-primary/45 font-bold uppercase">{t('admin.dash.optionsAvailable', { n: (config as any)[field].length })}</p>
                      </div>
                      <button onClick={() => setOptionManager({ field: field as any, title: t('admin.dash.editField', { field: field.replace('custom', '') }) })} className="p-3 bg-primary text-white rounded-xl"><span className="material-symbols-outlined">edit</span></button>
                    </div>
@@ -2295,18 +2295,18 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              )}
 
              {configTab === 'permisos' && (
-             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+             <div className="bg-white rounded-3xl p-8 border border-primary/10 shadow-sm">
                <h3 className="text-xl font-serif text-primary mb-2">{t('fix.adm.clientFeaturesTitle')}</h3>
-               <p className="text-xs text-gray-400 mb-6">{t('fix.adm.clientFeaturesHint')}</p>
+               <p className="text-xs text-primary/45 mb-6">{t('fix.adm.clientFeaturesHint')}</p>
                <div className="grid sm:grid-cols-2 gap-2">
                  {([['calculator',t('fix.adm.featCalculator')],['construction',t('fix.adm.featConstruction')],['constructionProgress',t('fix.adm.featConstructionProgress',{defaultValue:'Progreso de obra'})],['brochure',t('fix.adm.featBrochure')],['viewProject',t('fix.adm.featViewProject')],['drive',t('fix.adm.featDrive')]] as [string,string][]).map(([k,label]) => {
                    const feats = ((config as any).brand?.client_features) || {};
                    const on = feats[k] !== false;
                    return (
                      <button key={k} type="button" onClick={() => setBrandKey('client_features', { ...feats, [k]: !on })}
-                       className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition ${on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                       className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition ${on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-almond/50 border-primary/15 text-primary/45'}`}>
                        {label}
-                       <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+                       <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition ${on ? 'bg-green-500 justify-end' : 'bg-primary/20 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
                      </button>
                    );
                  })}
@@ -2318,14 +2318,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              {configTab === 'marca' && (
              <>
              {/* Marca y empresa — fuente única para web, emails y kwitansi */}
-             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+             <div className="bg-white rounded-3xl p-8 border border-primary/10 shadow-sm">
                <h3 className="text-xl font-serif text-primary mb-2">{t('admin.dash.brandCompany')}</h3>
-               <p className="text-xs text-gray-400 mb-6">{t('admin.dash.brandCompanyHint')}</p>
+               <p className="text-xs text-primary/45 mb-6">{t('admin.dash.brandCompanyHint')}</p>
                <div className="grid sm:grid-cols-2 gap-5 mb-6">
                  {[{ k: 'logo', label: t('admin.dash.logoLabel') }, { k: 'stamp', label: t('admin.dash.stampLabel') }].map(({ k, label }) => (
                    <div key={k}>
-                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{label}</label>
-                     <div className="relative border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center">
+                     <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{label}</label>
+                     <div className="relative border-2 border-dashed border-primary/15 rounded-2xl p-4 text-center">
                        {(config as any).brand?.[k] && (
                          <button type="button" title={t('admin.dash.deletePhoto')}
                            onClick={() => { const b = { ...((config as any).brand || {}), [k]: '' }; const nc = { ...config, brand: b } as any; setConfig(nc); void saveConfigToDb(nc); }}
@@ -2333,7 +2333,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                        )}
                        {(config as any).brand?.[k]
                          ? <img src={(config as any).brand[k]} alt={label} className="h-16 mx-auto object-contain mb-1" />
-                         : <span className="material-symbols-outlined text-gray-300 text-3xl">image</span>}
+                         : <span className="material-symbols-outlined text-primary/30 text-3xl">image</span>}
                        <label className="block mt-2 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">
                          {(config as any).brand?.[k] ? t('admin.dash.change') : t('admin.dash.uploadPng')}
                          <input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleBrandUpload(k, f); }} />
@@ -2344,35 +2344,35 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </div>
                <div className="grid sm:grid-cols-2 gap-5">
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.commercialEmail')}</label>
-                   <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" placeholder="hello@unrealstudiobali.com"
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.commercialEmail')}</label>
+                   <input className="w-full px-4 py-3 bg-almond/50 border rounded-xl font-bold text-primary text-sm" placeholder="hello@unrealstudiobali.com"
                      value={(config as any).brand?.commercial_email || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), commercial_email: e.target.value } } as any)} />
                  </div>
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.contactPhone')}</label>
-                   <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-primary text-sm" placeholder="+62 ..."
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.contactPhone')}</label>
+                   <input className="w-full px-4 py-3 bg-almond/50 border rounded-xl font-bold text-primary text-sm" placeholder="+62 ..."
                      value={(config as any).brand?.phone || ''} onChange={(e) => setConfig({ ...config, brand: { ...((config as any).brand || {}), phone: e.target.value } } as any)} />
                  </div>
                </div>
                <AsyncButton onClick={() => saveConfigToDb(config)} className="mt-6 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveBrandCompany')}</AsyncButton>
-               <p className="mt-3 text-[11px] text-gray-400">{t('admin.dash.signatureHint')}</p>
+               <p className="mt-3 text-[11px] text-primary/45">{t('admin.dash.signatureHint')}</p>
              </div>
 
              {/* Datos de empresa — una columna, módulos dinámicos */}
-             <div className="mt-8 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+             <div className="mt-8 bg-white rounded-3xl p-8 border border-primary/10 shadow-sm">
                <h3 className="text-xl font-serif text-primary mb-2">{t('admin.dash.companyData')}</h3>
-               <p className="text-xs text-gray-400 mb-6">{t('admin.dash.companyDataHint')}</p>
+               <p className="text-xs text-primary/45 mb-6">{t('admin.dash.companyDataHint')}</p>
                <div className="space-y-7 max-w-xl">
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.addresses')}</label>
-                   <p className="text-[10px] text-gray-400 mb-2">{t('admin.dash.addressesHint')}</p>
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.addresses')}</label>
+                   <p className="text-[10px] text-primary/45 mb-2">{t('admin.dash.addressesHint')}</p>
                    {(((config as any).brand?.addresses) || []).map((addr: any, i: number) => {
                      const text = typeof addr === 'string' ? addr : (addr?.text || '');
                      const maps = typeof addr === 'string' ? '' : (addr?.maps || '');
                      const writeAddr = (patch: any) => { const arr = [...(((config as any).brand?.addresses) || [])]; arr[i] = { text, maps, ...patch }; setBrandKey('addresses', arr); };
                      return (
-                       <div key={i} className="flex flex-col sm:flex-row gap-2 mb-3 bg-gray-50/60 p-2 rounded-xl">
+                       <div key={i} className="flex flex-col sm:flex-row gap-2 mb-3 bg-almond/40 p-2 rounded-xl">
                          <div className="flex-1 flex flex-col gap-2">
                            <input className="px-4 py-3 bg-white border rounded-xl text-sm text-primary" value={text} placeholder={t('admin.dash.officeAddressPh')}
                              onChange={(e) => writeAddr({ text: e.target.value })} />
@@ -2387,15 +2387,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.socials')}</label>
-                   <p className="text-[10px] text-gray-400 mb-2">{t('admin.dash.socialsHint')}</p>
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.socials')}</label>
+                   <p className="text-[10px] text-primary/45 mb-2">{t('admin.dash.socialsHint')}</p>
                    {(((config as any).brand?.socials) || []).map((s: any, i: number) => (
                      <div key={i} className="flex gap-2 mb-2">
-                       <select className="w-40 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.network || s?.label || 'instagram'}
+                       <select className="w-40 px-3 py-3 bg-almond/50 border rounded-xl text-sm text-primary" value={s?.network || s?.label || 'instagram'}
                          onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], network: e.target.value, label: undefined }; setBrandKey('socials', arr); }}>
                          {SOCIAL_NETWORKS.map((n) => <option key={n.key} value={n.key}>{n.label}</option>)}
                        </select>
-                       <input className="flex-1 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.url || ''} placeholder="https://..."
+                       <input className="flex-1 px-3 py-3 bg-almond/50 border rounded-xl text-sm text-primary" value={s?.url || ''} placeholder="https://..."
                          onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], url: e.target.value }; setBrandKey('socials', arr); }} />
                        <button type="button" onClick={() => setBrandKey('socials', (((config as any).brand?.socials) || []).filter((_: any, j: number) => j !== i))} className="w-10 shrink-0 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 text-lg">×</button>
                      </div>
@@ -2404,29 +2404,29 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.openingHours')}</label>
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.openingHours')}</label>
                    {[['mon', t('admin.dash.dayMon')], ['tue', t('admin.dash.dayTue')], ['wed', t('admin.dash.dayWed')], ['thu', t('admin.dash.dayThu')], ['fri', t('admin.dash.dayFri')], ['sat', t('admin.dash.daySat')], ['sun', t('admin.dash.daySun')]].map(([dk, dl]) => (
                      <div key={dk} className="flex items-center gap-3 mb-2">
                        <span className="w-24 text-xs font-bold text-primary/70">{dl}</span>
-                       <input className="flex-1 px-3 py-2.5 bg-gray-50 border rounded-xl text-sm text-primary" placeholder="9:00–18:00"
+                       <input className="flex-1 px-3 py-2.5 bg-almond/50 border rounded-xl text-sm text-primary" placeholder="9:00–18:00"
                          value={(((config as any).brand?.hours) || {})[dk] || ''} onChange={(e) => setBrandKey('hours', { ...(((config as any).brand?.hours) || {}), [dk]: e.target.value })} />
                      </div>
                    ))}
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.bookingLink')}</label>
-                   <input className="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm text-primary" placeholder="https://calendly.com/..."
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.bookingLink')}</label>
+                   <input className="w-full px-4 py-3 bg-almond/50 border rounded-xl text-sm text-primary" placeholder="https://calendly.com/..."
                      value={(config as any).brand?.booking_url || ''} onChange={(e) => setBrandKey('booking_url', e.target.value)} />
                  </div>
 
                  <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.defaultCurrencyClients')}</label>
-                   <select className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-sm text-primary"
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.defaultCurrencyClients')}</label>
+                   <select className="w-full px-4 py-3 bg-almond/50 border rounded-xl font-bold text-sm text-primary"
                      value={(config as any).brand?.default_currency_clients || 'EUR'} onChange={(e) => setBrandKey('default_currency_clients', e.target.value)}>
                      <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
                    </select>
-                   <p className="text-[10px] text-gray-400 mt-1">{t('admin.dash.defaultCurrencyHint')}</p>
+                   <p className="text-[10px] text-primary/45 mt-1">{t('admin.dash.defaultCurrencyHint')}</p>
                  </div>
                </div>
                <AsyncButton onClick={() => saveConfigToDb(config)} className="mt-7 w-full bg-primary text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md">{t('admin.dash.saveCompanyData')}</AsyncButton>
@@ -2442,7 +2442,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
               <div className="min-w-0">
                 <h2 className="text-2xl font-serif text-primary mb-1">{t('admin.dash.employeeProfiles')}</h2>
-                <p className="text-sm text-gray-400">{t('admin.dash.employeeProfilesHint')}</p>
+                <p className="text-sm text-primary/45">{t('admin.dash.employeeProfilesHint')}</p>
                 <p className="text-xs text-primary/50 mt-1">{t('admin.dash.vacationsManagedHint')}</p>
               </div>
               <div className="flex items-stretch gap-2 flex-wrap w-full sm:w-auto shrink-0">
@@ -2462,11 +2462,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="text-base sm:text-lg font-bold text-primary break-words">{e.full_name || e.email}</h3>
                         <button onClick={() => toggleEmployeeActive(e.id, !e.active)}
-                          className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full transition ${e.active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                          className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full transition ${e.active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-primary/10 text-primary/45 hover:bg-primary/15'}`}>
                           {e.active ? t('admin.dash.activeStatus') : t('admin.dash.inactiveStatus')}
                         </button>
                       </div>
-                      <p className="text-sm text-gray-500 break-words">{e.email}</p>
+                      <p className="text-sm text-primary/55 break-words">{e.email}</p>
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary/50 bg-primary/5 px-2 py-0.5 rounded">{t('fix.adm.thPermissions')}: {nPerms}/{EMPLOYEE_PERMISSIONS.length}</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary/50 bg-primary/5 px-2 py-0.5 rounded inline-flex items-center gap-1"><span className="material-symbols-outlined text-xs align-middle">schedule</span>{sched}</span>
@@ -2484,7 +2484,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 );
               })}
               {employees.length === 0 && (
-                <div className="px-4 py-8 text-center text-gray-400 bg-white rounded-2xl border border-gray-100">{t('admin.dash.noEmployees')}</div>
+                <div className="px-4 py-8 text-center text-primary/45 bg-white rounded-2xl border border-primary/10">{t('admin.dash.noEmployees')}</div>
               )}
             </div>
             {empModal && (
@@ -2503,7 +2503,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <div className="flex justify-between items-start gap-3 mb-6">
                     <div className="min-w-0">
                       <h2 className="text-xl sm:text-2xl font-serif text-primary">{t('admin.dash.mailCenter')}</h2>
-                      <p className="text-sm text-gray-400 mt-1 truncate">{t('admin.dash.sendTo')} <strong className="text-primary">{mailEmployee.full_name || mailEmployee.email}</strong> <span className="text-gray-300">· {mailEmployee.email || '—'}</span></p>
+                      <p className="text-sm text-primary/45 mt-1 truncate">{t('admin.dash.sendTo')} <strong className="text-primary">{mailEmployee.full_name || mailEmployee.email}</strong> <span className="text-primary/30">· {mailEmployee.email || '—'}</span></p>
                     </div>
                     <button onClick={() => setMailEmployee(null)} className="p-2 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition shrink-0"><span className="material-symbols-outlined">close</span></button>
                   </div>
@@ -2513,11 +2513,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       { icon: 'schedule', title: t('admin.dash.mailCheckin', { defaultValue: 'Recordatorio de fichaje' }), desc: t('admin.dash.mailCheckinDesc', { defaultValue: 'Recuérdale fichar entrada, pausas y salida' }), run: () => sendEmployeeCheckin(mailEmployee) },
                       { icon: 'lock_reset', title: t('admin.dash.mailReset', { defaultValue: 'Recuperar contraseña' }), desc: t('admin.dash.mailResetEmp', { defaultValue: 'Enlace para crear una nueva contraseña' }), run: () => sendEmployeeReset(mailEmployee) },
                     ].map((m, idx) => (
-                      <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
+                      <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-almond/50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-primary/10 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
                         <span className="material-symbols-outlined text-primary shrink-0">{m.icon}</span>
                         <span className="min-w-0">
                           <span className="block font-bold text-primary text-sm mb-0.5">{m.title}</span>
-                          <span className="block text-xs text-gray-400">{m.desc}</span>
+                          <span className="block text-xs text-primary/45">{m.desc}</span>
                         </span>
                       </button>
                     ))}
@@ -2547,22 +2547,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="bg-white w-full max-w-[90vw] h-full shadow-2xl p-6 md:p-12 overflow-y-auto rounded-2xl md:rounded-l-[3rem]">
             <div className="flex justify-between items-center mb-8 pb-4 border-b">
               <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}</h2>
-              <button onClick={() => setIsEditing(false)} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
+              <button onClick={() => setIsEditing(false)} className="p-2 text-primary/45 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
             <form onSubmit={handleSaveProject} className="space-y-3 pb-10">
                {/* ===== A. BÁSICOS ===== */}
-               <details name="propedit" open className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details name="propedit" open className="group rounded-2xl bg-almond/50 border border-primary/10">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secBasics')}</span>
-                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                  <span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.name')}</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.location')}</label><select value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{config.customZones.map(z => <option key={z} value={z}>{z}</option>)}</select></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.type', 'Tipo')}</label><select value={currentProject.property_type || ''} onChange={(e) => setCurrentProject({...currentProject, property_type: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}</select></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.name')}</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.location')}</label><select value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{config.customZones.map(z => <option key={z} value={z}>{z}</option>)}</select></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.type', 'Tipo')}</label><select value={currentProject.property_type || ''} onChange={(e) => setCurrentProject({...currentProject, property_type: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}</select></div>
                     <div>
-                      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.status')}</label>
+                      <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.status')}</label>
                       <select value={currentProject.status || config.customStatuses[0] || ''} onChange={(e) => setCurrentProject({...currentProject, status: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">
                           {/* Incluye el estado actual del proyecto aunque no esté en la lista de
                               estados configurados, para no mostrar uno equivocado ni sobreescribirlo. */}
@@ -2572,29 +2572,29 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                           ).map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </div>
-                    <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.description')}</label><textarea rows={3} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
+                    <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.description')}</label><textarea rows={3} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><input type="number" value={currentProject.investor_price ?? ''} onChange={(e) => setCurrentProject({...currentProject, investor_price: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><input type="number" value={currentProject.market_price ?? ''} onChange={(e) => setCurrentProject({...currentProject, market_price: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-4 py-3 bg-primary text-white rounded-2xl font-bold">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.investorPrice')}</label><input type="number" value={currentProject.investor_price ?? ''} onChange={(e) => setCurrentProject({...currentProject, investor_price: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.marketPrice')}</label><input type="number" value={currentProject.market_price ?? ''} onChange={(e) => setCurrentProject({...currentProject, market_price: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-4 py-3 bg-primary text-white rounded-2xl font-bold">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investmentTiers')}</label>
+                    <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.investmentTiers')}</label>
                     <textarea rows={3} value={tiersInput} onChange={(e) => setTiersInput(e.target.value)} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" />
                   </div>
                 </div>
                </details>
 
                {/* ===== B. MULTIMEDIA ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details name="propedit" className="group rounded-2xl bg-almond/50 border border-primary/10">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secMedia')}</span>
-                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                  <span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.mainImage')}</label>
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.mainImage')}</label>
                    <div className="flex gap-2">
                        <input type="text" value={currentProject.image || ''} onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})} placeholder={t('admin.props.mainImagePlaceholder')} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20" />
                        <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -2602,11 +2602,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                            <input type="file" className="hidden" accept="image/*,.heic" onChange={(e) => handleFileUpload(e, 'project_main')} disabled={uploading} />
                        </label>
                    </div>
-                   {currentProject.image && <div className="mt-4 h-40 rounded-2xl overflow-hidden border border-gray-200"><img src={getImageUrl(currentProject.image)} className="w-full h-full object-cover" /></div>}
+                   {currentProject.image && <div className="mt-4 h-40 rounded-2xl overflow-hidden border border-primary/15"><img src={getImageUrl(currentProject.image)} className="w-full h-full object-cover" /></div>}
                 </div>
 
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.gallery')}</label>
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.gallery')}</label>
                    <div className="flex gap-2 mb-4">
                        <input type="text" value={galleryInput} onChange={(e) => setGalleryInput(e.target.value)} placeholder={t('admin.props.extraUrl')} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20" />
                        <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -2627,7 +2627,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    </div>
                    <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
                        {(currentProject.gallery || []).map((img, idx) => (
-                           <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-gray-200">
+                           <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-primary/15">
                                <img src={getImageUrl(img)} className="w-full h-full object-cover" />
                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2 text-white">
                                    <div className="flex gap-2">
@@ -2643,7 +2643,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.constructionPhotos')}</label>
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.constructionPhotos')}</label>
                    <div className="flex gap-2 mb-4">
                        <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">add_photo_alternate</span>}
@@ -2652,7 +2652,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    </div>
                    <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
                        {(currentProject.construction_gallery || []).map((img, idx) => (
-                           <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-gray-200">
+                           <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-primary/15">
                                <img src={getImageUrl(img)} className="w-full h-full object-cover" />
                                <button type="button" onClick={() => removePhoto(img, 'construction_gallery')} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
                                    <span className="material-symbols-outlined">delete</span>
@@ -2663,7 +2663,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
 
                 <div>
-                   <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.projectPlans')}</label>
+                   <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.projectPlans')}</label>
                    <div className="flex gap-2 mb-2">
                        <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`} title={t('admin.props.uploadPdf', { defaultValue: 'Subir PDF' })}>
                            {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
@@ -2672,14 +2672,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    </div>
                    {/* …o pegar un enlace (Google Drive / PDF) */}
                    <div className="flex gap-2 mb-4">
-                       <input type="url" value={floorPlanUrl} onChange={(e) => setFloorPlanUrl(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addFloorPlanUrl(); } }} placeholder={t('admin.props.planUrlPlaceholder', { defaultValue: 'o pega un enlace (Drive / PDF)…' })} className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:border-primary/30 focus:outline-none" />
+                       <input type="url" value={floorPlanUrl} onChange={(e) => setFloorPlanUrl(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addFloorPlanUrl(); } }} placeholder={t('admin.props.planUrlPlaceholder', { defaultValue: 'o pega un enlace (Drive / PDF)…' })} className="flex-1 px-4 py-3 bg-white border border-primary/15 rounded-2xl text-sm focus:border-primary/30 focus:outline-none" />
                        <button type="button" onClick={addFloorPlanUrl} className="bg-primary/10 text-primary px-4 rounded-2xl text-sm font-bold hover:bg-primary/20 transition">{t('admin.props.addPlan', { defaultValue: 'Añadir' })}</button>
                    </div>
                    <div className="flex flex-col gap-2">
                        {(currentProject.floor_plans || []).map((pdf, idx) => (
-                           <div key={idx} className="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100">
+                           <div key={idx} className="flex items-center justify-between bg-white p-4 rounded-2xl border border-primary/10">
                                <div className="flex items-center gap-3 overflow-hidden">
-                                   <span className="material-symbols-outlined text-gray-400">picture_as_pdf</span>
+                                   <span className="material-symbols-outlined text-primary/45">picture_as_pdf</span>
                                    <span className="text-sm font-medium truncate">{pdf.includes('drive.google.com') ? t('admin.props.planDrive', { defaultValue: 'Plano (Google Drive)' }) : (pdf.split('/').pop() || 'Plano')}</span>
                                </div>
                                <button type="button" onClick={() => removePhoto(pdf, 'floor_plans')} className="p-2 hover:bg-red-50 text-red-500 rounded-xl transition"><span className="material-symbols-outlined">delete</span></button>
@@ -2692,20 +2692,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== C. ESPECIFICACIONES ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details name="propedit" className="group rounded-2xl bg-almond/50 border border-primary/10">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secSpecs')}</span>
-                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                  <span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
   <div className="grid grid-cols-3 gap-3">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><input type="number" value={currentProject.bedrooms ?? ''} onChange={(e) => setCurrentProject({...currentProject, bedrooms: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><input type="number" value={currentProject.bathrooms ?? ''} onChange={(e) => setCurrentProject({...currentProject, bathrooms: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><input type="number" value={currentProject.area_m2 ?? ''} onChange={(e) => setCurrentProject({...currentProject, area_m2: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.bedrooms')}</label><input type="number" value={currentProject.bedrooms ?? ''} onChange={(e) => setCurrentProject({...currentProject, bedrooms: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.bathrooms')}</label><input type="number" value={currentProject.bathrooms ?? ''} onChange={(e) => setCurrentProject({...currentProject, bathrooms: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.areaM2')}</label><input type="number" value={currentProject.area_m2 ?? ''} onChange={(e) => setCurrentProject({...currentProject, area_m2: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
   <div className="grid grid-cols-2 gap-3">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.furnishing')}</label>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.furnishing')}</label>
       <select value={currentProject.furnishing || ''} onChange={(e) => setCurrentProject({...currentProject, furnishing: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">
         <option value="">{t('admin.props.furnishNone')}</option>
         <option value="Sin amueblar">{t('admin.props.furnishUnfurnished')}</option>
@@ -2714,15 +2714,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </select>
     </div>
     <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl">
-      <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.hasPool')}</span>
-      <button type="button" onClick={() => setCurrentProject({...currentProject, has_pool: !currentProject.has_pool})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.has_pool ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+      <span className="text-[10px] font-black uppercase text-primary/45">{t('admin.dash.hasPool')}</span>
+      <button type="button" onClick={() => setCurrentProject({...currentProject, has_pool: !currentProject.has_pool})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.has_pool ? 'bg-primary justify-end' : 'bg-primary/20 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
     </div>
   </div>
 
-  <details className="group/eq rounded-xl bg-white border border-gray-100">
+  <details className="group/eq rounded-xl bg-white border border-primary/10">
     <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
-      <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.props.equipment')}</span>
-      <span className="material-symbols-outlined text-gray-400 transition-transform group-open/eq:rotate-180">expand_more</span>
+      <span className="text-[10px] font-black uppercase text-primary/45">{t('admin.props.equipment')}</span>
+      <span className="material-symbols-outlined text-primary/45 transition-transform group-open/eq:rotate-180">expand_more</span>
     </summary>
     <div className="px-4 pb-4 pt-1">
     {[
@@ -2738,7 +2738,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <p className="text-[9px] font-black uppercase text-primary/30 tracking-widest mb-2">{group.category}</p>
         <div className="flex flex-wrap gap-2">
           {group.items.map(item => (
-            <label key={item} className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 cursor-pointer hover:bg-gray-100 transition text-xs">
+            <label key={item} className="flex items-center gap-2 px-3 py-1.5 bg-almond/50 rounded-full border border-primary/10 cursor-pointer hover:bg-primary/10 transition text-xs">
               <input
                 type="checkbox"
                 checked={(currentProject.furnishing_items || []).includes(item)}
@@ -2748,7 +2748,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     : (currentProject.furnishing_items || []).filter(i => i !== item);
                   setCurrentProject({...currentProject, furnishing_items: newItems});
                 }}
-                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                className="w-4 h-4 rounded border-primary/20 text-primary focus:ring-primary"
               />
               <span className="font-medium">{item}</span>
             </label>
@@ -2759,18 +2759,18 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
   </details>
 
-  <details className="group/am rounded-xl bg-white border border-gray-100">
+  <details className="group/am rounded-xl bg-white border border-primary/10">
     <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
-      <span className="text-[10px] font-black uppercase text-gray-400">{t('admin.props.amenities')}</span>
-      <span className="material-symbols-outlined text-gray-400 transition-transform group-open/am:rotate-180">expand_more</span>
+      <span className="text-[10px] font-black uppercase text-primary/45">{t('admin.props.amenities')}</span>
+      <span className="material-symbols-outlined text-primary/45 transition-transform group-open/am:rotate-180">expand_more</span>
     </summary>
     <div className="px-4 pb-4 pt-1 flex flex-wrap gap-2">
       {AMENITIES_LIST.map(a => (
-        <label key={a} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-100 hover:bg-gray-50 cursor-pointer">
+        <label key={a} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/10 hover:bg-almond/50 cursor-pointer">
           <input type="checkbox" checked={(currentProject.amenities || []).includes(a)} onChange={(e) => {
             const current = currentProject.amenities || [];
             setCurrentProject({...currentProject, amenities: e.target.checked ? [...current, a] : current.filter(x => x !== a)});
-          }} className="rounded border-gray-300 text-primary focus:ring-primary" />
+          }} className="rounded border-primary/20 text-primary focus:ring-primary" />
           <span className="text-sm font-medium text-primary">{a}</span>
         </label>
       ))}
@@ -2780,23 +2780,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== D. COMERCIAL ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details name="propedit" className="group rounded-2xl bg-almond/50 border border-primary/10">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secCommercial')}</span>
-                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                  <span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.annualRentalProjection', { cur: currentProject.price_currency || 'EUR' })}</label><input type="number" value={currentProject.annual_rental_projection ?? ''} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder={t('admin.dash.beachDistancePh')} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.contractYears')}</label><input type="number" value={currentProject.years_contract ?? ''} onChange={(e) => setCurrentProject({...currentProject, years_contract: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.extensionYears')}</label><input type="number" value={currentProject.years_extension ?? ''} onChange={(e) => setCurrentProject({...currentProject, years_extension: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
-    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.adminDash.completionDateLabel')}</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.annualRentalProjection', { cur: currentProject.price_currency || 'EUR' })}</label><input type="number" value={currentProject.annual_rental_projection ?? ''} onChange={(e) => setCurrentProject({...currentProject, annual_rental_projection: e.target.value === '' ? null : (parseFloat(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.beachDistance')}</label><input type="text" value={currentProject.distance_beach || ''} onChange={(e) => setCurrentProject({...currentProject, distance_beach: e.target.value})} placeholder={t('admin.dash.beachDistancePh')} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.availableUnits')}</label><input type="text" value={currentProject.available_units || ''} onChange={(e) => setCurrentProject({...currentProject, available_units: e.target.value})} placeholder="3" className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.contractYears')}</label><input type="number" value={currentProject.years_contract ?? ''} onChange={(e) => setCurrentProject({...currentProject, years_contract: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.extensionYears')}</label><input type="number" value={currentProject.years_extension ?? ''} onChange={(e) => setCurrentProject({...currentProject, years_extension: e.target.value === '' ? null : (parseInt(e.target.value) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.adminDash.completionDateLabel')}</label><input type="text" placeholder="30/06/2026" value={currentProject.completion_date || ''} onChange={(e) => setCurrentProject({...currentProject, completion_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
   <div className="md:col-span-2">
-    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.landRatio')}</label>
+    <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.landRatio')}</label>
     <div className="flex items-center gap-3">
       <input type="range" min={0} max={100} value={currentProject.land_ratio || 30} onChange={(e) => setCurrentProject({...currentProject, land_ratio: parseInt(e.target.value)})} className="flex-1" />
       <span className="text-lg font-bold text-primary w-16 text-right">{currentProject.land_ratio || 30}%</span>
@@ -2807,17 +2807,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
   </div>
 
-  <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.progressPct')}</label><div className="flex items-center gap-3"><input type="range" min={0} max={100} value={currentProject.completion_percent || 0} onChange={(e) => setCurrentProject({...currentProject, completion_percent: parseInt(e.target.value)})} className="flex-1" /><span className="text-lg font-bold text-primary w-16 text-right">{currentProject.completion_percent || 0}%</span></div></div>
+  <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.props.progressPct')}</label><div className="flex items-center gap-3"><input type="range" min={0} max={100} value={currentProject.completion_percent || 0} onChange={(e) => setCurrentProject({...currentProject, completion_percent: parseInt(e.target.value)})} className="flex-1" /><span className="text-lg font-bold text-primary w-16 text-right">{currentProject.completion_percent || 0}%</span></div></div>
 
   <div className="bg-white p-4 rounded-2xl">
-    <p className="text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.dash.roiCalculated')}</p>
+    <p className="text-[10px] font-black uppercase text-primary/45 mb-3">{t('admin.dash.roiCalculated')}</p>
     <div className="grid grid-cols-2 gap-4">
-      <div className="bg-gray-50 p-4 rounded-xl">
-        <p className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.roiRental')}</p>
+      <div className="bg-almond/50 p-4 rounded-xl">
+        <p className="text-[10px] font-black uppercase text-primary/45">{t('admin.dash.roiRental')}</p>
         <p className="text-2xl font-serif text-primary">{currentProject.investor_price && currentProject.annual_rental_projection ? ((currentProject.annual_rental_projection / currentProject.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
       </div>
-      <div className="bg-gray-50 p-4 rounded-xl">
-        <p className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.roiResale')}</p>
+      <div className="bg-almond/50 p-4 rounded-xl">
+        <p className="text-[10px] font-black uppercase text-primary/45">{t('admin.dash.roiResale')}</p>
         <p className="text-2xl font-serif text-primary">{currentProject.investor_price && currentProject.market_price && currentProject.market_price > currentProject.investor_price ? (((currentProject.market_price - currentProject.investor_price) / currentProject.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
       </div>
     </div>
@@ -2826,22 +2826,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== E. OBRA Y DOCUMENTOS ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details name="propedit" className="group rounded-2xl bg-almond/50 border border-primary/10">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secConstruction')}</span>
-                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                  <span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
     <div>
-        <label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t('admin.dash.brochureByLang')}</label>
-        <p className="text-[10px] text-gray-400 mb-3">{t('admin.dash.brochureByLangHint')}</p>
+        <label className="block text-[10px] font-black uppercase text-primary/45 mb-1">{t('admin.dash.brochureByLang')}</label>
+        <p className="text-[10px] text-primary/45 mb-3">{t('admin.dash.brochureByLangHint')}</p>
         <div className="space-y-2">
           {([['en','English (ENG) · por defecto'],['es','Español'],['ro','Română'],['id','Indonesia']] as [string,string][]).map(([lng,label]) => {
             const val = ((currentProject as any).brochures?.[lng]) || (lng === 'en' ? (currentProject.brochure_url || '') : '');
             return (
               <div key={lng} className="flex gap-2 items-center">
                 <span className="w-10 text-[10px] font-black uppercase text-primary/50 shrink-0">{lng}</span>
-                <input type="text" value={val} onChange={(e) => setCurrentProject({...currentProject, brochures: {...(((currentProject as any).brochures) || {}), [lng]: e.target.value}} as any)} placeholder={label} className="flex-grow px-4 py-3 bg-gray-50 rounded-xl font-medium text-sm" />
+                <input type="text" value={val} onChange={(e) => setCurrentProject({...currentProject, brochures: {...(((currentProject as any).brochures) || {}), [lng]: e.target.value}} as any)} placeholder={label} className="flex-grow px-4 py-3 bg-almond/50 rounded-xl font-medium text-sm" />
                 <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                   <span className="material-symbols-outlined text-base">{uploading ? 'refresh' : 'upload_file'}</span>
                   <input type="file" className="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" onChange={(e) => handleBrochureLangUpload(e, lng)} disabled={uploading} />
@@ -2853,7 +2853,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div>
-         <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.constructionReportUrl')}</label>
+         <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.constructionReportUrl')}</label>
          <div className="flex gap-2">
              <input type="text" value={currentProject.construction_update_url || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_url: e.target.value})} placeholder="https://..." className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium" />
              <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -2862,9 +2862,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              </label>
          </div>
       </div>
-      <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.reportDate')}</label><input type="date" value={currentProject.construction_update_date || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+      <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.reportDate')}</label><input type="date" value={currentProject.construction_update_date || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_date: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
       <div className="md:col-span-2">
-        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.googleMapsUrl')}</label>
+        <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.googleMapsUrl')}</label>
         <input type="text" value={currentProject.google_maps_url || ''} onChange={(e) => setCurrentProject({...currentProject, google_maps_url: e.target.value})} placeholder={t('admin.dash.googleMapsPh')} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" />
         <p className="text-[8px] text-primary/30 mt-1">{t('admin.dash.googleMapsHint')}</p>
       </div>
@@ -2873,31 +2873,31 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== F. VISIBILIDAD ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details name="propedit" className="group rounded-2xl bg-almond/50 border border-primary/10">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secVisibility')}</span>
-                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                  <span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
                 <div className="px-4 pb-4 pt-1">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl">
                       <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.props.highlightHome')}</span>
-                      <button type="button" onClick={() => setCurrentProject({...currentProject, is_featured: !currentProject.is_featured})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_featured ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+                      <button type="button" onClick={() => setCurrentProject({...currentProject, is_featured: !currentProject.is_featured})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_featured ? 'bg-primary justify-end' : 'bg-primary/20 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
                     </div>
                     <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl">
                       <div>
                         <span className="text-[10px] font-black uppercase text-primary/60 block mb-1">{t('admin.props.hideFromPublic')}</span>
-                        <span className="text-[9px] text-gray-400">{t('admin.props.hideFromPublicHint')}</span>
+                        <span className="text-[9px] text-primary/45">{t('admin.props.hideFromPublicHint')}</span>
                       </div>
-                      <button type="button" onClick={() => setCurrentProject({...currentProject, is_hidden: !currentProject.is_hidden})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_hidden ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+                      <button type="button" onClick={() => setCurrentProject({...currentProject, is_hidden: !currentProject.is_hidden})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_hidden ? 'bg-primary justify-end' : 'bg-primary/20 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
                     </div>
                   </div>
                 </div>
                </details>
 
               {/* Ficha extendida: datos de agencia / legal / drive / vídeo (los usan los packs de agencia). */}
-              <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
-                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.agencyLegalExtra')}</span><span className="block text-xs text-gray-400">{t('admin.dash.agencyLegalHint')}</span></span><span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
+              <details name="propedit" className="group rounded-2xl bg-almond/50 border border-primary/10">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.agencyLegalExtra')}</span><span className="block text-xs text-primary/45">{t('admin.dash.agencyLegalHint')}</span></span><span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
                 <div className="px-4 pb-4 pt-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {([
@@ -2914,10 +2914,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     ['drive_legal_url',t('admin.dash.fldDriveLegal'),'text'],['drive_brochure_folder_url',t('admin.dash.fldDriveBrochure'),'text'],
                   ] as [string,string,string][]).map(([k,label,type]) => (
                     <div key={k}>
-                      <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5">{label}</label>
+                      <label className="block text-[10px] font-black uppercase text-primary/45 mb-1.5">{label}</label>
                       <input type={type==='number'?'number':'text'} value={(currentProject as any)[k] ?? ''}
                         onChange={(e) => setCurrentProject({ ...currentProject, [k]: type==='number' ? (parseFloat(e.target.value) || 0) : e.target.value } as any)}
-                        className="w-full px-3 py-2.5 bg-gray-50 rounded-xl text-sm font-medium" />
+                        className="w-full px-3 py-2.5 bg-almond/50 rounded-xl text-sm font-medium" />
                     </div>
                   ))}
                 </div>
@@ -2931,8 +2931,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
               </details>
               {/* Traducciones (EN/ID) de los campos que aparecen en los packs de agencia. */}
-              <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
-                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.packTranslations')}</span><span className="block text-xs text-gray-400">{t('admin.dash.packTranslationsHint')}</span></span><span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
+              <details name="propedit" className="group rounded-2xl bg-almond/50 border border-primary/10">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.packTranslations')}</span><span className="block text-xs text-primary/45">{t('admin.dash.packTranslationsHint')}</span></span><span className="material-symbols-outlined text-primary/45 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
                 <div className="px-4 pb-4 pt-1 space-y-3">
                   {([
                     ['description',t('admin.dash.trDescription')],['status',t('admin.dash.trStatus')],['completion_date',t('admin.dash.trCompletionDate')],
@@ -2943,9 +2943,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     ['lease_end_date',t('admin.dash.trLeaseEnd')],
                   ] as [string,string][]).map(([k,label]) => (
                     <div key={k} className="grid grid-cols-1 md:grid-cols-[140px_1fr_1fr] gap-2 items-center">
-                      <span className="text-[10px] font-black uppercase text-gray-400">{label}</span>
-                      <input placeholder="EN" value={(currentProject as any)[`${k}_en`] ?? ''} onChange={(e) => setCurrentProject({ ...currentProject, [`${k}_en`]: e.target.value } as any)} className="w-full px-3 py-2 bg-gray-50 rounded-xl text-sm" />
-                      <input placeholder="ID" value={(currentProject as any)[`${k}_id`] ?? ''} onChange={(e) => setCurrentProject({ ...currentProject, [`${k}_id`]: e.target.value } as any)} className="w-full px-3 py-2 bg-gray-50 rounded-xl text-sm" />
+                      <span className="text-[10px] font-black uppercase text-primary/45">{label}</span>
+                      <input placeholder="EN" value={(currentProject as any)[`${k}_en`] ?? ''} onChange={(e) => setCurrentProject({ ...currentProject, [`${k}_en`]: e.target.value } as any)} className="w-full px-3 py-2 bg-almond/50 rounded-xl text-sm" />
+                      <input placeholder="ID" value={(currentProject as any)[`${k}_id`] ?? ''} onChange={(e) => setCurrentProject({ ...currentProject, [`${k}_id`]: e.target.value } as any)} className="w-full px-3 py-2 bg-almond/50 rounded-xl text-sm" />
                     </div>
                   ))}
                 </div>
@@ -2956,7 +2956,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   {uploading && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {uploading ? t('admin.common.saving') : t('admin.adminDash.saveProperty')}
                 </button>
-                <button type="button" onClick={() => setIsEditing(false)} className="px-6 bg-gray-100 text-gray-500 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-gray-200">{t('admin.common.cancel')}</button>
+                <button type="button" onClick={() => setIsEditing(false)} className="px-6 bg-primary/10 text-primary/55 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-primary/15">{t('admin.common.cancel')}</button>
               </div>
             </form>
           </div>
@@ -2970,25 +2970,25 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <h2 className="text-2xl font-serif text-primary mb-6">{currentBlog.id && !String(currentBlog.id).startsWith('blog-') ? t('admin.dash.editArticle') : t('admin.dash.newArticle')}</h2>
       <form onSubmit={handleSaveBlog} className="space-y-5">
         <div className="grid grid-cols-2 gap-5">
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.titleLabel')}</label><input required value={currentBlog.title || ''} onChange={(e) => setCurrentBlog({...currentBlog, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.tagLabel')}</label><input value={currentBlog.tag || ''} onChange={(e) => setCurrentBlog({...currentBlog, tag: e.target.value})} placeholder="MERCADO" className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.titleLabel')}</label><input required value={currentBlog.title || ''} onChange={(e) => setCurrentBlog({...currentBlog, title: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.tagLabel')}</label><input value={currentBlog.tag || ''} onChange={(e) => setCurrentBlog({...currentBlog, tag: e.target.value})} placeholder="MERCADO" className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold" /></div>
         </div>
         <div className="grid grid-cols-2 gap-5">
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.publishDate')}</label><input type="date" value={currentBlog.published_date || ''} onChange={(e) => setCurrentBlog({...currentBlog, published_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-          <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.imageUrlPath')}</label><input value={currentBlog.image || ''} onChange={(e) => setCurrentBlog({...currentBlog, image: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.publishDate')}</label><input type="date" value={currentBlog.published_date || ''} onChange={(e) => setCurrentBlog({...currentBlog, published_date: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold" /></div>
+          <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.imageUrlPath')}</label><input value={currentBlog.image || ''} onChange={(e) => setCurrentBlog({...currentBlog, image: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold" /></div>
         </div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.descExcerpt')}</label><textarea value={currentBlog.description || ''} onChange={(e) => setCurrentBlog({...currentBlog, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium resize-none h-20" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.descExcerpt')}</label><textarea value={currentBlog.description || ''} onChange={(e) => setCurrentBlog({...currentBlog, description: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-medium resize-none h-20" /></div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.contentHtml')}</label>
+          <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.contentHtml')}</label>
           <div className="flex gap-2 mb-2">
-            <button type="button" onClick={() => wrapSelection('b')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-black hover:bg-gray-200">B</button>
-            <button type="button" onClick={() => wrapSelection('p')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-bold hover:bg-gray-200">P</button>
-            <button type="button" onClick={() => wrapSelection('h2')} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-bold hover:bg-gray-200">H2</button>
+            <button type="button" onClick={() => wrapSelection('b')} className="px-3 py-1.5 bg-primary/10 rounded-lg text-xs font-black hover:bg-primary/15">B</button>
+            <button type="button" onClick={() => wrapSelection('p')} className="px-3 py-1.5 bg-primary/10 rounded-lg text-xs font-bold hover:bg-primary/15">P</button>
+            <button type="button" onClick={() => wrapSelection('h2')} className="px-3 py-1.5 bg-primary/10 rounded-lg text-xs font-bold hover:bg-primary/15">H2</button>
           </div>
-          <textarea ref={blogContentRef} value={currentBlog.content || ''} onChange={(e) => setCurrentBlog({...currentBlog, content: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-mono text-sm resize-none h-48" />
+          <textarea ref={blogContentRef} value={currentBlog.content || ''} onChange={(e) => setCurrentBlog({...currentBlog, content: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-mono text-sm resize-none h-48" />
         </div>
         <div className="flex gap-4 pt-2">
-          <button type="button" onClick={() => setIsEditingBlog(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
+          <button type="button" onClick={() => setIsEditingBlog(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-primary/15 text-primary/45 hover:bg-almond/50 transition">{t('admin.common.cancel')}</button>
           <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? t('admin.dash.savingEllipsis') : t('admin.common.save')}</button>
         </div>
       </form>
@@ -3002,20 +3002,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
       <h2 className="text-2xl font-serif text-primary mb-6">{currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.editAdmin') : t('admin.dash.newAdmin')}</h2>
       <form onSubmit={handleSaveUser} className="space-y-5">
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.nameLabel')}</label><input required value={currentUser.name || ''} onChange={(e) => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.usernameEmail')}</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.passwordLabel')} {currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.emptyNoChange') : ''}</label><input type="text" required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.roleLabel')}</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
+        <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.nameLabel')}</label><input required value={currentUser.name || ''} onChange={(e) => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.usernameEmail')}</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.passwordLabel')} {currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.emptyNoChange') : ''}</label><input type="text" required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.roleLabel')}</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.signatureLabel')}</label>
-          <div className="relative inline-block border-2 border-dashed border-gray-200 rounded-2xl p-3 w-52 text-center">
+          <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.signatureLabel')}</label>
+          <div className="relative inline-block border-2 border-dashed border-primary/15 rounded-2xl p-3 w-52 text-center">
             {(currentUser as any).signature_url && <button type="button" title={t('admin.dash.deleteSignature')} onClick={() => setCurrentUser({ ...currentUser, signature_url: '' } as any)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-base leading-none shadow hover:bg-red-600">×</button>}
-            {(currentUser as any).signature_url ? <img src={(currentUser as any).signature_url} alt={t('admin.dash.signatureLabel')} className="h-12 mx-auto object-contain" /> : <span className="material-symbols-outlined text-gray-300 text-2xl">edit</span>}
+            {(currentUser as any).signature_url ? <img src={(currentUser as any).signature_url} alt={t('admin.dash.signatureLabel')} className="h-12 mx-auto object-contain" /> : <span className="material-symbols-outlined text-primary/30 text-2xl">edit</span>}
             <label className="block mt-1 cursor-pointer text-[10px] font-black uppercase text-primary tracking-widest">{(currentUser as any).signature_url ? t('admin.dash.change') : t('admin.dash.uploadPng')}<input type="file" accept="image/png,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleUserSignatureUpload(f); }} /></label>
           </div>
         </div>
         <div className="flex gap-4 pt-2">
-          <button type="button" onClick={() => setIsEditingUser(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
+          <button type="button" onClick={() => setIsEditingUser(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-primary/15 text-primary/45 hover:bg-almond/50 transition">{t('admin.common.cancel')}</button>
           <button type="submit" className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition">{t('admin.common.save')}</button>
         </div>
       </form>
@@ -3032,12 +3032,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {reportPicker && (
   <div className="fixed inset-0 z-[165] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setReportPicker(null); }}>
     <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-primary/10 shrink-0">
         <div>
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.reportPickTitle', { defaultValue: 'Aviso de obra — proyectos y destinatarios' })}</h3>
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{reportPicker.client.name}</p>
+          <p className="text-xs text-primary/45 mt-0.5 truncate">{reportPicker.client.name}</p>
         </div>
-        <button onClick={() => setReportPicker(null)} className="p-2 text-gray-400 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
+        <button onClick={() => setReportPicker(null)} className="p-2 text-primary/45 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="p-4 space-y-2 overflow-y-auto">
         <label className="flex items-center gap-2 px-2 pb-1 cursor-pointer select-none">
@@ -3047,10 +3047,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {reportPicker.projs.map((cp: any, i: number) => {
           const on = reportPicker.selected.includes(cp.id);
           return (
-            <label key={cp.id || i} className={`w-full text-left px-4 py-3 rounded-xl border transition flex items-center gap-2 cursor-pointer ${on ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/40'}`}>
+            <label key={cp.id || i} className={`w-full text-left px-4 py-3 rounded-xl border transition flex items-center gap-2 cursor-pointer ${on ? 'border-primary bg-primary/5' : 'border-primary/15 hover:border-primary/40'}`}>
               <input type="checkbox" className="rounded" checked={on} onChange={() => setReportPicker((p) => p ? { ...p, selected: p.selected.includes(cp.id) ? p.selected.filter((x) => x !== cp.id) : [...p.selected, cp.id] } : p)} />
               <span className="material-symbols-outlined text-primary/60 text-base">apartment</span>
-              <span className="font-bold text-primary text-sm break-words">{cp.project_name}{cp.unit_number ? <span className="text-gray-400 font-normal"> · {cp.unit_number}</span> : null}</span>
+              <span className="font-bold text-primary text-sm break-words">{cp.project_name}{cp.unit_number ? <span className="text-primary/45 font-normal"> · {cp.unit_number}</span> : null}</span>
             </label>
           );
         })}
@@ -3062,16 +3062,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           const checked = avail.filter((e) => !excl.has(e.toLowerCase()));
           return (
             <>
-              <div className="pt-2 mt-1 border-t border-gray-100">
+              <div className="pt-2 mt-1 border-t border-primary/10">
                 <p className="text-[10px] font-black uppercase tracking-widest text-primary/50 px-2 mb-1">{t('admin.dash.reportPickRecipients', { defaultValue: 'Destinatarios' })}</p>
                 {avail.length === 0 ? (
-                  <p className="text-xs text-gray-400 px-2 py-1">{t('admin.dash.reportPickPickProject', { defaultValue: 'Selecciona alguna propiedad para ver sus destinatarios.' })}</p>
+                  <p className="text-xs text-primary/45 px-2 py-1">{t('admin.dash.reportPickPickProject', { defaultValue: 'Selecciona alguna propiedad para ver sus destinatarios.' })}</p>
                 ) : avail.map((em) => {
                   const on = !excl.has(em.toLowerCase());
                   return (
                     <label key={em} className="flex items-center gap-2 px-2 py-1.5 cursor-pointer select-none">
                       <input type="checkbox" className="rounded" checked={on} onChange={() => setReportPicker((p) => p ? { ...p, excluded: on ? [...p.excluded, em] : p.excluded.filter((x) => x.toLowerCase() !== em.toLowerCase()) } : p)} />
-                      <span className="text-sm text-primary font-medium break-all">{holderNameByEmail(reportPicker.client, em)} <span className="text-gray-400 font-normal">· {em}</span></span>
+                      <span className="text-sm text-primary font-medium break-all">{holderNameByEmail(reportPicker.client, em)} <span className="text-primary/45 font-normal">· {em}</span></span>
                     </label>
                   );
                 })}
@@ -3088,14 +3088,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {emailPreview && (
   <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onMouseDown={(e) => { if (e.target === e.currentTarget && !emailPreview.sending) setEmailPreview(null); }}>
     <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-primary/10 shrink-0">
         <div className="min-w-0">
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailPreviewTitle', { defaultValue: 'Previsualización del email' })}</h3>
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{emailPreview.subject}</p>
+          <p className="text-xs text-primary/45 mt-0.5 truncate">{emailPreview.subject}</p>
           <div className="flex flex-wrap items-center gap-2 mt-1">
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary/45">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
             {emailPreview.recipients.map((em) => (
-              <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${emailPreview.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+              <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${emailPreview.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-almond/50 border-primary/15 text-primary/45'}`}>
                 <input type="checkbox" checked={emailPreview.selected.includes(em)} onChange={() => setEmailPreview((p) => { if (!p) return p; const selected = p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em]; return { ...p, selected }; })} className="rounded" />
                 {em}
               </label>
@@ -3103,16 +3103,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </div>
           {emailPreview.buildHtml && emailPreview.recipients.length > 1 && (
             <div className="flex flex-wrap items-center gap-2 mt-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewViewAs', { defaultValue: 'Ver como' })}:</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary/45">{t('admin.dash.emailPreviewViewAs', { defaultValue: 'Ver como' })}:</span>
               {emailPreview.recipients.map((em) => (
-                <button key={em} type="button" onClick={() => setEmailPreview((p) => p && p.buildHtml ? { ...p, previewEmail: em, html: p.buildHtml(em) } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${emailPreview.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-primary/40'}`}>
+                <button key={em} type="button" onClick={() => setEmailPreview((p) => p && p.buildHtml ? { ...p, previewEmail: em, html: p.buildHtml(em) } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${emailPreview.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-almond/50 border-primary/15 text-primary/55 hover:border-primary/40'}`}>
                   {em}
                 </button>
               ))}
             </div>
           )}
         </div>
-        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
+        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-primary/45 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="overflow-auto p-5 bg-[#F3E5D8]">
         <div className="max-w-3xl mx-auto min-w-0">
@@ -3120,8 +3120,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm overflow-x-auto" dangerouslySetInnerHTML={{ __html: emailPreview.html }} />
         </div>
       </div>
-      <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
-        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
+      <div className="px-6 py-4 border-t border-primary/10 flex gap-3 shrink-0">
+        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="flex-1 py-3 rounded-xl border border-primary/15 text-primary/55 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
         <button onClick={() => void sendPreviewedEmail()} disabled={emailPreview.sending || emailPreview.selected.length === 0} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{emailPreview.sending ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> {t('admin.adminDash.savingEllipsis')}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })} ({emailPreview.selected.length})</>}</button>
       </div>
     </div>
@@ -3132,9 +3132,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {isEditingClient && (
   <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setIsEditingClient(false); }}>
     <div className="relative bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[92vh] overflow-y-auto overscroll-contain">
-      <button type="button" onClick={() => setIsEditingClient(false)} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+      <button type="button" onClick={() => setIsEditingClient(false)} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-primary/10 text-primary/55 hover:bg-primary/15 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
       <h2 className="text-2xl font-serif text-primary mb-2 pr-10">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
-      <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
+      <p className="text-sm text-primary/45 mb-8">{t('admin.dash.fillClientData')}</p>
       <form onSubmit={handleSaveClient} onKeyDown={(e) => { if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') e.preventDefault(); }} className="space-y-5">
         {/* TITULARES: cada titular con su NOMBRE y su EMAIL. El título de la ficha
             junta los nombres con " & " y los correos van a todos. */}
@@ -3153,23 +3153,23 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           }));
           return (
             <div>
-              <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.holders', { defaultValue: 'Titular(es) — nombre, email, teléfono e idioma' })}</label>
+              <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.holders', { defaultValue: 'Titular(es) — nombre, email, teléfono e idioma' })}</label>
               <div className="space-y-3">
                 {hs.map((h, i) => (
-                  <div key={i} className="bg-gray-50/60 rounded-2xl p-2 border border-gray-100">
+                  <div key={i} className="bg-almond/40 rounded-2xl p-2 border border-primary/10">
                     <div className="flex gap-2 items-start">
                       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <input type="text" value={h.name || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, name: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderNamePh', { defaultValue: 'Nombre' })} />
-                        <input type="email" value={h.email || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, email: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderEmailPh', { defaultValue: 'Email' })} />
-                        <input type="text" value={h.phone || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, phone: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderPhonePh', { defaultValue: 'Teléfono' })} />
-                        <select value={h.lang || 'es'} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, lang: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-bold border border-gray-100 focus:border-primary/20 focus:outline-none text-sm">
+                        <input type="text" value={h.name || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, name: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-primary/10 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderNamePh', { defaultValue: 'Nombre' })} />
+                        <input type="email" value={h.email || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, email: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-primary/10 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderEmailPh', { defaultValue: 'Email' })} />
+                        <input type="text" value={h.phone || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, phone: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-primary/10 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderPhonePh', { defaultValue: 'Teléfono' })} />
+                        <select value={h.lang || 'es'} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, lang: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-bold border border-primary/10 focus:border-primary/20 focus:outline-none text-sm">
                           <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
                         </select>
                       </div>
                       {hs.length > 1 && (
                         <div className="flex flex-col items-center shrink-0">
-                          <button type="button" disabled={i === 0} onClick={() => { const n = [...hs]; const tmp = n[i - 1]; n[i - 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-gray-400 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveUp', { defaultValue: 'Subir' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_up</span></button>
-                          <button type="button" disabled={i === hs.length - 1} onClick={() => { const n = [...hs]; const tmp = n[i + 1]; n[i + 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-gray-400 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveDown', { defaultValue: 'Bajar' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_down</span></button>
+                          <button type="button" disabled={i === 0} onClick={() => { const n = [...hs]; const tmp = n[i - 1]; n[i - 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-primary/45 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveUp', { defaultValue: 'Subir' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_up</span></button>
+                          <button type="button" disabled={i === hs.length - 1} onClick={() => { const n = [...hs]; const tmp = n[i + 1]; n[i + 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-primary/45 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveDown', { defaultValue: 'Bajar' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_down</span></button>
                           <button type="button" onClick={() => setH(hs.filter((_, j) => j !== i))} className="p-1 text-red-400 hover:text-red-600" aria-label={t('admin.common.delete', { defaultValue: 'Eliminar' })}><span className="material-symbols-outlined text-lg">close</span></button>
                         </div>
                       )}
@@ -3186,32 +3186,32 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             cliente se sincroniza desde el 1er titular como fallback, así que aquí
             NO repetimos un campo global de teléfono. */}
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.notesLabel')}</label>
-          <textarea value={currentClient.notes || ''} onChange={(e) => setCurrentClient({...currentClient, notes: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none resize-none h-24" placeholder={t('admin.dash.notesPh')} />
+          <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.notesLabel')}</label>
+          <textarea value={currentClient.notes || ''} onChange={(e) => setCurrentClient({...currentClient, notes: e.target.value})} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none resize-none h-24" placeholder={t('admin.dash.notesPh')} />
         </div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.clientDriveFolder')}</label>
-          <input type="url" value={(currentClient as any).drive_folder_url || ''} onChange={(e) => setCurrentClient({...currentClient, drive_folder_url: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="https://drive.google.com/drive/folders/..." />
+          <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.clientDriveFolder')}</label>
+          <input type="url" value={(currentClient as any).drive_folder_url || ''} onChange={(e) => setCurrentClient({...currentClient, drive_folder_url: e.target.value} as any)} className="w-full px-5 py-4 bg-almond/50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none" placeholder="https://drive.google.com/drive/folders/..." />
         </div>
         {/* El idioma se elige POR TITULAR (cada bloque de titular tiene su selector).
             preferred_language del cliente se sincroniza desde el primer titular como
             fallback, así que aquí NO repetimos un selector global de idioma.
             La divisa tampoco se elige por cliente: el cliente ve únicamente las
             divisas que fija el admin en cada compra/calendario (sin selector). */}
-        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+        <div className="bg-almond/50 p-4 rounded-2xl border border-primary/10">
           <label className="text-[10px] font-black uppercase text-primary/60 block mb-2">{t('admin.dash.clientStatus', { defaultValue: 'Estado del cliente' })}</label>
-          <select value={(currentClient as any).status || (currentClient.is_active === false ? 'inactive' : 'active')} onChange={(e) => setCurrentClient((prev: any) => ({ ...prev, status: e.target.value, is_active: e.target.value === 'active' }))} className="w-full px-5 py-3 bg-white border border-gray-200 rounded-2xl font-bold">
+          <select value={(currentClient as any).status || (currentClient.is_active === false ? 'inactive' : 'active')} onChange={(e) => setCurrentClient((prev: any) => ({ ...prev, status: e.target.value, is_active: e.target.value === 'active' }))} className="w-full px-5 py-3 bg-white border border-primary/15 rounded-2xl font-bold">
             <option value="active">{t('admin.clientsTab.active')}</option>
             <option value="inactive">{t('admin.clientsTab.inactive')}</option>
             <option value="draft">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</option>
           </select>
-          <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.draftHint', { defaultValue: 'Activo = puede entrar y cuenta en Finanzas. Inactivo = no entra, sí cuenta. Draft = perfil de prueba, no entra ni cuenta.' })}</p>
+          <p className="text-[10px] text-primary/45 mt-2">{t('admin.dash.draftHint', { defaultValue: 'Activo = puede entrar y cuenta en Finanzas. Inactivo = no entra, sí cuenta. Draft = perfil de prueba, no entra ni cuenta.' })}</p>
         </div>
         {/* Permisos POR CLIENTE: heredan Configuración; lo global-OFF queda bloqueado
             (solo se activa en Configuración); lo global-ON se puede desactivar aquí. */}
-        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+        <div className="bg-almond/50 p-4 rounded-2xl border border-primary/10">
           <p className="text-[10px] font-black uppercase text-primary/60 mb-1">{t('admin.dash.clientPermsTitle')}</p>
-          <p className="text-[10px] text-gray-400 mb-3">{t('admin.dash.clientPermsHint')}</p>
+          <p className="text-[10px] text-primary/45 mb-3">{t('admin.dash.clientPermsHint')}</p>
           <div className="grid grid-cols-1 gap-2">
             {([['calculator', t('fix.adm.featCalculator')], ['construction', t('fix.adm.featConstruction')], ['constructionProgress', t('fix.adm.featConstructionProgress', { defaultValue: 'Progreso de obra' })], ['brochure', t('fix.adm.featBrochure')], ['viewProject', t('fix.adm.featViewProject')], ['drive', t('fix.adm.featDrive')]] as [string, string][]).map(([k, label]) => {
               const globalOn = ((((config as any).brand?.client_features) || {})[k]) !== false;
@@ -3221,16 +3221,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               return (
                 <button key={k} type="button" disabled={!globalOn}
                   onClick={() => setCurrentClient({ ...currentClient, feature_overrides: { ...ov, [k]: !clientOn } } as any)}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${!globalOn ? 'bg-gray-100 border-gray-200 text-gray-300 cursor-not-allowed' : on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
-                  <span className="text-left">{label}{!globalOn && <span className="block text-[9px] font-normal text-gray-400 normal-case">{t('admin.dash.clientPermsLocked')}</span>}</span>
-                  <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${!globalOn ? 'bg-primary/10 border-primary/15 text-primary/30 cursor-not-allowed' : on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-almond/50 border-primary/15 text-primary/45'}`}>
+                  <span className="text-left">{label}{!globalOn && <span className="block text-[9px] font-normal text-primary/45 normal-case">{t('admin.dash.clientPermsLocked')}</span>}</span>
+                  <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${on ? 'bg-green-500 justify-end' : 'bg-primary/20 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
                 </button>
               );
             })}
           </div>
         </div>
         <div className="flex gap-4 pt-4">
-          <button type="button" onClick={() => setIsEditingClient(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
+          <button type="button" onClick={() => setIsEditingClient(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-primary/15 text-primary/45 hover:bg-almond/50 transition">{t('admin.common.cancel')}</button>
           <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? t('admin.adminDash.savingEllipsis') : t('admin.adminDash.save')}</button>
         </div>
       </form>
@@ -3242,25 +3242,25 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditingAssignment(null); }}>
         <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
             <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.adminDash.editAssignment')}</h2>
-            <p className="text-sm text-gray-400 mb-2">{t('admin.dash.clientLabel')}: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
-            <p className="text-sm text-gray-400 mb-8">{t('admin.dash.projectLabel')}: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
+            <p className="text-sm text-primary/45 mb-2">{t('admin.dash.clientLabel')}: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
+            <p className="text-sm text-primary/45 mb-8">{t('admin.dash.projectLabel')}: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
             <form onSubmit={handleEditAssignment} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.unitReference')}</label><input value={editingAssignment.assignment.unit_number || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, unit_number: e.target.value}})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.unitReference')}</label><input value={editingAssignment.assignment.unit_number || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, unit_number: e.target.value}})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" /></div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
+                        <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.investedAmount')}</label>
                         <div className="flex gap-2">
-                            <input type="number" value={editingAssignment.assignment.investment_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_amount: parseFloat(e.target.value) || 0}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
-                            <select value={editingAssignment.assignment.currency || 'EUR'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, currency: e.target.value}})} className="px-3 py-4 bg-gray-100 border border-gray-200 rounded-2xl font-bold w-24">
+                            <input type="number" value={editingAssignment.assignment.investment_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_amount: parseFloat(e.target.value) || 0}})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold flex-grow" />
+                            <select value={editingAssignment.assignment.currency || 'EUR'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, currency: e.target.value}})} className="px-3 py-4 bg-primary/10 border border-primary/15 rounded-2xl font-bold w-24">
                                 {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
                             </select>
                         </div>
                     </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={editingAssignment.assignment.purchase_date || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, purchase_date: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentStatus')}</label>
-                        <select value={editingAssignment.assignment.status || 'Reserva'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, status: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={editingAssignment.assignment.purchase_date || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, purchase_date: e.target.value}})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.investmentStatus')}</label>
+                        <select value={editingAssignment.assignment.status || 'Reserva'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, status: e.target.value}})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold">
                             <option value="Reserva">{translateStatus('Reserva', t)}</option>
                             <option value="Pagado">{translateStatus('Pagado', t)}</option>
                             <option value="En proceso">{translateStatus('En proceso', t)}</option>
@@ -3269,17 +3269,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </div>
                 </div>
                 <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.deliveryDate')}</label>
-                    <input type="date" value={((editingAssignment.assignment as any).delivery_date || '').slice(0, 10)} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, delivery_date: e.target.value} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
-                    <p className="text-[10px] text-gray-400 mt-1">{t('admin.dash.deliveryDateHint')}</p>
+                    <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.deliveryDate')}</label>
+                    <input type="date" value={((editingAssignment.assignment as any).delivery_date || '').slice(0, 10)} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, delivery_date: e.target.value} as any})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" />
+                    <p className="text-[10px] text-primary/45 mt-1">{t('admin.dash.deliveryDateHint')}</p>
                 </div>
                 <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.driveFolderLabel', { defaultValue: 'Carpeta de documentación (Drive) de este proyecto' })}</label>
-                    <input type="url" value={(editingAssignment.assignment as any).drive_folder_url || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, drive_folder_url: e.target.value} as any})} placeholder="https://drive.google.com/drive/folders/..." className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-medium" />
+                    <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.driveFolderLabel', { defaultValue: 'Carpeta de documentación (Drive) de este proyecto' })}</label>
+                    <input type="url" value={(editingAssignment.assignment as any).drive_folder_url || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, drive_folder_url: e.target.value} as any})} placeholder="https://drive.google.com/drive/folders/..." className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-medium" />
                 </div>
                 <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentType', { defaultValue: 'Tipo de inversión' })}</label>
-                    <select value={(editingAssignment.assignment as any).investment_type || 'compra'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_type: e.target.value} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                    <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.investmentType', { defaultValue: 'Tipo de inversión' })}</label>
+                    <select value={(editingAssignment.assignment as any).investment_type || 'compra'} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, investment_type: e.target.value} as any})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold">
                       <option value="compra">{t('admin.dash.invCompra', { defaultValue: 'Compra (revender/alquilar)' })}</option>
                       <option value="pool">{t('admin.dash.invPool', { defaultValue: 'Pool de inversión' })}</option>
                       <option value="desarrollo">{t('admin.dash.invDesarrollo', { defaultValue: 'Desarrollo a medida' })}</option>
@@ -3288,8 +3288,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
                 {(editingAssignment.assignment as any).investment_type === 'pool' && (
                   <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
-                    <input type="number" value={(editingAssignment.assignment as any).pool_total_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, pool_total_amount: parseFloat(e.target.value) || 0} as any})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
+                    <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
+                    <input type="number" value={(editingAssignment.assignment as any).pool_total_amount || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, pool_total_amount: parseFloat(e.target.value) || 0} as any})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" />
                     {Number((editingAssignment.assignment as any).pool_total_amount) > 0 && (
                       <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(editingAssignment.assignment.investment_amount || 0) / Number((editingAssignment.assignment as any).pool_total_amount)) * 100).toFixed(4)}%</p>
                     )}
@@ -3310,31 +3310,31 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setAssigningProject(null); }}>
         <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
             <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.dash.assignProjectTitle')}</h2>
-            <p className="text-sm text-gray-400 mb-8">{t('admin.dash.clientLabel')}: <strong className="text-primary">{assigningProject.clientName}</strong></p>
+            <p className="text-sm text-primary/45 mb-8">{t('admin.dash.clientLabel')}: <strong className="text-primary">{assigningProject.clientName}</strong></p>
             <form onSubmit={handleAssignProject} className="space-y-6">
                 <div>
-                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.projectLabel')}</label>
-                    <select value={assignForm.project_id} onChange={(e) => setAssignForm({...assignForm, project_id: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                    <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.projectLabel')}</label>
+                    <select value={assignForm.project_id} onChange={(e) => setAssignForm({...assignForm, project_id: e.target.value})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold">
                         {projects.length === 0 && <option value="">{t('admin.dash.noProjectsOption')}</option>}
                         {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.unitReference')}</label><input value={assignForm.unit_number} onChange={(e) => setAssignForm({...assignForm, unit_number: e.target.value})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.unitReference')}</label><input value={assignForm.unit_number} onChange={(e) => setAssignForm({...assignForm, unit_number: e.target.value})} placeholder={t('admin.dash.unitReferencePh')} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" /></div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investedAmount')}</label>
+                        <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.investedAmount')}</label>
                         <div className="flex gap-2">
-                            <input type="number" value={assignForm.investment_amount || ''} onChange={(e) => setAssignForm({...assignForm, investment_amount: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold flex-grow" />
-                            <select value={assignForm.currency} onChange={(e) => setAssignForm({...assignForm, currency: e.target.value})} className="px-3 py-4 bg-gray-100 border border-gray-200 rounded-2xl font-bold w-24">
+                            <input type="number" value={assignForm.investment_amount || ''} onChange={(e) => setAssignForm({...assignForm, investment_amount: parseFloat(e.target.value) || 0})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold flex-grow" />
+                            <select value={assignForm.currency} onChange={(e) => setAssignForm({...assignForm, currency: e.target.value})} className="px-3 py-4 bg-primary/10 border border-primary/15 rounded-2xl font-bold w-24">
                                 {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
                             </select>
                         </div>
                     </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={assignForm.purchase_date} onChange={(e) => setAssignForm({...assignForm, purchase_date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentStatus')}</label>
-                        <select value={assignForm.status} onChange={(e) => setAssignForm({...assignForm, status: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={assignForm.purchase_date} onChange={(e) => setAssignForm({...assignForm, purchase_date: e.target.value})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" /></div>
+                    <div><label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.investmentStatus')}</label>
+                        <select value={assignForm.status} onChange={(e) => setAssignForm({...assignForm, status: e.target.value})} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold">
                             <option value="Reserva">{translateStatus('Reserva', t)}</option>
                             <option value="Pagado">{translateStatus('Pagado', t)}</option>
                             <option value="En proceso">{translateStatus('En proceso', t)}</option>
@@ -3344,8 +3344,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentType', { defaultValue: 'Tipo de inversión' })}</label>
-                        <select value={(assignForm as any).investment_type || 'compra'} onChange={(e) => setAssignForm({...assignForm, investment_type: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                        <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.investmentType', { defaultValue: 'Tipo de inversión' })}</label>
+                        <select value={(assignForm as any).investment_type || 'compra'} onChange={(e) => setAssignForm({...assignForm, investment_type: e.target.value} as any)} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold">
                             <option value="compra">{t('admin.dash.invCompra', { defaultValue: 'Compra (revender/alquilar)' })}</option>
                             <option value="pool">{t('admin.dash.invPool', { defaultValue: 'Pool de inversión' })}</option>
                             <option value="desarrollo">{t('admin.dash.invDesarrollo', { defaultValue: 'Desarrollo a medida' })}</option>
@@ -3354,8 +3354,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </div>
                     {(assignForm as any).investment_type === 'pool' && (
                       <div>
-                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
-                        <input type="number" value={(assignForm as any).pool_total || ''} onChange={(e) => setAssignForm({...assignForm, pool_total: parseFloat(e.target.value) || 0} as any)} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" />
+                        <label className="block text-[10px] font-black uppercase text-primary/45 mb-2">{t('admin.dash.poolTotal', { defaultValue: 'Total del complejo (para el %)' })}</label>
+                        <input type="number" value={(assignForm as any).pool_total || ''} onChange={(e) => setAssignForm({...assignForm, pool_total: parseFloat(e.target.value) || 0} as any)} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold" />
                         {Number((assignForm as any).pool_total) > 0 && Number(assignForm.investment_amount) > 0 && (
                           <p className="text-xs font-bold text-primary/70 mt-1">{t('admin.dash.poolShare', { defaultValue: 'Participación' })}: {((Number(assignForm.investment_amount) / Number((assignForm as any).pool_total)) * 100).toFixed(4)}%</p>
                         )}
@@ -3378,18 +3378,18 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-serif text-primary">{optionManager.title}</h2>
-        <button onClick={() => setOptionManager(null)} className="text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
+        <button onClick={() => setOptionManager(null)} className="text-primary/45 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="space-y-2 mb-6 max-h-60 overflow-y-auto">
         {((config as any)[optionManager.field] || []).map((item: string, idx: number) => (
-          <div key={idx} className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
+          <div key={idx} className="flex items-center justify-between bg-almond/50 rounded-xl px-4 py-3">
             <span className="text-sm font-medium text-primary">{item}</span>
             <button onClick={() => handleDeleteOption(idx)} className="text-red-400 hover:text-red-600 transition"><span className="material-symbols-outlined text-sm">delete</span></button>
           </div>
         ))}
       </div>
       <div className="flex gap-2">
-        <input type="text" value={newOptionValue} onChange={(e) => setNewOptionValue(e.target.value)} placeholder={t('admin.adminDash.newOptionPlaceholder')} className="flex-1 px-4 py-3 bg-gray-50 rounded-xl font-medium border border-gray-200 focus:border-primary focus:outline-none" onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddOption(); } }} />
+        <input type="text" value={newOptionValue} onChange={(e) => setNewOptionValue(e.target.value)} placeholder={t('admin.adminDash.newOptionPlaceholder')} className="flex-1 px-4 py-3 bg-almond/50 rounded-xl font-medium border border-primary/15 focus:border-primary focus:outline-none" onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddOption(); } }} />
         <button onClick={handleAddOption} className="bg-primary text-white px-5 py-3 rounded-xl font-bold text-xs uppercase hover:bg-black transition">{t('admin.dash.add')}</button>
       </div>
     </div>
@@ -3420,15 +3420,15 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h2 className="text-2xl font-serif text-primary">{t('admin.dash.whatsappTemplates')}</h2>
-          <p className="text-sm text-gray-400 mt-1">{t('admin.dash.sendTo')} <strong className="text-primary">{whatsappClient.name}</strong></p>
+          <p className="text-sm text-primary/45 mt-1">{t('admin.dash.sendTo')} <strong className="text-primary">{whatsappClient.name}</strong></p>
         </div>
         <button onClick={() => setWhatsappClient(null)} className="p-2 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="space-y-3">
         {WHATSAPP_TEMPLATES.map((tpl, idx) => (
-          <button key={idx} onClick={() => openWhatsAppTemplate(whatsappClient, tpl.template(whatsappClient))} className="w-full text-left bg-gray-50 hover:bg-green-50 rounded-xl px-6 py-5 transition border border-gray-100 hover:border-green-200">
+          <button key={idx} onClick={() => openWhatsAppTemplate(whatsappClient, tpl.template(whatsappClient))} className="w-full text-left bg-almond/50 hover:bg-green-50 rounded-xl px-6 py-5 transition border border-primary/10 hover:border-green-200">
             <p className="font-bold text-primary text-sm mb-1">{t(tpl.nameKey)}</p>
-            <p className="text-xs text-gray-400 line-clamp-2">{tpl.template(whatsappClient).substring(0, 100)}...</p>
+            <p className="text-xs text-primary/45 line-clamp-2">{tpl.template(whatsappClient).substring(0, 100)}...</p>
           </button>
         ))}
       </div>
@@ -3448,7 +3448,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <div className="flex justify-between items-start gap-3 mb-6">
         <div className="min-w-0">
           <h2 className="text-xl sm:text-2xl font-serif text-primary">{t('admin.dash.mailCenter')}</h2>
-          <p className="text-sm text-gray-400 mt-1 truncate">{t('admin.dash.sendTo')} <strong className="text-primary">{mailClient.name}</strong> <span className="text-gray-300">· {mailClient.email || '—'}</span></p>
+          <p className="text-sm text-primary/45 mt-1 truncate">{t('admin.dash.sendTo')} <strong className="text-primary">{mailClient.name}</strong> <span className="text-primary/30">· {mailClient.email || '—'}</span></p>
         </div>
         <button onClick={() => setMailClient(null)} className="p-2 text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
@@ -3460,11 +3460,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           { icon: 'description', titleKey: 'admin.dash.mailReport', descKey: 'admin.dash.mailReportDesc', run: () => sendReportEmail(mailClient) },
           { icon: 'event_note', titleKey: 'admin.dash.mailCalendar', descKey: 'admin.dash.mailCalendarDesc', run: () => sendCalendarEmail(mailClient) },
         ].map((m, idx) => (
-          <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
+          <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-almond/50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-primary/10 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
             <span className="material-symbols-outlined text-primary shrink-0">{m.icon}</span>
             <span className="min-w-0">
               <span className="block font-bold text-primary text-sm mb-0.5">{t(m.titleKey)}</span>
-              <span className="block text-xs text-gray-400">{t(m.descKey)}</span>
+              <span className="block text-xs text-primary/45">{t(m.descKey)}</span>
             </span>
           </button>
         ))}
