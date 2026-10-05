@@ -99,7 +99,11 @@ const Projects: React.FC = () => {
   const filteredProjects = useMemo(() => {
     let result = projects.filter(p => {
       if (p.is_hidden) return false; // Hide hidden projects from main list
-      if (p.is_listed === false) return false; // Explicitly unlisted
+      // NOTA: se quitó el filtro `is_listed === false`. Causaba que una propiedad
+      // PÚBLICA (is_hidden=false) saliera en el home pero NO en /proyectos (bug
+      // reportado por Andreas con Amante Villas). `is_listed` no se setea en
+      // ninguna UI (flag muerto). Ahora /proyectos usa la MISMA regla que el home:
+      // visible = !is_hidden → toda propiedad pública aparece en todos los sitios.
 
       const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());
       const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
