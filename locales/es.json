@@ -2720,5 +2720,18 @@
     "remove": "Eliminar",
     "enlarge": "Ampliar",
     "dragHint": "Arrastra para reordenar · marca con ⭐ la foto principal (portada)"
+  },
+  "listControls": {
+    "searchPlaceholder": "Buscar…",
+    "clear": "Borrar",
+    "sortlabel": "Ordenar",
+    "count": "{{count}} resultados",
+    "sort": {
+      "recent": "Recién editado",
+      "priceAsc": "Precio: menor a mayor",
+      "priceDesc": "Precio: mayor a menor",
+      "az": "Nombre: A → Z",
+      "za": "Nombre: Z → A"
+    }
   }
 }

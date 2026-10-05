@@ -2718,5 +2718,18 @@
     "remove": "Remove",
     "enlarge": "Enlarge",
     "dragHint": "Drag to reorder · mark the main photo (cover) with ⭐"
+  },
+  "listControls": {
+    "searchPlaceholder": "Search…",
+    "clear": "Clear",
+    "sortlabel": "Sort",
+    "count": "{{count}} results",
+    "sort": {
+      "recent": "Recently edited",
+      "priceAsc": "Price: low to high",
+      "priceDesc": "Price: high to low",
+      "az": "Name: A → Z",
+      "za": "Name: Z → A"
+    }
   }
 }

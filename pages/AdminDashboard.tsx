@@ -1,5 +1,6 @@
 import NumberInput from "../components/NumberInput";
 import PhotoManager from "../components/PhotoManager";
+import ListControls, { useListControls } from "../components/ListControls";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
@@ -162,6 +163,13 @@ const AMENITIES_LIST = [
   'Spa', 'Sala de juegos', 'Servicio de limpieza', 'Alquiler de motos'
 ];
   const [projects, setProjects] = useState<Project[]>([]);
+  // Búsqueda + orden de la lista de propiedades (reutilizable en todas las listas).
+  const projectsList = useListControls<Project>(projects, {
+    name: (p: any) => p.name || '',
+    price: (p: any) => p.investor_price,
+    updated: (p: any) => p.updated_at || p.created_at,
+    search: (p: any) => `${p.name || ''} ${p.location || ''} ${p.slug || ''}`,
+  }, 'recent');
   const [reportsProject, setReportsProject] = useState<{ id: string; name: string } | null>(null);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
@@ -1878,8 +1886,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <span className="material-symbols-outlined text-base">add</span> {t('admin.props.newBtn')}
               </button>
             </div>
+            <ListControls
+              query={projectsList.query} setQuery={projectsList.setQuery}
+              sort={projectsList.sort} setSort={projectsList.setSort}
+              count={projectsList.result.length}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map(proj => (
+              {projectsList.result.map(proj => (
                 <div key={proj.id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group">
                   <div className="h-48 relative overflow-hidden bg-gray-100">
                     {proj.image ? <img src={getImageUrl(proj.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><span className="material-symbols-outlined text-4xl">image</span></div>}

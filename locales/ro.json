@@ -2718,5 +2718,18 @@
     "remove": "Elimină",
     "enlarge": "Mărește",
     "dragHint": "Trage pentru a reordona · marchează cu ⭐ poza principală (copertă)"
+  },
+  "listControls": {
+    "searchPlaceholder": "Caută…",
+    "clear": "Șterge",
+    "sortlabel": "Sortează",
+    "count": "{{count}} rezultate",
+    "sort": {
+      "recent": "Editate recent",
+      "priceAsc": "Preț: crescător",
+      "priceDesc": "Preț: descrescător",
+      "az": "Nume: A → Z",
+      "za": "Nume: Z → A"
+    }
   }
 }

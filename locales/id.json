@@ -2719,5 +2719,18 @@
     "remove": "Hapus",
     "enlarge": "Perbesar",
     "dragHint": "Seret untuk mengurutkan · tandai foto utama (sampul) dengan ⭐"
+  },
+  "listControls": {
+    "searchPlaceholder": "Cari…",
+    "clear": "Hapus",
+    "sortlabel": "Urutkan",
+    "count": "{{count}} hasil",
+    "sort": {
+      "recent": "Baru diedit",
+      "priceAsc": "Harga: rendah ke tinggi",
+      "priceDesc": "Harga: tinggi ke rendah",
+      "az": "Nama: A → Z",
+      "za": "Nama: Z → A"
+    }
   }
 }
