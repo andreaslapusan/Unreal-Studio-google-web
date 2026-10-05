@@ -137,7 +137,7 @@ const AttendancePanel: React.FC = () => {
   // Altura fija por bloque (hora / lugar / foto) → todas las fotos de la fila
   // quedan alineadas independientemente de si hay coordenadas o lugar.
   const Cell: React.FC<{ ev?: Ev }> = ({ ev }) => {
-    if (!ev) return <div className="h-[108px] flex items-start text-gray-300">—</div>;
+    if (!ev) return <div className="h-[108px] flex items-start text-primary/30">—</div>;
     const url = ev.photo ? photoUrls[ev.photo] : '';
     return (
       <div className="text-xs leading-tight">
@@ -150,7 +150,7 @@ const AttendancePanel: React.FC = () => {
           )}
         </div>
         {url
-          ? <a href={url} target="_blank" rel="noreferrer" className="block mt-1"><img src={url} alt="" className="w-[70px] h-[70px] object-cover rounded-md border border-gray-100" /></a>
+          ? <a href={url} target="_blank" rel="noreferrer" className="block mt-1"><img src={url} alt="" className="w-[70px] h-[70px] object-cover rounded-md border border-primary/10" /></a>
           : <div className="w-[70px] h-[70px] mt-1" />}
       </div>
     );
@@ -159,14 +159,14 @@ const AttendancePanel: React.FC = () => {
   return (
     <div className="mt-12">
       <h2 className="text-2xl font-serif text-primary mb-2">{t('fix.att.heading')}</h2>
-      <p className="text-sm text-gray-400 mb-4">{t('fix.att.subtitle')}</p>
+      <p className="text-sm text-primary/45 mb-4">{t('fix.att.subtitle')}</p>
 
       <div className="flex flex-wrap items-center gap-2 mb-3">
         <label className="text-xs text-primary/50 font-bold">{t('fix.att.from')}
-          <input type="date" value={from} max="2099-12-31" onChange={(e) => setFrom(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
+          <input type="date" value={from} max="2099-12-31" onChange={(e) => setFrom(e.target.value)} className="ml-1 bg-white border border-primary/15 rounded-xl px-3 py-2 text-sm" />
         </label>
         <label className="text-xs text-primary/50 font-bold">{t('fix.att.to')}
-          <input type="date" value={to} max="2099-12-31" onChange={(e) => setTo(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
+          <input type="date" value={to} max="2099-12-31" onChange={(e) => setTo(e.target.value)} className="ml-1 bg-white border border-primary/15 rounded-xl px-3 py-2 text-sm" />
         </label>
         <button onClick={() => void downloadPdf()} disabled={loading || downloading || dayRows.length === 0} className="ml-auto bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl inline-flex items-center gap-1 hover:bg-black transition disabled:opacity-40">
           <span className={`material-symbols-outlined text-sm ${downloading ? 'animate-spin' : ''}`}>{downloading ? 'progress_activity' : 'download'}</span> {downloading ? t('fix.att.generating') : t('fix.att.downloadPdf')}
@@ -176,35 +176,35 @@ const AttendancePanel: React.FC = () => {
       <div className="flex flex-wrap gap-1.5 mb-5">
         {emps.map((e) => {
           const on = selected.has(e.email);
-          return <button key={e.email} onClick={() => toggle(e.email)} className={`text-[11px] font-bold px-3 py-1.5 rounded-full transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>{e.name}</button>;
+          return <button key={e.email} onClick={() => toggle(e.email)} className={`text-[11px] font-bold px-3 py-1.5 rounded-full transition ${on ? 'bg-primary text-white' : 'bg-primary/10 text-primary/55 hover:bg-primary/15'}`}>{e.name}</button>;
         })}
         {selected.size > 0 && <button onClick={() => setSelected(new Set())} className="text-[11px] text-primary/50 underline px-2">{t('fix.att.all')}</button>}
       </div>
 
       {loading ? (
-        <p className="text-sm text-gray-400">{t('admin.att.loading')}</p>
+        <p className="text-sm text-primary/45">{t('admin.att.loading')}</p>
       ) : dayRows.length === 0 ? (
-        <p className="text-sm text-gray-300 italic">{t('admin.att.empty')}</p>
+        <p className="text-sm text-primary/30 italic">{t('admin.att.empty')}</p>
       ) : (
-        <div className="max-h-[78vh] overflow-auto bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <div className="max-h-[78vh] overflow-auto bg-white rounded-2xl border border-primary/10 shadow-sm">
           <table className="w-full text-sm min-w-[920px]">
             <thead className="text-[10px] uppercase tracking-widest text-primary/50">
               {/* Cabecera fija al hacer scroll: sticky top-0 sobre cada celda + fondo
                   opaco y sombra inferior para que se lea siempre la columna. */}
               <tr>
-                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3 w-[110px]">{t('fix.att.employee')}</th>
-                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-2 py-3 w-[70px]">{t('fix.att.date')}</th>
-                {COLS.map((k) => <th key={k as string} className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3">{t(`fix.att.col_${k}`)}</th>)}
-                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.total')}</th>
-                <th className="sticky top-0 z-20 bg-gray-50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.diff')}</th>
+                <th className="sticky top-0 z-20 bg-almond/50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3 w-[110px]">{t('fix.att.employee')}</th>
+                <th className="sticky top-0 z-20 bg-almond/50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-2 py-3 w-[70px]">{t('fix.att.date')}</th>
+                {COLS.map((k) => <th key={k as string} className="sticky top-0 z-20 bg-almond/50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-left px-3 py-3">{t(`fix.att.col_${k}`)}</th>)}
+                <th className="sticky top-0 z-20 bg-almond/50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.total')}</th>
+                <th className="sticky top-0 z-20 bg-almond/50 shadow-[0_1px_0_rgba(0,0,0,0.08)] text-center px-2 py-3 w-[64px]">{t('fix.att.diff')}</th>
               </tr>
             </thead>
             <tbody>
               {dayRows.map((d) => {
                 const w = worked(d); const asg = schedule[d.email]; const diff = (w != null && asg != null) ? w - asg : null;
                 return (
-                  <tr key={d.key} className="border-t border-gray-50 align-top">
-                    <td className="px-3 py-3"><div className="font-bold text-primary text-xs leading-tight">{d.name}</div><div className="text-[9px] text-gray-400 truncate max-w-[100px]">{d.email}</div></td>
+                  <tr key={d.key} className="border-t border-primary/10 align-top">
+                    <td className="px-3 py-3"><div className="font-bold text-primary text-xs leading-tight">{d.name}</div><div className="text-[9px] text-primary/45 truncate max-w-[100px]">{d.email}</div></td>
                     <td className="px-2 py-3 text-primary/70 text-xs whitespace-nowrap capitalize">{fmtDay(d.day)}</td>
                     {COLS.map((k) => <td key={k as string} className="px-3 py-3"><Cell ev={d[k] as Ev | undefined} /></td>)}
                     <td className="px-2 py-3 text-center font-bold text-primary whitespace-nowrap">{w != null ? hm(w) : '—'}</td>

@@ -103,17 +103,17 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="ust-modal bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()} onKeyDown={onKeyDown}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-primary/10">
           <h2 className="text-xl font-serif text-primary">{isNew ? t('fix.emp.titleNew') : (fullName || t('fix.emp.titleEdit'))}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
+          <button onClick={onClose} className="text-primary/45 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
         </div>
 
         <div className="flex flex-col sm:flex-row flex-1 min-h-0">
           {/* Submenú lateral */}
-          <nav className="w-full sm:w-40 shrink-0 border-b sm:border-r border-gray-100 p-3 flex flex-row sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible bg-gray-50/50">
+          <nav className="w-full sm:w-40 shrink-0 border-b sm:border-r border-primary/10 p-3 flex flex-row sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible bg-almond/40">
             {TABS.map(([k, label, icon]) => (
               <button key={k} onClick={() => setTab(k)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold text-left transition ${tab === k ? 'bg-primary text-white' : 'text-primary/60 hover:bg-gray-100'}`}>
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold text-left transition ${tab === k ? 'bg-primary text-white' : 'text-primary/60 hover:bg-primary/10'}`}>
                 <span className="material-symbols-outlined text-[18px]">{icon}</span>{label}
               </button>
             ))}
@@ -125,26 +125,26 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
               <>
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelFullName')}</span>
-                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
+                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-1 w-full bg-almond/50 border border-primary/15 rounded-xl px-3 py-2.5 text-sm" />
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelEmail')}</span>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full bg-almond/50 border border-primary/15 rounded-xl px-3 py-2.5 text-sm" />
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelPhone', { defaultValue: 'Teléfono (WhatsApp)' })}</span>
-                  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+62..." className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
+                  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+62..." className="mt-1 w-full bg-almond/50 border border-primary/15 rounded-xl px-3 py-2.5 text-sm" />
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest">{t('fix.emp.labelPassword')} {isNew ? '' : t('fix.emp.labelPasswordHint')}</span>
                   <div className="mt-1 flex gap-2">
-                    <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder={isNew ? '' : '••••••••'} className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono" />
-                    <button onClick={() => setPassword(genPassword())} className="px-3 py-2 rounded-xl bg-gray-100 text-primary/70 text-xs font-bold hover:bg-gray-200">{t('fix.emp.generate')}</button>
+                    <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder={isNew ? '' : '••••••••'} className="flex-1 bg-almond/50 border border-primary/15 rounded-xl px-3 py-2.5 text-sm font-mono" />
+                    <button onClick={() => setPassword(genPassword())} className="px-3 py-2 rounded-xl bg-primary/10 text-primary/70 text-xs font-bold hover:bg-primary/15">{t('fix.emp.generate')}</button>
                   </div>
                 </label>
                 <label className="block">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('fix.emp.language', { defaultValue: 'Idioma preferido' })}</span>
-                  <select value={lang} onChange={(e) => setLang(e.target.value)} className="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-bold">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-primary/45">{t('fix.emp.language', { defaultValue: 'Idioma preferido' })}</span>
+                  <select value={lang} onChange={(e) => setLang(e.target.value)} className="mt-1 w-full bg-almond/50 border border-primary/15 rounded-xl px-3 py-2.5 text-sm font-bold">
                     <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
                   </select>
                 </label>
@@ -160,7 +160,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
                   const on = perms[p.key];
                   return (
                     <button key={p.key} title={t('admin.perms.' + p.key, p.description || p.label)} onClick={() => setPerms((m) => ({ ...m, [p.key]: !on }))}
-                      className={`px-3 py-1.5 rounded-full text-[12px] font-bold transition ${on ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                      className={`px-3 py-1.5 rounded-full text-[12px] font-bold transition ${on ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary/45 hover:bg-primary/15'}`}>
                       <span className="material-symbols-outlined text-[14px] align-middle mr-1">{on ? 'check_circle' : 'radio_button_unchecked'}</span>{t('admin.perms.' + p.key, p.label)}
                     </button>
                   );
@@ -172,15 +172,15 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
               <>
                 <div className="flex items-center gap-2">
                   <label className="text-xs font-bold text-primary/50">{t('fix.emp.startTime')}
-                    <input type="time" value={start} onChange={(e) => setStart(e.target.value)} className="ml-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm" />
+                    <input type="time" value={start} onChange={(e) => setStart(e.target.value)} className="ml-1 bg-almond/50 border border-primary/15 rounded-lg px-2 py-1.5 text-sm" />
                   </label>
-                  <span className="text-gray-300">→</span>
+                  <span className="text-primary/30">→</span>
                   <label className="text-xs font-bold text-primary/50">{t('fix.emp.endTime')}
-                    <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} className="ml-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm" />
+                    <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} className="ml-1 bg-almond/50 border border-primary/15 rounded-lg px-2 py-1.5 text-sm" />
                   </label>
                 </div>
                 <label className="flex items-center gap-2 text-xs font-bold text-primary/50">{t('fix.emp.tolerance')}
-                  <input type="number" min={0} max={120} value={margin} onChange={(e) => setMargin(parseInt(e.target.value) || 0)} className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm w-16" /> {t('fix.emp.minutes')}
+                  <input type="number" min={0} max={120} value={margin} onChange={(e) => setMargin(parseInt(e.target.value) || 0)} className="bg-almond/50 border border-primary/15 rounded-lg px-2 py-1.5 text-sm w-16" /> {t('fix.emp.minutes')}
                 </label>
                 <div>
                   <span className="text-xs font-bold text-primary/50 uppercase tracking-widest block mb-1.5">{t('fix.emp.workDays')}</span>
@@ -189,7 +189,7 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
                       const on = days.includes(dow);
                       return (
                         <button key={dow} onClick={() => setDays((d) => on ? d.filter((x) => x !== dow) : [...d, dow].sort())}
-                          className={`w-8 h-8 rounded-lg text-xs font-bold transition ${on ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>{weekdaysFor(uiLocale())[dow-1]}</button>
+                          className={`w-8 h-8 rounded-lg text-xs font-bold transition ${on ? 'bg-primary text-white' : 'bg-primary/10 text-primary/45 hover:bg-primary/15'}`}>{weekdaysFor(uiLocale())[dow-1]}</button>
                       );
                     })}
                   </div>
@@ -201,14 +201,14 @@ export default function EmployeeEditModal({ emp, onClose, onSaved }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-primary/10">
           {!isNew ? (
             <button onClick={del} disabled={deleting} className="text-red-600 text-xs font-bold uppercase tracking-widest hover:text-red-700 inline-flex items-center gap-1 disabled:opacity-40">
               <span className="material-symbols-outlined text-sm">{deleting ? 'progress_activity' : 'delete'}</span> {t('fix.emp.delete')}
             </button>
           ) : <span />}
           <div className="flex gap-2">
-            <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-primary/60 text-xs font-bold uppercase tracking-widest hover:bg-gray-100">{t('fix.emp.cancel')}</button>
+            <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-primary/60 text-xs font-bold uppercase tracking-widest hover:bg-primary/10">{t('fix.emp.cancel')}</button>
             <button onClick={save} disabled={saving} className="bg-primary text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-black transition inline-flex items-center gap-1.5 disabled:opacity-50">
               {saving && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}
               {saving ? t('fix.emp.saving') : t('fix.emp.save')}

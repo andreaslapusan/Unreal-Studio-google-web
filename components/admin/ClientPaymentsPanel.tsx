@@ -326,17 +326,17 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto overscroll-contain py-8 px-4">
       <div className="bg-white rounded-3xl ust-modal shadow-2xl">
-        <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white rounded-t-3xl">
+        <div className="flex justify-between items-center p-6 border-b border-primary/10 sticky top-0 bg-white rounded-t-3xl">
           <div>
             <h2 className="text-xl font-black text-primary">{t('admin.pay.title')} · {clientName}</h2>
-            <p className="text-xs text-gray-400">{clientEmail || t('admin.pay.noEmail')}</p>
+            <p className="text-xs text-primary/45">{clientEmail || t('admin.pay.noEmail')}</p>
           </div>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
+          <button onClick={onClose} className="p-2 text-primary/45 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
         </div>
 
         <div className="p-6 space-y-6">
-          {loading && <p className="text-sm text-gray-400">{t('admin.pay.loading')}</p>}
-          {!loading && units.length === 0 && <p className="text-sm text-gray-400 italic">{t('admin.pay.noUnits')}</p>}
+          {loading && <p className="text-sm text-primary/45">{t('admin.pay.loading')}</p>}
+          {!loading && units.length === 0 && <p className="text-sm text-primary/45 italic">{t('admin.pay.noUnits')}</p>}
 
           {units.filter((u) => filterName === undefined || ((u.project_name || '').trim().toLowerCase() === (filterName || '').trim().toLowerCase() && (filterUnit === undefined || String(u.unit_number ?? '').trim().toLowerCase() === String(filterUnit ?? '').trim().toLowerCase()))).map((u) => {
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
@@ -344,11 +344,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             const pending = Math.max(0, total - recv);
             const overpaid = Math.max(0, recv - total); // sobrepago (recibido de mas)
             return (
-              <div key={u.client_project_id} className="border border-gray-100 rounded-2xl overflow-hidden">
-                <div className="bg-gray-50 px-5 py-3 flex justify-between items-center">
+              <div key={u.client_project_id} className="border border-primary/10 rounded-2xl overflow-hidden">
+                <div className="bg-almond/50 px-5 py-3 flex justify-between items-center">
                   <div>
-                    <p className="font-bold text-primary">{u.project_name}{u.unit_number && <span className="text-gray-400 font-normal"> · {u.unit_number}</span>}</p>
-                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedPendingTotal', { recv: fmt(recv, u.currency), pending: fmt(pending, u.currency), total: fmt(total, u.currency), defaultValue: 'Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}' })}{overpaid > 0 && <span className="text-green-600 font-bold"> · {t('admin.pay.overpaidLabel', { defaultValue: 'Excedente' })} {fmt(overpaid, u.currency)}</span>}</p>
+                    <p className="font-bold text-primary">{u.project_name}{u.unit_number && <span className="text-primary/45 font-normal"> · {u.unit_number}</span>}</p>
+                    <p className="text-[11px] text-primary/45">{t('admin.pay.receivedPendingTotal', { recv: fmt(recv, u.currency), pending: fmt(pending, u.currency), total: fmt(total, u.currency), defaultValue: 'Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}' })}{overpaid > 0 && <span className="text-green-600 font-bold"> · {t('admin.pay.overpaidLabel', { defaultValue: 'Excedente' })} {fmt(overpaid, u.currency)}</span>}</p>
                   </div>
                   <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...emptyPayment(u.currency), position: u.payments.length } })}
                     className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-lg flex items-center gap-1 hover:bg-black">
@@ -356,17 +356,17 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                   </button>
                 </div>
 
-                <div className="divide-y divide-gray-50">
-                  {u.payments.length === 0 && <p className="px-5 py-4 text-xs text-gray-300 italic">{t('admin.pay.noPayments')}</p>}
+                <div className="divide-y divide-primary/10">
+                  {u.payments.length === 0 && <p className="px-5 py-4 text-xs text-primary/30 italic">{t('admin.pay.noPayments')}</p>}
                   {u.payments.map((p) => {
                     const overdue = !p.received && p.due_date && p.due_date.slice(0, 10) < baliToday();
                     return (
                       <div key={p.id} className="px-5 py-3 flex items-center gap-3 flex-wrap">
                         <AsyncButton onClick={() => toggleReceived(p)} title={t('admin.pay.markReceived')}
-                          className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold transition ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500 hover:bg-green-600 hover:text-white' : 'border-2 border-gray-300 text-gray-300 hover:border-green-600 hover:text-green-600'}`}>✓</AsyncButton>
+                          className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold transition ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500 hover:bg-green-600 hover:text-white' : 'border-2 border-primary/20 text-primary/30 hover:border-green-600 hover:text-green-600'}`}>✓</AsyncButton>
                         <div className="flex-1 min-w-[140px]">
                           <p className="font-semibold text-sm text-primary">{p.label || t('admin.pay.noLabel')}</p>
-                          <p className="text-[11px] text-gray-400">
+                          <p className="text-[11px] text-primary/45">
                             {p.due_date ? t('admin.pay.deadline', { date: new Date(dateOnly(p.due_date)).toLocaleDateString(uiLocale()) }) : t('admin.pay.noDate')}
                             {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(dateOnly(p.paid_at)).toLocaleDateString(uiLocale()) })}`}
                           </p>
@@ -396,7 +396,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                           <button onClick={() => openKwitansi(u, p)} title={t('admin.pay.generateSendKwitansi')}
                             className="p-1.5 text-primary bg-almond rounded-lg hover:brightness-95"><span className="material-symbols-outlined text-sm">receipt_long</span></button>
                           <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p } })}
-                            className="p-1.5 text-primary bg-gray-50 rounded-lg hover:bg-gray-100"><span className="material-symbols-outlined text-sm">edit</span></button>
+                            className="p-1.5 text-primary bg-almond/50 rounded-lg hover:bg-primary/10"><span className="material-symbols-outlined text-sm">edit</span></button>
                           {(p.received || p.kw_signed || p.kw_sent) && (
                             <AsyncButton onClick={() => resetPayment(p)} title={t('fix.cpp.resetProcessTitle')}
                               className="p-1.5 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100"><span className="material-symbols-outlined text-sm">restart_alt</span></AsyncButton>
@@ -420,13 +420,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-3"
             onKeyDown={(e) => { if (e.key === 'Enter' && !saving) { e.preventDefault(); void savePayment(); } }}>
             <h3 className="font-black text-primary">{editing.pay.id ? t('admin.pay.editPayment') : t('admin.pay.newPayment')}</h3>
-            <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.labelPlaceholder')}
+            <input className="w-full px-3 py-2 bg-almond/50 border rounded-lg text-sm" placeholder={t('admin.pay.labelPlaceholder')}
               value={editing.pay.label || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, label: e.target.value } }))} />
             <div className="flex gap-2 items-stretch">
-              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.amountPlaceholder')}
+              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-almond/50 border rounded-lg text-sm" placeholder={t('admin.pay.amountPlaceholder')}
                 value={grp(editing.pay.amount || 0)} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, amount: parseNum(e.target.value) } }))} />
               {/* La divisa la fija la venta (asignación de la propiedad), no se elige aquí. */}
-              <span className="px-3 flex items-center bg-gray-100 border rounded-lg text-sm font-bold text-primary/70" title={t('admin.pay.currencyFromSale', { defaultValue: 'La divisa la fija la venta de la propiedad' })}>
+              <span className="px-3 flex items-center bg-primary/10 border rounded-lg text-sm font-bold text-primary/70" title={t('admin.pay.currencyFromSale', { defaultValue: 'La divisa la fija la venta de la propiedad' })}>
                 {units.find((x) => x.client_project_id === editing.cp)?.currency || editing.pay.currency || 'EUR'}
               </span>
             </div>
@@ -437,15 +437,15 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               const pending = Number(eu.sale_total) - assigned;
               return <p className={`text-[11px] italic -mt-1 ${pending < 0 ? 'text-red-600 font-bold' : 'text-primary/50'}`}>{t('fix.cpp.pendingToAssign', { amount: fmt(pending, eu.currency) })}</p>;
             })()}
-            <label className="block text-[10px] font-black uppercase text-gray-400">{t('admin.pay.dueDateLabel')}</label>
-            <input type="date" min="2000-01-01" max="2099-12-31" className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm"
+            <label className="block text-[10px] font-black uppercase text-primary/45">{t('admin.pay.dueDateLabel')}</label>
+            <input type="date" min="2000-01-01" max="2099-12-31" className="w-full px-3 py-2 bg-almond/50 border rounded-lg text-sm"
               value={editing.pay.due_date || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, due_date: e.target.value } }))} />
-            <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
+            <input className="w-full px-3 py-2 bg-almond/50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
               value={editing.pay.notes || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, notes: e.target.value } }))} />
             {/* El importe REAL recibido y la fecha de cobro se capturan al GENERAR EL RECIBÍ
                 (al marcar recibido), no aquí — para no duplicarlo en el calendario. */}
             <div className="flex gap-2 pt-2">
-              <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-gray-500">{t('admin.common.cancel')}</button>
+              <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-primary/55">{t('admin.common.cancel')}</button>
               <button disabled={saving} onClick={savePayment} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">{saving ? t('admin.common.saving') : t('admin.common.save')}</button>
             </div>
           </div>
@@ -458,29 +458,29 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           <div className="bg-white rounded-2xl ust-modal p-6 space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="font-black text-primary">{t('admin.pay.kwitansi')}</h3>
-              <button onClick={() => setKw(null)} className="text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
+              <button onClick={() => setKw(null)} className="text-primary/45 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.receivedFromPlaceholder')}
+              <input className="px-3 py-2 bg-almond/50 border rounded-lg col-span-2" placeholder={t('admin.pay.receivedFromPlaceholder')}
                 value={kw.received_from} onChange={(e) => setKw((pv: any) => ({ ...pv, received_from: e.target.value }))} />
-              <input type="text" inputMode="numeric" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.amountPlaceholder')}
+              <input type="text" inputMode="numeric" className="px-3 py-2 bg-almond/50 border rounded-lg" placeholder={t('admin.pay.amountPlaceholder')}
                 value={grp(kw.amount || 0)} onChange={(e) => setKw((pv: any) => ({ ...pv, amount: parseNum(e.target.value) }))} />
-              <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw((pv: any) => ({ ...pv, currency: e.target.value }))}>
+              <select className="pl-3 pr-8 py-2 bg-almond/50 border rounded-lg" value={kw.currency} onChange={(e) => setKw((pv: any) => ({ ...pv, currency: e.target.value }))}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
-              <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.forPaymentPlaceholder')}
+              <input className="px-3 py-2 bg-almond/50 border rounded-lg col-span-2" placeholder={t('admin.pay.forPaymentPlaceholder')}
                 value={kw.for_payment} onChange={(e) => setKw((pv: any) => ({ ...pv, for_payment: e.target.value }))} />
-              <input className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.placePlaceholder')} value={kw.place} onChange={(e) => setKw((pv: any) => ({ ...pv, place: e.target.value }))} />
-              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw((pv: any) => ({ ...pv, date: e.target.value }))} />
+              <input className="px-3 py-2 bg-almond/50 border rounded-lg" placeholder={t('admin.pay.placePlaceholder')} value={kw.place} onChange={(e) => setKw((pv: any) => ({ ...pv, place: e.target.value }))} />
+              <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-almond/50 border rounded-lg" value={kw.date} onChange={(e) => setKw((pv: any) => ({ ...pv, date: e.target.value }))} />
             </div>
-            <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
-            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo, !!kw.signed) || '' }} />
+            <div className="text-[11px] text-primary/45">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
+            <div className="border rounded-xl p-3 bg-almond/50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo, !!kw.signed) || '' }} />
             {(() => {
               const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;
               return (
                 <div className="space-y-2">
                   <AsyncButton onClick={() => downloadKwitansi()} className="w-full py-2.5 rounded-lg border text-sm font-bold text-primary inline-flex items-center justify-center gap-1"><span className="material-symbols-outlined text-sm">download</span> {t('fix.cpp.downloadPdf')}</AsyncButton>
-                  <p className="text-[11px] text-gray-400 text-center">{t('fix.cpp.stepsInOrder')}</p>
+                  <p className="text-[11px] text-primary/45 text-center">{t('fix.cpp.stepsInOrder')}</p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <button disabled={kw.sending} onClick={markReceived}
                       className={`py-2.5 rounded-lg text-xs font-bold transition disabled:opacity-60 ${kwReceived ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-primary text-white hover:bg-black'}`}>
@@ -510,11 +510,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <div className="flex items-start justify-between gap-3 p-5 border-b">
               <div className="min-w-0">
                 <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.pay.kwitansiSendTitle', { defaultValue: 'Enviar recibí al cliente' })}</h3>
-                <p className="text-xs text-gray-400 mt-0.5 truncate">{recibiSend.subject}</p>
+                <p className="text-xs text-primary/45 mt-0.5 truncate">{recibiSend.subject}</p>
                 <div className="flex flex-wrap items-center gap-2 mt-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-primary/45">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
                   {recibiSend.recipients.map((em) => (
-                    <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${recibiSend.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                    <label key={em} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${recibiSend.selected.includes(em) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-almond/50 border-primary/15 text-primary/45'}`}>
                       <input type="checkbox" checked={recibiSend.selected.includes(em)} onChange={() => setRecibiSend((p) => { if (!p) return p; const selected = p.selected.includes(em) ? p.selected.filter((x) => x !== em) : [...p.selected, em]; return { ...p, selected }; })} className="rounded" />
                       {em}
                     </label>
@@ -522,23 +522,23 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                 </div>
                 {recibiSend.recipients.length > 1 && (
                   <div className="flex flex-wrap items-center gap-2 mt-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewViewAs', { defaultValue: 'Ver como' })}:</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/45">{t('admin.dash.emailPreviewViewAs', { defaultValue: 'Ver como' })}:</span>
                     {recibiSend.recipients.map((em) => (
-                      <button key={em} type="button" onClick={() => setRecibiSend((p) => p ? { ...p, previewEmail: em } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${recibiSend.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-primary/40'}`}>
+                      <button key={em} type="button" onClick={() => setRecibiSend((p) => p ? { ...p, previewEmail: em } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${recibiSend.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-almond/50 border-primary/15 text-primary/55 hover:border-primary/40'}`}>
                         {em}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
-              <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
+              <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="p-2 text-primary/45 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
             </div>
             <div className="overflow-y-auto p-5 bg-[#F3E5D8] flex-1">
               <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>
               <div className="bg-white rounded-2xl p-6 shadow-sm" dangerouslySetInnerHTML={{ __html: recibiSend.buildBody(recibiSend.previewEmail) }} />
             </div>
             <div className="flex gap-2 p-4 border-t">
-              <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
+              <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="flex-1 py-3 rounded-xl border border-primary/15 text-primary/55 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
               <button onClick={() => void confirmSendKwitansi()} disabled={recibiSend.sending || recibiSend.selected.length === 0} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{recibiSend.sending ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> {t('admin.adminDash.savingEllipsis', { defaultValue: 'Enviando…' })}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })} ({recibiSend.selected.length})</>}</button>
             </div>
           </div>

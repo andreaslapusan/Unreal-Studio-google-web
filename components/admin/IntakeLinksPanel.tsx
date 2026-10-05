@@ -81,7 +81,7 @@ const IntakeLinksPanel: React.FC = () => {
   const badge = (s: string) => {
     if (s === "submitted") return { cls: "bg-amber-100 text-amber-700", label: t("admin.intakes.statusSubmitted") };
     if (s === "published") return { cls: "bg-emerald-100 text-emerald-700", label: t("admin.intakes.statusPublished") };
-    return { cls: "bg-gray-100 text-gray-500", label: t("admin.intakes.statusCreated") };
+    return { cls: "bg-primary/10 text-primary/55", label: t("admin.intakes.statusCreated") };
   };
 
   const fmtDate = (s: string) => { try { return new Date(s).toLocaleDateString(i18n.language); } catch { return s; } };
@@ -129,14 +129,14 @@ const IntakeLinksPanel: React.FC = () => {
                     {r.owner_name || "—"}{r.owner_contact ? ` · ${r.owner_contact}` : ""} · {t("admin.intakes.createdAt")} {fmtDate(r.created_at)}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <code className="text-[11px] bg-gray-50 rounded-lg px-2 py-1 text-primary/60 truncate max-w-[240px] md:max-w-[360px]">{url}</code>
+                    <code className="text-[11px] bg-almond/50 rounded-lg px-2 py-1 text-primary/60 truncate max-w-[240px] md:max-w-[360px]">{url}</code>
                     <button onClick={() => copy(url)} className="text-[10px] font-black uppercase text-primary hover:underline shrink-0">
                       {copied === url ? t("admin.intakes.copied") : t("admin.intakes.copy")}
                     </button>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <a href={url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase px-3 py-2 rounded-lg bg-gray-100 text-primary/70 hover:bg-gray-200 transition">{t("admin.intakes.view")}</a>
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase px-3 py-2 rounded-lg bg-primary/10 text-primary/70 hover:bg-primary/15 transition">{t("admin.intakes.view")}</a>
                   {r.status === "submitted" && (
                     <button onClick={() => publish(r.id)} disabled={busy === r.id} className="text-[10px] font-black uppercase px-3 py-2 rounded-lg bg-emerald-600 text-white hover:brightness-110 transition disabled:opacity-40">{t("admin.intakes.publish")}</button>
                   )}

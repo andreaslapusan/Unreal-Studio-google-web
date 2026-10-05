@@ -150,14 +150,14 @@ const VacationManager: React.FC = () => {
         <h2 className="text-3xl font-serif text-primary">{t('admin.vac.title')}</h2>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Selector de empleado */}
-          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="flex-1 sm:flex-none min-w-0 pl-4 pr-8 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
+          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="flex-1 sm:flex-none min-w-0 pl-4 pr-8 py-2 bg-white border border-primary/15 rounded-xl text-sm font-medium text-primary">
             <option value="all">{t('admin.vac.allEmployees')}</option>
             {employees.map((e) => <option key={e.id} value={e.email}>{e.full_name || e.email}</option>)}
           </select>
           <div className="flex items-center justify-center gap-2">
-            <button onClick={() => { if (viewMonth === 0) { setViewMonth(11); setYear((y) => y - 1); } else setViewMonth(viewMonth - 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition shrink-0"><span className="material-symbols-outlined">chevron_left</span></button>
+            <button onClick={() => { if (viewMonth === 0) { setViewMonth(11); setYear((y) => y - 1); } else setViewMonth(viewMonth - 1); }} className="p-2 bg-primary/10 rounded-xl hover:bg-primary/15 transition shrink-0"><span className="material-symbols-outlined">chevron_left</span></button>
             <span className="text-base font-bold text-primary capitalize min-w-[130px] text-center">{new Date(year, viewMonth, 1).toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric' })}</span>
-            <button onClick={() => { if (viewMonth === 11) { setViewMonth(0); setYear((y) => y + 1); } else setViewMonth(viewMonth + 1); }} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition shrink-0"><span className="material-symbols-outlined">chevron_right</span></button>
+            <button onClick={() => { if (viewMonth === 11) { setViewMonth(0); setYear((y) => y + 1); } else setViewMonth(viewMonth + 1); }} className="p-2 bg-primary/10 rounded-xl hover:bg-primary/15 transition shrink-0"><span className="material-symbols-outlined">chevron_right</span></button>
           </div>
         </div>
       </div>
@@ -182,12 +182,12 @@ const VacationManager: React.FC = () => {
               <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-xl px-4 py-3 border border-amber-100">
                 <div className="min-w-0">
                   <p className="font-bold text-primary text-sm">{nameFor(v)}</p>
-                  <p className="text-xs text-gray-500">{fmtRange(v.start_date, v.end_date)} · {typeLabel(v.type)}{v.note ? ` · ${v.note}` : ''}</p>
+                  <p className="text-xs text-primary/55">{fmtRange(v.start_date, v.end_date)} · {typeLabel(v.type)}{v.note ? ` · ${v.note}` : ''}</p>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <AsyncButton onClick={() => setStatus(v.id, 'aprobada')} className="text-[11px] font-black uppercase tracking-widest bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">{t('admin.vac.approve')}</AsyncButton>
                   <AsyncButton onClick={() => setStatus(v.id, 'rechazada')} className="text-[11px] font-black uppercase tracking-widest bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition">{t('admin.vac.reject')}</AsyncButton>
-                  <button onClick={() => setEditing(v)} className="text-[11px] font-black uppercase tracking-widest bg-gray-100 text-primary px-3 py-2 rounded-lg hover:bg-gray-200 transition">{t('admin.vac.modify')}</button>
+                  <button onClick={() => setEditing(v)} className="text-[11px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-2 rounded-lg hover:bg-primary/15 transition">{t('admin.vac.modify')}</button>
                 </div>
               </li>
             ))}
@@ -245,11 +245,11 @@ const VacationManager: React.FC = () => {
         ) : (
           <ul className="space-y-2">
             {filtered.filter((v) => v.start_date.startsWith(String(year)) || v.end_date.startsWith(String(year))).map((v) => (
-              <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-gray-50">
+              <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-primary/10">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: colorOf(v.employee_email) }} />
                   <span className="font-medium text-primary text-sm">{nameFor(v)}</span>
-                  <span className="text-xs text-gray-500">{fmtRange(v.start_date, v.end_date)} · {typeLabel(v.type)}</span>
+                  <span className="text-xs text-primary/55">{fmtRange(v.start_date, v.end_date)} · {typeLabel(v.type)}</span>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_CLS[v.status] ?? STATUS_CLS.pendiente}`}>{statusLabel(v.status)}</span>
                 </div>
                 <div className="flex gap-2 shrink-0">
@@ -269,20 +269,20 @@ const VacationManager: React.FC = () => {
           <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto overscroll-contain">
             <h3 className="text-xl font-serif text-primary mb-4">{t('admin.vac.modifyTitle', { name: nameFor(editing) })}</h3>
             <div className="space-y-3">
-              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.from')}</span>
-                <input type="date" value={editing.start_date} onChange={(e) => setEditing({ ...editing, start_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
-              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.to')}</span>
-                <input type="date" value={editing.end_date} min={editing.start_date} onChange={(e) => setEditing({ ...editing, end_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
-              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.type')}</span>
-                <select value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1 bg-white">
+              <label className="block"><span className="text-xs font-bold text-primary/55">{t('admin.vac.from')}</span>
+                <input type="date" value={editing.start_date} onChange={(e) => setEditing({ ...editing, start_date: e.target.value })} className="w-full px-3 py-2 border border-primary/15 rounded-lg mt-1" /></label>
+              <label className="block"><span className="text-xs font-bold text-primary/55">{t('admin.vac.to')}</span>
+                <input type="date" value={editing.end_date} min={editing.start_date} onChange={(e) => setEditing({ ...editing, end_date: e.target.value })} className="w-full px-3 py-2 border border-primary/15 rounded-lg mt-1" /></label>
+              <label className="block"><span className="text-xs font-bold text-primary/55">{t('admin.vac.type')}</span>
+                <select value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className="w-full px-3 py-2 border border-primary/15 rounded-lg mt-1 bg-white">
                   <option value="vacaciones">{t('admin.vac.typeVacation')}</option><option value="baja">{t('admin.vac.typeSickLeave')}</option><option value="personal">{t('admin.vac.typePersonal')}</option>
                 </select></label>
-              <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.note')}</span>
-                <input type="text" value={editing.note ?? ''} onChange={(e) => setEditing({ ...editing, note: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
+              <label className="block"><span className="text-xs font-bold text-primary/55">{t('admin.vac.note')}</span>
+                <input type="text" value={editing.note ?? ''} onChange={(e) => setEditing({ ...editing, note: e.target.value })} className="w-full px-3 py-2 border border-primary/15 rounded-lg mt-1" /></label>
             </div>
             <div className="flex gap-2 mt-5">
               <AsyncButton onClick={() => saveEdit()} className="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-sm">{t('admin.common.save')}</AsyncButton>
-              <button onClick={() => setEditing(null)} className="flex-1 bg-gray-100 text-primary py-2.5 rounded-xl font-bold text-sm">{t('admin.common.cancel')}</button>
+              <button onClick={() => setEditing(null)} className="flex-1 bg-primary/10 text-primary py-2.5 rounded-xl font-bold text-sm">{t('admin.common.cancel')}</button>
             </div>
           </div>
         </div>
@@ -308,7 +308,7 @@ const VacationManager: React.FC = () => {
             ))}
           </ul>
           {(payDayMap.get(hoverDay.date)?.length ?? 0) > 0 && (
-            <div className="mt-2 pt-2 border-t border-gray-100">
+            <div className="mt-2 pt-2 border-t border-primary/10">
               <p className="font-black uppercase tracking-widest text-amber-600 text-[10px] mb-1">{t('admin.vac.paymentsDue', { defaultValue: 'Cobros este día' })}</p>
               <ul className="space-y-1">
                 {(payDayMap.get(hoverDay.date) ?? []).map((p, i) => (
@@ -320,7 +320,7 @@ const VacationManager: React.FC = () => {
               </ul>
             </div>
           )}
-          <p className="mt-2 pt-2 border-t border-gray-100 font-bold text-primary/70">{t('admin.vac.weekTotal', { n: weekTotal(hoverDay.date) })}</p>
+          <p className="mt-2 pt-2 border-t border-primary/10 font-bold text-primary/70">{t('admin.vac.weekTotal', { n: weekTotal(hoverDay.date) })}</p>
         </div>
       )}
 
@@ -339,7 +339,7 @@ const VacationManager: React.FC = () => {
               </div>
 
               {/* Leyenda: qué significa cada cosa */}
-              <div className="bg-gray-50 rounded-xl p-3 mb-4 space-y-1.5">
+              <div className="bg-almond/50 rounded-xl p-3 mb-4 space-y-1.5">
                 <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">{t('admin.vac.legendTitle', { defaultValue: 'Leyenda' })}</p>
                 <div className="flex items-center gap-2 text-xs text-primary/70"><span className="w-2.5 h-2.5 rounded-full bg-primary" /> {t('admin.vac.legendVacation', { defaultValue: 'Bolita de color = empleado de vacaciones/ausente (un color por persona)' })}</div>
                 <div className="flex items-center gap-2 text-xs text-primary/70"><span className="w-2.5 h-2.5 rounded-full bg-primary opacity-40" /> {t('admin.vac.legendPending', { defaultValue: 'Bolita apagada = solicitud pendiente de aprobar' })}</div>

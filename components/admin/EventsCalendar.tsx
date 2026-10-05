@@ -134,26 +134,26 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div>
           <h2 className="text-2xl font-serif text-primary mb-1">{t('admin.agenda.title', { defaultValue: 'Calendario' })}</h2>
-          <p className="text-sm text-gray-400">{t('admin.agenda.hint', { defaultValue: 'Todos los eventos: cobros y vacaciones del equipo.' })}</p>
+          <p className="text-sm text-primary/45">{t('admin.agenda.hint', { defaultValue: 'Todos los eventos: cobros y vacaciones del equipo.' })}</p>
         </div>
         <div className="flex items-center justify-center gap-2 shrink-0">
-          <button onClick={() => step(-1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition shrink-0"><span className="material-symbols-outlined">chevron_left</span></button>
+          <button onClick={() => step(-1)} className="p-2 bg-primary/10 rounded-xl hover:bg-primary/15 transition shrink-0"><span className="material-symbols-outlined">chevron_left</span></button>
           <span className="text-base font-bold text-primary capitalize min-w-[130px] text-center">{monthLabel}</span>
-          <button onClick={() => step(1)} className="p-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition shrink-0"><span className="material-symbols-outlined">chevron_right</span></button>
+          <button onClick={() => step(1)} className="p-2 bg-primary/10 rounded-xl hover:bg-primary/15 transition shrink-0"><span className="material-symbols-outlined">chevron_right</span></button>
         </div>
       </div>
 
       {/* Leyenda */}
       <div className="flex flex-wrap gap-3 mb-3">
         {(Object.keys(TYPE_META) as EvType[]).map((k) => (
-          <span key={k} className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500"><span className={`w-2.5 h-2.5 rounded-full ${TYPE_META[k].dot}`} />{typeLabel(k)}</span>
+          <span key={k} className="inline-flex items-center gap-1.5 text-xs font-bold text-primary/55"><span className={`w-2.5 h-2.5 rounded-full ${TYPE_META[k].dot}`} />{typeLabel(k)}</span>
         ))}
         <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary/50 ml-auto self-center"><span className="material-symbols-outlined leading-none" style={{ fontSize: '14px' }}>touch_app</span>{t('admin.agenda.tapHint', { defaultValue: 'Pulsa los días marcados' })}</span>
       </div>
 
       {/* Rejilla del mes */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-4 mb-4">
-        <div className="grid grid-cols-7 text-center text-[10px] font-black uppercase tracking-widest text-gray-300 mb-1">
+      <div className="bg-white rounded-2xl border border-primary/10 shadow-sm p-3 sm:p-4 mb-4">
+        <div className="grid grid-cols-7 text-center text-[10px] font-black uppercase tracking-widest text-primary/30 mb-1">
           {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d, i) => <div key={i} className="py-1">{d}</div>)}
         </div>
         <div className="grid grid-cols-7 gap-1">
@@ -166,8 +166,8 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
             // Los días vacíos son celdas inertes → así se sabe qué tiene acción y qué no.
             if (!has) {
               return (
-                <div key={i} className={`aspect-square rounded-lg border text-[11px] p-1 flex flex-col ${isToday ? 'border-primary/50' : 'border-gray-100'}`}>
-                  <span className={`font-bold ${isToday ? 'text-primary' : 'text-gray-300'}`}>{day}</span>
+                <div key={i} className={`aspect-square rounded-lg border text-[11px] p-1 flex flex-col ${isToday ? 'border-primary/50' : 'border-primary/10'}`}>
+                  <span className={`font-bold ${isToday ? 'text-primary' : 'text-primary/30'}`}>{day}</span>
                 </div>
               );
             }
@@ -201,14 +201,14 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
         <div className="bg-white rounded-2xl border border-primary/20 shadow-sm p-4 sm:p-5 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-start justify-between gap-3 mb-3">
             <h3 className="text-base font-bold text-primary capitalize">{selectedLabel}</h3>
-            <button onClick={() => setSelectedDay(null)} className="p-1.5 -m-1 text-gray-400 hover:text-primary hover:bg-gray-100 rounded-lg transition shrink-0" aria-label={t('admin.common.close', { defaultValue: 'Cerrar' })}><span className="material-symbols-outlined text-xl leading-none">close</span></button>
+            <button onClick={() => setSelectedDay(null)} className="p-1.5 -m-1 text-primary/45 hover:text-primary hover:bg-primary/10 rounded-lg transition shrink-0" aria-label={t('admin.common.close', { defaultValue: 'Cerrar' })}><span className="material-symbols-outlined text-xl leading-none">close</span></button>
           </div>
           {selectedEvents.length === 0 ? (
-            <div className="py-6 text-center text-gray-400 text-sm">{t('admin.agenda.dayEmpty', { defaultValue: 'No hay eventos este día.' })}</div>
+            <div className="py-6 text-center text-primary/45 text-sm">{t('admin.agenda.dayEmpty', { defaultValue: 'No hay eventos este día.' })}</div>
           ) : (
             <div className="space-y-2.5">
               {selectedEvents.map((e, i) => (
-                <div key={i} className="rounded-xl border border-gray-100 p-3">
+                <div key={i} className="rounded-xl border border-primary/10 p-3">
                   <div className="flex items-start gap-2 flex-wrap">
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge} shrink-0`}>{typeLabel(e.type)}</span>
                     <span className="text-sm font-bold text-primary break-words flex-1 min-w-0">{e.title}</span>
@@ -218,14 +218,14 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
                   </div>
                   {/* Vacaciones: rango del X al Y + descripción */}
                   {e.type === 'vacacion' && (
-                    <div className="text-xs text-gray-500 mt-1">
-                      <span className="font-semibold text-gray-600">
+                    <div className="text-xs text-primary/55 mt-1">
+                      <span className="font-semibold text-primary/65">
                         {e.end && e.end !== e.date ? t('admin.agenda.rangeFromTo', { from: fmtDate(e.date, dl), to: fmtDate(e.end, dl), defaultValue: `Del ${fmtDate(e.date, dl)} al ${fmtDate(e.end, dl)}` }) : fmtDate(e.date, dl)}
                       </span>
-                      {e.sub && <span className="text-gray-400"> · {e.sub}</span>}
+                      {e.sub && <span className="text-primary/45"> · {e.sub}</span>}
                     </div>
                   )}
-                  {e.type === 'cobro' && e.sub && <div className="text-xs text-gray-400 break-words mt-0.5">{e.sub}</div>}
+                  {e.type === 'cobro' && e.sub && <div className="text-xs text-primary/45 break-words mt-0.5">{e.sub}</div>}
                   {/* Botones de acción */}
                   <div className="flex flex-wrap gap-2 mt-2.5">
                     {e.type === 'cobro' && e.clientId && onOpenPayments && (
@@ -239,7 +239,7 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
                     {e.type === 'cobro' && e.clientName && onOpenClient && (
                       <button
                         onClick={() => onOpenClient(e.clientName!)}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-gray-50 hover:bg-gray-100 transition px-3 py-2 rounded-lg">
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-almond/50 hover:bg-primary/10 transition px-3 py-2 rounded-lg">
                         <span className="material-symbols-outlined text-base leading-none">person</span>
                         {t('admin.agenda.openClient', { defaultValue: 'Ficha cliente' })}
                       </button>
@@ -261,30 +261,30 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
       )}
 
       {/* Lista configurable */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+      <div className="bg-white rounded-2xl border border-primary/10 shadow-sm p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.agenda.listOf', { defaultValue: 'Lista' })}:</span>
-          <select value={filterType} onChange={(e) => setFilterType(e.target.value as any)} className="bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-primary">
+          <span className="text-[10px] font-black uppercase tracking-widest text-primary/45">{t('admin.agenda.listOf', { defaultValue: 'Lista' })}:</span>
+          <select value={filterType} onChange={(e) => setFilterType(e.target.value as any)} className="bg-almond/50 border border-primary/15 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-primary">
             <option value="all">{t('admin.agenda.allTypes', { defaultValue: 'Todos' })}</option>
             <option value="cobro">{t('admin.agenda.cobro')}</option>
             <option value="vacacion">{t('admin.agenda.vacacion')}</option>
           </select>
-          <select value={order} onChange={(e) => setOrder(e.target.value as any)} className="bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-primary">
+          <select value={order} onChange={(e) => setOrder(e.target.value as any)} className="bg-almond/50 border border-primary/15 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-primary">
             <option value="asc">{t('admin.agenda.asc', { defaultValue: 'Ascendente (próximos)' })}</option>
             <option value="desc">{t('admin.agenda.desc', { defaultValue: 'Descendente' })}</option>
           </select>
-          <label className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 cursor-pointer">
-            <input type="checkbox" checked={futureOnly} onChange={(e) => setFutureOnly(e.target.checked)} className="rounded border-gray-300" />
+          <label className="inline-flex items-center gap-1.5 text-xs font-bold text-primary/55 cursor-pointer">
+            <input type="checkbox" checked={futureOnly} onChange={(e) => setFutureOnly(e.target.checked)} className="rounded border-primary/20" />
             {t('admin.agenda.futureOnly', { defaultValue: 'Solo próximos' })}
           </label>
           <span className="text-[10px] font-black uppercase tracking-widest text-primary/30 ml-auto">{list.length}</span>
         </div>
         {loading ? (
-          <div className="py-10 text-center text-gray-400 text-sm">{t('admin.common.loading', { defaultValue: 'Cargando…' })}</div>
+          <div className="py-10 text-center text-primary/45 text-sm">{t('admin.common.loading', { defaultValue: 'Cargando…' })}</div>
         ) : list.length === 0 ? (
-          <div className="py-10 text-center text-gray-400 text-sm">{t('admin.agenda.empty', { defaultValue: 'No hay eventos.' })}</div>
+          <div className="py-10 text-center text-primary/45 text-sm">{t('admin.agenda.empty', { defaultValue: 'No hay eventos.' })}</div>
         ) : (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-primary/10">
             {list.map((e, i) => {
               const openDay = () => { setSelectedDay(e.date); setCur({ y: Number(e.date.slice(0, 4)), m: Number(e.date.slice(5, 7)) - 1 }); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }); };
               return (
@@ -292,14 +292,14 @@ export default function EventsCalendar({ adminUserId, onOpenPayments, onOpenClie
                   <div className="flex items-start gap-3">
                     <div className="text-center shrink-0 w-12">
                       <div className="text-lg font-bold text-primary leading-none">{new Date(e.date + 'T00:00:00').getDate()}</div>
-                      <div className="text-[10px] uppercase text-gray-400">{new Date(e.date + 'T00:00:00').toLocaleDateString(dl, { month: 'short' })}</div>
+                      <div className="text-[10px] uppercase text-primary/45">{new Date(e.date + 'T00:00:00').toLocaleDateString(dl, { month: 'short' })}</div>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${TYPE_META[e.type].badge}`}>{typeLabel(e.type)}</span>
                         <span className="text-sm font-bold text-primary break-words">{e.title}</span>
                       </div>
-                      {e.sub && <div className="text-xs text-gray-400 break-words">{e.sub}</div>}
+                      {e.sub && <div className="text-xs text-primary/45 break-words">{e.sub}</div>}
                     </div>
                     {e.type === 'cobro' && e.amount != null && (
                       <div className="text-sm font-black text-primary shrink-0 whitespace-nowrap">{money(e.amount, e.currency || 'EUR')}</div>

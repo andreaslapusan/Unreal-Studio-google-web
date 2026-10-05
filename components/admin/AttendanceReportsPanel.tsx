@@ -81,16 +81,16 @@ const AttendanceReportsPanel: React.FC = () => {
   return (
     <div className="mt-12">
       <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.attRep.title', 'Reportes de asistencia (PDF)')}</h2>
-      <p className="text-sm text-gray-400 mb-4">{t('admin.attRep.subtitle', 'Reporte diario generado automáticamente a las 23:59 (hora Bali). Descargable, con foto por fichaje.')}</p>
+      <p className="text-sm text-primary/45 mb-4">{t('admin.attRep.subtitle', 'Reporte diario generado automáticamente a las 23:59 (hora Bali). Descargable, con foto por fichaje.')}</p>
 
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <label className="text-xs text-primary/50 font-bold">{t('admin.att.from', 'Desde')}
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="ml-1 bg-white border border-primary/15 rounded-xl px-3 py-2 text-sm" />
         </label>
         <label className="text-xs text-primary/50 font-bold">{t('admin.att.to', 'Hasta')}
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="ml-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm" />
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="ml-1 bg-white border border-primary/15 rounded-xl px-3 py-2 text-sm" />
         </label>
-        <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="bg-white border border-gray-200 rounded-xl pl-3 pr-8 py-2 text-sm font-bold text-primary">
+        <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="bg-white border border-primary/15 rounded-xl pl-3 pr-8 py-2 text-sm font-bold text-primary">
           <option value="date_desc">{t('admin.attRep.sortDateDesc', 'Fecha (recientes)')}</option>
           <option value="date_asc">{t('admin.attRep.sortDateAsc', 'Fecha (antiguos)')}</option>
           <option value="present_desc">{t('admin.attRep.sortPresDesc', 'Más presentes')}</option>
@@ -100,13 +100,13 @@ const AttendanceReportsPanel: React.FC = () => {
       </div>
 
       {loading ? (
-        <p className="text-sm text-gray-400">{t('admin.att.loading', 'Cargando…')}</p>
+        <p className="text-sm text-primary/45">{t('admin.att.loading', 'Cargando…')}</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-gray-300 italic">{t('admin.attRep.empty', 'Aún no hay reportes generados.')}</p>
+        <p className="text-sm text-primary/30 italic">{t('admin.attRep.empty', 'Aún no hay reportes generados.')}</p>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-primary/10 shadow-sm overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase tracking-widest">
+            <thead className="bg-almond/50 text-primary/45 text-[10px] uppercase tracking-widest">
               <tr>
                 <th className="text-left px-4 py-3">{t('admin.attRep.thDate', 'Fecha')}</th>
                 <th className="text-left px-4 py-3">{t('admin.attRep.thPresent', 'Asistencia')}</th>
@@ -117,15 +117,15 @@ const AttendanceReportsPanel: React.FC = () => {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.report_date} className="border-t border-gray-50 hover:bg-gray-50/60 transition">
+                <tr key={r.report_date} className="border-t border-primary/10 hover:bg-almond/50 transition">
                   <td className="px-4 py-3 font-bold text-primary capitalize whitespace-nowrap">{fmtDay(r.report_date)}</td>
                   <td className="px-4 py-3 text-primary/70">
                     <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase px-2 py-0.5 rounded-full bg-green-50 text-green-600">
                       <span className="material-symbols-outlined text-xs">groups</span>{r.present}/{r.total}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{fmtGen(r.generated_at)}</td>
-                  <td className="px-4 py-3 text-gray-400 hidden md:table-cell whitespace-nowrap">{(r.bytes / 1024).toFixed(0)} KB</td>
+                  <td className="px-4 py-3 text-primary/55 hidden md:table-cell whitespace-nowrap">{fmtGen(r.generated_at)}</td>
+                  <td className="px-4 py-3 text-primary/45 hidden md:table-cell whitespace-nowrap">{(r.bytes / 1024).toFixed(0)} KB</td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => download(r)}

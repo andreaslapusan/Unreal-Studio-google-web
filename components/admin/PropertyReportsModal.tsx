@@ -71,55 +71,55 @@ const PropertyReportsModal: React.FC<{ propertyId: string; propertyName: string;
   return (
     <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
-        <div className="flex items-start justify-between gap-3 p-6 border-b border-gray-100 shrink-0">
+        <div className="flex items-start justify-between gap-3 p-6 border-b border-primary/10 shrink-0">
           <div className="min-w-0">
             <h2 className="text-xl font-serif text-primary flex items-center gap-2">
               <span className="material-symbols-outlined">description</span> {t('empleados.reports.title')}
             </h2>
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mt-1 truncate">{propertyName}</p>
+            <p className="text-[11px] font-black text-primary/45 uppercase tracking-widest mt-1 truncate">{propertyName}</p>
           </div>
           <button onClick={onClose} aria-label={t('empleados.reports.close')} className="text-primary/40 hover:text-primary shrink-0"><span className="material-symbols-outlined">close</span></button>
         </div>
 
         <div className="overflow-y-auto overscroll-contain">
           {loading ? (
-            <p className="text-center text-gray-400 py-10">{t('empleados.reports.loading')}</p>
+            <p className="text-center text-primary/45 py-10">{t('empleados.reports.loading')}</p>
           ) : reports.length === 0 ? (
             <div className="text-center py-12">
-              <span className="material-symbols-outlined text-4xl text-gray-200">folder_open</span>
-              <p className="text-gray-400 mt-2">{t('empleados.reports.empty')}</p>
+              <span className="material-symbols-outlined text-4xl text-primary/25">folder_open</span>
+              <p className="text-primary/45 mt-2">{t('empleados.reports.empty')}</p>
             </div>
           ) : (
             <>
-              <p className="text-xs text-gray-400 px-6 pt-4 pb-2">
+              <p className="text-xs text-primary/45 px-6 pt-4 pb-2">
                 {t('empleados.reports.count', { n: reports.length })}
-                {supersededCount > 0 && <span className="text-gray-300"> · {t('empleados.reports.superseded', { n: supersededCount })}</span>}
+                {supersededCount > 0 && <span className="text-primary/30"> · {t('empleados.reports.superseded', { n: supersededCount })}</span>}
               </p>
-              <ul className="divide-y divide-gray-100">
+              <ul className="divide-y divide-primary/10">
                 {reports.map((r) => (
-                  <li key={r.id} className="px-6 py-3 hover:bg-gray-50/60 transition">
+                  <li key={r.id} className="px-6 py-3 hover:bg-almond/50 transition">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-primary text-sm">{r.title}</span>
                       {r.pct_progress_at_update != null && (
                         <span className="shrink-0 text-[9px] font-black uppercase bg-almond text-primary px-2 py-0.5 rounded">{r.pct_progress_at_update}%</span>
                       )}
-                      <span className="text-[11px] text-gray-400 ml-auto shrink-0">{fmtDate(r.posted_at)}{r.posted_by ? ` · ${r.posted_by}` : ''}</span>
+                      <span className="text-[11px] text-primary/45 ml-auto shrink-0">{fmtDate(r.posted_at)}{r.posted_by ? ` · ${r.posted_by}` : ''}</span>
                     </div>
-                    {r.summary && <p className="text-[11px] text-gray-500 mt-0.5">{r.summary}</p>}
+                    {r.summary && <p className="text-[11px] text-primary/55 mt-0.5">{r.summary}</p>}
                     {/* Ficheros: chip clicable con icono + NOMBRE del documento */}
                     {r._assets.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-1.5">
                         {r._assets.map((a, i) => (
                           <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 max-w-full bg-gray-50 border border-gray-200 rounded-lg pl-1.5 pr-2 py-1 hover:ring-2 hover:ring-primary/40 transition group/asset"
+                            className="inline-flex items-center gap-1.5 max-w-full bg-almond/50 border border-primary/15 rounded-lg pl-1.5 pr-2 py-1 hover:ring-2 hover:ring-primary/40 transition group/asset"
                             title={a.file_name}>
                             {a.asset_type === 'image' ? (
                               <img src={a.external_url} className="w-6 h-6 rounded object-cover shrink-0" loading="lazy" />
                             ) : (
                               <span className="material-symbols-outlined text-[18px] text-primary/60 shrink-0">{icon(a.asset_type)}</span>
                             )}
-                            <span className="text-[11px] text-gray-600 truncate">{a.file_name}</span>
-                            <span className="material-symbols-outlined text-[13px] text-gray-300 group-hover/asset:text-primary shrink-0">open_in_new</span>
+                            <span className="text-[11px] text-primary/65 truncate">{a.file_name}</span>
+                            <span className="material-symbols-outlined text-[13px] text-primary/30 group-hover/asset:text-primary shrink-0">open_in_new</span>
                           </a>
                         ))}
                       </div>
