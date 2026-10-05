@@ -379,7 +379,7 @@ const Projects: React.FC = () => {
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">square_foot</span>{proj.area_m2} m²</span>
                     )}
                     {proj.tenure && (
-                      <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
+                      <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-primary/10 text-primary/70'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
                     )}
                   </div>
                   {localizedCompletion(proj, i18n.language) && (

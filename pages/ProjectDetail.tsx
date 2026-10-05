@@ -415,7 +415,7 @@ const ProjectDetail: React.FC = () => {
                 </div>
               )}
               {project.tenure && (
-                <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
+                <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-primary/10 text-primary/70'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
               )}
             </div>
           </div>
