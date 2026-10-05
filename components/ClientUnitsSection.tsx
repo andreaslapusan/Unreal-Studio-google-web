@@ -60,7 +60,7 @@ const ClientUnitsSection: React.FC<{ clientId: string }> = ({ clientId }) => {
 
   return (
     <section className="mt-10">
-      <h2 className="font-serif text-2xl text-primary mb-4">{t('inversoresDashboard.yourUnits')}</h2>
+      <h2 className="text-2xl md:text-3xl text-primary mb-6 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('inversoresDashboard.yourUnits')}</h2>
       <div className="grid gap-6 md:grid-cols-2">
         {units.map((u) => {
           const milestones: Milestone[] = [
@@ -74,17 +74,20 @@ const ClientUnitsSection: React.FC<{ clientId: string }> = ({ clientId }) => {
             { label: t('inversoresDashboard.labelDelivery'), done: false, value: u.delivery_date ? new Date(dateOnly(u.delivery_date)).toLocaleDateString(uiLocale()) : undefined },
           ];
           return (
-            <article key={u.investor_unit_id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-primary/5">
+            <article key={u.investor_unit_id} className="group bg-white rounded-3xl overflow-hidden border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:shadow-[0_28px_60px_-30px_rgba(63,35,5,0.45)] hover:-translate-y-0.5 transition-all duration-300">
               {u.hero_image_url && (
-                <img src={u.hero_image_url} alt={u.project_name ?? ''} className="w-full h-40 object-cover" loading="lazy" />
+                <div className="overflow-hidden">
+                  <img src={u.hero_image_url} alt={u.project_name ?? ''} className="w-full h-44 object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
+                </div>
               )}
               <div className="p-6">
-                <h3 className="font-serif text-xl text-primary">{u.project_name ?? t('inversoresDashboard.labelProject')}</h3>
-                {u.unit_name && <p className="text-sm text-primary/60 mb-3">{u.unit_name}</p>}
+                <h3 className="font-serif text-xl md:text-2xl text-primary tracking-[-0.01em]">{u.project_name ?? t('inversoresDashboard.labelProject')}</h3>
+                {u.unit_name && <p className="text-sm text-primary/55 mb-4">{u.unit_name}</p>}
                 {typeof u.price_paid === 'number' && (
-                  <p className="text-sm mb-4">
-                    <strong>{t('inversoresDashboard.labelPricePaid')}</strong> {fmtEUR(u.price_paid)}
-                  </p>
+                  <div className="mb-5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-0.5">{t('inversoresDashboard.labelPricePaid')}</p>
+                    <p className="font-serif text-2xl text-primary">{fmtEUR(u.price_paid)}</p>
+                  </div>
                 )}
 
                 {/* Seguimiento de pagos (hitos) */}
