@@ -634,21 +634,21 @@ const Home: React.FC = () => {
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">construction</span>
                 <div>
-                  <h5 className="font-bold text-primary">{t('home.v1Title')}</h5>
+                  <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v1Title')}</h5>
                   <p className="text-xs text-primary/60">{t('home.v1Body')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">sell</span>
                 <div>
-                  <h5 className="font-bold text-primary">{t('home.v2Title')}</h5>
+                  <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v2Title')}</h5>
                   <p className="text-xs text-primary/60">{t('home.v2Body')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
                 <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">payments</span>
                 <div>
-                  <h5 className="font-bold text-primary">{t('home.v3Title')}</h5>
+                  <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v3Title')}</h5>
                   <p className="text-xs text-primary/60">{t('home.v3Body')}</p>
                 </div>
               </div>
