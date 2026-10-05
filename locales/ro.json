@@ -128,7 +128,8 @@
       "tenure": {
         "leasehold": "Leasehold",
         "freehold": "Freehold"
-      }
+      },
+      "deliveryFrom": "începând cu"
     },
     "noResults": "Nu s-au găsit rezultate",
     "clearFilters": "Șterge filtrele",

@@ -128,7 +128,8 @@
       "tenure": {
         "leasehold": "Leasehold",
         "freehold": "Freehold"
-      }
+      },
+      "deliveryFrom": "from"
     },
     "noResults": "No results found",
     "clearFilters": "Clear filters",

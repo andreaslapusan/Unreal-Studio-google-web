@@ -30,7 +30,7 @@ export function statusBadgeClass(raw: string | null | undefined): string {
     return "bg-orange-500 text-white";
   // Under construction / structure complete → teal
   if (n.startsWith("en_construccion") || n.startsWith("estructura_completa"))
-    return "bg-teal-600 text-white";
+    return "bg-blue-600 text-white";
   // Co-investment opportunity → indigo
   if (n.startsWith("oportunidad"))
     return "bg-indigo-600 text-white";
@@ -54,7 +54,7 @@ export function statusDotClass(raw: string | null | undefined): string {
   if (n.startsWith("ultimas_unidades"))
     return "bg-orange-400";
   if (n.startsWith("en_construccion") || n.startsWith("estructura_completa"))
-    return "bg-teal-300";
+    return "bg-blue-400";
   if (n.startsWith("oportunidad"))
     return "bg-indigo-300";
   return "bg-almond";

@@ -14,6 +14,7 @@ import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import BookingWidget from '../components/BookingWidget';
 import LazyMap from '../components/LazyMap';
+import { isFinished, deliveryText } from '../lib/deliveryDate';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent } from '../lib/fbPixel';
 import { gtmViewItem } from '../lib/gtm';
@@ -871,7 +872,7 @@ const ProjectDetail: React.FC = () => {
                     {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
                     {project.furnishing && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
                     {project.has_pool && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}
-                    {project.completion_date && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{formatDate(project.completion_date)}</span></div>}
+                    {!isFinished(project.status) && project.completion_date && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{deliveryText(formatDate(project.completion_date), t('projects.card.deliveryFrom'))}</span></div>}
                 </div>
 
                 {(() => {
