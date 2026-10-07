@@ -117,16 +117,22 @@ export default function AgenciasPartnership() {
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
             {projects.map((p) => (
-              <article key={p.slug ?? p.name} className="bg-almond rounded-2xl overflow-hidden border border-primary/5 hover:border-primary/15 hover:shadow-lg transition-all duration-300 group">
+              <article key={p.slug ?? p.name} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-primary/5 shadow-sm hover:shadow-2xl hover:-translate-y-1 hover:border-primary/10 transition-all duration-500 group flex flex-col">
                 {p.image ? (
-                  <img src={imgSrc(getImageUrl(p.image), 600)} alt={p.name} loading="lazy" className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="overflow-hidden">
+                    <img src={imgSrc(getImageUrl(p.image), 600)} alt={p.name} loading="lazy" className="w-full h-48 object-cover transition-transform duration-1000 group-hover:scale-110" />
+                  </div>
                 ) : (
                   <div className="w-full h-48 bg-primary/5" />
                 )}
                 <div className="p-5">
-                  <h3 className="font-serif text-lg leading-tight">{p.name}</h3>
-                  {p.zone && <p className="text-xs text-primary/60 mt-1">{p.zone}</p>}
-                  {p.status && <p className="text-xs text-primary/50 mt-1">{statusLabel(p.status)}</p>}
+                  <h3 className="font-serif text-lg leading-tight tracking-[-0.01em]">{p.name}</h3>
+                  {p.zone && (
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary/45 mt-2 inline-flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-sm">location_on</span>{p.zone}
+                    </p>
+                  )}
+                  {p.status && <p className="text-xs text-primary/50 mt-1.5 font-light">{statusLabel(p.status)}</p>}
                 </div>
               </article>
             ))}
