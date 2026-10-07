@@ -34,6 +34,13 @@ const PORTAL_LABEL: Record<PortalKey, string> = {
   admin: 'Admin',
 };
 
+// Tratamiento editorial UNIFICADO de la tarjeta para los 3 estados del login
+// (verificando sesión, selector multi-rol, formulario). Antes solo el formulario
+// tenía el radio/sombra cálidos; loading y chooser usaban rounded-3xl + shadow-2xl
+// genéricos → inconsistencia visible. Un solo sitio = patrón, no casos sueltos.
+const CARD_CLASS =
+  'bg-white w-full max-w-md rounded-[1.75rem] border border-primary/10 shadow-[0_24px_64px_-28px_rgba(63,35,5,0.4)]';
+
 const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, dark }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -282,9 +289,9 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   if (loading || checking) {
     return (
       <PortalShell dark={dark}>
-        <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl border border-primary/5 flex flex-col items-center gap-4">
-          <span className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <p className="text-sm text-primary/50">{t('auth.loadingSession', { defaultValue: 'Iniciando sesión…' })}</p>
+        <div className={`${CARD_CLASS} p-10 flex flex-col items-center gap-5`}>
+          <span className="w-10 h-10 border-[3px] border-primary/15 border-t-primary rounded-full animate-spin" />
+          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary/45">{t('auth.loadingSession', { defaultValue: 'Iniciando sesión…' })}</p>
         </div>
       </PortalShell>
     );
@@ -294,17 +301,23 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   if (chooser) {
     return (
       <PortalShell dark={dark}>
-        <div className="bg-white w-full max-w-md rounded-3xl p-8 md:p-10 shadow-2xl border border-primary/5 text-center">
-          <h1 className="text-2xl font-serif text-primary mb-2">{t('auth.choosePortalTitle')}</h1>
-          <p className="text-sm text-primary/50 mb-6">{t('auth.choosePortalSub')}</p>
+        <div className={`${CARD_CLASS} p-8 md:p-11`}>
+          <div className="mb-8">
+            <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40 mb-3">
+              <span className="h-px w-7 bg-primary/30" />{t('auth.subtitle')}
+            </span>
+            <h1 className="text-[2rem] md:text-4xl font-serif text-primary tracking-[-0.01em] leading-none mb-2">{t('auth.choosePortalTitle')}</h1>
+            <p className="text-sm text-primary/50 font-light">{t('auth.choosePortalSub')}</p>
+          </div>
           <div className="space-y-3">
             {chooser.map((p) => (
               <button
                 key={p}
                 onClick={() => navigate(PORTAL_DASH[p])}
-                className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition"
+                className="group w-full bg-primary text-white py-4 px-5 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition flex items-center justify-between gap-2"
               >
                 {t(`auth.portal_${p}`)}
+                <span className="material-symbols-outlined text-base text-white/70 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white">arrow_forward</span>
               </button>
             ))}
           </div>
@@ -315,7 +328,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
 
   return (
     <PortalShell dark={dark}>
-      <div className="bg-white w-full max-w-md rounded-[1.75rem] p-8 md:p-11 shadow-[0_24px_64px_-28px_rgba(63,35,5,0.4)] border border-primary/10">
+      <div className={`${CARD_CLASS} p-8 md:p-11`}>
         <div className="mb-8">
           <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40 mb-3">
             <span className="h-px w-7 bg-primary/30" />{t('auth.subtitle')}
