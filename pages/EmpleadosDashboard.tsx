@@ -22,6 +22,7 @@ import { baliTime, baliToday, baliDayStartISO } from '../lib/timezone';
 import VacationCalendar from '../components/VacationCalendar';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
+import PageLoader from '../components/PageLoader';
 import ConstructionReportModal from '../components/ConstructionReportModal';
 
 type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
@@ -398,11 +399,7 @@ const EmpleadosDashboard: React.FC = () => {
   const onBreak = !!lastBreakStart && (!lastBreakEnd || new Date(lastBreakStart.created_at) > new Date(lastBreakEnd.created_at));
 
   if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-almond flex items-center justify-center">
-        <span className="material-symbols-outlined animate-spin text-3xl text-primary">refresh</span>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (

@@ -11,6 +11,7 @@ import { compressImage } from "../lib/imageCompress";
 import { projectSeoSlug } from "../lib/projectUrl";
 import PortalHeader from "../components/PortalHeader";
 import Footer from "../components/Footer";
+import PageLoader from "../components/PageLoader";
 
 interface PartnerRow {
   id: string;
@@ -88,7 +89,7 @@ export default function AgenciasDashboard() {
     };
   }, [user]);
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('agenciasDashboard.loadingAuth')}</div>;
+  if (authLoading) return <PageLoader label={t('agenciasDashboard.loadingAuth')} />;
   if (!user) return <Navigate to="/agencias" replace />;
   if (role && role !== "lister" && role !== "admin") {
     return (

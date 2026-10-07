@@ -10,6 +10,7 @@ import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
+import PageLoader from '../components/PageLoader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 import ClientPaymentsSection from '../components/ClientPaymentsSection';
 
@@ -571,12 +572,7 @@ const ClientDashboard: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-        <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('admin.clientDash.loading')}</p>
-      </div>
-    );
+    return <PageLoader label={t('admin.clientDash.loading')} />;
   }
 
   if (!clientData) {
