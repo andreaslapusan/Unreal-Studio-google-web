@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
               type="button"
               onClick={() => setSettingsOpen(!settingsOpen)}
               onBlur={() => setTimeout(() => setSettingsOpen(false), 150)}
-              className={`w-9 h-9 flex items-center justify-center rounded-full border transition ${heroOverlay ? 'bg-white/15 hover:bg-white/25 border-white/25 text-almond backdrop-blur-sm' : 'bg-white/60 hover:bg-white border-primary/10 text-primary'}`}
+              className={`w-9 h-9 flex items-center justify-center rounded-full border transition outline-none focus-visible:ring-2 ${heroOverlay ? 'bg-white/15 hover:bg-white/25 border-white/25 text-almond backdrop-blur-sm focus-visible:ring-white/60' : 'bg-white/60 hover:bg-white border-primary/10 text-primary focus-visible:ring-primary/40'}`}
               title={t('fix.nav.languageAndCurrency')}
               aria-label={t('fix.nav.languageAndCurrency')}
             >
@@ -138,7 +138,7 @@ const Navbar: React.FC = () => {
                     value={currency}
                     onMouseDown={(e) => e.stopPropagation()}
                     onChange={(e) => setCurrency(e.target.value as any)}
-                    className="w-full bg-white border border-primary/10 rounded-full px-3 py-1.5 text-xs font-bold text-primary focus:ring-0 cursor-pointer hover:bg-primary/5 transition"
+                    className="w-full bg-white border border-primary/10 rounded-full px-3 py-1.5 text-xs font-bold text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer hover:bg-primary/5 transition"
                   >
                     {CURRENCIES.map(c => (
                       <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
@@ -213,7 +213,7 @@ const Navbar: React.FC = () => {
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as any)}
-                  className="bg-white border border-primary/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-primary/5 transition"
+                  className="bg-white border border-primary/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer hover:bg-primary/5 transition"
                 >
                   {CURRENCIES.map(c => (
                     <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>

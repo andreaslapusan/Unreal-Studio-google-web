@@ -60,7 +60,7 @@ export default function LanguageSwitcher({ inverted = false }: { inverted?: bool
         <button
           key={l.code}
           onClick={() => change(l.code)}
-          className={`px-2 py-1 rounded-full transition ${
+          className={`px-2 py-1 rounded-full transition outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
             current === l.code
               ? inverted
                 ? "bg-white/20 text-white"
