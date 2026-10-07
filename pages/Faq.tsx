@@ -174,7 +174,7 @@ export default function Faq() {
       </header>
 
       <div className="max-w-4xl mx-auto px-6 md:px-12">
-        <div className="bg-white rounded-2xl shadow-sm border border-primary/5 p-3 mb-8 flex items-center gap-3">
+        <div className="bg-white rounded-2xl shadow-sm border border-primary/5 p-3 mb-8 flex items-center gap-3 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/20 transition">
           <span className="material-symbols-outlined text-primary/30 ml-2">search</span>
           <input
             aria-label={t("faq.search")}
@@ -191,7 +191,7 @@ export default function Faq() {
             <button
               key={c}
               onClick={() => setCategory(c)}
-              className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition ${
+              className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                 category === c
                   ? "bg-primary text-white shadow-md"
                   : "bg-white text-primary/60 hover:text-primary border border-primary/10"
