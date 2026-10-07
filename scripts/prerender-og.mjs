@@ -125,6 +125,18 @@ function setCanonical(html, url) {
   return html.replace(/<\/head>/i, `    <link rel="canonical" href="${u}">\n  </head>`);
 }
 
+// hreflang estático para los crawlers (el cliente los reinyecta vía LocaleSeo).
+// Se marcan con data-locale-seo="1" para que LocaleSeo.clear() los elimine al
+// hidratar → sin duplicados. tail = ruta sin prefijo de idioma ("" para la home,
+// "/proyecto/<slug>" para la ficha). x-default → /es (igual que LocaleSeo).
+const SEO_LANGS = ["es", "en", "ro", "id"];
+function setHreflang(html, tail) {
+  const links = SEO_LANGS
+    .map((l) => `    <link rel="alternate" hreflang="${l}" href="${ORIGIN}/${l}${tail}" data-locale-seo="1">`)
+    .join("\n") + `\n    <link rel="alternate" hreflang="x-default" href="${ORIGIN}/es${tail}" data-locale-seo="1">`;
+  return html.replace(/<\/head>/i, `${links}\n  </head>`);
+}
+
 async function main() {
   if (!existsSync(TEMPLATE)) {
     console.warn("[prerender-og] dist/index.html no existe; nada que hacer.");
@@ -159,6 +171,7 @@ async function main() {
     html = setMeta(html, "twitter:title", h.title, "name");
     html = setMeta(html, "twitter:description", h.desc, "name");
     html = setCanonical(html, url);
+    html = setHreflang(html, "");
     // Instagram por idioma: @unrealstudiomadrid solo en español (contenido ES);
     // el resto de idiomas usan @unrealstudiobali (contenido en inglés). El template
     // base ya trae "bali", así que solo hay que reescribir para /es.
@@ -241,6 +254,7 @@ async function main() {
         html = setMeta(html, "twitter:description", desc, "name");
         html = setMeta(html, "twitter:image", img, "name");
         html = setCanonical(html, canonical);
+        html = setHreflang(html, `/proyecto/${seoSlug}`);
 
         // Fichero <slug>.html (no carpeta/index.html) para que nginx lo sirva con
         // try_files $uri.html SIN redirigir a barra final.
