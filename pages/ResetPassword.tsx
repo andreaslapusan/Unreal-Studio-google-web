@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { portalPath, type Portal } from '../lib/portalUrls';
+import PortalShell from '../components/PortalShell';
 
 function extractTokens(href: string): { access_token: string; refresh_token: string } | null {
   const hashIdx = href.indexOf('#');
@@ -72,11 +73,12 @@ const ResetPassword: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-almond px-6 py-12">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-sm p-8 md:p-10">
-        <div className="text-center mb-6">
-          <span className="font-serif text-3xl font-bold text-primary tracking-tight">Unreal Studio</span>
-          <p className="brand-lema text-primary/50 text-sm mt-1">{t('fix.rp.tagline')}</p>
+    <PortalShell>
+      <div className="w-full max-w-md bg-white rounded-[1.75rem] border border-primary/10 shadow-[0_24px_64px_-28px_rgba(63,35,5,0.4)] p-8 md:p-11">
+        <div className="mb-7">
+          <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40">
+            <span className="h-px w-7 bg-primary/30" />{t('auth.subtitle')}
+          </span>
         </div>
 
         {fatal ? (
@@ -131,7 +133,7 @@ const ResetPassword: React.FC = () => {
           </form>
         )}
       </div>
-    </div>
+    </PortalShell>
   );
 };
 
