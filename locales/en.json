@@ -2626,7 +2626,9 @@
   },
   "authFinish": {
     "validating": "Validating your magic link.",
-    "backLogin": "Back to login"
+    "backLogin": "Back to login",
+    "somethingWrong": "Something is not right",
+    "linkExpiredOrUsed": "The link has expired or was already used."
   },
   "errorBoundary": {
     "msg": "This page had an error. You can go back home and keep using the site."

@@ -2627,7 +2627,9 @@
   },
   "authFinish": {
     "validating": "Memvalidasi tautan ajaib Anda.",
-    "backLogin": "Kembali ke login"
+    "backLogin": "Kembali ke login",
+    "somethingWrong": "Ada yang tidak beres",
+    "linkExpiredOrUsed": "Tautan sudah kedaluwarsa atau sudah digunakan."
   },
   "errorBoundary": {
     "msg": "Halaman ini mengalami kesalahan. Anda bisa kembali ke beranda dan melanjutkan."

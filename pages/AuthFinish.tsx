@@ -13,6 +13,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
+import PageLoader from "../components/PageLoader";
+import PortalNotice from "../components/PortalNotice";
 
 function extractOAuthTokens(href: string): { access_token: string; refresh_token: string } | null {
   const hashIdx = href.indexOf("#");
@@ -121,25 +123,16 @@ export default function AuthFinish() {
     }, 800);
   }, [user, role, loading, navigate]);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-almond px-6 text-center">
-      <div className="max-w-md">
-        {!errored && (
-          <>
-            <h1 className="text-3xl font-serif text-primary mb-4">Iniciando sesión…</h1>
-            <p>{t('authFinish.validating', { defaultValue: 'Validando tu enlace mágico.' })}</p>
-          </>
-        )}
-        {errored && (
-          <>
-            <h1 className="text-3xl font-serif text-primary mb-4">Algo no va bien</h1>
-            <p className="text-red-700">El enlace ha expirado o ya se usó.</p>
-            <a href="/agencias" className="inline-block mt-4 underline text-primary">
-              {t('authFinish.backLogin', { defaultValue: 'Volver al login' })}
-            </a>
-          </>
-        )}
-      </div>
-    </div>
-  );
+  if (errored) {
+    return (
+      <PortalNotice
+        icon="link_off"
+        title={t('authFinish.somethingWrong', { defaultValue: 'Algo no va bien' })}
+        body={t('authFinish.linkExpiredOrUsed', { defaultValue: 'El enlace ha expirado o ya se usó.' })}
+        actionLabel={t('authFinish.backLogin', { defaultValue: 'Volver al login' })}
+        to="/agencias"
+      />
+    );
+  }
+  return <PageLoader label={t('authFinish.validating', { defaultValue: 'Validando tu enlace mágico.' })} />;
 }

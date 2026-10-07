@@ -2626,7 +2626,9 @@
   },
   "authFinish": {
     "validating": "Se validează linkul tău magic.",
-    "backLogin": "Înapoi la autentificare"
+    "backLogin": "Înapoi la autentificare",
+    "somethingWrong": "Ceva nu este în regulă",
+    "linkExpiredOrUsed": "Linkul a expirat sau a fost deja folosit."
   },
   "errorBoundary": {
     "msg": "Această pagină a avut o eroare. Poți reveni la pagina principală și continua."
