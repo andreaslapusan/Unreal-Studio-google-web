@@ -2710,5 +2710,8 @@
     "driveError": "Could not import the photos. Make sure the folder is accessible.",
     "titleLabel": "Property title",
     "titlePlaceholder": "e.g. Melasti Reef — 1-bedroom apartment"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content"
   }
 }

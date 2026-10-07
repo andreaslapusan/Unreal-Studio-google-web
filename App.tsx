@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
@@ -130,6 +131,7 @@ const AttributionTracker = () => {
 
 const Layout = ({ children }: { children?: React.ReactNode }) => {
   const location = useLocation();
+  const { t } = useTranslation();
   // Las pantallas de LOGIN localizadas (/es/clientes, /en/employees, /es/admin/login…)
   // son portales → sin Navbar/Footer de marketing (igual que las rutas antiguas).
   const isHiddenPath = !!matchPortalPath(location.pathname)
@@ -145,8 +147,16 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
     || location.pathname === '/lofts-globalitae';
   return (
     <div className="flex flex-col min-h-screen">
+      {!isHiddenPath && (
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-white focus:px-6 focus:py-3 focus:rounded-full focus:font-bold focus:text-sm focus:shadow-2xl focus:outline-none focus:ring-2 focus:ring-primary/40"
+        >
+          {t('a11y.skipToContent', { defaultValue: 'Saltar al contenido' })}
+        </a>
+      )}
       {!isHiddenPath && <Navbar />}
-      <main className="flex-grow">{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-grow outline-none">{children}</main>
       {!isHiddenPath && <Footer />}
       {/* FloatingWhatsApp: activado por Andreas (2026-08-09). Bottom-right, no colisiona
           con el CTA "Agendar" (bottom-center). Manda al +34 625710770 (WHATSAPP_URL). */}

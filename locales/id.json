@@ -2711,5 +2711,8 @@
     "driveError": "Gagal mengimpor foto. Pastikan folder dapat diakses.",
     "titleLabel": "Judul properti",
     "titlePlaceholder": "mis. Melasti Reef — apartemen 1 kamar"
+  },
+  "a11y": {
+    "skipToContent": "Lewati ke konten"
   }
 }

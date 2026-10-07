@@ -2710,5 +2710,8 @@
     "driveError": "Nu s-au putut importa pozele. Verifică dacă folderul este accesibil.",
     "titleLabel": "Titlul proprietății",
     "titlePlaceholder": "ex. Melasti Reef — apartament cu 1 dormitor"
+  },
+  "a11y": {
+    "skipToContent": "Sari la conținut"
   }
 }
