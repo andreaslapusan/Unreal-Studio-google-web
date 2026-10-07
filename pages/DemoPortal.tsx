@@ -7,6 +7,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../lib/supabase';
+import Reveal from '../components/Reveal';
 
 // Número único de la web: +34 625710770 (Andreas 2026-08-09, quitado el +62).
 const WA = 'https://wa.me/34625710770?text=' + encodeURIComponent('Hola, he visto la demo del portal y me interesa reservar una unidad en Unreal Studio.');
@@ -110,7 +111,7 @@ export default function DemoPortal() {
           <p className="text-sm text-primary/55 mb-4">Fotos reales fechadas de tu construcción. Transparencia total, sin sorpresas.</p>
           <div className="space-y-4">
             {UPDATES.map((u, i) => (
-              <article key={i} className="rounded-3xl bg-white shadow-sm p-4 border border-primary/5 hover:shadow-md hover:border-primary/10 transition-all duration-300">
+              <Reveal key={i} as="article" delay={i * 90} className="rounded-3xl bg-white shadow-sm p-4 border border-primary/5 hover:shadow-md hover:border-primary/10 transition-all duration-300">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <div className="text-sm font-bold text-primary">{u.title}</div>
@@ -126,7 +127,7 @@ export default function DemoPortal() {
                   ))}
                 </div>
                 <p className="text-sm text-primary/55 mt-3">{u.note}</p>
-              </article>
+              </Reveal>
             ))}
           </div>
         </section>
