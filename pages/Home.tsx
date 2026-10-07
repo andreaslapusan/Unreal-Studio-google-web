@@ -407,8 +407,8 @@ const Home: React.FC = () => {
           <div className="flex flex-col md:flex-row items-stretch md:items-center">
             
             {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
+            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
                 <div className="relative">
@@ -429,8 +429,8 @@ const Home: React.FC = () => {
             </div>
 
             {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
+            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
                 <div className="flex items-center gap-2 bg-primary/5 rounded-full px-4 py-2.5 border border-primary/10 hover:border-primary/30 focus-within:border-primary/40 transition-all">
@@ -454,8 +454,8 @@ const Home: React.FC = () => {
             </div>
 
             {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
+            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
@@ -469,8 +469,8 @@ const Home: React.FC = () => {
             </div>
 
             {/* Type Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
+            <div className="flex-1 flex items-center gap-4 px-6 py-4 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">home_work</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
