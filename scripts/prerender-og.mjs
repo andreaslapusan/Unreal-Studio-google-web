@@ -146,6 +146,8 @@ async function main() {
   for (const h of HOME) {
     const url = `${ORIGIN}/${h.prefix}`;
     let html = template;
+    // <html lang> correcto por idioma (el template viene en "en") — SEO + a11y.
+    html = html.replace(/<html lang="[^"]*"/i, `<html lang="${h.prefix}"`);
     html = setTitle(html, h.title);
     html = setMeta(html, "description", h.desc, "name");
     html = setMeta(html, "og:type", "website");
@@ -221,6 +223,8 @@ async function main() {
       for (const slug of slugs) {
         const url = `${ORIGIN}${loc.prefix ? "/" + loc.prefix : ""}/proyecto/${slug}`;
         let html = template;
+        // <html lang> correcto por idioma (el template viene en "en") — SEO + a11y.
+        html = html.replace(/<html lang="[^"]*"/i, `<html lang="${loc.code}"`);
         html = setTitle(html, title);
         html = setMeta(html, "description", desc, "name");
         html = setMeta(html, "og:type", "article");
