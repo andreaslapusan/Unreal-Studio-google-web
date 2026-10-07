@@ -12,6 +12,7 @@ import { projectSeoSlug } from "../lib/projectUrl";
 import PortalHeader from "../components/PortalHeader";
 import Footer from "../components/Footer";
 import PageLoader from "../components/PageLoader";
+import PortalNotice from "../components/PortalNotice";
 
 interface PartnerRow {
   id: string;
@@ -93,12 +94,13 @@ export default function AgenciasDashboard() {
   if (!user) return <Navigate to="/agencias" replace />;
   if (role && role !== "lister" && role !== "admin") {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6 text-center">
-        <div>
-          <h1 className="text-3xl font-serif mb-4">{t('agenciasDashboard.accessDenied')}</h1>
-          <p>{t('agenciasDashboard.accessDeniedBody')}</p>
-        </div>
-      </div>
+      <PortalNotice
+        icon="lock"
+        title={t('agenciasDashboard.accessDenied')}
+        body={t('agenciasDashboard.accessDeniedBody')}
+        actionLabel={t('common.back')}
+        to="/agencias"
+      />
     );
   }
 

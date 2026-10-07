@@ -11,6 +11,7 @@ import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 import PageLoader from '../components/PageLoader';
+import PortalNotice from '../components/PortalNotice';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 import ClientPaymentsSection from '../components/ClientPaymentsSection';
 
@@ -577,9 +578,12 @@ const ClientDashboard: React.FC = () => {
 
   if (!clientData) {
     return (
-      <div className="min-h-screen bg-almond flex items-center justify-center">
-        <p className="text-primary/50">{t('admin.clientDash.errorLoad')} <button onClick={handleLogout} className="underline">{t('admin.clientDash.backToLogin')}</button></p>
-      </div>
+      <PortalNotice
+        icon="cloud_off"
+        title={t('admin.clientDash.errorLoad')}
+        actionLabel={t('admin.clientDash.backToLogin')}
+        onAction={handleLogout}
+      />
     );
   }
 
