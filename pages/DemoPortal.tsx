@@ -62,7 +62,7 @@ export default function DemoPortal() {
   const total = useMemo(() => PAYMENTS.reduce((s, p) => s + p.amount, 0), []);
 
   return (
-    <div className="min-h-screen bg-[#f7f3ee] text-[#2b2420]">
+    <div className="min-h-screen bg-almond text-primary">
       {/* Aviso DEMO */}
       <div className="sticky top-0 z-40 bg-primary text-white text-center text-xs sm:text-sm font-bold py-2 px-4">
         DEMO · Datos de ejemplo. Así verás TU propiedad como cliente de Unreal.
@@ -93,11 +93,11 @@ export default function DemoPortal() {
             </div>
             <Bar pct={PROGRESS} />
             <div className="grid grid-cols-2 gap-3 mt-4 text-center">
-              <div className="rounded-2xl bg-[#f7f3ee] py-3">
+              <div className="rounded-2xl bg-almond py-3">
                 <div className="text-[10px] uppercase tracking-widest text-primary/40 font-black">Entrega estimada</div>
                 <div className="font-serif text-lg text-primary">Jul 2027</div>
               </div>
-              <div className="rounded-2xl bg-[#f7f3ee] py-3">
+              <div className="rounded-2xl bg-almond py-3">
                 <div className="text-[10px] uppercase tracking-widest text-primary/40 font-black">Tipo</div>
                 <div className="font-serif text-lg text-primary">Villa · 2 dorm.</div>
               </div>
