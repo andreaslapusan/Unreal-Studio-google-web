@@ -130,4 +130,13 @@ select {
 .us-loader-breathe { animation: usLoaderBreathe 2.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .us-loader-bar, .us-loader-breathe { animation: none; }
+  /* Red de seguridad universal: para quien PIDE menos movimiento, neutralizamos
+     TODA animación/transición/parallax/scroll suave (no solo las marcadas con
+     motion-safe). Solo afecta a usuarios con la preferencia activada. */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
