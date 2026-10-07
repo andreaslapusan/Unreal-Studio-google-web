@@ -176,7 +176,7 @@ const Navbar: React.FC = () => {
 
       {/* Menú Móvil / Tablet - Se muestra hasta LG */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[60] bg-[#F3E5D8] lg:hidden flex flex-col animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[60] bg-almond lg:hidden flex flex-col animate-in fade-in duration-300">
           {/* Cabecera del Menú Móvil - Alineada exactamente con el Navbar */}
           <div className="flex justify-between items-center px-4 py-4 md:px-12 border-b border-primary/5 shrink-0">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center shrink-0">

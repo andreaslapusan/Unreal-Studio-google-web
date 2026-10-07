@@ -619,7 +619,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Sección 2: Cómo creamos valor */}
-      <section className="py-12 md:py-24 bg-[#F3E5D8] px-6 md:px-12">
+      <section className="py-12 md:py-24 bg-almond px-6 md:px-12">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
           <div className="lg:w-1/2 text-left space-y-5 md:space-y-8">
             <p className="inline-flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>{t('home.section2Tag')}</p>
