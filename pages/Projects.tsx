@@ -217,8 +217,8 @@ const Projects: React.FC = () => {
           <div className="grid grid-cols-2 md:flex md:flex-row items-stretch md:items-center">
 
             {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
                 <div className="relative">
@@ -239,8 +239,8 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
                 <div className="flex items-center gap-2 bg-almond/50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
@@ -264,8 +264,8 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
@@ -279,8 +279,8 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Type Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">home_work</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
@@ -296,8 +296,8 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Status Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">verified</span>
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">verified</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.status')}</label>
                 <div className="relative">
@@ -313,8 +313,8 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Bedrooms Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">bed</span>
+            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 group rounded-xl focus-within:bg-almond/50 transition-colors">
+              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">bed</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.bedrooms')}</label>
                 <div className="relative">
