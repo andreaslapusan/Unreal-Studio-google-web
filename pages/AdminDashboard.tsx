@@ -1106,7 +1106,20 @@ const AMENITIES_LIST = [
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
-        
+
+        // Provisionar el ACCESO real: crea/actualiza el usuario de login (Supabase Auth)
+        // con su contraseña + el PERFIL con rol. Sin esto, un admin nuevo no podía entrar
+        // (salía "usuario no existe" o bucle de redirección en /admin/login).
+        try {
+          const prov = await supabase.rpc('admin_provision_login', {
+            p_user_id: userId,
+            p_email: (currentUser.username || '').trim(),
+            p_password: currentUser.password_hash || '',
+            p_role: currentUser.role || 'admin',
+          });
+          if ((prov.data as any) && !(prov.data as any).success) console.warn('provision_login:', (prov.data as any).error);
+        } catch (e) { console.error('provision_login error', e); }
+
         await loadData();
         void loadMySignature();
         setIsEditingUser(false);
