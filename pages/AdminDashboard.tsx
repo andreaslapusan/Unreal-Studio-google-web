@@ -437,6 +437,45 @@ const AMENITIES_LIST = [
     if (sErr || !sent?.success) { alert(t('admin.dash.resetError', { error: sent?.error || sErr?.message || 'error' })); return; }
     alert(t('admin.dash.resetSent', { email }));
   };
+  // --- ADMINISTRADORES: email de bienvenida (acceso + contraseña temporal) y reset, como clientes/empleados ---
+  const adminLangOf = (u: any) => (['es', 'en', 'ro', 'id'].includes(u?.preferred_language || '') ? u.preferred_language : (i18n.language.slice(0, 2) || 'es')) as string;
+  const genTempPw = () => 'Unreal-' + Math.random().toString(36).slice(2, 7) + Math.floor(10 + Math.random() * 89);
+  const adminWelcomeInner = (u: any, lg: string, tempPw: string) => {
+    const esc = (s: string) => (s || '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] as string));
+    const et = i18n.getFixedT(lg);
+    const portalUrl = 'https://unrealstudiobali.com/admin';
+    const greeting = et('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name: u.name || '' });
+    const body = esc((TEAM_TPLS.welcome.body as any)[lg] || TEAM_TPLS.welcome.body.es);
+    const cellS = 'padding-right:14px;color:rgba(63,35,5,.55);vertical-align:top';
+    const valS = 'word-break:break-all;overflow-wrap:anywhere';
+    const creds = `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:16px 0;font-size:14px;line-height:1.9;color:#3F2305"><tr><td style="${cellS}">${et('emails.welcome.access')}</td><td style="${valS}"><a href="${portalUrl}" style="color:#3F2305;font-weight:700;${valS}">${portalUrl}</a></td></tr><tr><td style="${cellS}">${et('emails.welcome.emailLabel')}</td><td style="${valS}"><b>${esc(u.username)}</b></td></tr><tr><td style="${cellS}">${et('emails.welcome.tempPassword')}</td><td style="${valS}"><b>${esc(tempPw)}</b></td></tr></table>`;
+    const cta = `<p style="text-align:center;margin:22px 0 6px"><a href="${portalUrl}" style="background:#3F2305;color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:12px;display:inline-block;font-size:14px">${et('emails.welcome.cta')}</a></p>`;
+    return `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${greeting}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap;word-break:break-word">${body}</div>${creds}${cta}`;
+  };
+  const sendAdminWelcome = async (u: any) => {
+    const email = (u.username || '').trim();
+    if (!email.includes('@')) { alert(t('admin.dash.welcomeNoEmail')); return; }
+    const userId = getAdminUserId();
+    if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+    if (!window.confirm(t('admin.dash.adminWelcomeConfirm', { email, defaultValue: `¿Enviar email de bienvenida a ${email}? Se le generará una contraseña temporal nueva.` }))) return;
+    const lg = adminLangOf(u);
+    const temp = genTempPw();
+    const { data: prov } = await supabase.rpc('admin_provision_login', { p_user_id: userId, p_email: email, p_password: temp, p_role: u.role || 'admin' });
+    if (!(prov as any)?.success) { alert(t('admin.dash.adminProvisionError', { error: (prov as any)?.error || '', defaultValue: 'No se pudo preparar el acceso: {{error}}' })); return; }
+    const subject = (TEAM_TPLS.welcome.subject as any)[lg] || TEAM_TPLS.welcome.subject.es;
+    const { data: sent, error } = await invokeSendEmail({ adminUserId: userId, to: email, lang: lg, subject, html: adminWelcomeInner(u, lg, temp) });
+    await loadData();
+    if (error || !sent?.success) { alert(t('admin.dash.adminWelcomeMailFail', { temp, error: sent?.error || error?.message || '', defaultValue: `Acceso listo (contraseña temporal: ${temp}) pero el email no salió. Pásasela tú.` })); return; }
+    alert(t('admin.dash.adminWelcomeSent', { email, temp, defaultValue: `Bienvenida enviada a ${email}. Contraseña temporal: ${temp}` }));
+  };
+  const sendAdminReset = async (u: any) => {
+    const email = (u.username || '').trim();
+    if (!email.includes('@')) { alert(t('admin.dash.welcomeNoEmail')); return; }
+    if (!window.confirm(t('admin.dash.resetConfirm', { email }))) return;
+    const { data: sent, error } = await supabase.functions.invoke('send-password-reset', { body: { email, lang: adminLangOf(u), portal: 'admin' } });
+    if (error || !sent?.success) { alert(t('admin.dash.resetError', { error: sent?.error || error?.message || 'error' })); return; }
+    alert(t('admin.dash.resetSent', { email }));
+  };
   // Recordatorio de fichaje — email fijo (en su idioma) con la previsualización de marca.
   const sendEmployeeCheckin = (emp: any) => {
     const email = (emp.email || '').trim();
@@ -2339,6 +2378,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                             </td>
                           )}
                           <td className="px-6 py-4 text-right flex justify-end gap-2">
+                            <button onClick={() => sendAdminWelcome(u)} className="p-2 text-primary bg-almond rounded-lg hover:bg-primary hover:text-white transition" title={t('admin.dash.adminWelcomeBtn', { defaultValue: 'Enviar email de bienvenida (+ contraseña temporal)' })} aria-label={t('admin.dash.adminWelcomeBtn', { defaultValue: 'Enviar bienvenida' })}><span className="material-symbols-outlined text-sm">mail</span></button>
+                            <button onClick={() => sendAdminReset(u)} className="p-2 text-primary bg-almond rounded-lg hover:bg-primary hover:text-white transition" title={t('admin.dash.adminResetBtn', { defaultValue: 'Enviar email para restablecer contraseña' })} aria-label={t('admin.dash.adminResetBtn', { defaultValue: 'Restablecer contraseña' })}><span className="material-symbols-outlined text-sm">lock_reset</span></button>
                             <button onClick={() => openEditUser(u)} className="p-2 text-primary bg-almond rounded-lg"><span className="material-symbols-outlined text-sm">edit</span></button>
                             <button onClick={() => handleDeleteUser(u.id)} className="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white"><span className="material-symbols-outlined text-sm">delete</span></button>
                           </td>

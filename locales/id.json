@@ -1422,7 +1422,13 @@
       "reportPickPickProject": "Pilih properti untuk melihat penerimanya.",
       "reportPickRecipients": "Penerima",
       "optional": "opsional",
-      "signatureOnlySigner": "Hanya untuk yang menandatangani kwitansi. Biarkan kosong jika orang ini tidak menandatangani."
+      "signatureOnlySigner": "Hanya untuk yang menandatangani kwitansi. Biarkan kosong jika orang ini tidak menandatangani.",
+      "adminWelcomeBtn": "Kirim email selamat datang (+ kata sandi sementara)",
+      "adminResetBtn": "Kirim email atur ulang kata sandi",
+      "adminWelcomeConfirm": "Kirim email selamat datang ke {{email}}? Kata sandi sementara baru akan dibuat.",
+      "adminProvisionError": "Tidak dapat menyiapkan akses: {{error}}",
+      "adminWelcomeMailFail": "Akses siap (kata sandi sementara: {{temp}}) tetapi email gagal. Sampaikan sendiri.",
+      "adminWelcomeSent": "Selamat datang terkirim ke {{email}}. Kata sandi sementara: {{temp}}"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",

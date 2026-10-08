@@ -1317,7 +1317,13 @@
       "reportPickPickProject": "Select a property to see its recipients.",
       "reportPickRecipients": "Recipients",
       "optional": "optional",
-      "signatureOnlySigner": "Only for whoever signs kwitansis. Leave empty if this person will not sign."
+      "signatureOnlySigner": "Only for whoever signs kwitansis. Leave empty if this person will not sign.",
+      "adminWelcomeBtn": "Send welcome email (+ temporary password)",
+      "adminResetBtn": "Send password reset email",
+      "adminWelcomeConfirm": "Send a welcome email to {{email}}? A new temporary password will be generated.",
+      "adminProvisionError": "Could not prepare access: {{error}}",
+      "adminWelcomeMailFail": "Access ready (temp password: {{temp}}) but the email failed. Please share it yourself.",
+      "adminWelcomeSent": "Welcome sent to {{email}}. Temporary password: {{temp}}"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

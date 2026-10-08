@@ -1317,7 +1317,13 @@
       "reportPickPickProject": "Selecciona alguna propiedad para ver sus destinatarios.",
       "reportPickRecipients": "Destinatarios",
       "optional": "opcional",
-      "signatureOnlySigner": "Solo para quien firma kwitansis. Déjalo vacío si esta persona no va a firmar."
+      "signatureOnlySigner": "Solo para quien firma kwitansis. Déjalo vacío si esta persona no va a firmar.",
+      "adminWelcomeBtn": "Enviar email de bienvenida (+ contraseña temporal)",
+      "adminResetBtn": "Enviar email para restablecer contraseña",
+      "adminWelcomeConfirm": "¿Enviar email de bienvenida a {{email}}? Se le generará una contraseña temporal nueva.",
+      "adminProvisionError": "No se pudo preparar el acceso: {{error}}",
+      "adminWelcomeMailFail": "Acceso listo (contraseña temporal: {{temp}}) pero el email no salió. Pásasela tú.",
+      "adminWelcomeSent": "Bienvenida enviada a {{email}}. Contraseña temporal: {{temp}}"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

@@ -1317,7 +1317,13 @@
       "reportPickPickProject": "Selectează o proprietate pentru a-i vedea destinatarii.",
       "reportPickRecipients": "Destinatari",
       "optional": "opțional",
-      "signatureOnlySigner": "Doar pentru cine semnează kwitansis. Lasă gol dacă această persoană nu semnează."
+      "signatureOnlySigner": "Doar pentru cine semnează kwitansis. Lasă gol dacă această persoană nu semnează.",
+      "adminWelcomeBtn": "Trimite email de bun venit (+ parolă temporară)",
+      "adminResetBtn": "Trimite email de resetare a parolei",
+      "adminWelcomeConfirm": "Trimiți un email de bun venit la {{email}}? Se va genera o parolă temporară nouă.",
+      "adminProvisionError": "Nu s-a putut pregăti accesul: {{error}}",
+      "adminWelcomeMailFail": "Acces pregătit (parolă temporară: {{temp}}) dar emailul nu a plecat. Transmite-o tu.",
+      "adminWelcomeSent": "Bun venit trimis la {{email}}. Parolă temporară: {{temp}}"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
