@@ -668,7 +668,11 @@
       "profit": "Profit (preț listat − cost)",
       "costNote": "Vizibil doar aici în admin. Niciodată pe site-ul public.",
       "profitShort": "Profit",
-      "profitPrivate": "Profit (privat, doar admin)"
+      "profitPrivate": "Profit (privat, doar admin)",
+      "complexLandM2": "m² totali ai complexului (teren)",
+      "videoUrl": "Video proiect (link)",
+      "showIfFilled": "Apare pe pagină doar dacă îl completezi.",
+      "locationPh": "Scrie locația…"
     },
     "blogTab": {
       "title": "Articole Blog",

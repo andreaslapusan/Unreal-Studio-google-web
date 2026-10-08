@@ -668,7 +668,11 @@
       "profit": "Beneficio (precio listado − coste)",
       "costNote": "Solo visible aquí en el admin. Nunca se muestra en la web pública.",
       "profitShort": "Benef.",
-      "profitPrivate": "Beneficio (privado, solo admin)"
+      "profitPrivate": "Beneficio (privado, solo admin)",
+      "complexLandM2": "m² totales del complejo (terreno)",
+      "videoUrl": "Vídeo del proyecto (enlace)",
+      "showIfFilled": "Se muestra en la ficha solo si lo rellenas.",
+      "locationPh": "Escribe la ubicación…"
     },
     "blogTab": {
       "title": "Artículos del Blog",

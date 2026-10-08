@@ -2830,6 +2830,20 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><NumberInput value={currentProject.area_m2 ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, area_m2: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
+  {/* m² totales del complejo (terreno compartido) + Vídeo del proyecto. Se muestran en la ficha SOLO si se rellenan. */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div>
+      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.complexLandM2', { defaultValue: 'm² totales del complejo (terreno)' })}</label>
+      <NumberInput value={(currentProject as any).land_size_m2 ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, land_size_m2: v === '' ? null : (parseInt(v) || 0)} as any)} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" />
+      <p className="text-[10px] text-gray-400 mt-1">{t('admin.props.showIfFilled', { defaultValue: 'Se muestra en la ficha solo si lo rellenas.' })}</p>
+    </div>
+    <div>
+      <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.videoUrl', { defaultValue: 'Vídeo del proyecto (enlace)' })}</label>
+      <input type="text" value={(currentProject as any).video_url || ''} onChange={(e) => setCurrentProject({...currentProject, video_url: e.target.value} as any)} placeholder="https://youtu.be/… · Vimeo · Drive" className="w-full px-4 py-3 bg-white rounded-2xl font-bold" />
+      <p className="text-[10px] text-gray-400 mt-1">{t('admin.props.showIfFilled', { defaultValue: 'Se muestra en la ficha solo si lo rellenas.' })}</p>
+    </div>
+  </div>
+
   <div className="grid grid-cols-2 gap-3">
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.furnishing')}</label>
       <select value={currentProject.furnishing || ''} onChange={(e) => setCurrentProject({...currentProject, furnishing: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">

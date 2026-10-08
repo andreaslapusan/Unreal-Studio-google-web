@@ -668,7 +668,11 @@
       "profit": "Profit (listed price − cost)",
       "costNote": "Only visible here in admin. Never shown on the public website.",
       "profitShort": "Profit",
-      "profitPrivate": "Profit (private, admin only)"
+      "profitPrivate": "Profit (private, admin only)",
+      "complexLandM2": "Total complex land (m²)",
+      "videoUrl": "Project video (link)",
+      "showIfFilled": "Shown on the listing only if you fill it in.",
+      "locationPh": "Type the location…"
     },
     "blogTab": {
       "title": "Blog Articles",

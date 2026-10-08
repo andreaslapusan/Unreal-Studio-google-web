@@ -800,7 +800,11 @@
       "profit": "Keuntungan (harga tercatat − biaya)",
       "costNote": "Hanya terlihat di admin. Tidak pernah ditampilkan di situs publik.",
       "profitShort": "Untung",
-      "profitPrivate": "Keuntungan (privat, hanya admin)"
+      "profitPrivate": "Keuntungan (privat, hanya admin)",
+      "complexLandM2": "Total luas kompleks (m²)",
+      "videoUrl": "Video proyek (tautan)",
+      "showIfFilled": "Ditampilkan di halaman hanya jika diisi.",
+      "locationPh": "Ketik lokasi…"
     },
     "blogTab": {
       "title": "Artikel Blog",

@@ -554,11 +554,11 @@ const ProjectDetail: React.FC = () => {
                   <p className="text-lg font-bold text-primary">{fmtFurnishing(project.furnishing)}</p>
                 </div>
               )}
-              {Number((project as any).land_area_m2) > 0 && (
+              {Number((project as any).land_size_m2 || (project as any).land_area_m2) > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">landscape</span>
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelLandArea')}</p>
-                  <p className="text-lg font-bold text-primary">{(project as any).land_area_m2} m²</p>
+                  <p className="text-lg font-bold text-primary">{(project as any).land_size_m2 || (project as any).land_area_m2} m²</p>
                 </div>
               )}
               {(project as any).view_type && (
@@ -582,8 +582,8 @@ const ProjectDetail: React.FC = () => {
                       {t('fix.pd.downloadBrochure')}
                     </a>
                   )}
-                  {(project as any).walkthrough_url && (
-                    <a href={(project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-almond text-primary border border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-primary hover:text-white transition">
+                  {((project as any).video_url || (project as any).walkthrough_url) && (
+                    <a href={(project as any).video_url || (project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-almond text-primary border border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-primary hover:text-white transition">
                       <span className="material-symbols-outlined">smart_display</span>
                       {t('projectDetail.videoTourBtn')}
                     </a>
