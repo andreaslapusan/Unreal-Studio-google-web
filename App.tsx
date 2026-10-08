@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
 import PullToRefresh from './components/PullToRefresh';
 import GlobalLoading from './components/GlobalLoading';
+import PageLoader from './components/PageLoader';
 import LocaleSeo from './components/LocaleSeo';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
@@ -267,13 +268,7 @@ const App: React.FC = () => {
         <LocaleSeo />
         <AttributionTracker />
         <Layout>
-          <Suspense
-            fallback={
-              <div className="min-h-screen flex items-center justify-center bg-almond">
-                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-              </div>
-            }
-          >
+          <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Marketing público con prefijo de idioma: /es/…, /en/…, /ro/…, /id/… */}
             {SUPPORTED_LANGS.map((l) =>
