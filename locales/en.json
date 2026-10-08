@@ -657,8 +657,13 @@
       "driveImporting": "Importing…",
       "driveError": "Could not import the photos from Drive.",
       "driveHint": "If you paste a Google Drive folder link, we automatically import all the photos in the folder into the gallery.",
-      "driveProgress": "Uploading {{done}} of {{total}} photos",
-      "driveQueued": "Preparing import…"
+      "driveProgress": "{{done}} of {{total}} photos",
+      "driveQueued": "Preparing import…",
+      "driveInvalidLink": "That text doesn't contain a valid Google Drive folder link. Paste a link like https://drive.google.com/drive/folders/…",
+      "driveTimeout": "The import took too long. The folder may be private or very large — share it as 'anyone with the link' and try again.",
+      "driveFailed": "Couldn't import. Check the link is a Drive folder shared as 'anyone with the link' and that it has photos.",
+      "driveModalTitle": "Importing photos from Drive",
+      "driveCancel": "Cancel import"
     },
     "blogTab": {
       "title": "Blog Articles",
@@ -2717,7 +2722,9 @@
     "main": "Main",
     "remove": "Remove",
     "enlarge": "Enlarge",
-    "dragHint": "Drag to reorder · mark the main photo (cover) with ⭐"
+    "dragHint": "Drag to reorder · mark the main photo (cover) with ⭐",
+    "removeAll": "Delete all ({{count}})",
+    "removeAllConfirm": "Delete all {{count}} photos from the gallery? This can't be undone."
   },
   "listControls": {
     "searchPlaceholder": "Search…",

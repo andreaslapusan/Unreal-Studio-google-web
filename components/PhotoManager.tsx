@@ -24,11 +24,13 @@ interface PhotoManagerProps {
   mainImage?: string;
   /** Marcar una foto como principal. Si no se pasa, el botón de estrella no se muestra. */
   onSetMain?: (url: string) => void;
+  /** Borrar TODAS las fotos de golpe. Si no se pasa, el botón no se muestra. */
+  onRemoveAll?: () => void;
   /** Columnas del grid (desktop). Por defecto 6. */
   cols?: number;
 }
 
-const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove, mainImage, onSetMain, cols = 6 }) => {
+const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove, mainImage, onSetMain, onRemoveAll, cols = 6 }) => {
   const { t } = useTranslation();
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [overIdx, setOverIdx] = useState<number | null>(null);
@@ -55,10 +57,22 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
 
   return (
     <div>
-      <p className="text-[11px] text-primary/45 font-semibold mb-2 flex items-center gap-1.5">
-        <span className="material-symbols-outlined text-sm text-primary/35">drag_indicator</span>
-        {t('photoManager.dragHint')}
-      </p>
+      <div className="flex items-center justify-between gap-3 mb-2">
+        <p className="text-[11px] text-primary/45 font-semibold flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-sm text-primary/35">drag_indicator</span>
+          {t('photoManager.dragHint')}
+        </p>
+        {onRemoveAll && (
+          <button
+            type="button"
+            onClick={() => { if (window.confirm(t('photoManager.removeAllConfirm', { count: photos.length, defaultValue: `¿Borrar las ${photos.length} fotos de la galería? No se puede deshacer.` }))) onRemoveAll(); }}
+            className="shrink-0 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-red-500/90 hover:text-white hover:bg-red-500 border border-red-200 hover:border-red-500 rounded-lg px-2.5 py-1 transition outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+          >
+            <span className="material-symbols-outlined text-[15px]">delete_sweep</span>
+            {t('photoManager.removeAll', { count: photos.length, defaultValue: `Borrar todas (${photos.length})` })}
+          </button>
+        )}
+      </div>
       <div className={gridCls}>
         {photos.map((img, idx) => {
           const main = isMain(img, idx);
@@ -70,7 +84,6 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
               onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
               onDragOver={(e) => { e.preventDefault(); if (overIdx !== idx) setOverIdx(idx); }}
               onDrop={() => handleDrop(idx)}
-              style={{ contentVisibility: 'auto', containIntrinsicSize: '160px' } as React.CSSProperties}
               className={`relative aspect-square rounded-xl overflow-hidden group border transition-[border-color,box-shadow,transform,opacity] duration-200 cursor-grab active:cursor-grabbing
                 ${main ? 'border-primary ring-2 ring-primary/40' : 'border-gray-200'}
                 ${overIdx === idx && dragIdx !== idx ? 'ring-2 ring-primary/60 scale-[0.97]' : ''}

@@ -7,7 +7,27 @@
  */
 import { supabase } from "./supabase";
 
-export interface DriveImportResult { urls: string[]; error?: string; }
+export interface DriveImportResult { urls: string[]; error?: string; cancelled?: boolean }
+
+/**
+ * Extrae un link de CARPETA de Google Drive de un texto arbitrario (p.ej. un
+ * mensaje de WhatsApp pegado con texto alrededor del link). Devuelve la URL
+ * limpia de la carpeta, o null si el texto NO contiene una carpeta de Drive
+ * válida (link de fichero suelto, otro dominio, o sin link) → así el editor
+ * puede avisar "link no válido" antes de encolar nada.
+ */
+export function extractDriveFolder(text: string): string | null {
+  if (!text) return null;
+  const urls = text.match(/https?:\/\/[^\s"'<>]+/gi) || [];
+  for (const raw of urls) {
+    const u = raw.replace(/[).,]+$/, ""); // quita puntuación final pegada
+    if (!/\.google\.com/i.test(u)) continue;
+    // carpeta: /folders/<id>  ·  /drive/u/0/folders/<id>  ·  ?id=<id> (folderview/open)
+    if (/\/folders\/[-\w]{10,}/.test(u)) return u;
+    if (/[?&]id=[-\w]{10,}/.test(u) && /(folderview|open|\/drive\/)/i.test(u)) return u;
+  }
+  return null;
+}
 
 export async function runDriveImport(
   mode: "admin" | "intake",
@@ -15,7 +35,9 @@ export async function runDriveImport(
   folderUrl: string,
   onStatus?: (s: string) => void,
   onProgress?: (uploaded: number, total: number) => void,
+  shouldCancel?: () => boolean,
 ): Promise<DriveImportResult> {
+  if (shouldCancel?.()) return { urls: [], cancelled: true };
   onStatus?.("queued");
   const { data, error } = await supabase.rpc("request_drive_import", {
     p_mode: mode, p_token: token, p_folder_url: folderUrl,
@@ -26,6 +48,7 @@ export async function runDriveImport(
   // (subidas/total) para pintar la barra de avance.
   for (let i = 0; i < 100; i++) {
     await new Promise((r) => setTimeout(r, 3000));
+    if (shouldCancel?.()) return { urls: [], cancelled: true };
     const { data: st } = await supabase.rpc("drive_import_get", { p_id: id });
     if (!st) continue;
     onStatus?.(st.status);

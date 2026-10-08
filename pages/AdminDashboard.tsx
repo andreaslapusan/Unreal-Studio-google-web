@@ -9,7 +9,7 @@ import { DEFAULT_CONFIG, CURRENCIES } from '../constants';
 import { Project, AppConfig, BlogPost, User, Client, ClientProject } from '../types';
 import { useCurrency } from '../App';
 import { supabase, uploadImage, getImageUrl, parseJsonField } from '../lib/supabase';
-import { runDriveImport } from '../lib/driveImport';
+import { runDriveImport, extractDriveFolder } from '../lib/driveImport';
 import Footer from '../components/Footer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
@@ -501,18 +501,36 @@ const AMENITIES_LIST = [
   const [driveUrlAdmin, setDriveUrlAdmin] = useState('');
   const [driveBusyAdmin, setDriveBusyAdmin] = useState(false);
   const [driveProgress, setDriveProgress] = useState<{ uploaded: number; total: number } | null>(null);
+  const [driveError, setDriveError] = useState('');   // error visible junto al campo (link no válido, fallo…)
+  const driveCancelRef = useRef(false);               // bandera de cancelación para la importación en curso
   const importGalleryFromDrive = async () => {
-    if (!driveUrlAdmin.trim()) return;
+    setDriveError('');
+    const raw = driveUrlAdmin.trim();
+    if (!raw) return;
+    // Validación: extraer un link de CARPETA de Drive del texto pegado (puede venir
+    // dentro de un mensaje de WhatsApp). Si no hay carpeta válida → error claro YA.
+    const folder = extractDriveFolder(raw);
+    if (!folder) {
+      setDriveError(t('admin.props.driveInvalidLink', { defaultValue: 'Ese texto no contiene un link de carpeta de Google Drive válido. Pega un enlace como https://drive.google.com/drive/folders/…' }));
+      return;
+    }
+    driveCancelRef.current = false;
     setDriveBusyAdmin(true);
     setDriveProgress({ uploaded: 0, total: 0 });
-    const res = await runDriveImport('admin', null, driveUrlAdmin.trim(), undefined, (uploaded, total) => setDriveProgress({ uploaded, total }));
+    const res = await runDriveImport('admin', null, folder, undefined,
+      (uploaded, total) => setDriveProgress({ uploaded, total }),
+      () => driveCancelRef.current);
     setDriveBusyAdmin(false);
     setDriveProgress(null);
+    if (res.cancelled) return;                         // cancelado por el usuario → sin ruido
     if (res.urls.length) {
       setCurrentProject(prev => ({ ...prev, gallery: [...(prev.gallery || []), ...res.urls] }));
       setDriveUrlAdmin('');
     } else {
-      alert(t('admin.props.driveError', { defaultValue: 'No se pudieron importar las fotos de Drive.' }));
+      const msg = res.error === 'timeout'
+        ? t('admin.props.driveTimeout', { defaultValue: 'La importación tardó demasiado. Puede que la carpeta sea privada o muy grande — compártela como "cualquiera con el enlace" e inténtalo otra vez.' })
+        : t('admin.props.driveFailed', { defaultValue: 'No se pudo importar. Revisa que el link sea una carpeta de Drive compartida como "cualquiera con el enlace" y que tenga fotos.' });
+      setDriveError(msg);
     }
   };
   const [tiersInput, setTiersInput] = useState('');
@@ -2652,28 +2670,46 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    <div className="mb-4 bg-almond/50 p-3 rounded-2xl border border-primary/5">
                        <p className="text-[11px] text-primary/50 font-semibold mb-2 flex items-start gap-1.5"><span className="material-symbols-outlined text-sm text-primary/40">info</span>{t('admin.props.driveHint')}</p>
                        <div className="flex flex-col sm:flex-row gap-2">
-                           <input type="url" value={driveUrlAdmin} onChange={(e) => setDriveUrlAdmin(e.target.value)} placeholder={t('admin.props.driveUrlPh', { defaultValue: 'Pega el link de una carpeta de Google Drive…' })} disabled={driveBusyAdmin} className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium border border-transparent focus:border-primary/20 disabled:opacity-60" />
+                           <input type="text" value={driveUrlAdmin} onChange={(e) => { setDriveUrlAdmin(e.target.value); if (driveError) setDriveError(''); }} placeholder={t('admin.props.driveUrlPh', { defaultValue: 'Pega el link de una carpeta de Google Drive…' })} disabled={driveBusyAdmin} className={`flex-grow px-4 py-3 bg-white rounded-2xl font-medium border focus:border-primary/20 disabled:opacity-60 ${driveError ? 'border-red-300' : 'border-transparent'}`} />
                            <button type="button" onClick={importGalleryFromDrive} disabled={driveBusyAdmin || !driveUrlAdmin.trim()} className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-40 whitespace-nowrap">
                                <span className="material-symbols-outlined text-base">{driveBusyAdmin ? 'hourglass_top' : 'cloud_download'}</span>
                                {driveBusyAdmin ? t('admin.props.driveImporting', { defaultValue: 'Importando…' }) : t('admin.props.driveImport', { defaultValue: 'Importar de Drive' })}
                            </button>
                        </div>
-                       {driveBusyAdmin && (
-                         <div className="mt-3">
-                           <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-primary/50 mb-1.5">
-                             <span>{driveProgress && driveProgress.total > 0 ? t('admin.props.driveProgress', { done: driveProgress.uploaded, total: driveProgress.total }) : t('admin.props.driveQueued', { defaultValue: 'Preparando importación…' })}</span>
-                             <span>{driveProgress && driveProgress.total > 0 ? Math.round((driveProgress.uploaded / driveProgress.total) * 100) + '%' : ''}</span>
-                           </div>
-                           <div className="w-full bg-primary/10 rounded-full h-2 overflow-hidden">
-                             <div className={`bg-primary h-full rounded-full transition-all duration-500 ${driveProgress && driveProgress.total > 0 ? '' : 'animate-pulse'}`} style={{ width: driveProgress && driveProgress.total > 0 ? `${(driveProgress.uploaded / driveProgress.total) * 100}%` : '10%' }} />
-                           </div>
-                         </div>
+                       {driveError && (
+                         <p className="mt-2.5 text-xs font-bold text-red-600 flex items-start gap-1.5"><span className="material-symbols-outlined text-sm mt-px">error</span><span>{driveError}</span></p>
                        )}
                    </div>
+
+                   {/* Modal de progreso de importación: X de Y fotos + % + Cancelar */}
+                   {driveBusyAdmin && (
+                     <div className="fixed inset-0 z-[400] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+                       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-7 text-center">
+                         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                           <span className="material-symbols-outlined text-3xl animate-pulse">cloud_download</span>
+                         </div>
+                         <h3 className="text-lg font-serif text-primary mb-1">{t('admin.props.driveModalTitle', { defaultValue: 'Importando fotos de Drive' })}</h3>
+                         <p className="text-sm font-bold text-primary/70 mb-4">
+                           {driveProgress && driveProgress.total > 0
+                             ? <>{t('admin.props.driveProgress', { done: driveProgress.uploaded, total: driveProgress.total, defaultValue: `${driveProgress.uploaded} de ${driveProgress.total} fotos` })}<span className="text-primary"> · {Math.round((driveProgress.uploaded / driveProgress.total) * 100)}%</span></>
+                             : t('admin.props.driveQueued', { defaultValue: 'Preparando importación…' })}
+                         </p>
+                         <div className="w-full bg-primary/10 rounded-full h-2.5 overflow-hidden mb-6">
+                           <div className={`bg-primary h-full rounded-full transition-all duration-500 ${driveProgress && driveProgress.total > 0 ? '' : 'animate-pulse'}`} style={{ width: driveProgress && driveProgress.total > 0 ? `${(driveProgress.uploaded / driveProgress.total) * 100}%` : '12%' }} />
+                         </div>
+                         <button type="button" onClick={() => { driveCancelRef.current = true; }}
+                           className="inline-flex items-center gap-2 bg-gray-100 hover:bg-red-500 hover:text-white text-primary/70 font-black text-xs uppercase tracking-widest px-6 py-3 rounded-xl transition outline-none focus-visible:ring-2 focus-visible:ring-red-300">
+                           <span className="material-symbols-outlined text-base">close</span>{t('admin.props.driveCancel', { defaultValue: 'Cancelar importación' })}
+                         </button>
+                       </div>
+                     </div>
+                   )}
+
                    <PhotoManager
                      photos={currentProject.gallery || []}
                      onReorder={(next) => setCurrentProject({ ...currentProject, gallery: next })}
                      onRemove={(url) => removePhoto(url, 'gallery')}
+                     onRemoveAll={(currentProject.gallery || []).length ? (() => setCurrentProject(prev => ({ ...prev, gallery: [], image: (prev.gallery || []).includes(prev.image) ? '' : prev.image }))) : undefined}
                      mainImage={currentProject.image}
                      onSetMain={(url) => setCurrentProject({ ...currentProject, image: url })}
                    />
@@ -2692,6 +2728,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                      photos={currentProject.construction_gallery || []}
                      onReorder={(next) => setCurrentProject({ ...currentProject, construction_gallery: next })}
                      onRemove={(url) => removePhoto(url, 'construction_gallery')}
+                     onRemoveAll={(currentProject.construction_gallery || []).length ? (() => setCurrentProject({ ...currentProject, construction_gallery: [] })) : undefined}
                    />
                 </div>
 

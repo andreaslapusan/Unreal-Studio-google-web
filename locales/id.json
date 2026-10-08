@@ -789,8 +789,13 @@
       "driveImporting": "Mengimpor…",
       "driveError": "Gagal mengimpor foto dari Drive.",
       "driveHint": "Jika Anda menempel tautan folder Google Drive, kami otomatis mengimpor semua foto di folder itu ke galeri.",
-      "driveProgress": "Mengunggah {{done}} dari {{total}} foto",
-      "driveQueued": "Menyiapkan impor…"
+      "driveProgress": "{{done}} dari {{total}} foto",
+      "driveQueued": "Menyiapkan impor…",
+      "driveInvalidLink": "Teks itu tidak berisi tautan folder Google Drive yang valid. Tempel tautan seperti https://drive.google.com/drive/folders/…",
+      "driveTimeout": "Impor terlalu lama. Folder mungkin privat atau sangat besar — bagikan sebagai 'siapa saja yang memiliki link' lalu coba lagi.",
+      "driveFailed": "Gagal mengimpor. Pastikan link adalah folder Drive yang dibagikan sebagai 'siapa saja yang memiliki link' dan berisi foto.",
+      "driveModalTitle": "Mengimpor foto dari Drive",
+      "driveCancel": "Batalkan impor"
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -2718,7 +2723,9 @@
     "main": "Utama",
     "remove": "Hapus",
     "enlarge": "Perbesar",
-    "dragHint": "Seret untuk mengurutkan · tandai foto utama (sampul) dengan ⭐"
+    "dragHint": "Seret untuk mengurutkan · tandai foto utama (sampul) dengan ⭐",
+    "removeAll": "Hapus semua ({{count}})",
+    "removeAllConfirm": "Hapus semua {{count}} foto dari galeri? Tindakan ini tidak dapat dibatalkan."
   },
   "listControls": {
     "searchPlaceholder": "Cari…",

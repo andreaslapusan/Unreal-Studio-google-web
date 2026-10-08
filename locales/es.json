@@ -657,8 +657,13 @@
       "driveImporting": "Importando…",
       "driveError": "No se pudieron importar las fotos de Drive.",
       "driveHint": "Si pegas un enlace de una carpeta de Google Drive, importaremos automáticamente todas las fotos de la carpeta a la galería.",
-      "driveProgress": "Subiendo {{done}} de {{total}} fotos",
-      "driveQueued": "Preparando importación…"
+      "driveProgress": "{{done}} de {{total}} fotos",
+      "driveQueued": "Preparando importación…",
+      "driveInvalidLink": "Ese texto no contiene un link de carpeta de Google Drive válido. Pega un enlace como https://drive.google.com/drive/folders/…",
+      "driveTimeout": "La importación tardó demasiado. Puede que la carpeta sea privada o muy grande — compártela como «cualquiera con el enlace» e inténtalo otra vez.",
+      "driveFailed": "No se pudo importar. Revisa que el link sea una carpeta de Drive compartida como «cualquiera con el enlace» y que tenga fotos.",
+      "driveModalTitle": "Importando fotos de Drive",
+      "driveCancel": "Cancelar importación"
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -2719,7 +2724,9 @@
     "main": "Principal",
     "remove": "Eliminar",
     "enlarge": "Ampliar",
-    "dragHint": "Arrastra para reordenar · marca con ⭐ la foto principal (portada)"
+    "dragHint": "Arrastra para reordenar · marca con ⭐ la foto principal (portada)",
+    "removeAll": "Borrar todas ({{count}})",
+    "removeAllConfirm": "¿Borrar las {{count}} fotos de la galería? No se puede deshacer."
   },
   "listControls": {
     "searchPlaceholder": "Buscar…",

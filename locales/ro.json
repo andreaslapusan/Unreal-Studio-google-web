@@ -657,8 +657,13 @@
       "driveImporting": "Se importă…",
       "driveError": "Nu s-au putut importa pozele din Drive.",
       "driveHint": "Dacă lipești un link de folder Google Drive, importăm automat toate pozele din folder în galerie.",
-      "driveProgress": "Se încarcă {{done}} din {{total}} poze",
-      "driveQueued": "Se pregătește importul…"
+      "driveProgress": "{{done}} din {{total}} poze",
+      "driveQueued": "Se pregătește importul…",
+      "driveInvalidLink": "Textul nu conține un link valid de folder Google Drive. Lipește un link de tip https://drive.google.com/drive/folders/…",
+      "driveTimeout": "Importul a durat prea mult. Folderul poate fi privat sau foarte mare — distribuie-l ca «oricine cu linkul» și încearcă din nou.",
+      "driveFailed": "Nu s-a putut importa. Verifică dacă linkul este un folder Drive distribuit ca «oricine cu linkul» și dacă are poze.",
+      "driveModalTitle": "Se importă pozele din Drive",
+      "driveCancel": "Anulează importul"
     },
     "blogTab": {
       "title": "Articole Blog",
@@ -2717,7 +2722,9 @@
     "main": "Principală",
     "remove": "Elimină",
     "enlarge": "Mărește",
-    "dragHint": "Trage pentru a reordona · marchează cu ⭐ poza principală (copertă)"
+    "dragHint": "Trage pentru a reordona · marchează cu ⭐ poza principală (copertă)",
+    "removeAll": "Șterge toate ({{count}})",
+    "removeAllConfirm": "Ștergi toate cele {{count}} poze din galerie? Nu se poate anula."
   },
   "listControls": {
     "searchPlaceholder": "Caută…",
