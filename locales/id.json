@@ -697,7 +697,10 @@
       "language": "Bahasa",
       "currency": "Mata uang",
       "menu": "Menu",
-      "refresh": "Segarkan"
+      "refresh": "Segarkan",
+      "confirmDeleteOption": "Hapus opsi ini?",
+      "confirmDeletePlan": "Hapus denah ini (PDF)?",
+      "confirmDeleteHolder": "Hapus pemilik ini?"
     },
     "clientLogin": {
       "title": "Portal Investor",

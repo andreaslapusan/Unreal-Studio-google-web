@@ -539,7 +539,10 @@
       "language": "Language",
       "currency": "Currency",
       "menu": "Menu",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "confirmDeleteOption": "Delete this option?",
+      "confirmDeletePlan": "Delete this plan (PDF)?",
+      "confirmDeleteHolder": "Remove this holder?"
     },
     "nav": {
       "projects": "Properties",

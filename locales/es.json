@@ -539,7 +539,10 @@
       "language": "Idioma",
       "currency": "Divisa",
       "menu": "Menú",
-      "refresh": "Actualizar"
+      "refresh": "Actualizar",
+      "confirmDeleteOption": "¿Borrar esta opción?",
+      "confirmDeletePlan": "¿Borrar este plano (PDF)?",
+      "confirmDeleteHolder": "¿Quitar este titular?"
     },
     "nav": {
       "projects": "Propiedades",

@@ -1771,6 +1771,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
   const handleDeleteOption = (index: number) => {
     if (!optionManager) return;
+    if (!window.confirm(t('admin.common.confirmDeleteOption', { defaultValue: '¿Borrar esta opción?' }))) return;
     const field = optionManager.field as 'customTypes' | 'customZones' | 'customStatuses';
     const updatedConfig = { ...config, [field]: config[field].filter((_, i) => i !== index) };
     saveConfigToDb(updatedConfig);
@@ -2808,7 +2809,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                                    <span className="material-symbols-outlined text-gray-400">picture_as_pdf</span>
                                    <span className="text-sm font-medium truncate">{pdf.includes('drive.google.com') ? t('admin.props.planDrive', { defaultValue: 'Plano (Google Drive)' }) : (pdf.split('/').pop() || 'Plano')}</span>
                                </div>
-                               <button type="button" onClick={() => removePhoto(pdf, 'floor_plans')} className="p-2 hover:bg-red-50 text-red-500 rounded-xl transition"><span className="material-symbols-outlined">delete</span></button>
+                               <button type="button" onClick={() => { if (window.confirm(t('admin.common.confirmDeletePlan', { defaultValue: '¿Borrar este plano (PDF)?' }))) removePhoto(pdf, 'floor_plans'); }} className="p-2 hover:bg-red-50 text-red-500 rounded-xl transition"><span className="material-symbols-outlined">delete</span></button>
                            </div>
                        ))}
                    </div>
@@ -3343,7 +3344,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         <div className="flex flex-col items-center shrink-0">
                           <button type="button" disabled={i === 0} onClick={() => { const n = [...hs]; const tmp = n[i - 1]; n[i - 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-gray-400 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveUp', { defaultValue: 'Subir' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_up</span></button>
                           <button type="button" disabled={i === hs.length - 1} onClick={() => { const n = [...hs]; const tmp = n[i + 1]; n[i + 1] = n[i]; n[i] = tmp; setH(n); }} className="p-1 text-gray-400 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed" aria-label={t('admin.dash.holderMoveDown', { defaultValue: 'Bajar' })}><span className="material-symbols-outlined text-lg">keyboard_arrow_down</span></button>
-                          <button type="button" onClick={() => setH(hs.filter((_, j) => j !== i))} className="p-1 text-red-400 hover:text-red-600" aria-label={t('admin.common.delete', { defaultValue: 'Eliminar' })}><span className="material-symbols-outlined text-lg">close</span></button>
+                          <button type="button" onClick={() => { if (window.confirm(t('admin.common.confirmDeleteHolder', { defaultValue: '¿Quitar este titular?' }))) setH(hs.filter((_, j) => j !== i)); }} className="p-1 text-red-400 hover:text-red-600" aria-label={t('admin.common.delete', { defaultValue: 'Eliminar' })}><span className="material-symbols-outlined text-lg">close</span></button>
                         </div>
                       )}
                     </div>

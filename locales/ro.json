@@ -539,7 +539,10 @@
       "language": "Limbă",
       "currency": "Monedă",
       "menu": "Meniu",
-      "refresh": "Reîmprospătează"
+      "refresh": "Reîmprospătează",
+      "confirmDeleteOption": "Ștergi această opțiune?",
+      "confirmDeletePlan": "Ștergi acest plan (PDF)?",
+      "confirmDeleteHolder": "Elimini acest titular?"
     },
     "nav": {
       "projects": "Proprietăți",
