@@ -795,7 +795,12 @@
       "driveTimeout": "Impor terlalu lama. Folder mungkin privat atau sangat besar — bagikan sebagai 'siapa saja yang memiliki link' lalu coba lagi.",
       "driveFailed": "Gagal mengimpor. Pastikan link adalah folder Drive yang dibagikan sebagai 'siapa saja yang memiliki link' dan berisi foto.",
       "driveModalTitle": "Mengimpor foto dari Drive",
-      "driveCancel": "Batalkan impor"
+      "driveCancel": "Batalkan impor",
+      "cost": "Biaya proyek",
+      "profit": "Keuntungan (harga tercatat − biaya)",
+      "costNote": "Hanya terlihat di admin. Tidak pernah ditampilkan di situs publik.",
+      "profitShort": "Untung",
+      "profitPrivate": "Keuntungan (privat, hanya admin)"
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -1408,7 +1413,9 @@
       "mailResetEmp": "Tautan untuk membuat kata sandi baru",
       "reportNoRecipients": "Tidak ada penerima yang dipilih.",
       "reportPickPickProject": "Pilih properti untuk melihat penerimanya.",
-      "reportPickRecipients": "Penerima"
+      "reportPickRecipients": "Penerima",
+      "optional": "opsional",
+      "signatureOnlySigner": "Hanya untuk yang menandatangani kwitansi. Biarkan kosong jika orang ini tidak menandatangani."
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",

@@ -663,7 +663,12 @@
       "driveTimeout": "La importación tardó demasiado. Puede que la carpeta sea privada o muy grande — compártela como «cualquiera con el enlace» e inténtalo otra vez.",
       "driveFailed": "No se pudo importar. Revisa que el link sea una carpeta de Drive compartida como «cualquiera con el enlace» y que tenga fotos.",
       "driveModalTitle": "Importando fotos de Drive",
-      "driveCancel": "Cancelar importación"
+      "driveCancel": "Cancelar importación",
+      "cost": "Coste del proyecto",
+      "profit": "Beneficio (precio listado − coste)",
+      "costNote": "Solo visible aquí en el admin. Nunca se muestra en la web pública.",
+      "profitShort": "Benef.",
+      "profitPrivate": "Beneficio (privado, solo admin)"
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -1303,7 +1308,9 @@
       "mailResetEmp": "Enlace para crear una nueva contraseña",
       "reportNoRecipients": "No hay destinatarios seleccionados.",
       "reportPickPickProject": "Selecciona alguna propiedad para ver sus destinatarios.",
-      "reportPickRecipients": "Destinatarios"
+      "reportPickRecipients": "Destinatarios",
+      "optional": "opcional",
+      "signatureOnlySigner": "Solo para quien firma kwitansis. Déjalo vacío si esta persona no va a firmar."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

@@ -663,7 +663,12 @@
       "driveTimeout": "The import took too long. The folder may be private or very large — share it as 'anyone with the link' and try again.",
       "driveFailed": "Couldn't import. Check the link is a Drive folder shared as 'anyone with the link' and that it has photos.",
       "driveModalTitle": "Importing photos from Drive",
-      "driveCancel": "Cancel import"
+      "driveCancel": "Cancel import",
+      "cost": "Project cost",
+      "profit": "Profit (listed price − cost)",
+      "costNote": "Only visible here in admin. Never shown on the public website.",
+      "profitShort": "Profit",
+      "profitPrivate": "Profit (private, admin only)"
     },
     "blogTab": {
       "title": "Blog Articles",
@@ -1303,7 +1308,9 @@
       "mailResetEmp": "Link to create a new password",
       "reportNoRecipients": "No recipients selected.",
       "reportPickPickProject": "Select a property to see its recipients.",
-      "reportPickRecipients": "Recipients"
+      "reportPickRecipients": "Recipients",
+      "optional": "optional",
+      "signatureOnlySigner": "Only for whoever signs kwitansis. Leave empty if this person will not sign."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

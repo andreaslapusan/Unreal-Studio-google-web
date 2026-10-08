@@ -163,6 +163,11 @@ const AMENITIES_LIST = [
   'Spa', 'Sala de juegos', 'Servicio de limpieza', 'Alquiler de motos'
 ];
   const [projects, setProjects] = useState<Project[]>([]);
+  // Coste por proyecto (SOLO admin, tabla privada con RLS; NUNCA llega a la web
+  // pública). Beneficio = precio listado (investor_price) − coste.
+  const [projectCosts, setProjectCosts] = useState<Record<string, number>>({});
+  const [editCost, setEditCost] = useState<string>('');  // coste del proyecto en edición
+  const [showUserPw, setShowUserPw] = useState(false);   // ver/ocultar contraseña en el form de admin
   // Búsqueda + orden de la lista de propiedades (reutilizable en todas las listas).
   const projectsList = useListControls<Project>(projects, {
     name: (p: any) => p.name || '',
@@ -624,6 +629,15 @@ const AMENITIES_LIST = [
           })) as unknown as Project[]);
       } else if (projectsRes.error) { console.error('Error loading projects:', projectsRes.error); }
 
+      // Costes de proyecto (admin-only, RPC con check de admin). Solo si hay sesión admin.
+      if (userId) {
+        supabase.rpc('admin_get_project_costs', { p_user_id: userId }).then(({ data: costRows }) => {
+          const map: Record<string, number> = {};
+          (Array.isArray(costRows) ? costRows : []).forEach((r: any) => { if (r && r.project_id != null && r.cost != null) map[r.project_id] = Number(r.cost); });
+          setProjectCosts(map);
+        });
+      }
+
       if (blogsRes.data) setBlogs(blogsRes.data as unknown as BlogPost[]);
       else if (blogsRes.error) console.error('Error loading blogs:', blogsRes.error);
 
@@ -886,6 +900,8 @@ const AMENITIES_LIST = [
     };
 
     setCurrentProject(proj ? { ...defaultProject, ...proj } : defaultProject);
+    setEditCost(proj && proj.id && projectCosts[proj.id] != null ? String(projectCosts[proj.id]) : '');
+    setDriveError('');
     setIsEditing(true);
   };
 
@@ -952,6 +968,12 @@ const AMENITIES_LIST = [
         if (savedId) {
           const tl = (projectData as any).timeline;
           await supabase.from('projects').update({ timeline: Array.isArray(tl) && tl.length ? tl : null }).eq('id', savedId);
+        }
+        // Coste del proyecto (tabla privada admin-only; nunca toca la web pública).
+        if (savedId) {
+          const costNum = editCost === '' ? null : Number(editCost);
+          await supabase.rpc('admin_set_project_cost', { p_user_id: userId, p_project_id: savedId, p_cost: costNum });
+          setProjectCosts(prev => { const n = { ...prev }; if (costNum == null) delete n[savedId as string]; else n[savedId as string] = costNum; return n; });
         }
         // Auto-traducción del contenido (es→en/ro/id) SIEMPRE, sin trabajo manual.
         // Fire-and-forget: no bloquea el guardado; la edge fn traduce en segundo plano.
@@ -1065,6 +1087,7 @@ const AMENITIES_LIST = [
   // --- LOGICA DE USUARIOS ---
   const openEditUser = (user?: User) => {
     setCurrentUser(user ? { ...user } : { id: `user-${Date.now()}`, name: '', username: '', password_hash: '' });
+    setShowUserPw(false);
     setIsEditingUser(true);
   };
 
@@ -1931,7 +1954,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <h3 className="text-xl font-bold text-primary mb-1">{proj.name}</h3>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">{proj.location}</p>
                     <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
-                      <p className="font-bold text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
+                      <div>
+                        <p className="font-bold text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
+                        {projectCosts[proj.id] != null && proj.investor_price ? (
+                          <p className="text-[10px] font-black uppercase tracking-wide text-amber-700 mt-0.5 flex items-center gap-1" title={t('admin.props.profitPrivate', { defaultValue: 'Beneficio (privado, solo admin)' })}>
+                            <span className="material-symbols-outlined text-[12px]">savings</span>{t('admin.props.profitShort', { defaultValue: 'Benef.' })} {formatPrice((proj.investor_price as number) - projectCosts[proj.id], proj.price_currency)}
+                          </p>
+                        ) : null}
+                      </div>
                       <div className="flex gap-2">
                         <button onClick={() => setReportsProject({ id: proj.id, name: proj.name })} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95" title={t('empleados.reports.title')} aria-label={t('empleados.reports.title')}><span className="material-symbols-outlined text-sm">description</span></button>
                         <button onClick={() => openEditProject(proj)} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95" title={t('fix.apm.edit')}><span className="material-symbols-outlined text-sm">edit</span></button>
@@ -2643,6 +2673,27 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><NumberInput decimal value={currentProject.market_price ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, market_price: v === '' ? null : (parseFloat(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-4 py-3 bg-primary text-white rounded-2xl font-bold">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
                   </div>
+                  {/* Coste + Beneficio — PRIVADO (solo admin, nunca en la web pública) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-amber-50/60 border border-amber-200 rounded-2xl p-3">
+                    <div>
+                      <label className="block text-[10px] font-black uppercase text-amber-700 mb-2 flex items-center gap-1"><span className="material-symbols-outlined text-[13px]">lock</span>{t('admin.props.cost', { defaultValue: 'Coste del proyecto' })}</label>
+                      <NumberInput decimal value={editCost} onChangeValue={(v) => setEditCost(v)} className="w-full px-4 py-3 bg-white rounded-2xl font-bold border border-amber-200" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[10px] font-black uppercase text-amber-700 mb-2">{t('admin.props.profit', { defaultValue: 'Beneficio (precio listado − coste)' })}</label>
+                      <div className="w-full px-4 py-3 bg-white rounded-2xl font-bold text-amber-800 border border-amber-200 flex items-center justify-between">
+                        {(() => {
+                          const price = Number(currentProject.investor_price) || 0;
+                          const cost = editCost === '' ? null : Number(editCost);
+                          if (cost === null || !price) return <span className="text-amber-300">—</span>;
+                          const profit = price - cost;
+                          const margin = price > 0 ? (profit / price) * 100 : 0;
+                          return <><span className={profit < 0 ? 'text-red-600' : ''}>{formatPrice(profit, currentProject.price_currency)}</span><span className="text-[11px] font-bold text-amber-600">{margin.toFixed(1)}%</span></>;
+                        })()}
+                      </div>
+                    </div>
+                    <p className="sm:col-span-3 text-[10px] text-amber-700/80 flex items-center gap-1 -mt-1"><span className="material-symbols-outlined text-[12px]">visibility_off</span>{t('admin.props.costNote', { defaultValue: 'Solo visible aquí en el admin. Nunca se muestra en la web pública.' })}</p>
+                  </div>
                   <div className="md:col-span-2">
                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investmentTiers')}</label>
                     <textarea rows={3} value={tiersInput} onChange={(e) => setTiersInput(e.target.value)} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" />
@@ -2694,8 +2745,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                              ? <>{t('admin.props.driveProgress', { done: driveProgress.uploaded, total: driveProgress.total, defaultValue: `${driveProgress.uploaded} de ${driveProgress.total} fotos` })}<span className="text-primary"> · {Math.round((driveProgress.uploaded / driveProgress.total) * 100)}%</span></>
                              : t('admin.props.driveQueued', { defaultValue: 'Preparando importación…' })}
                          </p>
-                         <div className="w-full bg-primary/10 rounded-full h-2.5 overflow-hidden mb-6">
-                           <div className={`bg-primary h-full rounded-full transition-all duration-500 ${driveProgress && driveProgress.total > 0 ? '' : 'animate-pulse'}`} style={{ width: driveProgress && driveProgress.total > 0 ? `${(driveProgress.uploaded / driveProgress.total) * 100}%` : '12%' }} />
+                         <div className="relative w-full bg-primary/10 rounded-full h-2.5 overflow-hidden mb-6">
+                           {driveProgress && driveProgress.total > 0 ? (
+                             <div className="bg-primary h-full rounded-full transition-all duration-500" style={{ width: `${(driveProgress.uploaded / driveProgress.total) * 100}%` }} />
+                           ) : (
+                             /* Preparando: barra INDETERMINADA (segmento que viaja), no un % falso. */
+                             <div className="absolute inset-y-0 left-0 w-1/3 bg-primary rounded-full us-loader-bar" />
+                           )}
                          </div>
                          <button type="button" onClick={() => { driveCancelRef.current = true; }}
                            className="inline-flex items-center gap-2 bg-gray-100 hover:bg-red-500 hover:text-white text-primary/70 font-black text-xs uppercase tracking-widest px-6 py-3 rounded-xl transition outline-none focus-visible:ring-2 focus-visible:ring-red-300">
@@ -3101,10 +3157,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <form onSubmit={handleSaveUser} className="space-y-5">
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.nameLabel')}</label><input required value={currentUser.name || ''} onChange={(e) => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.usernameEmail')}</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
-        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.passwordLabel')} {currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.emptyNoChange') : ''}</label><input type="text" required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
+        <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.passwordLabel')} {currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.emptyNoChange') : ''}</label>
+          <div className="relative">
+            <input type={showUserPw ? 'text' : 'password'} required={!(currentUser.id && !String(currentUser.id).startsWith('user-'))} value={currentUser.password_hash || ''} onChange={(e) => setCurrentUser({...currentUser, password_hash: e.target.value})} autoComplete="new-password" className="w-full px-5 py-4 pr-14 bg-gray-50 rounded-2xl font-bold" />
+            <button type="button" onClick={() => setShowUserPw(s => !s)} aria-label={showUserPw ? t('auth.hidePassword', { defaultValue: 'Ocultar' }) : t('auth.showPassword', { defaultValue: 'Ver' })} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition p-1"><span className="material-symbols-outlined">{showUserPw ? 'visibility_off' : 'visibility'}</span></button>
+          </div>
+        </div>
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.roleLabel')}</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
         <div>
-          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.signatureLabel')}</label>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t('admin.dash.signatureLabel')} <span className="text-gray-300 normal-case">({t('admin.dash.optional', { defaultValue: 'opcional' })})</span></label>
+          <p className="text-[11px] text-gray-400 mb-2">{t('admin.dash.signatureOnlySigner', { defaultValue: 'Solo para quien firma kwitansis. Déjalo vacío si esta persona no va a firmar.' })}</p>
           <div className="relative inline-block border-2 border-dashed border-gray-200 rounded-2xl p-3 w-52 text-center">
             {(currentUser as any).signature_url && <button type="button" title={t('admin.dash.deleteSignature')} onClick={() => setCurrentUser({ ...currentUser, signature_url: '' } as any)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-base leading-none shadow hover:bg-red-600">×</button>}
             {(currentUser as any).signature_url ? <img src={(currentUser as any).signature_url} alt={t('admin.dash.signatureLabel')} className="h-12 mx-auto object-contain" /> : <span className="material-symbols-outlined text-gray-300 text-2xl">edit</span>}
