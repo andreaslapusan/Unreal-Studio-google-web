@@ -95,7 +95,6 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
               <img
                 src={thumbSrc(getImageUrl(img), 400)}
                 onError={imgFallback(getImageUrl(img))}
-                loading="lazy"
                 decoding="async"
                 onClick={() => setLightbox(idx)}
                 className="w-full h-full object-cover cursor-zoom-in"
