@@ -422,9 +422,7 @@ const Home: React.FC = () => {
                     <option value="roi">{t('projects.sort.roi')}</option>
                     <option value="asc">{t('projects.sort.asc')}</option>
                     <option value="desc">{t('projects.sort.desc')}</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
-                </div>
+                  </select>                </div>
               </div>
             </div>
 
@@ -462,9 +460,7 @@ const Home: React.FC = () => {
                   <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({...filters, zone: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
                     {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
-                </div>
+                  </select>                </div>
               </div>
             </div>
 
@@ -479,9 +475,7 @@ const Home: React.FC = () => {
                     <option value="Villa">Villa</option>
                     <option value="Loft">Loft</option>
                     {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
-                </div>
+                  </select>                </div>
               </div>
             </div>
 

@@ -165,8 +165,7 @@ const Contact: React.FC = () => {
                           <option>{t('contact.reasons.vacation')}</option>
                           <option>{t('contact.reasons.retirement')}</option>
                         </select>
-                        <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
-                      </div>
+                                              </div>
                     </div>
                   </div>
 
@@ -187,8 +186,7 @@ const Contact: React.FC = () => {
                            <option>{t('contact.budgets.b250to500')}</option>
                            <option>{t('contact.budgets.over500')}</option>
                          </select>
-                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
-                       </div>
+                                                </div>
                     </div>
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.timeframe')}</label>
@@ -205,8 +203,7 @@ const Contact: React.FC = () => {
                            <option>{t('contact.tf.m3')}</option>
                            <option>{t('contact.tf.exploring')}</option>
                          </select>
-                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
-                       </div>
+                                                </div>
                     </div>
                   </div>
 
