@@ -166,7 +166,11 @@ const AMENITIES_LIST = [
   // Coste por proyecto (SOLO admin, tabla privada con RLS; NUNCA llega a la web
   // pública). Beneficio = precio listado (investor_price) − coste.
   const [projectCosts, setProjectCosts] = useState<Record<string, number>>({});
+  // Divisa en la que se metió el coste de cada proyecto (puede diferir de la de
+  // venta: p.ej. coste en USD y precio listado en EUR). Default EUR.
+  const [projectCostCurrencies, setProjectCostCurrencies] = useState<Record<string, string>>({});
   const [editCost, setEditCost] = useState<string>('');  // coste del proyecto en edición
+  const [editCostCurrency, setEditCostCurrency] = useState<string>('EUR'); // divisa del coste en edición
   const [showUserPw, setShowUserPw] = useState(false);   // ver/ocultar contraseña en el form de admin
   // Búsqueda + orden de la lista de propiedades (reutilizable en todas las listas).
   const projectsList = useListControls<Project>(projects, {
@@ -226,6 +230,15 @@ const AMENITIES_LIST = [
   const [currentUserData, setCurrentUserData] = useState<User | null>(null);
   
   const { currency, setCurrency, formatPrice, formatMoney } = useCurrency();
+  // Convierte un importe entre divisas usando las tasas en vivo (base EUR) que ya
+  // carga la app desde open.er-api.com (config.exchangeRates). Para el margen: el
+  // coste puede estar en una divisa distinta al precio de venta.
+  const convertMoney = (amount: number, from: string, to: string): number => {
+    const rates: any = (config as any).exchangeRates || DEFAULT_CONFIG.exchangeRates;
+    const rFrom = Number(rates[from]) || 1;
+    const rTo = Number(rates[to]) || 1;
+    return (amount / rFrom) * rTo;
+  };
   // La vista activa vive en la URL (?view=) para que el menú lateral (presente
   // en todas las páginas admin) navegue entre secciones de forma consistente.
   const [searchParams, setSearchParams] = useSearchParams();
@@ -672,8 +685,10 @@ const AMENITIES_LIST = [
       if (userId) {
         supabase.rpc('admin_get_project_costs', { p_user_id: userId }).then(({ data: costRows }) => {
           const map: Record<string, number> = {};
-          (Array.isArray(costRows) ? costRows : []).forEach((r: any) => { if (r && r.project_id != null && r.cost != null) map[r.project_id] = Number(r.cost); });
+          const curMap: Record<string, string> = {};
+          (Array.isArray(costRows) ? costRows : []).forEach((r: any) => { if (r && r.project_id != null && r.cost != null) { map[r.project_id] = Number(r.cost); curMap[r.project_id] = r.cost_currency || 'EUR'; } });
           setProjectCosts(map);
+          setProjectCostCurrencies(curMap);
         });
       }
 
@@ -940,6 +955,7 @@ const AMENITIES_LIST = [
 
     setCurrentProject(proj ? { ...defaultProject, ...proj } : defaultProject);
     setEditCost(proj && proj.id && projectCosts[proj.id] != null ? String(projectCosts[proj.id]) : '');
+    setEditCostCurrency((proj && proj.id && projectCostCurrencies[proj.id]) || proj?.price_currency || 'EUR');
     setDriveError('');
     setIsEditing(true);
   };
@@ -1011,8 +1027,10 @@ const AMENITIES_LIST = [
         // Coste del proyecto (tabla privada admin-only; nunca toca la web pública).
         if (savedId) {
           const costNum = editCost === '' ? null : Number(editCost);
-          await supabase.rpc('admin_set_project_cost', { p_user_id: userId, p_project_id: savedId, p_cost: costNum });
+          const costCur = editCostCurrency || 'EUR';
+          await supabase.rpc('admin_set_project_cost', { p_user_id: userId, p_project_id: savedId, p_cost: costNum, p_cost_currency: costCur });
           setProjectCosts(prev => { const n = { ...prev }; if (costNum == null) delete n[savedId as string]; else n[savedId as string] = costNum; return n; });
+          setProjectCostCurrencies(prev => { const n = { ...prev }; if (costNum == null) delete n[savedId as string]; else n[savedId as string] = costCur; return n; });
         }
         // Auto-traducción del contenido (es→en/ro/id) SIEMPRE, sin trabajo manual.
         // Fire-and-forget: no bloquea el guardado; la edge fn traduce en segundo plano.
@@ -2011,7 +2029,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         <p className="font-bold text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
                         {projectCosts[proj.id] != null && proj.investor_price ? (
                           <p className="text-[10px] font-black uppercase tracking-wide text-amber-700 mt-0.5 flex items-center gap-1" title={t('admin.props.profitPrivate', { defaultValue: 'Beneficio (privado, solo admin)' })}>
-                            <span className="material-symbols-outlined text-[12px]">savings</span>{t('admin.props.profitShort', { defaultValue: 'Benef.' })} {formatPrice((proj.investor_price as number) - projectCosts[proj.id], proj.price_currency)}
+                            <span className="material-symbols-outlined text-[12px]">savings</span>{t('admin.props.profitShort', { defaultValue: 'Benef.' })} {formatPrice((proj.investor_price as number) - convertMoney(projectCosts[proj.id], projectCostCurrencies[proj.id] || proj.price_currency || 'EUR', proj.price_currency || 'EUR'), proj.price_currency)}
                           </p>
                         ) : null}
                       </div>
@@ -2728,26 +2746,39 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><NumberInput decimal value={currentProject.market_price ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, market_price: v === '' ? null : (parseFloat(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-4 py-3 bg-primary text-white rounded-2xl font-bold">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
                   </div>
-                  {/* Coste + Beneficio — PRIVADO (solo admin, nunca en la web pública) */}
+                  {/* Coste (precio privado) + Beneficio — PRIVADO (solo admin, nunca en la web pública).
+                      El coste lleva su propia divisa; el margen se calcula con forex EN VIVO y
+                      se muestra en la divisa global seleccionada arriba. */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-amber-50/60 border border-amber-200 rounded-2xl p-3">
                     <div>
                       <label className="block text-[10px] font-black uppercase text-amber-700 mb-2 flex items-center gap-1"><span className="material-symbols-outlined text-[13px]">lock</span>{t('admin.props.cost', { defaultValue: 'Coste del proyecto' })}</label>
-                      <NumberInput decimal value={editCost} onChangeValue={(v) => setEditCost(v)} className="w-full px-4 py-3 bg-white rounded-2xl font-bold border border-amber-200" />
+                      <div className="flex gap-2">
+                        <NumberInput decimal value={editCost} onChangeValue={(v) => setEditCost(v)} className="flex-1 min-w-0 px-4 py-3 bg-white rounded-2xl font-bold border border-amber-200" />
+                        <select value={editCostCurrency} onChange={(e) => setEditCostCurrency(e.target.value)} className="px-3 py-3 bg-amber-600 text-white rounded-2xl font-bold border border-amber-700" title={t('admin.props.costCurrency', { defaultValue: 'Divisa del coste' })}>
+                          {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
+                        </select>
+                      </div>
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-[10px] font-black uppercase text-amber-700 mb-2">{t('admin.props.profit', { defaultValue: 'Beneficio (precio listado − coste)' })}</label>
+                      <label className="block text-[10px] font-black uppercase text-amber-700 mb-2 flex items-center justify-between gap-1">
+                        <span>{t('admin.props.profit', { defaultValue: 'Beneficio (precio listado − coste)' })}</span>
+                        <span className="normal-case font-bold text-amber-500 flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">sync_alt</span>{t('admin.props.profitLive', { defaultValue: 'en vivo' })} · {currency}</span>
+                      </label>
                       <div className="w-full px-4 py-3 bg-white rounded-2xl font-bold text-amber-800 border border-amber-200 flex items-center justify-between">
                         {(() => {
                           const price = Number(currentProject.investor_price) || 0;
                           const cost = editCost === '' ? null : Number(editCost);
                           if (cost === null || !price) return <span className="text-amber-300">—</span>;
-                          const profit = price - cost;
+                          const priceCur = (currentProject.price_currency as string) || 'EUR';
+                          // Coste convertido a la divisa del precio listado con tasas en vivo.
+                          const costInPriceCur = convertMoney(cost, editCostCurrency || 'EUR', priceCur);
+                          const profit = price - costInPriceCur;
                           const margin = price > 0 ? (profit / price) * 100 : 0;
-                          return <><span className={profit < 0 ? 'text-red-600' : ''}>{formatPrice(profit, currentProject.price_currency)}</span><span className="text-[11px] font-bold text-amber-600">{margin.toFixed(1)}%</span></>;
+                          return <><span className={profit < 0 ? 'text-red-600' : ''}>{formatPrice(profit, priceCur)}</span><span className="text-[11px] font-bold text-amber-600">{margin.toFixed(1)}%</span></>;
                         })()}
                       </div>
                     </div>
-                    <p className="sm:col-span-3 text-[10px] text-amber-700/80 flex items-center gap-1 -mt-1"><span className="material-symbols-outlined text-[12px]">visibility_off</span>{t('admin.props.costNote', { defaultValue: 'Solo visible aquí en el admin. Nunca se muestra en la web pública.' })}</p>
+                    <p className="sm:col-span-3 text-[10px] text-amber-700/80 flex items-center gap-1 -mt-1"><span className="material-symbols-outlined text-[12px]">visibility_off</span>{t('admin.props.costNote', { defaultValue: 'Solo visible aquí en el admin. Nunca se muestra en la web pública.' })} {t('admin.props.costForexNote', { defaultValue: 'El margen usa forex en vivo y se muestra en la divisa global de arriba.' })}</p>
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investmentTiers')}</label>
