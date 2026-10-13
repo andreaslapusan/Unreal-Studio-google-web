@@ -5,20 +5,19 @@ import { translateProjectTerm } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
+import { DEFAULT_CONFIG, whatsappProjectUrl } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet, thumbSrc, imgFallback } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
-import BookingWidget from '../components/BookingWidget';
 import LazyMap from '../components/LazyMap';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
 import { fmtThousands } from '../lib/numberFormat';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
-import { trackViewContent } from '../lib/fbPixel';
-import { gtmViewItem } from '../lib/gtm';
+import { trackViewContent, trackLead } from '../lib/fbPixel';
+import { gtmViewItem, gtmWhatsappClick } from '../lib/gtm';
 import { translateStatus } from '../lib/statusI18n';
 import { useAuth } from '../lib/auth-context';
 
@@ -918,10 +917,13 @@ const ProjectDetail: React.FC = () => {
                 )}
               </div>
               <a
-                href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(t('fix.pd.mailSubject', { name: project.name, defaultValue: 'Información: {{name}}' }))}&body=${encodeURIComponent(t('fix.pd.mailBody', { name: project.name, location: project.location || '', defaultValue: 'Hola, me interesa el proyecto "{{name}}" en {{location}}. Me gustaría recibir más información y agendar una reunión.' }))}`}
-                className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"
+                href={whatsappProjectUrl(project.name)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => { try { gtmWhatsappClick({ source: 'project_detail' }); trackLead({ content_name: project.name, content_category: 'web_project_info' }); } catch { /* noop */ } }}
+                className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition"
               >
-                {t('fix.pd.requestProjectInfo')}
+                {t('fix.pd.requestProjectInfo')} <span className="material-symbols-outlined text-base">chat</span>
               </a>
             </div>
           </div>

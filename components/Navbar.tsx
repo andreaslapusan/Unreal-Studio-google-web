@@ -143,20 +143,8 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Botón Header: Optimizado para Móvil (2 líneas) y Desktop (1 línea) */}
-          <a
-            href={bookingLink({ medium: 'cta_navbar' })}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-primary text-white rounded-full font-bold uppercase tracking-widest hover:bg-opacity-90 transition shadow-xl whitespace-nowrap flex items-center justify-center px-4 py-2 md:px-7 md:py-3"
-          >
-            {/* Versión Móvil: Texto apilado y más pequeño */}
-            <div className="flex flex-col items-center leading-[0.9] md:hidden">
-              <span className="text-[9px]">{t('nav.scheduleShort')}</span>
-            </div>
-            {/* Versión Desktop: Texto normal (Visible desde md en adelante) */}
-            <span className="hidden md:inline text-[10px] md:text-xs">{t('nav.scheduleCall')}</span>
-          </a>
+          {/* CTA fijo "Agendar llamada" de arriba-derecha RETIRADO (Globalitae 2026-10-13).
+              El contacto se canaliza por el botón flotante de WhatsApp (bottom-right). */}
 
           {/* Hamburger Menu - Visible on Mobile AND Tablet (Hidden on LG+) */}
           <button 
@@ -230,24 +218,8 @@ const Navbar: React.FC = () => {
       {/* Espaciador para compensar el header fijo */}
       <div className="h-28 w-full bg-almond transition-colors duration-300"></div>
 
-      {/* Botón Flotante Permanente (Aparece al bajar) */}
-      <div 
-        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-40 transition-all duration-500 transform ${
-          isScrolled && !footerVisible
-            ? 'translate-y-0 opacity-100'
-            : 'translate-y-20 opacity-0 pointer-events-none'
-        }`}
-      >
-        <a
-          href={bookingLink({ medium: 'cta_floating' })}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-primary text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest shadow-2xl flex items-center gap-3 border border-almond/20 hover:scale-105 transition-transform whitespace-nowrap"
-        >
-          <span>{t('nav.scheduleCall')}</span>
-          <span className="material-symbols-outlined text-sm">calendar_month</span>
-        </a>
-      </div>
+      {/* CTA flotante "Agendar llamada" (bottom-center, deslizante) RETIRADO
+          (Globalitae 2026-10-13). El contacto va por el botón flotante de WhatsApp. */}
     </>
   );
 };

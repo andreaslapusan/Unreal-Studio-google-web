@@ -4,6 +4,7 @@ import { recordFormSubmit } from '../lib/attribution';
 import { trackLead } from '../lib/fbPixel';
 import { gtmGenerateLead, gtmWhatsappClick } from '../lib/gtm';
 import { usePageMeta } from '../components/PageMeta';
+import { whatsappUrl } from '../constants';
 
 const Contact: React.FC = () => {
   const { t } = useTranslation();
@@ -37,20 +38,20 @@ const Contact: React.FC = () => {
 
     // Meta Pixel: form submit = Lead conversion event.
     trackLead({ content_name: 'Contact form', content_category: 'web_form_contacto' });
-    // El formulario ahora redirige por EMAIL (hello@unrealstudiobali.com), no WhatsApp.
-    gtmGenerateLead({ form_id: 'contact', form_destination: 'email' });
+    // El formulario ahora redirige a WhatsApp del asesor (no email). El lead queda
+    // registrado en GHL via recordFormSubmit (arriba) + la conversación entra por GHL WhatsApp.
+    gtmGenerateLead({ form_id: 'contact', form_destination: 'whatsapp' });
+    gtmWhatsappClick({ source: 'contact_form' });
 
-    const subject = 'Solicitud de reunión - Unreal Studio';
-    const body =
-      `Nombre: ${formData.name}\n` +
-      `Email: ${formData.email || '—'}\n` +
-      `Teléfono: ${formData.phone || '—'}\n` +
+    const text =
+      `Hola, soy ${formData.name}. ` +
+      `Me interesa invertir en Bali con Unreal Studio.\n` +
       `Motivo: ${formData.reason}\n` +
       `Presupuesto: ${formData.budget}\n` +
-      `Plazo: ${formData.timeframe}\n` +
-      `Mensaje: ${formData.message || 'Sin mensaje adicional'}`;
+      `Plazo: ${formData.timeframe}` +
+      (formData.message ? `\nMensaje: ${formData.message}` : '');
 
-    const url = `mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const url = whatsappUrl(text);
 
     const win = window.open(url, '_blank');
     setSent({ url, blocked: !win });
@@ -83,8 +84,8 @@ const Contact: React.FC = () => {
              
              <div className="relative z-10 mb-8">
                 <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg rotate-3 shrink-0">
-                        <span className="material-symbols-outlined">mail</span>
+                    <div className="w-12 h-12 bg-[#25D366] text-white rounded-2xl flex items-center justify-center shadow-lg rotate-3 shrink-0">
+                        <span className="material-symbols-outlined">chat</span>
                     </div>
                     <h2 className="text-2xl md:text-3xl text-primary font-serif">{t('contact.formTitle')}</h2>
                 </div>
@@ -100,11 +101,11 @@ const Contact: React.FC = () => {
                     </p>
                     <p className="text-sm text-green-700/80 mt-1">
                       {sent.blocked
-                        ? t('contact.successBlocked', 'Tu navegador no pudo abrir el correo. Toca el botón para enviárnoslo:')
-                        : t('contact.successBody', 'Te hemos abierto tu correo para enviarnos los datos. Si no se abrió, usa el botón:')}
+                        ? t('contact.successBlockedWa', 'Tu navegador no pudo abrir WhatsApp. Toca el botón para hablar con un asesor:')
+                        : t('contact.successBodyWa', 'Te hemos abierto WhatsApp para hablar con un asesor. Si no se abrió, usa el botón:')}
                     </p>
-                    <a href={sent.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-3 bg-green-600 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-green-700 transition">
-                      <span className="material-symbols-outlined text-base">mail</span>{t('contact.openWhatsapp', 'Abrir correo')}
+                    <a href={sent.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-3 bg-[#25D366] text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-[#20bd5a] transition">
+                      <span className="material-symbols-outlined text-base">chat</span>{t('contact.openWhatsappBtn', 'Abrir WhatsApp')}
                     </a>
                   </div>
                 )}
@@ -124,11 +125,10 @@ const Contact: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('fix.contact.emailLabelRequired')}</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.emailOptional', { defaultValue: 'Email (opcional)' })}</label>
                       <input
                         type="email"
                         name="email"
-                        required
                         value={formData.email}
                         onChange={handleChange}
                         placeholder={t('fix.contact.emailPlaceholder')}
@@ -244,13 +244,13 @@ const Contact: React.FC = () => {
                 <span className="material-symbols-outlined text-orange-600">bolt</span> {t('contact.directChannels')}
               </h3>
               <div className="space-y-4">
-                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="mailto:hello@unrealstudiobali.com">
-                  <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary group-hover:text-white transition text-primary">
-                    <span className="material-symbols-outlined text-xl">mail</span>
+                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => gtmWhatsappClick({ source: 'contact_channels' })}>
+                  <div className="bg-[#25D366]/15 p-3 rounded-full group-hover:bg-[#25D366] group-hover:text-white transition text-[#1da851]">
+                    <span className="material-symbols-outlined text-xl">chat</span>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-500">{t('contact.emailLabel')}</p>
-                    <span className="font-medium text-primary">hello@unrealstudiobali.com</span>
+                    <p className="text-[10px] uppercase font-bold text-gray-500">WhatsApp</p>
+                    <span className="font-medium text-primary">+34 684 73 33 61</span>
                   </div>
                 </a>
               </div>

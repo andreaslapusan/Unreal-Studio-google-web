@@ -1,47 +1,24 @@
 /**
- * /agendar — full-page booking calendar.
+ * /agendar — ahora redirige a WhatsApp (Globalitae 2026-10-13).
  *
- * Replaces the old "Agendar llamada" WhatsApp deeplink. The widget reads
- * UTMs from the URL (utm_source / utm_medium / utm_campaign / utm_partner /
- * utm_property) and forwards them to the GHL booking iframe so we can see
- * exactly which CTA the booking came from.
+ * Se mantiene la página pero el calendario de GHL se sustituye por un botón que
+ * abre WhatsApp con el asesor (copy de bienvenida). Antes embebía el widget de
+ * reserva; Andreas pidió canalizar TODO a WhatsApp.
  */
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { supabase } from "../lib/supabase";
 import { usePageMeta } from "../components/PageMeta";
-import { readSWR, writeSWR } from "../lib/swrCache";
-import BookingWidget from "../components/BookingWidget";
-
-const FALLBACK_URL = "https://api.neo.software/widget/booking/KdAikEYhZVPgMylze6lO";
+import { WHATSAPP_URL } from "../constants";
+import { gtmWhatsappClick } from "../lib/gtm";
 
 export default function Booking() {
   const { t } = useTranslation();
   usePageMeta({ title: t('booking.title', { defaultValue: 'Agendar llamada | Unreal Studio Bali' }), description: t('contact.metaDescription') });
-  // Re-use the catalog cache to discover whichever booking_widget_url is
-  // configured. We use Golf Bay Lofts as the canonical source-of-truth so
-  // when Marcelino swaps the GHL calendar in the admin, this page picks it
-  // up without a code change.
-  const [url, setUrl] = useState<string>(() => readSWR<string>("booking_url") ?? FALLBACK_URL);
 
   useEffect(() => {
     document.title = t("booking.title", { defaultValue: "Agendar llamada | Unreal Studio Bali" });
   }, [t]);
-
-  useEffect(() => {
-    void (async () => {
-      const { data } = await supabase
-        .from("projects")
-        .select("booking_widget_url")
-        .not("booking_widget_url", "is", null)
-        .limit(1)
-        .maybeSingle();
-      const next = (data?.booking_widget_url as string | undefined) ?? FALLBACK_URL;
-      setUrl(next);
-      writeSWR("booking_url", next);
-    })();
-  }, []);
 
   return (
     <div className="bg-almond min-h-screen pb-16">
@@ -50,14 +27,25 @@ export default function Booking() {
           {t("booking.heroTitle", { defaultValue: "Reserva una llamada con un asesor" })}
         </h1>
         <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed">
-          {t("booking.heroSubtitle", {
+          {t("booking.heroSubtitleWa", {
             defaultValue:
-              "30 minutos por videollamada con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
+              "Habla directamente por WhatsApp con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
           })}
         </p>
       </header>
 
-      <BookingWidget url={url} />
+      <div className="max-w-xl mx-auto px-6 flex flex-col items-center">
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => gtmWhatsappClick({ source: 'booking_page' })}
+          className="w-full max-w-sm bg-[#25D366] hover:bg-[#20bd5a] text-white px-10 py-5 rounded-full font-black text-sm uppercase tracking-[0.15em] shadow-2xl flex items-center justify-center gap-3 transition-all hover:scale-[1.03]"
+        >
+          {t("booking.waCta", { defaultValue: "Hablar por WhatsApp" })}
+          <span className="material-symbols-outlined text-lg">chat</span>
+        </a>
+      </div>
 
       <p className="text-center text-xs text-primary/50 mt-6 px-6">
         {t("booking.altCta", { defaultValue: "Si prefieres, también puedes" })}{" "}

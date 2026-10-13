@@ -1,6 +1,23 @@
 import { AppConfig } from './types';
 
-export const WHATSAPP_URL = "https://wa.me/34625710770?text=¡Hola!%20Me%20gustaría%20agendar%20una%20llamada%20con%20el%20equipo%20de%20Unreal%20Studio%20para%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20proyectos%20de%20inversi%C3%B3n.";
+// Número de WhatsApp del asesor (Globalitae, 2026-10-13). Todos los CTAs de la web
+// apuntan aquí. Formato internacional sin + ni espacios para wa.me.
+export const WHATSAPP_NUMBER = "34684733361";
+
+// Copy de bienvenida genérico para todos los CTAs que NO son de un proyecto concreto.
+export const WHATSAPP_WELCOME_TEXT =
+  "Hola, estoy buscando opciones de inversión en Bali y me interesa conocer más sobre las oportunidades que tenéis disponibles ahora en Unreal Studio";
+
+// Construye un enlace de WhatsApp con texto pre-rellenado.
+export const whatsappUrl = (text: string = WHATSAPP_WELCOME_TEXT): string =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+
+// Enlace de WhatsApp con copy específico de un proyecto.
+export const whatsappProjectUrl = (projectName: string): string =>
+  whatsappUrl(`Hola, me interesa saber más sobre el proyecto de ${projectName} que tenéis en vuestra web`);
+
+// CTA genérico (bienvenida). Se mantiene el nombre WHATSAPP_URL por compatibilidad.
+export const WHATSAPP_URL = whatsappUrl();
 
 export const DEFAULT_CONFIG: AppConfig = {
   labels: {

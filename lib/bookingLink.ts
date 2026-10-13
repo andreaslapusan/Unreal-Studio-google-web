@@ -6,7 +6,7 @@
  * new tab so the iframe (which grabs wheel events) doesn't break scroll
  * on the host page.
  */
-import { readStoredAttribution } from "./utm-tracking";
+import { whatsappUrl, whatsappProjectUrl } from "../constants";
 
 export const DEFAULT_BOOKING_URL =
   "https://api.neo.software/widget/booking/KdAikEYhZVPgMylze6lO";
@@ -20,32 +20,17 @@ export interface BookingLinkOpts {
   campaign?: string;
   /** Slug of the project the user was looking at when they clicked. */
   propertySlug?: string;
+  /** Project name → usa el copy de WhatsApp específico de proyecto. */
+  propertyName?: string;
   /** Override the calendar URL (per-project booking_widget_url). */
   url?: string;
 }
 
 export function bookingLink(opts: BookingLinkOpts): string {
-  const base = opts.url ?? DEFAULT_BOOKING_URL;
-  let url: URL;
-  try {
-    url = new URL(base);
-  } catch {
-    return base;
-  }
-
-  const stored = readStoredAttribution();
-  const setIfMissing = (key: string, value?: string | null) => {
-    if (!value) return;
-    if (url.searchParams.has(key)) return;
-    url.searchParams.set(key, value);
-  };
-
-  setIfMissing("utm_source", stored?.source ?? opts.source ?? "web");
-  setIfMissing("utm_medium", opts.medium);
-  setIfMissing("utm_campaign", opts.campaign ?? stored?.campaign ?? "agendar_btn");
-  setIfMissing("utm_partner", stored?.partner_id ?? undefined);
-  setIfMissing("utm_property", opts.propertySlug ?? stored?.property_slug ?? undefined);
-  if (opts.propertySlug) setIfMissing("property_slug", opts.propertySlug);
-
-  return url.toString();
+  // 2026-10-13 (Globalitae): "Agendar llamada" ya NO abre el calendario de GHL.
+  // Todos los CTAs de agendar redirigen al WhatsApp del asesor. Si se pasa el
+  // nombre de proyecto se usa el copy específico; si no, el de bienvenida genérico.
+  return opts.propertyName
+    ? whatsappProjectUrl(opts.propertyName)
+    : whatsappUrl();
 }

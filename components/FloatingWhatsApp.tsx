@@ -15,7 +15,7 @@ export default function FloatingWhatsApp() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => { try { gtmWhatsappClick({ source: 'floating_fab', phone: '34625710770' }); } catch { /* noop */ } }}
+      onClick={() => { try { gtmWhatsappClick({ source: 'floating_fab', phone: '34684733361' }); } catch { /* noop */ } }}
       aria-label="WhatsApp"
       className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 bg-[#25D366] text-white rounded-full shadow-2xl shadow-black/20 pl-3.5 pr-4 py-3 hover:scale-105 active:scale-95 transition-transform"
     >
