@@ -2403,7 +2403,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <tbody className="divide-y divide-gray-50">
                       {usersList.result.map(u => (
                         <tr key={u.id} className="hover:bg-gray-50 transition">
-                          <td className="px-6 py-4 font-bold text-primary">{u.name}</td>
+                          <td className="px-6 py-4 font-bold text-primary"><span className="inline-flex items-center gap-2">{u.name}{(u as any).is_active === false && <span className="text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full bg-red-100 text-red-700">{t('admin.dash.statusInactiveShort', { defaultValue: 'Inactivo' })}</span>}</span></td>
                           <td className="px-6 py-4 text-sm text-gray-500">{u.username}</td>
                           {isSuperAdmin && (
                             <td className="px-6 py-4">
@@ -3296,6 +3296,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           </div>
         </div>
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.roleLabel')}</label><select value={(currentUser as any).role || 'admin'} onChange={(e) => setCurrentUser({...currentUser, role: e.target.value} as any)} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold"><option value="admin">admin</option><option value="superadmin">superadmin</option><option value="team">team</option></select></div>
+        <div>
+          <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.statusLabel', { defaultValue: 'Estado' })}</label>
+          <select value={(currentUser as any).is_active === false ? 'inactive' : 'active'} onChange={(e) => setCurrentUser({ ...currentUser, is_active: e.target.value === 'active' } as any)} className={`w-full px-5 py-4 rounded-2xl font-bold ${(currentUser as any).is_active === false ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'}`}>
+            <option value="active">{t('admin.dash.statusActive', { defaultValue: 'Activo (con acceso)' })}</option>
+            <option value="inactive">{t('admin.dash.statusInactive', { defaultValue: 'Inactivo (sin acceso)' })}</option>
+          </select>
+          <p className="text-[10px] text-gray-400 mt-1">{t('admin.dash.statusNote', { defaultValue: 'Si está inactivo, no puede entrar ni usar el sistema.' })}</p>
+        </div>
         <div>
           <label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t('admin.dash.signatureLabel')} <span className="text-gray-300 normal-case">({t('admin.dash.optional', { defaultValue: 'opcional' })})</span></label>
           <p className="text-[11px] text-gray-400 mb-2">{t('admin.dash.signatureOnlySigner', { defaultValue: 'Solo para quien firma kwitansis. Déjalo vacío si esta persona no va a firmar.' })}</p>
