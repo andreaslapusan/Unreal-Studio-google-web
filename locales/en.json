@@ -2765,6 +2765,8 @@
       "recent": "Recently edited",
       "priceAsc": "Price: low to high",
       "priceDesc": "Price: high to low",
+      "profitDesc": "Profit: high to low",
+      "profitAsc": "Profit: low to high",
       "az": "Name: A → Z",
       "za": "Name: Z → A"
     }

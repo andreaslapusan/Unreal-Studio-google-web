@@ -182,6 +182,17 @@ const AMENITIES_LIST = [
   const projectsList = useListControls<Project>(projects, {
     name: (p: any) => p.name || '',
     price: (p: any) => p.investor_price,
+    // Beneficio = precio listado − coste (convertido a la divisa del precio con forex
+    // en vivo). Null si el proyecto no tiene coste → va al final al ordenar.
+    profit: (p: any) => {
+      const c = projectCosts[p.id];
+      if (c == null || !p.investor_price) return null;
+      const rates: any = liveRates || DEFAULT_CONFIG.exchangeRates;
+      const from = projectCostCurrencies[p.id] || p.price_currency || 'EUR';
+      const to = p.price_currency || 'EUR';
+      const costInPriceCur = (Number(c) / (Number(rates[from]) || 1)) * (Number(rates[to]) || 1);
+      return Number(p.investor_price) - costInPriceCur;
+    },
     updated: (p: any) => p.updated_at || p.created_at,
     search: (p: any) => `${p.name || ''} ${p.location || ''} ${p.slug || ''}`,
   }, 'recent');
@@ -2035,6 +2046,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               query={projectsList.query} setQuery={projectsList.setQuery}
               sort={projectsList.sort} setSort={projectsList.setSort}
               count={projectsList.result.length}
+              options={['recent', 'profitDesc', 'profitAsc', 'priceDesc', 'priceAsc', 'az', 'za']}
             />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {projectsList.result.map(proj => (

@@ -2767,6 +2767,8 @@
       "recent": "Recién editado",
       "priceAsc": "Precio: menor a mayor",
       "priceDesc": "Precio: mayor a menor",
+      "profitDesc": "Beneficio: mayor a menor",
+      "profitAsc": "Beneficio: menor a mayor",
       "az": "Nombre: A → Z",
       "za": "Nombre: Z → A"
     }

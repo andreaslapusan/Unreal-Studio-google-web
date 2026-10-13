@@ -17,13 +17,15 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type SortKey = 'recent' | 'priceAsc' | 'priceDesc' | 'az' | 'za';
+export type SortKey = 'recent' | 'priceAsc' | 'priceDesc' | 'az' | 'za' | 'profitDesc' | 'profitAsc';
 
 export interface ListAccessors<T> {
   /** Texto para orden alfabético (nombre/título). */
   name: (x: T) => string;
   /** Valor numérico para orden por precio (opcional). */
   price?: (x: T) => number | string | null | undefined;
+  /** Beneficio para orden por beneficio (opcional, solo admin propiedades). Null = sin coste. */
+  profit?: (x: T) => number | null | undefined;
   /** Fecha/hora de edición para "recién editado" (opcional). */
   updated?: (x: T) => string | number | Date | null | undefined;
   /** Texto donde busca el buscador (por defecto, el nombre). */
@@ -39,6 +41,16 @@ const toTime = (v: unknown): number => {
   if (!v) return 0;
   const t = new Date(v as any).getTime();
   return isNaN(t) ? 0 : t;
+};
+// Orden por beneficio: los proyectos SIN coste (profit null) van SIEMPRE al final,
+// en ambas direcciones; el resto se ordena por el valor del beneficio.
+const profitCmp = (av: number | null | undefined, bv: number | null | undefined, dir: 'asc' | 'desc'): number => {
+  const an = av == null || isNaN(av as number);
+  const bn = bv == null || isNaN(bv as number);
+  if (an && bn) return 0;
+  if (an) return 1;
+  if (bn) return -1;
+  return dir === 'desc' ? (bv as number) - (av as number) : (av as number) - (bv as number);
 };
 
 /** Hook: filtra por buscador y ordena. Devuelve el array ya procesado. */
@@ -61,6 +73,8 @@ export function useListControls<T>(items: T[], acc: ListAccessors<T>, defaultSor
       case 'za': arr.sort((a, b) => (acc.name(b) || '').localeCompare(acc.name(a) || '')); break;
       case 'priceAsc': if (acc.price) arr.sort((a, b) => toNum(acc.price!(a)) - toNum(acc.price!(b))); break;
       case 'priceDesc': if (acc.price) arr.sort((a, b) => toNum(acc.price!(b)) - toNum(acc.price!(a))); break;
+      case 'profitDesc': if (acc.profit) arr.sort((a, b) => profitCmp(acc.profit!(a), acc.profit!(b), 'desc')); break;
+      case 'profitAsc': if (acc.profit) arr.sort((a, b) => profitCmp(acc.profit!(a), acc.profit!(b), 'asc')); break;
       case 'recent': if (acc.updated) arr.sort((a, b) => toTime(acc.updated!(b)) - toTime(acc.updated!(a))); break;
     }
     return arr;

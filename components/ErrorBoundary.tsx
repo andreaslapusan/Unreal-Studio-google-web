@@ -14,6 +14,7 @@
 import React from "react";
 import { supabase } from "../lib/supabase";
 import i18n from "../lib/i18n";
+import { WHATSAPP_URL } from "../constants";
 
 interface Props {
   children: React.ReactNode;
@@ -118,9 +119,9 @@ export default class ErrorBoundary extends React.Component<Props, State> {
             </h1>
             <p className="text-primary/70 mb-8">
               {i18n.t('errorBoundary.msg', { defaultValue: 'Esta página tuvo un error. Puedes volver al inicio y seguir usando la web.' })}
-              Si vuelve a pasar, escríbenos a{" "}
-              <a href="mailto:hello@unrealstudiobali.com" className="underline">
-                hello@unrealstudiobali.com
+              {" "}{i18n.t('errorBoundary.waPrefix', { defaultValue: 'Si vuelve a pasar, escríbenos por' })}{" "}
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="underline">
+                WhatsApp
               </a>
               .
             </p>
