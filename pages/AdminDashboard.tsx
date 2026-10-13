@@ -172,6 +172,11 @@ const AMENITIES_LIST = [
   const [editCost, setEditCost] = useState<string>('');  // coste del proyecto en edición
   const [editCostCurrency, setEditCostCurrency] = useState<string>('EUR'); // divisa del coste en edición
   const [profitDisplayCur, setProfitDisplayCur] = useState<string>('EUR'); // divisa en la que se MUESTRA el beneficio (elegible)
+  // Tasas de cambio EN VIVO (base EUR) para el cálculo de coste/beneficio. NO usar
+  // config.exchangeRates aquí: ese valor viene de app_config (BD) y puede estar
+  // desfasado (p.ej. USD 1,166 viejo). Refrescamos cada 5 min desde open.er-api.com.
+  const [liveRates, setLiveRates] = useState<Record<string, number> | null>(null);
+  const [liveRatesAt, setLiveRatesAt] = useState<string>('');
   const [showUserPw, setShowUserPw] = useState(false);   // ver/ocultar contraseña en el form de admin
   // Búsqueda + orden de la lista de propiedades (reutilizable en todas las listas).
   const projectsList = useListControls<Project>(projects, {
@@ -235,11 +240,29 @@ const AMENITIES_LIST = [
   // carga la app desde open.er-api.com (config.exchangeRates). Para el margen: el
   // coste puede estar en una divisa distinta al precio de venta.
   const convertMoney = (amount: number, from: string, to: string): number => {
-    const rates: any = (config as any).exchangeRates || DEFAULT_CONFIG.exchangeRates;
+    // Prioridad: tasas en vivo > config (BD) > defaults. Evita el forex desfasado.
+    const rates: any = liveRates || (config as any).exchangeRates || DEFAULT_CONFIG.exchangeRates;
     const rFrom = Number(rates[from]) || 1;
     const rTo = Number(rates[to]) || 1;
     return (amount / rFrom) * rTo;
   };
+  // Carga de tasas en vivo (base EUR) al montar + refresco cada 5 min.
+  useEffect(() => {
+    let alive = true;
+    const pull = async () => {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/EUR');
+        const data = await res.json();
+        if (alive && data && data.rates) {
+          setLiveRates({ EUR: 1, USD: data.rates.USD, IDR: data.rates.IDR, GBP: data.rates.GBP, AUD: data.rates.AUD });
+          setLiveRatesAt(data.time_last_update_utc || '');
+        }
+      } catch { /* mantiene las últimas tasas / fallback a config */ }
+    };
+    pull();
+    const id = setInterval(pull, 5 * 60 * 1000);
+    return () => { alive = false; clearInterval(id); };
+  }, []);
   // La vista activa vive en la URL (?view=) para que el menú lateral (presente
   // en todas las páginas admin) navegue entre secciones de forma consistente.
   const [searchParams, setSearchParams] = useSearchParams();
@@ -2764,7 +2787,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="sm:col-span-2">
                       <label className="block text-[10px] font-black uppercase text-amber-700 mb-2 flex items-center justify-between gap-1">
                         <span>{t('admin.props.profit', { defaultValue: 'Beneficio (precio listado − coste)' })}</span>
-                        <span className="normal-case font-bold text-amber-500 flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">sync_alt</span>{t('admin.props.profitLive', { defaultValue: 'en vivo' })}</span>
+                        <span className="normal-case font-bold text-amber-500 flex items-center gap-1" title={liveRatesAt ? `Forex: ${liveRatesAt}` : ''}><span className="material-symbols-outlined text-[12px]">sync_alt</span>{t('admin.props.profitLive', { defaultValue: 'en vivo' })}</span>
                       </label>
                       <div className="flex gap-2">
                         <div className="flex-1 min-w-0 px-4 py-3 bg-white rounded-2xl font-bold text-amber-800 border border-amber-200 flex items-center justify-between">
