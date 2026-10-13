@@ -171,6 +171,7 @@ const AMENITIES_LIST = [
   const [projectCostCurrencies, setProjectCostCurrencies] = useState<Record<string, string>>({});
   const [editCost, setEditCost] = useState<string>('');  // coste del proyecto en edición
   const [editCostCurrency, setEditCostCurrency] = useState<string>('EUR'); // divisa del coste en edición
+  const [profitDisplayCur, setProfitDisplayCur] = useState<string>('EUR'); // divisa en la que se MUESTRA el beneficio (elegible)
   const [showUserPw, setShowUserPw] = useState(false);   // ver/ocultar contraseña en el form de admin
   // Búsqueda + orden de la lista de propiedades (reutilizable en todas las listas).
   const projectsList = useListControls<Project>(projects, {
@@ -956,6 +957,7 @@ const AMENITIES_LIST = [
     setCurrentProject(proj ? { ...defaultProject, ...proj } : defaultProject);
     setEditCost(proj && proj.id && projectCosts[proj.id] != null ? String(projectCosts[proj.id]) : '');
     setEditCostCurrency((proj && proj.id && projectCostCurrencies[proj.id]) || proj?.price_currency || 'EUR');
+    setProfitDisplayCur(proj?.price_currency || currency || 'EUR');
     setDriveError('');
     setIsEditing(true);
   };
@@ -2762,20 +2764,27 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="sm:col-span-2">
                       <label className="block text-[10px] font-black uppercase text-amber-700 mb-2 flex items-center justify-between gap-1">
                         <span>{t('admin.props.profit', { defaultValue: 'Beneficio (precio listado − coste)' })}</span>
-                        <span className="normal-case font-bold text-amber-500 flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">sync_alt</span>{t('admin.props.profitLive', { defaultValue: 'en vivo' })} · {currency}</span>
+                        <span className="normal-case font-bold text-amber-500 flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">sync_alt</span>{t('admin.props.profitLive', { defaultValue: 'en vivo' })}</span>
                       </label>
-                      <div className="w-full px-4 py-3 bg-white rounded-2xl font-bold text-amber-800 border border-amber-200 flex items-center justify-between">
-                        {(() => {
-                          const price = Number(currentProject.investor_price) || 0;
-                          const cost = editCost === '' ? null : Number(editCost);
-                          if (cost === null || !price) return <span className="text-amber-300">—</span>;
-                          const priceCur = (currentProject.price_currency as string) || 'EUR';
-                          // Coste convertido a la divisa del precio listado con tasas en vivo.
-                          const costInPriceCur = convertMoney(cost, editCostCurrency || 'EUR', priceCur);
-                          const profit = price - costInPriceCur;
-                          const margin = price > 0 ? (profit / price) * 100 : 0;
-                          return <><span className={profit < 0 ? 'text-red-600' : ''}>{formatPrice(profit, priceCur)}</span><span className="text-[11px] font-bold text-amber-600">{margin.toFixed(1)}%</span></>;
-                        })()}
+                      <div className="flex gap-2">
+                        <div className="flex-1 min-w-0 px-4 py-3 bg-white rounded-2xl font-bold text-amber-800 border border-amber-200 flex items-center justify-between">
+                          {(() => {
+                            const price = Number(currentProject.investor_price) || 0;
+                            const cost = editCost === '' ? null : Number(editCost);
+                            if (cost === null || !price) return <span className="text-amber-300">—</span>;
+                            const priceCur = (currentProject.price_currency as string) || 'EUR';
+                            // Coste convertido a la divisa del precio listado con tasas en vivo.
+                            const costInPriceCur = convertMoney(cost, editCostCurrency || 'EUR', priceCur);
+                            const profit = price - costInPriceCur;
+                            const margin = price > 0 ? (profit / price) * 100 : 0;
+                            // Mostrar el beneficio en la divisa elegida (profitDisplayCur), convertido en vivo.
+                            const profitShown = convertMoney(profit, priceCur, profitDisplayCur || priceCur);
+                            return <><span className={profit < 0 ? 'text-red-600' : ''}>{formatMoney(profitShown, profitDisplayCur as any)}</span><span className="text-[11px] font-bold text-amber-600">{margin.toFixed(1)}%</span></>;
+                          })()}
+                        </div>
+                        <select value={profitDisplayCur} onChange={(e) => setProfitDisplayCur(e.target.value)} className="px-3 py-3 bg-amber-600 text-white rounded-2xl font-bold border border-amber-700" title={t('admin.props.profitCurrency', { defaultValue: 'Divisa del beneficio' })}>
+                          {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
+                        </select>
                       </div>
                     </div>
                     <p className="sm:col-span-3 text-[10px] text-amber-700/80 flex items-center gap-1 -mt-1"><span className="material-symbols-outlined text-[12px]">visibility_off</span>{t('admin.props.costNote', { defaultValue: 'Solo visible aquí en el admin. Nunca se muestra en la web pública.' })} {t('admin.props.costForexNote', { defaultValue: 'El margen usa forex en vivo y se muestra en la divisa global de arriba.' })}</p>

@@ -671,6 +671,7 @@
       "profit": "Profit (listed price − cost)",
       "costNote": "Only visible here in admin. Never shown on the public website.",
       "costCurrency": "Cost currency",
+      "profitCurrency": "Profit currency",
       "profitLive": "live",
       "costForexNote": "Margin uses live forex and is shown in the global currency selected above.",
       "profitShort": "Profit",

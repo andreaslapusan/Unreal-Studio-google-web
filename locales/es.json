@@ -671,6 +671,7 @@
       "profit": "Beneficio (precio listado − coste)",
       "costNote": "Solo visible aquí en el admin. Nunca se muestra en la web pública.",
       "costCurrency": "Divisa del coste",
+      "profitCurrency": "Divisa del beneficio",
       "profitLive": "en vivo",
       "costForexNote": "El margen usa forex en vivo y se muestra en la divisa global de arriba.",
       "profitShort": "Benef.",

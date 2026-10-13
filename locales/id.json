@@ -803,6 +803,7 @@
       "profit": "Keuntungan (harga tercatat − biaya)",
       "costNote": "Hanya terlihat di admin. Tidak pernah ditampilkan di situs publik.",
       "costCurrency": "Mata uang biaya",
+      "profitCurrency": "Mata uang keuntungan",
       "profitLive": "langsung",
       "costForexNote": "Margin memakai forex langsung dan ditampilkan dalam mata uang global yang dipilih di atas.",
       "profitShort": "Untung",
