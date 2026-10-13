@@ -7,7 +7,7 @@ import { uiLocale } from '../lib/dateLocale';
 import { dateOnly, baliToday } from '../lib/timezone';
 import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
-import { CURRENCIES, WHATSAPP_URL } from '../constants';
+import { CURRENCIES } from '../constants';
 import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
@@ -904,8 +904,10 @@ const ClientDashboard: React.FC = () => {
         <div className="mt-12 md:mt-16 bg-primary text-white rounded-2xl p-7 md:p-10 text-center">
           <h3 className="text-xl md:text-2xl font-serif mb-3">{t('admin.clientDash.helpTitle')}</h3>
           <p className="text-white/70 text-sm mb-6">{t('admin.clientDash.helpBody')}</p>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-8 py-4 rounded-xl font-bold text-sm hover:bg-[#20bd5a] transition">
-            <span className="material-symbols-outlined">chat</span> WhatsApp
+          {/* Portal de CLIENTES existentes = lo gestiona Andreas (no Sergio/comercial).
+              Mantener su email hello@ (al que SÍ tiene acceso), no el WhatsApp comercial. */}
+          <a href="mailto:hello@unrealstudiobali.com" className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-bold text-sm hover:brightness-95 transition">
+            <span className="material-symbols-outlined">mail</span> hello@unrealstudiobali.com
           </a>
         </div>
       </main>
