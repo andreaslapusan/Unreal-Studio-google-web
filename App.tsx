@@ -86,6 +86,12 @@ interface CurrencyContextType {
   // la inversión del cliente y el calendario de pagos: se muestran siempre en
   // la divisa con la que se guardaron, nunca se reconvierten.
   formatMoney: (amount: number, currency: CurrencyCode) => string;
+  // Tasas de cambio EN VIVO (base EUR), única fuente para cualquier conversión de
+  // la web (filtros/orden por precio, etc.). Evita usar app_config.exchangeRates (BD),
+  // que puede estar desfasado.
+  rates: Record<CurrencyCode, number>;
+  // Convierte un importe entre divisas con las tasas en vivo.
+  convert: (amount: number, from: CurrencyCode, to: CurrencyCode) => number;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
@@ -169,7 +175,11 @@ const App: React.FC = () => {
           configRows.forEach((row: any) => {
             configObj[row.key] = row.value;
           });
-          setConfig({ ...DEFAULT_CONFIG, ...configObj });
+          // NO dejar que las tasas guardadas en BD (app_config.exchangeRates, que
+          // pueden estar desfasadas) pisen el forex EN VIVO. La conversión de divisas
+          // de toda la web usa SIEMPRE las tasas en vivo (fetchRates), no la BD.
+          delete configObj.exchangeRates;
+          setConfig(prev => ({ ...DEFAULT_CONFIG, ...configObj, exchangeRates: prev.exchangeRates }));
         }
       } catch (error) {
         console.error("Error loading app config:", error);
@@ -198,6 +208,9 @@ const App: React.FC = () => {
       }
     };
     fetchRates();
+    // Refresco del forex cada 5 min para mantener la conversión al día en toda la web.
+    const ratesTimer = setInterval(fetchRates, 5 * 60 * 1000);
+    return () => clearInterval(ratesTimer);
   }, []);
 
   const formatPrice = (amount: number, fromCurrency: CurrencyCode) => {
@@ -247,7 +260,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice, formatMoney }}>
+    <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice, formatMoney, rates: config.exchangeRates, convert: (amount, from, to) => (amount / (config.exchangeRates[from] || 1)) * (config.exchangeRates[to] || 1) }}>
       <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />

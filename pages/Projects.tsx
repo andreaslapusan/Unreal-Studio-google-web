@@ -41,7 +41,7 @@ const Projects: React.FC = () => {
   // refresh in the background. Same pattern as Home.tsx.
   const [projects, setProjects] = useState<Project[]>(() => readSWR<Project[]>('projects_list') ?? []);
   const [config, setConfig] = useState<AppConfig>(() => readSWR<AppConfig>('home_config') ?? DEFAULT_CONFIG);
-  const { formatPrice, currency } = useCurrency();
+  const { formatPrice, currency, rates: liveRates } = useCurrency();
   const [loading, setLoading] = useState<boolean>(() => (readSWR<Project[]>('projects_list') ?? []).length === 0);
   
   // Inicializar estado con formato de miles si existe en URL
@@ -117,7 +117,7 @@ const Projects: React.FC = () => {
         filters.beds === '3' ? Number(p.bedrooms) >= 3 : Number(p.bedrooms) === Number(filters.beds)
       );
 
-      const rates = config.exchangeRates;
+      const rates = liveRates;
       const projectRate = rates[p.price_currency] || 1;
       const currentRate = rates[currency] || 1;
       
@@ -148,7 +148,7 @@ const Projects: React.FC = () => {
         return roiB - roiA;
       }
 
-      const rates = config.exchangeRates;
+      const rates = liveRates;
       const currentRate = rates[currency] || 1;
       
       const priceA = (a.investor_price / (rates[a.price_currency] || 1)) * currentRate;

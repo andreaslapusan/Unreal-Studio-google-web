@@ -27,7 +27,7 @@ const Home: React.FC = () => {
   // Only show the full-page loader when we have absolutely nothing to render.
   const [loading, setLoading] = useState<boolean>(() => (readSWR<Project[]>('home_projects') ?? []).length === 0);
   
-  const { formatPrice, currency } = useCurrency();
+  const { formatPrice, currency, rates: liveRates } = useCurrency();
   
   // Estado para el modal de video
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -143,7 +143,7 @@ const Home: React.FC = () => {
     const visibleProjects = projects.filter(p => !p.is_hidden);
     if (visibleProjects.length === 0) return "80.000€";
 
-    const rates = config.exchangeRates;
+    const rates = liveRates;
     let minEur = Infinity;
     let minProject = null;
 
@@ -172,7 +172,7 @@ const Home: React.FC = () => {
       const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
       
       // Filtro de Precio (con conversión de divisa)
-      const rates = config.exchangeRates;
+      const rates = liveRates;
       const projectRate = rates[p.price_currency] || 1;
       const currentRate = rates[currency] || 1;
       
@@ -205,7 +205,7 @@ const Home: React.FC = () => {
         return roiB - roiA;
       }
 
-      const rates = config.exchangeRates;
+      const rates = liveRates;
       const currentRate = rates[currency] || 1;
       
       const priceA = (a.investor_price / (rates[a.price_currency] || 1)) * currentRate;
