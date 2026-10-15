@@ -45,7 +45,7 @@ const ServiceContactsPanel: React.FC = () => {
 
   // Categorías DINÁMICAS: solo las que ya existen en contactos guardados (no inventadas).
   const categories = useMemo(
-    () => Array.from(new Set(rows.map((r) => (r.category || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    () => Array.from(new Set<string>(rows.map((r) => (r.category || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
     [rows]
   );
   const filtered = useMemo(
