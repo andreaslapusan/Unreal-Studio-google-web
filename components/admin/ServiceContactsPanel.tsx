@@ -24,12 +24,6 @@ interface Contact {
   created_at?: string;
 }
 
-const CATEGORIES = [
-  "Fontanero", "Electricista", "Herrero", "Carpintero/Muebles", "Tukang/Manitas",
-  "Albañil", "Pintor", "Limpieza", "Piscinas", "Aire acondicionado", "Jardinería",
-  "Vidrio/Aluminio", "Constructor", "Notario/Legal", "Transporte", "Otros",
-];
-
 const emptyForm: Partial<Contact> = { name: "", phone: "", whatsapp: "", category: "", tags: [], area: "", notes: "", rating: undefined, source: "" };
 
 const ServiceContactsPanel: React.FC = () => {
@@ -49,6 +43,11 @@ const ServiceContactsPanel: React.FC = () => {
   };
   useEffect(() => { void load(); }, []);
 
+  // Categorías DINÁMICAS: solo las que ya existen en contactos guardados (no inventadas).
+  const categories = useMemo(
+    () => Array.from(new Set(rows.map((r) => (r.category || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    [rows]
+  );
   const filtered = useMemo(
     () => (catFilter ? rows.filter((r) => (r.category || "") === catFilter) : rows),
     [rows, catFilter]
@@ -107,10 +106,12 @@ const ServiceContactsPanel: React.FC = () => {
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
-        <select value={catFilter} onChange={(e) => setCatFilter(e.target.value)} className="px-4 py-2.5 bg-white rounded-xl font-bold text-sm border border-gray-100 text-primary">
-          <option value="">{t("admin.contacts.allCategories", { defaultValue: "Todas las categorías" })}</option>
-          {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
+        {categories.length > 0 && (
+          <select value={catFilter} onChange={(e) => setCatFilter(e.target.value)} className="px-4 py-2.5 bg-white rounded-xl font-bold text-sm border border-gray-100 text-primary">
+            <option value="">{t("admin.contacts.allCategories", { defaultValue: "Todas las categorías" })}</option>
+            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        )}
         <div className="flex-1 min-w-[200px]">
           <ListControls query={list.query} setQuery={list.setQuery} sort={list.sort} setSort={list.setSort} count={list.result.length} options={["az", "za", "recent"]} />
         </div>
@@ -167,9 +168,10 @@ const ServiceContactsPanel: React.FC = () => {
                 <input value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" /></div>
               <div className="grid grid-cols-2 gap-3">
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.category", { defaultValue: "Categoría" })}</label>
-                  <select value={editing.category || ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold">
-                    <option value="">—</option>{CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select></div>
+                  <input list="sc-categories" value={editing.category || ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} placeholder={t("admin.contacts.categoryPlaceholder", { defaultValue: "Elige o crea una nueva…" })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" />
+                  <datalist id="sc-categories">{categories.map((c) => <option key={c} value={c} />)}</datalist>
+                  <p className="text-[9px] text-gray-400 mt-1">{t("admin.contacts.categoryHint", { defaultValue: "Escribe una nueva para crearla, o elige una existente." })}</p>
+                </div>
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.area", { defaultValue: "Zona" })}</label>
                   <input value={editing.area || ""} onChange={(e) => setEditing({ ...editing, area: e.target.value })} placeholder="Uluwatu, Canggu…" className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" /></div>
               </div>
