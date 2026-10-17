@@ -138,24 +138,24 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
       {lightbox !== null && photos[lightbox] && (
         <div className="fixed inset-0 z-[300] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setLightbox(null)}>
-          <button type="button" aria-label="×" className="absolute top-6 right-6 text-white/80 hover:text-white hover:scale-110 transition"
+          <button type="button" aria-label="×" className="absolute top-6 right-6 z-[310] text-white/80 hover:text-white hover:scale-110 transition"
             onClick={(e) => { e.stopPropagation(); setLightbox(null); }}>
             <span className="material-symbols-outlined text-4xl">close</span>
           </button>
           {photos.length > 1 && (
             <>
-              <button type="button" aria-label="‹" className="absolute left-4 md:left-8 text-white/70 hover:text-white hover:scale-110 transition"
+              <button type="button" aria-label="‹" className="absolute left-2 md:left-6 z-[310] p-2 rounded-full bg-black/25 hover:bg-black/45 text-white/80 hover:text-white hover:scale-110 transition"
                 onClick={(e) => { e.stopPropagation(); setLightbox((lightbox - 1 + photos.length) % photos.length); }}>
                 <span className="material-symbols-outlined text-4xl md:text-5xl">chevron_left</span>
               </button>
-              <button type="button" aria-label="›" className="absolute right-4 md:right-8 text-white/70 hover:text-white hover:scale-110 transition"
+              <button type="button" aria-label="›" className="absolute right-2 md:right-6 z-[310] p-2 rounded-full bg-black/25 hover:bg-black/45 text-white/80 hover:text-white hover:scale-110 transition"
                 onClick={(e) => { e.stopPropagation(); setLightbox((lightbox + 1) % photos.length); }}>
                 <span className="material-symbols-outlined text-4xl md:text-5xl">chevron_right</span>
               </button>
             </>
           )}
           <img src={thumbSrc(getImageUrl(photos[lightbox]), 1600)} onError={imgFallback(getImageUrl(photos[lightbox]))} alt="" onClick={(e) => e.stopPropagation()}
-            decoding="async" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200" />
+            decoding="async" className="relative z-0 max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200" />
           <span className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-xs font-bold tracking-widest bg-white/10 px-3 py-1.5 rounded-full">
             {lightbox + 1} / {photos.length}
           </span>
