@@ -681,7 +681,8 @@
       "complexLandM2": "m² totali ai complexului (teren)",
       "videoUrl": "Video proiect (link)",
       "showIfFilled": "Apare pe pagină doar dacă îl completezi.",
-      "locationPh": "Scrie locația…"
+      "locationPh": "Scrie locația…",
+      "secUnits": "Plan / Unități"
     },
     "blogTab": {
       "title": "Articole Blog",
@@ -1665,6 +1666,26 @@
       "createdAt": "Creat",
       "errorCreate": "Nu s-a putut crea linkul.",
       "errorPublish": "Nu s-a putut publica."
+    },
+    "siteplan": {
+      "uploadPlan": "Încarcă planul",
+      "changePlan": "Schimbă planul",
+      "addUnit": "Adaugă unitate",
+      "placingOn": "Atinge planul pentru a adăuga",
+      "available": "Disponibilă",
+      "sold": "Vândută",
+      "reserved": "Rezervată",
+      "unit": "Unitate",
+      "status": "Status",
+      "label": "Nr. / Etichetă",
+      "note": "Notă (opțional)",
+      "notePh": "ex. preț, proprietar, tip…",
+      "tip": "Dă clic pe un pin pentru a schimba statusul; trage-l pentru a-l muta.",
+      "saved": "Salvat ✓",
+      "saveError": "Eroare la salvare",
+      "saveFirst": "Salvează mai întâi proiectul pentru a adăuga planul și unitățile.",
+      "noPlan": "Încarcă planul proiectului pentru a marca unitățile.",
+      "unsaved": "Modificări nesalvate"
     }
   },
   "footer": {

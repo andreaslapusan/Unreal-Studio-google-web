@@ -28,6 +28,7 @@ import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import IntakeLinksPanel from '../components/admin/IntakeLinksPanel';
 import ServiceContactsPanel from '../components/admin/ServiceContactsPanel';
+import SitePlanEditor from '../components/admin/SitePlanEditor';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
 import { SOCIAL_NETWORKS } from '../lib/socials';
@@ -3121,6 +3122,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </div>
     </div>
   </div>
+                </div>
+               </details>
+
+               {/* ===== D2. PLANO / UNIDADES ===== */}
+               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
+                  <span className="text-lg font-serif text-primary">{t('admin.props.secUnits', { defaultValue: 'Plano / Unidades' })}</span>
+                  <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1">
+                  <SitePlanEditor projectId={currentProject.id} projectName={currentProject.name} />
                 </div>
                </details>
 

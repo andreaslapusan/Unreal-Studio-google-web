@@ -813,7 +813,8 @@
       "complexLandM2": "Total luas kompleks (m²)",
       "videoUrl": "Video proyek (tautan)",
       "showIfFilled": "Ditampilkan di halaman hanya jika diisi.",
-      "locationPh": "Ketik lokasi…"
+      "locationPh": "Ketik lokasi…",
+      "secUnits": "Denah / Unit"
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -1770,6 +1771,26 @@
       "createdAt": "Dibuat",
       "errorCreate": "Gagal membuat tautan.",
       "errorPublish": "Gagal mempublikasikan."
+    },
+    "siteplan": {
+      "uploadPlan": "Unggah denah",
+      "changePlan": "Ganti denah",
+      "addUnit": "Tambah unit",
+      "placingOn": "Ketuk denah untuk menambah",
+      "available": "Tersedia",
+      "sold": "Terjual",
+      "reserved": "Dipesan",
+      "unit": "Unit",
+      "status": "Status",
+      "label": "No. / Label",
+      "note": "Catatan (opsional)",
+      "notePh": "mis. harga, pemilik, tipe…",
+      "tip": "Klik pin untuk mengubah status; seret untuk memindahkan.",
+      "saved": "Tersimpan ✓",
+      "saveError": "Gagal menyimpan",
+      "saveFirst": "Simpan proyek dulu untuk menambahkan denah dan unitnya.",
+      "noPlan": "Unggah denah proyek untuk mulai menandai unit.",
+      "unsaved": "Perubahan belum disimpan"
     }
   },
   "footer": {

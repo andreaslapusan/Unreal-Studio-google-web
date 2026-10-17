@@ -681,7 +681,8 @@
       "complexLandM2": "m² totales del complejo (terreno)",
       "videoUrl": "Vídeo del proyecto (enlace)",
       "showIfFilled": "Se muestra en la ficha solo si lo rellenas.",
-      "locationPh": "Escribe la ubicación…"
+      "locationPh": "Escribe la ubicación…",
+      "secUnits": "Plano / Unidades"
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -1665,6 +1666,26 @@
       "createdAt": "Creado",
       "errorCreate": "No se pudo crear el enlace.",
       "errorPublish": "No se pudo publicar."
+    },
+    "siteplan": {
+      "uploadPlan": "Subir plano",
+      "changePlan": "Cambiar plano",
+      "addUnit": "Añadir unidad",
+      "placingOn": "Toca el plano para añadir",
+      "available": "Disponible",
+      "sold": "Vendida",
+      "reserved": "Reservada",
+      "unit": "Unidad",
+      "status": "Estado",
+      "label": "Nº / Etiqueta",
+      "note": "Nota (opcional)",
+      "notePh": "p.ej. precio, titular, tipología…",
+      "tip": "Clica un pin para cambiar estado; arrástralo para moverlo.",
+      "saved": "Guardado ✓",
+      "saveError": "Error al guardar",
+      "saveFirst": "Guarda primero el proyecto para poder añadir el plano y sus unidades.",
+      "noPlan": "Sube el plano del proyecto para empezar a marcar unidades.",
+      "unsaved": "Cambios sin guardar"
     }
   },
   "footer": {

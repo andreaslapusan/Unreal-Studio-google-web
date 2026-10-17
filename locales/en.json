@@ -681,7 +681,8 @@
       "complexLandM2": "Total complex land (m²)",
       "videoUrl": "Project video (link)",
       "showIfFilled": "Shown on the listing only if you fill it in.",
-      "locationPh": "Type the location…"
+      "locationPh": "Type the location…",
+      "secUnits": "Site plan / Units"
     },
     "blogTab": {
       "title": "Blog Articles",
@@ -1665,6 +1666,26 @@
       "createdAt": "Created",
       "errorCreate": "Could not create the link.",
       "errorPublish": "Could not publish."
+    },
+    "siteplan": {
+      "uploadPlan": "Upload plan",
+      "changePlan": "Change plan",
+      "addUnit": "Add unit",
+      "placingOn": "Tap the plan to add",
+      "available": "Available",
+      "sold": "Sold",
+      "reserved": "Reserved",
+      "unit": "Unit",
+      "status": "Status",
+      "label": "No. / Label",
+      "note": "Note (optional)",
+      "notePh": "e.g. price, owner, type…",
+      "tip": "Click a pin to change status; drag it to move.",
+      "saved": "Saved ✓",
+      "saveError": "Save error",
+      "saveFirst": "Save the project first to add the plan and its units.",
+      "noPlan": "Upload the project plan to start marking units.",
+      "unsaved": "Unsaved changes"
     }
   },
   "footer": {
