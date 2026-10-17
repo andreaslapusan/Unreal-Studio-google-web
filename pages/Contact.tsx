@@ -46,6 +46,8 @@ const Contact: React.FC = () => {
     const text =
       `Hola, soy ${formData.name}. ` +
       `Me interesa invertir en Bali con Unreal Studio.\n` +
+      (formData.email ? `Email: ${formData.email}\n` : '') +
+      (formData.phone ? `Teléfono: ${formData.phone}\n` : '') +
       `Motivo: ${formData.reason}\n` +
       `Presupuesto: ${formData.budget}\n` +
       `Plazo: ${formData.timeframe}` +
