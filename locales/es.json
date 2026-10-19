@@ -1335,7 +1335,11 @@
       "adminWelcomeConfirm": "¿Enviar email de bienvenida a {{email}}? Se le generará una contraseña temporal nueva.",
       "adminProvisionError": "No se pudo preparar el acceso: {{error}}",
       "adminWelcomeMailFail": "Acceso listo (contraseña temporal: {{temp}}) pero el email no salió. Pásasela tú.",
-      "adminWelcomeSent": "Bienvenida enviada a {{email}}. Contraseña temporal: {{temp}}"
+      "adminWelcomeSent": "Bienvenida enviada a {{email}}. Contraseña temporal: {{temp}}",
+      "reportsLabel": "Reportes de obra",
+      "reportsActive": "Activos",
+      "reportsPaused": "Pausados",
+      "reportsHint": "Si los pausas, deja de recibir el email automático de reportes y se le oculta el botón de ver reporte en su portal."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

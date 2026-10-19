@@ -861,7 +861,7 @@ const ClientDashboard: React.FC = () => {
                                   <span className="material-symbols-outlined text-sm">download</span> {t('admin.clientDash.btnBrochure')}
                               </a>
                           )}
-                          {proj.construction_update_url && feat('construction') && (
+                          {proj.construction_update_url && feat('construction') && proj.reports_enabled !== false && (
                               <a href={proxied(proj.construction_update_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition">
                                   <span className="material-symbols-outlined text-sm">construction</span> {t('admin.clientDash.btnConstructionReport')}
                                   {proj.construction_update_date && <span className="text-[8px] opacity-70 ml-1">({formatDate(proj.construction_update_date)})</span>}

@@ -1335,7 +1335,11 @@
       "adminWelcomeConfirm": "Send a welcome email to {{email}}? A new temporary password will be generated.",
       "adminProvisionError": "Could not prepare access: {{error}}",
       "adminWelcomeMailFail": "Access ready (temp password: {{temp}}) but the email failed. Please share it yourself.",
-      "adminWelcomeSent": "Welcome sent to {{email}}. Temporary password: {{temp}}"
+      "adminWelcomeSent": "Welcome sent to {{email}}. Temporary password: {{temp}}",
+      "reportsLabel": "Construction reports",
+      "reportsActive": "Active",
+      "reportsPaused": "Paused",
+      "reportsHint": "If paused, they stop receiving the automatic report email and the view-report button is hidden in their portal."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

@@ -1335,7 +1335,11 @@
       "adminWelcomeConfirm": "Trimiți un email de bun venit la {{email}}? Se va genera o parolă temporară nouă.",
       "adminProvisionError": "Nu s-a putut pregăti accesul: {{error}}",
       "adminWelcomeMailFail": "Acces pregătit (parolă temporară: {{temp}}) dar emailul nu a plecat. Transmite-o tu.",
-      "adminWelcomeSent": "Bun venit trimis la {{email}}. Parolă temporară: {{temp}}"
+      "adminWelcomeSent": "Bun venit trimis la {{email}}. Parolă temporară: {{temp}}",
+      "reportsLabel": "Rapoarte de construcție",
+      "reportsActive": "Active",
+      "reportsPaused": "Pauzate",
+      "reportsHint": "Dacă le pui pe pauză, nu mai primește emailul automat de rapoarte și butonul de vizualizare a raportului dispare din portalul său."
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",

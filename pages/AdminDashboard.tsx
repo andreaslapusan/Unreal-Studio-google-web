@@ -1770,7 +1770,8 @@ const handleEditAssignment = async (e: React.FormEvent) => {
             p_drive: (editingAssignment.assignment as any).drive_folder_url ?? '',
             p_investment_type: (editingAssignment.assignment as any).investment_type ?? '',
             p_pool_total: (editingAssignment.assignment as any).pool_total_amount ?? null,
-            p_participants: (editingAssignment.assignment as any).holder_participants ?? null
+            p_participants: (editingAssignment.assignment as any).holder_participants ?? null,
+            p_reports_enabled: (editingAssignment.assignment as any).reports_enabled !== false
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
@@ -3621,6 +3622,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   </div>
                 )}
                 <ParticipantsPicker holders={(clients.find((c) => c.id === editingAssignment.clientId)?.holders) || []} value={(editingAssignment.assignment as any).holder_participants} onChange={(v) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, holder_participants: v} as any})} t={t} />
+                <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4">
+                    <div className="pr-4">
+                        <p className="text-sm font-bold text-primary">{t('admin.dash.reportsLabel', { defaultValue: 'Reportes de obra' })}: <span className={(editingAssignment.assignment as any).reports_enabled !== false ? 'text-emerald-600' : 'text-gray-400'}>{(editingAssignment.assignment as any).reports_enabled !== false ? t('admin.dash.reportsActive', { defaultValue: 'Activos' }) : t('admin.dash.reportsPaused', { defaultValue: 'Pausados' })}</span></p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">{t('admin.dash.reportsHint', { defaultValue: 'Si los pausas, deja de recibir el email automático de reportes y se le oculta el botón de ver reporte en su portal.' })}</p>
+                    </div>
+                    <button type="button" aria-label="toggle reportes" onClick={() => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, reports_enabled: (editingAssignment.assignment as any).reports_enabled === false} as any})}
+                        className={`relative shrink-0 w-14 h-8 rounded-full transition ${(editingAssignment.assignment as any).reports_enabled !== false ? 'bg-emerald-500' : 'bg-gray-300'}`}>
+                        <span className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${(editingAssignment.assignment as any).reports_enabled !== false ? 'translate-x-6' : ''}`} />
+                    </button>
+                </div>
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
                     <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.dash.close')}</button>
