@@ -1341,6 +1341,7 @@
       "welcomeConfirm": "Kirim email selamat datang ke {{email}}?",
       "welcomeSent": "Email selamat datang telah dikirim ke {{email}}.",
       "welcomeNoEmail": "Klien ini tidak memiliki email. Tambahkan terlebih dahulu.",
+      "inactiveNoEmail": "Klien ini tidak aktif. Tandai sebagai Aktif terlebih dahulu untuk dapat mengirim email.",
       "welcomeError": "Gagal mengirim selamat datang: {{error}}",
       "mailCenter": "Kirim surat",
       "mailCenterTitle": "Kirim surat ke {{name}}",

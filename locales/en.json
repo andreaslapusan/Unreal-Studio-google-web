@@ -1236,6 +1236,7 @@
       "welcomeConfirm": "Send welcome email to {{email}}?",
       "welcomeSent": "Welcome email sent to {{email}}.",
       "welcomeNoEmail": "This client has no email. Add one first.",
+      "inactiveNoEmail": "This client is inactive. Mark them as Active first to send emails.",
       "welcomeError": "Failed to send welcome: {{error}}",
       "mailCenter": "Send mail",
       "mailCenterTitle": "Send mail to {{name}}",

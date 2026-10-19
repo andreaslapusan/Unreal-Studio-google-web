@@ -1415,7 +1415,16 @@ const sendWelcomeCore = async (args: { name: string; email: string; emails?: str
   return { ok: true };
 };
 
+// Cliente no activo (inactivo/draft) → no se le manda ningún correo: primero marcarlo como Activo.
+const blockIfNotActive = (client: Client) => {
+  const st = (client as any).status || (client.is_active ? 'active' : 'inactive');
+  if (st === 'active') return false;
+  alert(t('admin.dash.inactiveNoEmail'));
+  return true;
+};
+
 const sendWelcome = async (client: Client) => {
+  if (blockIfNotActive(client)) return;
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   const userId = getAdminUserId();
@@ -1431,6 +1440,7 @@ const sendWelcome = async (client: Client) => {
 
 // Recuperación de contraseña manual (te llaman "perdí la clave" → se la mandas tú).
 const sendResetEmail = async (client: Client) => {
+  if (blockIfNotActive(client)) return;
   // Manda la recuperación a TODOS los titulares del perfil (cada uno tiene su propio
   // login), no solo al primero. emailsOf reúne email principal + extra_emails + holders.
   const emails = emailsOf(client);
@@ -1485,6 +1495,7 @@ const sendPreviewedEmail = async () => {
 };
 
 const sendReminderEmail = async (client: Client) => {
+  if (blockIfNotActive(client)) return;
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   const userId = getAdminUserId();
@@ -1591,6 +1602,7 @@ const sendReportForProjects = async (client: Client, cps: any[], allowed?: strin
 };
 
 const sendReportEmail = async (client: Client) => {
+  if (blockIfNotActive(client)) return;
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   // FIX raíz: la lista de destinatarios sale de holder_participants / holders, que
@@ -1623,6 +1635,7 @@ const sendReportEmail = async (client: Client) => {
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
 // concepto, fecha límite, importe, recibido, balance + totales), en su idioma.
 const sendCalendarEmail = async (client: Client) => {
+  if (blockIfNotActive(client)) return;
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   const userId = getAdminUserId();

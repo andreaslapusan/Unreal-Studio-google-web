@@ -1236,6 +1236,7 @@
       "welcomeConfirm": "Trimite mesajul de bun venit la {{email}}?",
       "welcomeSent": "Mesajul de bun venit a fost trimis la {{email}}.",
       "welcomeNoEmail": "Acest client nu are adresa de email. Adauga-i una mai intai.",
+      "inactiveNoEmail": "Acest client este inactiv. Marchează-l mai întâi ca Activ pentru a-i putea trimite emailuri.",
       "welcomeError": "Nu s-a putut trimite mesajul de bun venit: {{error}}",
       "mailCenter": "Trimite email",
       "mailCenterTitle": "Trimite email către {{name}}",
