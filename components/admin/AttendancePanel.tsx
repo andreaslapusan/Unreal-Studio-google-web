@@ -46,6 +46,9 @@ const AttendancePanel: React.FC = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  // Las URLs firmadas caducan a la hora: re-firmar cada 50 min si el panel sigue abierto
+  const [tick, setTick] = useState(0);
+  useEffect(() => { const id = setInterval(() => setTick((x) => x + 1), 50 * 60 * 1000); return () => clearInterval(id); }, []);
 
   useEffect(() => {
     void (async () => {
@@ -69,7 +72,7 @@ const AttendancePanel: React.FC = () => {
       } else setPhotoUrls({});
       setLoading(false);
     })();
-  }, [from, to]);
+  }, [from, to, tick]);
 
   const schedule = useMemo(() => {
     const m: Record<string, number | null> = {};
