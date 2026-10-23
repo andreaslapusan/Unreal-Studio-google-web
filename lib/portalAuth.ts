@@ -7,7 +7,7 @@
  *
  *   andreas@unrealstudiobali.com  +  cliente  →  andreas+ust-cliente@unrealstudiobali.com
  *
- * El email REAL se guarda en user_metadata.real_email; las funciones/políticas
+ * El email REAL se guarda en app_metadata.real_email (solo servidor); las funciones/políticas
  * de la BD usan app_email() (real_email o, si no hay, auth.email()), así que la
  * resolución de datos (cliente, empleado, admin…) sigue funcionando.
  *
@@ -27,10 +27,11 @@ export function synthEmail(portal: Portal, email: string): string {
   return `${real.slice(0, at)}+ust-${portal}@${real.slice(at + 1)}`;
 }
 
-/** Email real de la sesión: real_email del metadata o, si no, el email auth. */
+/** Email real de la sesión: app_metadata.real_email o, si no, el email auth. */
 export function realEmailOf(user: User | null | undefined): string {
   if (!user) return '';
-  const meta = (user.user_metadata || {}) as Record<string, unknown>;
+  // app_metadata solo lo escribe el servidor; user_metadata lo puede cambiar el propio usuario.
+  const meta = (user.app_metadata || {}) as Record<string, unknown>;
   const real = typeof meta.real_email === 'string' ? meta.real_email : '';
   return (real || user.email || '').toLowerCase();
 }
