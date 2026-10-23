@@ -20,18 +20,15 @@ interface PageLoaderProps {
 const PageLoader: React.FC<PageLoaderProps> = ({ label }) => {
   const { t } = useTranslation();
   return (
-    <div className="min-h-screen bg-almond flex flex-col items-center justify-center gap-6 px-6"
+    <div className="min-h-screen bg-primary flex flex-col items-center justify-center gap-6 px-6"
       role="status" aria-live="polite" aria-busy="true">
-      <span className="inline-flex items-center gap-2.5 text-[11px] font-black uppercase tracking-[0.22em] text-primary/40">
-        <span className="h-px w-8 bg-primary/30"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/30"></span>
-      </span>
-      <span className="font-serif text-3xl md:text-4xl text-primary tracking-tight us-loader-breathe select-none">
+      <span className="font-logo text-4xl md:text-5xl text-almond us-loader-breathe select-none">
         Unreal Studio
       </span>
-      <div className="relative h-px w-40 bg-primary/15 overflow-hidden rounded-full" aria-hidden="true">
-        <span className="absolute inset-y-0 left-0 w-1/3 bg-primary us-loader-bar"></span>
+      <div className="relative h-px w-32 bg-almond/15 overflow-hidden" aria-hidden="true">
+        <span className="absolute inset-y-0 left-0 w-1/3 bg-clay-light us-loader-bar"></span>
       </div>
-      <p className="text-primary/40 font-bold text-[10px] uppercase tracking-[0.2em]">{label || t('common.loading')}</p>
+      <p className="us-label text-almond/45">{label || t('common.loading')}</p>
     </div>
   );
 };

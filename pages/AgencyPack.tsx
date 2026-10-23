@@ -131,13 +131,11 @@ const AgencyPack: React.FC = () => {
     document.title = t('agencyPack.pageTitle');
     if (!slug) return;
     (async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('slug', slug)
-        .maybeSingle();
+      // Datos internos del pack: solo staff o agencia con sesión (RPC agency_pack_get)
+      const { data: rows, error } = await supabase.rpc('agency_pack_get', { p_slug: slug });
+      const data = Array.isArray(rows) ? rows[0] ?? null : null;
       if (error) {
-        setError(error.message);
+        setError(t('agencyPack.loginRequired'));
       } else if (!data) {
         setError(t('agencyPack.notFound'));
       } else {

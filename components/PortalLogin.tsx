@@ -39,7 +39,7 @@ const PORTAL_LABEL: Record<PortalKey, string> = {
 // tenía el radio/sombra cálidos; loading y chooser usaban rounded-3xl + shadow-2xl
 // genéricos → inconsistencia visible. Un solo sitio = patrón, no casos sueltos.
 const CARD_CLASS =
-  'bg-white w-full max-w-md rounded-[1.75rem] border border-primary/10 shadow-[0_24px_64px_-28px_rgba(63,35,5,0.4)]';
+  'w-full max-w-md';
 
 const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, dark }) => {
   const { t, i18n } = useTranslation();
@@ -290,8 +290,8 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     return (
       <PortalShell dark={dark}>
         <div className={`${CARD_CLASS} p-10 flex flex-col items-center gap-5`}>
-          <span className="w-10 h-10 border-[3px] border-primary/15 border-t-primary rounded-full animate-spin" />
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary/45">{t('auth.loadingSession', { defaultValue: 'Iniciando sesión…' })}</p>
+          <span className="relative block h-px w-32 bg-primary/15 overflow-hidden"><span className="absolute inset-y-0 left-0 w-1/3 bg-clay us-loader-bar" /></span>
+          <p className="us-label text-primary/45">{t('auth.loadingSession', { defaultValue: 'Iniciando sesión…' })}</p>
         </div>
       </PortalShell>
     );
@@ -303,21 +303,19 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       <PortalShell dark={dark}>
         <div className={`${CARD_CLASS} p-8 md:p-11`}>
           <div className="mb-8">
-            <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40 mb-3">
-              <span className="h-px w-7 bg-primary/30" />{t('auth.subtitle')}
-            </span>
-            <h1 className="text-[2rem] md:text-4xl font-serif text-primary tracking-[-0.01em] leading-none mb-2">{t('auth.choosePortalTitle')}</h1>
-            <p className="text-sm text-primary/50 font-light">{t('auth.choosePortalSub')}</p>
+            <p className="us-label text-clay mb-4">{t('auth.subtitle')}</p>
+            <h1 className="font-display uppercase text-[2.2rem] md:text-5xl text-primary leading-[0.95] mb-3">{t('auth.choosePortalTitle')}</h1>
+            <p className="text-[15px] text-primary/55">{t('auth.choosePortalSub')}</p>
           </div>
           <div className="space-y-3">
             {chooser.map((p) => (
               <button
                 key={p}
                 onClick={() => navigate(PORTAL_DASH[p])}
-                className="group w-full bg-primary text-white py-4 px-5 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition flex items-center justify-between gap-2"
+                className="group us-btn w-full !justify-between"
               >
                 {t(`auth.portal_${p}`)}
-                <span className="material-symbols-outlined text-base text-white/70 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white">arrow_forward</span>
+                <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             ))}
           </div>
@@ -330,18 +328,16 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     <PortalShell dark={dark}>
       <div className={`${CARD_CLASS} p-8 md:p-11`}>
         <div className="mb-8">
-          <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40 mb-3">
-            <span className="h-px w-7 bg-primary/30" />{t('auth.subtitle')}
-          </span>
-          <h1 className="text-[2rem] md:text-4xl font-serif text-primary tracking-[-0.01em] leading-none">{t(`auth.portal_${portal}`)}</h1>
+          <p className="us-label text-clay mb-4">{t('auth.subtitle')}</p>
+          <h1 className="font-display uppercase text-[2.2rem] md:text-5xl text-primary leading-[0.95]">{t(`auth.portal_${portal}`)}</h1>
         </div>
 
-        <form onSubmit={handlePassword} className="space-y-5">
-          {error && <div className="bg-red-50 text-red-600 text-sm font-bold p-4 rounded-xl text-center">{error}</div>}
-          {info && <div className="bg-green-50 text-green-700 text-sm font-bold p-4 rounded-xl text-center">{info}</div>}
+        <form onSubmit={handlePassword} className="space-y-7">
+          {error && <div role="alert" className="border border-red-700/25 bg-red-50/70 text-red-800 text-sm font-medium p-4">{error}</div>}
+          {info && <div role="status" className="border border-emerald-700/25 bg-emerald-50/70 text-emerald-800 text-sm font-medium p-4">{info}</div>}
 
           <div>
-            <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">
+            <label className="block us-label text-primary/50 mb-1">
               {t('auth.email')}
             </label>
             <input
@@ -354,12 +350,12 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('fix.contact.emailPlaceholder')}
-              className="w-full px-4 sm:px-5 py-4 bg-almond/40 rounded-2xl font-bold text-sm sm:text-base border border-primary/10 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 focus:outline-none transition"
+              className="w-full px-0 py-3 bg-transparent rounded-none font-medium text-base border-0 border-b border-primary/25 focus:border-clay focus:ring-0 focus:outline-none transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">
+            <label className="block us-label text-primary/50 mb-1">
               {t('auth.password')}
             </label>
             <div className="relative">
@@ -371,13 +367,13 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-4 pr-14 bg-almond/40 rounded-2xl font-bold border border-primary/10 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 focus:outline-none transition"
+                className="w-full px-0 py-3 pr-12 bg-transparent rounded-none font-medium text-base border-0 border-b border-primary/25 focus:border-clay focus:ring-0 focus:outline-none transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary transition p-1"
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary transition p-2"
               >
                 <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
               </button>
@@ -386,7 +382,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
 
           <div className="flex items-center justify-between text-xs">
             <label className="flex items-center gap-2 cursor-pointer text-primary/60">
-              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="rounded border-primary/30 text-primary focus:ring-primary/20" />
+              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="rounded-[2px] border-primary/30 text-primary focus:ring-clay/30" />
               {t('auth.remember')}
             </label>
             <button type="button" onClick={handleRecover} className="text-primary/60 hover:text-primary underline">
@@ -397,15 +393,15 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
           <button
             type="submit"
             disabled={busy}
-            className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="us-btn w-full disabled:opacity-50"
           >
-            {busy ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : null}
+            {busy ? <span className="w-4 h-4 border-2 border-almond/30 border-t-almond rounded-full animate-spin" /> : null}
             {t('auth.signin')}
           </button>
 
           <div className="flex items-center gap-3 my-2">
             <span className="flex-1 h-px bg-primary/10" />
-            <span className="text-[10px] text-primary/40 uppercase tracking-widest">{t('auth.or')}</span>
+            <span className="us-label text-primary/40">{t('auth.or')}</span>
             <span className="flex-1 h-px bg-primary/10" />
           </div>
 
@@ -413,7 +409,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
             type="button"
             onClick={handleMagicLink}
             disabled={busy}
-            className="w-full bg-white border border-primary/20 text-primary py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/5 transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="us-btn us-btn-ghost text-primary w-full hover:!bg-primary hover:!text-almond disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-sm">mail</span>
             {t('auth.magicLink')}

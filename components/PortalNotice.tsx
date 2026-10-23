@@ -25,21 +25,19 @@ interface PortalNoticeProps {
 
 const PortalNotice: React.FC<PortalNoticeProps> = ({ title, body, icon = 'info', actionLabel, to, onAction }) => {
   const actionClass =
-    'group inline-flex items-center gap-2 bg-primary text-white px-7 py-3.5 rounded-full font-black uppercase tracking-widest text-xs shadow-lg hover:bg-black hover:gap-3 transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-almond mt-2';
+    'group us-btn';
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-almond px-6 text-center relative overflow-hidden">
+    <div className="min-h-screen flex flex-col justify-center bg-almond px-5 md:px-12 relative overflow-hidden">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.05]">
         <div className="absolute top-0 left-1/4 w-px h-full bg-primary" />
         <div className="absolute top-0 left-2/4 w-px h-full bg-primary" />
         <div className="absolute top-0 left-3/4 w-px h-full bg-primary" />
       </div>
-      <div className="relative z-10 flex flex-col items-center motion-safe:animate-[fadeInUp_0.7s_ease-out] max-w-lg">
-        <span className="inline-flex items-center gap-2.5 text-[11px] font-black uppercase tracking-[0.3em] text-primary/45 mb-6">
-          <span className="h-px w-9 bg-primary/35" />Unreal Studio · Bali<span className="h-px w-9 bg-primary/35" />
-        </span>
-        <span className="material-symbols-outlined text-primary/25 text-5xl mb-4" aria-hidden="true">{icon}</span>
-        <h1 className="text-3xl md:text-5xl font-serif text-primary tracking-tight mb-4">{title}</h1>
-        {body && <p className="text-primary/55 font-light leading-relaxed mb-8">{body}</p>}
+      <div className="relative z-10 flex flex-col items-start max-w-2xl w-full mx-auto motion-safe:animate-[fadeInUp_0.7s_cubic-bezier(0.23,1,0.32,1)]">
+        <span className="font-logo text-2xl text-primary/60 mb-10">Unreal Studio</span>
+        <span className="material-symbols-outlined text-clay text-4xl mb-5" aria-hidden="true">{icon}</span>
+        <h1 className="font-display uppercase text-[2.2rem] leading-[0.95] md:text-6xl text-primary mb-5">{title}</h1>
+        {body && <p className="text-primary/60 leading-relaxed mb-10 max-w-lg">{body}</p>}
         {actionLabel && to && (
           <Link to={to} className={actionClass}>
             <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:-translate-x-0.5">arrow_back</span>{actionLabel}

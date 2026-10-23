@@ -93,8 +93,8 @@ const AdminSidebar: React.FC = () => {
   const itemClass = (active: boolean) =>
     `relative flex items-center gap-3 px-5 py-2.5 text-sm font-medium transition-colors ${
       active
-        ? 'bg-white/10 text-white before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-amber-400'
-        : 'text-white/55 hover:text-white hover:bg-white/5'
+        ? 'bg-almond/[0.07] text-almond before:absolute before:left-0 before:top-2 before:bottom-2 before:w-px before:bg-clay-light [&_.material-symbols-outlined]:text-clay-light'
+        : 'text-almond/55 hover:text-almond hover:bg-almond/[0.04]'
     }`;
 
   const renderItem = (it: NavItem, active: boolean) => (
@@ -117,10 +117,10 @@ const AdminSidebar: React.FC = () => {
   );
 
   return (
-    <aside className="hidden lg:flex flex-col w-60 shrink-0 bg-primary text-white h-screen sticky top-0 self-start overflow-y-auto">
-      <Link to="/admin?view=dashboard" className="px-5 py-6 border-b border-white/10 block">
-        <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="font-serif text-xl tracking-tight text-white" />
-        <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{t('admin.nav.panel', 'Panel de administración')}</span>
+    <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-primary text-almond h-screen sticky top-0 self-start overflow-y-auto">
+      <Link to="/admin?view=dashboard" className="px-5 py-7 border-b border-almond/10 block">
+        <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="text-[1.7rem] leading-none text-almond" />
+        <span className="block us-label text-almond/40 mt-2">{t('admin.nav.panel', 'Panel de administración')}</span>
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-3">

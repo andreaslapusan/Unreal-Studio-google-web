@@ -12,32 +12,31 @@ const Privacy: React.FC = () => {
   const rightsList = t('privacy.rightsList', { returnObjects: true }) as string[];
 
   return (
-    <div className="bg-almond min-h-screen pt-16 pb-24 px-6 md:px-12 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto bg-white rounded-[3rem] p-8 md:p-16 lg:p-20 shadow-xl text-left border border-primary/5">
-        <span className="inline-flex items-center gap-2.5 text-[11px] uppercase tracking-[0.22em] text-primary/40 font-black mb-4"><span className="h-px w-7 bg-primary/30" />Unreal Studio · Bali</span>
-        <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-[-0.02em] leading-[1.05] mb-12">{t('privacy.title')}</h1>
+    <div className="bg-almond min-h-screen pt-10 md:pt-16 pb-24 md:pb-32 px-5 md:px-12">
+      <div className="max-w-[1440px] mx-auto text-left">
+                <h1 className="font-display uppercase text-[2.4rem] leading-[0.95] sm:text-6xl md:text-7xl text-primary mb-12 md:mb-20 max-w-5xl us-rise">{t('privacy.title')}</h1>
 
-        <div className="space-y-12 text-primary/80 leading-relaxed font-light text-base md:text-lg">
+        <div className="space-y-12 text-primary/75 leading-relaxed text-base md:text-lg max-w-[68ch] lg:ml-[33%]">
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.whoWeAreH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.whoWeAreH')}</h2>
             <p>
               {t('privacy.whoWeArePre')} <a href="https://unrealstudiobali.com" className="underline font-medium">https://unrealstudiobali.com</a>{t('privacy.whoWeArePost')}
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.controllerH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.controllerH')}</h2>
             <p>{t('privacy.controllerP')}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.dataH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.dataH')}</h2>
             <p>{t('privacy.dataP1')}</p>
             <p className="mt-4">{t('privacy.dataP2')}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.purposeH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.purposeH')}</h2>
             <p>{t('privacy.purposeP')}</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               {purposeList.map((item, i) => <li key={i}>{item}</li>)}
@@ -45,7 +44,7 @@ const Privacy: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.collectH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.collectH')}</h2>
             <p>{t('privacy.collectP1')}</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               {collectList1.map((item, i) => <li key={i}>{item}</li>)}
@@ -57,7 +56,7 @@ const Privacy: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.legitimacyH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.legitimacyH')}</h2>
             <p>{t('privacy.legitimacyP')}</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
               {legitimacyList.map((item, i) => <li key={i}>{item}</li>)}
@@ -65,7 +64,7 @@ const Privacy: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.cookiesH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.cookiesH')}</h2>
             <p>{t('privacy.cookiesP1')}</p>
             <p className="mt-4">{t('privacy.cookiesP2')}</p>
             <p className="mt-4">{t('privacy.cookiesP3')}</p>
@@ -73,26 +72,26 @@ const Privacy: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.embeddedH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.embeddedH')}</h2>
             <p>{t('privacy.embeddedP1')}</p>
             <p className="mt-4">{t('privacy.embeddedP2')}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.shareH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.shareH')}</h2>
             <p>{t('privacy.shareP1')}</p>
             <p className="mt-4">{t('privacy.shareP2')}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.retentionH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.retentionH')}</h2>
             <p>{t('privacy.retentionP1')}</p>
             <p className="mt-4">{t('privacy.retentionP2')}</p>
             <p className="mt-4">{t('privacy.retentionP3')}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.rightsH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.rightsH')}</h2>
             <p>{t('privacy.rightsP1')}</p>
             <p className="mt-4">{t('privacy.rightsP2')}</p>
             <ul className="list-disc ml-6 mt-4 space-y-2">
@@ -102,25 +101,25 @@ const Privacy: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.complaintH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.complaintH')}</h2>
             <p>{t('privacy.complaintP1')}</p>
             <p className="mt-4">{t('privacy.complaintP2')}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.securityH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.securityH')}</h2>
             <p>{t('privacy.securityP1')}</p>
             <p className="mt-4">{t('privacy.securityP2')}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.changesH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.changesH')}</h2>
             <p>{t('privacy.changesP1')}</p>
             <p className="mt-4 italic">{t('privacy.changesP2')}</p>
           </section>
 
           <section className="pt-10 border-t border-primary/10">
-            <h2 className="text-xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('privacy.contactH')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('privacy.contactH')}</h2>
             <p>{t('privacy.contactP')}</p>
             <div className="mt-4 p-6 bg-almond/50 rounded-2xl border border-primary/10">
               <p className="font-bold text-primary">{t('privacy.contactName')}</p>

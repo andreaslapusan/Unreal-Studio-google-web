@@ -3,7 +3,7 @@ import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
-import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
+import { DEFAULT_CONFIG, WHATSAPP_URL, PUBLIC_PROJECT_COLS } from '../constants';
 import { Project, AppConfig, BlogPost } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
@@ -15,6 +15,9 @@ import { statusDotClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
 import PageLoader from '../components/PageLoader';
 import Reveal from '../components/Reveal';
+import WordReveal from '../components/WordReveal';
+import ProjectCard from '../components/ProjectCard';
+import FilterField, { filterControl, filterInput } from '../components/FilterField';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -75,7 +78,7 @@ const Home: React.FC = () => {
 
         const { data: projectsData } = await supabase
             .from('projects')
-            .select('*')
+            .select(PUBLIC_PROJECT_COLS)
             .order('sort_order', { ascending: true });
 
         if (projectsData) {
@@ -246,542 +249,374 @@ const Home: React.FC = () => {
       return <PageLoader />;
   }
 
+  const ctaImage = getImageUrl(
+    (featuredProject?.gallery && featuredProject.gallery[1]) ||
+    projects.find(p => !p.is_hidden && p.id !== featuredProject?.id)?.image ||
+    featuredProject?.image || ''
+  );
+  const valueItems = [
+    { icon: 'construction', title: t('home.v1Title'), body: t('home.v1Body') },
+    { icon: 'sell', title: t('home.v2Title'), body: t('home.v2Body') },
+    { icon: 'payments', title: t('home.v3Title'), body: t('home.v3Body') },
+  ];
+  const reasons = [
+    { icon: 'trending_down', title: t('home.b1Title'), body: t('home.b1Body') },
+    { icon: 'shield', title: t('home.b2Title'), body: t('home.b2Body') },
+    { icon: 'public', title: t('home.b3Title'), body: t('home.b3Body') },
+  ];
+  const gridProjects = filteredGridProjects.slice(0, 3);
+
   return (
-    <div className="bg-almond transition-colors duration-300 overflow-x-hidden text-left relative">
-      {/* Video Modal Overlay */}
+    <div className="bg-almond overflow-x-hidden text-left relative">
+      {/* Vídeo intro (modal) */}
       {isVideoOpen && (
-        <div 
-            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300"
-            onClick={() => setIsVideoOpen(false)}
+        <div
+          className="fixed inset-0 z-[100] bg-primary/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-10"
+          onClick={() => setIsVideoOpen(false)}
+          role="dialog" aria-modal="true"
         >
-          <div 
-            className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-            onClick={e => e.stopPropagation()}
-          >
-             <button 
-               onClick={() => setIsVideoOpen(false)}
-               className="absolute top-4 right-4 z-20 bg-black/50 hover:bg-black text-white p-2 rounded-full transition-colors backdrop-blur-sm group"
-             >
-               <span className="material-symbols-outlined group-hover:rotate-90 transition-transform">close</span>
-             </button>
-             {/* Self-hosted Video */}
-             <video 
-               autoPlay 
-               loop 
-               muted 
-               playsInline
-               controls
-               preload="none"
-               className="w-full h-full object-cover"
-               src={(config as any).brand?.intro_video_url || ''}
-               onPlay={(e) => {
-                 const video = e.currentTarget;
-                 if (video.muted) {
-                   setTimeout(() => { video.muted = false; }, 500);
-                 }
-               }}
-             >
-               {t("home.videoUnsupported", { defaultValue: "Tu navegador no soporta video HTML5." })}
-             </video>
+          <div className="relative w-full max-w-5xl bg-black overflow-hidden" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setIsVideoOpen(false)}
+              aria-label={t('common.close', { defaultValue: 'Cerrar' })}
+              className="absolute top-3 right-3 z-20 w-11 h-11 bg-almond text-primary flex items-center justify-center rounded-full transition-transform duration-300 hover:rotate-90"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <video
+              autoPlay loop muted playsInline controls preload="none"
+              className="w-full h-full object-cover"
+              src={(config as any).brand?.intro_video_url || ''}
+              onPlay={(e) => {
+                const video = e.currentTarget;
+                if (video.muted) setTimeout(() => { video.muted = false; }, 500);
+              }}
+            >
+              {t("home.videoUnsupported", { defaultValue: "Tu navegador no soporta video HTML5." })}
+            </video>
           </div>
         </div>
       )}
 
-      {/* Hero Section */}
-      <header className="relative overflow-hidden pt-28 md:pt-40 pb-20 md:pb-28 min-h-[86vh] flex items-center">
+      {/* ── Héroe: la obra a sangre, el titular como rótulo de arquitectura ── */}
+      <header className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden bg-primary text-almond">
         {featuredProject && (
-          <div className="absolute inset-0 z-0" aria-hidden="true">
-            <img src={imgSrc(getImageUrl(featuredProject.image), 1920)} srcSet={imgSrcSet(getImageUrl(featuredProject.image), [900, 1400, 1920])} sizes="100vw" className="w-full h-full object-cover scale-105" alt="" onError={imgFallback(getImageUrl(featuredProject.image))} />
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#241402]/95 via-[#241402]/78 to-[#241402]/35"></div>
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-almond to-transparent"></div>
+          <div className="absolute inset-0 us-curtain" aria-hidden="true">
+            <img
+              src={imgSrc(getImageUrl(featuredProject.image), 1920)}
+              srcSet={imgSrcSet(getImageUrl(featuredProject.image), [800, 1200, 1600, 2200])}
+              sizes="100vw"
+              className="w-full h-full object-cover"
+              alt=""
+              loading="eager"
+              fetchPriority="high"
+              onError={imgFallback(getImageUrl(featuredProject.image))}
+            />
           </div>
         )}
-        <div className="relative z-10 w-full px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
-        <div className="space-y-8 md:space-y-10 z-10">
-          <div className="max-w-xl">
-            <p className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-almond/70 mb-6">
-              <span className="h-px w-8 bg-almond/50"></span>{t('home.heroEyebrow')}
-            </p>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.25rem] leading-[1.0] tracking-[-0.025em] text-almond mb-8 drop-shadow-sm">
-              <Trans
-                i18nKey="home.heroTitle"
-                values={{ price: minPriceDisplay }}
-                components={{ i: <span className="italic font-extralight" /> }}
-              />
-            </h1>
-            <p className="text-lg md:text-xl text-almond/85 mb-10 leading-relaxed font-medium max-w-lg">
-              <Trans i18nKey="home.heroBody" components={{ b: <span className="font-bold text-almond" /> }} />
-            </p>
-            <div className="flex flex-col sm:flex-row gap-5">
-              <a 
-                href={WHATSAPP_URL} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="bg-almond text-primary px-10 py-5 rounded-full font-bold shadow-2xl hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                {t('home.ctaMeeting')} <span className="material-symbols-outlined">arrow_forward</span>
-              </a>
-              {(config as any).brand?.intro_video_url && (
-                <button
-                  onClick={() => setIsVideoOpen(true)}
-                  className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border border-almond/40 font-bold text-almond hover:bg-almond/10 transition text-sm cursor-pointer backdrop-blur-sm"
-                >
-                  <span className="material-symbols-outlined text-almond">play_circle</span> {t('home.ctaVideo')}
-                </button>
-              )}
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 pl-1">
-             <span className="h-px w-10 bg-almond/40"></span>
-             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-almond/70">{t('home.investorsCount')}</p>
-          </div>
-        </div>
-        
-        {/* Featured Project Card */}
-        <div className="w-full">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-almond/60 mb-4 text-left">{t('home.featuredTag')}</p>
-          {featuredProject ? (
-              <Link to={projectPath(featuredProject)} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden ring-1 ring-primary/5 shadow-[0_30px_60px_-20px_rgba(63,35,5,0.28)] hover:shadow-[0_40px_80px_-24px_rgba(63,35,5,0.36)] hover:-translate-y-1 transition-all duration-500 flex flex-row md:flex-col group h-full md:h-auto items-stretch outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-almond">
-                <div className="w-[40%] md:w-full relative md:h-[500px] shrink-0 overflow-hidden">
-                  <img
-                    src={imgSrc(getImageUrl(featuredProject.image), 1000)}
-                    srcSet={imgSrcSet(getImageUrl(featuredProject.image), [480, 800, 1000, 1400])}
-                    sizes="(max-width: 768px) 40vw, 50vw"
-                    className="absolute inset-0 md:relative w-full h-full object-cover group-hover:scale-105 transition duration-1000"
-                    alt={featuredProject.name}
-                    onError={imgFallback(getImageUrl(featuredProject.image))}
-                    loading="eager"
-                    fetchPriority="high"
-                  />
-                  <div className="absolute top-3 left-3 md:top-8 md:left-8">
-                    <span className="inline-flex items-center gap-2 bg-black/35 backdrop-blur-md text-white border border-white/20 text-[8px] md:text-[10px] font-black px-3 py-1.5 md:px-5 md:py-2.5 uppercase tracking-[0.15em] rounded-full shadow-xl">
-                      <span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(featuredProject.status)}`} />{translateStatus(featuredProject.status, t)}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="p-4 md:p-8 lg:p-12 w-[60%] md:w-full flex flex-col justify-center text-left">
-                  <p className="text-[9px] md:text-[11px] font-black text-primary/40 uppercase tracking-[0.2em] mb-2 md:mb-4 truncate">{featuredProject.location}</p>
-                  <h3 className="text-xl md:text-4xl lg:text-5xl font-serif tracking-[-0.015em] mb-3 md:mb-4 text-primary leading-[1.08] line-clamp-2">{featuredProject.name}</h3>
-                  {featuredProject.tenure && (
-                    <span className={`inline-flex w-fit items-center gap-1 text-[9px] md:text-[11px] font-black uppercase px-2.5 py-1 rounded-full mb-3 md:mb-8 ${(featuredProject.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-primary/10 text-primary/70'}`}><span className="material-symbols-outlined text-[13px] md:text-base">key</span>{t(`projects.card.tenure.${(featuredProject.tenure||'').toLowerCase()}`, featuredProject.tenure)}</span>
-                  )}
-                  
-                  <div className="mt-auto pt-3 md:pt-10 border-t border-primary/10 flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-4">
-                    <div>
-                      <p className="text-[8px] md:text-[10px] uppercase text-primary/40 font-black mb-1 md:mb-2 tracking-widest">{t('home.investmentFrom')}</p>
-                      <div className="flex items-baseline gap-2">
-                        <p className="font-bold text-lg md:text-3xl text-primary leading-none">{formatPrice(featuredProject.investor_price, featuredProject.price_currency)}</p>
-                        {Number(featuredProject.market_price) > Number(featuredProject.investor_price) && (
-                          <p className="text-xs md:text-sm text-primary/40 line-through font-bold">{formatPrice(Number(featuredProject.market_price), featuredProject.price_currency)}</p>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="hidden md:flex items-center justify-center gap-3 bg-almond/30 px-6 py-4 rounded-2xl group-hover:bg-primary group-hover:text-white transition-all duration-500 self-start sm:self-auto w-full sm:w-auto">
-                      <span className="text-primary group-hover:text-white font-bold text-xs uppercase tracking-widest">{t('home.viewProject')}</span>
-                      <span className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                    </div>
+        {/* Lectura sobre la foto: sombra solo donde vive el texto. */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(30,27,22,0.55)_0%,rgba(30,27,22,0)_26%,rgba(30,27,22,0)_42%,rgba(30,27,22,0.82)_100%)]" aria-hidden="true" />
 
-                    <div className="md:hidden flex items-center gap-1 text-primary mt-1">
-                      <span className="text-[9px] font-bold uppercase tracking-widest">{t('home.viewShort')}</span>
-                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-5 md:px-12 pt-32 pb-8 md:pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-end">
+            <div className="lg:col-span-8">
+              <h1 className="font-display uppercase text-almond text-[2.6rem] leading-[0.95] sm:text-6xl md:text-7xl xl:text-[6rem] xl:leading-[0.92] us-rise" style={{ animationDelay: '500ms' }}>
+                <Trans
+                  i18nKey="home.heroTitle"
+                  values={{ price: minPriceDisplay }}
+                  components={{ i: <span className="us-accent text-[1.08em] text-clay-light" /> }}
+                />
+              </h1>
+              <p className="mt-7 md:mt-9 max-w-xl text-base md:text-lg leading-relaxed text-almond/80 us-rise" style={{ animationDelay: '750ms' }}>
+                <Trans i18nKey="home.heroBody" components={{ b: <span className="text-almond font-semibold" /> }} />
+              </p>
+              <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 us-rise" style={{ animationDelay: '900ms' }}>
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="us-btn us-btn-light">
+                  {t('home.ctaMeeting')} <span className="material-symbols-outlined">arrow_forward</span>
+                </a>
+                {(config as any).brand?.intro_video_url && (
+                  <button onClick={() => setIsVideoOpen(true)} className="us-btn us-btn-ghost text-almond">
+                    <span className="material-symbols-outlined">play_arrow</span> {t('home.ctaVideo')}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Lámina del proyecto destacado (pie de foto con ficha técnica). */}
+            {featuredProject ? (
+              <Link
+                to={projectPath(featuredProject)}
+                className="lg:col-span-4 group block bg-almond text-primary p-5 md:p-6 us-rise outline-none focus-visible:ring-2 focus-visible:ring-clay-light"
+                style={{ animationDelay: '1100ms' }}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="us-label text-primary/50">{t('home.featuredTag')}</span>
+                  <span className="inline-flex items-center gap-2 us-label text-primary/70"><span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(featuredProject.status)}`} />{translateStatus(featuredProject.status, t)}</span>
+                </div>
+                <p className="font-serif text-2xl md:text-[1.7rem] leading-[1.08] mt-4 transition-colors group-hover:text-clay">{featuredProject.name}</p>
+                <p className="text-sm text-primary/55 mt-1.5">
+                  {featuredProject.location}
+                  {featuredProject.tenure ? ` · ${t(`projects.card.tenure.${(featuredProject.tenure || '').toLowerCase()}`, featuredProject.tenure)}` : ''}
+                </p>
+                <div className="flex items-end justify-between gap-4 mt-5 pt-4 border-t border-primary/15">
+                  <div>
+                    <p className="us-label text-primary/45">{t('home.investmentFrom')}</p>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <p className="text-2xl font-medium us-num tracking-tight">{formatPrice(featuredProject.investor_price, featuredProject.price_currency)}</p>
+                      {Number(featuredProject.market_price) > Number(featuredProject.investor_price) && (
+                        <p className="text-xs text-primary/40 line-through us-num">{formatPrice(Number(featuredProject.market_price), featuredProject.price_currency)}</p>
+                      )}
                     </div>
                   </div>
+                  <span className="inline-flex items-center gap-2 us-label text-primary">
+                    <span className="hidden sm:inline">{t('home.viewProject')}</span>
+                    <span className="w-10 h-10 rounded-full bg-primary text-almond flex items-center justify-center transition-colors duration-300 group-hover:bg-clay">
+                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </span>
+                  </span>
                 </div>
               </Link>
-          ) : (
-             <div className="bg-white rounded-3xl p-12 text-center shadow-lg h-full flex flex-col items-center justify-center">
-                 <span className="material-symbols-outlined text-4xl text-primary/25 mb-2">home_work</span>
-                 <p className="text-primary/40 font-bold uppercase tracking-widest text-xs">{t('home.comingSoon')}</p>
-             </div>
-          )}
-        </div>
+            ) : (
+              <div className="lg:col-span-4 bg-almond/10 border border-almond/20 p-8 text-center">
+                <p className="us-label text-almond/60">{t('home.comingSoon')}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Raíl inferior: posicionamiento + prueba social, sin rótulo sobre el titular. */}
+          <div className="mt-10 md:mt-14 pt-5 border-t border-almond/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 us-label text-almond/60">
+            <span>{t('home.heroEyebrow')}</span>
+            <span className="text-almond/80">{t('home.investorsCount')}</span>
+          </div>
         </div>
       </header>
 
-      {/* Filter Bar */}
-      <div className="px-4 md:px-12 relative z-30 -mt-12 md:-mt-16 mb-12 md:mb-16 max-w-7xl mx-auto">
-        <div className="bg-white/85 backdrop-blur-md rounded-2xl shadow-[0_16px_48px_-24px_rgba(63,35,5,0.28)] border border-primary/10 p-1.5 md:p-2.5">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center">
-            
-            {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">sort</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
-                <div className="relative">
-                  <select
-                    aria-label={t('projects.filters.sortBy')}
-                    value={filters.sort}
-                    onChange={(e) => setFilters({...filters, sort: e.target.value})}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
-                  >
-                    <option value="featured">{t('projects.sort.featured')}</option>
-                    <option value="roi">{t('projects.sort.roi')}</option>
-                    <option value="asc">{t('projects.sort.asc')}</option>
-                    <option value="desc">{t('projects.sort.desc')}</option>
-                  </select>                </div>
-              </div>
-            </div>
+      {/* ── Catálogo: buscador-instrumento + composición asimétrica ── */}
+      <section className="pt-16 md:pt-28 pb-16 md:pb-24" aria-labelledby="home-projects">
+        <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+          <div className="flex items-end justify-between gap-6 mb-8 md:mb-12">
+            <h2 id="home-projects" className="font-display uppercase text-[2.4rem] leading-[0.95] md:text-7xl text-primary">{t('nav.projects')}</h2>
+            <button onClick={handleSearch} className="us-link text-primary shrink-0 mb-2">
+              <span className="hidden sm:inline">{t('home.viewMoreProperties')}</span><span className="sm:hidden">{t('home.viewShort')}</span>
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+          </div>
 
-            {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">payments</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
-                <div className="flex items-center gap-2 bg-primary/5 rounded-full px-4 py-2.5 border border-primary/10 hover:border-primary/30 focus-within:border-primary/40 transition-all">
-                  <input
-                    type="text"
-                    placeholder={t('projects.filters.min')}
-                    value={filters.minPrice}
-                    onChange={(e) => handlePriceChange('minPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-primary/30 text-center"
-                  />
-                  <span className="text-primary/25 text-[10px]">•</span>
-                  <input
-                    type="text"
-                    placeholder={t('projects.filters.max')}
-                    value={filters.maxPrice}
-                    onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-primary/30 text-center"
-                  />
-                </div>
+          <div className="bg-paper border border-primary/15 rounded-[3px] grid grid-cols-2 md:flex md:items-stretch mb-12 md:mb-20">
+            <FilterField icon="sort" label={t('projects.filters.sortBy')} className="flex-1 border-b border-r md:border-b-0">
+              <select aria-label={t('projects.filters.sortBy')} value={filters.sort} onChange={(e) => setFilters({ ...filters, sort: e.target.value })} className={filterControl}>
+                <option value="featured">{t('projects.sort.featured')}</option>
+                <option value="roi">{t('projects.sort.roi')}</option>
+                <option value="asc">{t('projects.sort.asc')}</option>
+                <option value="desc">{t('projects.sort.desc')}</option>
+              </select>
+            </FilterField>
+            <FilterField icon="payments" label={t('projects.filters.budget')} className="flex-1 border-b md:border-b-0 md:border-r">
+              <div className="flex items-center gap-2">
+                <input type="text" inputMode="numeric" aria-label={t('projects.filters.min')} placeholder={t('projects.filters.min')} value={filters.minPrice} onChange={(e) => handlePriceChange('minPrice', e.target.value)} className={filterInput} />
+                <span className="text-primary/25" aria-hidden="true">—</span>
+                <input type="text" inputMode="numeric" aria-label={t('projects.filters.max')} placeholder={t('projects.filters.max')} value={filters.maxPrice} onChange={(e) => handlePriceChange('maxPrice', e.target.value)} className={filterInput} />
               </div>
-            </div>
-
-            {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-primary/10 group rounded-xl focus-within:bg-almond/50 transition-colors">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">location_on</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
-                <div className="relative">
-                  <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({...filters, zone: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
-                    {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
-                  </select>                </div>
-              </div>
-            </div>
-
-            {/* Type Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 group rounded-xl focus-within:bg-almond/50 transition-colors">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary group-focus-within:text-primary transition-colors">home_work</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-primary/40 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
-                <div className="relative">
-                  <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
-                    <option value="Villa">Villa</option>
-                    <option value="Loft">Loft</option>
-                    {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={handleSearch}
-              className="bg-primary text-white m-2 px-8 py-4 rounded-2xl md:rounded-[2rem] font-black text-[10px] uppercase tracking-widest hover:brightness-125 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
-            >
-              <span>{t('home.searchBtn')}</span>
-              <span className="material-symbols-outlined text-sm">search</span>
+            </FilterField>
+            <FilterField icon="location_on" label={t('projects.filters.zone')} className="flex-1 border-r">
+              <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({ ...filters, zone: e.target.value })} className={filterControl}>
+                <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
+                {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
+              </select>
+            </FilterField>
+            <FilterField icon="home_work" label={t('projects.filters.type')} className="flex-1 md:border-r">
+              <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({ ...filters, type: e.target.value })} className={filterControl}>
+                <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
+                <option value="Villa">Villa</option>
+                <option value="Loft">Loft</option>
+                {config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}
+              </select>
+            </FilterField>
+            <button onClick={handleSearch} className="us-btn col-span-2 md:col-span-1 rounded-none md:min-w-[11rem]">
+              {t('home.searchBtn')} <span className="material-symbols-outlined">search</span>
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Listings Section */}
-      <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-          {filteredGridProjects.slice(0, 3).map((proj) => (
-            <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_12px_30px_-16px_rgba(63,35,5,0.18)] hover:shadow-[0_24px_48px_-20px_rgba(63,35,5,0.28)] hover:-translate-y-1 transition-all duration-500 flex flex-col group border border-primary/5 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-almond">
-              <div className="h-44 md:h-80 relative overflow-hidden">
-                <img
-                  loading="lazy"
-                  src={imgSrc(getImageUrl(proj.image), 600)}
-                  srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="w-full h-full object-cover group-hover:scale-[1.06] transition duration-[1200ms] ease-out"
-                  onError={imgFallback(getImageUrl(proj.image))}
-                  alt={proj.name}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70"></div>
-                <span className="absolute top-3 left-3 md:top-5 md:left-5 inline-flex items-center gap-2 bg-black/35 backdrop-blur-md text-white border border-white/20 text-[8px] md:text-[10px] font-black px-3 py-1.5 uppercase tracking-[0.15em] rounded-full shadow-lg"><span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(proj.status)}`} />{translateStatus(proj.status, t)}</span>
-              </div>
-              <div className="p-4 md:p-8 flex-grow flex flex-col text-left">
-                <p className="text-[9px] md:text-[10px] font-black text-primary/40 uppercase tracking-[0.2em] mb-2 md:mb-3 truncate">{proj.location}</p>
-                <h3 className="font-serif font-normal text-xl md:text-[1.9rem] mb-2 md:mb-3 text-primary line-clamp-2 md:line-clamp-none leading-[1.05] tracking-[-0.01em]">{proj.name}</h3>
-                {proj.tenure && (
-                  <span className={`inline-flex w-fit items-center gap-1 text-[8px] md:text-[10px] font-black uppercase px-2 py-0.5 rounded-full mb-2 ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-primary/10 text-primary/70'}`}><span className="material-symbols-outlined text-[12px] md:text-sm">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
-                )}
-                {proj.completion_percent > 0 && (
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
-                    <div className="flex-1 bg-primary/10 rounded-full h-1.5 overflow-hidden">
-                      <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
-                    </div>
-                    <span className="text-[10px] font-bold text-primary">{proj.completion_percent}%</span>
-                  </div>
-                )}
-                <div className="mt-auto pt-3 md:pt-6 border-t border-primary/10 flex justify-between items-center">
-                  <div>
-                    <p className="text-[8px] md:text-[10px] uppercase text-primary/40 font-black mb-0.5 md:mb-1">{t('home.investFrom')}</p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="font-bold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
-                      {Number(proj.market_price) > Number(proj.investor_price) && (
-                        <p className="text-[10px] md:text-xs text-primary/40 line-through font-bold">{formatPrice(Number(proj.market_price), proj.price_currency)}</p>
-                      )}
-                    </div>
-                  </div>
-                  <span className="text-primary font-bold text-[8px] md:text-[10px] uppercase tracking-widest flex items-center gap-1 group-hover:gap-3 transition-all">
-                     <span className="hidden md:inline">{t('home.viewShort')}</span>
-                     <span className="material-symbols-outlined text-sm md:text-base">add</span>
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        
-        <div className="mt-12 md:mt-16 text-center">
-          <button onClick={handleSearch} className="inline-flex items-center gap-2 border-b-2 border-primary text-primary font-bold pb-1 uppercase tracking-widest text-xs hover:text-primary/70 hover:border-primary/70 transition">
-            {t('home.viewMoreProperties')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          </button>
-        </div>
-      </section>
-
-      {/* Sección 1: Por qué salir de Europa */}
-      <section className="py-12 md:py-24 bg-white px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-20 items-center">
-          <div className="lg:w-1/2 space-y-5 md:space-y-8 text-left">
-            <p className="inline-flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>{t('home.section1Tag')}</p>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl text-primary leading-[1.05] tracking-[-0.015em]">{t('home.section1Title')}</h2>
-            <p className="text-base md:text-lg text-primary/60 font-light leading-relaxed max-w-xl">
-              {t('home.section1Body')}
-            </p>
-            <div className="space-y-5 md:space-y-8">
-              <Reveal delay={0} className="flex gap-4 items-start">
-                <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-2xl">trending_down</span>
-                </div>
-                <div>
-                  <h4 className="text-xl font-serif text-primary mb-2 tracking-[-0.01em]">{t('home.b1Title')}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b1Body')}</p>
-                </div>
-              </Reveal>
-              <Reveal delay={120} className="flex gap-4 items-start">
-                <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-2xl">security</span>
-                </div>
-                <div>
-                  <h4 className="text-xl font-serif text-primary mb-2 tracking-[-0.01em]">{t('home.b2Title')}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b2Body')}</p>
-                </div>
-              </Reveal>
-              <Reveal delay={240} className="flex gap-4 items-start">
-                <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-2xl">public</span>
-                </div>
-                <div>
-                  <h4 className="text-xl font-serif text-primary mb-2 tracking-[-0.01em]">{t('home.b3Title')}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b3Body')}</p>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-          <div className="lg:w-1/2 relative">
-            <div className="relative w-full">
-              <div className="rounded-3xl overflow-hidden shadow-2xl h-56 sm:h-72 md:h-auto md:aspect-square relative group">
-                <img
-                  loading="lazy"
-                  src={imgSrc("/img/The%20Nook/1-04.webp", 800)}
-                  srcSet={imgSrcSet("/img/The%20Nook/1-04.webp", [400, 800, 1200])}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="w-full h-full object-cover"
-                  alt="Interior Architecture"
-                />
-                <div className="absolute inset-0 bg-black/10"></div>
-              </div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:bottom-10 md:translate-y-0 bg-primary p-6 md:p-8 rounded-3xl shadow-2xl text-left min-w-[200px] md:min-w-[280px] z-10 border border-white/10 backdrop-blur-md bg-primary/95">
-                <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-almond/40 mb-1 md:mb-2">{t('home.roiAvgTag')}</p>
-                <p className="text-4xl md:text-6xl text-almond font-serif mb-1 md:mb-2 leading-none">28%</p>
-                <p className="text-[8px] md:text-[10px] font-bold text-almond/60 uppercase tracking-wider">{t('home.roiAvgFooter')}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sección 2: Cómo creamos valor */}
-      <section className="py-12 md:py-24 bg-almond px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
-          <div className="lg:w-1/2 text-left space-y-5 md:space-y-8">
-            <p className="inline-flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>{t('home.section2Tag')}</p>
-            <h2 className="text-3xl md:text-5xl text-primary leading-[1.05] tracking-[-0.015em]">{t('home.section2Title')}</h2>
-            <p className="text-base md:text-lg text-primary/70 font-light leading-relaxed max-w-lg">
-              {t('home.section2Body')}
-            </p>
-            <div className="space-y-3 md:space-y-4">
-              <Reveal delay={0} className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5 hover:border-primary/15 hover:bg-white/60 transition-colors">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">construction</span>
-                <div>
-                  <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v1Title')}</h5>
-                  <p className="text-xs text-primary/60">{t('home.v1Body')}</p>
-                </div>
-              </Reveal>
-              <Reveal delay={120} className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5 hover:border-primary/15 hover:bg-white/60 transition-colors">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">sell</span>
-                <div>
-                  <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v2Title')}</h5>
-                  <p className="text-xs text-primary/60">{t('home.v2Body')}</p>
-                </div>
-              </Reveal>
-              <Reveal delay={240} className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5 hover:border-primary/15 hover:bg-white/60 transition-colors">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">payments</span>
-                <div>
-                  <h5 className="font-serif text-primary text-lg tracking-[-0.01em]">{t('home.v3Title')}</h5>
-                  <p className="text-xs text-primary/60">{t('home.v3Body')}</p>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-          <div className="lg:w-1/2 w-full">
-            <div className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-primary/5 text-center space-y-6 md:space-y-10">
-              <h3 className="text-2xl text-primary font-serif">{t('home.profitTitle')}</h3>
-
-              {profitabilityData ? (
-                <div className="space-y-6 md:space-y-10 text-left">
-                  <div className="space-y-5">
-                    <div className="flex justify-between text-[11px] font-bold uppercase text-primary/40 tracking-wider">
-                      <span>{t('home.marketValue')}</span>
-                      <span className="text-primary font-black">
-                        {formatPrice(profitabilityData.marketPrice, profitabilityData.currency)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-primary/10 h-2.5 rounded-full overflow-hidden">
-                      <div className="bg-primary/30 h-full w-full opacity-40"></div>
-                    </div>
-                  </div>
-                  <div className="space-y-5">
-                    <div className="flex justify-between text-[11px] font-bold uppercase text-primary/40 tracking-wider">
-                      <span>{t('home.profitabilityUnrealPrice')}</span>
-                      <span className="text-primary font-black">
-                        {formatPrice(profitabilityData.investorPrice, profitabilityData.currency)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-primary/10 h-2.5 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-primary h-full transition-all duration-1000" 
-                        style={{ width: `${profitabilityData.barWidth}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-6 pt-6 border-t border-primary/10">
-                    <div className="text-left">
-                      <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest mb-1">{t('home.profit.immediateGain', { defaultValue: 'Plusvalía Inmediata' })}</p>
-                      <p className="text-4xl font-serif text-green-600 font-bold">+{profitabilityData.gainPercent}%</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest mb-1">{t('home.profit.estimatedGain', { defaultValue: 'Ganancia Estimada' })}</p>
-                      <p className="text-4xl font-serif text-primary font-bold">
-                        {formatPrice(profitabilityData.capitalGain, profitabilityData.currency)}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4 pt-2">
-                    <p className="text-[10px] text-primary/40 font-medium italic">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
-                    <div className="space-y-4 text-center">
-                      <p className="text-primary font-bold text-sm">{t('home.profit.ctaQuestion', { defaultValue: '¿Quieres invertir en una unidad con esta rentabilidad?' })}</p>
-                      {featuredProject && (
-                        <Link
-                          to={projectPath(featuredProject)}
-                          className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2 mx-auto w-fit"
-                        >
-                          {t('home.profit.seeFeatured', { defaultValue: 'Ver propiedad destacada' })} <span className="material-symbols-outlined">arrow_forward</span>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-primary/40 font-bold uppercase tracking-widest text-xs py-10">{t('home.noProjectData')}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sección 3: No pierdas tiempo */}
-      <section className="py-24 md:py-32 bg-primary px-6 relative overflow-hidden text-center">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] border border-white rounded-full -translate-y-1/2 translate-x-1/2"></div>
-           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] border border-white rounded-full translate-y-1/2 -translate-x-1/2"></div>
-        </div>
-        <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-          <h2 className="text-6xl md:text-8xl text-almond font-serif leading-none tracking-[-0.02em]">{t('home.ctaSectionTitle')}</h2>
-          <p className="text-lg md:text-xl text-almond/70 font-light max-w-2xl mx-auto leading-relaxed px-4">
-            {t('home.ctaSectionBody')}
-          </p>
-          
-          <div className="flex flex-col items-center justify-center gap-6 mt-16 px-4">
-            <a 
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full max-w-sm bg-almond text-primary px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:scale-105 transition-all duration-300 shadow-2xl flex items-center justify-center gap-3"
+        {/* Móvil: carrusel con snap · Escritorio: 6/3/3 con desfase vertical */}
+        <div className="flex lg:grid lg:grid-cols-12 gap-5 lg:gap-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory hide-scrollbar px-5 md:px-12 max-w-[1440px] mx-auto scroll-px-5">
+          {gridProjects.map((proj, i) => (
+            <Reveal
+              key={proj.id}
+              delay={i * 110}
+              className={`snap-start shrink-0 w-[84%] sm:w-[46%] lg:w-auto ${i === 0 ? 'lg:col-span-6' : 'lg:col-span-3'} ${i === 1 ? 'lg:mt-20' : ''} ${i === 2 ? 'lg:mt-40' : ''}`}
             >
-              {t('home.ctaWhatsapp')} <span className="material-symbols-outlined text-base">chat</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Sección 4: Últimas Novedades - Most Recent Blogs */}
-      <section className="py-12 md:py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-8 md:mb-12 border-b border-primary/5 pb-5 md:pb-8">
-          <div className="text-left">
-            <h2 className="text-4xl md:text-5xl text-primary font-serif tracking-[-0.015em]">{t('home.blogTitle')}</h2>
-          </div>
-          <Link to="/blog" className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group">
-            {t('home.blogCta')} <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </Link>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
-          {blogs.map((post, i) => (
-            <Reveal key={post.id} delay={i * 90} className="h-full">
-            <Link to={`/blog/${post.slug}`} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
-              {/* Imagen */}
-              <div className="order-1 md:order-2">
-                 <div className="aspect-[16/10] rounded-[2rem] overflow-hidden relative shadow-lg">
-                    <img
-                      loading="lazy"
-                      src={imgSrc(getImageUrl(post.image), 600)}
-                      srcSet={imgSrcSet(getImageUrl(post.image), [320, 600, 900])}
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-105"
-                      onError={imgFallback(getImageUrl(post.image))}
-                      alt={post.title}
-                    />
-                 </div>
-              </div>
-
-              {/* Texto */}
-              <div className="order-2 md:order-1 mt-4 md:mt-0 mb-4 md:mb-8 flex flex-col flex-grow">
-                  <div className="flex justify-between items-center mb-3">
-                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{post.tag}</p>
-                    <p className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">{formatDate(post.published_date)}</p>
-                  </div>
-                  <h4 className="text-2xl font-serif text-primary mb-4 leading-snug tracking-[-0.01em] group-hover:text-black transition line-clamp-3">{post.title}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed line-clamp-3 flex-grow">{post.description}</p>
-              </div>
-            </Link>
+              <ProjectCard project={proj} tall={i === 0} sizes={i === 0 ? '(max-width: 1024px) 84vw, 50vw' : '(max-width: 1024px) 84vw, 25vw'} />
             </Reveal>
           ))}
         </div>
       </section>
+
+      {/* ── Por qué fuera de Europa: titular + lámina con el 28% superpuesto ── */}
+      <section className="bg-paper py-20 md:py-32" aria-labelledby="home-why">
+        <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
+            <h2 id="home-why" className="lg:col-span-7 font-display uppercase text-[2.3rem] leading-[0.98] md:text-6xl xl:text-7xl text-primary">{t('home.section1Title')}</h2>
+            <p className="lg:col-span-5 text-base md:text-lg text-primary/65 leading-relaxed max-w-xl lg:pb-2">{t('home.section1Body')}</p>
+          </div>
+
+          <div className="mt-12 md:mt-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+            <Reveal className="lg:col-span-7 relative">
+              <div className="us-zoom relative overflow-hidden aspect-[4/3] bg-primary/10">
+                <img
+                  loading="lazy"
+                  src={imgSrc("/img/The%20Nook/1-04.webp", 1200)}
+                  srcSet={imgSrcSet("/img/The%20Nook/1-04.webp", [600, 900, 1200, 1600])}
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  alt="Interior Architecture"
+                />
+              </div>
+              <div className="relative -mt-16 ml-auto mr-4 md:mr-0 md:absolute md:-bottom-10 md:-right-8 w-[78%] sm:w-auto sm:max-w-xs bg-primary text-almond p-6 md:p-8 shadow-[0_30px_60px_-30px_rgba(30,27,22,0.6)]">
+                <p className="us-label text-almond/55">{t('home.roiAvgTag')}</p>
+                <p className="font-display text-[4.5rem] md:text-[6rem] leading-[0.9] mt-3 text-clay-light us-num">28%</p>
+                <p className="text-sm text-almond/70 mt-3">{t('home.roiAvgFooter')}</p>
+              </div>
+            </Reveal>
+
+            <ul className="lg:col-span-5 lg:pt-6 divide-y divide-primary/15 border-y border-primary/15 self-start">
+              {reasons.map((r, i) => (
+                <Reveal as="li" key={r.title} delay={i * 110} className="py-6 md:py-8 grid grid-cols-[2.5rem_1fr] gap-4">
+                  <span className="material-symbols-outlined text-[26px] text-clay mt-0.5" aria-hidden="true">{r.icon}</span>
+                  <div>
+                    <h3 className="font-serif text-xl md:text-2xl text-primary leading-snug">{r.title}</h3>
+                    <p className="text-[15px] text-primary/60 leading-relaxed mt-2">{r.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Cómo creamos valor: manifiesto palabra a palabra + libro de cuentas ── */}
+      <section className="bg-moss text-almond py-20 md:py-32 overflow-hidden" aria-labelledby="home-value">
+        <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+          <h2 id="home-value" className="us-label text-clay-light">{t('home.section2Title')}</h2>
+          <WordReveal
+            text={t('home.section2Body')}
+            mutedClass="opacity-20"
+            className="mt-6 md:mt-8 font-serif text-[1.65rem] leading-[1.18] sm:text-4xl md:text-5xl md:leading-[1.12] xl:text-[3.6rem] max-w-6xl text-almond"
+          />
+
+          <div className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-0 border-t border-almond/15">
+            {valueItems.map((v, i) => (
+              <Reveal key={v.title} delay={i * 110} className={`py-7 md:py-10 md:px-8 ${i > 0 ? 'border-t md:border-t-0 md:border-l border-almond/15' : 'md:pl-0'}`}>
+                <span className="material-symbols-outlined text-[28px] text-clay-light" aria-hidden="true">{v.icon}</span>
+                <h3 className="font-serif text-xl md:text-2xl mt-4">{v.title}</h3>
+                <p className="text-[15px] text-almond/60 mt-2 leading-relaxed">{v.body}</p>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Desglose de rentabilidad como libro de cuentas: dos reglas medidas. */}
+          <div className="mt-6 md:mt-10 bg-almond text-primary grid grid-cols-1 lg:grid-cols-12">
+            <div className="lg:col-span-5 p-6 md:p-10 lg:p-12 flex flex-col justify-between gap-8 border-b lg:border-b-0 lg:border-r border-primary/15">
+              <div>
+                <h3 className="font-serif text-3xl md:text-4xl leading-tight">{t('home.profitTitle')}</h3>
+                {featuredProject && <p className="us-label text-primary/50 mt-3">{featuredProject.name}</p>}
+              </div>
+              <div className="space-y-5">
+                <p className="text-primary/75 font-medium">{t('home.profit.ctaQuestion', { defaultValue: '¿Quieres invertir en una unidad con esta rentabilidad?' })}</p>
+                {featuredProject && (
+                  <Link to={projectPath(featuredProject)} className="us-btn w-full sm:w-auto">
+                    {t('home.profit.seeFeatured', { defaultValue: 'Ver propiedad destacada' })} <span className="material-symbols-outlined">arrow_forward</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+            <div className="lg:col-span-7 p-6 md:p-10 lg:p-12">
+              {profitabilityData ? (
+                <>
+                  <div className="space-y-8">
+                    <div>
+                      <div className="flex justify-between items-baseline gap-4">
+                        <span className="us-label text-primary/50">{t('home.marketValue')}</span>
+                        <span className="text-lg font-medium us-num">{formatPrice(profitabilityData.marketPrice, profitabilityData.currency)}</span>
+                      </div>
+                      <div className="mt-3 h-3 bg-[repeating-linear-gradient(90deg,rgba(30,27,22,0.22)_0_1px,transparent_1px_10%)] border-b border-primary/30" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-baseline gap-4">
+                        <span className="us-label text-primary/50">{t('home.profitabilityUnrealPrice')}</span>
+                        <span className="text-lg font-semibold us-num">{formatPrice(profitabilityData.investorPrice, profitabilityData.currency)}</span>
+                      </div>
+                      <div className="mt-3 h-3 relative border-b border-primary/15" aria-hidden="true">
+                        <div className="absolute left-0 bottom-0 h-3 bg-primary" style={{ width: `${profitabilityData.barWidth}%` }} />
+                        <div className="absolute bottom-0 h-3 bg-clay/80" style={{ left: `${profitabilityData.barWidth}%`, right: 0 }} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-10 grid grid-cols-2 gap-6 pt-8 border-t border-primary/15">
+                    <div>
+                      <p className="us-label text-primary/50">{t('home.profit.immediateGain', { defaultValue: 'Plusvalía Inmediata' })}</p>
+                      <p className="font-display text-5xl md:text-6xl text-clay mt-2 us-num">+{profitabilityData.gainPercent}%</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="us-label text-primary/50">{t('home.profit.estimatedGain', { defaultValue: 'Ganancia Estimada' })}</p>
+                      <p className="font-display text-3xl md:text-5xl mt-2 us-num">{formatPrice(profitabilityData.capitalGain, profitabilityData.currency)}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-primary/45 mt-6">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
+                </>
+              ) : (
+                <p className="us-label text-primary/40 py-10">{t('home.noProjectData')}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Llamada final: fotografía a sangre y una sola acción ── */}
+      <section className="relative overflow-hidden bg-primary text-almond" aria-labelledby="home-cta">
+        {ctaImage && (
+          <img loading="lazy" src={imgSrc(ctaImage, 1600)} srcSet={imgSrcSet(ctaImage, [800, 1200, 1600, 2200])} sizes="100vw" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-45" onError={imgFallback(ctaImage)} />
+        )}
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(30,27,22,0.85),rgba(30,27,22,0.35))]" aria-hidden="true" />
+        <div className="relative max-w-[1440px] mx-auto px-5 md:px-12 py-24 md:py-40">
+          <Reveal>
+            <h2 id="home-cta" className="font-display uppercase text-[3rem] leading-[0.92] sm:text-7xl md:text-8xl xl:text-[6rem] max-w-5xl">{t('home.ctaSectionTitle')}</h2>
+            <p className="mt-6 md:mt-8 text-base md:text-xl text-almond/75 max-w-xl leading-relaxed">{t('home.ctaSectionBody')}</p>
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="us-btn us-btn-light mt-10 w-full sm:w-auto">
+              {t('home.ctaWhatsapp')} <span className="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Diario: últimas novedades ── */}
+      {blogs.length > 0 && (
+        <section className="py-20 md:py-28" aria-labelledby="home-blog">
+          <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+            <div className="flex items-end justify-between gap-6 mb-10 md:mb-14 pb-6 border-b border-primary/15">
+              <h2 id="home-blog" className="font-display uppercase text-[2.3rem] leading-[0.95] md:text-6xl text-primary">{t('home.blogTitle')}</h2>
+              <Link to="/blog" className="us-link text-primary shrink-0 mb-2">{t('home.blogCta')} <span className="material-symbols-outlined text-base">arrow_forward</span></Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 lg:gap-12">
+              {blogs.map((post, i) => (
+                <Reveal key={post.id} delay={i * 100} className="h-full">
+                  <Link to={`/blog/${post.slug}`} className="group flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-4 focus-visible:ring-offset-almond">
+                    <div className="us-zoom relative overflow-hidden aspect-[3/2] bg-primary/10">
+                      <img loading="lazy" src={imgSrc(getImageUrl(post.image), 700)} srcSet={imgSrcSet(getImageUrl(post.image), [400, 700, 1000])} sizes="(max-width: 768px) 100vw, 33vw" className="absolute inset-0 w-full h-full object-cover" onError={imgFallback(getImageUrl(post.image))} alt={post.title} />
+                    </div>
+                    <div className="flex justify-between items-center gap-3 mt-5 us-label text-primary/45">
+                      <span className="text-clay">{post.tag}</span>
+                      <time className="us-num">{formatDate(post.published_date)}</time>
+                    </div>
+                    <h3 className="font-serif text-xl md:text-2xl text-primary mt-3 leading-snug transition-colors group-hover:text-clay line-clamp-3">{post.title}</h3>
+                    <p className="text-[15px] text-primary/60 leading-relaxed mt-3 line-clamp-3">{post.description}</p>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

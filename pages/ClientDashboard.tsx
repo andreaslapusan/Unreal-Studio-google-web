@@ -832,7 +832,7 @@ const ClientDashboard: React.FC = () => {
                       const total = Number(proj.pool_total_amount);
                       const pct = total > 0 ? (recibido / total) * 100 : 0;
                       return (
-                        <div className="mt-5 bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-4">
+                        <div className="mt-5 bg-paper border border-primary/15 rounded-2xl p-4">
                           <p className="text-[9px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.poolTitle', { defaultValue: 'Pool de inversión' })}</p>
                           <div className="flex items-end justify-between gap-3 flex-wrap">
                             <p className="text-sm text-primary"><span className="font-bold">{formatMoney(recibido, cur)}</span> <span className="text-primary/50">{t('admin.clientDash.poolOf', { defaultValue: 'de' })} {formatMoney(total, cur)}</span></p>

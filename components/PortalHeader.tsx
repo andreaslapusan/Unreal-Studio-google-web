@@ -34,7 +34,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
   const logoutBtn = onLogout && (
     <button
       onClick={onLogout}
-      className="flex items-center gap-1.5 bg-white border border-primary/10 text-primary/70 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition shadow-sm"
+      className="flex items-center gap-1.5 border border-primary/20 text-primary/75 px-4 py-2.5 rounded-[2px] us-label hover:bg-primary hover:text-almond hover:border-primary transition-colors"
     >
       <span className="material-symbols-outlined text-sm">logout</span>
       <span>{t('admin.common.logout')}</span>
@@ -42,13 +42,13 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-almond border-b border-primary/10 px-4 md:px-8 py-3 md:py-4 shadow-sm">
+    <header className="sticky top-0 z-40 bg-almond/90 backdrop-blur-xl border-b border-primary/15 px-4 md:px-8 py-3 md:py-4">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
         {/* IZQUIERDA: logo de marca como link a "/" */}
         <Link to="/" className="flex flex-col shrink-0 leading-tight min-w-0">
-          <BrandLogo imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tighter" />
+          <BrandLogo imgClassName="h-9 w-auto object-contain" textClassName="text-[1.7rem] text-primary leading-none" />
           {subtitle && (
-            <span className="text-[11px] font-semibold text-primary/45 break-all leading-tight">
+            <span className="us-label text-primary/45 break-all leading-tight mt-1 normal-case tracking-normal font-medium text-[11px]">
               {subtitle}
             </span>
           )}
@@ -67,7 +67,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
             onClick={() => setOpen((o) => !o)}
             aria-label={t('admin.common.menu', 'Menú')}
             aria-expanded={open}
-            className="w-10 h-10 rounded-full bg-white border border-primary/10 text-primary flex items-center justify-center shadow-sm active:scale-95 transition"
+            className="w-11 h-11 rounded-full border border-primary/20 text-primary flex items-center justify-center active:scale-95 transition"
           >
             <span className="material-symbols-outlined text-[22px]">{open ? 'close' : 'menu'}</span>
           </button>
@@ -75,7 +75,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
             <>
               <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
               <div
-                className="absolute right-0 top-12 z-50 bg-white rounded-2xl shadow-xl border border-primary/10 p-3 min-w-[220px] flex flex-col gap-2.5"
+                className="absolute right-0 top-13 mt-1 z-50 bg-paper rounded-[3px] shadow-[0_24px_48px_-24px_rgba(30,27,22,0.45)] border border-primary/15 p-3 min-w-[230px] flex flex-col gap-2.5"
                 onClick={() => setOpen(false)}
               >
                 {extra && <div className="flex flex-col gap-2.5">{extra}</div>}

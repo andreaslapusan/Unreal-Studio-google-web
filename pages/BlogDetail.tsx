@@ -4,6 +4,7 @@ import { dateOnly } from '../lib/timezone';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
+import PageLoader from '../components/PageLoader';
 import InlineNotFound from '../components/InlineNotFound';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
@@ -84,12 +85,7 @@ const BlogDetail: React.FC = () => {
   }, [slug]);
 
   if (loading) {
-      return (
-          <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
-              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('blog.loadingArticle')}</p>
-          </div>
-      );
+      return <PageLoader label={t('blog.loadingArticle')} />;
   }
 
   if (!post) {
@@ -104,74 +100,70 @@ const BlogDetail: React.FC = () => {
   }
 
   return (
-    <div className="bg-almond min-h-screen pb-24 transition-colors duration-300">
-       <div className="h-[60vh] w-full relative overflow-hidden">
-           <img
-             src={imgSrc(getImageUrl(post.image), 1600)}
-             srcSet={imgSrcSet(getImageUrl(post.image), [600, 1000, 1400, 1800])}
-             sizes="100vw"
-             onError={imgFallback(getImageUrl(post.image))}
-             className="w-full h-full object-cover scale-105 motion-safe:animate-[portalPan_42s_ease-in-out_infinite_alternate]"
-             alt={post.title}
-             loading="eager"
-             fetchPriority="high"
-           />
-           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-           <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-20 max-w-7xl mx-auto">
-               <span className="inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-[0.22em] px-4 py-2 rounded-full w-fit mb-6 shadow-xl">{post.tag}</span>
-               <h1 className="text-4xl md:text-6xl lg:text-7xl text-white font-serif leading-[1.05] tracking-[-0.02em] max-w-5xl">{post.title}</h1>
+    <article className="bg-almond min-h-screen pb-24 md:pb-32">
+       <header className="max-w-[1440px] mx-auto px-5 md:px-12 pt-8 md:pt-14">
+           <Link to="/blog" className="us-link text-primary/70 hover:text-primary">
+               <span className="material-symbols-outlined text-base">arrow_back</span> {t('blog.backToBlog')}
+           </Link>
+           <div className="mt-10 md:mt-14 flex flex-wrap items-center gap-x-6 gap-y-2 us-label text-primary/50">
+               <span className="text-clay">{post.tag}</span>
+               <time className="us-num">{formatDate(post.published_date)}</time>
+           </div>
+           <h1 className="font-serif text-primary text-[2.2rem] leading-[1.04] sm:text-5xl md:text-6xl xl:text-7xl mt-5 max-w-6xl us-rise">{post.title}</h1>
+       </header>
+
+       <div className="max-w-[1440px] mx-auto px-5 md:px-12 mt-10 md:mt-16">
+           <div className="relative overflow-hidden aspect-[4/3] md:aspect-[21/9] bg-primary/10 us-curtain">
+               <img
+                 src={imgSrc(getImageUrl(post.image), 1800)}
+                 srcSet={imgSrcSet(getImageUrl(post.image), [700, 1100, 1500, 2000])}
+                 sizes="100vw"
+                 onError={imgFallback(getImageUrl(post.image))}
+                 className="absolute inset-0 w-full h-full object-cover"
+                 alt={post.title}
+                 loading="eager"
+                 fetchPriority="high"
+               />
            </div>
        </div>
 
-       <div className="max-w-6xl mx-auto px-4 md:px-12 -mt-16 relative z-10">
-           <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 lg:p-20 shadow-2xl border border-primary/5">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-16 border-b border-primary/10 pb-8 gap-4 max-w-3xl mx-auto w-full">
-                    <div className="flex items-center gap-3">
-                        <span className="material-symbols-outlined text-primary/30">calendar_today</span>
-                        <span className="text-xs font-bold text-primary/45 uppercase tracking-widest">{formatDate(post.published_date)}</span>
-                    </div>
-                    <Link to="/blog" className="text-[10px] font-black text-primary uppercase tracking-widest hover:translate-x-[-4px] transition-transform flex items-center gap-2">
-                        <span className="material-symbols-outlined text-sm">arrow_back</span> {t('blog.backToBlog')}
-                    </Link>
-                </div>
-
-                {/* Renderizado de HTML enriquecido para SEO. Saneado con DOMPurify:
-                    permite formato del blog pero elimina scripts/eventos (anti-XSS).
-                    Medida de lectura acotada (~70ch) para confort editorial. */}
+       <div className="max-w-[1440px] mx-auto px-5 md:px-12 mt-12 md:mt-20">
+                {/* HTML enriquecido saneado con DOMPurify (anti-XSS); medida de lectura ~68ch. */}
                 <div
-                  className="prose prose-lg md:prose-xl max-w-3xl mx-auto prose-p:text-primary/75 prose-p:font-light prose-p:leading-relaxed prose-headings:text-primary prose-headings:font-serif prose-headings:tracking-[-0.01em] prose-headings:mt-12 prose-strong:text-primary prose-strong:font-bold prose-a:text-primary prose-a:underline-offset-4 prose-li:text-primary/75 prose-li:font-light prose-blockquote:border-primary prose-blockquote:text-primary/80 prose-blockquote:font-serif prose-blockquote:italic prose-img:rounded-3xl prose-img:shadow-lg"
+                  className="prose prose-lg md:prose-xl max-w-[68ch] mx-auto prose-p:text-primary/75 prose-p:leading-relaxed prose-headings:text-primary prose-headings:font-serif prose-headings:mt-14 prose-strong:text-primary prose-strong:font-semibold prose-a:text-clay prose-a:underline-offset-4 prose-li:text-primary/75 prose-blockquote:border-l prose-blockquote:border-clay prose-blockquote:text-primary/80 prose-blockquote:font-normal prose-blockquote:not-italic prose-img:rounded-none"
                   dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content, { ADD_ATTR: ['target'] }) }}
                 />
 
-                <div className="mt-20 pt-12 border-t border-primary/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-3xl mx-auto w-full">
+                <div className="mt-20 pt-10 border-t border-primary/15 flex flex-col md:flex-row justify-between md:items-center gap-8 max-w-[68ch] mx-auto w-full">
                     <div>
-                        <h4 className="text-xl font-bold text-primary mb-2">{t('blog.shareTitle')}</h4>
-                        <p className="text-sm text-primary/50 font-medium">{t('blog.shareBody')}</p>
+                        <h2 className="font-serif text-2xl text-primary">{t('blog.shareTitle')}</h2>
+                        <p className="text-[15px] text-primary/55 mt-2">{t('blog.shareBody')}</p>
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-3">
                         <button
                             type="button"
                             title={t('blog.copyLink', 'Copiar enlace')}
+                            aria-label={t('blog.copyLink', 'Copiar enlace')}
                             onClick={() => { try { navigator.clipboard?.writeText(window.location.href); } catch { /* ignore */ } }}
-                            className="w-12 h-12 rounded-full bg-almond/60 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
-                            <span className="material-symbols-outlined text-base group-hover:scale-110 transition">link</span>
+                            className="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-almond transition-colors duration-300">
+                            <span className="material-symbols-outlined text-xl">link</span>
                         </button>
                         <button
                             type="button"
                             title={t('blog.share', 'Compartir')}
+                            aria-label={t('blog.share', 'Compartir')}
                             onClick={() => {
                                 const data = { title: document.title, url: window.location.href };
                                 if (navigator.share) { void navigator.share(data).catch(() => {}); }
                                 else { try { navigator.clipboard?.writeText(window.location.href); } catch { /* ignore */ } }
                             }}
-                            className="w-12 h-12 rounded-full bg-almond/60 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm group">
-                            <span className="material-symbols-outlined text-base group-hover:scale-110 transition">share</span>
+                            className="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-almond transition-colors duration-300">
+                            <span className="material-symbols-outlined text-xl">ios_share</span>
                         </button>
                     </div>
                 </div>
-           </div>
        </div>
-    </div>
+    </article>
   );
 };
 

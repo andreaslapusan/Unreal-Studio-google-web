@@ -6,45 +6,44 @@ const Terms: React.FC = () => {
   useEffect(() => { document.title = t('terms.docTitle'); }, [t]);
 
   return (
-    <div className="bg-almond min-h-screen pt-16 pb-24 px-6 md:px-12 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto bg-white rounded-[3rem] p-10 md:p-20 shadow-xl text-left border border-primary/5">
-        <span className="inline-flex items-center gap-2.5 text-[11px] uppercase tracking-[0.22em] text-primary/40 font-black mb-4"><span className="h-px w-7 bg-primary/30" />Unreal Studio · Bali</span>
-        <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-[-0.02em] leading-[1.05] mb-12">{t('terms.title')}</h1>
+    <div className="bg-almond min-h-screen pt-10 md:pt-16 pb-24 md:pb-32 px-5 md:px-12">
+      <div className="max-w-[1440px] mx-auto text-left">
+                <h1 className="font-display uppercase text-[2.4rem] leading-[0.95] sm:text-6xl md:text-7xl text-primary mb-12 md:mb-20 max-w-5xl us-rise">{t('terms.title')}</h1>
 
-        <div className="space-y-10 text-primary/70 leading-relaxed font-light text-lg">
+        <div className="space-y-12 text-primary/70 leading-relaxed text-base md:text-lg max-w-[68ch] lg:ml-[33%]">
           <section>
-            <h2 className="text-2xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('terms.s1H')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('terms.s1H')}</h2>
             <p>{t('terms.s1P')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('terms.s2H')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('terms.s2H')}</h2>
             <p>{t('terms.s2P')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('terms.s3H')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('terms.s3H')}</h2>
             <p>{t('terms.s3P')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('terms.s4H')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('terms.s4H')}</h2>
             <p>{t('terms.s4P')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('terms.s5H')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('terms.s5H')}</h2>
             <p>
               {t('terms.s5P_pre')}<em>{t('terms.s5P_em')}</em>{t('terms.s5P_post')}
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-primary mb-4 uppercase tracking-widest text-sm">{t('terms.s6H')}</h2>
+            <h2 className="us-label text-clay mb-4">{t('terms.s6H')}</h2>
             <p>{t('terms.s6P')}</p>
           </section>
 
-          <section className="pt-10 border-t border-primary/10 text-sm italic">
+          <section className="pt-10 border-t border-primary/15 text-sm text-primary/55">
             <p>{t('terms.copyright')}</p>
           </section>
         </div>

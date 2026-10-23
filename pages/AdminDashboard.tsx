@@ -1786,7 +1786,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
       )}
 
-      <header className="bg-white border-b border-primary/15 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center gap-2">
+      <header className="bg-almond/90 backdrop-blur-xl border-b border-primary/15 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 flex justify-between items-center gap-2">
         <div className="flex items-center flex-shrink-0">
           <Link to="/"><BrandLogo imgClassName="h-8 md:h-10 w-auto object-contain" textClassName="font-serif text-primary text-lg md:text-2xl tracking-tight" /></Link>
         </div>
@@ -2030,7 +2030,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
     <div className="space-y-4">
       {filteredClients.map(client => (
-        <div key={client.id} className="bg-[#f7f1ea] rounded-2xl border border-[#e4d8c9] shadow-sm overflow-hidden">
+        <div key={client.id} className="bg-paper rounded-2xl border border-primary/15 shadow-sm overflow-hidden">
           {/* Header con datos del cliente — layout consistente: casilla + info (izq) + acciones (der/abajo) */}
           <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
             <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -2157,7 +2157,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </button>
               </div>
               {archItems.length === 0 ? (
-                <div className="bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-8 text-center">
+                <div className="bg-paper border border-primary/15 rounded-2xl p-8 text-center">
                   <span className="material-symbols-outlined text-4xl text-amber-700/40">architecture</span>
                   <p className="text-sm font-bold text-primary mt-2">{t('admin.arch.emptyTitle', { defaultValue: 'Aún no hay clientes de arquitectura' })}</p>
                   <p className="text-xs text-primary/45 mt-1 max-w-md mx-auto">{t('admin.arch.emptyHint', { defaultValue: 'Para asociar un cliente: Clientes → su ficha → en la propiedad asignada, cambia el tipo de inversión a "Arquitectura". Aparecerá aquí para gestionar su carpeta de Drive y su plan de pagos.' })}</p>
@@ -2173,7 +2173,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       </div>
                       <div className="space-y-3">
                         {groups[gk].map(({ client, cp }, idx) => (
-                          <div key={cp.id || idx} className="bg-[#f7f1ea] border border-[#e4d8c9] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+                          <div key={cp.id || idx} className="bg-paper border border-primary/15 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="font-bold text-primary break-words">{client.name}</span>
@@ -2457,7 +2457,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 const nPerms = EMPLOYEE_PERMISSIONS.filter((p) => hasPermission(e, p.key)).length;
                 const sched = (e.work_start_time && e.work_end_time) ? `${e.work_start_time.slice(0,5)}–${e.work_end_time.slice(0,5)}` : '—';
                 return (
-                  <div key={e.id} className="bg-[#f7f1ea] rounded-2xl border border-[#e4d8c9] shadow-sm p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
+                  <div key={e.id} className="bg-paper rounded-2xl border border-primary/15 shadow-sm p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="text-base sm:text-lg font-bold text-primary break-words">{e.full_name || e.email}</h3>

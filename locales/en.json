@@ -19,7 +19,8 @@
     "sending": "Sending…",
     "next": "Next",
     "continue": "Continue",
-    "whatsappFab": "Chat with us"
+    "whatsappFab": "Chat with us",
+    "close": "Close"
   },
   "lang": {
     "name": "Language",
@@ -1972,6 +1973,7 @@
   },
   "agencyPack": {
     "loading": "Loading…",
+    "loginRequired": "Access for registered agencies only. Log in to the agency portal to view this pack.",
     "notFound": "Project not found",
     "pageTitle": "Agency Pack — Unreal Studio Bali",
     "pageTitleProject": "Agency Pack · {{name}} — Unreal Studio Bali",

@@ -5,7 +5,7 @@ import { translateProjectTerm } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
+import { DEFAULT_CONFIG, WHATSAPP_URL, PUBLIC_PROJECT_COLS } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
@@ -22,6 +22,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { statusDotClass } from '../lib/statusColor';
 import { useAuth } from '../lib/auth-context';
 import Reveal from '../components/Reveal';
+import ProjectCard from '../components/ProjectCard';
 import PageLoader from '../components/PageLoader';
 import InlineNotFound from '../components/InlineNotFound';
 
@@ -104,7 +105,7 @@ const ProjectDetail: React.FC = () => {
            // against the full slug catalog.
            let { data: projectData } = await supabase
              .from('projects')
-             .select('*')
+             .select(PUBLIC_PROJECT_COLS)
              .eq('slug', slug)
              .maybeSingle();
 
@@ -117,7 +118,7 @@ const ProjectDetail: React.FC = () => {
              if (canonical) {
                const { data: hit } = await supabase
                  .from('projects')
-                 .select('*')
+                 .select(PUBLIC_PROJECT_COLS)
                  .eq('slug', canonical)
                  .maybeSingle();
                projectData = hit;
@@ -256,7 +257,7 @@ const ProjectDetail: React.FC = () => {
               // Cargar Proyectos Similares (Misma ubicación/zona)
               const { data: similarData } = await supabase
                 .from('projects')
-                .select('*')
+                .select(PUBLIC_PROJECT_COLS)
                 .eq('location', loadedProject.location) // Usamos location como zone
                 .neq('id', loadedProject.id)
                 .eq('is_hidden', false)
@@ -371,54 +372,51 @@ const ProjectDetail: React.FC = () => {
     <div className="bg-almond transition-colors duration-300 overflow-x-hidden text-left relative">
       {/* Lightbox Modal */}
       {lightbox.open && (
-        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] bg-primary/[0.97] flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <button onClick={() => setLightbox({ open: false, index: 0 })} className="absolute top-8 right-8 text-white z-[110] hover:scale-110 transition">
             <span className="material-symbols-outlined text-4xl">close</span>
           </button>
-          <button onClick={prevSlide} className="absolute left-4 md:left-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
-            <span className="material-symbols-outlined text-4xl">arrow_back</span>
+          <button onClick={prevSlide} className="absolute left-3 md:left-8 text-almond z-[110] w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border border-almond/25 hover:bg-almond hover:text-primary transition-colors">
+            <span className="material-symbols-outlined text-2xl">arrow_back</span>
           </button>
           <img src={allImages[lightbox.index]} alt={project.name} onError={imgFallback(allImages[lightbox.index])} className="max-w-full max-h-[90vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300" />
-          <button onClick={nextSlide} className="absolute right-4 md:right-8 text-white z-[110] bg-white/10 p-4 rounded-full hover:bg-white/20 transition">
-            <span className="material-symbols-outlined text-4xl">arrow_forward</span>
+          <button onClick={nextSlide} className="absolute right-3 md:right-8 text-almond z-[110] w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border border-almond/25 hover:bg-almond hover:text-primary transition-colors">
+            <span className="material-symbols-outlined text-2xl">arrow_forward</span>
           </button>
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 font-bold text-xs uppercase tracking-widest">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-almond/60 us-label us-num">
             {lightbox.index + 1} / {allImages.length}
           </div>
         </div>
       )}
 
-      <section className="relative h-[75vh] w-full overflow-hidden">
-        <img
-          alt={project.name}
-          className="absolute inset-0 w-full h-full object-cover"
-          src={imgSrc(getImageUrl(project.image), 1600)}
-          srcSet={imgSrcSet(getImageUrl(project.image), [600, 1000, 1400, 1800])}
-          sizes="100vw"
-          loading="eager"
-          fetchPriority="high"
-          onError={imgFallback(getImageUrl(project.image))}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/5"></div>
-        <div className="absolute inset-x-0 bottom-0 z-10">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 pb-10 md:pb-16">
-            {project.property_type && (
-              <p className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-almond/80 mb-4">
-                <span className="h-px w-8 bg-almond/50"></span>{project.property_type}
-              </p>
+      <section className="relative min-h-[88svh] md:min-h-[100svh] w-full overflow-hidden bg-primary flex flex-col justify-end">
+        <div className="absolute inset-0 us-curtain">
+          <img
+            alt={project.name}
+            className="absolute inset-0 w-full h-full object-cover"
+            src={imgSrc(getImageUrl(project.image), 1800)}
+            srcSet={imgSrcSet(getImageUrl(project.image), [800, 1200, 1600, 2200])}
+            sizes="100vw"
+            loading="eager"
+            fetchPriority="high"
+            onError={imgFallback(getImageUrl(project.image))}
+          />
+        </div>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(30,27,22,0.5)_0%,rgba(30,27,22,0)_28%,rgba(30,27,22,0)_45%,rgba(30,27,22,0.85)_100%)]" aria-hidden="true"></div>
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-5 md:px-12 pb-8 md:pb-12 pt-32">
+          <Link to="/proyectos" className="us-link text-almond/80 hover:text-almond mb-8 md:mb-10 us-rise" style={{ animationDelay: '400ms' }}>
+            <span className="material-symbols-outlined text-base">arrow_back</span>{t('projectDetail.backToProjects')}
+          </Link>
+          <h1 className="font-display uppercase text-almond text-[2.5rem] leading-[0.95] sm:text-6xl md:text-7xl xl:text-[6rem] xl:leading-[0.92] max-w-5xl us-rise" style={{ animationDelay: '550ms' }}>{project.name}</h1>
+          <div className="mt-8 md:mt-10 pt-5 border-t border-almond/20 flex flex-wrap items-center gap-x-8 gap-y-3 us-label text-almond/75 us-rise" style={{ animationDelay: '750ms' }}>
+            {project.property_type && <span>{project.property_type}</span>}
+            {project.location && (
+              <span className="inline-flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-clay-light">location_on</span>{project.location}</span>
             )}
-            <h1 className="font-serif text-almond text-5xl md:text-7xl leading-[1.0] tracking-[-0.02em] mb-4 drop-shadow-lg max-w-3xl">{project.name}</h1>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-              {project.location && (
-                <div className="flex items-center text-almond/90 text-sm md:text-base font-semibold">
-                  <span className="material-symbols-outlined text-base mr-1">location_on</span>
-                  {project.location}
-                </div>
-              )}
-              {project.tenure && (
-                <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-primary/10 text-primary/70'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
-              )}
-            </div>
+            {project.tenure && (
+              <span className="inline-flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-clay-light">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
+            )}
+            <span className="inline-flex items-center gap-2"><span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(project.status)}`} />{translateStatus(project.status, t)}</span>
           </div>
         </div>
       </section>
@@ -432,44 +430,36 @@ const ProjectDetail: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-almond border-y border-primary/10 relative z-10">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-7 md:py-10 flex flex-col md:flex-row md:items-center gap-7 md:gap-0">
+      <div className="bg-primary text-almond relative z-10">
+        <div className="max-w-[1440px] mx-auto px-5 md:px-12 py-8 md:py-12 grid grid-cols-2 lg:grid-cols-12 gap-y-8 gap-x-6">
           {(project.investor_price ?? 0) > 0 && (
-            <div className="md:pr-12 md:mr-12 md:border-r border-primary/10 shrink-0">
-              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiInvestorPrice')}</p>
-              <div className="flex items-baseline gap-3">
-                <p className="text-4xl md:text-[3.25rem] leading-none font-serif text-primary tracking-[-0.02em]">{formatPrice(project.investor_price, project.price_currency)}</p>
+            <div className="col-span-2 lg:col-span-5 lg:pr-10 lg:border-r border-almond/15">
+              <p className="us-label text-almond/50">{t('projectDetail.kpiInvestorPrice')}</p>
+              <div className="flex items-baseline gap-3 mt-3 flex-wrap">
+                <p className="font-display text-5xl md:text-6xl xl:text-7xl leading-none us-num">{formatPrice(project.investor_price, project.price_currency)}</p>
                 {(project.market_price ?? 0) > Number(project.investor_price) && (
-                  <p className="text-base md:text-xl font-serif text-primary/30 line-through">{formatPrice(project.market_price, project.price_currency)}</p>
+                  <p className="text-lg md:text-xl text-almond/40 line-through us-num">{formatPrice(project.market_price, project.price_currency)}</p>
                 )}
               </div>
             </div>
           )}
-          <div className="grid grid-cols-3 gap-5 md:gap-12 flex-1">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiRoiRental')}</p>
-              <p className="text-2xl md:text-[1.9rem] font-serif text-primary leading-none">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : (project.roi || '—')}</p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiRoiResale')}</p>
-              <p className="text-2xl md:text-[1.9rem] font-serif text-primary leading-none">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/40 font-black mb-2.5">{t('projectDetail.kpiStatus')}</p>
-              <span className="inline-flex items-center gap-2 text-xs md:text-sm font-black uppercase tracking-wide text-primary leading-none pt-1">
-                <span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(project.status)}`}></span>{translateStatus(project.status, t)}
-              </span>
-            </div>
+          <div className="lg:col-span-3 lg:pl-4">
+            <p className="us-label text-almond/50">{t('projectDetail.kpiRoiRental')}</p>
+            <p className="font-display text-4xl md:text-5xl leading-none mt-3 text-clay-light us-num">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : (project.roi || '—')}</p>
+          </div>
+          <div className="lg:col-span-3">
+            <p className="us-label text-almond/50">{t('projectDetail.kpiRoiResale')}</p>
+            <p className="font-display text-4xl md:text-5xl leading-none mt-3 us-num">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
           </div>
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-6 md:px-12 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <main className="max-w-[1440px] mx-auto px-5 md:px-12 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16">
         <div className="lg:col-span-8 space-y-20">
           <section>
-            <h2 className="text-4xl md:text-5xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.sectionProject')}</h2>
+            <h2 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-8 md:mb-10">{t('projectDetail.sectionProject')}</h2>
             {localizedDescription() && (
-              <div className="prose prose-lg text-primary/80 font-light space-y-6 mb-12">
+              <div className="text-lg md:text-xl leading-relaxed text-primary/75 space-y-6 mb-12 max-w-[65ch]">
                 <p>{localizedDescription()}</p>
               </div>
             )}
@@ -482,13 +472,13 @@ const ProjectDetail: React.FC = () => {
                 (project.completion_percent > 0) && { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) },
               ].filter(Boolean) as { icon: string; label: string; value: string }[];
               return specs.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 border-b border-primary/15">
                   {specs.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-primary/5">
-                      <div className="bg-almond p-3 rounded-xl"><span className="material-symbols-outlined text-primary">{item.icon}</span></div>
+                    <div key={idx} className="flex items-center gap-4 py-5 border-t border-primary/15">
+                      <span className="material-symbols-outlined text-[26px] text-clay">{item.icon}</span>
                       <div>
-                        <p className="text-[9px] uppercase font-black text-primary/45 tracking-widest">{item.label}</p>
-                        <p className="font-bold text-primary text-sm">{item.value}</p>
+                        <p className="us-label text-primary/45">{item.label}</p>
+                        <p className="font-medium text-primary text-base mt-0.5">{item.value}</p>
                       </div>
                     </div>
                   ))}
@@ -496,47 +486,47 @@ const ProjectDetail: React.FC = () => {
               ) : null;
             })()}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-primary/15 border border-primary/15 mt-10">
               {project.bedrooms > 0 && (
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
-                  <span className="material-symbols-outlined text-primary/40 text-2xl">bed</span>
-                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelBedrooms')}</p>
-                  <p className="text-lg font-bold text-primary">{project.bedrooms}</p>
+                <div className="bg-almond p-5 md:p-6 text-left">
+                  <span className="material-symbols-outlined text-clay text-2xl">bed</span>
+                  <p className="us-label text-primary/45 mt-3">{t('projectDetail.labelBedrooms')}</p>
+                  <p className="font-display text-2xl md:text-3xl text-primary mt-1 us-num">{project.bedrooms}</p>
                 </div>
               )}
               {project.bathrooms > 0 && (
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
-                  <span className="material-symbols-outlined text-primary/40 text-2xl">shower</span>
-                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelBathrooms')}</p>
-                  <p className="text-lg font-bold text-primary">{project.bathrooms}</p>
+                <div className="bg-almond p-5 md:p-6 text-left">
+                  <span className="material-symbols-outlined text-clay text-2xl">shower</span>
+                  <p className="us-label text-primary/45 mt-3">{t('projectDetail.labelBathrooms')}</p>
+                  <p className="font-display text-2xl md:text-3xl text-primary mt-1 us-num">{project.bathrooms}</p>
                 </div>
               )}
               {project.area_m2 > 0 && (
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
-                  <span className="material-symbols-outlined text-primary/40 text-2xl">straighten</span>
-                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelArea')}</p>
-                  <p className="text-lg font-bold text-primary">{project.area_m2} m²</p>
+                <div className="bg-almond p-5 md:p-6 text-left">
+                  <span className="material-symbols-outlined text-clay text-2xl">straighten</span>
+                  <p className="us-label text-primary/45 mt-3">{t('projectDetail.labelArea')}</p>
+                  <p className="font-display text-2xl md:text-3xl text-primary mt-1 us-num">{project.area_m2} m²</p>
                 </div>
               )}
               {project.furnishing && (
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
-                  <span className="material-symbols-outlined text-primary/40 text-2xl">chair</span>
-                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelFurnishing')}</p>
-                  <p className="text-lg font-bold text-primary">{fmtFurnishing(project.furnishing)}</p>
+                <div className="bg-almond p-5 md:p-6 text-left">
+                  <span className="material-symbols-outlined text-clay text-2xl">chair</span>
+                  <p className="us-label text-primary/45 mt-3">{t('projectDetail.labelFurnishing')}</p>
+                  <p className="font-display text-2xl md:text-3xl text-primary mt-1 us-num">{fmtFurnishing(project.furnishing)}</p>
                 </div>
               )}
               {Number((project as any).land_area_m2) > 0 && (
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
-                  <span className="material-symbols-outlined text-primary/40 text-2xl">landscape</span>
-                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelLandArea')}</p>
-                  <p className="text-lg font-bold text-primary">{(project as any).land_area_m2} m²</p>
+                <div className="bg-almond p-5 md:p-6 text-left">
+                  <span className="material-symbols-outlined text-clay text-2xl">landscape</span>
+                  <p className="us-label text-primary/45 mt-3">{t('projectDetail.labelLandArea')}</p>
+                  <p className="font-display text-2xl md:text-3xl text-primary mt-1 us-num">{(project as any).land_area_m2} m²</p>
                 </div>
               )}
               {(project as any).view_type && (
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
-                  <span className="material-symbols-outlined text-primary/40 text-2xl">visibility</span>
-                  <p className="text-[9px] font-black text-primary/45 uppercase tracking-widest mt-2">{t('projectDetail.labelView')}</p>
-                  <p className="text-lg font-bold text-primary">{(project as any).view_type}</p>
+                <div className="bg-almond p-5 md:p-6 text-left">
+                  <span className="material-symbols-outlined text-clay text-2xl">visibility</span>
+                  <p className="us-label text-primary/45 mt-3">{t('projectDetail.labelView')}</p>
+                  <p className="font-display text-2xl md:text-3xl text-primary mt-1 us-num">{(project as any).view_type}</p>
                 </div>
               )}
             </div>
@@ -544,17 +534,17 @@ const ProjectDetail: React.FC = () => {
 
           {/* Botones de Descarga en Columna Principal - MOVIDO AQUÍ PARA MAYOR VISIBILIDAD */}
           {(brochureFor(project, i18n.language) || (project.floor_plans && project.floor_plans.length > 0) || (project as any).walkthrough_url) && (
-            <section className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm">
-                <h3 className="text-2xl font-serif text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
+            <section className="bg-paper p-6 md:p-10 border border-primary/15">
+                <h3 className="font-serif text-2xl md:text-3xl text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
                 <div className="flex flex-wrap gap-4">
                   {brochureFor(project, i18n.language) && (
-                    <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
+                    <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="us-btn flex-1 min-w-[200px]">
                       <span className="material-symbols-outlined">download</span>
                       {t('fix.pd.downloadBrochure')}
                     </a>
                   )}
                   {(project as any).walkthrough_url && (
-                    <a href={(project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-almond text-primary border border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-primary hover:text-white transition">
+                    <a href={(project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="us-btn us-btn-ghost text-primary flex-1 min-w-[200px] hover:!text-almond hover:!bg-primary">
                       <span className="material-symbols-outlined">smart_display</span>
                       {t('projectDetail.videoTourBtn')}
                     </a>
@@ -569,8 +559,8 @@ const ProjectDetail: React.FC = () => {
                     <h4 className="text-lg font-serif text-primary mb-4">{t('projectDetail.plansTitle')}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {project.floor_plans.map((pdf, idx) => (
-                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-almond/50 p-4 rounded-2xl border border-primary/10 hover:bg-primary/10 transition group">
-                          <div className="bg-red-100 text-red-500 p-2 rounded-xl group-hover:scale-110 transition">
+                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-almond p-4 border border-primary/15 hover:border-primary/40 transition-colors group">
+                          <div className="text-clay p-1">
                             <span className="material-symbols-outlined">picture_as_pdf</span>
                           </div>
                           <div className="flex-1 overflow-hidden">
@@ -588,7 +578,7 @@ const ProjectDetail: React.FC = () => {
 
           {project.amenities && project.amenities.length > 0 && (
             <section>
-              <h2 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.servicesTitle')}</h2>
+              <h2 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-8 md:mb-10">{t('projectDetail.servicesTitle')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 md:gap-x-14 gap-y-0 border-b border-primary/10">
                 {(() => {
                   const intakeKeys = ['privatePool','sharedPool','garden','parking','security','gym','kitchen','ac','wifi','rooftop','oceanView','nearBeach','coworking','cleaning'];
@@ -647,7 +637,7 @@ const ProjectDetail: React.FC = () => {
             if (grouped.length === 0) return null;
             return (
               <section>
-                <h2 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.equipmentTitle')}</h2>
+                <h2 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-8 md:mb-10">{t('projectDetail.equipmentTitle')}</h2>
                 <div className="space-y-6">
                   {grouped.map(([catName, cat]) => {
                     const activeItems = cat.items.filter(item => project.furnishing_items!.includes(item));
@@ -675,7 +665,7 @@ const ProjectDetail: React.FC = () => {
           
           {showClientLogin && (
             <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowClientLogin(false); }}>
-                <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl">
+                <div className="bg-paper w-full max-w-md p-8 md:p-10 shadow-2xl border border-primary/15">
                     <div className="text-center mb-8">
                         <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">lock</span>
                         <h2 className="text-xl font-serif text-primary mb-2">{t('projectDetail.investorAccessTitle')}</h2>
@@ -685,18 +675,18 @@ const ProjectDetail: React.FC = () => {
                     <form onSubmit={handleClientLoginForDoc} className="space-y-4">
                         <div>
                             <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
-                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-almond/50 border border-primary/15 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-white border border-primary/15 rounded-[3px] font-medium focus:border-clay focus:outline-none" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">{t('projectDetail.password')}</label>
                             <div className="relative">
-                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-almond/50 border border-primary/15 rounded-2xl font-bold focus:border-primary focus:outline-none" />
+                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-white border border-primary/15 rounded-[3px] font-medium focus:border-clay focus:outline-none" />
                               <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? t('fix.pd.hidePassword') : t('fix.pd.showPassword')} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
                                 <span className="material-symbols-outlined text-xl">{showLoginPw ? 'visibility_off' : 'visibility'}</span>
                               </button>
                             </div>
                         </div>
-                        <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">
+                        <button type="submit" disabled={loginLoading} className="us-btn w-full disabled:opacity-50">
                             {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('fix.pd.verifying')}</> : t('fix.pd.accessReport')}
                         </button>
                     </form>
@@ -739,14 +729,14 @@ const ProjectDetail: React.FC = () => {
 
             return (
               <section className="mt-12">
-                <h2 className="text-3xl text-primary mb-8">{t('projectDetail.locationTitle')}</h2>
+                <h2 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-8 md:mb-10">{t('projectDetail.locationTitle')}</h2>
                 {embedUrl ? (
                   <LazyMap
                     embedUrl={embedUrl}
-                    className="rounded-2xl overflow-hidden shadow-lg border border-primary/5"
+                    className="overflow-hidden border border-primary/15"
                   />
                 ) : (
-                  <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/5 bg-primary/10 flex items-center justify-center" style={{height: '400px'}}>
+                  <div className="overflow-hidden border border-primary/15 bg-paper flex items-center justify-center" style={{height: '400px'}}>
                     <a href={project.google_maps_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-3 text-primary/50 hover:text-primary transition">
                       <span className="material-symbols-outlined text-4xl">map</span>
                       <span className="text-sm font-bold uppercase tracking-widest">{t('projectDetail.viewOnMaps')}</span>
@@ -765,12 +755,12 @@ const ProjectDetail: React.FC = () => {
               Marcelino: gallery should appear before timeline. */}
 
           {tiersArray && tiersArray.length > 0 && (
-            <section className="bg-white p-8 md:p-12 rounded-3xl border border-primary/5 shadow-sm">
-              <h3 className="text-3xl md:text-4xl text-primary mb-8 tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.investmentStructureTitle')}</h3>
+            <section className="border-t border-primary/15 pt-10">
+              <h3 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-8 md:mb-10">{t('projectDetail.investmentStructureTitle')}</h3>
               <div className="space-y-1">
                 {tiersArray.map((tier: string, idx: number) => (
                   <div key={idx} className="flex items-center gap-4 py-4 border-b border-primary/10 last:border-0">
-                    <span className="font-serif text-primary/30 text-lg leading-none tabular-nums shrink-0 w-7">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="font-display text-clay text-xl leading-none tabular-nums shrink-0 w-9">{String(idx + 1).padStart(2, '0')}</span>
                     <span className="text-primary/80 font-medium">{tier}</span>
                   </div>
                 ))}
@@ -780,8 +770,7 @@ const ProjectDetail: React.FC = () => {
 
           {project.construction_gallery && project.construction_gallery.length > 0 && (
             <section>
-              <h3 className="text-3xl md:text-4xl text-primary mb-8 text-left tracking-[-0.02em] flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary/40 text-4xl">construction</span>
+              <h3 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-8 md:mb-10">
                 {t('projectDetail.constructionProgressTitle')}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -792,7 +781,7 @@ const ProjectDetail: React.FC = () => {
                     <div 
                       key={idx} 
                       onClick={() => globalIdx !== -1 && setLightbox({ open: true, index: globalIdx })}
-                      className="relative rounded-2xl overflow-hidden shadow-sm group cursor-pointer aspect-square border border-primary/10"
+                      className="relative overflow-hidden group cursor-pointer aspect-square bg-primary/10"
                     >
                       <img
                         loading="lazy"
@@ -803,8 +792,8 @@ const ProjectDetail: React.FC = () => {
                         sizes="(max-width: 768px) 50vw, 33vw"
                         onError={imgFallback(getImageUrl(img))}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-end p-3">
-                        <span className="material-symbols-outlined text-white/95 text-lg bg-white/15 backdrop-blur-md rounded-full p-1.5 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">zoom_in</span>
+                      <div className="absolute inset-0 bg-primary/35 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-end p-3">
+                        <span className="material-symbols-outlined text-lg bg-almond text-primary rounded-full p-1.5 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">zoom_in</span>
                       </div>
                     </div>
                   );
@@ -814,13 +803,13 @@ const ProjectDetail: React.FC = () => {
           )}
 
           <Reveal as="section">
-            <h3 className="text-3xl md:text-4xl text-primary mb-8 text-left tracking-[-0.02em] flex items-center gap-4"><span className="h-px w-10 bg-primary/30 shrink-0"></span>{t('projectDetail.galleryTitle')}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <h3 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-8 md:mb-10">{t('projectDetail.galleryTitle')}</h3>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
               {allImages.map((img, idx) => (
                 <div
                   key={idx}
                   onClick={() => setLightbox({ open: true, index: idx })}
-                  className={`relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${idx === 0 ? 'md:col-span-2 md:row-span-2 aspect-video' : 'aspect-square'}`}
+                  className={`relative overflow-hidden group cursor-pointer bg-primary/10 ${idx === 0 ? 'col-span-2 lg:row-span-2 aspect-[4/3] lg:aspect-auto' : 'aspect-square'}`}
                 >
                   <img
                     loading="lazy"
@@ -831,8 +820,8 @@ const ProjectDetail: React.FC = () => {
                     sizes="(max-width: 768px) 100vw, 50vw"
                     onError={imgFallback(img)}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-end p-4">
-                    <span className="material-symbols-outlined text-white/95 text-xl bg-white/15 backdrop-blur-md rounded-full p-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">zoom_in</span>
+                  <div className="absolute inset-0 bg-primary/35 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-end p-4">
+                    <span className="material-symbols-outlined text-xl bg-almond text-primary rounded-full p-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">zoom_in</span>
                   </div>
                 </div>
               ))}
@@ -850,9 +839,9 @@ const ProjectDetail: React.FC = () => {
               guarantees the panel fits the viewport when its content is taller
               than the screen — without that, sticky never engages because the
               element's bottom never enters view before the parent ends. */}
-          <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-6 [scrollbar-width:thin]">
-            <div className="bg-white p-8 rounded-2xl shadow-2xl border border-primary/5 text-left">
-              <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-primary/10">{t('projectDetail.assetSummary')}</h3>
+          <div className="lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto space-y-6 [scrollbar-width:thin]">
+            <div className="bg-paper p-6 md:p-8 border border-primary/15 text-left">
+              <h3 className="font-serif text-2xl text-primary mb-6 pb-4 border-b border-primary/15">{t('projectDetail.assetSummary')}</h3>
               <div className="space-y-8 mb-10">
                 {project.completion_percent > 0 && (
                 <div>
@@ -860,20 +849,20 @@ const ProjectDetail: React.FC = () => {
                     <span>{t('projectDetail.labelConstructionProgress')}</span>
                     <span className="text-primary">{project.completion_percent}%</span>
                   </div>
-                  <div className="w-full bg-primary/10 rounded-full h-2.5 overflow-hidden">
-                    <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${project.completion_percent}%` }}></div>
+                  <div className="w-full bg-primary/10 h-[3px] overflow-hidden">
+                    <div className="bg-clay h-full transition-all duration-1000" style={{ width: `${project.completion_percent}%` }}></div>
                   </div>
                 </div>
                 )}
 
                 {/* Nuevo bloque de datos extra en sidebar */}
                 <div>
-                    {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
-                    {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
-                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
-                    {project.furnishing && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
-                    {project.has_pool && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}
-                    {!isFinished(project.status) && project.completion_date && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{deliveryText(formatDate(project.completion_date), t('projects.card.deliveryFrom'))}</span></div>}
+                    {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-semibold us-num">{project.bedrooms}</span></div>}
+                    {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-semibold us-num">{project.bathrooms}</span></div>}
+                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-semibold us-num">{project.area_m2} m²</span></div>}
+                    {project.furnishing && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-semibold us-num">{fmtFurnishing(project.furnishing)}</span></div>}
+                    {project.has_pool && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-semibold us-num">{t('projectDetail.yes')}</span></div>}
+                    {!isFinished(project.status) && project.completion_date && <div className="flex justify-between py-2 border-b border-primary/10"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-semibold us-num">{deliveryText(formatDate(project.completion_date), t('projects.card.deliveryFrom'))}</span></div>}
                 </div>
 
                 {(() => {
@@ -901,7 +890,7 @@ const ProjectDetail: React.FC = () => {
                 {brochureFor(project, i18n.language) && (
                   <div className="pt-6 border-t border-primary/10 space-y-3">
                     {brochureFor(project, i18n.language) && (
-                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-almond/50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
+                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="us-btn us-btn-ghost text-primary w-full hover:!bg-primary hover:!text-almond">
                         <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}
@@ -911,7 +900,7 @@ const ProjectDetail: React.FC = () => {
               </div>
               <a
                 href={`mailto:hello@unrealstudiobali.com?subject=${encodeURIComponent(t('fix.pd.mailSubject', { name: project.name, defaultValue: 'Información: {{name}}' }))}&body=${encodeURIComponent(t('fix.pd.mailBody', { name: project.name, location: project.location || '', defaultValue: 'Hola, me interesa el proyecto "{{name}}" en {{location}}. Me gustaría recibir más información y agendar una reunión.' }))}`}
-                className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition"
+                className="us-btn w-full"
               >
                 {t('fix.pd.requestProjectInfo')}
               </a>
@@ -920,35 +909,18 @@ const ProjectDetail: React.FC = () => {
         </div>
       </main>
 
-      <section className="max-w-7xl mx-auto px-6 md:px-12 py-20 border-t border-primary/10">
-        <h3 className="text-3xl text-primary mb-12 text-left">{t('projectDetail.similarTitle')}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {similarProjects.map((similar) => (
-            <Link key={similar.id} to={projectPath(similar)} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group border border-primary/5">
-              <div className="h-48 overflow-hidden relative">
-                <img
-                  loading="lazy"
-                  alt={similar.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                  src={imgSrc(getImageUrl(similar.image), 500)}
-                  srcSet={imgSrcSet(getImageUrl(similar.image), [320, 500, 800])}
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  onError={imgFallback(getImageUrl(similar.image))}
-                />
-                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-black/35 backdrop-blur-md text-white border border-white/20 text-[8px] font-black px-3 py-1.5 uppercase tracking-widest rounded-full shadow-lg"><span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(similar.status)}`} />{translateStatus(similar.status, t)}</span>
-              </div>
-              <div className="p-6 text-left">
-                <h4 className="text-lg font-bold text-primary mb-2 truncate">{similar.name}</h4>
-                <p className="text-[10px] font-black uppercase text-primary/45 tracking-widest mb-4">{similar.location}</p>
-                <div className="flex justify-between items-center pt-4 border-t border-primary/10">
-                  <p className="font-bold text-primary">{(similar.investor_price ?? 0) > 0 ? formatPrice(similar.investor_price, similar.price_currency) : t('projectDetail.consult')}</p>
-                  <span className="material-symbols-outlined text-primary group-hover:translate-x-1 transition">arrow_forward</span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {similarProjects.length > 0 && (
+        <section className="bg-paper py-16 md:py-24">
+          <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+            <h2 className="font-display uppercase text-[2rem] leading-[0.95] md:text-5xl text-primary mb-10 md:mb-14">{t('projectDetail.similarTitle')}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-8 gap-y-14">
+              {similarProjects.map((similar) => (
+                <ProjectCard key={similar.id} project={similar} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

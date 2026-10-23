@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { PUBLIC_PROJECT_COLS } from '../constants';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../types';
@@ -33,7 +34,7 @@ const LandingGlobalitae: React.FC = () => {
       try {
         const { data: projectData, error } = await supabase
           .from('projects')
-          .select('*')
+          .select(PUBLIC_PROJECT_COLS)
           .eq('slug', slug)
           .single();
 
@@ -168,7 +169,7 @@ const LandingGlobalitae: React.FC = () => {
 
   if (loading) {
       return (
-          <div className="min-h-screen bg-[#f5f0eb] flex flex-col items-center justify-center space-y-4">
+          <div className="min-h-screen bg-paper flex flex-col items-center justify-center space-y-4">
               <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
               <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('fix.lg.loadingProject')}</p>
           </div>
@@ -177,7 +178,7 @@ const LandingGlobalitae: React.FC = () => {
 
   if (!project) {
       return (
-          <div className="min-h-screen bg-[#f5f0eb] flex flex-col items-center justify-center text-center px-6">
+          <div className="min-h-screen bg-paper flex flex-col items-center justify-center text-center px-6">
               <h1 className="text-6xl font-serif text-primary mb-4">{t('fix.lg.projectNotFound')}</h1>
               <p className="text-xl text-primary/70">{t('fix.lg.projectNotAvailable')}</p>
           </div>
@@ -185,7 +186,7 @@ const LandingGlobalitae: React.FC = () => {
   }
 
   return (
-    <div className="bg-[#f5f0eb] min-h-screen font-sans text-primary selection:bg-primary selection:text-white pb-12">
+    <div className="bg-paper min-h-screen font-sans text-primary selection:bg-primary selection:text-white pb-12">
       <noscript>
         <img height="1" width="1" style={{display: 'none'}} src="https://www.facebook.com/tr?id=2063788554445408&ev=PageView&noscript=1" alt="" />
       </noscript>
@@ -195,7 +196,7 @@ const LandingGlobalitae: React.FC = () => {
         .font-light { font-family: 'Nexa Extra Light', sans-serif !important; }
       `}</style>
       {/* HEADER MÍNIMO */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#f5f0eb]/90 backdrop-blur-md border-b border-primary/10">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-paper/90 backdrop-blur-md border-b border-primary/10">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-3 md:h-20 flex flex-col md:flex-row items-center justify-center relative gap-2 md:gap-0">
           <div className="md:absolute md:left-12 flex items-center gap-2">
             <span className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter">Unreal Studio</span>
@@ -474,7 +475,7 @@ const LandingGlobalitae: React.FC = () => {
           <h2 className="text-4xl md:text-5xl font-serif text-primary mb-6">{t('fix.lg.requestInfoThisProject')}</h2>
           <p className="text-lg text-primary/70 mb-12">{t('fix.lg.requestInfoSubtitle')}</p>
           
-          <div id="ghl-form" className="bg-[#f5f0eb] p-4 md:p-12 rounded-[2rem] shadow-inner text-left">
+          <div id="ghl-form" className="bg-paper p-4 md:p-12 rounded-[2rem] shadow-inner text-left">
             <div className="w-full" style={{minHeight: '735px'}}>
               <iframe
                 src="https://api.leadconnectorhq.com/widget/form/sJULfOixnegP6pWUFDy1"

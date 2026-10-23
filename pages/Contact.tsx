@@ -63,38 +63,33 @@ const Contact: React.FC = () => {
     });
   };
 
+  const fieldCls = 'w-full bg-transparent border-0 border-b border-primary/25 rounded-none px-0 py-3 text-primary text-base font-medium placeholder:text-primary/30 focus:ring-0 focus:border-clay outline-none transition-colors';
+  const labelCls = 'us-label text-primary/50';
+
   return (
-    <div className="bg-almond transition-colors duration-300 min-h-screen">
-      <main className="px-6 md:px-12 pt-16 pb-24">
-        <div className="max-w-4xl mx-auto text-center mb-20 space-y-7">
-          <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/35"></span></span>
-          <h1 className="text-5xl md:text-7xl leading-[1.04] text-primary tracking-[-0.02em]">
-            {t('contact.heroTitle1')} <br className="hidden md:block" />{t('contact.heroTitle2')}
+    <div className="bg-almond min-h-screen">
+      <main className="max-w-[1440px] mx-auto px-5 md:px-12 pt-10 md:pt-16 pb-24 md:pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end mb-14 md:mb-20">
+          <h1 className="lg:col-span-8 font-display uppercase text-primary text-[2.6rem] leading-[0.95] sm:text-6xl md:text-7xl xl:text-[6rem] xl:leading-[0.92] us-rise">
+            {t('contact.heroTitle1')} {t('contact.heroTitle2')}
           </h1>
-          <p className="text-lg md:text-xl text-primary/70 font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="lg:col-span-4 text-base md:text-lg text-primary/65 leading-relaxed lg:pb-3">
             {t('contact.heroSubtitle')}
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start text-left">
-          
-          {/* Formulario de Contacto / WhatsApp Generator */}
-          <div className="lg:col-span-7 bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-12 shadow-2xl border border-primary/5 relative overflow-hidden">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100%] -mr-8 -mt-8 z-0"></div>
-             
-             <div className="relative z-10 mb-8">
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg rotate-3 shrink-0">
-                        <span className="material-symbols-outlined">mail</span>
-                    </div>
-                    <h2 className="text-2xl md:text-3xl text-primary font-serif">{t('contact.formTitle')}</h2>
-                </div>
-                <p className="text-sm text-primary/55 font-medium mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start text-left">
+
+          {/* Formulario */}
+          <div className="lg:col-span-7 bg-paper border border-primary/15 p-6 md:p-12">
+             <div className="mb-2">
+                <h2 className="font-serif text-2xl md:text-3xl text-primary">{t('contact.formTitle')}</h2>
+                <p className="text-[15px] text-primary/55 mt-3 mb-10 max-w-lg">
                   {t('contact.formIntro')}
                 </p>
 
                 {sent && (
-                  <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-5">
+                  <div className="mb-8 border border-emerald-700/25 bg-emerald-50/60 p-5">
                     <p className="font-bold text-green-700 flex items-center gap-2">
                       <span className="material-symbols-outlined">check_circle</span>
                       {t('contact.successTitle', '¡Perfecto! Hemos recibido tus datos.')}
@@ -104,16 +99,16 @@ const Contact: React.FC = () => {
                         ? t('contact.successBlocked', 'Tu navegador no pudo abrir el correo. Toca el botón para enviárnoslo:')
                         : t('contact.successBody', 'Te hemos abierto tu correo para enviarnos los datos. Si no se abrió, usa el botón:')}
                     </p>
-                    <a href={sent.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-3 bg-green-600 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-green-700 transition">
+                    <a href={sent.url} target="_blank" rel="noreferrer" className="us-btn mt-4 !bg-emerald-800 hover:!bg-emerald-900">
                       <span className="material-symbols-outlined text-base">mail</span>{t('contact.openWhatsapp', 'Abrir correo')}
                     </a>
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.fullName')}</label>
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-1">
+                      <label className={labelCls}>{t('contact.fullName')}</label>
                       <input
                         type="text"
                         name="name"
@@ -121,11 +116,11 @@ const Contact: React.FC = () => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder={t('contact.fullNamePlaceholder')}
-                        className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition"
+                        className={`${fieldCls}`}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('fix.contact.emailLabelRequired')}</label>
+                    <div className="space-y-1">
+                      <label className={labelCls}>{t('fix.contact.emailLabelRequired')}</label>
                       <input
                         type="email"
                         name="email"
@@ -133,32 +128,32 @@ const Contact: React.FC = () => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder={t('fix.contact.emailPlaceholder')}
-                        className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition"
+                        className={`${fieldCls}`}
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.phoneLabel')}</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-1">
+                      <label className={labelCls}>{t('contact.phoneLabel')}</label>
                       <input
                         type="tel"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder={t('fix.contact.phonePlaceholder')}
-                        className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition"
+                        className={`${fieldCls}`}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.reason')}</label>
+                    <div className="space-y-1">
+                      <label className={labelCls}>{t('contact.reason')}</label>
                       <div className="relative">
                         <select
                             aria-label={t('contact.reason')}
                             name="reason"
                             value={formData.reason}
                             onChange={handleChange}
-                            className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition appearance-none cursor-pointer bg-none"
+                            className={`${fieldCls} cursor-pointer pr-8`}
                         >
                           <option>{t('contact.reasons.diversify')}</option>
                           <option>{t('contact.reasons.roi')}</option>
@@ -169,16 +164,16 @@ const Contact: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.budget')}</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-1">
+                       <label className={labelCls}>{t('contact.budget')}</label>
                        <div className="relative">
                          <select
                             aria-label={t('contact.budget')}
                             name="budget"
                             value={formData.budget}
                             onChange={handleChange}
-                            className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition appearance-none cursor-pointer bg-none"
+                            className={`${fieldCls} cursor-pointer pr-8`}
                          >
                            <option>{t('contact.budgets.under50')}</option>
                            <option>{t('contact.budgets.b50to100')}</option>
@@ -188,15 +183,15 @@ const Contact: React.FC = () => {
                          </select>
                                                 </div>
                     </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.timeframe')}</label>
+                    <div className="space-y-1">
+                       <label className={labelCls}>{t('contact.timeframe')}</label>
                        <div className="relative">
                          <select
                             aria-label={t('contact.timeframe')}
                             name="timeframe"
                             value={formData.timeframe}
                             onChange={handleChange}
-                            className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-bold focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition appearance-none cursor-pointer bg-none"
+                            className={`${fieldCls} cursor-pointer pr-8`}
                          >
                            <option>{t('contact.tf.asap')}</option>
                            <option>{t('contact.tf.m1')}</option>
@@ -207,101 +202,58 @@ const Contact: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">{t('contact.message')}</label>
+                  <div className="space-y-1">
+                    <label className={labelCls}>{t('contact.message')}</label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
                       placeholder={t('contact.messagePlaceholder')}
                       rows={3}
-                      className="w-full bg-almond/40 border border-primary/10 rounded-xl px-4 py-3 text-primary font-medium focus:ring-2 focus:ring-primary/15 focus:border-primary focus:bg-white outline-none transition resize-none"
+                      className={`${fieldCls} resize-none`}
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-black text-white py-4 rounded-xl font-bold text-sm uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-primary/30"
-                  >
-                    <span>{t('contact.submit')}</span>
-                    {/* SVG Send Icon */}
-                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                  <button type="submit" className="us-btn w-full sm:w-auto">
+                    {t('contact.submit')} <span className="material-symbols-outlined">arrow_forward</span>
                   </button>
                   
-                  <p className="text-[10px] text-center text-primary/40">
+                  <p className="text-xs text-primary/45">
                     {t('contact.privacyNote')}
                   </p>
                 </form>
              </div>
           </div>
 
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            {/* Información de contacto estática */}
-            <div className="bg-[#EBE0D3] rounded-[2.5rem] p-8 border border-primary/5">
-              <h3 className="text-xl font-bold text-primary mb-6 flex items-center gap-2">
-                <span className="material-symbols-outlined text-orange-600">bolt</span> {t('contact.directChannels')}
-              </h3>
-              <div className="space-y-4">
-                <a className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl hover:bg-white transition group" href="mailto:hello@unrealstudiobali.com">
-                  <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary group-hover:text-white transition text-primary">
-                    <span className="material-symbols-outlined text-xl">mail</span>
-                  </div>
+          <aside className="lg:col-span-5 bg-primary text-almond p-6 md:p-10 lg:sticky lg:top-28">
+            <p className="us-label text-clay-light">{t('contact.directChannels')}</p>
+            <a className="group block mt-4 pb-8" href="mailto:hello@unrealstudiobali.com">
+              <p className="us-label text-almond/45">{t('contact.emailLabel')}</p>
+              <span className="block font-serif text-xl sm:text-2xl md:text-[1.7rem] mt-2 break-all transition-colors group-hover:text-clay-light">hello@unrealstudiobali.com</span>
+            </a>
+              <a href="https://maps.app.goo.gl/abmGvNJzsbuM3pxr5?g_st=ic" target="_blank" rel="noopener noreferrer" className="group block py-7 border-t border-almond/15">
+                <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-primary/50">{t('contact.emailLabel')}</p>
-                    <span className="font-medium text-primary">hello@unrealstudiobali.com</span>
+                    <p className="us-label text-almond/45">{t('contact.hqLabel')}</p>
+                    <h3 className="font-display uppercase text-3xl md:text-4xl mt-2">{t('fix.contact.madridCity')}</h3>
                   </div>
-                </a>
-              </div>
-            </div>
-
-            {/* Madrid Office */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-lg border border-primary/5 flex flex-col">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h4 className="font-bold text-xl text-primary">{t('fix.contact.madridCity')}</h4>
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-primary/40 mt-1">{t('contact.hqLabel')}</p>
+                  <span className="material-symbols-outlined text-2xl text-clay-light transition-transform duration-500 ease-out group-hover:-translate-y-1 group-hover:translate-x-1">north_east</span>
                 </div>
-                <div className="w-12 h-12 rounded-full overflow-hidden border border-primary/10 shadow-sm">
-                  <img alt="Madrid" className="w-full h-full object-cover grayscale opacity-80" src="https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&q=80&w=200&h=200" />
-                </div>
-              </div>
-              <p className="text-sm text-primary/55 font-light mb-6 leading-relaxed">
-{t('fix.contact.madridAddressLine1')}<br />{t('fix.contact.madridAddressLine2')}
-              </p>
-              <a 
-                className="inline-flex items-center text-[10px] font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition w-fit" 
-                href="https://maps.app.goo.gl/abmGvNJzsbuM3pxr5?g_st=ic" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                {t('contact.viewLocation')} <span className="material-symbols-outlined text-sm ml-1">north_east</span>
+                <p className="text-[15px] text-almond/65 mt-3 leading-relaxed">{t('fix.contact.madridAddressLine1')}<br />{t('fix.contact.madridAddressLine2')}</p>
+                <span className="us-link text-almond/80 mt-4">{t('contact.viewLocation')}</span>
               </a>
-            </div>
-
-            {/* Bali Office */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-lg border border-primary/5 flex flex-col">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h4 className="font-bold text-xl text-primary">{t('fix.contact.baliCity')}</h4>
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-primary/40 mt-1">{t('contact.asiaLabel')}</p>
+              <a href="https://maps.app.goo.gl/bnYDvKsJu7GWdUfA8?g_st=ic" target="_blank" rel="noopener noreferrer" className="group block py-7 border-t border-almond/15">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="us-label text-almond/45">{t('contact.asiaLabel')}</p>
+                    <h3 className="font-display uppercase text-3xl md:text-4xl mt-2">{t('fix.contact.baliCity')}</h3>
+                  </div>
+                  <span className="material-symbols-outlined text-2xl text-clay-light transition-transform duration-500 ease-out group-hover:-translate-y-1 group-hover:translate-x-1">north_east</span>
                 </div>
-                <div className="w-12 h-12 rounded-full overflow-hidden border border-primary/10 shadow-sm">
-                  <img alt="Bali" className="w-full h-full object-cover grayscale opacity-80" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=200&h=200" />
-                </div>
-              </div>
-              <p className="text-sm text-primary/55 font-light mb-6 leading-relaxed">
-{t('fix.contact.baliAddressLine1')}<br />{t('fix.contact.baliAddressLine2')}
-              </p>
-              <a 
-                className="inline-flex items-center text-[10px] font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition w-fit" 
-                href="https://maps.app.goo.gl/bnYDvKsJu7GWdUfA8?g_st=ic" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                {t('contact.viewLocation')} <span className="material-symbols-outlined text-sm ml-1">north_east</span>
+                <p className="text-[15px] text-almond/65 mt-3 leading-relaxed">{t('fix.contact.baliAddressLine1')}<br />{t('fix.contact.baliAddressLine2')}</p>
+                <span className="us-link text-almond/80 mt-4">{t('contact.viewLocation')}</span>
               </a>
-            </div>
-          </div>
+          </aside>
         </div>
       </main>
     </div>

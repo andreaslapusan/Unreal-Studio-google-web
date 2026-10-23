@@ -16,28 +16,70 @@
   .ust-modal { width: 70vw; max-width: 70vw; }
 }
 
-/* Custom site styles formerly inlined in index.html. Kept here so that
-   PostCSS picks them up at build time and ships a single CSS file. */
+/* ===== Rediseño 2026 · "Piedra y basalto" =====================================
+   Sistema: Archivo (variable, eje de anchura) para texto y titulares — los
+   titulares en ancho EXPANDIDO y peso ligero, como rótulos de un estudio de
+   arquitectura; Cormorant Garamond itálica solo como acento de una palabra; DM
+   Serif Display queda reservado al logotipo "Unreal Studio". Paleta: tokens en
+   tailwind.config.js (basalto, piedra paras, laterita, jungla). */
+:root {
+  --ink: #1e1b16;
+  --stone: #ece6dc;
+  --paper: #f6f3ed;
+  --clay: #9e4a26;
+  --clay-light: #d8936b;
+  --moss: #252b21;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+html { -webkit-text-size-adjust: 100%; }
 body {
-  font-family: "Manrope", sans-serif;
-  background-color: #f3e5d8;
-  color: #3f2305;
+  font-family: "Archivo", system-ui, sans-serif;
+  background-color: var(--stone);
+  color: var(--ink);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Selección de texto de marca: resaltado marrón cálido (no el azul por defecto),
-   coherente con la paleta almond/marrón. Detalle fino de sitio premium. */
-::selection { background-color: rgba(63, 35, 5, 0.16); color: #3f2305; }
-::-moz-selection { background-color: rgba(63, 35, 5, 0.16); color: #3f2305; }
+/* Selección, caret y scrollbar de marca: lo que el navegador pinta también es diseño. */
+::selection { background-color: rgba(158, 74, 38, 0.22); color: var(--ink); }
+::-moz-selection { background-color: rgba(158, 74, 38, 0.22); color: var(--ink); }
+input, textarea { caret-color: var(--clay); }
+input::placeholder, textarea::placeholder { color: rgba(30, 27, 22, 0.36); opacity: 1; }
+html { scrollbar-color: rgba(30, 27, 22, 0.35) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(30, 27, 22, 0.28); border-radius: 9999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-track { background: transparent; }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: "DM Serif Display", serif;
+/* Titulares: Archivo expandido y ligero. Se normaliza el peso también cuando
+   el componente trae font-bold (heredado del sistema anterior con DM Serif). */
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-stretch: 112%;
+  font-weight: 380;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
+p { text-wrap: pretty; }
+.font-display { font-stretch: 118%; font-weight: 250; letter-spacing: -0.03em; overflow-wrap: break-word; }
+/* En pantallas estrechas el rótulo se condensa un poco para que palabras largas
+   (OPORTUNIDADES, INVESTASI…) quepan sin cortar. */
+@media (max-width: 480px) { .font-display { font-stretch: 104%; -webkit-hyphens: auto; hyphens: auto; } }
+/* Acento: UNA palabra en serif itálica fina dentro de un titular. */
+.font-accent, .us-accent { font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 300; font-stretch: 100%; letter-spacing: -0.01em; text-transform: none; }
+/* Logotipo: identidad de marca intacta (DM Serif Display). */
+.font-logo { font-family: "DM Serif Display", Georgia, serif !important; font-stretch: 100% !important; font-weight: 400 !important; letter-spacing: -0.02em; }
+/* Cifras de datos (precios, %): numerales tabulares alineados. */
+.us-num { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
 
-/* Las cabeceras EN MAYÚSCULAS (etiquetas tipo "NUESTRAS SEDES", "REQUIERE TU
-   ATENCIÓN") deben ir en Manrope, no en la serif de display: con DM Serif +
-   uppercase + tracking quedaban mal. Las cabeceras de caja normal siguen serif. */
-h1.uppercase, h2.uppercase, h3.uppercase, h4.uppercase, h5.uppercase, h6.uppercase {
-  font-family: "Manrope", sans-serif;
+/* Las cabeceras EN MAYÚSCULAS (etiquetas pequeñas) van en ancho normal y peso
+   medio, con tracking positivo: son rótulos, no titulares. */
+h1.uppercase:not(.font-display), h2.uppercase:not(.font-display), h3.uppercase:not(.font-display), h4.uppercase:not(.font-display), h5.uppercase:not(.font-display), h6.uppercase:not(.font-display) {
+  font-stretch: 100%;
+  font-weight: 600;
+  letter-spacing: 0.14em;
 }
 
 /* Todos los <select>: flecha propia + padding-right para que NUNCA tape el texto
@@ -46,7 +88,7 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233F2305' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231E1B16' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.6rem center;
   background-size: 1rem;
@@ -69,7 +111,7 @@ select {
   -webkit-font-feature-settings: "liga";
   font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
 }
 
 .glass-card {
@@ -89,9 +131,9 @@ select {
 /* Accesibilidad (auditoría): indicador de foco visible SOLO con teclado
    (:focus-visible no se dispara al hacer click con ratón, así no molesta). */
 :focus-visible {
-  outline: 2px solid #3f2305;
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 /* Lema de marca: serif fino en cursiva (Cormorant Garamond 300 italic), no DM Serif grueso. */
@@ -140,3 +182,49 @@ select {
     scroll-behavior: auto !important;
   }
 }
+
+/* ===== Piezas del sistema 2026 (reutilizadas en web pública y portales) ===== */
+@layer components {
+  /* Rótulo pequeño en versalitas: categorías, metadatos, etiquetas de campo. */
+  .us-label { font-size: 0.6875rem; line-height: 1rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; font-stretch: 100%; }
+  /* Botón principal: rectángulo arquitectónico, no píldora. */
+  .us-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem;
+    min-height: 3.25rem; padding: 0 1.75rem; border-radius: 2px;
+    font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; font-stretch: 105%;
+    background: var(--ink); color: var(--stone);
+    transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out), transform 160ms var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .us-btn:active { transform: scale(0.97); }
+  .us-btn .material-symbols-outlined { font-size: 1.15rem; transition: transform 300ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .us-btn:hover { background: var(--clay); color: #fff; }
+    .us-btn:hover .material-symbols-outlined { transform: translateX(4px); }
+  }
+  .us-btn-light { background: var(--stone); color: var(--ink); }
+  @media (hover: hover) and (pointer: fine) { .us-btn-light:hover { background: var(--clay-light); color: var(--ink); } }
+  .us-btn-ghost { background: transparent; color: inherit; box-shadow: inset 0 0 0 1px currentColor; }
+  @media (hover: hover) and (pointer: fine) { .us-btn-ghost:hover { background: var(--stone); color: var(--ink); box-shadow: inset 0 0 0 1px var(--stone); } }
+  /* Enlace editorial con subrayado que se dibuja. */
+  .us-link { position: relative; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; padding-bottom: 6px; }
+  .us-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform-origin: left; transition: transform 500ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .us-link:hover::after { transform: scaleX(0.35); } }
+  /* Etiqueta de estado sobre fotografía: placa sólida de piedra, sin cristal. */
+  .us-tag { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.65rem; border-radius: 2px; background: var(--paper); color: var(--ink); font-size: 0.625rem; line-height: 1; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+  /* Fotografía con zoom lento al pasar (solo punteros finos). */
+  .us-zoom img { transition: transform 1400ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .group:hover .us-zoom img, .us-zoom:hover img { transform: scale(1.045); } }
+}
+
+/* Momento de entrada del héroe: la fotografía se descubre como un telón y el
+   titular sube desde su línea base. Un solo gesto, solo con motion permitido. */
+@keyframes usCurtain { from { clip-path: inset(0 0 100% 0); transform: scale(1.12); } to { clip-path: inset(0 0 0 0); transform: scale(1); } }
+@keyframes usRise { from { opacity: 0; transform: translate3d(0, 40px, 0); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@media (prefers-reduced-motion: no-preference) {
+  .us-curtain { animation: usCurtain 1.6s var(--ease-in-out) both; }
+  .us-rise { animation: usRise 1.1s var(--ease-out) both; }
+}
+/* Palabra a palabra (sección manifiesto): de tono apagado a tinta plena. */
+.us-word { transition: color 700ms var(--ease-out), opacity 700ms var(--ease-out); }
+@keyframes usMenuIn { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }

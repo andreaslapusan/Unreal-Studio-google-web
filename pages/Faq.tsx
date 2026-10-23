@@ -162,94 +162,93 @@ export default function Faq() {
   }, [faqs, category, query]);
 
   return (
-    <div className="bg-almond min-h-screen pb-24">
-      <header className="px-6 md:px-12 pt-20 pb-16 max-w-5xl mx-auto text-center space-y-6">
-        <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Bali<span className="h-px w-8 bg-primary/35"></span></span>
-        <h1 className="text-5xl md:text-7xl text-primary font-serif tracking-[-0.02em] leading-[1.04]">
-          {t("faq.heroTitle")}
-        </h1>
-        <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed font-light">
-          {t("faq.heroSubtitle")}
-        </p>
-      </header>
+    <div className="bg-almond min-h-screen pb-24 md:pb-32">
+      <div className="max-w-[1440px] mx-auto px-5 md:px-12 pt-10 md:pt-16">
+        <header className="mb-12 md:mb-16">
+          <h1 className="font-display uppercase text-primary text-[2.6rem] leading-[0.95] sm:text-6xl md:text-7xl xl:text-[6rem] xl:leading-[0.92] max-w-5xl us-rise">
+            {t("faq.heroTitle")}
+          </h1>
+          <p className="text-base md:text-lg text-primary/65 max-w-2xl leading-relaxed mt-6">
+            {t("faq.heroSubtitle")}
+          </p>
+        </header>
 
-      <div className="max-w-4xl mx-auto px-6 md:px-12">
-        <div className="bg-white rounded-2xl shadow-sm border border-primary/5 p-3 mb-8 flex items-center gap-3 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/20 transition">
-          <span className="material-symbols-outlined text-primary/30 ml-2">search</span>
-          <input
-            aria-label={t("faq.search")}
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("faq.search")}
-            className="flex-1 bg-transparent border-none outline-none text-primary text-base font-medium placeholder:text-primary/30"
-          />
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          {/* Índice lateral: buscador + categorías */}
+          <aside className="lg:col-span-4">
+            <div className="lg:sticky lg:top-28 space-y-8">
+              <label className="flex items-center gap-3 border-b border-primary/25 focus-within:border-clay transition-colors py-2">
+                <span className="material-symbols-outlined text-primary/40" aria-hidden="true">search</span>
+                <input
+                  aria-label={t("faq.search")}
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("faq.search")}
+                  className="flex-1 bg-transparent border-none outline-none focus:ring-0 p-0 text-primary text-base placeholder:text-primary/35"
+                />
+              </label>
+              <nav className="flex lg:flex-col flex-wrap gap-2 lg:gap-0 lg:border-t lg:border-primary/15">
+                {categories.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCategory(c)}
+                    aria-pressed={category === c}
+                    className={`text-left transition-colors duration-300 outline-none focus-visible:ring-2 focus-visible:ring-clay us-label px-3.5 py-2.5 rounded-[2px] border lg:border-0 lg:border-b lg:border-primary/15 lg:rounded-none lg:px-0 lg:py-4 lg:text-[0.8125rem] lg:flex lg:items-center lg:justify-between ${
+                      category === c
+                        ? "bg-primary text-almond border-primary lg:bg-transparent lg:text-clay"
+                        : "border-primary/20 text-primary/60 hover:text-primary"
+                    }`}
+                  >
+                    {c === ALL ? t("faq.categories.all") : t(`faq.categories.${c}`, { defaultValue: c })}
+                    <span className={`hidden lg:inline transition-opacity ${category === c ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true"><span className="material-symbols-outlined text-base">arrow_forward</span></span>
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </aside>
 
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategory(c)}
-              className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
-                category === c
-                  ? "bg-primary text-white shadow-md"
-                  : "bg-white text-primary/60 hover:text-primary border border-primary/10"
-              }`}
-            >
-              {c === ALL
-                ? t("faq.categories.all")
-                : t(`faq.categories.${c}`, { defaultValue: c })}
-            </button>
-          ))}
-        </div>
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" />
-          </div>
-        )}
-
-        {!loading && filtered.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-primary/50 italic">{t("faq.noResults")}</p>
-          </div>
-        )}
-
-        <div className="space-y-3">
-          {filtered.map((f) => (
-            <details
-              key={f.id}
-              className="bg-white rounded-2xl border border-primary/5 shadow-sm group transition-all duration-300 hover:border-primary/20 hover:shadow-md open:border-primary/15 open:shadow-md"
-            >
-              <summary className="cursor-pointer p-6 list-none flex items-start justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 rounded-2xl">
-                <h2 className="font-serif text-lg md:text-xl text-primary leading-snug transition-colors group-hover:text-black">
-                  {f.question}
-                </h2>
-                <span className="material-symbols-outlined text-primary/40 group-hover:text-primary group-open:rotate-45 transition-transform duration-300 shrink-0">
-                  add
-                </span>
-              </summary>
-              <div className="px-6 pb-6 text-primary/80 text-sm md:text-base leading-relaxed motion-safe:group-open:animate-[fadeInUp_0.35s_ease-out]">
-                {renderAnswer(f.answer)}
+          <div className="lg:col-span-8">
+            {loading && (
+              <div className="py-16 flex justify-center" role="status" aria-busy="true">
+                <div className="relative h-px w-32 bg-primary/15 overflow-hidden"><span className="absolute inset-y-0 left-0 w-1/3 bg-clay us-loader-bar" /></div>
               </div>
-            </details>
-          ))}
+            )}
+
+            {!loading && filtered.length === 0 && (
+              <div className="py-16 border-t border-primary/15">
+                <p className="text-primary/55">{t("faq.noResults")}</p>
+              </div>
+            )}
+
+            <div className="border-t border-primary/15">
+              {filtered.map((f) => (
+                <details key={f.id} className="group border-b border-primary/15">
+                  <summary className="cursor-pointer py-6 md:py-7 list-none flex items-start justify-between gap-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay">
+                    <h2 className="font-serif text-lg md:text-2xl text-primary leading-snug transition-colors group-hover:text-clay">
+                      {f.question}
+                    </h2>
+                    <span className="shrink-0 w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary transition-all duration-500 ease-out group-open:rotate-45 group-open:bg-primary group-open:text-almond group-open:border-primary">
+                      <span className="material-symbols-outlined text-xl">add</span>
+                    </span>
+                  </summary>
+                  <div className="pb-8 pr-0 md:pr-16 text-primary/75 text-base leading-relaxed max-w-[68ch] motion-safe:group-open:animate-[fadeInUp_0.4s_cubic-bezier(0.23,1,0.32,1)]">
+                    {renderAnswer(f.answer)}
+                  </div>
+                </details>
+              ))}
+            </div>
+
+            <section className="mt-16 md:mt-24 bg-primary text-almond p-8 md:p-12">
+              <h2 className="font-display uppercase text-3xl md:text-5xl leading-[0.95]">{t("faq.ctaTitle")}</h2>
+              <p className="text-almond/70 mt-4 max-w-xl leading-relaxed">{t("faq.ctaBody")}</p>
+              <Link to="/contacto" className="us-btn us-btn-light mt-8">
+                {t("faq.ctaBtn")} <span className="material-symbols-outlined">arrow_forward</span>
+              </Link>
+            </section>
+          </div>
         </div>
       </div>
-
-      <section className="max-w-3xl mx-auto px-6 md:px-12 mt-20">
-        <div className="bg-primary text-white rounded-3xl p-10 text-center shadow-xl">
-          <h2 className="font-serif text-3xl mb-3">{t("faq.ctaTitle")}</h2>
-          <p className="text-white/80 mb-6 max-w-xl mx-auto">{t("faq.ctaBody")}</p>
-          <Link
-            to="/contacto"
-            className="inline-block bg-white text-primary px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-lg"
-          >
-            {t("faq.ctaBtn")}
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }

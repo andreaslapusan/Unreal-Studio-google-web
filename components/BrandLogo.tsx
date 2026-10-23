@@ -43,9 +43,10 @@ const BrandLogo: React.FC<Props> = ({ imgClassName, textClassName, tagline, tagl
 
   const mark = logo
     ? <img src={logo} alt="Unreal Studio" className={imgClassName || 'h-9 w-auto object-contain'} />
-    // Logo de texto PERMANENTE (decisión de Andreas): "Unreal Studio" en DM Serif.
+    // Logo de texto PERMANENTE (decisión de Andreas): "Unreal Studio" en DM Serif
+    // (font-logo fuerza la cara del logotipo aunque el sistema tipográfico cambie).
     // No cambiar nunca salvo que se suba un logo en Configuración.
-    : <span className={textClassName || 'font-serif font-bold text-primary text-xl tracking-tight'}>Unreal Studio</span>;
+    : <span className={`font-logo ${textClassName || 'text-primary text-xl'}`}>Unreal Studio</span>;
 
   if (!tagline) return mark;
   return (

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { WHATSAPP_URL } from '../constants';
 import { APP_VERSION } from '../lib/version';
 import { supabase } from '../lib/supabase';
-import { SocialIcon, networkClass } from '../lib/socials';
-import BrandLogo from './BrandLogo';
+import { SocialIcon } from '../lib/socials';
+import { BRAND_LEMA } from './BrandLogo';
+import { bookingLink } from '../lib/bookingLink';
 
 const DAY_LABEL: Record<string, string> = { mon: 'Lun', tue: 'Mar', wed: 'Mié', thu: 'Jue', fri: 'Vie', sat: 'Sáb', sun: 'Dom' };
 
@@ -39,86 +39,92 @@ const Footer: React.FC = () => {
   const hours: Record<string, string> = brand?.hours || {};
   const hoursEntries = Object.entries(hours).filter(([, v]) => v);
 
+  const linkCls = 'inline-block py-1.5 text-almond/70 hover:text-almond transition-colors duration-300';
   return (
-    <footer className="bg-white border-t border-primary/10 pt-10 md:pt-20 pb-24 md:pb-12 px-6 md:px-12 text-sm">
-      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 md:gap-16 mb-8 md:mb-16 text-left">
-        {/* Brand Column */}
-        <div className="col-span-2 md:col-span-1">
-          <Link to="/" className="block mb-4 md:mb-8">
-            <BrandLogo tagline imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tight" taglineClassName="brand-lema text-primary/50 text-sm tracking-wide mt-1.5" />
-          </Link>
-          <p className="text-primary/60 text-sm leading-relaxed max-w-xs font-medium">
-            {t('footer.tagline')}
-          </p>
-        </div>
+    <footer className="bg-primary text-almond pt-16 md:pt-24 pb-28 md:pb-10 overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-12 pb-14 md:pb-20 border-b border-almond/15 text-left">
+          {/* Marca + lema */}
+          <div className="col-span-2 lg:col-span-5">
+            <p className="font-serif text-2xl md:text-3xl leading-snug text-almond max-w-md">{t('footer.tagline')}</p>
+            <a href={bookingLink({ medium: 'cta_footer' })} target="_blank" rel="noopener noreferrer" className="us-btn us-btn-light mt-8">
+              {t('nav.scheduleCall')} <span className="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
 
-        {/* Menu Column */}
-        <div>
-          <h5 className="inline-flex items-center gap-2 font-black text-xs uppercase tracking-[0.2em] text-primary/70 mb-4 before:content-[''] before:h-px before:w-5 before:bg-primary/30">{t('footer.menu')}</h5>
-          <ul className="space-y-2 text-primary/50 text-xs font-bold uppercase tracking-wider">
-            <li><Link className="inline-block py-1 hover:text-primary transition" to="/">{t('footer.home')}</Link></li>
-            <li><Link className="inline-block py-1 hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
-            <li><Link className="inline-block py-1 hover:text-primary transition" to="/blog">{t('footer.blog')}</Link></li>
-            <li><Link className="inline-block py-1 hover:text-primary transition" to="/faq">{t('nav.faq')}</Link></li>
-            <li><Link className="inline-block py-1 hover:text-primary transition" to="/contacto">{t('footer.contact')}</Link></li>
-          </ul>
-        </div>
+          {/* Menú */}
+          <div className="lg:col-span-2 lg:col-start-7">
+            <h2 className="us-label text-almond/45 mb-4">{t('footer.menu')}</h2>
+            <ul className="space-y-1 text-[15px]">
+              <li><Link className={linkCls} to="/">{t('footer.home')}</Link></li>
+              <li><Link className={linkCls} to="/proyectos">{t('footer.projects')}</Link></li>
+              <li><Link className={linkCls} to="/blog">{t('footer.blog')}</Link></li>
+              <li><Link className={linkCls} to="/faq">{t('nav.faq')}</Link></li>
+              <li><Link className={linkCls} to="/contacto">{t('footer.contact')}</Link></li>
+            </ul>
+          </div>
 
-        {/* Offices, hours & social (desde Configuración → Datos de empresa) */}
-        <div>
-          <h5 className="inline-flex items-center gap-2 font-black text-xs uppercase tracking-[0.2em] text-primary/70 mb-4 before:content-[''] before:h-px before:w-5 before:bg-primary/30">{t('footer.offices')}</h5>
-          <ul className="space-y-3 text-primary/50 text-xs font-bold tracking-wider mb-6">
-            {addresses.map((addr, i) => (
-              <li key={i}>
-                <a href={addressHref(addr)} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 hover:text-primary transition">
-                  <span className="material-symbols-outlined text-base">location_on</span> {addr.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          {hoursEntries.length > 0 && (
-            <div className="mb-6 text-[11px] text-primary/50 font-medium space-y-0.5">
-              {hoursEntries.map(([k, v]) => (
-                <div key={k} className="flex gap-2"><span className="font-bold text-primary/70 w-8">{t('footer.days.' + k, { defaultValue: DAY_LABEL[k] || k })}</span> {v}</div>
+          {/* Sedes, horario y redes (Configuración → Datos de empresa) */}
+          <div className="lg:col-span-4">
+            <h2 className="us-label text-almond/45 mb-4">{t('footer.offices')}</h2>
+            <ul className="space-y-3 text-[15px] mb-6">
+              {addresses.map((addr, i) => (
+                <li key={i}>
+                  <a href={addressHref(addr)} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-almond/70 hover:text-almond transition-colors">
+                    <span className="material-symbols-outlined text-[18px] mt-0.5 text-clay-light">location_on</span> <span>{addr.text}</span>
+                  </a>
+                </li>
               ))}
-            </div>
-          )}
+            </ul>
 
-          <div className="flex flex-wrap gap-4">
-            {socials.map((s, i) => {
-              const net = s.network || s.label || 'website';
-              return (
-                <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={net}
-                   className={`w-11 h-11 rounded-full flex items-center justify-center hover:text-white transition duration-300 ${networkClass(net)}`}>
-                  <SocialIcon network={net} />
-                </a>
-              );
-            })}
-            <Link to="/contacto" className="w-11 h-11 rounded-full bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-300" aria-label={t('footer.scheduleVideocall')}>
-              <span className="material-symbols-outlined text-xl">videocam</span>
-            </Link>
+            {hoursEntries.length > 0 && (
+              <div className="mb-6 text-sm text-almond/60 space-y-0.5 us-num">
+                {hoursEntries.map(([k, v]) => (
+                  <div key={k} className="flex gap-3"><span className="font-semibold text-almond/80 w-10">{t('footer.days.' + k, { defaultValue: DAY_LABEL[k] || k })}</span> {v}</div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-3">
+              {socials.map((s, i) => {
+                const net = s.network || s.label || 'website';
+                return (
+                  <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={net}
+                     className="w-11 h-11 rounded-full border border-almond/25 text-almond flex items-center justify-center hover:bg-almond hover:text-primary transition-colors duration-300">
+                    <SocialIcon network={net} />
+                  </a>
+                );
+              })}
+              <Link to="/contacto" className="w-11 h-11 rounded-full border border-almond/25 text-almond flex items-center justify-center hover:bg-almond hover:text-primary transition-colors duration-300" aria-label={t('footer.scheduleVideocall')}>
+                <span className="material-symbols-outlined text-xl">videocam</span>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-6">
-        <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
-        <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
-          <Link className="inline-block py-1 hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
-          <Link className="inline-block py-1 hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
-          {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
-              para que al entrar quede fijado el manifest del portal y se pueda instalar
-              cada uno como su propia app desde aquí. Ver index.html (script de manifest). */}
-          <a className="py-1 hover:text-primary transition flex items-center gap-1" href="/cliente">
-            <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
-          </a>
-          {/* Agencias OCULTO temporalmente de la web pública (Andreas, 2026-06-18) */}
-          <a className="py-1 hover:text-primary transition flex items-center gap-1" href="/empleados">
-            <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
-          </a>
-          <a className="py-1 hover:text-primary transition flex items-center gap-1" href="/admin/login">
-            <span className="material-symbols-outlined text-xs">settings</span> {t('footer.admin')}
-          </a>
+
+        {/* El logotipo a escala de fachada + lema oficial. */}
+        <Link to="/" className="block pt-10 md:pt-14 outline-none focus-visible:ring-2 focus-visible:ring-clay-light" aria-label="Unreal Studio">
+          <span className="font-logo block text-almond leading-[0.85] text-[15.5vw] xl:text-[14rem] whitespace-nowrap">Unreal Studio</span>
+          <span className="brand-lema block text-almond/55 text-lg md:text-2xl mt-3 md:mt-4">{BRAND_LEMA}</span>
+        </Link>
+
+        <div className="mt-10 md:mt-14 pt-6 border-t border-almond/15 flex flex-col md:flex-row justify-between md:items-center gap-5 us-label text-almond/40">
+          <p>{t('footer.rights')} <span className="normal-case tracking-normal">· v{APP_VERSION}</span></p>
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
+            <Link className="py-1 hover:text-almond transition-colors" to="/privacidad">{t('footer.privacy')}</Link>
+            <Link className="py-1 hover:text-almond transition-colors" to="/terminos">{t('footer.terms')}</Link>
+            {/* Enlaces de portal: <a> con carga COMPLETA a propósito (manifest por portal). */}
+            <a className="py-1 hover:text-almond transition-colors flex items-center gap-1.5" href="/cliente">
+              <span className="material-symbols-outlined text-sm">person</span> {t('footer.clients')}
+            </a>
+            {/* Agencias OCULTO temporalmente de la web pública (Andreas, 2026-06-18) */}
+            <a className="py-1 hover:text-almond transition-colors flex items-center gap-1.5" href="/empleados">
+              <span className="material-symbols-outlined text-sm">badge</span> {t('footer.team')}
+            </a>
+            <a className="py-1 hover:text-almond transition-colors flex items-center gap-1.5" href="/admin/login">
+              <span className="material-symbols-outlined text-sm">settings</span> {t('footer.admin')}
+            </a>
+          </div>
         </div>
       </div>
     </footer>
