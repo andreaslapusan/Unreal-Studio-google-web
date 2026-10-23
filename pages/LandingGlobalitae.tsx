@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { PUBLIC_PROJECT_COLS } from '../constants';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../types';
@@ -33,7 +34,7 @@ const LandingGlobalitae: React.FC = () => {
       try {
         const { data: projectData, error } = await supabase
           .from('projects')
-          .select('*')
+          .select(PUBLIC_PROJECT_COLS)
           .eq('slug', slug)
           .single();
 

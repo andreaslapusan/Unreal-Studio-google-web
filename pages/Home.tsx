@@ -3,7 +3,7 @@ import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
-import { DEFAULT_CONFIG, WHATSAPP_URL } from '../constants';
+import { DEFAULT_CONFIG, WHATSAPP_URL, PUBLIC_PROJECT_COLS } from '../constants';
 import { Project, AppConfig, BlogPost } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
@@ -72,7 +72,7 @@ const Home: React.FC = () => {
 
         const { data: projectsData } = await supabase
             .from('projects')
-            .select('*')
+            .select(PUBLIC_PROJECT_COLS)
             .order('sort_order', { ascending: true });
 
         if (projectsData) {

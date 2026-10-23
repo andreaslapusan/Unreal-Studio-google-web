@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CURRENCIES, DEFAULT_CONFIG } from '../constants';
+import { CURRENCIES, DEFAULT_CONFIG, PUBLIC_PROJECT_COLS } from '../constants';
 import { projectPath } from '../lib/projectUrl';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
@@ -76,7 +76,7 @@ const Projects: React.FC = () => {
 
         const { data } = await supabase
           .from('projects')
-          .select('*')
+          .select(PUBLIC_PROJECT_COLS)
           .order('sort_order', { ascending: true });
 
         if (data) {

@@ -5,7 +5,7 @@ import { translateProjectTerm } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { DEFAULT_CONFIG, whatsappProjectUrl } from '../constants';
+import { DEFAULT_CONFIG, whatsappProjectUrl, PUBLIC_PROJECT_COLS } from '../constants';
 import { Project, AppConfig } from '../types';
 import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
@@ -127,7 +127,7 @@ const ProjectDetail: React.FC = () => {
            // against the full slug catalog.
            let { data: projectData } = await supabase
              .from('projects')
-             .select('*')
+             .select(PUBLIC_PROJECT_COLS)
              .eq('slug', slug)
              .maybeSingle();
 
@@ -140,7 +140,7 @@ const ProjectDetail: React.FC = () => {
              if (canonical) {
                const { data: hit } = await supabase
                  .from('projects')
-                 .select('*')
+                 .select(PUBLIC_PROJECT_COLS)
                  .eq('slug', canonical)
                  .maybeSingle();
                projectData = hit;
@@ -279,7 +279,7 @@ const ProjectDetail: React.FC = () => {
               // Cargar Proyectos Similares (Misma ubicación/zona)
               const { data: similarData } = await supabase
                 .from('projects')
-                .select('*')
+                .select(PUBLIC_PROJECT_COLS)
                 .eq('location', loadedProject.location) // Usamos location como zone
                 .neq('id', loadedProject.id)
                 .eq('is_hidden', false)
