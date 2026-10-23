@@ -177,7 +177,7 @@ const Navbar: React.FC = () => {
 
       {/* Menú móvil / tablet: telón de basalto con el índice en tipografía de rótulo */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[60] bg-primary text-almond lg:hidden flex flex-col motion-safe:animate-[usMenuIn_0.5s_cubic-bezier(0.32,0.72,0,1)]" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[70] bg-primary text-almond lg:hidden flex flex-col motion-safe:animate-[usMenuIn_0.5s_cubic-bezier(0.32,0.72,0,1)]" role="dialog" aria-modal="true">
           <div className="h-[4.5rem] md:h-24 px-5 md:px-12 flex justify-between items-center shrink-0">
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center shrink-0">
               <BrandLogo imgClassName="h-9 md:h-11 w-auto object-contain" textClassName="text-[1.65rem] md:text-[2rem] leading-none text-almond" />
