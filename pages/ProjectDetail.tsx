@@ -460,15 +460,7 @@ const ProjectDetail: React.FC = () => {
       )}
 
       <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
-          <div className="px-4 first:pl-0 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
-            <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
-          </div>
-          <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
-            <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
-          </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
           {(project.investor_price ?? 0) > 0 && (
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
@@ -883,26 +875,6 @@ const ProjectDetail: React.FC = () => {
                     {!isFinished(project.status) && project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{deliveryText(formatDate(project.completion_date), t('projects.card.deliveryFrom'))}</span></div>}
                 </div>
 
-                {(() => {
-                  const rental = (project.annual_rental_projection && project.investor_price) ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : null;
-                  const resale = (project.market_price && project.investor_price && project.investor_price > 0) ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : null;
-                  return (rental || resale) ? (
-                    <div className="space-y-3">
-                      {rental && (
-                        <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                          <span>{t('projectDetail.kpiRoiRental')}</span>
-                          <span className="text-primary">{rental}</span>
-                        </div>
-                      )}
-                      {resale && (
-                        <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                          <span>{t('projectDetail.kpiRoiResale')}</span>
-                          <span className="text-primary">{resale}</span>
-                        </div>
-                      )}
-                    </div>
-                  ) : null;
-                })()}
 
                 {/* Botones en Sidebar */}
                 {brochureFor(project, i18n.language) && (

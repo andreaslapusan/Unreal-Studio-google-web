@@ -119,10 +119,9 @@ const Home: React.FC = () => {
     if (!featuredProject) return null;
 
     const investorPrice = featuredProject.investor_price;
-    // Si market_price es 0 o null, simulamos un 59% de plusvalía como respaldo
-    const marketPrice = featuredProject.market_price && featuredProject.market_price > 0
-      ? featuredProject.market_price
-      : investorPrice * 1.59;
+    // Sin precio de mercado real no se muestra comparativa (nada de cifras simuladas)
+    if (!(featuredProject.market_price > investorPrice)) return null;
+    const marketPrice = featuredProject.market_price;
 
     const capitalGain = marketPrice - investorPrice;
     const gainPercent = ((marketPrice - investorPrice) / investorPrice) * 100;
@@ -601,11 +600,6 @@ const Home: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-black/10"></div>
               </div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:bottom-10 md:translate-y-0 bg-primary p-6 md:p-8 rounded-3xl shadow-2xl text-left min-w-[200px] md:min-w-[280px] z-10 border border-white/10 backdrop-blur-md bg-primary/95">
-                <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-almond/40 mb-1 md:mb-2">{t('home.roiAvgTag')}</p>
-                <p className="text-4xl md:text-6xl text-almond font-serif mb-1 md:mb-2 leading-none">28%</p>
-                <p className="text-[8px] md:text-[10px] font-bold text-almond/60 uppercase tracking-wider">{t('home.roiAvgFooter')}</p>
-              </div>
             </div>
           </div>
         </div>
@@ -676,23 +670,8 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-50">
-                    <div className="text-left">
-                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">{t('home.profit.immediateGain', { defaultValue: 'Plusvalía Inmediata' })}</p>
-                      <p className="text-4xl font-serif text-green-600 font-bold">+{profitabilityData.gainPercent}%</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">{t('home.profit.estimatedGain', { defaultValue: 'Ganancia Estimada' })}</p>
-                      <p className="text-4xl font-serif text-primary font-bold">
-                        {formatPrice(profitabilityData.capitalGain, profitabilityData.currency)}
-                      </p>
-                    </div>
-                  </div>
-                  
                   <div className="space-y-4 pt-2">
-                    <p className="text-[10px] text-gray-400 font-medium italic">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
                     <div className="space-y-4 text-center">
-                      <p className="text-primary font-bold text-sm">{t('home.profit.ctaQuestion', { defaultValue: '¿Quieres invertir en una unidad con esta rentabilidad?' })}</p>
                       {featuredProject && (
                         <Link
                           to={projectPath(featuredProject)}
