@@ -2033,6 +2033,7 @@
   },
   "agencyPack": {
     "loading": "Se încarcă…",
+    "loginRequired": "Acces doar pentru agențiile înregistrate. Autentifică-te în portalul agențiilor pentru a vedea acest pachet.",
     "notFound": "Proiect negăsit",
     "pageTitle": "Pachet Agenție — Unreal Studio Bali",
     "pageTitleProject": "Pachet Agenție · {{name}} — Unreal Studio Bali",

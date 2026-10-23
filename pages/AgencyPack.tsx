@@ -135,7 +135,7 @@ const AgencyPack: React.FC = () => {
       const { data: rows, error } = await supabase.rpc('agency_pack_get', { p_slug: slug });
       const data = Array.isArray(rows) ? rows[0] ?? null : null;
       if (error) {
-        setError(error.message);
+        setError(t('agencyPack.loginRequired'));
       } else if (!data) {
         setError(t('agencyPack.notFound'));
       } else {

@@ -2033,6 +2033,7 @@
   },
   "agencyPack": {
     "loading": "Loading…",
+    "loginRequired": "Access for registered agencies only. Log in to the agency portal to view this pack.",
     "notFound": "Project not found",
     "pageTitle": "Agency Pack — Unreal Studio Bali",
     "pageTitleProject": "Agency Pack · {{name}} — Unreal Studio Bali",

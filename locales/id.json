@@ -2015,6 +2015,7 @@
   },
   "agencyPack": {
     "loading": "Memuat…",
+    "loginRequired": "Akses hanya untuk agensi terdaftar. Masuk ke portal agensi untuk melihat paket ini.",
     "notFound": "Proyek tidak ditemukan",
     "pageTitle": "Paket Agen — Unreal Studio Bali",
     "pageTitleProject": "Paket Agen · {{name}} — Unreal Studio Bali",
