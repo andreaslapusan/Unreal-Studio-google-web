@@ -381,7 +381,7 @@ const AMENITIES_LIST = [
     const portalUrl = 'https://unrealstudiobali.com/empleados';
     const greeting = et('admin.dash.emailGreeting', { defaultValue: 'Hola {{name}},', name: emp.full_name || '' });
     const body = esc(TEAM_TPLS.welcome.body[lg] || TEAM_TPLS.welcome.body.es);
-    const cellS = 'padding-right:14px;color:rgba(63,35,5,.55);vertical-align:top';
+    const cellS = 'padding-right:14px;color:rgba(30,27,22,.55);vertical-align:top';
     const valS = 'word-break:break-all;overflow-wrap:anywhere';
     const creds = `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:16px 0;font-size:14px;line-height:1.9;color:#3F2305"><tr><td style="${cellS}">${et('emails.welcome.access')}</td><td style="${valS}"><a href="${portalUrl}" style="color:#3F2305;font-weight:700;${valS}">${portalUrl}</a></td></tr><tr><td style="${cellS}">${et('emails.welcome.emailLabel')}</td><td style="${valS}"><b>${esc(emp.email)}</b></td></tr>${emp.password ? `<tr><td style="${cellS}">${et('emails.welcome.tempPassword')}</td><td style="${valS}"><b>${esc(emp.password)}</b></td></tr>` : ''}</table>`;
     const cta = `<p style="text-align:center;margin:22px 0 6px"><a href="${portalUrl}" style="background:#3F2305;color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:12px;display:inline-block;font-size:14px">${et('emails.welcome.cta')}</a></p>`;
@@ -1343,9 +1343,9 @@ const sendReminderEmail = async (client: Client) => {
     <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${e2('emails.reminder.hi', { name: holderNameByEmail(client, em) })}</p>
     <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${lead2}</p>
     <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.reminder.paymentFor', { project: target.project_name, label: target.label || '' })}</p>
-    <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${e2('emails.reminder.deadlineLabel')} <b>${dueStr2}</b></p>
+    <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(30,27,22,.7)">${e2('emails.reminder.deadlineLabel')} <b>${dueStr2}</b></p>
     <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine2}</p>
-    <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${e2('emails.reminder.recommendation')}</p>
+    <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(30,27,22,.7)">${e2('emails.reminder.recommendation')}</p>
     <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.reminder.cta')}</a></p>`;
   };
   openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: (ems) => t('admin.dash.reminderSent', { email: ems.join(', ') }), userId, lang, buildHtml, buildSubject: (em) => i18n.getFixedT(holderLangByEmail(client, em))(`emails.reminder.${stage}_subject`, { n }) });
@@ -1363,7 +1363,7 @@ const buildReportHtmlFor = (client: Client, cp: any) => (em: string) => {
     `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 14px;color:${BROWN}">${et('emails.report.subject', { project: cp.project_name })}</h1>`,
     `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.hi', { name: holderNameByEmail(client, em) })}</p>`,
     `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${et('emails.report.body', { project: cp.project_name })}</p>`,
-    cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
+    cp.unit_number ? `<p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(30,27,22,.7)">${et('emails.report.unit', { unit: cp.unit_number })}</p>` : '',
     `<p style="text-align:center;margin:8px 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px">${et('emails.report.cta')}</a></p>`,
   ].join('');
 };
@@ -1458,10 +1458,10 @@ const sendCalendarEmail = async (client: Client) => {
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
   const fmtd = (s: string | null) => s ? new Date(s + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
   const recv = (p: any) => p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0);
-  const th = `style="text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:rgba(63,35,5,.5);padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.15);white-space:nowrap"`;
-  const td = `style="font-size:12px;color:${BROWN};padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap"`;
+  const th = `style="text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:rgba(30,27,22,.5);padding:4px 8px;border-bottom:1px solid rgba(30,27,22,.15);white-space:nowrap"`;
+  const td = `style="font-size:12px;color:${BROWN};padding:4px 8px;border-bottom:1px solid rgba(30,27,22,.08);white-space:nowrap"`;
   const h1 = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${et('emails.calendar.subject')}</h1>`;
-  const intro = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${et('emails.calendar.intro')}</p>`;
+  const intro = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(30,27,22,.8)">${et('emails.calendar.intro')}</p>`;
   // ¿Participa el email `em` en la unidad `u`? Sin participantes definidos → sí (todos).
   const unitHasEm = (u: any, em: string) => {
     const hp = u?.holder_participants;
@@ -1480,9 +1480,9 @@ const sendCalendarEmail = async (client: Client) => {
       tables += `<div style="width:100%;overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-bottom:6px"><tr><th ${th}>${tt('emails.calendar.colConcept')}</th><th ${th}>${tt('emails.calendar.colDue')}</th><th ${th}>${tt('emails.calendar.colAmount')}</th><th ${th}>${tt('emails.calendar.colReceived')}</th><th ${th}>${tt('emails.calendar.colReceivedDate', { defaultValue: 'Recibido el' })}</th><th ${th}>${tt('emails.calendar.colBalance')}</th></tr>`;
       for (const p of (u.payments || [])) { const r = recv(p); tA += p.amount; tR += r; const bal = p.amount - r;
         const balCol = bal > 0 ? '#c0392b' : '#15803d';
-        tables += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
+        tables += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(30,27,22,.08);white-space:nowrap;font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
       const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
-      tables += `<tr><td ${td}><b>${tt('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
+      tables += `<tr><td ${td}><b>${tt('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(30,27,22,.08);white-space:nowrap;font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
     }
     return tables;
   };
@@ -1491,7 +1491,7 @@ const sendCalendarEmail = async (client: Client) => {
   const buildHtml = (em: string) => {
     const lg = holderLangByEmail(client, em); const e2 = i18n.getFixedT(lg);
     const h1b = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${e2('emails.calendar.subject')}</h1>`;
-    const introb = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${e2('emails.calendar.intro')}</p>`;
+    const introb = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(30,27,22,.8)">${e2('emails.calendar.intro')}</p>`;
     const ctab = `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.calendar.cta')}</a></p>`;
     return h1b + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + introb + tablesFor(em, e2) + ctab;
   };

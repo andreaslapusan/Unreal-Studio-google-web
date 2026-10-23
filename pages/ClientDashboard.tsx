@@ -696,10 +696,9 @@ const ClientDashboard: React.FC = () => {
         {/* Bienvenida editorial: overline + saludo en serif + subtítulo, al nivel
             del resto del sitio (hero de login/ficha). Entrada personal y premium. */}
         <header className="mb-9 md:mb-12">
-          <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40 mb-3">
-            <span className="h-px w-7 bg-primary/30" />{t('admin.clientDash.portalEyebrow')}
+          <span className="us-label text-clay block mb-3">{t('admin.clientDash.portalEyebrow')}
           </span>
-          <h1 className="font-serif text-primary text-[2rem] md:text-5xl tracking-[-0.02em] leading-[1.05]">
+          <h1 className="font-display uppercase text-primary text-[2rem] md:text-6xl leading-[0.95]">
             {t('admin.clientDash.greeting')}, {(() => {
               // Saludo personalizado al titular que ha iniciado sesión (independencia
               // total): si su email coincide con un holder, su nombre; si no, el de la ficha.
@@ -720,15 +719,15 @@ const ClientDashboard: React.FC = () => {
         {clientId && <ClientUnitsSection clientId={clientId} />}
         {/* Resumen */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12">
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(30,27,22,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiInvested')}</p>
             <p className="text-3xl font-serif text-primary">{getTotalConverted()}</p>
           </div>
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(30,27,22,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiProjects')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length}</p>
           </div>
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-primary/8 shadow-[0_18px_44px_-28px_rgba(30,27,22,0.35)] hover:-translate-y-0.5 transition-transform duration-300">
             <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest mb-2">{t('admin.clientDash.kpiStatus')}</p>
             <p className="text-3xl font-serif text-primary">{projects.length > 0 ? t('admin.clientDash.statusActive') : t('admin.clientDash.statusNoInvestments')}</p>
           </div>

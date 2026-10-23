@@ -25,6 +25,7 @@ export default {
       // (primary/almond) para que portales y admin hereden el cambio sin tocar
       // miles de clases.
       colors: {
+        white: "#FCFBF8", // blanco cálido: las tarjetas de portales/admin dejan de ser blanco frío
         primary: "#1E1B16", // basalto (tinta)
         almond: "#ECE6DC", // piedra paras (superficie)
         paper: "#F6F3ED", // papel cálido (superficie elevada clara)
@@ -47,6 +48,15 @@ export default {
         xl: "0.625rem",
         "2xl": "0.75rem",
         "3xl": "0.875rem",
+      },
+      // Sombras tintadas de basalto, con desplazamiento: profundidad real, no halo.
+      boxShadow: {
+        sm: "0 1px 2px 0 rgba(30,27,22,0.06)",
+        DEFAULT: "0 2px 6px -1px rgba(30,27,22,0.08), 0 1px 2px -1px rgba(30,27,22,0.06)",
+        md: "0 8px 20px -10px rgba(30,27,22,0.18)",
+        lg: "0 16px 32px -16px rgba(30,27,22,0.22)",
+        xl: "0 24px 48px -24px rgba(30,27,22,0.3)",
+        "2xl": "0 36px 72px -32px rgba(30,27,22,0.38)",
       },
       transitionTimingFunction: {
         out: "cubic-bezier(0.23, 1, 0.32, 1)",

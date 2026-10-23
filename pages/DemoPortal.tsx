@@ -43,7 +43,7 @@ const PROGRESS = 45;
 function Bar({ pct }: { pct: number }) {
   return (
     <div className="h-2 w-full rounded-full bg-primary/10 overflow-hidden">
-      <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${pct}%` }} />
+      <div className="h-full rounded-full bg-clay transition-all duration-700" style={{ width: `${pct}%` }} />
     </div>
   );
 }
@@ -70,7 +70,7 @@ export default function DemoPortal() {
 
       {/* Cabecera */}
       <header className="max-w-4xl mx-auto px-5 pt-6 pb-2 flex items-center justify-between">
-        <span className="font-serif text-lg sm:text-xl font-bold text-primary tracking-wide">Unreal Studio</span>
+        <span className="font-logo text-2xl text-primary">Unreal Studio</span>
         <span className="text-[10px] uppercase tracking-widest text-primary/40 font-black border border-primary/20 rounded-full px-3 py-1">Portal cliente · Demo</span>
       </header>
 
@@ -81,8 +81,8 @@ export default function DemoPortal() {
             <img src={getImageUrl(HERO)} alt="Villa Deseo" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-0 p-5 text-white">
-              <span className="inline-block text-[10px] font-black uppercase tracking-widest bg-white/20 backdrop-blur rounded-full px-3 py-1 mb-2">En construcción</span>
-              <h1 className="font-serif text-2xl sm:text-3xl leading-tight">Villa Deseo — Demo</h1>
+              <span className="us-tag mb-3">En construcción</span>
+              <h1 className="font-display uppercase text-[1.9rem] sm:text-5xl leading-[0.95]">Villa Deseo — Demo</h1>
               <p className="text-sm opacity-90 flex items-center gap-1 mt-1"><span className="material-symbols-outlined text-base leading-none">location_on</span>Melasti, Uluwatu · Bali</p>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function DemoPortal() {
 
         {/* Obra en vivo */}
         <section className="mt-8">
-          <h2 className="flex items-center gap-2.5 before:content-[''] before:h-px before:w-6 before:bg-primary/30 font-serif text-xl md:text-2xl tracking-[-0.01em] text-primary mb-1">Obra en vivo</h2>
+          <h2 className="font-display uppercase text-2xl md:text-4xl leading-[0.95] text-primary mb-2">Obra en vivo</h2>
           <p className="text-sm text-primary/55 mb-4">Fotos reales fechadas de tu construcción. Transparencia total, sin sorpresas.</p>
           <div className="space-y-4">
             {UPDATES.map((u, i) => (
@@ -134,7 +134,7 @@ export default function DemoPortal() {
 
         {/* Calendario de pagos */}
         <section className="mt-8">
-          <h2 className="flex items-center gap-2.5 before:content-[''] before:h-px before:w-6 before:bg-primary/30 font-serif text-xl md:text-2xl tracking-[-0.01em] text-primary mb-1">Tu calendario de pagos</h2>
+          <h2 className="font-display uppercase text-2xl md:text-4xl leading-[0.95] text-primary mb-2">Tu calendario de pagos</h2>
           <p className="text-sm text-primary/55 mb-4">Siempre sabes qué has pagado y qué falta. Cero letra pequeña.</p>
           <div className="rounded-3xl bg-white shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
@@ -168,7 +168,7 @@ export default function DemoPortal() {
 
         {/* Recibo */}
         <section className="mt-8">
-          <h2 className="flex items-center gap-2.5 before:content-[''] before:h-px before:w-6 before:bg-primary/30 font-serif text-xl md:text-2xl tracking-[-0.01em] text-primary mb-1">Recibos al instante</h2>
+          <h2 className="font-display uppercase text-2xl md:text-4xl leading-[0.95] text-primary mb-2">Recibos al instante</h2>
           <p className="text-sm text-primary/55 mb-4">Cada pago genera su recibo oficial (kwitansi), descargable al momento.</p>
           <div className="rounded-3xl bg-white shadow-sm p-5 flex items-center gap-4">
             <div className="w-14 h-16 rounded-xl bg-primary/5 flex items-center justify-center shrink-0">
@@ -183,10 +183,10 @@ export default function DemoPortal() {
         </section>
 
         {/* CTA */}
-        <section className="mt-10 rounded-3xl bg-primary text-white p-7 text-center shadow-lg">
-          <h2 className="font-serif text-2xl mb-2">Esto es lo que verás como propietario.</h2>
+        <section className="mt-10 bg-primary text-almond p-7 md:p-10 text-center">
+          <h2 className="font-display uppercase text-3xl md:text-4xl leading-[0.95] mb-3">Esto es lo que verás como propietario.</h2>
           <p className="text-sm opacity-90 mb-5">Obra en vivo, pagos claros y recibos al momento. Una empresa real detrás de cada villa.</p>
-          <a href={WA} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary font-black rounded-full px-7 py-3.5 hover:bg-white/90 transition">
+          <a href={WA} target="_blank" rel="noopener noreferrer" className="us-btn us-btn-light">
             <span className="material-symbols-outlined">chat</span> Reservar mi unidad
           </a>
           <div className="mt-4 text-xs opacity-70"><Link to="/proyectos" className="underline">Ver todos los proyectos</Link></div>

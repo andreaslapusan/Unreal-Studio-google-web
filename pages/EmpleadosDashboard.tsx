@@ -337,7 +337,7 @@ const EmpleadosDashboard: React.FC = () => {
     rr(pad, pad, W - pad * 2, H - pad * 2, rad); ctx.stroke();
     const barH = Math.round(H * 0.075);
     ctx.save(); rr(pad, H - pad - barH, W - pad * 2, barH, rad); ctx.clip();
-    ctx.fillStyle = 'rgba(63,35,5,0.66)'; ctx.fillRect(pad, H - pad - barH, W - pad * 2, barH); ctx.restore();
+    ctx.fillStyle = 'rgba(30,27,22,0.66)'; ctx.fillRect(pad, H - pad - barH, W - pad * 2, barH); ctx.restore();
     ctx.fillStyle = CREAM; ctx.textBaseline = 'middle';
     ctx.font = `800 ${Math.round(barH * 0.4)}px Manrope, Arial, sans-serif`;
     ctx.textAlign = 'left'; ctx.fillText('Unreal Studio', pad + Math.round(W * 0.045), H - pad - barH / 2);
@@ -452,7 +452,7 @@ const EmpleadosDashboard: React.FC = () => {
         {employee?.full_name && (
           <header className="mb-6">
             <span className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-primary/40 mb-2"><span className="h-px w-6 bg-primary/30" />{t('empleados.portalEyebrow')}</span>
-            <h1 className="font-serif text-primary text-3xl tracking-[-0.02em] leading-[1.05]">{t('admin.clientDash.greeting')}, {(employee.full_name || '').trim().split(' ')[0]}</h1>
+            <h1 className="font-display uppercase text-primary text-[2rem] md:text-5xl leading-[0.95]">{t('admin.clientDash.greeting')}, {(employee.full_name || '').trim().split(' ')[0]}</h1>
           </header>
         )}
         {(() => {

@@ -63,6 +63,10 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   text-wrap: balance;
 }
 p { text-wrap: pretty; }
+/* Pesos del sistema anterior (Manrope 900) normalizados para Archivo: el
+   negro-negro en versalitas pequeñas se empastaba. */
+.font-black { font-weight: 700; }
+.font-extrabold { font-weight: 650; }
 .font-display { font-stretch: 118%; font-weight: 250; letter-spacing: -0.03em; overflow-wrap: break-word; }
 /* En pantallas estrechas el rótulo se condensa un poco para que palabras largas
    (OPORTUNIDADES, INVESTASI…) quepan sin cortar. */

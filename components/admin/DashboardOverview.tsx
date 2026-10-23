@@ -46,7 +46,7 @@ const DashboardOverview: React.FC = () => {
   return (
     <div className="animate-in fade-in duration-500">
       <div className="mb-8">
-        <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.28em] text-primary/40 mb-2"><span className="h-px w-7 bg-primary/30" />Unreal Studio · Admin</span>
+        <span className="us-label text-clay block mb-2">Unreal Studio · Admin</span>
         <h1 className="font-serif text-4xl md:text-5xl text-primary tracking-[-0.02em] leading-none">{t('admin.overview.title', { defaultValue: 'Resumen' })}</h1>
       </div>
 

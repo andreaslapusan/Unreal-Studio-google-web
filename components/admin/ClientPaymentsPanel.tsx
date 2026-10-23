@@ -273,11 +273,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:#3F2305">${e2('emails.recibi.title')}</h1>
       <p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#3F2305">${e2('emails.recibi.hi', { name: holderNameByEmail(em) })}</p>
       <table style="width:100%;font-size:14px;line-height:1.9;color:#3F2305;margin:0 0 16px">
-        <tr><td style="color:rgba(63,35,5,.55);width:160px">${e2('emails.recibi.concept')}</td><td style="font-weight:700">${kw.for_payment}</td></tr>
-        <tr><td style="color:rgba(63,35,5,.55)">${e2('emails.recibi.amountReceived')}</td><td style="font-weight:700">${fig}</td></tr>
-        ${paidS ? `<tr><td style="color:rgba(63,35,5,.55)">${e2('emails.recibi.paymentDate')}</td><td>${paidS}</td></tr>` : ''}
-        ${dueS ? `<tr><td style="color:rgba(63,35,5,.55)">${e2('emails.recibi.dueDate')}</td><td>${dueS}</td></tr>` : ''}
-        <tr><td style="color:rgba(63,35,5,.55)">${e2('emails.recibi.number')}</td><td>${no}</td></tr>
+        <tr><td style="color:rgba(30,27,22,.55);width:160px">${e2('emails.recibi.concept')}</td><td style="font-weight:700">${kw.for_payment}</td></tr>
+        <tr><td style="color:rgba(30,27,22,.55)">${e2('emails.recibi.amountReceived')}</td><td style="font-weight:700">${fig}</td></tr>
+        ${paidS ? `<tr><td style="color:rgba(30,27,22,.55)">${e2('emails.recibi.paymentDate')}</td><td>${paidS}</td></tr>` : ''}
+        ${dueS ? `<tr><td style="color:rgba(30,27,22,.55)">${e2('emails.recibi.dueDate')}</td><td>${dueS}</td></tr>` : ''}
+        <tr><td style="color:rgba(30,27,22,.55)">${e2('emails.recibi.number')}</td><td>${no}</td></tr>
       </table>
       <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#3F2305">${e2('emails.recibi.downloadInstruction')}</p>
       <p style="text-align:center;margin:0 0 4px"><a href="https://unrealstudiobali.com/cliente" style="background:#3F2305;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.recibi.cta')}</a></p>`;

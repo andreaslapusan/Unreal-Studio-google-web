@@ -169,7 +169,7 @@ const AdminAgencias: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8 gap-3 flex-wrap">
           <div>
-            <h1 className="text-4xl md:text-5xl font-serif text-primary">{t('admin.agencias.title')}</h1>
+            <h1 className="font-display uppercase text-4xl md:text-5xl text-primary leading-[0.95]">{t('admin.agencias.title')}</h1>
             <p className="text-primary/60 mt-2">
               {t('admin.agencias.subtitle')}
             </p>

@@ -74,10 +74,9 @@ const ResetPassword: React.FC = () => {
 
   return (
     <PortalShell>
-      <div className="w-full max-w-md bg-white rounded-[1.75rem] border border-primary/10 shadow-[0_24px_64px_-28px_rgba(63,35,5,0.4)] p-8 md:p-11">
+      <div className="w-full max-w-md bg-white rounded-[1.75rem] border border-primary/10 shadow-[0_24px_64px_-28px_rgba(30,27,22,0.4)] p-8 md:p-11">
         <div className="mb-7">
-          <span className="inline-flex items-center gap-2.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary/40">
-            <span className="h-px w-7 bg-primary/30" />{t('auth.subtitle')}
+          <span className="us-label text-clay block">{t('auth.subtitle')}
           </span>
         </div>
 

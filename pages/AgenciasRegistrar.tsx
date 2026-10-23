@@ -121,7 +121,7 @@ export default function AgenciasRegistrar() {
   if (submitted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-almond px-6 py-16">
-        <div className="max-w-md text-center glass-card rounded-3xl p-10 shadow-[0_24px_64px_-32px_rgba(63,35,5,0.4)]">
+        <div className="max-w-md text-center glass-card rounded-3xl p-10 shadow-[0_24px_64px_-32px_rgba(30,27,22,0.4)]">
           <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 text-primary flex items-center justify-center">
             <span className="material-symbols-outlined text-4xl">check_circle</span>
           </div>
@@ -139,11 +139,11 @@ export default function AgenciasRegistrar() {
   return (
     <div className="min-h-screen bg-almond px-6 py-16">
       <div className="max-w-2xl mx-auto">
-        <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45 mb-5"><span className="h-px w-8 bg-primary/35"></span>Unreal Studio · Partners</span>
-        <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-[-0.02em] leading-[1.05] mb-4">{t('agenciasRegistrar.title')}</h1>
+        <span className="us-label text-clay block mb-5">Unreal Studio · Partners</span>
+        <h1 className="font-display uppercase text-[2.2rem] md:text-6xl text-primary leading-[0.95] mb-4">{t('agenciasRegistrar.title')}</h1>
         <p className="text-primary/70 mb-8 font-light leading-relaxed max-w-xl">{t('agenciasRegistrar.intro')}</p>
 
-        <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-3xl p-8 md:p-10 shadow-[0_24px_64px_-32px_rgba(63,35,5,0.4)]">
+        <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-3xl p-8 md:p-10 shadow-[0_24px_64px_-32px_rgba(30,27,22,0.4)]">
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
               <span className="text-[11px] font-black uppercase tracking-widest text-primary/55">{t('agenciasRegistrar.agencyName')}</span>

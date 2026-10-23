@@ -229,7 +229,7 @@ const LandingGlobalitae: React.FC = () => {
           <div className="inline-block bg-white text-primary text-[10px] md:text-xs font-black px-4 py-2 uppercase tracking-widest rounded-full mb-6 shadow-lg">
             {t('fix.lg.lastUnits')}
           </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-4 leading-[1.05] tracking-[-0.02em] drop-shadow-lg">
+          <h1 className="font-display uppercase text-[2.6rem] sm:text-6xl md:text-7xl xl:text-[6rem] text-white mb-4 leading-[0.92] drop-shadow-lg">
             {project.name}
           </h1>
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 text-white/90">

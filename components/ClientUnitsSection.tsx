@@ -74,7 +74,7 @@ const ClientUnitsSection: React.FC<{ clientId: string }> = ({ clientId }) => {
             { label: t('inversoresDashboard.labelDelivery'), done: false, value: u.delivery_date ? new Date(dateOnly(u.delivery_date)).toLocaleDateString(uiLocale()) : undefined },
           ];
           return (
-            <article key={u.investor_unit_id} className="group bg-white rounded-3xl overflow-hidden border border-primary/8 shadow-[0_18px_44px_-28px_rgba(63,35,5,0.35)] hover:shadow-[0_28px_60px_-30px_rgba(63,35,5,0.45)] hover:-translate-y-0.5 transition-all duration-300">
+            <article key={u.investor_unit_id} className="group bg-white rounded-3xl overflow-hidden border border-primary/8 shadow-[0_18px_44px_-28px_rgba(30,27,22,0.35)] hover:shadow-[0_28px_60px_-30px_rgba(30,27,22,0.45)] hover:-translate-y-0.5 transition-all duration-300">
               {u.hero_image_url && (
                 <div className="overflow-hidden">
                   <img src={u.hero_image_url} alt={u.project_name ?? ''} className="w-full h-44 object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />

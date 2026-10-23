@@ -55,8 +55,8 @@ export default function AgenciasPartnership() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 pt-20 pb-16">
-          <span className="inline-flex items-center gap-2.5 text-[11px] md:text-xs font-black uppercase tracking-[0.22em] text-primary/45 mb-6"><span className="h-px w-8 bg-primary/35"></span>{t("agenciasPartnership.tag")}</span>
-          <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] mb-6">
+          <span className="us-label text-clay block mb-6">{t("agenciasPartnership.tag")}</span>
+          <h1 className="font-display uppercase text-[2.6rem] leading-[0.95] md:text-7xl mb-6">
             {t("agenciasPartnership.heroTitle1")}
             <br />
             <span className="text-primary/55">{t("agenciasPartnership.heroTitle2")}</span>
