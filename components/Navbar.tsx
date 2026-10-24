@@ -106,7 +106,7 @@ const Navbar: React.FC = () => {
                 key={link.path}
                 to={link.path}
                 aria-current={isActive(link.path) ? 'page' : undefined}
-                className={`relative text-[0.75rem] font-semibold uppercase tracking-[0.16em] py-2 transition-colors duration-300 after:absolute after:left-0 after:right-0 after:bottom-0 after:h-px after:origin-left after:transition-transform after:duration-500 after:ease-out ${lightText ? 'text-almond/75 hover:text-almond after:bg-almond' : 'text-primary/60 hover:text-primary after:bg-clay'} ${
+                className={`relative text-[0.9375rem] font-medium py-2 transition-colors duration-300 after:absolute after:left-0 after:right-0 after:bottom-0 after:h-px after:origin-left after:transition-transform after:duration-500 after:ease-out ${lightText ? 'text-almond/75 hover:text-almond after:bg-almond' : 'text-primary/60 hover:text-primary after:bg-clay'} ${
                   isActive(link.path) ? `${lightText ? 'text-almond' : 'text-primary'} after:scale-x-100` : 'after:scale-x-0 hover:after:scale-x-100'
                 }`}
               >
@@ -129,7 +129,7 @@ const Navbar: React.FC = () => {
                 <span className="material-symbols-outlined text-[20px]">language</span>
               </button>
               {settingsOpen && (
-                <div className="absolute right-0 mt-3 w-60 bg-paper border border-primary/15 rounded-[3px] shadow-[0_24px_48px_-24px_rgba(30,27,22,0.45)] p-4 z-50 space-y-4 origin-top-right motion-safe:animate-[fadeInUp_0.25s_cubic-bezier(0.23,1,0.32,1)]">
+                <div className="absolute right-0 mt-3 w-60 bg-paper border border-primary/15 rounded-2xl shadow-[0_24px_48px_-24px_rgba(30,27,22,0.45)] p-4 z-50 space-y-4 origin-top-right motion-safe:animate-[fadeInUp_0.25s_cubic-bezier(0.23,1,0.32,1)]">
                   <div>
                     <p className="us-label text-primary/45 mb-2">{t('fix.nav.language')}</p>
                     <LanguageSwitcher />
@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
                       value={currency}
                       onMouseDown={(e) => e.stopPropagation()}
                       onChange={(e) => setCurrency(e.target.value as any)}
-                      className="w-full bg-white border border-primary/15 rounded-[3px] px-3 py-2 text-sm font-medium text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-clay cursor-pointer"
+                      className="w-full bg-white border border-primary/15 rounded-2xl px-3 py-2 text-sm font-medium text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-clay cursor-pointer"
                     >
                       {CURRENCIES.map(c => (
                         <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
@@ -212,7 +212,7 @@ const Navbar: React.FC = () => {
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as any)}
                   aria-label={t('fix.nav.currency')}
-                  className="bg-transparent border border-almond/25 rounded-[3px] px-3 py-2 text-sm font-medium text-almond focus:outline-none focus-visible:ring-2 focus-visible:ring-clay-light cursor-pointer"
+                  className="bg-transparent border border-almond/25 rounded-2xl px-3 py-2 text-sm font-medium text-almond focus:outline-none focus-visible:ring-2 focus-visible:ring-clay-light cursor-pointer"
                   style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ECE6DC' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")" }}
                 >
                   {CURRENCIES.map(c => (

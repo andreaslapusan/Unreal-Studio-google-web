@@ -194,7 +194,7 @@ export default function Faq() {
                     key={c}
                     onClick={() => setCategory(c)}
                     aria-pressed={category === c}
-                    className={`text-left transition-colors duration-300 outline-none focus-visible:ring-2 focus-visible:ring-clay us-label px-3.5 py-2.5 rounded-[2px] border lg:border-0 lg:border-b lg:border-primary/15 lg:rounded-none lg:px-0 lg:py-4 lg:text-[0.8125rem] lg:flex lg:items-center lg:justify-between ${
+                    className={`text-left transition-colors duration-300 outline-none focus-visible:ring-2 focus-visible:ring-clay us-label px-3.5 py-2.5 rounded-xl border lg:border-0 lg:border-b lg:border-primary/15 lg:rounded-none lg:px-0 lg:py-4 lg:text-[0.8125rem] lg:flex lg:items-center lg:justify-between ${
                       category === c
                         ? "bg-primary text-almond border-primary lg:bg-transparent lg:text-clay"
                         : "border-primary/20 text-primary/60 hover:text-primary"

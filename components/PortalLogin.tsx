@@ -382,7 +382,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
 
           <div className="flex items-center justify-between text-xs">
             <label className="flex items-center gap-2 cursor-pointer text-primary/60">
-              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="rounded-[2px] border-primary/30 text-primary focus:ring-clay/30" />
+              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="rounded-xl border-primary/30 text-primary focus:ring-clay/30" />
               {t('auth.remember')}
             </label>
             <button type="button" onClick={handleRecover} className="text-primary/60 hover:text-primary underline">

@@ -675,12 +675,12 @@ const ProjectDetail: React.FC = () => {
                     <form onSubmit={handleClientLoginForDoc} className="space-y-4">
                         <div>
                             <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
-                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-white border border-primary/15 rounded-[3px] font-medium focus:border-clay focus:outline-none" />
+                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-white border border-primary/15 rounded-2xl font-medium focus:border-clay focus:outline-none" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase text-primary/45 tracking-widest mb-2">{t('projectDetail.password')}</label>
                             <div className="relative">
-                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-white border border-primary/15 rounded-[3px] font-medium focus:border-clay focus:outline-none" />
+                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-white border border-primary/15 rounded-2xl font-medium focus:border-clay focus:outline-none" />
                               <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? t('fix.pd.hidePassword') : t('fix.pd.showPassword')} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
                                 <span className="material-symbols-outlined text-xl">{showLoginPw ? 'visibility_off' : 'visibility'}</span>
                               </button>

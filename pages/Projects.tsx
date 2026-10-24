@@ -217,7 +217,7 @@ const Projects: React.FC = () => {
 
       {/* Barra de filtros: instrumento de piedra, fija bajo la cabecera al hacer scroll en escritorio */}
       <div className="max-w-[1440px] mx-auto px-5 md:px-12 mb-12 md:mb-16 relative z-30">
-        <div className="bg-paper border border-primary/15 rounded-[3px] grid grid-cols-2 lg:flex lg:items-stretch">
+        <div className="bg-paper border border-primary/15 rounded-2xl grid grid-cols-2 lg:flex lg:items-stretch">
           <FilterField icon="sort" label={t('projects.filters.sortBy')} className="flex-1 border-b border-r lg:border-b-0">
             <select aria-label={t('projects.filters.sortBy')} value={filters.sort} onChange={(e) => handleFilterChange('sort', e.target.value)} className={filterControl}>
               <option value="featured">{t('projects.sort.featured')}</option>

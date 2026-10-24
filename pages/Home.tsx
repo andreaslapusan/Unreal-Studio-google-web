@@ -299,7 +299,8 @@ const Home: React.FC = () => {
       )}
 
       {/* ── Héroe: la obra a sangre, el titular como rótulo de arquitectura ── */}
-      <header className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden bg-primary text-almond">
+      <div className="p-2 md:p-3">
+      <header className="relative min-h-[94svh] flex flex-col justify-end overflow-hidden bg-primary text-almond rounded-[2rem] md:rounded-[2.75rem]">
         {featuredProject && (
           <div className="absolute inset-0 us-curtain" aria-hidden="true">
             <img
@@ -315,12 +316,12 @@ const Home: React.FC = () => {
           </div>
         )}
         {/* Lectura sobre la foto: sombra solo donde vive el texto. */}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(30,27,22,0.55)_0%,rgba(30,27,22,0)_26%,rgba(30,27,22,0)_42%,rgba(30,27,22,0.82)_100%)]" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(46,39,33,0.45)_0%,rgba(46,39,33,0)_30%,rgba(46,39,33,0)_45%,rgba(46,39,33,0.7)_100%)]" aria-hidden="true" />
 
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-5 md:px-12 pt-32 pb-8 md:pb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-end">
-            <div className="lg:col-span-8">
-              <h1 className="font-display uppercase text-almond text-[2.6rem] leading-[0.95] sm:text-6xl md:text-7xl xl:text-[6rem] xl:leading-[0.92] us-rise" style={{ animationDelay: '500ms' }}>
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-14 pt-32 pb-10 md:pb-16">
+          <div className="max-w-4xl">
+            <div>
+              <h1 className="font-display text-almond text-[2.9rem] leading-[1] sm:text-6xl md:text-7xl xl:text-[5.5rem] xl:leading-[0.98] us-rise" style={{ animationDelay: '500ms' }}>
                 <Trans
                   i18nKey="home.heroTitle"
                   values={{ price: minPriceDisplay }}
@@ -342,111 +343,32 @@ const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* Lámina del proyecto destacado (pie de foto con ficha técnica). */}
-            {featuredProject ? (
-              <Link
-                to={projectPath(featuredProject)}
-                className="lg:col-span-4 group block bg-almond text-primary p-5 md:p-6 us-rise outline-none focus-visible:ring-2 focus-visible:ring-clay-light"
-                style={{ animationDelay: '1100ms' }}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="us-label text-primary/50">{t('home.featuredTag')}</span>
-                  <span className="inline-flex items-center gap-2 us-label text-primary/70"><span className={`w-1.5 h-1.5 rounded-full ${statusDotClass(featuredProject.status)}`} />{translateStatus(featuredProject.status, t)}</span>
-                </div>
-                <p className="font-serif text-2xl md:text-[1.7rem] leading-[1.08] mt-4 transition-colors group-hover:text-clay">{featuredProject.name}</p>
-                <p className="text-sm text-primary/55 mt-1.5">
-                  {featuredProject.location}
-                  {featuredProject.tenure ? ` · ${t(`projects.card.tenure.${(featuredProject.tenure || '').toLowerCase()}`, featuredProject.tenure)}` : ''}
-                </p>
-                <div className="flex items-end justify-between gap-4 mt-5 pt-4 border-t border-primary/15">
-                  <div>
-                    <p className="us-label text-primary/45">{t('home.investmentFrom')}</p>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <p className="text-2xl font-medium us-num tracking-tight">{formatPrice(featuredProject.investor_price, featuredProject.price_currency)}</p>
-                      {Number(featuredProject.market_price) > Number(featuredProject.investor_price) && (
-                        <p className="text-xs text-primary/40 line-through us-num">{formatPrice(Number(featuredProject.market_price), featuredProject.price_currency)}</p>
-                      )}
-                    </div>
-                  </div>
-                  <span className="inline-flex items-center gap-2 us-label text-primary">
-                    <span className="hidden sm:inline">{t('home.viewProject')}</span>
-                    <span className="w-10 h-10 rounded-full bg-primary text-almond flex items-center justify-center transition-colors duration-300 group-hover:bg-clay">
-                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                    </span>
-                  </span>
-                </div>
-              </Link>
-            ) : (
-              <div className="lg:col-span-4 bg-almond/10 border border-almond/20 p-8 text-center">
-                <p className="us-label text-almond/60">{t('home.comingSoon')}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Raíl inferior: posicionamiento + prueba social, sin rótulo sobre el titular. */}
-          <div className="mt-10 md:mt-14 pt-5 border-t border-almond/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 us-label text-almond/60">
-            <span>{t('home.heroEyebrow')}</span>
-            <span className="text-almond/80">{t('home.investorsCount')}</span>
           </div>
         </div>
       </header>
+      </div>
 
       {/* ── Catálogo: buscador-instrumento + composición asimétrica ── */}
       <section className="pt-16 md:pt-28 pb-16 md:pb-24" aria-labelledby="home-projects">
         <div className="max-w-[1440px] mx-auto px-5 md:px-12">
-          <div className="flex items-end justify-between gap-6 mb-8 md:mb-12">
-            <h2 id="home-projects" className="font-display uppercase text-[2.4rem] leading-[0.95] md:text-7xl text-primary">{t('nav.projects')}</h2>
+          <div className="flex items-end justify-between gap-6 mb-10 md:mb-16">
+            <h2 id="home-projects" className="font-display text-[2.6rem] leading-[1] md:text-7xl text-primary">{t('nav.projects')}</h2>
             <button onClick={handleSearch} className="us-link text-primary shrink-0 mb-2">
               <span className="hidden sm:inline">{t('home.viewMoreProperties')}</span><span className="sm:hidden">{t('home.viewShort')}</span>
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
           </div>
-
-          <div className="bg-paper border border-primary/15 rounded-[3px] grid grid-cols-2 md:flex md:items-stretch mb-12 md:mb-20">
-            <FilterField icon="sort" label={t('projects.filters.sortBy')} className="flex-1 border-b border-r md:border-b-0">
-              <select aria-label={t('projects.filters.sortBy')} value={filters.sort} onChange={(e) => setFilters({ ...filters, sort: e.target.value })} className={filterControl}>
-                <option value="featured">{t('projects.sort.featured')}</option>
-                <option value="roi">{t('projects.sort.roi')}</option>
-                <option value="asc">{t('projects.sort.asc')}</option>
-                <option value="desc">{t('projects.sort.desc')}</option>
-              </select>
-            </FilterField>
-            <FilterField icon="payments" label={t('projects.filters.budget')} className="flex-1 border-b md:border-b-0 md:border-r">
-              <div className="flex items-center gap-2">
-                <input type="text" inputMode="numeric" aria-label={t('projects.filters.min')} placeholder={t('projects.filters.min')} value={filters.minPrice} onChange={(e) => handlePriceChange('minPrice', e.target.value)} className={filterInput} />
-                <span className="text-primary/25" aria-hidden="true">—</span>
-                <input type="text" inputMode="numeric" aria-label={t('projects.filters.max')} placeholder={t('projects.filters.max')} value={filters.maxPrice} onChange={(e) => handlePriceChange('maxPrice', e.target.value)} className={filterInput} />
-              </div>
-            </FilterField>
-            <FilterField icon="location_on" label={t('projects.filters.zone')} className="flex-1 border-r">
-              <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({ ...filters, zone: e.target.value })} className={filterControl}>
-                <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
-                {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
-              </select>
-            </FilterField>
-            <FilterField icon="home_work" label={t('projects.filters.type')} className="flex-1 md:border-r">
-              <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({ ...filters, type: e.target.value })} className={filterControl}>
-                <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
-                <option value="Villa">Villa</option>
-                <option value="Loft">Loft</option>
-                {config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}
-              </select>
-            </FilterField>
-            <button onClick={handleSearch} className="us-btn col-span-2 md:col-span-1 rounded-none md:min-w-[11rem]">
-              {t('home.searchBtn')} <span className="material-symbols-outlined">search</span>
-            </button>
-          </div>
         </div>
 
-        {/* Móvil: carrusel con snap · Escritorio: 6/3/3 con desfase vertical */}
+        {/* Móvil: carrusel con snap · Escritorio: 3 columnas iguales */}
         <div className="flex lg:grid lg:grid-cols-12 gap-5 lg:gap-8 overflow-x-auto lg:overflow-visible snap-x snap-mandatory hide-scrollbar px-5 md:px-12 max-w-[1440px] mx-auto scroll-px-5">
           {gridProjects.map((proj, i) => (
             <Reveal
               key={proj.id}
               delay={i * 110}
-              className={`snap-start shrink-0 w-[84%] sm:w-[46%] lg:w-auto ${i === 0 ? 'lg:col-span-6' : 'lg:col-span-3'} ${i === 1 ? 'lg:mt-20' : ''} ${i === 2 ? 'lg:mt-40' : ''}`}
+              className="snap-start shrink-0 w-[84%] sm:w-[46%] lg:w-auto lg:col-span-4"
             >
-              <ProjectCard project={proj} tall={i === 0} sizes={i === 0 ? '(max-width: 1024px) 84vw, 50vw' : '(max-width: 1024px) 84vw, 25vw'} />
+              <ProjectCard project={proj} sizes="(max-width: 1024px) 84vw, 33vw" />
             </Reveal>
           ))}
         </div>
@@ -456,12 +378,12 @@ const Home: React.FC = () => {
       <section className="bg-paper py-20 md:py-32" aria-labelledby="home-why">
         <div className="max-w-[1440px] mx-auto px-5 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
-            <h2 id="home-why" className="lg:col-span-7 font-display uppercase text-[2.3rem] leading-[0.98] md:text-6xl xl:text-7xl text-primary">{t('home.section1Title')}</h2>
+            <h2 id="home-why" className="lg:col-span-7 font-display text-[2.5rem] leading-[1.02] md:text-6xl xl:text-7xl text-primary">{t('home.section1Title')}</h2>
             <p className="lg:col-span-5 text-base md:text-lg text-primary/65 leading-relaxed max-w-xl lg:pb-2">{t('home.section1Body')}</p>
           </div>
 
           <div className="mt-12 md:mt-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
-            <Reveal className="lg:col-span-7 relative">
+            <Reveal className="lg:col-span-10 lg:col-start-2 relative">
               <div className="us-zoom relative overflow-hidden aspect-[4/3] bg-primary/10">
                 <img
                   loading="lazy"
@@ -472,115 +394,27 @@ const Home: React.FC = () => {
                   alt="Interior Architecture"
                 />
               </div>
-              <div className="relative -mt-16 ml-auto mr-4 md:mr-0 md:absolute md:-bottom-10 md:-right-8 w-[78%] sm:w-auto sm:max-w-xs bg-primary text-almond p-6 md:p-8 shadow-[0_30px_60px_-30px_rgba(30,27,22,0.6)]">
-                <p className="us-label text-almond/55">{t('home.roiAvgTag')}</p>
-                <p className="font-display text-[4.5rem] md:text-[6rem] leading-[0.9] mt-3 text-clay-light us-num">28%</p>
-                <p className="text-sm text-almond/70 mt-3">{t('home.roiAvgFooter')}</p>
+              <div className="relative -mt-16 ml-auto mr-4 md:mr-0 md:absolute md:-bottom-10 md:-right-8 w-[78%] sm:w-auto sm:max-w-xs bg-paper text-primary rounded-[1.75rem] p-6 md:p-8 shadow-[0_30px_60px_-30px_rgba(46,39,33,0.45)]">
+                <p className="us-label text-primary/55">{t('home.roiAvgTag')}</p>
+                <p className="font-display text-[4.5rem] md:text-[6rem] leading-[0.9] mt-3 text-clay us-num">28%</p>
+                <p className="text-sm text-primary/60 mt-3">{t('home.roiAvgFooter')}</p>
               </div>
             </Reveal>
 
-            <ul className="lg:col-span-5 lg:pt-6 divide-y divide-primary/15 border-y border-primary/15 self-start">
-              {reasons.map((r, i) => (
-                <Reveal as="li" key={r.title} delay={i * 110} className="py-6 md:py-8 grid grid-cols-[2.5rem_1fr] gap-4">
-                  <span className="material-symbols-outlined text-[26px] text-clay mt-0.5" aria-hidden="true">{r.icon}</span>
-                  <div>
-                    <h3 className="font-serif text-xl md:text-2xl text-primary leading-snug">{r.title}</h3>
-                    <p className="text-[15px] text-primary/60 leading-relaxed mt-2">{r.body}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Cómo creamos valor: manifiesto palabra a palabra + libro de cuentas ── */}
-      <section className="bg-moss text-almond py-20 md:py-32 overflow-hidden" aria-labelledby="home-value">
-        <div className="max-w-[1440px] mx-auto px-5 md:px-12">
-          <h2 id="home-value" className="us-label text-clay-light">{t('home.section2Title')}</h2>
-          <WordReveal
-            text={t('home.section2Body')}
-            mutedClass="opacity-20"
-            className="mt-6 md:mt-8 font-serif text-[1.65rem] leading-[1.18] sm:text-4xl md:text-5xl md:leading-[1.12] xl:text-[3.6rem] max-w-6xl text-almond"
-          />
-
-          <div className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-0 border-t border-almond/15">
-            {valueItems.map((v, i) => (
-              <Reveal key={v.title} delay={i * 110} className={`py-7 md:py-10 md:px-8 ${i > 0 ? 'border-t md:border-t-0 md:border-l border-almond/15' : 'md:pl-0'}`}>
-                <span className="material-symbols-outlined text-[28px] text-clay-light" aria-hidden="true">{v.icon}</span>
-                <h3 className="font-serif text-xl md:text-2xl mt-4">{v.title}</h3>
-                <p className="text-[15px] text-almond/60 mt-2 leading-relaxed">{v.body}</p>
-              </Reveal>
-            ))}
-          </div>
-
-          {/* Desglose de rentabilidad como libro de cuentas: dos reglas medidas. */}
-          <div className="mt-6 md:mt-10 bg-almond text-primary grid grid-cols-1 lg:grid-cols-12">
-            <div className="lg:col-span-5 p-6 md:p-10 lg:p-12 flex flex-col justify-between gap-8 border-b lg:border-b-0 lg:border-r border-primary/15">
-              <div>
-                <h3 className="font-serif text-3xl md:text-4xl leading-tight">{t('home.profitTitle')}</h3>
-                {featuredProject && <p className="us-label text-primary/50 mt-3">{featuredProject.name}</p>}
-              </div>
-              <div className="space-y-5">
-                <p className="text-primary/75 font-medium">{t('home.profit.ctaQuestion', { defaultValue: '¿Quieres invertir en una unidad con esta rentabilidad?' })}</p>
-                {featuredProject && (
-                  <Link to={projectPath(featuredProject)} className="us-btn w-full sm:w-auto">
-                    {t('home.profit.seeFeatured', { defaultValue: 'Ver propiedad destacada' })} <span className="material-symbols-outlined">arrow_forward</span>
-                  </Link>
-                )}
-              </div>
-            </div>
-            <div className="lg:col-span-7 p-6 md:p-10 lg:p-12">
-              {profitabilityData ? (
-                <>
-                  <div className="space-y-8">
-                    <div>
-                      <div className="flex justify-between items-baseline gap-4">
-                        <span className="us-label text-primary/50">{t('home.marketValue')}</span>
-                        <span className="text-lg font-medium us-num">{formatPrice(profitabilityData.marketPrice, profitabilityData.currency)}</span>
-                      </div>
-                      <div className="mt-3 h-3 bg-[repeating-linear-gradient(90deg,rgba(30,27,22,0.22)_0_1px,transparent_1px_10%)] border-b border-primary/30" aria-hidden="true" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between items-baseline gap-4">
-                        <span className="us-label text-primary/50">{t('home.profitabilityUnrealPrice')}</span>
-                        <span className="text-lg font-semibold us-num">{formatPrice(profitabilityData.investorPrice, profitabilityData.currency)}</span>
-                      </div>
-                      <div className="mt-3 h-3 relative border-b border-primary/15" aria-hidden="true">
-                        <div className="absolute left-0 bottom-0 h-3 bg-primary" style={{ width: `${profitabilityData.barWidth}%` }} />
-                        <div className="absolute bottom-0 h-3 bg-clay/80" style={{ left: `${profitabilityData.barWidth}%`, right: 0 }} />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-10 grid grid-cols-2 gap-6 pt-8 border-t border-primary/15">
-                    <div>
-                      <p className="us-label text-primary/50">{t('home.profit.immediateGain', { defaultValue: 'Plusvalía Inmediata' })}</p>
-                      <p className="font-display text-5xl md:text-6xl text-clay mt-2 us-num">+{profitabilityData.gainPercent}%</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="us-label text-primary/50">{t('home.profit.estimatedGain', { defaultValue: 'Ganancia Estimada' })}</p>
-                      <p className="font-display text-3xl md:text-5xl mt-2 us-num">{formatPrice(profitabilityData.capitalGain, profitabilityData.currency)}</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-primary/45 mt-6">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
-                </>
-              ) : (
-                <p className="us-label text-primary/40 py-10">{t('home.noProjectData')}</p>
-              )}
-            </div>
           </div>
         </div>
       </section>
 
       {/* ── Llamada final: fotografía a sangre y una sola acción ── */}
-      <section className="relative overflow-hidden bg-primary text-almond" aria-labelledby="home-cta">
+      <div className="p-2 md:p-3">
+      <section className="relative overflow-hidden bg-primary text-almond rounded-[2rem] md:rounded-[2.75rem]" aria-labelledby="home-cta">
         {ctaImage && (
           <img loading="lazy" src={imgSrc(ctaImage, 1600)} srcSet={imgSrcSet(ctaImage, [800, 1200, 1600, 2200])} sizes="100vw" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-45" onError={imgFallback(ctaImage)} />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(30,27,22,0.85),rgba(30,27,22,0.35))]" aria-hidden="true" />
         <div className="relative max-w-[1440px] mx-auto px-5 md:px-12 py-24 md:py-40">
           <Reveal>
-            <h2 id="home-cta" className="font-display uppercase text-[3rem] leading-[0.92] sm:text-7xl md:text-8xl xl:text-[6rem] max-w-5xl">{t('home.ctaSectionTitle')}</h2>
+            <h2 id="home-cta" className="font-display text-[3rem] leading-[1] sm:text-7xl md:text-8xl xl:text-[5.5rem] max-w-4xl">{t('home.ctaSectionTitle')}</h2>
             <p className="mt-6 md:mt-8 text-base md:text-xl text-almond/75 max-w-xl leading-relaxed">{t('home.ctaSectionBody')}</p>
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="us-btn us-btn-light mt-10 w-full sm:w-auto">
               {t('home.ctaWhatsapp')} <span className="material-symbols-outlined">arrow_forward</span>
@@ -588,35 +422,8 @@ const Home: React.FC = () => {
           </Reveal>
         </div>
       </section>
+      </div>
 
-      {/* ── Diario: últimas novedades ── */}
-      {blogs.length > 0 && (
-        <section className="py-20 md:py-28" aria-labelledby="home-blog">
-          <div className="max-w-[1440px] mx-auto px-5 md:px-12">
-            <div className="flex items-end justify-between gap-6 mb-10 md:mb-14 pb-6 border-b border-primary/15">
-              <h2 id="home-blog" className="font-display uppercase text-[2.3rem] leading-[0.95] md:text-6xl text-primary">{t('home.blogTitle')}</h2>
-              <Link to="/blog" className="us-link text-primary shrink-0 mb-2">{t('home.blogCta')} <span className="material-symbols-outlined text-base">arrow_forward</span></Link>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 lg:gap-12">
-              {blogs.map((post, i) => (
-                <Reveal key={post.id} delay={i * 100} className="h-full">
-                  <Link to={`/blog/${post.slug}`} className="group flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-4 focus-visible:ring-offset-almond">
-                    <div className="us-zoom relative overflow-hidden aspect-[3/2] bg-primary/10">
-                      <img loading="lazy" src={imgSrc(getImageUrl(post.image), 700)} srcSet={imgSrcSet(getImageUrl(post.image), [400, 700, 1000])} sizes="(max-width: 768px) 100vw, 33vw" className="absolute inset-0 w-full h-full object-cover" onError={imgFallback(getImageUrl(post.image))} alt={post.title} />
-                    </div>
-                    <div className="flex justify-between items-center gap-3 mt-5 us-label text-primary/45">
-                      <span className="text-clay">{post.tag}</span>
-                      <time className="us-num">{formatDate(post.published_date)}</time>
-                    </div>
-                    <h3 className="font-serif text-xl md:text-2xl text-primary mt-3 leading-snug transition-colors group-hover:text-clay line-clamp-3">{post.title}</h3>
-                    <p className="text-[15px] text-primary/60 leading-relaxed mt-3 line-clamp-3">{post.description}</p>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 };

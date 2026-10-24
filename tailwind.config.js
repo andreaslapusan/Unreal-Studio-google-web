@@ -25,29 +25,30 @@ export default {
       // (primary/almond) para que portales y admin hereden el cambio sin tocar
       // miles de clases.
       colors: {
-        white: "#FCFBF8", // blanco cálido: las tarjetas de portales/admin dejan de ser blanco frío
-        primary: "#1E1B16", // basalto (tinta)
-        almond: "#ECE6DC", // piedra paras (superficie)
-        paper: "#F6F3ED", // papel cálido (superficie elevada clara)
-        clay: { DEFAULT: "#9E4A26", light: "#D8936B" }, // laterita (acento)
-        moss: "#252B21", // jungla (superficie oscura secundaria)
+        white: "#FFFDF9",
+        primary: "#2E2721", // tinta cálida, no negro
+        almond: "#F5EFE6", // arena clara (superficie)
+        paper: "#FBF8F2", // papel (superficie elevada)
+        clay: { DEFAULT: "#A65A3A", light: "#E0A887" }, // terracota (acento)
+        moss: "#3F4A3A", // jungla suave
         "surface-dark": "#1a1a1a",
       },
       fontFamily: {
         // `font-serif` es el rol de TITULAR en todo el código: ahora Archivo
         // expandido (ver index.css). El logo conserva DM Serif (font-logo).
-        serif: ['"Archivo"', "system-ui", "sans-serif"],
-        sans: ['"Archivo"', "system-ui", "sans-serif"],
-        display: ['"Archivo"', "system-ui", "sans-serif"],
+        serif: ['"Cormorant Garamond"', "Georgia", "serif"],
+        sans: ['"Manrope"', "system-ui", "sans-serif"],
+        display: ['"Cormorant Garamond"', "Georgia", "serif"],
         accent: ['"Cormorant Garamond"', "Georgia", "serif"],
         logo: ['"DM Serif Display"', "Georgia", "serif"],
-        montserrat: ['"Archivo"', "sans-serif"],
+        montserrat: ['"Manrope"', "sans-serif"],
       },
       // Esquinas arquitectónicas: más contenidas que antes en TODA la app.
       borderRadius: {
-        xl: "0.625rem",
-        "2xl": "0.75rem",
-        "3xl": "0.875rem",
+        // Rediseño v2 "orgánico": esquinas suaves en toda la app.
+        xl: "1rem",
+        "2xl": "1.5rem",
+        "3xl": "2rem",
       },
       // Sombras tintadas de basalto, con desplazamiento: profundidad real, no halo.
       boxShadow: {

@@ -34,7 +34,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
   const logoutBtn = onLogout && (
     <button
       onClick={onLogout}
-      className="flex items-center gap-1.5 border border-primary/20 text-primary/75 px-4 py-2.5 rounded-[2px] us-label hover:bg-primary hover:text-almond hover:border-primary transition-colors"
+      className="flex items-center gap-1.5 border border-primary/20 text-primary/75 px-4 py-2.5 rounded-xl us-label hover:bg-primary hover:text-almond hover:border-primary transition-colors"
     >
       <span className="material-symbols-outlined text-sm">logout</span>
       <span>{t('admin.common.logout')}</span>
@@ -75,7 +75,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
             <>
               <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
               <div
-                className="absolute right-0 top-13 mt-1 z-50 bg-paper rounded-[3px] shadow-[0_24px_48px_-24px_rgba(30,27,22,0.45)] border border-primary/15 p-3 min-w-[230px] flex flex-col gap-2.5"
+                className="absolute right-0 top-13 mt-1 z-50 bg-paper rounded-2xl shadow-[0_24px_48px_-24px_rgba(30,27,22,0.45)] border border-primary/15 p-3 min-w-[230px] flex flex-col gap-2.5"
                 onClick={() => setOpen(false)}
               >
                 {extra && <div className="flex flex-col gap-2.5">{extra}</div>}

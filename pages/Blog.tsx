@@ -116,7 +116,7 @@ const Blog: React.FC = () => {
                 key={tag}
                 onClick={() => setSelectedTag(tag)}
                 aria-pressed={selectedTag === tag}
-                className={`us-label px-3.5 py-2.5 rounded-[2px] border transition-colors duration-300 outline-none focus-visible:ring-2 focus-visible:ring-clay ${
+                className={`us-label px-3.5 py-2.5 rounded-xl border transition-colors duration-300 outline-none focus-visible:ring-2 focus-visible:ring-clay ${
                   selectedTag === tag ? 'bg-primary text-almond border-primary' : 'border-primary/20 text-primary/60 hover:text-primary hover:border-primary/50'
                 }`}
               >
@@ -127,7 +127,7 @@ const Blog: React.FC = () => {
               aria-label={t('blog.sortNewest')}
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
-              className="us-label bg-transparent border border-primary/20 rounded-[2px] pl-3.5 py-2.5 text-primary outline-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-clay cursor-pointer"
+              className="us-label bg-transparent border border-primary/20 rounded-xl pl-3.5 py-2.5 text-primary outline-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-clay cursor-pointer"
             >
               <option value="newest">{t('blog.sortNewest')}</option>
               <option value="oldest">{t('blog.sortOldest')}</option>

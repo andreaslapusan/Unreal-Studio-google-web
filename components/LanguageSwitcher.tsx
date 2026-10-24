@@ -51,7 +51,7 @@ export default function LanguageSwitcher({ inverted = false }: { inverted?: bool
 
   return (
     <div
-      className={`inline-flex items-center rounded-[3px] border p-0.5 text-[0.6875rem] font-semibold tracking-[0.12em] ${
+      className={`inline-flex items-center rounded-2xl border p-0.5 text-[0.6875rem] font-semibold tracking-[0.12em] ${
         inverted ? "border-almond/25" : "border-primary/15"
       }`}
       aria-label="Language switcher"
@@ -61,7 +61,7 @@ export default function LanguageSwitcher({ inverted = false }: { inverted?: bool
           key={l.code}
           onClick={() => change(l.code)}
           aria-pressed={current === l.code}
-          className={`min-w-[2.5rem] px-2.5 py-2 rounded-[2px] transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-clay ${
+          className={`min-w-[2.5rem] px-2.5 py-2 rounded-xl transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-clay ${
             current === l.code
               ? inverted
                 ? "bg-almond text-primary"

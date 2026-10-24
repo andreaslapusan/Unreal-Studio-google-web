@@ -37,7 +37,7 @@ const AdminMobileNav: React.FC = () => {
       </div>
       {open && (
         <div className="fixed inset-0 z-40" onClick={() => setOpen(false)}>
-          <div className="absolute right-3 top-12 bg-moss rounded-[3px] shadow-xl border border-white/10 p-3 w-[210px] flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
+          <div className="absolute right-3 top-12 bg-moss rounded-2xl shadow-xl border border-white/10 p-3 w-[210px] flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
             {links.map((it) => {
               const active = it.match(location.pathname);
               return (
