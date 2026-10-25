@@ -2,14 +2,14 @@
  * defer-css: hace NO render-blocking el CSS principal de la app en todos los HTML
  * de dist. Así el navegador pinta al instante el fondo crema + la ruedecita (estilos
  * inline), en vez de quedarse en NEGRO mientras descarga el CSS (107 KB) en conexiones
- * lentas. Cuando el CSS carga, se aplica (media='all') y se retira la capa de arranque
- * (window.__hideBoot), evitando cualquier flash sin estilos.
+ * lentas. Cuando el CSS carga, se aplica (media='all'); la capa de arranque la retira
+ * window.__hideBoot cuando React pinta #root (ver index.html).
  *
  * Convierte:
  *   <link rel="stylesheet" crossorigin href="/assets/index-XXXX.css">
  * en:
  *   <link rel="stylesheet" crossorigin href="/assets/index-XXXX.css" media="print"
- *         onload="this.media='all';window.__hideBoot&&window.__hideBoot()">
+ *         onload="this.media='all'">
  *   <noscript><link rel="stylesheet" crossorigin href="/assets/index-XXXX.css"></noscript>
  */
 import { readdirSync, statSync, readFileSync, writeFileSync } from 'node:fs';
@@ -36,7 +36,7 @@ for (const file of walk(DIST)) {
   RE.lastIndex = 0;
   const next = html.replace(RE, (_m, pre, href, post) => {
     const attrs = (pre + post).replace(/\s+media="[^"]*"/g, '').trim();
-    return `<link rel="stylesheet" ${attrs} href="${href}" media="print" onload="this.media='all';window.__hideBoot&&window.__hideBoot()"><noscript><link rel="stylesheet" ${attrs} href="${href}"></noscript>`;
+    return `<link rel="stylesheet" ${attrs} href="${href}" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" ${attrs} href="${href}"></noscript>`;
   });
   if (next !== html) { writeFileSync(file, next); changed++; }
 }
