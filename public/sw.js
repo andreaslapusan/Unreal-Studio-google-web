@@ -38,17 +38,20 @@ self.addEventListener('fetch', (event) => {
 
   // NAVEGACIONES (HTML): siempre red; offline → shell cacheado.
   if (req.mode === 'navigate') {
+    // Con red lenta/inestable el fetch no falla, se queda colgado → en iOS standalone
+    // pantalla NEGRA indefinida. Si hay shell cacheado, a los 3 s se sirve ese
+    // (el guard de versión recarga luego si hubo deploy).
     event.respondWith((async () => {
-      try {
-        const res = await fetch(req);
+      const network = fetch(req).then((res) => {
         if (res && res.status === 200) {
-          const cache = await caches.open(CACHE);
-          cache.put('/', res.clone()).catch(() => {});
+          caches.open(CACHE).then((c) => c.put('/', res.clone())).catch(() => {});
         }
         return res;
-      } catch {
-        return (await caches.match('/')) || Response.error();
-      }
+      });
+      const cached = await caches.match('/');
+      if (!cached) return network.catch(() => Response.error());
+      const timeout = new Promise((r) => setTimeout(() => r(cached), 3000));
+      return Promise.race([network.catch(() => cached), timeout]);
     })());
     return;
   }
