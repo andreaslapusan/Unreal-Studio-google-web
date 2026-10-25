@@ -239,7 +239,8 @@
     <div id="app-boot"><div></div></div>
     <script>
       // Solo se quita cuando React ya pintó algo en #root (antes: al cargar el CSS → con red lenta quedaba crema VACÍO sin ruedecita).
-      window.__hideBoot = function(){ var r=document.getElementById('root'), b=document.getElementById('app-boot'); if(!b||!r||!r.childElementCount) return false; b.style.opacity='0'; setTimeout(function(){ b && b.remove(); }, 250); return true; };
+      // Y además el CSS diferido (defer-css.mjs) ya aplicado: si no, el fallback de Suspense sale sin estilos → crema vacío.
+      window.__hideBoot = function(){ var r=document.getElementById('root'), b=document.getElementById('app-boot'); if(!b||!r||!r.childElementCount) return false; if(document.querySelector('link[href*="/assets/index-"][media="print"]')) return false; b.style.opacity='0'; setTimeout(function(){ b && b.remove(); }, 250); return true; };
       (function(){ var n=0, iv=setInterval(function(){ if(window.__hideBoot()) return clearInterval(iv); if(++n===50){ var b=document.getElementById('app-boot'); if(!b) return;
         var l=(location.pathname.split('/')[1]||navigator.language||'es').slice(0,2), T={es:['Conexión lenta, seguimos cargando…','Reintentar'],en:['Slow connection, still loading…','Retry'],ro:['Conexiune lentă, se încarcă în continuare…','Reîncearcă'],id:['Koneksi lambat, masih memuat…','Coba lagi']}[l]||['Slow connection, still loading…','Retry'];
         var m=document.createElement('p'); m.style.cssText='position:absolute;top:calc(50% + 40px);left:0;right:0;text-align:center;font:14px sans-serif;color:#3F2305';
