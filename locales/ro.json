@@ -570,7 +570,8 @@
       "agencyPacks": "Pachete Agenție",
       "arquitectura": "Arhitectură",
       "agenda": "Calendar",
-      "intakes": "Linkuri de listare"
+      "intakes": "Linkuri de listare",
+      "deseoPromo": "Trimitere mobilare + extensie"
     },
     "clientLogin": {
       "title": "Portal Investitor",
@@ -1700,6 +1701,35 @@
       "B": "Bucătărie în interior",
       "C": "Unitățile Sandrei",
       "D": "Unitățile lui Andreas"
+    },
+    "deseoPromo": {
+      "title": "Trimitere mobilare + extensie",
+      "subtitle": "Unitățile Deseo cu tipul lor. Selectează clienții și apasă „Pregătește trimiterea” pentru a previzualiza emailul personalizat al fiecăruia. Trimiterea reală este dezactivată până la OK-ul lui Andreas.",
+      "allTypes": "Toate tipurile",
+      "selectedCount": "{{count}} selectați",
+      "prepare": "Pregătește trimiterea",
+      "selectAll": "Selectează tot",
+      "colName": "Nume",
+      "colEmail": "Email",
+      "colUnit": "Unitate",
+      "colPdf": "PDF mobilare",
+      "pdfYes": "Da",
+      "pdfNo": "Fără tip",
+      "noTemplate": "Fără șablon",
+      "empty": "Nicio unitate Deseo pentru acest filtru.",
+      "errorType": "Tipul nu a putut fi salvat.",
+      "errorTemplate": "Șablonul de email nu a putut fi încărcat.",
+      "previewTitle": "Previzualizare trimitere",
+      "sendLocked": "Doar previzualizare: trimiterea reală este dezactivată și necesită OK-ul explicit al lui Andreas.",
+      "skipped": "Omiși",
+      "close": "Închide",
+      "to": "Către",
+      "subject": "Subiect",
+      "attachment": "Atașament",
+      "prev": "Anterior",
+      "next": "Următor",
+      "send": "Trimite",
+      "noPreviews": "Niciunul dintre cei selectați nu are șablon (tip A, B sau C)."
     }
   },
   "footer": {

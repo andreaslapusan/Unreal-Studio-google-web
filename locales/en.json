@@ -570,7 +570,8 @@
       "agencyPacks": "Agency Packs",
       "arquitectura": "Architecture",
       "agenda": "Calendar",
-      "intakes": "Listing links"
+      "intakes": "Listing links",
+      "deseoPromo": "Furnishing + extension mailing"
     },
     "clientLogin": {
       "title": "Investor Portal",
@@ -1700,6 +1701,35 @@
       "B": "Kitchen inside",
       "C": "Sandra's units",
       "D": "Andreas's units"
+    },
+    "deseoPromo": {
+      "title": "Furnishing + extension mailing",
+      "subtitle": "Deseo units with their type. Select clients and click “Prepare mailing” to preview each personalised email. Actual sending is disabled until Andreas gives the OK.",
+      "allTypes": "All types",
+      "selectedCount": "{{count}} selected",
+      "prepare": "Prepare mailing",
+      "selectAll": "Select all",
+      "colName": "Name",
+      "colEmail": "Email",
+      "colUnit": "Unit",
+      "colPdf": "Furnishing PDF",
+      "pdfYes": "Yes",
+      "pdfNo": "No type",
+      "noTemplate": "No template",
+      "empty": "No Deseo units match this filter.",
+      "errorType": "Could not save the type.",
+      "errorTemplate": "Could not load the email template.",
+      "previewTitle": "Mailing preview",
+      "sendLocked": "Preview only: actual sending is disabled and requires Andreas's explicit OK.",
+      "skipped": "Skipped",
+      "close": "Close",
+      "to": "To",
+      "subject": "Subject",
+      "attachment": "Attachment",
+      "prev": "Previous",
+      "next": "Next",
+      "send": "Send",
+      "noPreviews": "None of the selected clients has a template (type A, B or C)."
     }
   },
   "footer": {

@@ -28,6 +28,7 @@ import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import IntakeLinksPanel from '../components/admin/IntakeLinksPanel';
 import ServiceContactsPanel from '../components/admin/ServiceContactsPanel';
+import DeseoFurnishingPanel from '../components/admin/DeseoFurnishingPanel';
 import SitePlanEditor from '../components/admin/SitePlanEditor';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
@@ -37,8 +38,8 @@ import { portalPath } from '../lib/portalUrls';
 import i18n from '../lib/i18n';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
+type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'deseoPromo' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'deseoPromo', 'contacts', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
 
 // Titulares que PARTICIPAN en una propiedad concreta (+ % opcional). Si la
 // propiedad no tiene participantes definidos (null/[]), participan TODOS los
@@ -397,6 +398,7 @@ const AMENITIES_LIST = [
     { key: 'agenda', view: 'agenda' },
     { key: 'calendar', view: 'calendar' },
     { key: 'clients', view: 'clients' },
+    { key: 'deseoPromo', view: 'deseoPromo' },
     { key: 'arquitectura', view: 'arquitectura' },
     { key: 'employees', view: 'employees' },
     { key: 'users', view: 'users' },
@@ -2059,6 +2061,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
         {activeView === 'intakes' && <IntakeLinksPanel />}
         {activeView === 'contacts' && <ServiceContactsPanel />}
+        {activeView === 'deseoPromo' && <DeseoFurnishingPanel clients={clients} onChanged={loadData} />}
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
