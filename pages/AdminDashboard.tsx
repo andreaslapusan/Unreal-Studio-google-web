@@ -3851,11 +3851,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </span>
           </button>
         ))}
-        {(mailClient.projects || []).filter((cp: any) => isDeseoAssignment(cp)).flatMap((cp: any) => {
+        {(mailClient.projects || []).flatMap((cp: any) => {
+          const deseo = isDeseoAssignment(cp);
           const okFurn = FURNISHING_TYPES.includes(cp.unit_type || '');
           const unitLbl = `${cp.unit_number || '—'}${cp.unit_type ? ` · ${t('admin.unitType.badge', { type: cp.unit_type })}` : ''}`;
           return [
-            <button key={`furn-${cp.id}`} disabled={mailBusy || !okFurn} onClick={() => setDeseoPreview({ client: mailClient, assignment: cp, template: 'furnishing' })} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
+            deseo && <button key={`furn-${cp.id}`} disabled={mailBusy || !okFurn} onClick={() => setDeseoPreview({ client: mailClient, assignment: cp, template: 'furnishing' })} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
               <span className="material-symbols-outlined text-primary shrink-0">chair</span>
               <span className="min-w-0">
                 <span className="block font-bold text-primary text-sm mb-0.5">{t('admin.deseoPromo.title')} · {unitLbl}</span>
@@ -3865,7 +3866,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <button key={`notary-${cp.id}`} disabled={mailBusy} onClick={() => setDeseoPreview({ client: mailClient, assignment: cp, template: 'notarization' })} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
               <span className="material-symbols-outlined text-primary shrink-0">gavel</span>
               <span className="min-w-0">
-                <span className="block font-bold text-primary text-sm mb-0.5">{t('admin.deseoPromo.notaryTitle')} · {unitLbl}</span>
+                <span className="block font-bold text-primary text-sm mb-0.5">{t('admin.deseoPromo.notaryTitle')} · {cp.project_name || ''} · {unitLbl}</span>
                 <span className="block text-xs text-gray-400">{t('admin.deseoPromo.notaryDesc')}</span>
               </span>
             </button>,

@@ -23,12 +23,12 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 // En el mailto del botón Confirmar los placeholders van dentro de una URL → codificar.
 const fill = (html: string, v: Record<string, string>) => html.replace(/(mailto:[^"']*)/g, (m) =>
   Object.entries(v).reduce((acc, [k, val]) => acc.split(`{{${k}}}`).join(encodeURIComponent(val)), m))
-  .replace(/{{(nombre|unidad|tipo)}}/g, (_, k) => esc(v[k] || ""));
+  .replace(/{{(nombre|unidad|tipo|proyecto)}}/g, (_, k) => esc(v[k] || ""));
 
 interface PdfMeta { name?: string; modifiedTime?: string; version?: string; sizeMB?: number }
 interface Props {
   client: { id: string; name: string; email: string };
-  assignment: { unit_number?: string | null; unit_type?: string | null };
+  assignment: { unit_number?: string | null; unit_type?: string | null; project_name?: string | null };
   adminUserId: string | null;
   template: DeseoTemplate;
   onClose: () => void;
@@ -39,6 +39,8 @@ const DeseoFurnishingPreview: React.FC<Props> = ({ client, assignment, adminUser
   const ty = assignment.unit_type || "";
   const unit = assignment.unit_number || "—";
   const tpl = DESEO_TEMPLATES[template];
+  // "Golf Bay Lofts - 1bd" → "Golf Bay Lofts" (placeholder {{proyecto}})
+  const projectName = (assignment.project_name || "").replace(/\s*-\s*\d+\s*bd\s*$/i, "").trim();
   const [preview, setPreview] = useState<{ subject: string; html: string; pdf: PdfMeta | null } | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -50,12 +52,12 @@ const DeseoFurnishingPreview: React.FC<Props> = ({ client, assignment, adminUser
       const { data, error } = await supabase.from("email_templates").select("html, meta").eq("key", tpl.key).maybeSingle();
       if (!alive) return;
       if (error || !data?.html) { alert(t("admin.deseoPromo.errorTemplate")); onClose(); return; }
-      const html = fill(data.html, { nombre: client.name || "", unidad: unit, tipo: ty });
+      const html = fill(data.html, { nombre: client.name || "", unidad: unit, tipo: ty, proyecto: projectName });
       const subject = (html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] || "").replace(/&amp;/g, "&").trim();
       setPreview({ subject, html, pdf: tpl.withPdf ? data.meta?.pdfs?.[ty] || null : null });
     })();
     return () => { alive = false; };
-  }, [client.name, unit, ty, tpl.key]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [client.name, unit, ty, tpl.key, projectName]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = async () => {
     if (!preview || !adminUserId || !client.email) return;
