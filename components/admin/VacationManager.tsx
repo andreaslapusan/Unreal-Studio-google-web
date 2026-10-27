@@ -266,8 +266,9 @@ const VacationManager: React.FC = () => {
       {/* Modal modificar */}
       {editing && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto overscroll-contain">
-            <h3 className="text-xl font-serif text-primary mb-4">{t('admin.vac.modifyTitle', { name: nameFor(editing) })}</h3>
+          <div className="relative bg-white rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto overscroll-contain">
+            <button type="button" onClick={() => setEditing(null)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+            <h3 className="pr-10 text-xl font-serif text-primary mb-4">{t('admin.vac.modifyTitle', { name: nameFor(editing) })}</h3>
             <div className="space-y-3">
               <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.from')}</span>
                 <input type="date" value={editing.start_date} onChange={(e) => setEditing({ ...editing, start_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
