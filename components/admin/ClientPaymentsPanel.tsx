@@ -417,10 +417,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       {/* Add / edit payment */}
       {editing && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-[60]">
-          <div className="relative bg-white rounded-2xl w-full max-w-md p-6 space-y-3"
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-3"
             onKeyDown={(e) => { if (e.key === 'Enter' && !saving) { e.preventDefault(); void savePayment(); } }}>
-            <button type="button" onClick={() => setEditing(null)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
-            <h3 className="pr-10 font-black text-primary">{editing.pay.id ? t('admin.pay.editPayment') : t('admin.pay.newPayment')}</h3>
+            <h3 className="font-black text-primary">{editing.pay.id ? t('admin.pay.editPayment') : t('admin.pay.newPayment')}</h3>
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.labelPlaceholder')}
               value={editing.pay.label || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, label: e.target.value } }))} />
             <div className="flex gap-2 items-stretch">

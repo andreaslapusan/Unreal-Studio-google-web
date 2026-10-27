@@ -462,9 +462,8 @@ function PropertyEditor({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="relative bg-white rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
-        <button type="button" onClick={onCancel} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
-        <h2 className="pr-10 font-serif text-2xl mb-4">{isNew ? t('admin.portal.newProject') : t('admin.portal.editProject')}</h2>
+      <div className="bg-white rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
+        <h2 className="font-serif text-2xl mb-4">{isNew ? t('admin.portal.newProject') : t('admin.portal.editProject')}</h2>
         <div className="space-y-3">
           <Input label={t('fix.apm.labelSlug')} value={form.slug} onChange={(v) => update("slug", v)} />
           <Input label={t('fix.apm.labelName')} value={form.name} onChange={(v) => update("name", v)} />
@@ -591,9 +590,8 @@ function UnitEditor({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="relative bg-white rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
-        <button type="button" onClick={onCancel} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
-        <h2 className="pr-10 font-serif text-2xl mb-4">{isNew ? t('admin.portal.newUnit') : t('admin.portal.editUnit')}</h2>
+      <div className="bg-white rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
+        <h2 className="font-serif text-2xl mb-4">{isNew ? t('admin.portal.newUnit') : t('admin.portal.editUnit')}</h2>
         <div className="space-y-3">
           <label className="block">
             <span className="text-sm font-medium">{t('fix.apm.labelProject')}</span>

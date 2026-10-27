@@ -431,9 +431,8 @@ const EmpleadosDashboard: React.FC = () => {
 
       {showChangePassword && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowChangePassword(false); }}>
-          <div className="relative bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl max-h-[90vh] overflow-y-auto overscroll-contain">
-            <button type="button" onClick={() => setShowChangePassword(false)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
-            <h2 className="pr-10 text-xl font-serif text-primary mb-6">{t('fix.empd.changePasswordTitle')}</h2>
+          <div className="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl max-h-[90vh] overflow-y-auto overscroll-contain">
+            <h2 className="text-xl font-serif text-primary mb-6">{t('fix.empd.changePasswordTitle')}</h2>
             <form onSubmit={handleChangePassword} className="space-y-4">
               <input type="password" autoComplete="new-password" required placeholder={t('fix.empd.newPasswordPlaceholder')} value={pw.newPass}
                 onChange={(e) => setPw({ ...pw, newPass: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
@@ -668,8 +667,7 @@ const EmpleadosDashboard: React.FC = () => {
       {/* Error de cámara: tarjeta persistente con instrucciones + reintentar */}
       {cameraError && (
         <div className="fixed inset-0 z-[70] bg-black/60 flex items-center justify-center px-6" onClick={() => setCameraError(null)}>
-          <div className="relative bg-white rounded-3xl p-7 max-w-sm w-full shadow-2xl text-center" onClick={(e) => e.stopPropagation()}>
-            <button type="button" onClick={() => setCameraError(null)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+          <div className="bg-white rounded-3xl p-7 max-w-sm w-full shadow-2xl text-center" onClick={(e) => e.stopPropagation()}>
             <div className="text-5xl mb-3">📷</div>
             <h3 className="text-xl font-serif text-primary mb-2">{cameraError.title}</h3>
             <p className="text-sm text-primary/70 leading-relaxed mb-6">{cameraError.body}</p>
