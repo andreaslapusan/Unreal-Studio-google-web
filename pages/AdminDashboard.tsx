@@ -28,7 +28,7 @@ import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import IntakeLinksPanel from '../components/admin/IntakeLinksPanel';
 import ServiceContactsPanel from '../components/admin/ServiceContactsPanel';
-import DeseoFurnishingPreview, { FURNISHING_TYPES, type DeseoTemplate } from '../components/admin/DeseoFurnishingPreview';
+import { FURNISHING_TYPES, DESEO_TEMPLATES, type DeseoTemplate, unitLabel, projectShortName, fillTemplate, subjectOf, fetchDeseoTemplate, furnishingPdfPath, furnishingPdfName } from '../lib/deseoTemplates';
 import SitePlanEditor from '../components/admin/SitePlanEditor';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
@@ -228,13 +228,12 @@ const AMENITIES_LIST = [
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0, participants: [] });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [mailClient, setMailClient] = useState<Client | null>(null);
-  const [deseoPreview, setDeseoPreview] = useState<{ client: Client; assignment: any; template: DeseoTemplate } | null>(null);
   const [mailEmployee, setMailEmployee] = useState<any | null>(null);
   const [mailBusy, setMailBusy] = useState(false);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
-  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string; buildSubject?: (email: string) => string }>(null);
+  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string; buildSubject?: (email: string) => string; raw?: boolean; extraBody?: Record<string, unknown>; note?: string }>(null);
   const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[]; selected: string[]; excluded: string[] }>(null); // elegir proyecto(s) y destinatarios del aviso de obra
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
@@ -1469,11 +1468,13 @@ const sendResetEmail = async (client: Client) => {
 // previa; el envío real ocurre al pulsar "Enviar" en sendPreviewedEmail.
 // buildHtml: si se pasa, el correo se PERSONALIZA por destinatario (cada titular ve
 // SU propio email de acceso). Si no, se envía el mismo html a todos los seleccionados.
-const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; buildHtml?: (email: string) => string; buildSubject?: (email: string) => string }) => {
+// raw: html es un documento completo (sin plantilla de marca, se previsualiza en iframe); extraBody: campos
+// extra para send-client-email (adjunto, remitente, log); note: línea informativa en la cabecera.
+const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; buildHtml?: (email: string) => string; buildSubject?: (email: string) => string; raw?: boolean; extraBody?: Record<string, unknown>; note?: string }) => {
   const recipients = (Array.isArray(args.to) ? args.to : [args.to]).map((e) => (e || '').trim()).filter(Boolean);
   const first = recipients[0] || '';
   const html0 = args.buildHtml ? args.buildHtml(first) : args.html;
-  setEmailPreview({ recipients, selected: [...recipients], previewEmail: first, subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml, buildSubject: args.buildSubject });
+  setEmailPreview({ recipients, selected: [...recipients], previewEmail: first, subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml, buildSubject: args.buildSubject, raw: args.raw, extraBody: args.extraBody, note: args.note });
 };
 const sendPreviewedEmail = async () => {
   if (!emailPreview || emailPreview.selected.length === 0) return;
@@ -1484,11 +1485,11 @@ const sendPreviewedEmail = async () => {
       // Un correo PERSONALIZADO por cada destinatario (su propio email de acceso).
       for (const to of ep.selected) {
         const subj = ep.buildSubject ? ep.buildSubject(to) : ep.subject; // asunto en el idioma de CADA titular
-        const { data: sent, error } = await invokeSendEmail({ adminUserId: ep.userId, to, lang: ep.lang, subject: subj, html: ep.buildHtml(to) });
+        const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to, lang: ep.lang, subject: subj, html: ep.buildHtml(to) });
         if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
       }
     } else {
-      const { data: sent, error } = await invokeSendEmail({ adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html });
+      const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html });
       if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
     }
     alert(ep.sentMsg(ep.selected));
@@ -1700,6 +1701,35 @@ const sendCalendarEmail = async (client: Client) => {
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up). Cada
   // titular recibe un correo SEPARADO con su nombre.
   openEmailPreview({ to: calRecipients, subject: et('emails.calendar.subject'), html: buildHtml(calRecipients[0] || email), sentMsg: (ems) => t('admin.dash.calendarSent', { email: ems.join(', ') }), userId, lang, buildHtml, buildSubject: (em) => i18n.getFixedT(holderLangByEmail(client, em))('emails.calendar.subject') });
+};
+
+// Plantillas Deseo/proyecto (amueblado + extensión, aviso notarización): MISMO flujo que el resto de
+// correos (openEmailPreview): destinatarios = participantes de ESA propiedad, un correo por persona
+// con su nombre, vista previa por persona y envío manual con el botón Enviar.
+const sendDeseoTemplate = async (client: Client, cp: any, template: DeseoTemplate) => {
+  if (blockIfNotActive(client)) return;
+  const userId = getAdminUserId();
+  if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+  const recipients = recipientsForCp(client, cp);
+  if (!recipients.length) { alert(t('admin.dash.welcomeNoEmail')); return; }
+  const tplRow = await fetchDeseoTemplate(template);
+  if (!tplRow) { alert(t('admin.deseoPromo.errorTemplate')); return; }
+  const withPdf = DESEO_TEMPLATES[template].withPdf;
+  const ty = cp.unit_type || '';
+  const vars = { unidad: unitLabel(cp.unit_number, cp.project_name), tipo: ty, proyecto: projectShortName(cp.project_name) };
+  // Un correo por persona, dirigido SOLO a ella: nunca "A & B" (si el email no está en titulares, primer nombre).
+  const personName = (em: string) => holderNameByEmail(client, em).split(' & ')[0];
+  const buildHtml = (em: string) => fillTemplate(tplRow.html, { ...vars, nombre: personName(em) });
+  const subject = subjectOf(buildHtml(recipients[0]));
+  const pdf = withPdf ? tplRow.pdfs[ty] : undefined;
+  const pdfDate = pdf?.modifiedTime ? new Date(pdf.modifiedTime).toLocaleString(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }) : '';
+  openEmailPreview({
+    to: recipients, subject, html: '', userId, lang: clientLangOf(client), raw: true, buildHtml, buildSubject: (em) => subjectOf(buildHtml(em)),
+    sentMsg: (ems) => t('admin.deseoPromo.sentOk', { to: ems.join(', ') }),
+    extraBody: { fromName: 'Equipo de Unreal Studio', clientId: client.id, emailType: DESEO_TEMPLATES[template].key,
+      ...(withPdf ? { attachmentPath: furnishingPdfPath(ty), attachmentName: furnishingPdfName(ty) } : {}) },
+    note: withPdf ? `${t('admin.deseoPromo.attachment')}: ${furnishingPdfName(ty)}${pdf ? ' · ' + t('admin.deseoPromo.pdfVersion', { version: pdf.version || '?', date: pdfDate, size: pdf.sizeMB ?? '?' }) : ''}` : undefined,
+  });
 };
 
 const handleDeleteClient = async (id: string) => {
@@ -3454,7 +3484,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
         <div className="min-w-0">
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailPreviewTitle', { defaultValue: 'Previsualización del email' })}</h3>
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{emailPreview.subject}</p>
+          <p className="text-xs text-gray-400 mt-0.5 truncate">{emailPreview.buildSubject && emailPreview.previewEmail ? emailPreview.buildSubject(emailPreview.previewEmail) : emailPreview.subject}</p>
+          {emailPreview.note && <p className="text-[11px] text-gray-500 mt-0.5">{emailPreview.note}</p>}
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
             {emailPreview.recipients.map((em) => (
@@ -3475,12 +3506,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </div>
           )}
         </div>
-        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
+        <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} aria-label={t('admin.common.close')} className="p-2 text-gray-400 hover:text-primary disabled:opacity-50 shrink-0"><span className="material-symbols-outlined">close</span></button>
       </div>
       <div className="overflow-auto p-5 bg-[#F3E5D8]">
         <div className="max-w-3xl mx-auto min-w-0">
-          <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>
-          <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm overflow-x-auto" dangerouslySetInnerHTML={{ __html: emailPreview.html }} />
+          {!emailPreview.raw && <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>}
+          {emailPreview.raw
+            ? <iframe title="email" srcDoc={emailPreview.html} sandbox="" className="w-full min-h-[60vh] bg-white rounded-2xl shadow-sm" />
+            : <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm overflow-x-auto" dangerouslySetInnerHTML={{ __html: emailPreview.html }} />}
         </div>
       </div>
       <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
@@ -3854,16 +3887,16 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {(mailClient.projects || []).flatMap((cp: any) => {
           const deseo = isDeseoAssignment(cp);
           const okFurn = FURNISHING_TYPES.includes(cp.unit_type || '');
-          const unitLbl = `${cp.unit_number || '—'}${cp.unit_type ? ` · ${t('admin.unitType.badge', { type: cp.unit_type })}` : ''}`;
+          const unitLbl = `${unitLabel(cp.unit_number, cp.project_name)}${cp.unit_type ? ` · ${t('admin.unitType.badge', { type: cp.unit_type })}` : ''}`;
           return [
-            deseo && <button key={`furn-${cp.id}`} disabled={mailBusy || !okFurn} onClick={() => setDeseoPreview({ client: mailClient, assignment: cp, template: 'furnishing' })} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
+            deseo && <button key={`furn-${cp.id}`} disabled={mailBusy || !okFurn} onClick={() => { void (async () => { setMailBusy(true); try { await sendDeseoTemplate(mailClient, cp, 'furnishing'); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
               <span className="material-symbols-outlined text-primary shrink-0">chair</span>
               <span className="min-w-0">
                 <span className="block font-bold text-primary text-sm mb-0.5">{t('admin.deseoPromo.title')} · {unitLbl}</span>
                 <span className="block text-xs text-gray-400">{okFurn ? t('admin.deseoPromo.optionDesc', { type: cp.unit_type }) : t('admin.deseoPromo.noTemplate')}</span>
               </span>
             </button>,
-            <button key={`notary-${cp.id}`} disabled={mailBusy} onClick={() => setDeseoPreview({ client: mailClient, assignment: cp, template: 'notarization' })} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button key={`notary-${cp.id}`} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await sendDeseoTemplate(mailClient, cp, 'notarization'); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
               <span className="material-symbols-outlined text-primary shrink-0">gavel</span>
               <span className="min-w-0">
                 <span className="block font-bold text-primary text-sm mb-0.5">{t('admin.deseoPromo.notaryTitle')} · {cp.project_name || ''} · {unitLbl}</span>
@@ -3875,9 +3908,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </div>
     </div>
   </div>
-)}
-{deseoPreview && (
-  <DeseoFurnishingPreview client={deseoPreview.client} assignment={deseoPreview.assignment} template={deseoPreview.template} adminUserId={getAdminUserId()} onClose={() => setDeseoPreview(null)} />
 )}
 
     <Footer />
