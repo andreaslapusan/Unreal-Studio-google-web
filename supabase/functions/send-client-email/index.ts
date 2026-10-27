@@ -130,10 +130,13 @@ Deno.serve(async (req) => {
     if (!/^emails\/[A-Za-z0-9._\/-]+\.pdf$/.test(p.attachmentPath) || p.attachmentPath.includes("..")) {
       return json({ success: false, error: "bad_attachment_path" }, 400);
     }
-    const { data: blob, error: dlErr } = await supabase.storage.from("images").download(p.attachmentPath);
-    if (dlErr || !blob) return json({ success: false, error: "attachment_not_found" }, 404);
+    // PDFs de 6-8 MB: cargarlos en el worker agota su memoria (WORKER_RESOURCE_LIMIT). Resend
+    // los descarga él mismo por URL pública (`path`), así que con adjunto se usa su API HTTP.
+    const { data: pub } = supabase.storage.from("images").getPublicUrl(p.attachmentPath);
+    const head = await fetch(pub.publicUrl, { method: "HEAD" });
+    if (!head.ok) return json({ success: false, error: "attachment_not_found" }, 404);
     const fname = String(p.attachmentName || p.attachmentPath.split("/").pop()).replace(/[\/\\"\r\n]/g, "");
-    attachments = [{ filename: fname, content: new Uint8Array(await blob.arrayBuffer()), encoding: "binary", contentType: "application/pdf" }];
+    attachments = [{ filename: fname, path: pub.publicUrl }];
   }
   const logSend = async (status: string) => {
     if (!p.clientId) return;
@@ -151,6 +154,21 @@ Deno.serve(async (req) => {
     .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&[a-z]+;/g, " ")
     .replace(/\s+/g, " ").trim();
 
+  if (attachments) {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${Deno.env.get("RESEND_API_KEY") ?? pass}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from, to: [p.to], reply_to: "hello@unrealstudiobali.com", subject: p.subject,
+        text: toText(p.html) || p.subject, html: p.raw ? p.html : brandWrap(p.subject, p.html, p.lang),
+        headers: UNSUB, attachments,
+      }),
+    });
+    if (!r.ok) { await logSend("failed"); return json({ success: false, error: `resend_${r.status}: ${(await r.text()).slice(0, 300)}` }, 502); }
+    await logSend("sent");
+    return json({ success: true });
+  }
+
   const client = new SMTPClient({
     connection: { hostname: host, port, tls: port === 465, auth: { username: user, password: pass } },
   });
@@ -163,7 +181,6 @@ Deno.serve(async (req) => {
       content: toText(p.html) || p.subject,
       html: p.raw ? p.html : brandWrap(p.subject, p.html, p.lang),
       headers: UNSUB,
-      ...(attachments ? { attachments } : {}),
     });
   } catch (e) {
     try { await client.close(); } catch { /* ignore */ }
