@@ -161,8 +161,9 @@ const ServiceContactsPanel: React.FC = () => {
 
       {editing && (
         <div className="fixed inset-0 bg-black/40 z-[70] flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-xl font-serif text-primary mb-5">{editing.id ? t("admin.contacts.edit", { defaultValue: "Editar contacto" }) : t("admin.contacts.add", { defaultValue: "Nuevo contacto" })}</h3>
+          <div className="relative bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <button type="button" onClick={() => setEditing(null)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+            <h3 className="pr-10 text-xl font-serif text-primary mb-5">{editing.id ? t("admin.contacts.edit", { defaultValue: "Editar contacto" }) : t("admin.contacts.add", { defaultValue: "Nuevo contacto" })}</h3>
             <div className="space-y-4">
               <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.name", { defaultValue: "Nombre" })}</label>
                 <input value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" /></div>

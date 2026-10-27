@@ -935,8 +935,9 @@ const ClientDashboard: React.FC = () => {
       {/* Modal Cambiar Contraseña */}
       {showChangePassword && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowChangePassword(false); }}>
-          <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl">
-            <h2 className="text-xl font-serif text-primary mb-6">{t('admin.clientDash.changePasswordTitle')}</h2>
+          <div className="relative bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl">
+            <button type="button" onClick={() => setShowChangePassword(false)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+            <h2 className="pr-10 text-xl font-serif text-primary mb-6">{t('admin.clientDash.changePasswordTitle')}</h2>
             {passwordError && <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl mb-4">{passwordError}</div>}
             {passwordSuccess && <div className="bg-green-50 text-green-600 text-sm font-bold p-3 rounded-xl mb-4">{passwordSuccess}</div>}
             <form onSubmit={handleChangePassword} className="space-y-4">

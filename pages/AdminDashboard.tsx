@@ -28,7 +28,7 @@ import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import IntakeLinksPanel from '../components/admin/IntakeLinksPanel';
 import ServiceContactsPanel from '../components/admin/ServiceContactsPanel';
-import DeseoFurnishingPanel from '../components/admin/DeseoFurnishingPanel';
+import DeseoFurnishingEmailButton from '../components/admin/DeseoFurnishingEmailButton';
 import SitePlanEditor from '../components/admin/SitePlanEditor';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
@@ -38,8 +38,8 @@ import { portalPath } from '../lib/portalUrls';
 import i18n from '../lib/i18n';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'deseoPromo' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'deseoPromo', 'contacts', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
+type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
 
 // Titulares que PARTICIPAN en una propiedad concreta (+ % opcional). Si la
 // propiedad no tiene participantes definidos (null/[]), participan TODOS los
@@ -243,6 +243,8 @@ const AMENITIES_LIST = [
   useEscapeKey(() => setIsEditingClient(false), isEditingClient);
   useEscapeKey(() => setEditingAssignment(null), !!editingAssignment);
   useEscapeKey(() => setAssigningProject(null), !!assigningProject);
+  useEscapeKey(() => setIsEditingBlog(false), isEditingBlog);
+  useEscapeKey(() => setIsEditingUser(false), isEditingUser);
   useEscapeKey(() => setWhatsappClient(null), !!whatsappClient);
   useEscapeKey(() => setMailClient(null), !!mailClient);
   useEscapeKey(() => setPaymentsClient(null), !!paymentsClient);
@@ -398,7 +400,6 @@ const AMENITIES_LIST = [
     { key: 'agenda', view: 'agenda' },
     { key: 'calendar', view: 'calendar' },
     { key: 'clients', view: 'clients' },
-    { key: 'deseoPromo', view: 'deseoPromo' },
     { key: 'arquitectura', view: 'arquitectura' },
     { key: 'employees', view: 'employees' },
     { key: 'users', view: 'users' },
@@ -2061,7 +2062,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
         {activeView === 'intakes' && <IntakeLinksPanel />}
         {activeView === 'contacts' && <ServiceContactsPanel />}
-        {activeView === 'deseoPromo' && <DeseoFurnishingPanel clients={clients} adminUserId={getAdminUserId()} onChanged={loadData} />}
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">
@@ -2341,6 +2341,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="flex gap-1.5 shrink-0 items-center">
                         {cp.drive_folder_url && <a href={cp.drive_folder_url} target="_blank" rel="noopener noreferrer" className="text-amber-700 bg-amber-50 hover:bg-amber-100 transition p-2 rounded-lg" title={t('admin.dash.driveFolder', { defaultValue: 'Carpeta de documentación (Drive)' })}><span className="material-symbols-outlined text-xl leading-none">folder</span></a>}
                         <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('fix.adm.paymentsCalendar')}><span className="material-symbols-outlined text-xl leading-none">event</span></button>
+                        {isDeseoAssignment(cp) && <DeseoFurnishingEmailButton client={client} assignment={cp} adminUserId={getAdminUserId()} />}
                         <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-xl leading-none">edit</span></button>
                         <AsyncButton onClick={() => handleUnassignProject(client.id, cp.id)} className="text-red-500 bg-red-50 hover:bg-red-100 transition p-2 rounded-lg" title={t('admin.dash.unassignTitle')}><span className="material-symbols-outlined text-xl leading-none">close</span></AsyncButton>
                     </div>
@@ -3305,8 +3306,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {/* Modal Editar/Crear Artículo de Blog */}
 {isEditingBlog && (
   <div className="fixed inset-0 z-[150] flex items-start justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingBlog(false); }}>
-    <div className="bg-white w-full max-w-3xl rounded-3xl p-6 md:p-10 shadow-2xl my-8">
-      <h2 className="text-2xl font-serif text-primary mb-6">{currentBlog.id && !String(currentBlog.id).startsWith('blog-') ? t('admin.dash.editArticle') : t('admin.dash.newArticle')}</h2>
+    <div className="relative bg-white w-full max-w-3xl rounded-3xl p-6 md:p-10 shadow-2xl my-8">
+      <button type="button" onClick={() => setIsEditingBlog(false)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+      <h2 className="pr-10 text-2xl font-serif text-primary mb-6">{currentBlog.id && !String(currentBlog.id).startsWith('blog-') ? t('admin.dash.editArticle') : t('admin.dash.newArticle')}</h2>
       <form onSubmit={handleSaveBlog} className="space-y-5">
         <div className="grid grid-cols-2 gap-5">
           <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.titleLabel')}</label><input required value={currentBlog.title || ''} onChange={(e) => setCurrentBlog({...currentBlog, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
@@ -3338,8 +3340,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {/* Modal Editar/Crear Administrador */}
 {isEditingUser && (
   <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditingUser(false); }}>
-    <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
-      <h2 className="text-2xl font-serif text-primary mb-6">{currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.editAdmin') : t('admin.dash.newAdmin')}</h2>
+    <div className="relative bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
+      <button type="button" onClick={() => setIsEditingUser(false)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+      <h2 className="pr-10 text-2xl font-serif text-primary mb-6">{currentUser.id && !String(currentUser.id).startsWith('user-') ? t('admin.dash.editAdmin') : t('admin.dash.newAdmin')}</h2>
       <form onSubmit={handleSaveUser} className="space-y-5">
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.nameLabel')}</label><input required value={currentUser.name || ''} onChange={(e) => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
         <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.usernameEmail')}</label><input required type="email" value={currentUser.username || ''} onChange={(e) => setCurrentUser({...currentUser, username: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-bold" /></div>
@@ -3593,8 +3596,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
 {editingAssignment && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditingAssignment(null); }}>
-        <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
-            <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.adminDash.editAssignment')}</h2>
+        <div className="relative bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <button type="button" onClick={() => setEditingAssignment(null)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+            <h2 className="text-2xl font-serif text-primary mb-2 pr-10">{t('admin.adminDash.editAssignment')}</h2>
             <p className="text-sm text-gray-400 mb-2">{t('admin.dash.clientLabel')}: <strong className="text-primary">{editingAssignment.clientName}</strong></p>
             <p className="text-sm text-gray-400 mb-8">{t('admin.dash.projectLabel')}: <strong className="text-primary">{editingAssignment.assignment.project_name}</strong></p>
             <form onSubmit={handleEditAssignment} className="space-y-6">
@@ -3679,8 +3683,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 {/* Modal Asignar Proyecto a un cliente */}
 {assigningProject && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setAssigningProject(null); }}>
-        <div className="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
-            <h2 className="text-2xl font-serif text-primary mb-2">{t('admin.dash.assignProjectTitle')}</h2>
+        <div className="relative bg-white w-full max-w-2xl rounded-3xl p-6 md:p-10 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <button type="button" onClick={() => setAssigningProject(null)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+            <h2 className="pr-10 text-2xl font-serif text-primary mb-2">{t('admin.dash.assignProjectTitle')}</h2>
             <p className="text-sm text-gray-400 mb-8">{t('admin.dash.clientLabel')}: <strong className="text-primary">{assigningProject.clientName}</strong></p>
             <form onSubmit={handleAssignProject} className="space-y-6">
                 <div>
