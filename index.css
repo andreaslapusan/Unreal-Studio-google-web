@@ -16,6 +16,15 @@
   .ust-modal { width: 70vw; max-width: 70vw; }
 }
 
+/* Con un pop-up abierto (fondo oscuro fixed inset-0) la página de detrás NO se
+   desliza — en TODOS los modales a la vez, sin tocar cada componente (queja
+   recurrente de Andreas, 2026-10-27). */
+html:has(.fixed.inset-0[class*="bg-black/"]),
+html:has(.fixed.inset-0[class*="bg-black/"]) body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* Custom site styles formerly inlined in index.html. Kept here so that
    PostCSS picks them up at build time and ships a single CSS file. */
 body {
