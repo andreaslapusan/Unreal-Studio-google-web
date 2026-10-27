@@ -1796,6 +1796,15 @@
       "saveFirst": "Simpan proyek dulu untuk menambahkan denah dan unitnya.",
       "noPlan": "Unggah denah proyek untuk mulai menandai unit.",
       "unsaved": "Perubahan belum disimpan"
+    },
+    "unitType": {
+      "label": "Tipe unit",
+      "none": "Tanpa tipe",
+      "badge": "Tipe {{type}}",
+      "A": "Standar",
+      "B": "Dapur di dalam",
+      "C": "Unit milik Sandra",
+      "D": "Unit milik Andreas"
     }
   },
   "footer": {

@@ -1764,6 +1764,10 @@ const handleUnassignProject = async (clientId: string, assignmentId: string) => 
   }
 };
 
+// Deseo: un único listing para todos los tipos → el tipo va por unidad (client_projects.unit_type)
+const UNIT_TYPES = ['A', 'B', 'C', 'D'] as const;
+const isDeseoAssignment = (a: any) => /deseo/i.test(a?.project_name || '') || !!a?.unit_type;
+
 const handleEditAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAssignment) return;
@@ -1788,6 +1792,11 @@ const handleEditAssignment = async (e: React.FormEvent) => {
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
+        if (isDeseoAssignment(editingAssignment.assignment)) {
+            const r = await supabase.rpc('admin_set_unit_type', { p_assignment_id: editingAssignment.assignment.id, p_type: editingAssignment.assignment.unit_type || '' });
+            if (r.error) throw r.error;
+            if (r.data && !r.data.success) throw new Error(r.data.error);
+        }
         await loadData();
         setEditingAssignment(null);
     } catch (error) {
@@ -2321,6 +2330,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="flex items-center gap-4 flex-wrap">
                       <span className="font-bold text-primary text-sm">{cp.project_name || cp.project_id}</span>
                       {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
+                      {cp.unit_type && <span title={t(`admin.unitType.${cp.unit_type}`)} className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{t('admin.unitType.badge', { type: cp.unit_type })}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                       {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-100 text-green-700' : cp.status === 'Pagado' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
@@ -2385,6 +2395,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="font-bold text-primary break-words">{client.name}</span>
                                 {cp.unit_number && <span className="text-[10px] bg-white text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
+                                {cp.unit_type && <span title={t(`admin.unitType.${cp.unit_type}`)} className="text-[10px] bg-white text-primary px-2 py-0.5 rounded font-bold">{t('admin.unitType.badge', { type: cp.unit_type })}</span>}
                                 {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                               </div>
                               <p className="text-xs text-gray-400 mt-0.5 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}</p>
@@ -3596,6 +3607,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         </div>
                     </div>
                 </div>
+                {isDeseoAssignment(editingAssignment.assignment) && (
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.unitType.label')}</label>
+                        <select value={editingAssignment.assignment.unit_type || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, unit_type: e.target.value || null}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold">
+                            <option value="">{t('admin.unitType.none')}</option>
+                            {UNIT_TYPES.map((ut) => <option key={ut} value={ut}>{t('admin.unitType.badge', { type: ut })} · {t(`admin.unitType.${ut}`)}</option>)}
+                        </select>
+                    </div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.purchaseDate')}</label><input type="date" value={editingAssignment.assignment.purchase_date || ''} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, purchase_date: e.target.value}})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.investmentStatus')}</label>

@@ -1691,6 +1691,15 @@
       "saveFirst": "Guarda primero el proyecto para poder añadir el plano y sus unidades.",
       "noPlan": "Sube el plano del proyecto para empezar a marcar unidades.",
       "unsaved": "Cambios sin guardar"
+    },
+    "unitType": {
+      "label": "Tipo de unidad",
+      "none": "Sin tipo",
+      "badge": "Tipo {{type}}",
+      "A": "Estándar",
+      "B": "Cocina dentro",
+      "C": "Unidades de Sandra",
+      "D": "Unidades de Andreas"
     }
   },
   "footer": {

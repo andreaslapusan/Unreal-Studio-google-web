@@ -1691,6 +1691,15 @@
       "saveFirst": "Save the project first to add the plan and its units.",
       "noPlan": "Upload the project plan to start marking units.",
       "unsaved": "Unsaved changes"
+    },
+    "unitType": {
+      "label": "Unit type",
+      "none": "No type",
+      "badge": "Type {{type}}",
+      "A": "Standard",
+      "B": "Kitchen inside",
+      "C": "Sandra's units",
+      "D": "Andreas's units"
     }
   },
   "footer": {

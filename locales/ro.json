@@ -1691,6 +1691,15 @@
       "saveFirst": "Salvează mai întâi proiectul pentru a adăuga planul și unitățile.",
       "noPlan": "Încarcă planul proiectului pentru a marca unitățile.",
       "unsaved": "Modificări nesalvate"
+    },
+    "unitType": {
+      "label": "Tip unitate",
+      "none": "Fără tip",
+      "badge": "Tip {{type}}",
+      "A": "Standard",
+      "B": "Bucătărie în interior",
+      "C": "Unitățile Sandrei",
+      "D": "Unitățile lui Andreas"
     }
   },
   "footer": {
