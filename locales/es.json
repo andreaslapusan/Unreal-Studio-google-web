@@ -128,13 +128,17 @@
         "leasehold": "Leasehold",
         "freehold": "Freehold"
       },
-      "deliveryFrom": "a partir de"
+      "deliveryFrom": "a partir de",
+      "marketPrice": "Precio de mercado"
     },
     "noResults": "No se encontraron resultados",
     "clearFilters": "Limpiar filtros",
     "soldTitle": "Proyectos Vendidos",
     "statusSold": "VENDIDO",
-    "metaDescription": "Catálogo de propiedades de inversión en Bali: villas, lofts y estudios en Uluwatu, Canggu y Tabanan. Precios, ROI y disponibilidad actualizada."
+    "metaDescription": "Catálogo de propiedades de inversión en Bali: villas, lofts y estudios en Uluwatu, Canggu y Tabanan. Precios, ROI y disponibilidad actualizada.",
+    "soldOutBadge": "Sold out",
+    "soldOutTitle": "Sold out",
+    "soldOutNotice": "Esta propiedad está agotada (sold out). Ya no hay unidades disponibles."
   },
   "contact": {
     "title": "Contacto | Unreal Studio Madrid",
@@ -682,7 +686,12 @@
       "videoUrl": "Vídeo del proyecto (enlace)",
       "showIfFilled": "Se muestra en la ficha solo si lo rellenas.",
       "locationPh": "Escribe la ubicación…",
-      "secUnits": "Plano / Unidades"
+      "secUnits": "Plano / Unidades",
+      "visibility": "Visibilidad",
+      "visAvailable": "Disponible",
+      "visHidden": "Oculto",
+      "visSoldOut": "Sold out",
+      "visHelp": "Disponible: en la web. Oculto: no aparece. Sold out: aparece en la sección \"Sold out\" con precio de mercado y sin opciones de compra."
     },
     "blogTab": {
       "title": "Artículos del Blog",
@@ -1702,7 +1711,7 @@
       "D": "Unidades de Andreas"
     },
     "deseoPromo": {
-      "title": "Email amueblado + extensión",
+      "title": "Amueblado + extensión",
       "noTemplate": "Sin plantilla",
       "errorTemplate": "No se pudo cargar la plantilla del email.",
       "previewTitle": "Vista previa del envío",
@@ -1714,7 +1723,12 @@
       "confirmSend": "¿Enviar el email de amueblado + extensión?\n\nPara: {{to}}\nUnidad: {{unit}}\nTipo: {{type}}\nAdjunto: {{file}}",
       "errorSend": "No se pudo enviar el email: {{error}}",
       "sentOk": "Email enviado a {{to}}.",
-      "sent": "Enviado"
+      "sent": "Enviado",
+      "optionDesc": "Plantilla amueblado + extensión con el PDF del Tipo {{type}} (vista previa antes de enviar)",
+      "pdfVersion": "Drive v{{version}} · {{date}} · {{size}} MB",
+      "notaryTitle": "Aviso notarización",
+      "notaryDesc": "Aviso de notarización de su unidad (vista previa antes de enviar)",
+      "confirmSendNotary": "¿Enviar el aviso de notarización?\n\nPara: {{to}}\nUnidad: {{unit}}"
     }
   },
   "footer": {

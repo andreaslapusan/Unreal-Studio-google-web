@@ -283,6 +283,7 @@ const ProjectDetail: React.FC = () => {
                 .eq('location', loadedProject.location) // Usamos location como zone
                 .neq('id', loadedProject.id)
                 .eq('is_hidden', false)
+                .neq('visibility_status', 'sold_out')
                 .limit(3);
               
               if (similarData) {
@@ -393,6 +394,7 @@ const ProjectDetail: React.FC = () => {
       );
   }
 
+  const soldOut = project.visibility_status === 'sold_out';
   return (
     <div className="bg-almond transition-colors duration-300 overflow-x-hidden text-left relative">
       {/* Lightbox Modal */}
@@ -469,7 +471,7 @@ const ProjectDetail: React.FC = () => {
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
             <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
           </div>
-          {(project.investor_price ?? 0) > 0 && (
+          {!soldOut && (project.investor_price ?? 0) > 0 && (
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
             <p className="text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
@@ -478,14 +480,14 @@ const ProjectDetail: React.FC = () => {
           {(project.market_price ?? 0) > 0 && (
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiMarketPrice')}</p>
-            <p className="text-3xl font-serif line-through opacity-40">{formatPrice(project.market_price, project.price_currency)}</p>
+            <p className={`text-3xl font-serif ${soldOut ? '' : 'line-through opacity-40'}`}>{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
           )}
           <div className="px-4 border-r-0 text-center md:text-left col-span-2 md:col-span-1">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
             <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
-              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-              {translateStatus(project.status, t)}
+              <span className={`w-2 h-2 rounded-full ${soldOut ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'}`}></span>
+              {soldOut ? t('projects.soldOutBadge') : translateStatus(project.status, t)}
             </p>
           </div>
         </div>
@@ -916,6 +918,12 @@ const ProjectDetail: React.FC = () => {
                   </div>
                 )}
               </div>
+              {soldOut ? (
+                <div className="w-full bg-primary/5 text-primary py-4 px-5 rounded-xl text-center">
+                  <p className="font-black uppercase tracking-widest text-xs mb-1">{t('projects.soldOutBadge')}</p>
+                  <p className="text-xs text-primary/70">{t('projects.soldOutNotice')}</p>
+                </div>
+              ) : (
               <a
                 href={whatsappProjectUrl(project.name)}
                 target="_blank"
@@ -925,6 +933,7 @@ const ProjectDetail: React.FC = () => {
               >
                 {t('fix.pd.requestProjectInfo')} <span className="material-symbols-outlined text-base">chat</span>
               </a>
+              )}
             </div>
           </div>
         </div>

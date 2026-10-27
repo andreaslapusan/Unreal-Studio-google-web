@@ -108,7 +108,7 @@ const Home: React.FC = () => {
   }, []);
 
   const featuredProject = useMemo(() => {
-    const visibleProjects = projects.filter(p => !p.is_hidden);
+    const visibleProjects = projects.filter(p => !p.is_hidden && p.visibility_status !== 'sold_out');
     if (visibleProjects.length === 0) return null;
     return visibleProjects.find(p => p.is_featured) || visibleProjects[0];
   }, [projects]);
@@ -140,7 +140,7 @@ const Home: React.FC = () => {
 
   // Cálculo del precio mínimo dinámico
   const minPriceDisplay = useMemo(() => {
-    const visibleProjects = projects.filter(p => !p.is_hidden);
+    const visibleProjects = projects.filter(p => !p.is_hidden && p.visibility_status !== 'sold_out');
     if (visibleProjects.length === 0) return "80.000€";
 
     const rates = liveRates;
@@ -164,7 +164,7 @@ const Home: React.FC = () => {
 
   const filteredGridProjects = useMemo(() => {
     let result = projects.filter(p => {
-      if (p.is_hidden) return false; // Hide hidden projects from main list
+      if (p.is_hidden || p.visibility_status === 'sold_out') return false; // ocultas y sold out fuera del home
       
       // Filtro de Zona
       const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());

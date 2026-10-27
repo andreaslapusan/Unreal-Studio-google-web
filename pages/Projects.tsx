@@ -99,7 +99,7 @@ const Projects: React.FC = () => {
 
   const filteredProjects = useMemo(() => {
     let result = projects.filter(p => {
-      if (p.is_hidden) return false; // Hide hidden projects from main list
+      if (p.is_hidden || p.visibility_status === 'sold_out') return false; // ocultas fuera; sold out va en su propia sección
       // Quitado el filtro is_listed: una propiedad PÚBLICA (is_hidden=false) debe
       // salir en /proyectos igual que en el home. is_listed era flag muerto (solo
       // se leía aquí) y hacía que Amante saliera en home pero no en proyectos.
@@ -163,8 +163,101 @@ const Projects: React.FC = () => {
   }, [projects, filters, currency, config]);
 
   const soldProjects = useMemo(() => {
-    return projects.filter(p => p.is_hidden && ((p.status || '').toLowerCase() === 'vendido' || (p.status || '').toLowerCase() === 'sold'));
+    return projects.filter(p => p.visibility_status === 'sold_out').sort((a, b) => a.sort_order - b.sort_order);
   }, [projects]);
+
+  // Tarjeta de proyecto; sold=true → badge "Sold out" + precio de mercado (sin precio de oferta).
+  const renderCard = (proj: Project, idx: number, sold = false) => (
+              <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
+                <div className="relative h-52 sm:h-56 md:h-80 overflow-hidden">
+                  <img
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    fetchPriority={idx === 0 ? "high" : "auto"}
+                    alt={proj.name}
+                    className="w-full h-full object-cover transition duration-1000 group-hover:scale-110"
+                    src={imgSrc(getImageUrl(proj.image), 600)}
+                    srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    onError={imgFallback(getImageUrl(proj.image))}
+                  />
+                  <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
+                    {sold
+                      ? <span className="bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{t('projects.soldOutBadge')}</span>
+                      : <span className={`${statusBadgeClass(proj.status)} text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg`}>{translateStatus(proj.status, t)}</span>}
+                  </div>
+                  {proj.has_real_photos && (
+                    <div className="absolute top-2 right-2 md:top-5 md:right-5 z-10">
+                      <span className="flex items-center gap-1 bg-white/95 text-emerald-700 text-[8px] md:text-[9px] font-black px-2 py-1 md:px-3 md:py-1.5 uppercase rounded-md md:rounded-full shadow-lg">
+                        <span className="material-symbols-outlined text-[11px] md:text-sm">photo_camera</span>{t('projects.card.realPhotos')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
+                  <h3 className="text-base md:text-3xl font-serif text-primary mb-1 md:mb-2 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
+                  {proj.location && (
+                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-2">
+                      <span className="material-symbols-outlined text-[13px] md:text-base">location_on</span>
+                      <span className="truncate">{proj.location}</span>
+                    </p>
+                  )}
+                  {/* Key specs row — beds / baths / area / tenure, like the top Bali agencies */}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] md:text-[11px] font-bold text-primary/70 mb-2">
+                    {Number(proj.bedrooms) > 0 && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bed</span>{proj.bedrooms}</span>
+                    )}
+                    {Number(proj.bathrooms) > 0 && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bathtub</span>{proj.bathrooms}</span>
+                    )}
+                    {Number(proj.area_m2) > 0 && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">square_foot</span>{proj.area_m2} m²</span>
+                    )}
+                    {proj.tenure && (
+                      <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
+                    )}
+                  </div>
+                  {!isFinished(proj.status) && localizedCompletion(proj, i18n.language) && (
+                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1">
+                      <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
+                      {t('projects.card.delivery')}: {deliveryText(localizedCompletion(proj, i18n.language), t('projects.card.deliveryFrom'))}
+                    </p>
+                  )}
+                  {proj.completion_percent > 0 && proj.completion_percent < 100 && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
+                      <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                        <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
+                      </div>
+                      <span className="text-[10px] font-bold text-primary">{proj.completion_percent}%</span>
+                    </div>
+                  )}
+                  <div className="mt-auto">
+                    <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
+                      {sold ? (
+                        <div>
+                          <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">{t('projects.card.marketPrice')}</p>
+                          <p className="font-extrabold text-sm md:text-xl text-primary">{formatPrice(Number(proj.market_price) > 0 ? Number(proj.market_price) : proj.investor_price, proj.price_currency)}</p>
+                        </div>
+                      ) : (
+                      <div>
+                        <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">{t('projects.card.from')}</p>
+                        <div className="flex items-baseline gap-2">
+                          <p className="font-extrabold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
+                          {Number(proj.market_price) > Number(proj.investor_price) && (
+                            <p className="text-[10px] md:text-xs text-gray-400 line-through font-bold">{formatPrice(Number(proj.market_price), proj.price_currency)}</p>
+                          )}
+                        </div>
+                      </div>
+                      )}
+                      <span className="flex items-center gap-1 text-xs md:text-xs font-black uppercase tracking-widest text-primary group-hover:gap-2 transition-all whitespace-nowrap bg-primary/5 rounded-full px-3 py-1.5 md:px-0 md:py-0 md:bg-transparent">
+                        {t('projects.card.viewDetails', 'Ver detalles')}
+                        <span className="material-symbols-outlined text-sm md:text-xl">arrow_forward</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+  );
 
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = { ...filters, [key]: value };
@@ -338,88 +431,7 @@ const Projects: React.FC = () => {
       <section className="px-6 md:px-12 pb-32 max-w-7xl mx-auto">
         {filteredProjects.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-            {filteredProjects.map((proj, idx) => (
-              <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
-                <div className="relative h-52 sm:h-56 md:h-80 overflow-hidden">
-                  <img
-                    loading={idx === 0 ? "eager" : "lazy"}
-                    fetchPriority={idx === 0 ? "high" : "auto"}
-                    alt={proj.name}
-                    className="w-full h-full object-cover transition duration-1000 group-hover:scale-110"
-                    src={imgSrc(getImageUrl(proj.image), 600)}
-                    srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    onError={imgFallback(getImageUrl(proj.image))}
-                  />
-                  <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
-                    <span className={`${statusBadgeClass(proj.status)} text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg`}>{translateStatus(proj.status, t)}</span>
-                  </div>
-                  {proj.has_real_photos && (
-                    <div className="absolute top-2 right-2 md:top-5 md:right-5 z-10">
-                      <span className="flex items-center gap-1 bg-white/95 text-emerald-700 text-[8px] md:text-[9px] font-black px-2 py-1 md:px-3 md:py-1.5 uppercase rounded-md md:rounded-full shadow-lg">
-                        <span className="material-symbols-outlined text-[11px] md:text-sm">photo_camera</span>{t('projects.card.realPhotos')}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
-                  <h3 className="text-base md:text-3xl font-serif text-primary mb-1 md:mb-2 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
-                  {proj.location && (
-                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-2">
-                      <span className="material-symbols-outlined text-[13px] md:text-base">location_on</span>
-                      <span className="truncate">{proj.location}</span>
-                    </p>
-                  )}
-                  {/* Key specs row — beds / baths / area / tenure, like the top Bali agencies */}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] md:text-[11px] font-bold text-primary/70 mb-2">
-                    {Number(proj.bedrooms) > 0 && (
-                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bed</span>{proj.bedrooms}</span>
-                    )}
-                    {Number(proj.bathrooms) > 0 && (
-                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bathtub</span>{proj.bathrooms}</span>
-                    )}
-                    {Number(proj.area_m2) > 0 && (
-                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">square_foot</span>{proj.area_m2} m²</span>
-                    )}
-                    {proj.tenure && (
-                      <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
-                    )}
-                  </div>
-                  {!isFinished(proj.status) && localizedCompletion(proj, i18n.language) && (
-                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1">
-                      <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
-                      {t('projects.card.delivery')}: {deliveryText(localizedCompletion(proj, i18n.language), t('projects.card.deliveryFrom'))}
-                    </p>
-                  )}
-                  {proj.completion_percent > 0 && proj.completion_percent < 100 && (
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
-                      <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                        <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
-                      </div>
-                      <span className="text-[10px] font-bold text-primary">{proj.completion_percent}%</span>
-                    </div>
-                  )}
-                  <div className="mt-auto">
-                    <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
-                      <div>
-                        <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">{t('projects.card.from')}</p>
-                        <div className="flex items-baseline gap-2">
-                          <p className="font-extrabold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
-                          {Number(proj.market_price) > Number(proj.investor_price) && (
-                            <p className="text-[10px] md:text-xs text-gray-400 line-through font-bold">{formatPrice(Number(proj.market_price), proj.price_currency)}</p>
-                          )}
-                        </div>
-                      </div>
-                      <span className="flex items-center gap-1 text-xs md:text-xs font-black uppercase tracking-widest text-primary group-hover:gap-2 transition-all whitespace-nowrap bg-primary/5 rounded-full px-3 py-1.5 md:px-0 md:py-0 md:bg-transparent">
-                        {t('projects.card.viewDetails', 'Ver detalles')}
-                        <span className="material-symbols-outlined text-sm md:text-xl">arrow_forward</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+            {filteredProjects.map((proj, idx) => renderCard(proj, idx))}
           </div>
         ) : (
           <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
@@ -429,38 +441,10 @@ const Projects: React.FC = () => {
         )}
 
         {soldProjects.length > 0 && (
-          <div className="mt-32">
-            <h2 className="text-4xl text-primary mb-12 text-center font-serif">{t('projects.soldTitle')}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 opacity-70">
-              {soldProjects.map((proj, idx) => (
-                <div key={proj.id} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-white/50 flex flex-col h-full grayscale-[0.5]">
-                  <div className="relative h-52 sm:h-56 md:h-80 overflow-hidden">
-                    <img
-                      loading="lazy"
-                      alt={proj.name}
-                      className="w-full h-full object-cover"
-                      src={imgSrc(getImageUrl(proj.image), 600)}
-                      srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      onError={imgFallback(getImageUrl(proj.image))}
-                    />
-                    <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
-                      <span className="bg-red-600 text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{t('projects.statusSold')}</span>
-                    </div>
-                  </div>
-                  <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
-                    <h3 className="text-base md:text-3xl font-serif text-primary mb-2 md:mb-3 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
-                    <div className="mt-auto">
-                      <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
-                        <div>
-                          <p className="text-[8px] md:text-[9px] uppercase text-primary/40 font-black tracking-widest mb-0.5 md:mb-1">{t('projects.card.finalPrice')}</p>
-                          <p className="font-extrabold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          <div className="mt-24 md:mt-32">
+            <h2 className="text-3xl md:text-4xl text-primary mb-10 md:mb-12 text-center font-serif">{t('projects.soldOutTitle')}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+              {soldProjects.map((proj, idx) => renderCard(proj, idx + filteredProjects.length, true))}
             </div>
           </div>
         )}

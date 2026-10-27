@@ -128,13 +128,17 @@
         "leasehold": "Hak Sewa",
         "freehold": "Hak Milik"
       },
-      "deliveryFrom": "mulai"
+      "deliveryFrom": "mulai",
+      "marketPrice": "Harga pasar"
     },
     "noResults": "Tidak ada hasil",
     "clearFilters": "Hapus filter",
     "soldTitle": "Proyek Terjual",
     "statusSold": "TERJUAL",
-    "metaDescription": "Katalog properti investasi di Bali: vila, loft, dan studio di Uluwatu, Canggu, dan Tabanan. Harga, ROI, dan ketersediaan terkini."
+    "metaDescription": "Katalog properti investasi di Bali: vila, loft, dan studio di Uluwatu, Canggu, dan Tabanan. Harga, ROI, dan ketersediaan terkini.",
+    "soldOutBadge": "Sold out",
+    "soldOutTitle": "Sold out",
+    "soldOutNotice": "Properti ini sudah habis terjual (sold out). Tidak ada unit tersedia."
   },
   "contact": {
     "title": "Kontak | Unreal Studio Madrid",
@@ -814,7 +818,12 @@
       "videoUrl": "Video proyek (tautan)",
       "showIfFilled": "Ditampilkan di halaman hanya jika diisi.",
       "locationPh": "Ketik lokasi…",
-      "secUnits": "Denah / Unit"
+      "secUnits": "Denah / Unit",
+      "visibility": "Visibilitas",
+      "visAvailable": "Tersedia",
+      "visHidden": "Tersembunyi",
+      "visSoldOut": "Sold out",
+      "visHelp": "Tersedia: tampil di web. Tersembunyi: tidak tampil. Sold out: tampil di bagian \"Sold out\" dengan harga pasar dan tanpa opsi pembelian."
     },
     "blogTab": {
       "title": "Artikel Blog",
@@ -1807,7 +1816,7 @@
       "D": "Unit milik Andreas"
     },
     "deseoPromo": {
-      "title": "Email furnitur + perpanjangan",
+      "title": "Furnishing + perpanjangan",
       "noTemplate": "Tanpa template",
       "errorTemplate": "Template email tidak dapat dimuat.",
       "previewTitle": "Pratinjau pengiriman",
@@ -1819,7 +1828,12 @@
       "confirmSend": "Kirim email furnitur + perpanjangan?\n\nKepada: {{to}}\nUnit: {{unit}}\nTipe: {{type}}\nLampiran: {{file}}",
       "errorSend": "Email tidak dapat dikirim: {{error}}",
       "sentOk": "Email terkirim ke {{to}}.",
-      "sent": "Terkirim"
+      "sent": "Terkirim",
+      "optionDesc": "Templat furnishing + perpanjangan dengan PDF Tipe {{type}} (pratinjau sebelum mengirim)",
+      "pdfVersion": "Drive v{{version}} · {{date}} · {{size}} MB",
+      "notaryTitle": "Pemberitahuan notarisasi",
+      "notaryDesc": "Pemberitahuan notarisasi unit (pratinjau sebelum mengirim)",
+      "confirmSendNotary": "Kirim pemberitahuan notarisasi?\n\nKepada: {{to}}\nUnit: {{unit}}"
     }
   },
   "footer": {

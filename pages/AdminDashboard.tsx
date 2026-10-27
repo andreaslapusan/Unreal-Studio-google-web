@@ -28,6 +28,7 @@ import { FaqsTab, TimelinesTab } from './AdminPortalManager';
 import AgencyApplications from '../components/admin/AgencyApplications';
 import IntakeLinksPanel from '../components/admin/IntakeLinksPanel';
 import ServiceContactsPanel from '../components/admin/ServiceContactsPanel';
+import DeseoFurnishingPreview, { FURNISHING_TYPES, type DeseoTemplate } from '../components/admin/DeseoFurnishingPreview';
 import SitePlanEditor from '../components/admin/SitePlanEditor';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
@@ -227,6 +228,7 @@ const AMENITIES_LIST = [
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0, participants: [] });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [mailClient, setMailClient] = useState<Client | null>(null);
+  const [deseoPreview, setDeseoPreview] = useState<{ client: Client; assignment: any; template: DeseoTemplate } | null>(null);
   const [mailEmployee, setMailEmployee] = useState<any | null>(null);
   const [mailBusy, setMailBusy] = useState(false);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
@@ -2084,6 +2086,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="absolute top-4 left-4 flex gap-2">
                       <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{translateStatus(proj.status, t)}</div>
                       {proj.is_hidden && <div className="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.hidden')}</div>}
+                      {proj.visibility_status === 'sold_out' && <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.visSoldOut')}</div>}
                     </div>
                   </div>
                   <div className="p-6 flex-grow flex flex-col">
@@ -3222,12 +3225,18 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       <span className="text-[10px] font-black uppercase text-primary/60">{t('admin.props.highlightHome')}</span>
                       <button type="button" onClick={() => setCurrentProject({...currentProject, is_featured: !currentProject.is_featured})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_featured ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
                     </div>
-                    <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl">
-                      <div>
-                        <span className="text-[10px] font-black uppercase text-primary/60 block mb-1">{t('admin.props.hideFromPublic')}</span>
-                        <span className="text-[9px] text-gray-400">{t('admin.props.hideFromPublicHint')}</span>
+                    <div className="px-4 py-3 bg-white rounded-xl md:col-span-2">
+                      <span className="text-[10px] font-black uppercase text-primary/60 block mb-2">{t('admin.props.visibility')}</span>
+                      <div role="radiogroup" aria-label={t('admin.props.visibility')} className="grid grid-cols-3 gap-1 bg-gray-100 rounded-xl p-1">
+                        {([['available', 'visAvailable'], ['hidden', 'visHidden'], ['sold_out', 'visSoldOut']] as const).map(([v, k]) => {
+                          const cur = currentProject.visibility_status || (currentProject.is_hidden ? 'hidden' : 'available');
+                          return (
+                            <button key={v} type="button" role="radio" aria-checked={cur === v} onClick={() => setCurrentProject({ ...currentProject, visibility_status: v, is_hidden: v === 'hidden' })}
+                              className={`py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${cur === v ? 'bg-primary text-white shadow' : 'text-primary/60 hover:bg-white'}`}>{t(`admin.props.${k}`)}</button>
+                          );
+                        })}
                       </div>
-                      <button type="button" onClick={() => setCurrentProject({...currentProject, is_hidden: !currentProject.is_hidden})} className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${currentProject.is_hidden ? 'bg-primary justify-end' : 'bg-gray-300 justify-start'}`}><div className="w-4 h-4 bg-white rounded-full shadow-md" /></button>
+                      <span className="text-[9px] text-gray-400 block mt-2">{t('admin.props.visHelp')}</span>
                     </div>
                   </div>
                 </div>
@@ -3842,9 +3851,32 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </span>
           </button>
         ))}
+        {(mailClient.projects || []).filter((cp: any) => isDeseoAssignment(cp)).flatMap((cp: any) => {
+          const okFurn = FURNISHING_TYPES.includes(cp.unit_type || '');
+          const unitLbl = `${cp.unit_number || '—'}${cp.unit_type ? ` · ${t('admin.unitType.badge', { type: cp.unit_type })}` : ''}`;
+          return [
+            <button key={`furn-${cp.id}`} disabled={mailBusy || !okFurn} onClick={() => setDeseoPreview({ client: mailClient, assignment: cp, template: 'furnishing' })} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span className="material-symbols-outlined text-primary shrink-0">chair</span>
+              <span className="min-w-0">
+                <span className="block font-bold text-primary text-sm mb-0.5">{t('admin.deseoPromo.title')} · {unitLbl}</span>
+                <span className="block text-xs text-gray-400">{okFurn ? t('admin.deseoPromo.optionDesc', { type: cp.unit_type }) : t('admin.deseoPromo.noTemplate')}</span>
+              </span>
+            </button>,
+            <button key={`notary-${cp.id}`} disabled={mailBusy} onClick={() => setDeseoPreview({ client: mailClient, assignment: cp, template: 'notarization' })} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span className="material-symbols-outlined text-primary shrink-0">gavel</span>
+              <span className="min-w-0">
+                <span className="block font-bold text-primary text-sm mb-0.5">{t('admin.deseoPromo.notaryTitle')} · {unitLbl}</span>
+                <span className="block text-xs text-gray-400">{t('admin.deseoPromo.notaryDesc')}</span>
+              </span>
+            </button>,
+          ];
+        })}
       </div>
     </div>
   </div>
+)}
+{deseoPreview && (
+  <DeseoFurnishingPreview client={deseoPreview.client} assignment={deseoPreview.assignment} template={deseoPreview.template} adminUserId={getAdminUserId()} onClose={() => setDeseoPreview(null)} />
 )}
 
     <Footer />

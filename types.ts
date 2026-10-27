@@ -59,6 +59,7 @@ export interface Project {
   construction_gallery?: string[];
   furnishing_items?: string[];
   is_hidden?: boolean;
+  visibility_status?: 'available' | 'hidden' | 'sold_out';
   tenure?: string;
   has_real_photos?: boolean;
   is_listed?: boolean;

@@ -128,13 +128,17 @@
         "leasehold": "Leasehold",
         "freehold": "Freehold"
       },
-      "deliveryFrom": "from"
+      "deliveryFrom": "from",
+      "marketPrice": "Market price"
     },
     "noResults": "No results found",
     "clearFilters": "Clear filters",
     "soldTitle": "Sold projects",
     "statusSold": "SOLD",
-    "metaDescription": "Investment property catalogue in Bali: villas, lofts and studios in Uluwatu, Canggu and Tabanan. Live prices, ROI and availability."
+    "metaDescription": "Investment property catalogue in Bali: villas, lofts and studios in Uluwatu, Canggu and Tabanan. Live prices, ROI and availability.",
+    "soldOutBadge": "Sold out",
+    "soldOutTitle": "Sold out",
+    "soldOutNotice": "This property is sold out. There are no units available."
   },
   "contact": {
     "title": "Contact | Unreal Studio Madrid",
@@ -682,7 +686,12 @@
       "videoUrl": "Project video (link)",
       "showIfFilled": "Shown on the listing only if you fill it in.",
       "locationPh": "Type the location…",
-      "secUnits": "Site plan / Units"
+      "secUnits": "Site plan / Units",
+      "visibility": "Visibility",
+      "visAvailable": "Available",
+      "visHidden": "Hidden",
+      "visSoldOut": "Sold out",
+      "visHelp": "Available: on the website. Hidden: not shown. Sold out: shown in the \"Sold out\" section with market price and no purchase options."
     },
     "blogTab": {
       "title": "Blog Articles",
@@ -1702,7 +1711,7 @@
       "D": "Andreas's units"
     },
     "deseoPromo": {
-      "title": "Furnishing + extension email",
+      "title": "Furnishing + extension",
       "noTemplate": "No template",
       "errorTemplate": "Could not load the email template.",
       "previewTitle": "Mailing preview",
@@ -1714,7 +1723,12 @@
       "confirmSend": "Send the furnishing + extension email?\n\nTo: {{to}}\nUnit: {{unit}}\nType: {{type}}\nAttachment: {{file}}",
       "errorSend": "The email could not be sent: {{error}}",
       "sentOk": "Email sent to {{to}}.",
-      "sent": "Sent"
+      "sent": "Sent",
+      "optionDesc": "Furnishing + extension template with the Type {{type}} PDF (preview before sending)",
+      "pdfVersion": "Drive v{{version}} · {{date}} · {{size}} MB",
+      "notaryTitle": "Notarisation notice",
+      "notaryDesc": "Notice about the notarisation of their unit (preview before sending)",
+      "confirmSendNotary": "Send the notarisation notice?\n\nTo: {{to}}\nUnit: {{unit}}"
     }
   },
   "footer": {

@@ -128,13 +128,17 @@
         "leasehold": "Leasehold",
         "freehold": "Freehold"
       },
-      "deliveryFrom": "începând cu"
+      "deliveryFrom": "începând cu",
+      "marketPrice": "Preț de piață"
     },
     "noResults": "Nu s-au găsit rezultate",
     "clearFilters": "Șterge filtrele",
     "soldTitle": "Proiecte Vândute",
     "statusSold": "VÂNDUT",
-    "metaDescription": "Catalog de proprietăți de investiție în Bali: vile, lofturi și studiouri în Uluwatu, Canggu și Tabanan. Prețuri, ROI și disponibilitate actualizate."
+    "metaDescription": "Catalog de proprietăți de investiție în Bali: vile, lofturi și studiouri în Uluwatu, Canggu și Tabanan. Prețuri, ROI și disponibilitate actualizate.",
+    "soldOutBadge": "Sold out",
+    "soldOutTitle": "Sold out",
+    "soldOutNotice": "Această proprietate este vândută integral (sold out). Nu mai sunt unități disponibile."
   },
   "contact": {
     "title": "Contact | Unreal Studio Madrid",
@@ -682,7 +686,12 @@
       "videoUrl": "Video proiect (link)",
       "showIfFilled": "Apare pe pagină doar dacă îl completezi.",
       "locationPh": "Scrie locația…",
-      "secUnits": "Plan / Unități"
+      "secUnits": "Plan / Unități",
+      "visibility": "Vizibilitate",
+      "visAvailable": "Disponibil",
+      "visHidden": "Ascuns",
+      "visSoldOut": "Sold out",
+      "visHelp": "Disponibil: pe site. Ascuns: nu apare. Sold out: apare în secțiunea „Sold out” cu preț de piață și fără opțiuni de cumpărare."
     },
     "blogTab": {
       "title": "Articole Blog",
@@ -1702,7 +1711,7 @@
       "D": "Unitățile lui Andreas"
     },
     "deseoPromo": {
-      "title": "Email mobilare + extensie",
+      "title": "Mobilare + extindere",
       "noTemplate": "Fără șablon",
       "errorTemplate": "Șablonul de email nu a putut fi încărcat.",
       "previewTitle": "Previzualizare trimitere",
@@ -1714,7 +1723,12 @@
       "confirmSend": "Trimiți emailul de mobilare + extensie?\n\nCătre: {{to}}\nUnitate: {{unit}}\nTip: {{type}}\nAtașament: {{file}}",
       "errorSend": "Emailul nu a putut fi trimis: {{error}}",
       "sentOk": "Email trimis către {{to}}.",
-      "sent": "Trimis"
+      "sent": "Trimis",
+      "optionDesc": "Șablon mobilare + extindere cu PDF-ul Tip {{type}} (previzualizare înainte de trimitere)",
+      "pdfVersion": "Drive v{{version}} · {{date}} · {{size}} MB",
+      "notaryTitle": "Notificare notarizare",
+      "notaryDesc": "Notificare privind notarizarea unității (previzualizare înainte de trimitere)",
+      "confirmSendNotary": "Trimiți notificarea de notarizare?\n\nCătre: {{to}}\nUnitate: {{unit}}"
     }
   },
   "footer": {
