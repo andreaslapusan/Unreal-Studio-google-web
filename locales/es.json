@@ -1704,7 +1704,7 @@
     },
     "deseoPromo": {
       "title": "Envío amueblado + extensión",
-      "subtitle": "Unidades de Deseo con su tipo. Selecciona clientes y pulsa «Preparar envío» para previsualizar el email personalizado de cada uno. El envío real está desactivado hasta el OK de Andreas.",
+      "subtitle": "Unidades de Deseo con su tipo. Selecciona clientes y pulsa «Preparar envío» para ver el email personalizado de cada uno. El envío es manual: uno a uno, con «Enviar email» y confirmación.",
       "allTypes": "Todos los tipos",
       "selectedCount": "{{count}} seleccionados",
       "prepare": "Preparar envío",
@@ -1720,7 +1720,6 @@
       "errorType": "No se pudo guardar el tipo.",
       "errorTemplate": "No se pudo cargar la plantilla del email.",
       "previewTitle": "Vista previa del envío",
-      "sendLocked": "Solo vista previa: el envío real está desactivado y requiere el OK expreso de Andreas.",
       "skipped": "Omitidos",
       "close": "Cerrar",
       "to": "Para",
@@ -1728,8 +1727,12 @@
       "attachment": "Adjunto",
       "prev": "Anterior",
       "next": "Siguiente",
-      "send": "Enviar",
-      "noPreviews": "Ninguno de los seleccionados tiene plantilla (tipo A, B o C)."
+      "send": "Enviar email",
+      "noPreviews": "Ninguno de los seleccionados tiene plantilla (tipo A, B o C).",
+      "confirmSend": "¿Enviar el email de amueblado + extensión?\n\nPara: {{to}}\nUnidad: {{unit}}\nTipo: {{type}}\nAdjunto: {{file}}",
+      "errorSend": "No se pudo enviar el email: {{error}}",
+      "sentOk": "Email enviado a {{to}}.",
+      "sent": "Enviado"
     }
   },
   "footer": {

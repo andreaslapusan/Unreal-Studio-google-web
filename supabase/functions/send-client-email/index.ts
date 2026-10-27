@@ -6,6 +6,9 @@
  * marca Unreal (cabecera de texto "Unreal Studio" + footer compacto) y lo envía
  * por SMTP (Resend). Las llamadas pasan SOLO el contenido; la marca se añade aquí
  * UNA vez (no duplicar header/footer en el html que se pasa).
+ * Opcionales: raw (html ya es un documento completo → sin brandWrap), fromName,
+ * attachmentPath (solo dentro del bucket público images/emails/), attachmentName,
+ * clientId + emailType (→ fila en client_email_log).
  */
 // @ts-nocheck — runtime Deno, no en el tsconfig de Vite
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.107.0";
@@ -87,7 +90,8 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ success: false, error: "Method not allowed" }, 405);
 
-  let p: { adminUserId?: string; to?: string; subject?: string; html?: string; kwitansiId?: string; lang?: string };
+  let p: { adminUserId?: string; to?: string; subject?: string; html?: string; kwitansiId?: string; lang?: string;
+    raw?: boolean; fromName?: string; attachmentPath?: string; attachmentName?: string; clientId?: string; emailType?: string };
   try { p = await req.json(); } catch { return json({ success: false, error: "Bad JSON" }, 400); }
   if (!p.adminUserId || !p.to || !p.subject || !p.html) {
     return json({ success: false, error: "adminUserId, to, subject, html required" }, 400);
@@ -115,7 +119,26 @@ Deno.serve(async (req) => {
   const pass = Deno.env.get("SMTP_PASS");
   if (!host || !user || !pass) return json({ success: false, error: "transport_not_configured" }, 503);
   const port = Number(Deno.env.get("SMTP_PORT") ?? "465");
-  const from = Deno.env.get("MAIL_FROM") ?? "Unreal Studio <no.reply@unrealstudiobali.com>";
+  const defFrom = Deno.env.get("MAIL_FROM") ?? "Unreal Studio <no.reply@unrealstudiobali.com>";
+  const fromAddr = defFrom.match(/<([^>]+)>/)?.[1] ?? defFrom;
+  const fromName = String(p.fromName || "").replace(/[<>"\r\n]/g, "").trim();
+  const from = fromName ? `${fromName} <${fromAddr}>` : defFrom;
+
+  // Adjunto: solo ficheros de nuestro bucket público images/emails/ (sin URLs arbitrarias → sin SSRF).
+  let attachments: unknown[] | undefined;
+  if (p.attachmentPath) {
+    if (!/^emails\/[A-Za-z0-9._\/-]+\.pdf$/.test(p.attachmentPath) || p.attachmentPath.includes("..")) {
+      return json({ success: false, error: "bad_attachment_path" }, 400);
+    }
+    const { data: blob, error: dlErr } = await supabase.storage.from("images").download(p.attachmentPath);
+    if (dlErr || !blob) return json({ success: false, error: "attachment_not_found" }, 404);
+    const fname = String(p.attachmentName || p.attachmentPath.split("/").pop()).replace(/[\/\\"\r\n]/g, "");
+    attachments = [{ filename: fname, content: new Uint8Array(await blob.arrayBuffer()), encoding: "binary", contentType: "application/pdf" }];
+  }
+  const logSend = async (status: string) => {
+    if (!p.clientId) return;
+    await supabase.from("client_email_log").insert({ client_id: p.clientId, to_email: p.to, email_type: p.emailType || "manual", subject: p.subject, status });
+  };
 
   // Anti-spam: cabecera List-Unsubscribe (Gmail/Outlook lo premian) + versión
   // texto-plano (multipart/alternative mejora la entrega a bandeja de entrada).
@@ -138,14 +161,17 @@ Deno.serve(async (req) => {
       replyTo: "hello@unrealstudiobali.com",
       subject: p.subject,
       content: toText(p.html) || p.subject,
-      html: brandWrap(p.subject, p.html, p.lang),
+      html: p.raw ? p.html : brandWrap(p.subject, p.html, p.lang),
       headers: UNSUB,
+      ...(attachments ? { attachments } : {}),
     });
   } catch (e) {
     try { await client.close(); } catch { /* ignore */ }
+    await logSend("failed");
     return json({ success: false, error: String(e) }, 502);
   }
   try { await client.close(); } catch { /* ignore */ }
+  await logSend("sent");
 
   if (p.kwitansiId) {
     await supabase.rpc("admin_mark_kwitansi_sent", { p_user_id: p.adminUserId, p_id: p.kwitansiId, p_email: p.to });

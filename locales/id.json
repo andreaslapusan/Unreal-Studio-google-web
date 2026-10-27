@@ -1809,7 +1809,7 @@
     },
     "deseoPromo": {
       "title": "Kirim furnitur + perpanjangan",
-      "subtitle": "Unit Deseo beserta tipenya. Pilih klien lalu klik “Siapkan pengiriman” untuk melihat pratinjau email yang dipersonalisasi untuk masing-masing. Pengiriman sebenarnya dinonaktifkan sampai ada OK dari Andreas.",
+      "subtitle": "Unit Deseo beserta tipenya. Pilih klien lalu klik “Siapkan pengiriman” untuk melihat email yang dipersonalisasi untuk masing-masing. Pengiriman dilakukan manual: satu per satu, dengan “Kirim email” dan konfirmasi.",
       "allTypes": "Semua tipe",
       "selectedCount": "{{count}} dipilih",
       "prepare": "Siapkan pengiriman",
@@ -1825,7 +1825,6 @@
       "errorType": "Tipe tidak dapat disimpan.",
       "errorTemplate": "Template email tidak dapat dimuat.",
       "previewTitle": "Pratinjau pengiriman",
-      "sendLocked": "Hanya pratinjau: pengiriman sebenarnya dinonaktifkan dan memerlukan OK eksplisit dari Andreas.",
       "skipped": "Dilewati",
       "close": "Tutup",
       "to": "Kepada",
@@ -1833,8 +1832,12 @@
       "attachment": "Lampiran",
       "prev": "Sebelumnya",
       "next": "Berikutnya",
-      "send": "Kirim",
-      "noPreviews": "Tidak ada klien terpilih yang memiliki template (tipe A, B atau C)."
+      "send": "Kirim email",
+      "noPreviews": "Tidak ada klien terpilih yang memiliki template (tipe A, B atau C).",
+      "confirmSend": "Kirim email furnitur + perpanjangan?\n\nKepada: {{to}}\nUnit: {{unit}}\nTipe: {{type}}\nLampiran: {{file}}",
+      "errorSend": "Email tidak dapat dikirim: {{error}}",
+      "sentOk": "Email terkirim ke {{to}}.",
+      "sent": "Terkirim"
     }
   },
   "footer": {

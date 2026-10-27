@@ -2061,7 +2061,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
         {activeView === 'intakes' && <IntakeLinksPanel />}
         {activeView === 'contacts' && <ServiceContactsPanel />}
-        {activeView === 'deseoPromo' && <DeseoFurnishingPanel clients={clients} onChanged={loadData} />}
+        {activeView === 'deseoPromo' && <DeseoFurnishingPanel clients={clients} adminUserId={getAdminUserId()} onChanged={loadData} />}
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">

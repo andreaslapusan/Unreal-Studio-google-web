@@ -1704,7 +1704,7 @@
     },
     "deseoPromo": {
       "title": "Furnishing + extension mailing",
-      "subtitle": "Deseo units with their type. Select clients and click “Prepare mailing” to preview each personalised email. Actual sending is disabled until Andreas gives the OK.",
+      "subtitle": "Deseo units with their type. Select clients and click “Prepare mailing” to preview each personalised email. Sending is manual: one by one, with “Send email” and a confirmation.",
       "allTypes": "All types",
       "selectedCount": "{{count}} selected",
       "prepare": "Prepare mailing",
@@ -1720,7 +1720,6 @@
       "errorType": "Could not save the type.",
       "errorTemplate": "Could not load the email template.",
       "previewTitle": "Mailing preview",
-      "sendLocked": "Preview only: actual sending is disabled and requires Andreas's explicit OK.",
       "skipped": "Skipped",
       "close": "Close",
       "to": "To",
@@ -1728,8 +1727,12 @@
       "attachment": "Attachment",
       "prev": "Previous",
       "next": "Next",
-      "send": "Send",
-      "noPreviews": "None of the selected clients has a template (type A, B or C)."
+      "send": "Send email",
+      "noPreviews": "None of the selected clients has a template (type A, B or C).",
+      "confirmSend": "Send the furnishing + extension email?\n\nTo: {{to}}\nUnit: {{unit}}\nType: {{type}}\nAttachment: {{file}}",
+      "errorSend": "The email could not be sent: {{error}}",
+      "sentOk": "Email sent to {{to}}.",
+      "sent": "Sent"
     }
   },
   "footer": {

@@ -1,27 +1,28 @@
 /**
  * DeseoFurnishingPanel — "Envío amueblado + extensión" (solo admin).
  * Lista las unidades Deseo con su tipo (A/B/C/D, editable vía admin_set_unit_type)
- * y PREVISUALIZA el email personalizado por cliente. NO envía nada: el envío real
- * requiere el "super OK" de Andreas → SEND_ENABLED queda en false.
+ * y PREVISUALIZA el email personalizado por cliente. Envío SOLO manual, uno a uno,
+ * cuando el admin pulsa "Enviar email" y confirma (nada automático ni masivo).
  * Plantillas: public/email-templates/deseo-promo-tipo-{a,b,c}.html (fuente: ~/jobs/deseo-furnishing/email).
  */
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../../lib/supabase";
 
-const SEND_ENABLED = false; // feature flag: envío real bloqueado hasta el OK explícito de Andreas
+const PDF_PATH = (ty: string) => `emails/furnishing-2026-10/amueblado-tipo-${ty.toLowerCase()}.pdf`;
+const PDF_NAME = (ty: string) => `Amueblado Deseo Studios - Tipo ${ty}.pdf`;
 const UNIT_TYPES = ["A", "B", "C", "D"] as const;
 const TEMPLATE_TYPES = ["A", "B", "C"]; // D: sin plantilla
 const PDF_TYPES = ["A", "B", "C"]; // PDFs amueblado existentes (tipo-a, tipo-b-7650, tipo-c); D no tiene
 
-interface Row { id: string; name: string; email: string; unit: string; type: string | null; }
+interface Row { id: string; clientId: string; name: string; email: string; unit: string; type: string | null; }
 interface Preview { row: Row; subject: string; html: string; }
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
 export const fillTemplate = (tpl: string, r: Row) =>
   tpl.replace(/{{nombre}}/g, esc(r.name)).replace(/{{unidad}}/g, esc(r.unit)).replace(/{{tipo}}/g, esc(r.type || ""));
 
-const DeseoFurnishingPanel: React.FC<{ clients: any[]; onChanged: () => void | Promise<void> }> = ({ clients, onChanged }) => {
+const DeseoFurnishingPanel: React.FC<{ clients: any[]; adminUserId: string | null; onChanged: () => void | Promise<void> }> = ({ clients, adminUserId, onChanged }) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
@@ -29,10 +30,28 @@ const DeseoFurnishingPanel: React.FC<{ clients: any[]; onChanged: () => void | P
   const [previews, setPreviews] = useState<Preview[] | null>(null);
   const [skipped, setSkipped] = useState<Row[]>([]);
   const [idx, setIdx] = useState(0);
+  const [sending, setSending] = useState(false);
+  const [sentIds, setSentIds] = useState<string[]>([]);
+
+  // Envío manual de UN cliente, tras confirmación explícita (destinatario, unidad, tipo, adjunto).
+  const send = async (pv: Preview) => {
+    const ty = pv.row.type as string;
+    if (!adminUserId || !pv.row.email) return;
+    if (!window.confirm(t("admin.deseoPromo.confirmSend", { to: `${pv.row.name} <${pv.row.email}>`, unit: pv.row.unit, type: ty, file: PDF_NAME(ty) }))) return;
+    setSending(true);
+    const { data, error } = await supabase.functions.invoke("send-client-email", {
+      body: { adminUserId, to: pv.row.email, subject: pv.subject, html: pv.html, raw: true, fromName: "Equipo de Unreal Studio",
+        attachmentPath: PDF_PATH(ty), attachmentName: PDF_NAME(ty), clientId: pv.row.clientId, emailType: "deseo_furnishing_extension" },
+    });
+    setSending(false);
+    if (error || !data?.success) { alert(t("admin.deseoPromo.errorSend", { error: data?.error || error?.message || "error" })); return; }
+    setSentIds((s) => [...s, pv.row.id]);
+    alert(t("admin.deseoPromo.sentOk", { to: pv.row.email }));
+  };
 
   const rows: Row[] = useMemo(() => clients.flatMap((c: any) => (c.projects || [])
     .filter((cp: any) => /deseo/i.test(cp.project_name || ""))
-    .map((cp: any) => ({ id: cp.id, name: c.name, email: c.email, unit: cp.unit_number || "—", type: cp.unit_type || null })))
+    .map((cp: any) => ({ id: cp.id, clientId: c.id, name: c.name, email: c.email, unit: cp.unit_number || "—", type: cp.unit_type || null })))
     .sort((a, b) => a.unit.localeCompare(b.unit, undefined, { numeric: true })), [clients]);
 
   const visible = rows.filter((r) => !filter || (filter === "none" ? !r.type : r.type === filter));
@@ -129,7 +148,6 @@ const DeseoFurnishingPanel: React.FC<{ clients: any[]; onChanged: () => void | P
             <div className="p-5 border-b border-gray-100 flex items-start gap-3">
               <div className="flex-1 min-w-0">
                 <h2 className="font-black text-primary">{t("admin.deseoPromo.previewTitle")}</h2>
-                <p className="text-[11px] text-amber-700 bg-amber-50 rounded-lg px-2 py-1 mt-2">{t("admin.deseoPromo.sendLocked")}</p>
                 {skipped.length > 0 && <p className="text-[11px] text-gray-500 mt-2">{t("admin.deseoPromo.skipped")}: {skipped.map((s) => `${s.unit} (${s.type ? t("admin.deseoPromo.noTemplate") : t("admin.unitType.none")})`).join(", ")}</p>}
               </div>
               <button onClick={() => setPreviews(null)} aria-label={t("admin.deseoPromo.close")} className="material-symbols-outlined text-gray-400 hover:text-primary">close</button>
@@ -146,7 +164,11 @@ const DeseoFurnishingPanel: React.FC<{ clients: any[]; onChanged: () => void | P
                   <button onClick={() => setIdx((i) => Math.max(0, i - 1))} disabled={idx === 0} className="text-[10px] font-black uppercase px-3 py-2 rounded-lg bg-gray-100 text-primary/70 disabled:opacity-40">{t("admin.deseoPromo.prev")}</button>
                   <span className="text-xs font-bold text-primary/60">{idx + 1} / {previews.length}</span>
                   <button onClick={() => setIdx((i) => Math.min(previews.length - 1, i + 1))} disabled={idx >= previews.length - 1} className="text-[10px] font-black uppercase px-3 py-2 rounded-lg bg-gray-100 text-primary/70 disabled:opacity-40">{t("admin.deseoPromo.next")}</button>
-                  {SEND_ENABLED && <button disabled className="ml-auto text-[10px] font-black uppercase px-3 py-2 rounded-lg bg-primary text-white opacity-40">{t("admin.deseoPromo.send")}</button>}
+                  {sentIds.includes(cur.row.id)
+                    ? <span className="ml-auto text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">{t("admin.deseoPromo.sent")}</span>
+                    : <button onClick={() => send(cur)} disabled={sending || !adminUserId || !cur.row.email} className="ml-auto bg-primary text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition disabled:opacity-40">
+                        <span className="material-symbols-outlined text-base">send</span> {sending ? "…" : t("admin.deseoPromo.send")}
+                      </button>}
                 </div>
               </>
             ) : <p className="p-10 text-center text-primary/40">{t("admin.deseoPromo.noPreviews")}</p>}

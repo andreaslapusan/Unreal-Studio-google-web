@@ -1704,7 +1704,7 @@
     },
     "deseoPromo": {
       "title": "Trimitere mobilare + extensie",
-      "subtitle": "Unitățile Deseo cu tipul lor. Selectează clienții și apasă „Pregătește trimiterea” pentru a previzualiza emailul personalizat al fiecăruia. Trimiterea reală este dezactivată până la OK-ul lui Andreas.",
+      "subtitle": "Unitățile Deseo cu tipul lor. Selectează clienții și apasă „Pregătește trimiterea” pentru a vedea emailul personalizat al fiecăruia. Trimiterea este manuală: unul câte unul, cu „Trimite email” și confirmare.",
       "allTypes": "Toate tipurile",
       "selectedCount": "{{count}} selectați",
       "prepare": "Pregătește trimiterea",
@@ -1720,7 +1720,6 @@
       "errorType": "Tipul nu a putut fi salvat.",
       "errorTemplate": "Șablonul de email nu a putut fi încărcat.",
       "previewTitle": "Previzualizare trimitere",
-      "sendLocked": "Doar previzualizare: trimiterea reală este dezactivată și necesită OK-ul explicit al lui Andreas.",
       "skipped": "Omiși",
       "close": "Închide",
       "to": "Către",
@@ -1728,8 +1727,12 @@
       "attachment": "Atașament",
       "prev": "Anterior",
       "next": "Următor",
-      "send": "Trimite",
-      "noPreviews": "Niciunul dintre cei selectați nu are șablon (tip A, B sau C)."
+      "send": "Trimite email",
+      "noPreviews": "Niciunul dintre cei selectați nu are șablon (tip A, B sau C).",
+      "confirmSend": "Trimiți emailul de mobilare + extensie?\n\nCătre: {{to}}\nUnitate: {{unit}}\nTip: {{type}}\nAtașament: {{file}}",
+      "errorSend": "Emailul nu a putut fi trimis: {{error}}",
+      "sentOk": "Email trimis către {{to}}.",
+      "sent": "Trimis"
     }
   },
   "footer": {
