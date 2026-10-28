@@ -691,6 +691,7 @@
       "visAvailable": "Disponibil",
       "visHidden": "Ascuns",
       "visSoldOut": "Sold out",
+      "visAll": "Toate stările",
       "visHelp": "Disponibil: pe site. Ascuns: nu apare. Sold out: apare în secțiunea „Sold out” cu preț de piață și fără opțiuni de cumpărare."
     },
     "blogTab": {

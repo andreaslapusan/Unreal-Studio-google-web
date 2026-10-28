@@ -169,7 +169,7 @@ const Projects: React.FC = () => {
   // Tarjeta de proyecto; sold=true → badge "Sold out" + precio de mercado (sin precio de oferta).
   const renderCard = (proj: Project, idx: number, sold = false) => (
               <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
-                <div className="relative h-52 sm:h-56 md:h-80 overflow-hidden">
+                <div className={`relative overflow-hidden ${sold ? 'h-40 md:h-48' : 'h-52 sm:h-56 md:h-80'}`}>
                   <img
                     loading={idx === 0 ? "eager" : "lazy"}
                     fetchPriority={idx === 0 ? "high" : "auto"}
@@ -177,7 +177,7 @@ const Projects: React.FC = () => {
                     className="w-full h-full object-cover transition duration-1000 group-hover:scale-110"
                     src={imgSrc(getImageUrl(proj.image), 600)}
                     srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    sizes={sold ? "(max-width: 1024px) 50vw, 25vw" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
                     onError={imgFallback(getImageUrl(proj.image))}
                   />
                   <div className="absolute top-2 left-2 md:top-5 md:left-5 z-10">
@@ -193,8 +193,8 @@ const Projects: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <div className="p-4 md:p-8 flex-1 flex flex-col text-left">
-                  <h3 className="text-base md:text-3xl font-serif text-primary mb-1 md:mb-2 leading-tight line-clamp-2 md:line-clamp-none">{proj.name}</h3>
+                <div className={`flex-1 flex flex-col text-left ${sold ? 'p-4 md:p-5' : 'p-4 md:p-8'}`}>
+                  <h3 className={`${sold ? 'text-base md:text-xl' : 'text-base md:text-3xl'} font-serif text-primary mb-1 md:mb-2 leading-tight line-clamp-2 md:line-clamp-none`}>{proj.name}</h3>
                   {proj.location && (
                     <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-2">
                       <span className="material-symbols-outlined text-[13px] md:text-base">location_on</span>
@@ -443,7 +443,7 @@ const Projects: React.FC = () => {
         {soldProjects.length > 0 && (
           <div className="mt-24 md:mt-32">
             <h2 className="text-3xl md:text-4xl text-primary mb-10 md:mb-12 text-center font-serif">{t('projects.soldOutTitle')}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {soldProjects.map((proj, idx) => renderCard(proj, idx + filteredProjects.length, true))}
             </div>
           </div>

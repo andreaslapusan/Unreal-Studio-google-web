@@ -691,6 +691,7 @@
       "visAvailable": "Disponible",
       "visHidden": "Oculto",
       "visSoldOut": "Sold out",
+      "visAll": "Todos los estados",
       "visHelp": "Disponible: en la web. Oculto: no aparece. Sold out: aparece en la sección \"Sold out\" con precio de mercado y sin opciones de compra."
     },
     "blogTab": {

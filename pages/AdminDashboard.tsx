@@ -199,6 +199,8 @@ const AMENITIES_LIST = [
     updated: (p: any) => p.updated_at || p.created_at,
     search: (p: any) => `${p.name || ''} ${p.location || ''} ${p.slug || ''}`,
   }, 'recent');
+  const [projVisFilter, setProjVisFilter] = useState<'' | 'available' | 'hidden' | 'sold_out'>('');
+  const visOf = (p: any) => p.visibility_status || (p.is_hidden ? 'hidden' : 'available');
   const [reportsProject, setReportsProject] = useState<{ id: string; name: string } | null>(null);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
@@ -2105,11 +2107,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <ListControls
               query={projectsList.query} setQuery={projectsList.setQuery}
               sort={projectsList.sort} setSort={projectsList.setSort}
-              count={projectsList.result.length}
+              count={projectsList.result.filter(p => !projVisFilter || visOf(p) === projVisFilter).length}
               options={['recent', 'profitDesc', 'profitAsc', 'priceDesc', 'priceAsc', 'az', 'za']}
-            />
+            >
+              <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 border border-gray-100 focus-within:border-primary/40 transition">
+                <span className="material-symbols-outlined text-gray-400 text-base">filter_list</span>
+                <select value={projVisFilter} onChange={(e) => setProjVisFilter(e.target.value as any)} aria-label={t('admin.props.visibility')}
+                  className="bg-transparent border-none outline-none text-sm font-bold text-primary cursor-pointer pr-1">
+                  <option value="">{t('admin.props.visAll')}</option>
+                  <option value="available">{t('admin.props.visAvailable')}</option>
+                  <option value="hidden">{t('admin.props.visHidden')}</option>
+                  <option value="sold_out">{t('admin.props.visSoldOut')}</option>
+                </select>
+              </div>
+            </ListControls>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projectsList.result.map(proj => (
+              {projectsList.result.filter(p => !projVisFilter || visOf(p) === projVisFilter).map(proj => (
                 <div key={proj.id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group">
                   <div className="h-48 relative overflow-hidden bg-gray-100">
                     {proj.image ? <img src={getImageUrl(proj.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><span className="material-symbols-outlined text-4xl">image</span></div>}

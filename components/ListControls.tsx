@@ -96,12 +96,14 @@ interface ListControlsProps {
   /** Nº de resultados tras filtrar — se muestra discreto a la derecha. */
   count?: number;
   className?: string;
+  /** Filtros extra (selects) que van en la misma fila. */
+  children?: React.ReactNode;
 }
 
 const ListControls: React.FC<ListControlsProps> = ({
   query, setQuery, sort, setSort,
   options = ['recent', 'priceAsc', 'priceDesc', 'az', 'za'],
-  placeholder, count, className = '',
+  placeholder, count, className = '', children,
 }) => {
   const { t } = useTranslation();
   return (
@@ -135,6 +137,7 @@ const ListControls: React.FC<ListControlsProps> = ({
           ))}
         </select>
       </div>
+      {children}
       {typeof count === 'number' && (
         <div className="hidden sm:flex items-center text-[11px] font-black uppercase tracking-widest text-primary/30 px-2 shrink-0">
           {t('listControls.count', { count })}
