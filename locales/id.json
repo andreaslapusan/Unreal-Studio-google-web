@@ -2798,7 +2798,14 @@
       "oceanView": "Pemandangan laut",
       "nearBeach": "Dekat pantai",
       "coworking": "Coworking",
-      "cleaning": "Kebersihan"
+      "cleaning": "Kebersihan",
+      "terrace": "Teras",
+      "spa": "Spa",
+      "storage": "Gudang",
+      "reception": "Resepsionis",
+      "bar": "Bar",
+      "cctv": "Kamera keamanan",
+      "laundry": "Binatu"
     },
     "turnkey": "Siap huni",
     "driveTitle": "Impor dari Google Drive",

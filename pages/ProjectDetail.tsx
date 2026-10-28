@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
-import { translateProjectTerm, amenityLabel, amenityIcon } from '../lib/projectTerms';
+import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -620,7 +620,7 @@ const ProjectDetail: React.FC = () => {
             <section>
               <h2 className="text-3xl text-primary mb-8">{t('projectDetail.servicesTitle')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {project.amenities.map((amenity, idx) => {
+                {normalizeAmenities(project.amenities).map((amenity, idx) => {
                   return (
                     <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
                       <span className="material-symbols-outlined text-primary/40">{amenityIcon(amenity)}</span>

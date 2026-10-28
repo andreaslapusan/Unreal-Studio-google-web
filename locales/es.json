@@ -2799,7 +2799,14 @@
       "oceanView": "Vistas al mar",
       "nearBeach": "Cerca de la playa",
       "coworking": "Coworking",
-      "cleaning": "Limpieza"
+      "cleaning": "Limpieza",
+      "terrace": "Terraza",
+      "spa": "Spa",
+      "storage": "Almacén",
+      "reception": "Recepción",
+      "bar": "Bar",
+      "cctv": "Cámaras de seguridad",
+      "laundry": "Lavandería"
     },
     "turnkey": "Llave en mano",
     "driveTitle": "Importar desde Google Drive",

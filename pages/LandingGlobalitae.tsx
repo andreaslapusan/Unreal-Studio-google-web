@@ -7,7 +7,7 @@ import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { translateStatus } from '../lib/statusI18n';
 import { imgFallback } from '../lib/imageOptimize';
-import { amenityLabel, amenityIcon } from '../lib/projectTerms';
+import { amenityLabel, amenityIcon, normalizeAmenities } from '../lib/projectTerms';
 
 const LandingGlobalitae: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -442,7 +442,7 @@ const LandingGlobalitae: React.FC = () => {
         <section className="py-20 px-6 md:px-12 max-w-7xl mx-auto border-t border-primary/10">
           <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/40 mb-12 text-center">{t('fix.lg.includedServices')}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {project.amenities.map((amenity: string, idx: number) => {
+            {normalizeAmenities(project.amenities).map((amenity: string, idx: number) => {
               return (
                 <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
                   <span className="material-symbols-outlined text-primary/40">{amenityIcon(amenity)}</span>

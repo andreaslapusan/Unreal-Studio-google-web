@@ -2797,7 +2797,14 @@
       "oceanView": "Ocean view",
       "nearBeach": "Near the beach",
       "coworking": "Coworking",
-      "cleaning": "Cleaning"
+      "cleaning": "Cleaning",
+      "terrace": "Terrace",
+      "spa": "Spa",
+      "storage": "Storage room",
+      "reception": "Reception",
+      "bar": "Bar",
+      "cctv": "Security cameras",
+      "laundry": "Laundry"
     },
     "turnkey": "Turnkey",
     "driveTitle": "Import from Google Drive",

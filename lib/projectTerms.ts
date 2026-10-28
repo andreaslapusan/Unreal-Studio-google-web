@@ -128,18 +128,30 @@ export function translateProjectTerm(term: string, lang: string | undefined): st
 // Amenities llegan de la BD en dos formatos: etiqueta española (admin) o clave
 // camelCase (auto-alta /listing: "sharedPool", "ac"…). Las claves se traducen con
 // las MISMAS cadenas de locales que usa ListingIntake (listingIntake.amenity.*).
+// Strings españoles (admin) que equivalen a una clave canónica → se muestran con
+// la traducción de la clave y se deduplican si vienen ambos.
+const ES_TO_KEY: Record<string, string> = {
+  'Piscina privada': 'privatePool', 'Piscina compartida': 'sharedPool', 'Jardín tropical': 'garden',
+  'Jardín': 'garden', 'Parking': 'parking', 'Seguridad 24h': 'security', 'Gimnasio': 'gym',
+  'Cocina equipada': 'kitchen', 'Aire acondicionado': 'ac', 'WiFi': 'wifi', 'Vistas al mar': 'oceanView',
+  'Cercano a la playa': 'nearBeach', 'Cerca de la playa': 'nearBeach', 'Coworking': 'coworking',
+  'Servicio de limpieza': 'cleaning', 'Terraza': 'terrace', 'Spa': 'spa', 'Almacén': 'storage',
+  'Recepción': 'reception', 'Bar': 'bar', 'Cámaras de seguridad': 'cctv', 'Lavandería': 'laundry',
+};
+
+/** Lista de amenities a claves canónicas (cuando existen), sin duplicados, orden original. */
+export function normalizeAmenities(list: string[] | null | undefined): string[] {
+  return [...new Set((list || []).map((a) => ES_TO_KEY[a.trim()] || a.trim()).filter(Boolean))];
+}
+
 const AMENITY_ICONS: Record<string, string> = {
-  'Piscina privada': 'pool', 'Piscina compartida': 'pool', 'Gimnasio': 'fitness_center',
-  'Coworking': 'desktop_windows', 'Jardín tropical': 'park', 'Terraza': 'deck',
-  'Parking': 'local_parking', 'Seguridad 24h': 'shield', 'Cámaras de seguridad': 'videocam',
-  'WiFi': 'wifi', 'Aire acondicionado': 'ac_unit', 'Ventilador': 'mode_fan_off',
-  'Cocina equipada': 'kitchen', 'Lavandería': 'local_laundry_service', 'Zona barbacoa': 'outdoor_grill',
-  'Vistas al mar': 'water', 'Cercano a la playa': 'beach_access', 'Recepción': 'concierge',
-  'Bar': 'local_bar', 'Almacén': 'warehouse', 'Spa': 'spa',
-  'Sala de juegos': 'sports_esports', 'Servicio de limpieza': 'cleaning_services', 'Alquiler de motos': 'two_wheeler',
   privatePool: 'pool', sharedPool: 'pool', garden: 'park', parking: 'local_parking', security: 'shield',
   gym: 'fitness_center', kitchen: 'kitchen', ac: 'ac_unit', wifi: 'wifi', rooftop: 'deck',
   oceanView: 'water', nearBeach: 'beach_access', coworking: 'desktop_windows', cleaning: 'cleaning_services',
+  terrace: 'deck', spa: 'spa', storage: 'warehouse', reception: 'concierge', bar: 'local_bar',
+  cctv: 'videocam', laundry: 'local_laundry_service',
+  'Ventilador': 'mode_fan_off', 'Zona barbacoa': 'outdoor_grill', 'Sala de juegos': 'sports_esports',
+  'Alquiler de motos': 'two_wheeler',
 };
 
 export function amenityIcon(term: string): string {

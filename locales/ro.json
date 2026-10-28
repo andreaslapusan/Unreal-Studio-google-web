@@ -2797,7 +2797,14 @@
       "oceanView": "Vedere la ocean",
       "nearBeach": "Aproape de plajă",
       "coworking": "Coworking",
-      "cleaning": "Curățenie"
+      "cleaning": "Curățenie",
+      "terrace": "Terasă",
+      "spa": "Spa",
+      "storage": "Depozit",
+      "reception": "Recepție",
+      "bar": "Bar",
+      "cctv": "Camere de supraveghere",
+      "laundry": "Spălătorie"
     },
     "turnkey": "La cheie",
     "driveTitle": "Importă din Google Drive",
