@@ -25,10 +25,10 @@ const ConstructionReportButton: React.FC<{ projectName: string; className?: stri
             <h3 className="text-2xl font-serif text-primary mb-2 pr-8">{t('projectDetail.reportModalTitle')}</h3>
             <p className="text-sm text-primary/60 mb-6">{t('projectDetail.reportModalText')}</p>
             <div className="space-y-3">
-              <Link to={portalPath('cliente')} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-4 rounded-2xl font-bold hover:brightness-110 transition">
+              <Link to={portalPath('cliente')} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-4 rounded-2xl font-bold hover:bg-[#8B5E3C] transition">
                 <span className="material-symbols-outlined">login</span>{t('projectDetail.reportLogin')}
               </Link>
-              <a href={mailto} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-4 rounded-2xl font-bold hover:brightness-110 transition">
+              <a href={mailto} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-4 rounded-2xl font-bold hover:bg-[#8B5E3C] transition">
                 <span className="material-symbols-outlined">mail</span>{t('projectDetail.reportRequest')}
               </a>
             </div>

@@ -605,19 +605,19 @@ const ProjectDetail: React.FC = () => {
                 <h3 className="text-2xl font-serif text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
                 <div className="flex flex-wrap gap-4">
                   {brochureFor(project, i18n.language) && (
-                    <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
+                    <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:bg-[#8B5E3C] transition">
                       <span className="material-symbols-outlined">download</span>
                       {t('fix.pd.downloadBrochure')}
                     </a>
                   )}
                   {((project as any).video_url || (project as any).walkthrough_url) && (
-                    <a href={(project as any).video_url || (project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
+                    <a href={(project as any).video_url || (project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:bg-[#8B5E3C] transition">
                       <span className="material-symbols-outlined">smart_display</span>
                       {t('projectDetail.videoTourBtn')}
                     </a>
                   )}
                   {/* Reporte de obra: privado → el botón solo abre acceso al portal o petición por email. */}
-                  <ConstructionReportButton projectName={project.name} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition" />
+                  <ConstructionReportButton projectName={project.name} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:bg-[#8B5E3C] transition" />
                 </div>
                 
                 {project.floor_plans && project.floor_plans.length > 0 && (
@@ -625,7 +625,7 @@ const ProjectDetail: React.FC = () => {
                     <h4 className="text-lg font-serif text-primary mb-4">{t('projectDetail.plansTitle')}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {project.floor_plans.map((pdf, idx) => (
-                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-primary p-4 rounded-2xl hover:brightness-110 transition group">
+                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-primary p-4 rounded-2xl hover:bg-[#8B5E3C] transition group">
                           <div className="bg-white/10 text-white p-2 rounded-xl group-hover:scale-110 transition">
                             <span className="material-symbols-outlined">picture_as_pdf</span>
                           </div>
@@ -850,7 +850,7 @@ const ProjectDetail: React.FC = () => {
               than the screen — without that, sticky never engages because the
               element's bottom never enters view before the parent ends. */}
           <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-6 [scrollbar-width:thin]">
-            <div className="bg-white p-8 rounded-2xl shadow-2xl border border-primary/5 text-left">
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5 text-left">
               <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">{t('projectDetail.assetSummary')}</h3>
               <div className="space-y-8 mb-10">
                 {project.completion_percent > 0 && (
@@ -901,11 +901,11 @@ const ProjectDetail: React.FC = () => {
                 {(
                   <div className="pt-6 border-t border-gray-100 space-y-3">
                     {brochureFor(project, i18n.language) && (
-                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-primary hover:brightness-110 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
+                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-primary hover:bg-[#8B5E3C] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
                         <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}
-                    <ConstructionReportButton projectName={project.name} className="flex items-center justify-center gap-2 bg-primary hover:brightness-110 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full [&>span]:text-sm" />
+                    <ConstructionReportButton projectName={project.name} className="flex items-center justify-center gap-2 bg-primary hover:bg-[#8B5E3C] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full [&>span]:text-sm" />
                   </div>
                 )}
               </div>
