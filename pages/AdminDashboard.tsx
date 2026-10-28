@@ -2128,8 +2128,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     {proj.image ? <img src={getImageUrl(proj.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><span className="material-symbols-outlined text-4xl">image</span></div>}
                     <div className="absolute top-4 left-4 flex gap-2">
                       <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{translateStatus(proj.status, t)}</div>
-                      {proj.is_hidden && <div className="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.hidden')}</div>}
-                      {proj.visibility_status === 'sold_out' && <div className="bg-primary text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.visSoldOut')}</div>}
+                      {visOf(proj) === 'hidden' && <div className="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.hidden')}</div>}
+                      {visOf(proj) === 'sold_out' && <div className="bg-yellow-400 text-primary text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.visSoldOut')}</div>}
+                      {visOf(proj) === 'available' && <div className="bg-emerald-500 text-white text-[8px] font-black px-3 py-1.5 uppercase rounded-lg shadow-lg">{t('admin.props.visAvailable')}</div>}
                     </div>
                   </div>
                   <div className="p-6 flex-grow flex flex-col">
