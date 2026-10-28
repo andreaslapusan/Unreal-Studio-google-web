@@ -6,6 +6,7 @@ import { APP_VERSION } from '../lib/version';
 import { supabase } from '../lib/supabase';
 import { SocialIcon, networkClass } from '../lib/socials';
 import BrandLogo from './BrandLogo';
+import { reopenConsent } from '../lib/consent';
 
 const DAY_LABEL: Record<string, string> = { mon: 'Lun', tue: 'Mar', wed: 'Mié', thu: 'Jue', fri: 'Vie', sat: 'Sáb', sun: 'Dom' };
 
@@ -106,6 +107,8 @@ const Footer: React.FC = () => {
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
           <Link className="hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
           <Link className="hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
+          <Link className="hover:text-primary transition" to="/aviso-legal">{t('footer.legalNotice')}</Link>
+          <button type="button" className="hover:text-primary transition uppercase tracking-widest font-bold" onClick={reopenConsent}>{t('footer.cookies')}</button>
           {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
               para que al entrar quede fijado el manifest del portal y se pueda instalar
               cada uno como su propia app desde aquí. Ver index.html (script de manifest). */}

@@ -7,6 +7,7 @@ import PullToRefresh from './components/PullToRefresh';
 import GlobalLoading from './components/GlobalLoading';
 import LocaleSeo from './components/LocaleSeo';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
+import CookieNotice from './components/CookieNotice';
 import { SUPPORTED_LANGS, LangSetter, BareRedirect } from './components/LocaleRoute';
 import NotFound from './components/NotFound';
 import { PORTAL_SEGMENTS, portalPath, matchPortalPath, type Portal } from './lib/portalUrls';
@@ -45,8 +46,7 @@ const AdminMarketing = lazyWithReload(() => import('./pages/AdminMarketing'));
 const DemoPortal = lazyWithReload(() => import('./pages/DemoPortal'));
 const ClientLogin = lazyWithReload(() => import('./pages/ClientLogin'));
 const ClientDashboard = lazyWithReload(() => import('./pages/ClientDashboard'));
-const Privacy = lazyWithReload(() => import('./pages/Privacy'));
-const Terms = lazyWithReload(() => import('./pages/Terms'));
+const LegalPage = lazyWithReload(() => import('./pages/LegalPage'));
 const Blog = lazyWithReload(() => import('./pages/Blog'));
 const BlogDetail = lazyWithReload(() => import('./pages/BlogDetail'));
 const Faq = lazyWithReload(() => import('./pages/Faq'));
@@ -157,6 +157,8 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
       {/* FloatingWhatsApp: activado por Andreas (2026-08-09). Bottom-right, no colisiona
           con el CTA "Agendar" (bottom-center). Manda al +34 625710770 (WHATSAPP_URL). */}
       {!isHiddenPath && <FloatingWhatsApp />}
+      {/* Aviso de cookies: también en la landing de anuncios (carga su propio Pixel). */}
+      {(!isHiddenPath || location.pathname === '/lofts-globalitae') && <CookieNotice />}
     </div>
   );
 };
@@ -254,8 +256,9 @@ const App: React.FC = () => {
     { path: 'booking', element: <Booking /> },
     { path: 'contacto', element: <Contact /> },
     { path: 'contact', element: <Contact /> },
-    { path: 'privacidad', element: <Privacy /> },
-    { path: 'terminos', element: <Terms /> },
+    { path: 'privacidad', element: <LegalPage doc="privacidad" /> },
+    { path: 'terminos', element: <LegalPage doc="terminos" /> },
+    { path: 'aviso-legal', element: <LegalPage doc="aviso-legal" /> },
     { path: 'agencias', element: <AgenciasPartnership /> },
   ];
 

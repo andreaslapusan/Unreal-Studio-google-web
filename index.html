@@ -2,14 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <!-- Google Tag Manager -->
-    <!-- tras window.load: con red lenta no debe competir con el JS de la app -->
-    <script>window.addEventListener('load',function(){setTimeout(function(){(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-NHNQM6VG');},1500);});</script>
-    <!-- End Google Tag Manager -->
     <!-- Legacy hash redirect: preserves bookmarks/ad-campaign links shared back
          when we used HashRouter (URLs like /#/proyecto/foo). Anything matching
          /#/<rest> is rewritten to /<rest> before React mounts so the new
@@ -61,49 +53,38 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://www.googletagmanager.com">
 
     <!-- Preload hero / og image SOLO en la home (en el resto de rutas robaba ancho de banda al JS con red lenta) -->
     <script>if(/^\/(es|en|ro|id)?\/?$/.test(location.pathname)){var _pl=document.createElement('link');_pl.rel='preload';_pl.as='image';_pl.href='/img/og-image.webp';_pl.setAttribute('fetchpriority','high');document.head.appendChild(_pl);}</script>
 
-    <!-- Google Analytics — deferred until the browser is idle so the
-         157 KiB gtag bundle never competes with first paint or LCP image
-         download. dataLayer is queued synchronously so any gtag() calls
-         that fire before idle still get captured and replayed. -->
+    <!-- Analítica y publicidad (GTM GTM-NHNQM6VG, GA4 G-VM1PBTZ06W, Pixel de Meta) SOLO con
+         consentimiento de cookies (RGPD/LSSI). El aviso (components/CookieNotice + lib/consent.ts)
+         llama a window.__loadTracking al aceptar; en visitas siguientes se carga tras window.load
+         (diferido 1,5 s para no competir con el primer pintado). Sin consentimiento no se carga
+         nada: lib/gtm.ts solo rellena un dataLayer local y lib/fbPixel.ts no hace nada. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){ window.dataLayer.push(arguments); }
       window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', 'G-VM1PBTZ06W', { send_page_view: true, anonymize_ip: true });
-
-      function _loadGA() {
-        if (window._gaInjected) return;
-        window._gaInjected = true;
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-VM1PBTZ06W';
-        document.head.appendChild(s);
-      }
-      // Prefer idle scheduling; fall back to window load for older Safari.
-      window.addEventListener('load', function () { setTimeout(_loadGA, 1500); });
-    </script>
-
-    <!-- Facebook Pixel (deferred). Stub fbq() so any track() calls from
-         app code before the script is fetched still queue and replay
-         once fbevents.js arrives. PageView is fired site-wide; per-route
-         events go through lib/fbPixel.ts. -->
-    <script>
-      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window,document);
-      window.fbq('init', '866349369727610');
-      window.fbq('track', 'PageView');
-      function _loadFb() {
-        if (window._fbLoaded) return;
-        window._fbLoaded = true;
-        var t=document.createElement('script');t.async=true;t.src='https://connect.facebook.net/en_US/fbevents.js';
-        document.head.appendChild(t);
-      }
-      window.addEventListener('load', function () { setTimeout(_loadFb, 1500); });
+      window.__loadTracking = function () {
+        if (window.__trackingLoaded) return;
+        window.__trackingLoaded = true;
+        function inject(src) { var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s); }
+        window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        inject('https://www.googletagmanager.com/gtm.js?id=GTM-NHNQM6VG');
+        gtag('js', new Date());
+        gtag('config', 'G-VM1PBTZ06W', { send_page_view: true, anonymize_ip: true });
+        inject('https://www.googletagmanager.com/gtag/js?id=G-VM1PBTZ06W');
+        !function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);
+        window.fbq('init', '866349369727610');
+        window.fbq('track', 'PageView');
+        inject('https://connect.facebook.net/en_US/fbevents.js');
+      };
+      window.addEventListener('load', function () {
+        var c = null;
+        try { c = localStorage.getItem('cookie_consent'); } catch (e) {}
+        if (c === 'granted') setTimeout(window.__loadTracking, 1500);
+      });
     </script>
     <!-- Meta's <noscript> img fallback intentionally omitted — this is an SPA
          (empty without JS), and parse5/Vite rejects <img> inside <noscript>
@@ -228,10 +209,6 @@
     </script>
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NHNQM6VG"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <!-- Capa de arranque (crema + ruedecita) FUERA de #root para que React no la
          borre antes de tiempo: tapa la pantalla hasta que el CSS de la app carga

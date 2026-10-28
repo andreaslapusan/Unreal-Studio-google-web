@@ -1903,7 +1903,9 @@
       "fri": "Jum",
       "sat": "Sab",
       "sun": "Min"
-    }
+    },
+    "legalNotice": "Pemberitahuan hukum",
+    "cookies": "Cookies"
   },
   "team": {
     "emailLabel": "Email kerja",
@@ -1944,92 +1946,6 @@
     "verifyError": "Tidak dapat memverifikasi akses Anda. Coba lagi.",
     "noAccessPortal": "Akun ini tidak memiliki akses ke portal {{portal}}.",
     "loadingSession": "Menginisialisasi sesi…"
-  },
-  "privacy": {
-    "collectList1": [
-      "Melalui akses dan penggunaan situs web kami",
-      "Melalui telepon, surat, atau surel",
-      "Selama percakapan antara Anda dan perwakilan kami",
-      "Ketika Anda berkontrak dengan kami",
-      "Ketika Anda berpartisipasi dalam kontes, promosi, atau meminta informasi",
-      "Ketika Anda menyelesaikan survei, memberikan umpan balik, atau mengajukan keluhan"
-    ],
-    "collectP2": "Kami juga dapat mengumpulkan informasi pribadi dari pihak ketiga, termasuk:",
-    "collectList2": [
-      "Perusahaan pihak ketiga seperti lembaga pelaporan kredit, kepolisian, dan lembaga pemerintah",
-      "Perwakilan Anda (pengacara, akuntan, dan penasihat keuangan)",
-      "Pemberi kerja Anda",
-      "Sumber informasi yang tersedia untuk umum atau organisasi lain di mana Anda telah memberikan persetujuan"
-    ],
-    "legitimacyH": "ALASAN YANG SAH",
-    "legitimacyP": "Dasar hukum untuk pengolahan data adalah:",
-    "legitimacyList": [
-      "Persetujuan eksplisit dari pengguna, diberikan ketika mengirimkan formulir atau memulai kontak",
-      "Kepentingan yang sah untuk memelihara dan meningkatkan layanan kami",
-      "Kepatuhan dengan kewajiban kontraktual"
-    ],
-    "cookiesH": "COOKIES",
-    "cookiesP1": "Ketika Anda mengakses situs web kami, kami dapat mengirimkan \"cookie\" (file ringkasan kecil yang berisi nomor identifikasi unik) ke komputer Anda. Ini memungkinkan kami untuk mengenali komputer Anda dan melacak aktivitas Anda di situs web kami selama periode waktu tertentu.",
-    "cookiesP2": "Kami juga menggunakan cookies untuk mengukur pola lalu lintas, menentukan area mana dari situs web kami yang telah dikunjungi, dan mengukur pola transaksi secara agregat. Kami menggunakan informasi ini untuk menyelidiki kebiasaan pengguna kami dengan tujuan meningkatkan produk dan layanan online kami. Cookies kami tidak mengumpulkan informasi pribadi.",
-    "cookiesP3": "Jika Anda tidak ingin menerima cookies, Anda dapat mengatur peramban untuk menghindari komputer Anda menerima cookies.",
-    "cookiesP4": "Kami dapat mencatat alamat IP (yaitu, alamat elektronik komputer yang terhubung ke internet) untuk menganalisis tren, mengelola situs web, dan melacak gerakan pengguna.",
-    "embeddedH": "KONTEN YANG DISERTAKAN DARI SITUS WEB LAIN",
-    "embeddedP1": "Artikel di situs ini dapat menyertakan konten yang disertakan (misalnya, video, gambar, artikel, dll.). Konten yang disertakan dari situs web lain berperilaku sama seperti jika pengunjung mengunjungi situs web lain tersebut.",
-    "embeddedP2": "Situs web ini dapat mengumpulkan data tentang Anda, menggunakan cookies, menyertakan pelacakan tambahan pihak ketiga, dan memantau interaksi Anda dengan konten yang disertakan, termasuk memantau interaksi Anda jika Anda memiliki akun dan masuk ke situs web tersebut.",
-    "shareH": "DENGAN SIAPA KAMI BERBAGI DATA ANDA",
-    "shareP1": "Kami dapat mengungkapkan informasi pribadi kepada afiliasi kami dan penyedia layanan pihak ketiga yang berlokasi di luar negeri untuk beberapa tujuan yang disebutkan sebelumnya. Kami mengambil langkah-langkah yang wajar untuk memastikan bahwa penerima informasi pribadi Anda tidak melanggar kewajiban privasi yang terkait dengan informasi pribadi Anda.",
-    "shareP2": "Data tidak akan diberikan kepada pihak ketiga, kecuali jika diwajibkan oleh hukum.",
-    "retentionH": "PEMELIHARAAN DATA",
-    "retentionP1": "Jika Anda meninggalkan komentar, komentar dan metadata akan disimpan tanpa batas waktu. Ini agar kami dapat mengenali dan menyetujui komentar lanjutan secara otomatis daripada mempertahankannya dalam antrian moderasi.",
-    "retentionP2": "Untuk pengguna yang mendaftar di situs web kami, kami juga menyimpan informasi pribadi yang Anda berikan di profil pengguna Anda. Semua pengguna dapat melihat, mengedit, atau menghapus informasi pribadi mereka kapan saja (kecuali bahwa mereka tidak dapat mengubah nama pengguna mereka). Administrator situs web juga dapat melihat dan mengedit informasi tersebut.",
-    "retentionP3": "Data akan disimpan selama waktu yang ketat diperlukan untuk memenuhi tujuan pengumpulan atau selama ada hubungan kepentingan yang sah antara pihak-pihak.",
-    "rightsH": "HAK PENGGUNA",
-    "rightsP1": "Jika Anda memiliki akun di situs ini atau telah meninggalkan komentar, Anda dapat meminta untuk menerima file ekspor dari data pribadi yang kami miliki tentang Anda, termasuk data yang Anda berikan kepada kami. Anda juga dapat meminta kami untuk menghapus data pribadi apa pun yang kami miliki tentang Anda. Ini tidak termasuk data apa pun yang kami wajibkan untuk menyimpan untuk tujuan administratif, hukum, atau keamanan.",
-    "rightsP2": "Hak yang dapat Anda lakukan kapan saja adalah:",
-    "rightsList": [
-      "Akses ke data pribadi Anda",
-      "Perbaikan data yang tidak akurat",
-      "Penghapusan data Anda",
-      "Pembatasan pengolahan",
-      "Keberatan terhadap pengolahan",
-      "Portabilitas data"
-    ],
-    "docTitle": "Kebijakan Privasi | Unreal Studio Madrid",
-    "title": "Kebijakan Privasi",
-    "whoWeAreH": "SIAPA KAMI",
-    "whoWeArePre": "Alamat web kami adalah:",
-    "whoWeArePost": ". Di Unreal Studio, kami mengakui pentingnya melindungi privasi dan hak-hak individu terkait dengan informasi pribadi mereka. Dokumen ini adalah kebijakan privasi kami dan menjelaskan bagaimana kami mengumpulkan dan mengelola data pribadi Anda.",
-    "controllerH": "PENGENDALI PENGOLAHAN",
-    "controllerP": "Pengendali pengolahan data adalah Unreal Studio, entitas yang bertanggung jawab atas proyek-proyek properti dan layanan yang diiklankan melalui situs web ini dan kampanye iklan yang terkait.",
-    "dataH": "DATA PRIBADI APA YANG KAMI KUMPULKAN DAN MENGAPA",
-    "dataP1": "Kami dapat mengumpulkan nama, alamat pos, alamat email, nomor telepon, usia atau tanggal lahir, profesi, pekerjaan atau jabatan, data identifikasi pemerintah, dan informasi tambahan yang terkait dengan Anda yang Anda berikan langsung melalui situs web kami atau tidak langsung melalui penggunaan situs web kami atau kehadiran online, melalui perwakilan kami atau dengan cara lain, serta informasi yang Anda berikan melalui pusat layanan pelanggan kami, survei kepuasan atau kunjungan perwakilan kami.",
-    "dataP2": "Kami juga dapat mengumpulkan informasi yang tidak bersifat pribadi karena tidak mengidentifikasi Anda atau orang lain. Sebagai contoh, kami dapat mengumpulkan jawaban anonim dari survei atau informasi agregat tentang bagaimana pengguna menggunakan situs web kami.",
-    "purposeH": "TUJUAN PENGOLAHAN",
-    "purposeP": "Data pribadi yang diberikan melalui formulir, pesan, atau kampanye iklan di media sosial hanya akan digunakan untuk:",
-    "purposeList": [
-      "Memberikan informasi terkait proyek properti",
-      "Menanggapi permintaan kontak",
-      "Melakukan komunikasi informatif terkait layanan kami",
-      "Meningkatkan produk dan layanan online kami",
-      "Mengelola partisipasi dalam kontes, promosi, atau permintaan informasi"
-    ],
-    "collectH": "BAGAIMANA KAMI MENGUMPULKAN INFORMASI PRIBADI ANDA",
-    "collectP1": "Kami mengumpulkan informasi pribadi Anda langsung dari Anda, kecuali jika tidak masuk akal atau tidak mungkin untuk melakukannya. Metode pengumpulan termasuk:",
-    "rightsP3": "Untuk melaksanakan hak-hak ini, silakan hubungi kami melalui saluran kontak yang telah diaktifkan.",
-    "complaintH": "PROSES PENGADUAN PELANGGARAN PRIVASI",
-    "complaintP1": "Jika Anda percaya bahwa privasi Anda telah dilanggar, silakan hubungi kami menggunakan informasi kontak yang tercantum di bawah ini dan berikan rincian insiden tersebut agar kami dapat menyelidikinya. Kami akan menangani keluhan sesuai dengan Prosedur Pengelolaan Keluhan kami yang berlaku.",
-    "complaintP2": "Kami akan menangani permintaan atau keluhan Anda dengan cara yang penuh kerahasiaan. Perwakilan kami akan menghubungi Anda dalam waktu yang wajar setelah menerima keluhan Anda untuk membahas kekhawatiran Anda dan menjelaskan pilihan tentang bagaimana masalah tersebut dapat diselesaikan. Kami akan memastikan bahwa keluhan Anda diselesaikan dengan cara yang tepat dan efektif.",
-    "securityH": "LANGKAH-LANGKAH KEAMANAN",
-    "securityP1": "Karena situs web kami terhubung dengan internet, dan internet secara inheren tidak aman, kami tidak dapat memberikan jaminan tentang keamanan transmisi informasi yang Anda kirimkan kepada kami secara online. Kami juga tidak dapat menjamin bahwa informasi yang Anda berikan tidak akan diintersep saat ditransmisikan melalui internet. Oleh karena itu, setiap informasi pribadi atau informasi lain yang Anda kirimkan kepada kami secara online dilakukan dengan risiko Anda sendiri.",
-    "securityP2": "Penanggung jawab pengolahan data mengambil langkah-langkah teknis dan organisasi yang diperlukan untuk memastikan keamanan dan kerahasiaan data pribadi.",
-    "changesH": "PERUBAHAN PADA KEBIJAKAN PRIVASI KAMI",
-    "changesP1": "Kami dapat mengubah kebijakan privasi ini dari waktu ke waktu. Setiap versi terbaru dari kebijakan privasi ini akan dipublikasikan di situs web kami.",
-    "changesP2": "Kebijakan privasi ini terakhir diperbarui pada tanggal 5 Februari 2026.",
-    "contactH": "HUBUNGI UNREAL STUDIO",
-    "contactP": "Jika Anda memiliki pertanyaan tentang kebijakan privasi ini, kekhawatiran atau komentar tentang pengolahan privasi Anda, silakan gunakan tautan kontak di situs web kami atau hubungi:",
-    "contactName": "Unreal Studio",
-    "contactWebsiteLabel": "Situs web:",
-    "compliance": "Kepatuhan peraturan: Kebijakan privasi ini memenuhi Peraturan (UE) 2016/679 (RGPD), Undang-Undang Organik 3/2018 tentang Perlindungan Data Pribadi dan Jaminan Hak Digital (LOPDGDD), dan persyaratan Meta untuk kampanye iklan."
   },
   "vacaciones": {
     "sectionLabel": "Tim",
@@ -2162,25 +2078,6 @@
     "floorPlansTitle": "Rencana lantai",
     "footerLine1": "Pack agen · Unreal Studio Bali · Data langsung dari Supabase",
     "footerLine2": "Komisi default: 5% sudah termasuk dalam harga. Untuk kesepakatan khusus, hubungi langsung."
-  },
-  "terms": {
-    "docTitle": "Syarat dan Ketentuan | Unreal Studio Madrid",
-    "title": "Syarat dan Ketentuan",
-    "s1H": "1. Penerimaan Syarat",
-    "s1P": "Dengan mengakses dan menggunakan situs web ini, Anda menerima untuk mematuhi dan tunduk pada syarat dan ketentuan penggunaan berikut. Jika Anda tidak setuju dengan bagian mana pun dari syarat ini, Anda tidak boleh menggunakan situs web kami.",
-    "s2H": "2. Sifat Informasi",
-    "s2P": "Konten situs web ini hanya untuk tujuan informatif dan tidak merupakan saran keuangan, hukum, atau pajak profesional. Meskipun kami berusaha untuk menjaga informasi tetap mutakhir, Unreal Studio tidak menjamin keakuratan absolut proyeksi ROI yang ditampilkan.",
-    "s3H": "3. Pengecualian Tanggung Jawab atas Investasi",
-    "s3P": "Setiap investasi properti membawa risiko. Hasil masa lalu tidak menjamin hasil di masa depan. Angka-angka rentabilitas (ROI) adalah perkiraan berdasarkan studi pasar saat ini dan dapat berubah karena faktor-faktor makroekonomi, perubahan peraturan di Indonesia atau Spanyol, dan fluktuasi pariwisata.",
-    "s4H": "4. Kekayaan Intelektual",
-    "s4P": "Semua desain arsitektur, render, foto, dan konten teksual di situs ini adalah milik eksklusif Unreal Studio Madrid. Penggandaan total atau sebagian tanpa izin tertulis yang jelas dilarang.",
-    "s5H": "5. Perundang-Undangan Bali (Leasehold)",
-    "s5P_pre": "Pengguna mengakui mengetahui bahwa sebagian besar aset yang ditawarkan di Bali, Indonesia, beroperasi di bawah rezim ",
-    "s5P_em": "Leasehold",
-    "s5P_post": " (sewa jangka panjang), sesuai dengan perundang-undangan Indonesia untuk investor asing. Rincian spesifik dari setiap kontrak akan dibahas secara pribadi dengan pihak yang berminat.",
-    "s6H": "6. Yurisdiksi",
-    "s6P": "Setiap perselisihan yang timbul dari penggunaan situs web ini akan tunduk pada hukum Spanyol dan yurisdiksi eksklusif pengadilan Madrid.",
-    "copyright": "Hak Cipta 2026 Unreal Studio Madrid. Semua hak dilindungi."
   },
   "fix": {
     "att": {
@@ -2947,5 +2844,16 @@
     "allProjects": "Lihat semua proyek",
     "footer": "Demo dengan data contoh · Unreal Studio",
     "close": "Tutup"
+  },
+  "cookies": {
+    "label": "Pemberitahuan cookie",
+    "text": "Kami hanya menggunakan cookie analitik dan iklan jika Anda menyetujuinya.",
+    "more": "Info lebih lanjut",
+    "accept": "Terima",
+    "reject": "Tolak",
+    "close": "Tutup"
+  },
+  "legal": {
+    "loadError": "Teks hukum tidak dapat dimuat. Hubungi kami di"
   }
 }

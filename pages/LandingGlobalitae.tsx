@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { getConsent } from '../lib/consent';
 import { PUBLIC_PROJECT_COLS } from '../constants';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
@@ -123,7 +124,8 @@ const LandingGlobalitae: React.FC = () => {
       (window as any).fbq('track', 'PageView');
     };
     
-    loadPixel();
+    // RGPD: el Pixel solo se carga con consentimiento de cookies.
+    if (getConsent() === 'granted') loadPixel();
 
     // Listen for GHL form submission via postMessage
     const handleMessage = (event: MessageEvent) => {

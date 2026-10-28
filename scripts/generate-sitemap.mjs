@@ -41,6 +41,7 @@ const STATIC_ROUTES = [
   { path: "/contacto", priority: "0.5", changefreq: "monthly" },
   { path: "/privacidad", priority: "0.3", changefreq: "yearly" },
   { path: "/terminos", priority: "0.3", changefreq: "yearly" },
+  { path: "/aviso-legal", priority: "0.3", changefreq: "yearly" },
 ];
 
 function slugify(s) {
