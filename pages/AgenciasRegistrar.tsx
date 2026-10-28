@@ -274,7 +274,7 @@ export default function AgenciasRegistrar() {
           <button
             type="submit"
             disabled={submitting || !form.agency_name || !form.email}
-            className="w-full bg-primary text-white py-3 rounded-lg font-bold hover:translate-y-[-2px] transition disabled:opacity-50"
+            className="w-full bg-primary text-white border border-primary py-3 rounded-lg font-bold hover:bg-almond hover:text-primary transition disabled:opacity-50 disabled:hover:bg-primary disabled:hover:text-white"
           >
             {submitting ? t('agenciasRegistrar.submitting') : t('agenciasRegistrar.submit')}
           </button>

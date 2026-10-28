@@ -65,10 +65,10 @@ export default function AgenciasPartnership() {
             {t("agenciasPartnership.heroBody")}
           </p>
           <div className="flex flex-wrap gap-3">
-            <Link to="/agencias/registrar" className="bg-primary text-white px-8 py-4 rounded-full font-semibold hover:translate-y-[-2px] transition shadow-lg">
+            <Link to="/agencias/registrar" className="inline-flex justify-center min-w-[15rem] bg-primary text-white border border-primary px-8 py-4 rounded-full font-semibold hover:bg-almond hover:text-primary transition shadow-lg">
               {t("agenciasPartnership.ctaApply")}
             </Link>
-            <Link to="/agencias/login" className="bg-white border border-primary/20 text-primary px-8 py-4 rounded-full font-medium hover:bg-primary/5 transition">
+            <Link to="/agencias/login" className="inline-flex justify-center min-w-[15rem] bg-primary text-white border border-primary px-8 py-4 rounded-full font-semibold hover:bg-almond hover:text-primary transition shadow-lg">
               {t("agenciasPartnership.ctaLogin")}
             </Link>
           </div>
@@ -110,7 +110,7 @@ export default function AgenciasPartnership() {
 
       {/* Projects (reales de la BD, sin precios) */}
       <section className="bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="font-serif text-3xl mb-2 text-center">{t("agenciasPartnership.projectsTitle")}</h2>
           <p className="text-primary/60 text-center mb-12 max-w-2xl mx-auto">
             {t("agenciasPartnership.projectsSubtitle")}

@@ -309,7 +309,7 @@ const Home: React.FC = () => {
                 href={WHATSAPP_URL} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="bg-primary text-white px-10 py-5 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2"
+                className="bg-primary text-white border border-primary px-10 py-5 rounded-full font-bold shadow-xl hover:bg-almond hover:text-primary transition flex items-center justify-center gap-2"
               >
                 {t('home.ctaMeeting')} <span className="material-symbols-outlined">arrow_forward</span>
               </a>
@@ -375,8 +375,8 @@ const Home: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="hidden md:flex items-center justify-center gap-3 bg-almond/30 px-6 py-4 rounded-2xl group-hover:bg-primary group-hover:text-white transition-all duration-500 self-start sm:self-auto w-full sm:w-auto">
-                      <span className="text-primary group-hover:text-white font-bold text-xs uppercase tracking-widest">{t('home.viewProject')}</span>
+                    <div className="hidden md:flex items-center justify-center gap-3 bg-primary text-white border border-primary px-6 py-4 rounded-2xl group-hover:bg-almond group-hover:text-primary transition-all duration-500 self-start sm:self-auto w-full sm:w-auto">
+                      <span className="font-bold text-xs uppercase tracking-widest">{t('home.viewProject')}</span>
                       <span className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </div>
 
@@ -480,7 +480,7 @@ const Home: React.FC = () => {
 
             <button 
               onClick={handleSearch}
-              className="bg-primary text-white m-2 px-8 py-4 rounded-2xl md:rounded-[2rem] font-black text-[10px] uppercase tracking-widest hover:brightness-125 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
+              className="bg-primary text-white m-2 px-8 py-4 rounded-2xl md:rounded-[2rem] font-black text-[10px] uppercase tracking-widest border border-primary hover:bg-almond hover:text-primary transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
             >
               <span>{t('home.searchBtn')}</span>
               <span className="material-symbols-outlined text-sm">search</span>
@@ -695,7 +695,7 @@ const Home: React.FC = () => {
                       {featuredProject && (
                         <Link
                           to={projectPath(featuredProject)}
-                          className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-xl hover:translate-y-[-2px] transition flex items-center justify-center gap-2 mx-auto w-fit"
+                          className="bg-primary text-white border border-primary px-10 py-4 rounded-full font-bold shadow-xl hover:bg-almond hover:text-primary transition flex items-center justify-center gap-2 mx-auto w-fit"
                         >
                           {t('home.profit.seeFeatured', { defaultValue: 'Ver propiedad destacada' })} <span className="material-symbols-outlined">arrow_forward</span>
                         </Link>
@@ -728,7 +728,7 @@ const Home: React.FC = () => {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full max-w-sm bg-almond text-primary px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:scale-105 transition-all duration-300 shadow-2xl flex items-center justify-center gap-3"
+              className="w-full max-w-sm bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 md:px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.12em] md:tracking-[0.2em] whitespace-nowrap transition-all duration-300 shadow-2xl flex items-center justify-center gap-3"
             >
               {t('home.ctaWhatsapp')} <span className="material-symbols-outlined text-base">chat</span>
             </a>
@@ -742,7 +742,7 @@ const Home: React.FC = () => {
           <div className="text-left">
             <h2 className="text-4xl md:text-5xl text-primary font-serif">{t('home.blogTitle')}</h2>
           </div>
-          <Link to="/blog" className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group">
+          <Link to="/blog" className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group whitespace-nowrap shrink-0">
             {t('home.blogCta')} <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </Link>
         </div>

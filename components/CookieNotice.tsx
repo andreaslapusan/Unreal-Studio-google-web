@@ -28,7 +28,7 @@ export default function CookieNotice() {
         <Link to="/privacidad" className="underline hover:text-primary whitespace-nowrap">{t('cookies.more')}</Link>
       </span>
       <span className="flex items-center gap-1.5 shrink-0">
-        <button type="button" onClick={() => choose('granted')} className="px-2.5 py-1 rounded-full bg-primary text-white hover:bg-primary/90 transition">{t('cookies.accept')}</button>
+        <button type="button" onClick={() => choose('granted')} className="px-2.5 py-1 rounded-full bg-primary text-white border border-primary hover:bg-almond hover:text-primary transition">{t('cookies.accept')}</button>
         <button type="button" onClick={() => setOpen(false)} aria-label={t('cookies.close')} className="w-6 h-6 rounded-full text-primary/50 hover:text-primary hover:bg-primary/5 text-base leading-none">×</button>
       </span>
     </div>

@@ -446,7 +446,7 @@ const ProjectDetail: React.FC = () => {
           onError={imgFallback(getImageUrl(project.image))}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-        <div className="absolute bottom-12 left-6 md:left-12 max-w-md w-full">
+        <div className="absolute bottom-12 left-6 right-6 md:left-12 md:right-auto max-w-md md:w-full">
           <div className="bg-white/95 backdrop-blur-md p-8 rounded-xl shadow-2xl border-l-4 border-primary">
             {project.property_type && (
               <span className="bg-primary text-white text-[10px] uppercase font-bold px-3 py-2 rounded tracking-wide mb-4 inline-block">
@@ -483,28 +483,28 @@ const ProjectDetail: React.FC = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
           <div className="px-4 first:pl-0 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
-            <p className="text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
+            <p className="text-2xl md:text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
           </div>
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
-            <p className="text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
+            <p className="text-2xl md:text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
           </div>
           {!soldOut && (project.investor_price ?? 0) > 0 && (
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
-            <p className="text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
+            <p className="text-2xl md:text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
           </div>
           )}
           {(project.market_price ?? 0) > 0 && (
           <div className="px-4 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiMarketPrice')}</p>
-            <p className={`text-3xl font-serif ${soldOut ? '' : 'line-through opacity-40'}`}>{formatPrice(project.market_price, project.price_currency)}</p>
+            <p className={`text-2xl md:text-3xl font-serif ${soldOut ? '' : 'line-through opacity-40'}`}>{formatPrice(project.market_price, project.price_currency)}</p>
           </div>
           )}
           <div className="px-4 border-r-0 text-center md:text-left col-span-2 md:col-span-1">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
-            <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-9 uppercase tracking-tighter">
-              <span className={`w-2 h-2 rounded-full ${soldOut ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'}`}></span>
+            <p className="text-base font-bold flex items-center justify-center md:justify-start gap-2 min-h-8 md:min-h-9 leading-tight uppercase">
+              <span className={`w-2 h-2 shrink-0 rounded-full ${soldOut ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'}`}></span>
               {soldOut ? t('projects.soldOutBadge') : translateStatus(project.status, t)}
             </p>
           </div>
@@ -723,7 +723,7 @@ const ProjectDetail: React.FC = () => {
                               </button>
                             </div>
                         </div>
-                        <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">
+                        <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg border border-primary hover:bg-almond hover:text-primary transition disabled:opacity-50 flex items-center justify-center gap-2">
                             {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('fix.pd.verifying')}</> : t('fix.pd.accessReport')}
                         </button>
                     </form>

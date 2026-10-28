@@ -248,7 +248,7 @@ const Projects: React.FC = () => {
                         </div>
                       </div>
                       )}
-                      <span className="flex items-center gap-1 text-xs md:text-xs font-black uppercase tracking-widest text-primary group-hover:gap-2 transition-all whitespace-nowrap bg-primary/5 rounded-full px-3 py-1.5 md:px-0 md:py-0 md:bg-transparent">
+                      <span className="flex items-center gap-1 text-xs md:text-xs font-black uppercase tracking-widest text-white md:text-primary group-hover:gap-2 transition-all whitespace-nowrap bg-primary rounded-full px-3 py-1.5 md:px-0 md:py-0 md:bg-transparent">
                         <span className={sold ? 'hidden md:inline' : ''}>{t('projects.card.viewDetails', 'Ver detalles')}</span>
                         <span className="material-symbols-outlined text-sm md:text-xl">arrow_forward</span>
                       </span>
@@ -293,9 +293,6 @@ const Projects: React.FC = () => {
   return (
     <div className="bg-almond transition-colors duration-300">
       <header className="px-6 md:px-12 pt-20 pb-28 text-center relative overflow-hidden bg-almond">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-10">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary rounded-full blur-[100px]"></div>
-        </div>
         <div className="relative z-10 max-w-5xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl leading-[1.1] text-primary tracking-tight">
             {t('projects.heroTitle')}
@@ -337,7 +334,7 @@ const Projects: React.FC = () => {
               <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
-                <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
+                <div className="flex items-center gap-2 bg-primary/5 rounded-full px-3 py-1.5 border border-primary/10 hover:border-primary/30 transition-all">
                   <input
                     type="text"
                     placeholder={t('projects.filters.min')}
