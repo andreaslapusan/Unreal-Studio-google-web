@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
-import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities } from '../lib/projectTerms';
+import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, propertyTypeLabel } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +35,7 @@ const ProjectDetail: React.FC = () => {
     return p.description || '';
   };
   // Amueblado: traduce las claves del formulario de auto-alta (semi/furnished/turnkey);
-  // si es texto libre de un proyecto antiguo, lo muestra tal cual.
+  // si es texto libre, usa la columna traducida (furnishing_en/ro/id).
   const fmtFurnishing = (v: string) => {
     const map: Record<string, string> = {
       semi: t('listingIntake.semiFurnished'),
@@ -43,7 +43,7 @@ const ProjectDetail: React.FC = () => {
       turnkey: t('listingIntake.turnkey'),
       unfurnished: t('listingIntake.unfurnished'),
     };
-    return map[String(v).toLowerCase()] || v;
+    return map[String(v).toLowerCase()] || localizedField(project, 'furnishing', i18n.language) || v;
   };
   // Importe con separador de miles + símbolo de divisa (para extensión y renta).
   const CUR_SYM: Record<string, string> = { EUR: '€', USD: '$', IDR: 'Rp', AUD: 'A$' };
@@ -431,7 +431,7 @@ const ProjectDetail: React.FC = () => {
           <div className="bg-white/95 backdrop-blur-md p-8 rounded-xl shadow-2xl border-l-4 border-primary">
             {project.property_type && (
               <span className="bg-primary text-white text-[10px] uppercase font-bold px-3 py-2 rounded tracking-wide mb-4 inline-block">
-                {project.property_type}
+                {propertyTypeLabel(project.property_type, i18n.language)}
               </span>
             )}
             <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}</h1>
@@ -504,7 +504,7 @@ const ProjectDetail: React.FC = () => {
             {(() => {
               // Regla del dueño: un campo sin valor NO se muestra (ni card ni label).
               const specs = [
-                project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
+                project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: localizedField(project, 'distance_beach', i18n.language) },
                 project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}` },
                 project.tenure !== 'Freehold' && extensionLines().length > 0 && { icon: 'update', label: t('projectDetail.labelExtensions'), value: <>{extensionLines().map((l, i) => <span key={i} className="block">{l}</span>)}</> },
                 (project.completion_percent > 0) && { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) },
@@ -564,7 +564,7 @@ const ProjectDetail: React.FC = () => {
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">visibility</span>
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelView')}</p>
-                  <p className="text-lg font-bold text-primary">{(project as any).view_type}</p>
+                  <p className="text-lg font-bold text-primary">{translateProjectTerm((project as any).view_type, i18n.language)}</p>
                 </div>
               )}
             </div>
@@ -870,7 +870,7 @@ const ProjectDetail: React.FC = () => {
                     {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
                     {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
                     {project.has_pool && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}
-                    {!isFinished(project.status) && project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{deliveryText(formatDate(project.completion_date), t('projects.card.deliveryFrom'))}</span></div>}
+                    {!isFinished(project.status) && project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{deliveryText(formatDate(localizedCompletion(project, i18n.language)), t('projects.card.deliveryFrom'))}</span></div>}
                 </div>
 
                 {(() => {

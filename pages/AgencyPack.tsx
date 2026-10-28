@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
+import { localizeMonthYear, propertyTypeLabel } from '../lib/projectTerms';
 
 interface ProjectAgencyRow {
   id: string;
@@ -206,7 +207,7 @@ const AgencyPack: React.FC = () => {
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-primary/5">
             <h2 className="text-base font-serif text-primary mb-4">{t('agencyPack.sectionIdentification')}</h2>
             <Field label={t('agencyPack.fieldOwner')}>{project.owner_name}</Field>
-            <Field label={t('agencyPack.fieldType')}>{project.property_type}</Field>
+            <Field label={t('agencyPack.fieldType')}>{project.property_type && propertyTypeLabel(project.property_type, i18n.language)}</Field>
             <Field label={t('agencyPack.fieldZone')}>{project.zone}</Field>
             <Field label={t('agencyPack.fieldStatus')}>{tr(project,'status')}</Field>
             <Field label={t('agencyPack.fieldProgress')}>
@@ -271,7 +272,7 @@ const AgencyPack: React.FC = () => {
                 : null}
             </Field>
             <Field label={t('agencyPack.fieldPaymentPlan')}>{tr(project,'payment_plan_off_plan')}</Field>
-            <Field label={t('agencyPack.fieldEstimatedDelivery')}>{tr(project,'completion_date')}</Field>
+            <Field label={t('agencyPack.fieldEstimatedDelivery')}>{localizeMonthYear(tr(project,'completion_date') || '', i18n.language) || null}</Field>
           </section>
         </div>
 

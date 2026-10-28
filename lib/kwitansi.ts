@@ -134,6 +134,14 @@ export function localizeConcept(text: string | undefined, lang = 'es'): string {
   if (!text || lang === 'es' || !CONCEPT_WORDS[lang]) return text || '';
   const C = CONCEPT_WORDS[lang];
   let out = text;
+  // Frases completas usadas como concepto en el calendario de pagos.
+  const PHRASES: Record<string, [string, string]> = {
+    en: ['Pool contribution (committed)', 'Final payment (balance)'],
+    ro: ['Contribuție la pool (angajată)', 'Plata finală (rest)'],
+    id: ['Kontribusi pool (komitmen)', 'Pembayaran akhir (sisa)'],
+  };
+  out = out.replace(/Aportaci[oó]n pool \(comprometido\)/gi, PHRASES[lang][0]);
+  out = out.replace(/Pago final \(resto\)/gi, PHRASES[lang][1]);
   // Ordinal + Pago/Aportación → "First Payment" (en) / "Plata întâi" (ro) / "Pembayaran Pertama" (id)
   out = out.replace(/\b([A-Za-zÁÉÍÓÚáéíóúñÑ]+)\s+(Pago|Aportaci[oó]n)\b/gi, (m, ord, kind) => {
     const idx = CONCEPT_ORD_ES[ord.toLowerCase()];

@@ -196,7 +196,10 @@
     "successTitle": "¡Perfecto! Hemos recibido tus datos.",
     "successBody": "Te hemos abierto tu correo para enviarnos los datos. Si no se abrió, usa el botón:",
     "successBlocked": "Tu navegador no pudo abrir el correo. Toca el botón para enviárnoslo:",
-    "openWhatsapp": "Abrir correo"
+    "openWhatsapp": "Abrir correo",
+    "openWhatsappBtn": "Abrir WhatsApp",
+    "successBlockedWa": "Tu navegador no pudo abrir WhatsApp. Toca el botón para hablar con un asesor:",
+    "successBodyWa": "Te hemos abierto WhatsApp para hablar con un asesor. Si no se abrió, usa el botón:"
   },
   "bookingWidget": {
     "tag": "AGENDAR LLAMADA",
@@ -1736,6 +1739,29 @@
       "notaryTitle": "Aviso notarización",
       "notaryDesc": "Aviso de notarización de su unidad (vista previa antes de enviar)",
       "confirmSendNotary": "¿Enviar el aviso de notarización?\n\nPara: {{to}}\nUnidad: {{unit}}"
+    },
+    "contacts": {
+      "title": "Contactos / Proveedores",
+      "subtitle": "Agenda de oficios de Bali: fontaneros, electricistas, carpinteros, tukangs…",
+      "add": "Nuevo contacto",
+      "allCategories": "Todas las categorías",
+      "loading": "Cargando…",
+      "empty": "Aún no hay contactos. Añade el primero.",
+      "confirmDelete": "¿Borrar este contacto?",
+      "edit": "Editar contacto",
+      "name": "Nombre",
+      "category": "Categoría",
+      "categoryPlaceholder": "Elige o crea una nueva…",
+      "categoryHint": "Escribe una nueva para crearla, o elige una existente.",
+      "area": "Zona",
+      "phone": "Teléfono",
+      "whatsapp": "WhatsApp",
+      "tags": "Tags (separados por coma)",
+      "rating": "Valoración (1-5)",
+      "source": "Origen",
+      "notes": "Notas",
+      "cancel": "Cancelar",
+      "save": "Guardar"
     }
   },
   "footer": {
@@ -2074,7 +2100,9 @@
     "heroTitle": "Reserva una llamada con un asesor",
     "heroSubtitle": "30 minutos por videollamada con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
     "altCta": "Si prefieres, también puedes",
-    "altCtaLink": "escribirnos"
+    "altCtaLink": "escribirnos",
+    "heroSubtitleWa": "Habla directamente por WhatsApp con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
+    "waCta": "Hablar por WhatsApp"
   },
   "agencyPack": {
     "loading": "Cargando…",
@@ -2733,10 +2761,14 @@
   },
   "authFinish": {
     "validating": "Validando tu enlace mágico.",
-    "backLogin": "Volver al login"
+    "backLogin": "Volver al login",
+    "signingIn": "Iniciando sesión…",
+    "errorTitle": "Algo no va bien",
+    "errorBody": "El enlace ha expirado o ya se usó."
   },
   "errorBoundary": {
-    "msg": "Esta página tuvo un error. Puedes volver al inicio y seguir usando la web."
+    "msg": "Esta página tuvo un error. Puedes volver al inicio y seguir usando la web.",
+    "waPrefix": "Si vuelve a pasar, escríbenos por"
   },
   "listingIntake": {
     "kicker": "Alta de propiedad",
@@ -2812,7 +2844,8 @@
       "reception": "Recepción",
       "bar": "Bar",
       "cctv": "Cámaras de seguridad",
-      "laundry": "Lavandería"
+      "laundry": "Lavandería",
+      "jacuzzi": "Jacuzzi"
     },
     "turnkey": "Llave en mano",
     "driveTitle": "Importar desde Google Drive",
@@ -2852,5 +2885,58 @@
       "az": "Nombre: A → Z",
       "za": "Nombre: Z → A"
     }
+  },
+  "demoPortal": {
+    "metaTitle": "Demo del portal · Unreal Studio",
+    "waMessage": "Hola, he visto la demo del portal y me interesa reservar una unidad en Unreal Studio.",
+    "banner": "DEMO · Datos de ejemplo. Así verás TU propiedad como cliente de Unreal.",
+    "headerBadge": "Portal cliente · Demo",
+    "heroAlt": "Villa Deseo",
+    "status": "En construcción",
+    "villaTitle": "Villa Deseo — Demo",
+    "location": "Melasti, Uluwatu · Bali",
+    "progressLabel": "Avance de obra",
+    "estimatedDelivery": "Entrega estimada",
+    "type": "Tipo",
+    "typeValue": "Villa · 2 dorm.",
+    "liveTitle": "Obra en vivo",
+    "liveSubtitle": "Fotos reales fechadas de tu construcción. Transparencia total, sin sorpresas.",
+    "updates": {
+      "u1": {
+        "title": "Cimentación completada",
+        "note": "Estructura de cimientos y replanteo terminados. Obra iniciada en plazo."
+      },
+      "u2": {
+        "title": "Estructura planta baja",
+        "note": "Pilares y forjado de planta baja levantados."
+      },
+      "u3": {
+        "title": "Estructura primera planta",
+        "note": "Muros de la primera planta en curso. Avance según calendario."
+      }
+    },
+    "paymentsTitle": "Tu calendario de pagos",
+    "paymentsSubtitle": "Siempre sabes qué has pagado y qué falta. Cero letra pequeña.",
+    "paid": "Pagado",
+    "total": "Total",
+    "payments": {
+      "p1": "Reserva",
+      "p2": "Firma de contrato (25%)",
+      "p3": "Inicio de obra (25%)",
+      "p4": "Estructura completada (25%)",
+      "p5": "Entrega (20%)"
+    },
+    "due": "Vence {{date}}",
+    "received": "Recibido",
+    "pending": "Pendiente",
+    "receiptsTitle": "Recibos al instante",
+    "receiptsSubtitle": "Cada pago genera su recibo oficial (kwitansi), descargable al momento.",
+    "receiptName": "Recibo DEMO-02 · Firma de contrato",
+    "ctaTitle": "Esto es lo que verás como propietario.",
+    "ctaText": "Obra en vivo, pagos claros y recibos al momento. Una empresa real detrás de cada villa.",
+    "ctaButton": "Reservar mi unidad",
+    "allProjects": "Ver todos los proyectos",
+    "footer": "Demo con datos de ejemplo · Unreal Studio",
+    "close": "Cerrar"
   }
 }

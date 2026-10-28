@@ -27,17 +27,12 @@ const PORTAL_DASH: Record<PortalKey, string> = {
   empleados: '/empleados/dashboard',
   admin: '/admin',
 };
-const PORTAL_LABEL: Record<PortalKey, string> = {
-  cliente: 'Clientes',
-  agencias: 'Agencias',
-  empleados: 'Team',
-  admin: 'Admin',
-};
 
 const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, dark }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const portalLabel = t(`auth.portal_${portal}`);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,8 +47,8 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   const [checking, setChecking] = useState(false);
 
   useEffect(() => {
-    document.title = `${PORTAL_LABEL[portal]} | Unreal Studio`;
-  }, [portal]);
+    document.title = `${portalLabel} | Unreal Studio`;
+  }, [portalLabel]);
 
   // Si llegamos aquí porque el dashboard expulsó una sesión cuyo email/cuenta no
   // tiene acceso a este portal (p.ej. se inició con un email antiguo), mostramos
@@ -62,7 +57,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     const e = new URLSearchParams(window.location.search).get('e');
     if (e === 'mismatch' || e === 'noaccess') {
       setError(t('auth.noAccessPortal', {
-        portal: PORTAL_LABEL[portal],
+        portal: portalLabel,
         defaultValue: 'Esta cuenta no tiene acceso al portal de {{portal}}. Inicia sesión con tu email actual.',
       }));
       window.history.replaceState(null, '', window.location.pathname);
@@ -176,7 +171,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
           const { data: cid } = await supabase.rpc('client_my_id');
           if (!cid?.success) {
             try { await supabase.auth.signOut(); } catch { /* ignore */ }
-            setError(t('auth.noAccessPortal', { portal: PORTAL_LABEL[portal], defaultValue: 'Esta cuenta no tiene acceso al portal de {{portal}}. Inicia sesión con tu email actual.' }));
+            setError(t('auth.noAccessPortal', { portal: portalLabel, defaultValue: 'Esta cuenta no tiene acceso al portal de {{portal}}. Inicia sesión con tu email actual.' }));
             return;
           }
         }
@@ -188,7 +183,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       // la sesión recién creada y avisamos de que no tiene acceso aquí.
       try { await supabase.auth.signOut(); } catch { /* ignore */ }
       setError(t('auth.noAccessPortal', {
-        portal: PORTAL_LABEL[portal],
+        portal: portalLabel,
         defaultValue: 'Esta cuenta no tiene acceso al portal de {{portal}}.',
       }));
     } finally {
@@ -242,7 +237,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       });
       if (err) throw err;
       if (!data?.success) {
-        setError(data?.error === 'no_account' ? t('fix.login.noAccountForEmail', { portal: PORTAL_LABEL[portal] }) : t('auth.genericError'));
+        setError(data?.error === 'no_account' ? t('fix.login.noAccountForEmail', { portal: portalLabel }) : t('auth.genericError'));
       } else setInfo(t('auth.magicSent'));
     } catch {
       setError(t('auth.genericError'));
@@ -268,7 +263,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
       });
       if (err) throw err;
       if (!data?.success) {
-        setError(data?.error === 'no_account' ? t('fix.login.noAccountForEmail', { portal: PORTAL_LABEL[portal] }) : t('auth.genericError'));
+        setError(data?.error === 'no_account' ? t('fix.login.noAccountForEmail', { portal: portalLabel }) : t('auth.genericError'));
       } else setInfo(t('auth.recoverSent'));
     } catch {
       setError(t('auth.genericError'));

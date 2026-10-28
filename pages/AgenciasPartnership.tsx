@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase, getImageUrl } from "../lib/supabase";
 import { imgSrc } from "../lib/imageOptimize";
+import { translateStatus } from "../lib/statusI18n";
 
 interface ProjectCard {
   name: string;
@@ -25,11 +26,8 @@ interface Step { title: string; body: string }
 
 export default function AgenciasPartnership() {
   const { t } = useTranslation();
-  const statusLabel = (st?: string) => {
-    const map: Record<string, string> = { active: 'active', Activo: 'active', Reserva: 'reserved', Reservado: 'reserved', Pagado: 'paid', 'En proceso': 'inProgress', 'En construcción': 'inProgress', Completado: 'completed', Pendiente: 'pending' };
-    const k = map[String(st || '')];
-    return k ? t('admin.clientDash.status.' + k) : String(st || '');
-  };
+  // Estado público del proyecto (Sobre Plano / En Construcción / Obra Finalizada…): mismo traductor que /proyectos.
+  const statusLabel = (st?: string) => translateStatus(st, t);
   const [projects, setProjects] = useState<ProjectCard[]>([]);
 
   // benefits/steps vienen del namespace i18n (es/en/ro) como arrays.

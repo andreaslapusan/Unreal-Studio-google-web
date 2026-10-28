@@ -126,14 +126,14 @@ export default function AuthFinish() {
       <div className="max-w-md">
         {!errored && (
           <>
-            <h1 className="text-3xl font-serif text-primary mb-4">Iniciando sesión…</h1>
+            <h1 className="text-3xl font-serif text-primary mb-4">{t('authFinish.signingIn', { defaultValue: 'Iniciando sesión…' })}</h1>
             <p>{t('authFinish.validating', { defaultValue: 'Validando tu enlace mágico.' })}</p>
           </>
         )}
         {errored && (
           <>
-            <h1 className="text-3xl font-serif text-primary mb-4">Algo no va bien</h1>
-            <p className="text-red-700">El enlace ha expirado o ya se usó.</p>
+            <h1 className="text-3xl font-serif text-primary mb-4">{t('authFinish.errorTitle', { defaultValue: 'Algo no va bien' })}</h1>
+            <p className="text-red-700">{t('authFinish.errorBody', { defaultValue: 'El enlace ha expirado o ya se usó.' })}</p>
             <a href="/agencias" className="inline-block mt-4 underline text-primary">
               {t('authFinish.backLogin', { defaultValue: 'Volver al login' })}
             </a>

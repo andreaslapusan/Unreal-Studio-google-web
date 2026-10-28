@@ -196,7 +196,10 @@
     "successTitle": "Perfect! Ți-am primit datele.",
     "successBody": "Ți-am deschis aplicația de email pentru a ne trimite datele. Dacă nu s-a deschis, folosește butonul:",
     "successBlocked": "Browserul nu a putut deschide aplicația de email. Apasă butonul pentru a-l trimite:",
-    "openWhatsapp": "Deschide email"
+    "openWhatsapp": "Deschide email",
+    "openWhatsappBtn": "Deschide WhatsApp",
+    "successBlockedWa": "Browserul nu a putut deschide WhatsApp. Apasă butonul pentru a vorbi cu un consultant:",
+    "successBodyWa": "Am deschis WhatsApp pentru a vorbi cu un consultant. Dacă nu s-a deschis, folosește butonul:"
   },
   "bookingWidget": {
     "tag": "PROGRAMEAZĂ APEL",
@@ -916,9 +919,9 @@
       "calcResaleValueYear": "Valoare revânzare anul {{year}}",
       "calcPaybackEstimated": "Payback estimat: {{value}}",
       "calcHorizon": "Orizont: {{years}} ani",
-      "calcChipContract": "Contract: {{years}}a",
-      "calcChipExt": "Ext: +{{years}}a",
-      "calcChipExtra": "Extra: +{{years}}a",
+      "calcChipContract": "Contract: {{years}} ani",
+      "calcChipExt": "Ext: +{{years}} ani",
+      "calcChipExtra": "Extra: +{{years}} ani",
       "calcExtraLeaseYears": "Ani suplimentari de lease (opțional)",
       "calcMaxLandAppreciation": "Apreciere teren max.",
       "calcOccupancy": "Ocupare",
@@ -1736,6 +1739,29 @@
       "notaryTitle": "Notificare notarizare",
       "notaryDesc": "Notificare privind notarizarea unității (previzualizare înainte de trimitere)",
       "confirmSendNotary": "Trimiți notificarea de notarizare?\n\nCătre: {{to}}\nUnitate: {{unit}}"
+    },
+    "contacts": {
+      "title": "Contacte / Furnizori",
+      "subtitle": "Agenda meseriașilor din Bali: instalatori, electricieni, tâmplari, tukangs…",
+      "add": "Contact nou",
+      "allCategories": "Toate categoriile",
+      "loading": "Se încarcă…",
+      "empty": "Încă nu există contacte. Adaugă primul.",
+      "confirmDelete": "Ștergi acest contact?",
+      "edit": "Editează contactul",
+      "name": "Nume",
+      "category": "Categorie",
+      "categoryPlaceholder": "Alege sau creează una nouă…",
+      "categoryHint": "Scrie una nouă pentru a o crea sau alege una existentă.",
+      "area": "Zonă",
+      "phone": "Telefon",
+      "whatsapp": "WhatsApp",
+      "tags": "Etichete (separate prin virgulă)",
+      "rating": "Evaluare (1-5)",
+      "source": "Sursă",
+      "notes": "Note",
+      "cancel": "Anulează",
+      "save": "Salvează"
     }
   },
   "footer": {
@@ -2074,7 +2100,9 @@
     "heroTitle": "Rezervă un apel cu un consilier",
     "heroSubtitle": "30 de minute prin apel video cu echipa noastră. Îți trimitem dosarele actualizate ale proiectelor care se potrivesc cel mai bine profilului tău.",
     "altCta": "Dacă preferi, ne poți și",
-    "altCtaLink": "scrie-ne"
+    "altCtaLink": "scrie-ne",
+    "heroSubtitleWa": "Vorbește direct pe WhatsApp cu echipa noastră. Îți trimitem dosarele actualizate ale proiectelor care se potrivesc cel mai bine profilului tău.",
+    "waCta": "Scrie-ne pe WhatsApp"
   },
   "agencyPack": {
     "loading": "Se încarcă…",
@@ -2731,10 +2759,14 @@
   },
   "authFinish": {
     "validating": "Se validează linkul tău magic.",
-    "backLogin": "Înapoi la autentificare"
+    "backLogin": "Înapoi la autentificare",
+    "signingIn": "Se conectează…",
+    "errorTitle": "Ceva nu a mers bine",
+    "errorBody": "Linkul a expirat sau a fost deja folosit."
   },
   "errorBoundary": {
-    "msg": "Această pagină a avut o eroare. Poți reveni la pagina principală și continua."
+    "msg": "Această pagină a avut o eroare. Poți reveni la pagina principală și continua.",
+    "waPrefix": "Dacă se repetă, scrie-ne pe"
   },
   "listingIntake": {
     "kicker": "Adaugă proprietatea",
@@ -2810,7 +2842,8 @@
       "reception": "Recepție",
       "bar": "Bar",
       "cctv": "Camere de supraveghere",
-      "laundry": "Spălătorie"
+      "laundry": "Spălătorie",
+      "jacuzzi": "Jacuzzi"
     },
     "turnkey": "La cheie",
     "driveTitle": "Importă din Google Drive",
@@ -2850,5 +2883,58 @@
       "az": "Nume: A → Z",
       "za": "Nume: Z → A"
     }
+  },
+  "demoPortal": {
+    "metaTitle": "Demo portal · Unreal Studio",
+    "waMessage": "Bună, am văzut demo-ul portalului și sunt interesat să rezerv o unitate la Unreal Studio.",
+    "banner": "DEMO · Date de exemplu. Așa vei vedea PROPRIETATEA TA ca și client Unreal.",
+    "headerBadge": "Portal client · Demo",
+    "heroAlt": "Villa Deseo",
+    "status": "În construcție",
+    "villaTitle": "Villa Deseo — Demo",
+    "location": "Melasti, Uluwatu · Bali",
+    "progressLabel": "Progresul lucrărilor",
+    "estimatedDelivery": "Predare estimată",
+    "type": "Tip",
+    "typeValue": "Vilă · 2 dorm.",
+    "liveTitle": "Șantier în direct",
+    "liveSubtitle": "Fotografii reale și datate ale construcției tale. Transparență totală, fără surprize.",
+    "updates": {
+      "u1": {
+        "title": "Fundație finalizată",
+        "note": "Structura fundației și trasarea au fost finalizate. Lucrările au început la termen."
+      },
+      "u2": {
+        "title": "Structura parterului",
+        "note": "Stâlpii și planșeul parterului au fost ridicați."
+      },
+      "u3": {
+        "title": "Structura etajului întâi",
+        "note": "Pereții etajului întâi sunt în lucru. Progres conform calendarului."
+      }
+    },
+    "paymentsTitle": "Calendarul tău de plăți",
+    "paymentsSubtitle": "Știi mereu ce ai plătit și ce mai rămâne. Fără clauze ascunse.",
+    "paid": "Plătit",
+    "total": "Total",
+    "payments": {
+      "p1": "Rezervare",
+      "p2": "Semnarea contractului (25%)",
+      "p3": "Începerea lucrărilor (25%)",
+      "p4": "Structură finalizată (25%)",
+      "p5": "Predare (20%)"
+    },
+    "due": "Scadent {{date}}",
+    "received": "Primit",
+    "pending": "În așteptare",
+    "receiptsTitle": "Chitanțe pe loc",
+    "receiptsSubtitle": "Fiecare plată generează chitanța oficială (kwitansi), descărcabilă imediat.",
+    "receiptName": "Chitanța DEMO-02 · Semnarea contractului",
+    "ctaTitle": "Asta vei vedea ca proprietar.",
+    "ctaText": "Șantier în direct, plăți clare și chitanțe pe loc. O companie reală în spatele fiecărei vile.",
+    "ctaButton": "Rezervă unitatea mea",
+    "allProjects": "Vezi toate proiectele",
+    "footer": "Demo cu date de exemplu · Unreal Studio",
+    "close": "Închide"
   }
 }

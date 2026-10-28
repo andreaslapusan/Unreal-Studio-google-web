@@ -196,7 +196,10 @@
     "successTitle": "Bagus! Data Anda sudah kami terima.",
     "successBody": "Kami telah membuka aplikasi email Anda untuk mengirimkan datanya. Jika tidak terbuka, gunakan tombol:",
     "successBlocked": "Browser Anda tidak dapat membuka aplikasi email. Ketuk tombol untuk mengirimkannya:",
-    "openWhatsapp": "Buka email"
+    "openWhatsapp": "Buka email",
+    "openWhatsappBtn": "Buka WhatsApp",
+    "successBlockedWa": "Browser Anda tidak dapat membuka WhatsApp. Ketuk tombol untuk berbicara dengan konsultan:",
+    "successBodyWa": "Kami telah membuka WhatsApp agar Anda dapat berbicara dengan konsultan. Jika tidak terbuka, gunakan tombol ini:"
   },
   "bookingWidget": {
     "tag": "JADWALKAN PANGGILAN",
@@ -329,7 +332,7 @@
     "whyTitle": "Mengapa bekerja sama dengan kami",
     "howTitle": "Cara kerja",
     "projectsTitle": "Proyek tersedia untuk listing",
-    "projectsSubtitle": "Snapshot per {{date}} · hubungi kami untuk ketersediaan terbaru",
+    "projectsSubtitle": "Pilihan proyek pengembangan kami di Bali. Detail lengkap, materi, dan ketentuan komersial tersedia di portal mitra.",
     "faqTitle": "Pertanyaan yang sering diajukan",
     "ctaFinalTitle": "Siap listing Bali bersama kami?",
     "ctaFinalBody": "Kami balas dalam 24-48 jam. Jika cocok, kami berikan akses portal dan langsung mulai.",
@@ -1017,13 +1020,13 @@
       "passwordChangeSuccess": "Kata sandi diperbarui dengan sukses.",
       "pageTitle": "Portal Saya | Unreal Studio Madrid",
       "calcNetRentalShort": "Sewa neto ({{years}} tahun)",
-      "calcGross": "Bruto: {{value}} | Deduc: {{pct}}%",
+      "calcGross": "Bruto: {{value}} | Potongan: {{pct}}%",
       "calcResaleValueYear": "Nilai penjualan kembali tahun {{year}}",
       "calcPaybackEstimated": "Payback perkiraan: {{value}}",
       "calcHorizon": "Horizon: {{years}} tahun",
       "calcChipContract": "Kontrak: {{years}} tahun",
       "calcChipExt": "Ext: +{{years}} tahun",
-      "calcChipExtra": "Extra: +{{years}} tahun",
+      "calcChipExtra": "Tambahan: +{{years}} tahun",
       "calcExtraLeaseYears": "Tahun tambahan lease (opsional)",
       "calcMaxLandAppreciation": "Apreciasi tanah maks.",
       "calcOccupancy": "Okupansi",
@@ -1841,6 +1844,29 @@
       "notaryTitle": "Pemberitahuan notarisasi",
       "notaryDesc": "Pemberitahuan notarisasi unit (pratinjau sebelum mengirim)",
       "confirmSendNotary": "Kirim pemberitahuan notarisasi?\n\nKepada: {{to}}\nUnit: {{unit}}"
+    },
+    "contacts": {
+      "title": "Kontak / Pemasok",
+      "subtitle": "Direktori tukang Bali: tukang ledeng, listrik, kayu, tukang…",
+      "add": "Kontak baru",
+      "allCategories": "Semua kategori",
+      "loading": "Memuat…",
+      "empty": "Belum ada kontak. Tambahkan yang pertama.",
+      "confirmDelete": "Hapus kontak ini?",
+      "edit": "Edit kontak",
+      "name": "Nama",
+      "category": "Kategori",
+      "categoryPlaceholder": "Pilih atau buat yang baru…",
+      "categoryHint": "Ketik yang baru untuk membuatnya, atau pilih yang sudah ada.",
+      "area": "Area",
+      "phone": "Telepon",
+      "whatsapp": "WhatsApp",
+      "tags": "Tag (pisahkan dengan koma)",
+      "rating": "Penilaian (1-5)",
+      "source": "Sumber",
+      "notes": "Catatan",
+      "cancel": "Batal",
+      "save": "Simpan"
     }
   },
   "footer": {
@@ -2056,7 +2082,9 @@
     "heroTitle": "Reservasi panggilan dengan konsultan",
     "heroSubtitle": "30 menit per videopanggilan dengan tim kami. Kami mengirimkan dossiers terbaru dari proyek yang paling sesuai dengan profil Anda.",
     "altCta": "Jika Anda lebih suka, Anda juga bisa",
-    "altCtaLink": "menulis kepada kami"
+    "altCtaLink": "menulis kepada kami",
+    "heroSubtitleWa": "Bicaralah langsung dengan tim kami melalui WhatsApp. Kami akan mengirimkan dosir terbaru dari proyek yang paling sesuai dengan profil Anda.",
+    "waCta": "Chat via WhatsApp"
   },
   "agencyPack": {
     "loading": "Memuat…",
@@ -2732,10 +2760,14 @@
   },
   "authFinish": {
     "validating": "Memvalidasi tautan ajaib Anda.",
-    "backLogin": "Kembali ke login"
+    "backLogin": "Kembali ke login",
+    "signingIn": "Sedang masuk…",
+    "errorTitle": "Terjadi kesalahan",
+    "errorBody": "Tautan telah kedaluwarsa atau sudah digunakan."
   },
   "errorBoundary": {
-    "msg": "Halaman ini mengalami kesalahan. Anda bisa kembali ke beranda dan melanjutkan."
+    "msg": "Halaman ini mengalami kesalahan. Anda bisa kembali ke beranda dan melanjutkan.",
+    "waPrefix": "Jika terjadi lagi, hubungi kami melalui"
   },
   "listingIntake": {
     "kicker": "Daftarkan properti",
@@ -2811,7 +2843,8 @@
       "reception": "Resepsionis",
       "bar": "Bar",
       "cctv": "Kamera keamanan",
-      "laundry": "Binatu"
+      "laundry": "Binatu",
+      "jacuzzi": "Jakuzi"
     },
     "turnkey": "Siap huni",
     "driveTitle": "Impor dari Google Drive",
@@ -2851,5 +2884,58 @@
       "az": "Nama: A → Z",
       "za": "Nama: Z → A"
     }
+  },
+  "demoPortal": {
+    "metaTitle": "Demo portal · Unreal Studio",
+    "waMessage": "Halo, saya telah melihat demo portal dan tertarik untuk memesan unit di Unreal Studio.",
+    "banner": "DEMO · Data contoh. Beginilah Anda akan melihat properti ANDA sebagai klien Unreal.",
+    "headerBadge": "Portal klien · Demo",
+    "heroAlt": "Villa Deseo",
+    "status": "Dalam pembangunan",
+    "villaTitle": "Villa Deseo — Demo",
+    "location": "Melasti, Uluwatu · Bali",
+    "progressLabel": "Progres pembangunan",
+    "estimatedDelivery": "Perkiraan serah terima",
+    "type": "Tipe",
+    "typeValue": "Villa · 2 kamar tidur",
+    "liveTitle": "Pembangunan langsung",
+    "liveSubtitle": "Foto asli bertanggal dari pembangunan Anda. Transparansi penuh, tanpa kejutan.",
+    "updates": {
+      "u1": {
+        "title": "Pondasi selesai",
+        "note": "Struktur pondasi dan pematokan telah selesai. Pekerjaan dimulai tepat waktu."
+      },
+      "u2": {
+        "title": "Struktur lantai dasar",
+        "note": "Kolom dan pelat lantai dasar telah berdiri."
+      },
+      "u3": {
+        "title": "Struktur lantai satu",
+        "note": "Dinding lantai satu sedang dikerjakan. Progres sesuai jadwal."
+      }
+    },
+    "paymentsTitle": "Jadwal pembayaran Anda",
+    "paymentsSubtitle": "Anda selalu tahu apa yang telah dibayar dan apa yang tersisa. Tanpa ketentuan tersembunyi.",
+    "paid": "Dibayar",
+    "total": "Total",
+    "payments": {
+      "p1": "Pemesanan",
+      "p2": "Penandatanganan kontrak (25%)",
+      "p3": "Mulai pembangunan (25%)",
+      "p4": "Struktur selesai (25%)",
+      "p5": "Serah terima (20%)"
+    },
+    "due": "Jatuh tempo {{date}}",
+    "received": "Diterima",
+    "pending": "Tertunda",
+    "receiptsTitle": "Kuitansi instan",
+    "receiptsSubtitle": "Setiap pembayaran menghasilkan kuitansi resmi (kwitansi), dapat diunduh seketika.",
+    "receiptName": "Kuitansi DEMO-02 · Penandatanganan kontrak",
+    "ctaTitle": "Inilah yang akan Anda lihat sebagai pemilik.",
+    "ctaText": "Pembangunan langsung, pembayaran yang jelas, dan kuitansi seketika. Perusahaan nyata di balik setiap villa.",
+    "ctaButton": "Pesan unit saya",
+    "allProjects": "Lihat semua proyek",
+    "footer": "Demo dengan data contoh · Unreal Studio",
+    "close": "Tutup"
   }
 }

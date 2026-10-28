@@ -11,13 +11,14 @@ import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { projectPath } from '../lib/projectUrl';
 import { translateStatus } from '../lib/statusI18n';
+import { localizeFields, blogTagLabel } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
 
 const Home: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   usePageMeta({ title: t('home.title'), description: t('home.metaDescription'), image: '/img/og-image.webp' });
   // SWR: hydrate from localStorage cache so the first paint already has the
   // featured project + grid + blog teasers. Background fetch refreshes.
@@ -749,7 +750,7 @@ const Home: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
-          {blogs.map((post) => (
+          {blogs.map((b) => localizeFields(b, ['title', 'description', 'content'], i18n.language)).map((post) => (
             <Link key={post.id} to={`/blog/${post.slug}`} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
               {/* Imagen */}
               <div className="order-1 md:order-2">
@@ -769,7 +770,7 @@ const Home: React.FC = () => {
               {/* Texto */}
               <div className="order-2 md:order-1 mt-4 md:mt-0 mb-4 md:mb-8 flex flex-col flex-grow">
                   <div className="flex justify-between items-center mb-3">
-                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{post.tag}</p>
+                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{blogTagLabel(post.tag, t)}</p>
                     <p className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">{formatDate(post.published_date)}</p>
                   </div>
                   <h4 className="text-2xl font-bold text-primary mb-4 leading-snug group-hover:text-primary/70 transition line-clamp-3">{post.title}</h4>

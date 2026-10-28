@@ -6,13 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
+import { localizeFields, blogTagLabel } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
 import DOMPurify from 'dompurify';
 
 const BlogDetail: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<BlogPost | null>(null);
+  const [rawPost, setPost] = useState<BlogPost | null>(null);
+  const post = rawPost && localizeFields(rawPost, ['title', 'description', 'content'], i18n.language);
   const [loading, setLoading] = useState(true);
 
   // Meta + Open Graph por ARTÍCULO (antes se compartía la imagen/texto de la home).
@@ -115,7 +117,7 @@ const BlogDetail: React.FC = () => {
            />
            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-20 max-w-7xl mx-auto">
-               <span className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-lg w-fit mb-6 shadow-xl">{post.tag}</span>
+               <span className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-lg w-fit mb-6 shadow-xl">{blogTagLabel(post.tag, t)}</span>
                <h1 className="text-4xl md:text-6xl lg:text-7xl text-white font-serif leading-tight max-w-5xl">{post.title}</h1>
            </div>
        </div>

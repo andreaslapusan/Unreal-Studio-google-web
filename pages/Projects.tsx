@@ -12,6 +12,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { statusBadgeClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
+import { localizedCompletion } from '../lib/projectTerms';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -24,13 +25,6 @@ const STATUS_GROUPS: Record<string, string[]> = {
   off_plan: ['off plan', 'sobre plano', 'pre-venta', 'pre venta', 'en pre-venta', 'en pre venta', 'pre-construcción', 'pre-construccion'],
   en_construccion: ['en construcción', 'en construccion', 'estructura completa', 'últimas unidades', 'ultimas unidades'],
   obra_finalizada: ['obra finalizada', 'finalizado', 'entregado', 'listo para entrar', 'terminad'],
-};
-
-const localizedCompletion = (p: Project, lang: string): string => {
-  const l = (lang || 'es').slice(0, 2);
-  if (l === 'en') return (p as any).completion_date_en || p.completion_date || '';
-  if (l === 'id') return (p as any).completion_date_id || p.completion_date || '';
-  return p.completion_date || '';
 };
 
 const Projects: React.FC = () => {

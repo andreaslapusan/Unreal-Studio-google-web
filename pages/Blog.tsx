@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
+import { localizeFields, blogTagLabel } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
 
 const ALL_TAG = '__all__'; // sentinel — preserved across language switches
 
 const Blog: React.FC = () => {
-  const { t } = useTranslation();
-  const catLabel = (tag) => { const k = { 'MERCADO':'market', 'INVERSIÓN':'investment', 'LEGAL':'legal' }[tag]; return k ? t('blog.cat.'+k, { defaultValue: tag }) : tag; };
+  const { t, i18n } = useTranslation();
+  const catLabel = (tag) => blogTagLabel(tag, t);
   usePageMeta({ title: t('blog.title'), description: t('blog.metaDescription') });
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +55,7 @@ const Blog: React.FC = () => {
   }, [blogs]);
 
   const filteredBlogs = useMemo(() => {
-    let result = [...blogs];
+    let result = blogs.map((b) => localizeFields(b, ['title', 'description', 'content'], i18n.language));
     if (selectedTag !== ALL_TAG) {
       result = result.filter(b => (b.tag || '').toUpperCase() === selectedTag);
     }
@@ -72,7 +73,7 @@ const Blog: React.FC = () => {
       return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
     });
     return result;
-  }, [blogs, selectedTag, sortOrder, searchQuery]);
+  }, [blogs, selectedTag, sortOrder, searchQuery, i18n.language]);
 
   if (loading) {
     return (

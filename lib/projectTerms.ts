@@ -8,6 +8,7 @@
 // traducir hasta que se añada aquí. Mismo comportamiento que antes para lo no mapeado.
 
 import i18n from "./i18n";
+import { uiLocale } from "./dateLocale";
 
 type Tr = { en: string; ro: string; id: string };
 
@@ -37,6 +38,15 @@ const TERMS: Record<string, Tr> = {
   'Sala de juegos': { en: 'Games room', ro: 'Sală de jocuri', id: 'Ruang permainan' },
   'Servicio de limpieza': { en: 'Cleaning service', ro: 'Serviciu de curățenie', id: 'Layanan kebersihan' },
   'Alquiler de motos': { en: 'Motorbike rental', ro: 'Închiriere scutere', id: 'Sewa motor' },
+
+  // === Vista (projects.view_type, texto libre sin columnas traducidas) ===
+  'Vistas al océano': { en: 'Ocean views', ro: 'Vedere la ocean', id: 'Pemandangan laut' },
+  'Vistas al mar y arrozales': { en: 'Sea and rice field views', ro: 'Vedere la mare și orezării', id: 'Pemandangan laut dan sawah' },
+  'Vistas a los arrozales': { en: 'Rice field views', ro: 'Vedere la orezării', id: 'Pemandangan sawah' },
+  'Vistas al jardín': { en: 'Garden views', ro: 'Vedere la grădină', id: 'Pemandangan taman' },
+  'Vistas a la piscina': { en: 'Pool views', ro: 'Vedere la piscină', id: 'Pemandangan kolam' },
+  'Complejo': { en: 'Complex', ro: 'Complex', id: 'Kompleks' },
+  'Jardín': { en: 'Garden', ro: 'Grădină', id: 'Taman' },
 
   // === Categorías de equipamiento ===
   'Baño': { en: 'Bathroom', ro: 'Baie', id: 'Kamar mandi' },
@@ -137,6 +147,7 @@ const ES_TO_KEY: Record<string, string> = {
   'Cercano a la playa': 'nearBeach', 'Cerca de la playa': 'nearBeach', 'Coworking': 'coworking',
   'Servicio de limpieza': 'cleaning', 'Terraza': 'terrace', 'Spa': 'spa', 'Almacén': 'storage',
   'Recepción': 'reception', 'Bar': 'bar', 'Cámaras de seguridad': 'cctv', 'Lavandería': 'laundry',
+  'Jacuzzi': 'jacuzzi',
 };
 
 /** Lista de amenities a claves canónicas (cuando existen), sin duplicados, orden original. */
@@ -149,7 +160,7 @@ const AMENITY_ICONS: Record<string, string> = {
   gym: 'fitness_center', kitchen: 'kitchen', ac: 'ac_unit', wifi: 'wifi', rooftop: 'deck',
   oceanView: 'water', nearBeach: 'beach_access', coworking: 'desktop_windows', cleaning: 'cleaning_services',
   terrace: 'deck', spa: 'spa', storage: 'warehouse', reception: 'concierge', bar: 'local_bar',
-  cctv: 'videocam', laundry: 'local_laundry_service',
+  cctv: 'videocam', laundry: 'local_laundry_service', jacuzzi: 'hot_tub',
   'Ventilador': 'mode_fan_off', 'Zona barbacoa': 'outdoor_grill', 'Sala de juegos': 'sports_esports',
   'Alquiler de motos': 'two_wheeler',
 };
@@ -169,4 +180,49 @@ export function amenityLabel(term: string, lang: string | undefined): string {
     return capitalize(term.replace(/_/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase());
   }
   return capitalize(translateProjectTerm(term, lang));
+}
+
+/** Campo de proyecto en el idioma dado: `<campo>_<lang>` (auto-traducido por translate-project) o el original. */
+export function localizedField(p: any, base: string, lang: string | undefined): string {
+  const l = (lang || 'es').slice(0, 2).toLowerCase();
+  return (l !== 'es' && p?.[`${base}_${l}`]) || p?.[base] || '';
+}
+
+const ES_MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+/** "Diciembre 2027" (texto libre en español) → "December 2027" / "Decembrie 2027"…; otros formatos, tal cual. */
+export function localizeMonthYear(s: string, lang: string | undefined): string {
+  const m = /^([a-záéíóú]+)\s+(?:de\s+)?(\d{4})$/i.exec((s || '').trim());
+  const i = m ? ES_MONTHS.indexOf(m[1].toLowerCase().replace('setiembre', 'septiembre')) : -1;
+  if (!m || i < 0 || (lang || 'es').startsWith('es')) return s;
+  return capitalize(new Date(Date.UTC(+m[2], i, 15)).toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric', timeZone: 'UTC' }));
+}
+
+/** Fecha de entrega en el idioma dado (columna traducida si existe; si no, traduce "Mes AAAA"). */
+export function localizedCompletion(p: any, lang: string | undefined): string {
+  return localizeMonthYear(localizedField(p, 'completion_date', lang), lang);
+}
+
+// projects.property_type se guarda en inglés (Villa/Loft/Apartment…).
+const PROPERTY_TYPES: Record<string, Record<string, string>> = {
+  Apartment: { es: 'Apartamento', en: 'Apartment', ro: 'Apartament', id: 'Apartemen' },
+  Villa: { es: 'Villa', en: 'Villa', ro: 'Vilă', id: 'Vila' },
+  Loft: { es: 'Loft', en: 'Loft', ro: 'Loft', id: 'Loft' },
+  Studio: { es: 'Estudio', en: 'Studio', ro: 'Garsonieră', id: 'Studio' },
+  Townhouse: { es: 'Adosado', en: 'Townhouse', ro: 'Casă înșiruită', id: 'Rumah deret' },
+  Land: { es: 'Terreno', en: 'Land', ro: 'Teren', id: 'Tanah' },
+};
+export function propertyTypeLabel(v: string, lang: string | undefined): string {
+  return PROPERTY_TYPES[v]?.[(lang || 'es').slice(0, 2)] || v;
+}
+
+/** Copia del registro con `fields` en el idioma dado (columnas <campo>_<lang>; blogs, proyectos…). */
+export function localizeFields<T extends Record<string, any>>(row: T, fields: string[], lang: string | undefined): T {
+  return { ...row, ...Object.fromEntries(fields.map((f) => [f, localizedField(row, f, lang)])) };
+}
+
+/** Etiqueta de categoría del blog (blogs.tag se guarda en español en mayúsculas). */
+export function blogTagLabel(tag: string | undefined, t: (k: string, o?: any) => string): string {
+  const k = ({ MERCADO: 'market', 'INVERSIÓN': 'investment', LEGAL: 'legal' } as Record<string, string>)[(tag || '').toUpperCase()];
+  return k ? t('blog.cat.' + k, { defaultValue: tag }) : tag || '';
 }

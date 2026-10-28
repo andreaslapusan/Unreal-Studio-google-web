@@ -12,6 +12,7 @@ import DOMPurify from 'dompurify';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { localizeConcept } from '../lib/kwitansi';
 
 interface Kwitansi {
   id: string; no_seq: number; for_payment: string; amount: number;
@@ -24,7 +25,7 @@ const fmt = (n: number, c: string) => {
 };
 
 const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }> = ({ embedded }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [rows, setRows] = useState<Kwitansi[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +55,7 @@ const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }>
           <div key={k.id} className="bg-white rounded-2xl p-4 border border-primary/5 shadow-sm flex items-center gap-4">
             <span className="material-symbols-outlined text-primary text-2xl">receipt_long</span>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm text-primary truncate">{k.for_payment}</p>
+              <p className="font-semibold text-sm text-primary truncate">{localizeConcept(k.for_payment, i18n.language)}</p>
               <p className="text-[11px] text-primary/50">{new Date(dateOnly(k.kwitansi_date)).toLocaleDateString(uiLocale())} · {fmt(Number(k.amount), k.currency)}</p>
             </div>
             <button onClick={() => view(k)} className="shrink-0 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg hover:bg-black transition flex items-center gap-1">

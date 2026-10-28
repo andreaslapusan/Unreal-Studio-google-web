@@ -15,7 +15,7 @@ import { dateOnly, baliToday } from '../lib/timezone';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
-import { renderKwitansiHtml } from '../lib/kwitansi';
+import { renderKwitansiHtml, localizeConcept } from '../lib/kwitansi';
 
 interface Payment {
   id: string; label: string; amount: number; currency: string;
@@ -218,7 +218,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                   return (
                     <div key={p.id} className={`rounded-xl p-3.5 border ${p.received ? 'bg-green-50 border-green-200' : overdue ? 'bg-red-50 border-red-200' : 'bg-white border-primary/10'}`}>
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="font-bold text-primary text-sm min-w-0">{p.label}</div>
+                        <div className="font-bold text-primary text-sm min-w-0">{localizeConcept(p.label, i18n.language)}</div>
                         <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full shrink-0 ${p.received ? 'bg-green-100 text-green-700' : overdue ? 'bg-red-100 text-red-600' : 'bg-almond text-primary/50'}`}>
                           <span className="material-symbols-outlined text-sm">{p.received ? 'check_circle' : overdue ? 'warning' : 'schedule'}</span>
                           {p.received ? t('fix.pay.statusReceived') : overdue ? t('fix.pay.statusOverdue') : t('fix.pay.statusPending')}
@@ -296,7 +296,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                       const claimed = claimedIds.has(p.id);
                       return (
                         <tr key={p.id} className="border-t border-primary/5">
-                          <td className="px-4 py-3 font-medium text-primary">{p.label}</td>
+                          <td className="px-4 py-3 font-medium text-primary">{localizeConcept(p.label, i18n.language)}</td>
                           <td className="px-4 py-3 text-primary/70 whitespace-nowrap">{fmtDate(p.due_date)}</td>
                           <td className="px-4 py-3 text-right font-bold text-primary whitespace-nowrap">{fmt(Number(p.amount), p.currency)}</td>
                           <td className="px-4 py-3 text-right text-green-700 whitespace-nowrap">{received > 0 ? fmt(received, p.currency) : '—'}</td>
@@ -392,7 +392,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
                         <div className="flex items-center gap-3 min-w-0">
                           <span className={`material-symbols-outlined text-lg ${iconColor}`}>{icon}</span>
                           <div className="min-w-0">
-                            <div className="font-medium truncate text-primary">{p.label}</div>
+                            <div className="font-medium truncate text-primary">{localizeConcept(p.label, i18n.language)}</div>
                             <div className="text-xs text-primary/60">{p.received && p.paid_at ? t('fix.pay.receivedOn', { date: fmtDate(p.paid_at) }) : p.due_date ? t('fix.pay.dueDateLabel', { date: fmtDate(p.due_date) }) : ''}</div>
                           </div>
                         </div>

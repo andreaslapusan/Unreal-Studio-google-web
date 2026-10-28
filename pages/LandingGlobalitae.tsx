@@ -7,7 +7,7 @@ import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { translateStatus } from '../lib/statusI18n';
 import { imgFallback } from '../lib/imageOptimize';
-import { amenityLabel, amenityIcon, normalizeAmenities } from '../lib/projectTerms';
+import { amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion } from '../lib/projectTerms';
 
 const LandingGlobalitae: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -290,7 +290,7 @@ const LandingGlobalitae: React.FC = () => {
                 {project.name}
               </h3>
               <div className="prose prose-lg prose-p:text-primary/70 prose-p:font-light prose-p:leading-relaxed max-w-none">
-                {project.description?.split('\n').map((paragraph, idx) => (
+                {localizedField(project, 'description', i18n.language).split('\n').map((paragraph, idx) => (
                   <p key={idx} className="mb-6">{paragraph}</p>
                 ))}
               </div>
@@ -308,7 +308,7 @@ const LandingGlobalitae: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.beachDistance')}</p>
-                  <p className="text-xl font-bold">{project.distance_beach || t('fix.lg.consult')}</p>
+                  <p className="text-xl font-bold">{localizedField(project, 'distance_beach', i18n.language) || t('fix.lg.consult')}</p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.contract')}</p>
@@ -343,7 +343,7 @@ const LandingGlobalitae: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.furnishing')}</p>
-                  <p className="text-xl font-bold">{project.furnishing || t('fix.lg.consult')}</p>
+                  <p className="text-xl font-bold">{localizedField(project, 'furnishing', i18n.language) || t('fix.lg.consult')}</p>
                 </div>
               </div>
             </div>
@@ -369,7 +369,7 @@ const LandingGlobalitae: React.FC = () => {
                   </li>
                   <li className="flex justify-between items-center">
                     <span className="text-sm text-primary/60">{t('fix.lg.furnishing')}</span>
-                    <span className="font-bold">{project.furnishing}</span>
+                    <span className="font-bold">{localizedField(project, 'furnishing', i18n.language)}</span>
                   </li>
                   <li className="flex justify-between items-center">
                     <span className="text-sm text-primary/60">{t('fix.lg.pool')}</span>
@@ -377,7 +377,7 @@ const LandingGlobalitae: React.FC = () => {
                   </li>
                   <li className="flex justify-between items-center">
                     <span className="text-sm text-primary/60">{t('fix.lg.completion')}</span>
-                    <span className="font-bold">{formatDate(project.completion_date)}</span>
+                    <span className="font-bold">{formatDate(localizedCompletion(project, i18n.language))}</span>
                   </li>
                   <li className="flex justify-between items-center">
                     <span className="text-sm text-primary/60">{t('fix.lg.constructionProgress')}</span>
