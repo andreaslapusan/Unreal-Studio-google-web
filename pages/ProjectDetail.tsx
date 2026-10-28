@@ -13,6 +13,7 @@ import { imgSrc, imgSrcSet, thumbSrc, imgFallback } from '../lib/imageOptimize';
 import RolePricingBadge from '../components/RolePricingBadge';
 import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import LazyMap from '../components/LazyMap';
+import ConstructionReportButton from '../components/ConstructionReportButton';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
 import { fmtThousands } from '../lib/numberFormat';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
@@ -599,7 +600,7 @@ const ProjectDetail: React.FC = () => {
           </section>
 
           {/* Botones de Descarga en Columna Principal - MOVIDO AQUÍ PARA MAYOR VISIBILIDAD */}
-          {(brochureFor(project, i18n.language) || (project.floor_plans && project.floor_plans.length > 0) || (project as any).walkthrough_url) && (
+          {(
             <section className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm">
                 <h3 className="text-2xl font-serif text-primary mb-6">{t('projectDetail.docsTitle')}</h3>
                 <div className="flex flex-wrap gap-4">
@@ -615,9 +616,8 @@ const ProjectDetail: React.FC = () => {
                       {t('projectDetail.videoTourBtn')}
                     </a>
                   )}
-                  {/* Reporte de obra: NO se expone en la página pública (es privado y
-                      específico de cada cliente). Se ve solo en el portal /cliente,
-                      gateado por las propiedades que el cliente tiene asignadas. */}
+                  {/* Reporte de obra: privado → el botón solo abre acceso al portal o petición por email. */}
+                  <ConstructionReportButton projectName={project.name} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-almond text-primary border border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-primary hover:text-white transition" />
                 </div>
                 
                 {project.floor_plans && project.floor_plans.length > 0 && (

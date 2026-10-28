@@ -277,7 +277,14 @@
     "extensionLineNoTotal": "Extensie {{years}} ani",
     "extYears": "+{{years}} ani",
     "extTotal": "Total {{total}} ani",
-    "roiDisclaimer": "Randamente estimate și aproximative; nu constituie o garanție de performanță."
+    "roiDisclaimer": "Randamente estimate și aproximative; nu constituie o garanție de performanță.",
+    "reportBtn": "Ultimul raport de șantier",
+    "reportModalTitle": "Raport de șantier",
+    "reportModalText": "Rapoartele de șantier sunt private pentru investitorii noștri. Autentifică-te în portalul clienților sau solicită acces echipei noastre.",
+    "reportLogin": "Autentificare în portalul clienților",
+    "reportRequest": "Solicită acces echipei Unreal Studio",
+    "reportMailSubject": "Solicitare raport de șantier – {{project}}",
+    "reportMailBody": "Bună ziua, echipa Unreal Studio,\n\nSunt interesat/ă de proiectul {{project}} și aș dori să văd ultimul raport de șantier.\n\nMulțumesc,\n"
   },
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",

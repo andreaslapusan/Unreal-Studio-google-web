@@ -277,7 +277,14 @@
     "extensionLineNoTotal": "{{years}}-year extension",
     "extYears": "+{{years}} years",
     "extTotal": "{{total}} years total",
-    "roiDisclaimer": "Estimated, approximate returns; not a guarantee of performance."
+    "roiDisclaimer": "Estimated, approximate returns; not a guarantee of performance.",
+    "reportBtn": "Latest construction report",
+    "reportModalTitle": "Construction report",
+    "reportModalText": "Construction reports are private to our investors. Log in to the client portal or request access from our team.",
+    "reportLogin": "Log in to the client portal",
+    "reportRequest": "Request access from the Unreal Studio team",
+    "reportMailSubject": "Construction report request – {{project}}",
+    "reportMailBody": "Hello Unreal Studio team,\n\nI am interested in the {{project}} project and would like to see the latest construction report.\n\nThank you,\n"
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",

@@ -277,7 +277,14 @@
     "extensionLineNoTotal": "Perpanjangan {{years}} tahun",
     "extYears": "+{{years}} tahun",
     "extTotal": "Total {{total}} tahun",
-    "roiDisclaimer": "Imbal hasil perkiraan dan bersifat estimasi; bukan jaminan kinerja."
+    "roiDisclaimer": "Imbal hasil perkiraan dan bersifat estimasi; bukan jaminan kinerja.",
+    "reportBtn": "Laporan konstruksi terbaru",
+    "reportModalTitle": "Laporan konstruksi",
+    "reportModalText": "Laporan konstruksi bersifat pribadi untuk investor kami. Masuk ke portal klien atau minta akses ke tim kami.",
+    "reportLogin": "Masuk ke portal klien",
+    "reportRequest": "Minta akses ke tim Unreal Studio",
+    "reportMailSubject": "Permintaan laporan konstruksi – {{project}}",
+    "reportMailBody": "Halo tim Unreal Studio,\n\nSaya tertarik dengan proyek {{project}} dan ingin melihat laporan konstruksi terbaru.\n\nTerima kasih,\n"
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",

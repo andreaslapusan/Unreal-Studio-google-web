@@ -277,7 +277,14 @@
     "extensionLineNoTotal": "Extensión {{years}} años",
     "extYears": "+{{years}} años",
     "extTotal": "Total {{total}} años",
-    "roiDisclaimer": "Rentabilidades estimadas y aproximadas; no constituyen una garantía de rendimiento."
+    "roiDisclaimer": "Rentabilidades estimadas y aproximadas; no constituyen una garantía de rendimiento.",
+    "reportBtn": "Último reporte de obra",
+    "reportModalTitle": "Reporte de obra",
+    "reportModalText": "Los reportes de obra son privados para nuestros inversores. Inicia sesión en el portal de clientes o solicita acceso a nuestro equipo.",
+    "reportLogin": "Iniciar sesión en el portal de clientes",
+    "reportRequest": "Solicitar acceso al equipo de Unreal Studio",
+    "reportMailSubject": "Solicitud de reporte de obra – {{project}}",
+    "reportMailBody": "Hola equipo de Unreal Studio,\n\nEstoy interesado/a en el proyecto {{project}} y me gustaría ver el último reporte de obra.\n\nGracias,\n"
   },
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",
