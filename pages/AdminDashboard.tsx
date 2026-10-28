@@ -1,3 +1,4 @@
+import { propertyTypeKey } from '../lib/projectTerms';
 import NumberInput from "../components/NumberInput";
 import PhotoManager from "../components/PhotoManager";
 import ListControls, { useListControls } from "../components/ListControls";
@@ -154,6 +155,8 @@ const GUIDE_STEPS = [
   { titleKey: 'admin.dash.guide4Title', textKey: 'admin.dash.guide4Text' },
   { titleKey: 'admin.dash.guide5Title', textKey: 'admin.dash.guide5Text' }
 ];
+
+const PROP_SECTIONS = ['admin.props.secBasics', 'admin.props.secMedia', 'admin.props.secSpecs', 'admin.props.secCommercial', 'admin.props.secUnits', 'admin.props.secConstruction', 'admin.props.secVisibility', 'admin.dash.agencyLegalExtra', 'admin.dash.packTranslations'];
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -582,6 +585,8 @@ const AMENITIES_LIST = [
 
   const [walkthroughStep, setWalkthroughStep] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [propSec, setPropSec] = useState(0);
+  useEffect(() => { if (isEditing) setPropSec(0); }, [isEditing]);
   const [isEditingBlog, setIsEditingBlog] = useState(false);
   const [isEditingUser, setIsEditingUser] = useState(false);
   useEscapeKey(() => setIsEditingBlog(false), isEditingBlog);
@@ -2825,14 +2830,21 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       {isEditing && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 overscroll-contain" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
           {/* sin backdrop-blur en este overlay: con 20-30 fotos en el panel con scroll, Chrome/Mac dejaba franjas en blanco (GPU) y el scroll iba a tirones */}
-          <div className="bg-white w-full max-w-6xl max-h-[92vh] shadow-2xl px-6 pt-6 md:px-12 md:pt-10 overflow-y-auto overscroll-contain rounded-3xl">
-            <div className="flex justify-between items-center mb-8 pb-4 border-b">
-              <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}</h2>
-              <button onClick={() => setIsEditing(false)} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
+          <div className="bg-white w-full max-w-[96vw] h-[92vh] shadow-2xl rounded-3xl flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center px-6 md:px-10 py-5 border-b shrink-0">
+              <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}{currentProject.name ? <span className="text-primary/40 text-lg"> · {currentProject.name}</span> : null}</h2>
+              <button type="button" onClick={() => setIsEditing(false)} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
-            <form onSubmit={handleSaveProject} className="space-y-3">
+            <div className="flex flex-1 min-h-0">
+            {/* Menú fijo de secciones (Andreas 28-oct): se pincha una y a la derecha se ve solo esa. */}
+            <nav className="w-56 shrink-0 border-r border-gray-100 p-4 space-y-1 overflow-y-auto bg-gray-50/60">
+              {PROP_SECTIONS.map((k, i) => (
+                <button key={k} type="button" onClick={() => setPropSec(i)} className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition ${propSec === i ? 'bg-primary text-white' : 'text-primary/70 hover:bg-almond hover:text-primary'}`}>{t(k)}</button>
+              ))}
+            </nav>
+            <form onSubmit={handleSaveProject} className="flex-1 min-w-0 overflow-y-auto overscroll-contain px-6 md:px-10 pt-6 space-y-3 flex flex-col">
                {/* ===== A. BÁSICOS ===== */}
-               <details name="propedit" open className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 0 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secBasics')}</span>
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
@@ -2841,7 +2853,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.name')}</label><input required value={currentProject.name || ''} onChange={(e) => setCurrentProject({...currentProject, name: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.location')}</label><input type="text" list="admin-zones-list" value={currentProject.location || ''} onChange={(e) => setCurrentProject({...currentProject, location: e.target.value})} placeholder={t('admin.props.locationPh', { defaultValue: 'Escribe la ubicación…' })} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /><datalist id="admin-zones-list">{config.customZones.map(z => <option key={z} value={z} />)}</datalist></div>
-                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.type', 'Tipo')}</label><select value={currentProject.property_type || ''} onChange={(e) => setCurrentProject({...currentProject, property_type: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{config.customTypes.map(ty => <option key={ty} value={ty}>{ty}</option>)}</select></div>
+                    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.type', 'Tipo')}</label><select value={config.customTypes.find(ty => propertyTypeKey(ty) === propertyTypeKey(currentProject.property_type)) || currentProject.property_type || ''} onChange={(e) => setCurrentProject({...currentProject, property_type: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">{[...config.customTypes, ...(currentProject.property_type && !config.customTypes.some(ty => propertyTypeKey(ty) === propertyTypeKey(currentProject.property_type)) ? [currentProject.property_type] : [])].map(ty => <option key={ty} value={ty}>{ty}</option>)}</select></div>
                     <div>
                       <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.status')}</label>
                       <select value={currentProject.status || config.customStatuses[0] || ''} onChange={(e) => setCurrentProject({...currentProject, status: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">
@@ -2909,7 +2921,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== B. MULTIMEDIA ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 1 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secMedia')}</span>
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
@@ -3023,7 +3035,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== C. ESPECIFICACIONES ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 2 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secSpecs')}</span>
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
@@ -3125,7 +3137,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== D. COMERCIAL ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 3 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secCommercial')}</span>
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
@@ -3198,7 +3210,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== D2. PLANO / UNIDADES ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 4 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secUnits', { defaultValue: 'Plano / Unidades' })}</span>
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
@@ -3209,7 +3221,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== E. OBRA Y DOCUMENTOS ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 5 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secConstruction')}</span>
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
@@ -3256,7 +3268,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
                {/* ===== F. VISIBILIDAD ===== */}
-               <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+               <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 6 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
                   <span className="text-lg font-serif text-primary">{t('admin.props.secVisibility')}</span>
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
@@ -3285,7 +3297,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                </details>
 
               {/* Ficha extendida: datos de agencia / legal / drive / vídeo (los usan los packs de agencia). */}
-              <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+              <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 7 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.agencyLegalExtra')}</span><span className="block text-xs text-gray-400">{t('admin.dash.agencyLegalHint')}</span></span><span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
                 <div className="px-4 pb-4 pt-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -3320,7 +3332,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
               </details>
               {/* Traducciones (EN/ID) de los campos que aparecen en los packs de agencia. */}
-              <details name="propedit" className="group rounded-2xl bg-gray-50 border border-gray-100">
+              <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 8 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none"><span><span className="text-lg font-serif text-primary">{t('admin.dash.packTranslations')}</span><span className="block text-xs text-gray-400">{t('admin.dash.packTranslationsHint')}</span></span><span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180 shrink-0">expand_more</span></summary>
                 <div className="px-4 pb-4 pt-1 space-y-3">
                   {([
@@ -3340,7 +3352,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
               </details>
 
-              <div className="flex gap-3 sticky bottom-0 z-10 bg-white -mx-6 md:-mx-12 px-6 md:px-12 pt-4 pb-6 md:pb-8 border-t border-gray-100 shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.08)]">
+              <div className="flex gap-3 sticky bottom-0 z-10 bg-white -mx-6 md:-mx-10 px-6 md:px-10 pt-4 pb-6 mt-auto border-t border-gray-100 shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.08)]">
                 <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg hover:bg-black disabled:opacity-60 inline-flex items-center justify-center gap-2">
                   {uploading && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {uploading ? t('admin.common.saving') : t('admin.adminDash.saveProperty')}
@@ -3348,6 +3360,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <button type="button" onClick={() => setIsEditing(false)} className="px-6 bg-gray-100 text-gray-500 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-gray-200">{t('admin.common.cancel')}</button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}
