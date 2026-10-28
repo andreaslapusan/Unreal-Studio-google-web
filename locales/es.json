@@ -275,6 +275,8 @@
     "labelExtensions": "Extensiones",
     "extensionLine": "Extensión {{years}} años (total {{total}} años)",
     "extensionLineNoTotal": "Extensión {{years}} años",
+    "extYears": "+{{years}} años",
+    "extTotal": "Total {{total}} años",
     "roiDisclaimer": "Rentabilidades estimadas y aproximadas; no constituyen una garantía de rendimiento."
   },
   "faq": {

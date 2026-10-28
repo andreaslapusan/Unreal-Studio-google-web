@@ -62,23 +62,21 @@ const ProjectDetail: React.FC = () => {
     const sym = CUR_SYM[c] || c;
     return `${fmtThousands(String(amount))} ${sym}`.trim();
   };
-  // Extensiones del leasehold, una por línea: "Extensión 5 años (total 25 años) · 7.500 €".
+  // Extensiones del leasehold como filas de tabla: +5 años · Total 25 años · 7.500 €.
   // Array `extensions` [{years, price}] (precio en la divisa del proyecto); respaldo al campo
   // único `years_extension` (+ extension_cost_usd si > 0). Sin extensión → [] (card oculta).
-  const extensionLines = (): string[] => {
+  const extensionRows = (): { years: string; total: string; price: string }[] => {
     const p = project as any;
     if (!p) return [];
     const base = Number(p.years_contract) || 0;
-    const line = (years: any, price: string | null) => {
-      const total = base && Number(years) ? base + Number(years) : null;
-      const txt = total
-        ? t('projectDetail.extensionLine', { years, total })
-        : t('projectDetail.extensionLineNoTotal', { years });
-      return price ? `${txt} · ${price}` : txt;
-    };
+    const row = (years: any, price: string | null) => ({
+      years: t('projectDetail.extYears', { years }),
+      total: base && Number(years) ? t('projectDetail.extTotal', { total: base + Number(years) }) : '',
+      price: price || '',
+    });
     const exts = Array.isArray(p.extensions) ? p.extensions.filter((e: any) => e && e.years != null) : [];
-    if (exts.length) return exts.map((e: any) => line(e.years, e.price != null && Number(e.price) > 0 ? fmtMoney(e.price, p.price_currency) : null));
-    if (p.years_extension) return [line(p.years_extension, Number(p.extension_cost_usd) > 0 ? fmtMoney(p.extension_cost_usd, 'USD') : null)];
+    if (exts.length) return exts.map((e: any) => row(e.years, e.price != null && Number(e.price) > 0 ? fmtMoney(e.price, p.price_currency) : null));
+    if (p.years_extension) return [row(p.years_extension, Number(p.extension_cost_usd) > 0 ? fmtMoney(p.extension_cost_usd, 'USD') : null)];
     return [];
   };
   const { slug } = useParams<{ slug: string }>();
@@ -524,7 +522,17 @@ const ProjectDetail: React.FC = () => {
               const specs = [
                 project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: localizedField(project, 'distance_beach', i18n.language) },
                 project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}` },
-                project.tenure !== 'Freehold' && extensionLines().length > 0 && { icon: 'update', label: t('projectDetail.labelExtensions'), value: <>{extensionLines().map((l, i) => <span key={i} className="block">{l}</span>)}</> },
+                project.tenure !== 'Freehold' && extensionRows().length > 0 && { icon: 'update', label: t('projectDetail.labelExtensions'), value: (
+                  <table className="w-full mt-1 text-sm"><tbody>
+                    {extensionRows().map((r, i) => (
+                      <tr key={i} className="border-t first:border-t-0 border-primary/10">
+                        <td className="py-1 pr-3 whitespace-nowrap">{r.years}</td>
+                        <td className="py-1 pr-3 whitespace-nowrap font-normal text-primary/60">{r.total}</td>
+                        <td className="py-1 text-right whitespace-nowrap">{r.price}</td>
+                      </tr>
+                    ))}
+                  </tbody></table>
+                ) },
                 (project.completion_percent > 0) && { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) },
               ].filter(Boolean) as { icon: string; label: string; value: React.ReactNode }[];
               return specs.length > 0 ? (
@@ -534,7 +542,7 @@ const ProjectDetail: React.FC = () => {
                       <div className="bg-almond p-3 rounded-xl"><span className="material-symbols-outlined text-primary">{item.icon}</span></div>
                       <div>
                         <p className="text-[9px] uppercase font-black text-gray-400 tracking-widest">{item.label}</p>
-                        <p className="font-bold text-primary text-sm">{item.value}</p>
+                        <div className="font-bold text-primary text-sm">{item.value}</div>
                       </div>
                     </div>
                   ))}
@@ -568,7 +576,7 @@ const ProjectDetail: React.FC = () => {
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">chair</span>
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelFurnishing')}</p>
-                  <p className="text-sm md:text-lg leading-tight font-bold text-primary [overflow-wrap:anywhere]">{fmtFurnishing(project.furnishing)}</p>
+                  <p className="text-sm md:text-base leading-tight font-bold text-primary hyphens-auto">{fmtFurnishing(project.furnishing)}</p>
                 </div>
               )}
               {Number((project as any).land_size_m2 || (project as any).land_area_m2) > 0 && (
@@ -827,32 +835,6 @@ const ProjectDetail: React.FC = () => {
             </section>
           )}
 
-          <section>
-            <h3 className="text-3xl text-primary mb-8 text-left">{t('projectDetail.galleryTitle')}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {allImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setLightbox({ open: true, index: idx })}
-                  style={{ contentVisibility: 'auto', containIntrinsicSize: '320px' } as React.CSSProperties}
-                  className={`relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${idx === 0 ? 'md:col-span-2 md:row-span-2 aspect-video' : 'aspect-square'}`}
-                >
-                  <img
-                    loading="lazy"
-                    decoding="async"
-                    alt={t('fix.pd.galleryImageAlt', { name: project.name, n: idx + 1 })}
-                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
-                    src={thumbSrc(img, idx === 0 ? 1200 : 800)}
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    onError={imgFallback(img)}
-                  />
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
 
           {/* Timeline/hitos del proyecto OCULTOS en la web pública (decisión de
               Andreas: las fechas de entrega podían dar a entender compromisos que
@@ -944,6 +926,33 @@ const ProjectDetail: React.FC = () => {
             </div>
           </div>
         </div>
+        {/* Galería a todo el ancho (4 columnas) para no dejar hueco a la derecha. */}
+        <section className="lg:col-span-12">
+          <h3 className="text-3xl text-primary mb-8 text-left">{t('projectDetail.galleryTitle')}</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-dense gap-4">
+            {allImages.map((img, idx) => (
+              <div
+                key={idx}
+                onClick={() => setLightbox({ open: true, index: idx })}
+                style={{ contentVisibility: 'auto', containIntrinsicSize: '320px' } as React.CSSProperties}
+                className={`relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${idx === 0 ? 'col-span-2 row-span-2 aspect-video md:aspect-auto' : 'aspect-square'}`}
+              >
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  alt={t('fix.pd.galleryImageAlt', { name: project.name, n: idx + 1 })}
+                  className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                  src={thumbSrc(img, idx === 0 ? 1200 : 800)}
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  onError={imgFallback(img)}
+                />
+                <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                  <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
 
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-20 border-t border-primary/10">

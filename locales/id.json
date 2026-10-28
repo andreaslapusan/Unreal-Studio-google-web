@@ -275,6 +275,8 @@
     "labelExtensions": "Perpanjangan",
     "extensionLine": "Perpanjangan {{years}} tahun (total {{total}} tahun)",
     "extensionLineNoTotal": "Perpanjangan {{years}} tahun",
+    "extYears": "+{{years}} tahun",
+    "extTotal": "Total {{total}} tahun",
     "roiDisclaimer": "Imbal hasil perkiraan dan bersifat estimasi; bukan jaminan kinerja."
   },
   "faq": {

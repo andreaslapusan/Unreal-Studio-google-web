@@ -275,6 +275,8 @@
     "labelExtensions": "Extensii",
     "extensionLine": "Extensie {{years}} ani (total {{total}} ani)",
     "extensionLineNoTotal": "Extensie {{years}} ani",
+    "extYears": "+{{years}} ani",
+    "extTotal": "Total {{total}} ani",
     "roiDisclaimer": "Randamente estimate și aproximative; nu constituie o garanție de performanță."
   },
   "faq": {
