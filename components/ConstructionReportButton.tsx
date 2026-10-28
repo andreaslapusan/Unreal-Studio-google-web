@@ -28,7 +28,7 @@ const ConstructionReportButton: React.FC<{ projectName: string; className?: stri
               <Link to={portalPath('cliente')} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-4 rounded-2xl font-bold hover:brightness-110 transition">
                 <span className="material-symbols-outlined">login</span>{t('projectDetail.reportLogin')}
               </Link>
-              <a href={mailto} className="flex items-center justify-center gap-2 bg-almond text-primary border border-primary/10 px-6 py-4 rounded-2xl font-bold hover:bg-primary hover:text-white transition">
+              <a href={mailto} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-4 rounded-2xl font-bold hover:brightness-110 transition">
                 <span className="material-symbols-outlined">mail</span>{t('projectDetail.reportRequest')}
               </a>
             </div>

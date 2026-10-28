@@ -611,13 +611,13 @@ const ProjectDetail: React.FC = () => {
                     </a>
                   )}
                   {((project as any).video_url || (project as any).walkthrough_url) && (
-                    <a href={(project as any).video_url || (project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-almond text-primary border border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-primary hover:text-white transition">
+                    <a href={(project as any).video_url || (project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition">
                       <span className="material-symbols-outlined">smart_display</span>
                       {t('projectDetail.videoTourBtn')}
                     </a>
                   )}
                   {/* Reporte de obra: privado → el botón solo abre acceso al portal o petición por email. */}
-                  <ConstructionReportButton projectName={project.name} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-almond text-primary border border-primary/10 px-6 py-5 rounded-2xl font-bold shadow-sm hover:bg-primary hover:text-white transition" />
+                  <ConstructionReportButton projectName={project.name} className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 py-5 rounded-2xl font-bold shadow-xl hover:brightness-110 hover:scale-[1.02] transition" />
                 </div>
                 
                 {project.floor_plans && project.floor_plans.length > 0 && (
@@ -625,15 +625,15 @@ const ProjectDetail: React.FC = () => {
                     <h4 className="text-lg font-serif text-primary mb-4">{t('projectDetail.plansTitle')}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {project.floor_plans.map((pdf, idx) => (
-                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:bg-gray-100 transition group">
-                          <div className="bg-red-100 text-red-500 p-2 rounded-xl group-hover:scale-110 transition">
+                        <a key={idx} href={getImageUrl(pdf)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-primary p-4 rounded-2xl hover:brightness-110 transition group">
+                          <div className="bg-white/10 text-white p-2 rounded-xl group-hover:scale-110 transition">
                             <span className="material-symbols-outlined">picture_as_pdf</span>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <p className="text-sm font-bold text-primary truncate">{floorPlanLabel(pdf, idx, t)}</p>
-                            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">{t('projectDetail.viewPdf')}</p>
+                            <p className="text-sm font-bold text-white truncate">{floorPlanLabel(pdf, idx, t)}</p>
+                            <p className="text-[10px] font-black uppercase text-white/60 tracking-widest mt-1">{t('projectDetail.viewPdf')}</p>
                           </div>
-                          <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition">open_in_new</span>
+                          <span className="material-symbols-outlined text-white/60 group-hover:text-white transition">open_in_new</span>
                         </a>
                       ))}
                     </div>
@@ -901,11 +901,11 @@ const ProjectDetail: React.FC = () => {
                 {(
                   <div className="pt-6 border-t border-gray-100 space-y-3">
                     {brochureFor(project, i18n.language) && (
-                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
+                      <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-primary hover:brightness-110 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
                         <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}
-                    <ConstructionReportButton projectName={project.name} className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full [&>span]:text-sm" />
+                    <ConstructionReportButton projectName={project.name} className="flex items-center justify-center gap-2 bg-primary hover:brightness-110 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full [&>span]:text-sm" />
                   </div>
                 )}
               </div>
