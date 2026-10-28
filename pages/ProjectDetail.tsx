@@ -96,12 +96,6 @@ const ProjectDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ open: boolean, index: number }>({ open: false, index: 0 });
 
-  const [showClientLogin, setShowClientLogin] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [showLoginPw, setShowLoginPw] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
 
   // Helper date formatter
   const formatDate = (dateString: string | undefined) => {
@@ -353,44 +347,6 @@ const ProjectDetail: React.FC = () => {
         ? project.investor_tiers.split('\n').filter((t: string) => t.trim().length > 0)
         : parseJsonField(project.investor_tiers, []);
   }, [project]);
-
-  const isClientLoggedIn = (): boolean => {
-      const session = localStorage.getItem('_ust_client_');
-      if (!session) return false;
-      try {
-          const decoded = atob(session);
-          return decoded.startsWith('client_');
-      } catch { return false; }
-  };
-
-  const handleClientLoginForDoc = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setLoginError('');
-      setLoginLoading(true);
-      try {
-          const isEmail = loginEmail.includes('@');
-          
-          const { data, error } = await supabase.rpc('verify_client_login', {
-              p_email: isEmail ? loginEmail : null,
-              p_phone: !isEmail ? loginEmail : null,
-              p_password: loginPassword
-          });
-          if (error || !data || !data.success) {
-              setLoginError(t('fix.pd.wrongCredentials'));
-              setLoginLoading(false);
-              return;
-          }
-          const token = btoa(`client_${data.client_id}_${Date.now()}`);
-          localStorage.setItem('_ust_client_', token);
-          setShowClientLogin(false);
-          setLoginEmail('');
-          setLoginPassword('');
-      } catch (err) {
-          setLoginError(t('fix.pd.connectionError'));
-      } finally {
-          setLoginLoading(false);
-      }
-  };
 
   if (loading) {
       return (
@@ -700,40 +656,6 @@ const ProjectDetail: React.FC = () => {
             );
           })()}
           
-          {showClientLogin && (
-            <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowClientLogin(false); }}>
-                <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl">
-                    <div className="text-center mb-8">
-                        <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">lock</span>
-                        <h2 className="text-xl font-serif text-primary mb-2">{t('projectDetail.investorAccessTitle')}</h2>
-                        <p className="text-sm text-primary/50">{t('projectDetail.investorAccessBody')}</p>
-                    </div>
-                    {loginError && <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl mb-4 text-center">{loginError}</div>}
-                    <form onSubmit={handleClientLoginForDoc} className="space-y-4">
-                        <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.emailOrPhone')}</label>
-                            <input type="text" required name="email" id="report-email" autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder={t('fix.pd.emailOrPhonePlaceholder')} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
-                        </div>
-                        <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">{t('projectDetail.password')}</label>
-                            <div className="relative">
-                              <input type={showLoginPw ? 'text' : 'password'} required name="password" id="report-password" autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full px-5 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-2xl font-bold focus:border-primary focus:outline-none" />
-                              <button type="button" onClick={() => setShowLoginPw((v) => !v)} aria-label={showLoginPw ? t('fix.pd.hidePassword') : t('fix.pd.showPassword')} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary p-1">
-                                <span className="material-symbols-outlined text-xl">{showLoginPw ? 'visibility_off' : 'visibility'}</span>
-                              </button>
-                            </div>
-                        </div>
-                        <button type="submit" disabled={loginLoading} className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg border border-primary hover:bg-almond hover:text-primary transition disabled:opacity-50 flex items-center justify-center gap-2">
-                            {loginLoading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('fix.pd.verifying')}</> : t('fix.pd.accessReport')}
-                        </button>
-                    </form>
-
-                    <button onClick={() => setShowClientLogin(false)} className="w-full mt-4 text-primary/40 hover:text-primary text-xs font-bold uppercase tracking-widest py-2 transition">{t('projectDetail.close')}</button>
-                    <p className="text-center text-[10px] text-primary/30 mt-6">{t('projectDetail.noAccess')}</p>
-                </div>
-            </div>
-          )}
-
           {project.google_maps_url && (() => {
             const getEmbedUrl = (url: string): string | null => {
               if (!url) return null;

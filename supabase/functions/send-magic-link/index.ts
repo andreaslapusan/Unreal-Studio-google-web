@@ -14,7 +14,8 @@ Deno.serve(async (req) => {
   const email=(p.email||"").trim().toLowerCase();
   const lang=(p.lang||"es");
   if (!email || !email.includes("@")) return json({ success:false, error:"email required" }, 400);
-  const redirectTo = p.redirectTo || "https://unrealstudiobali.com/auth/finish";
+  // Solo redirecciones a nuestro dominio (evita redirectTo arbitrario).
+  const redirectTo = typeof p.redirectTo === "string" && p.redirectTo.startsWith("https://unrealstudiobali.com/") ? p.redirectTo : "https://unrealstudiobali.com/auth/finish";
   const supabase = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
   const portal = String(p.portal||"").toLowerCase();
   const member = await (async () => { try {

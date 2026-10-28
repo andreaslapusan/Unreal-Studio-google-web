@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { PUBLIC_PROJECT_COLS } from '../constants';
+import ConstructionReportButton from '../components/ConstructionReportButton';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../types';
@@ -391,15 +392,7 @@ const LandingGlobalitae: React.FC = () => {
                 </ul>
               </div>
 
-              {project.construction_update_url && (
-                <a 
-                  href={getImageUrl(project.construction_update_url)} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-full bg-white text-primary border border-primary/10 px-8 py-5 rounded-2xl font-bold hover:bg-gray-50 transition flex items-center justify-center gap-3 shadow-sm"
-                >
-                  <span className="material-symbols-outlined">analytics</span>
-                  {t('fix.lg.viewConstructionReport')}
+              <ConstructionReportButton projectName={project.name} className="w-full bg-primary text-white border border-primary px-8 h-14 rounded-2xl font-bold hover:bg-almond hover:text-primary transition flex items-center justify-center gap-3 shadow-sm" />
                 </a>
               )}
             </div>
