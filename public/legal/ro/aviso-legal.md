@@ -8,8 +8,6 @@
 
 - **Marcă comercială:** Unreal Studio.
 - **Adresă de e-mail de contact:** hello@unrealstudiobali.com
-- **Birou comercial în Spania:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid.
-- **Birou comercial în Indonezia:** Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali.
 
 ## 2. Marca Unreal Studio și entitățile care operează sub aceasta
 

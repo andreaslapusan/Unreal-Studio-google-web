@@ -8,7 +8,6 @@ Prezenta Politică explică modul în care prelucrăm datele cu caracter persona
 
 **Operator:** Entitățile Unreal care operează Site-ul Web sub marca comercială Unreal Studio, în termenii descriși în Nota Legală („Operatorul”).
 
-**Birouri:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid (Spania) · Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali (Indonezia).
 
 **Contact în materie de confidențialitate:** hello@unrealstudiobali.com
 

@@ -8,8 +8,6 @@ En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios
 
 - **Marca comercial:** Unreal Studio.
 - **Correo electrónico de contacto:** hello@unrealstudiobali.com
-- **Oficina comercial en España:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid.
-- **Oficina comercial en Indonesia:** Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali.
 
 ## 2. La marca Unreal Studio y las entidades que operan bajo ella
 

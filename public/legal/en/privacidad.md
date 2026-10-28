@@ -8,7 +8,6 @@ This Policy explains how we process the personal data of visitors, prospective c
 
 **Controller:** the Unreal Entities that operate the Website under the trade name Unreal Studio, on the terms described in the Legal Notice (the "Controller").
 
-**Offices:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid (Spain) · Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali (Indonesia).
 
 **Privacy contact:** hello@unrealstudiobali.com
 

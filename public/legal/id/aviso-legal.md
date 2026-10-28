@@ -8,8 +8,6 @@ Sesuai dengan Pasal 10 Undang-Undang 34/2002 tanggal 11 Juli tentang Layanan Mas
 
 - **Merek dagang:** Unreal Studio.
 - **Surel kontak:** hello@unrealstudiobali.com
-- **Kantor pemasaran di Spanyol:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid.
-- **Kantor pemasaran di Indonesia:** Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali.
 
 ## 2. Merek Unreal Studio dan entitas yang beroperasi di bawahnya
 

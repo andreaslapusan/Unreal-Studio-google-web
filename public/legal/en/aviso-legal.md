@@ -8,8 +8,6 @@ In compliance with article 10 of Law 34/2002, of 11 July, on Information Society
 
 - **Trade name:** Unreal Studio.
 - **Contact email:** hello@unrealstudiobali.com
-- **Sales office in Spain:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid.
-- **Sales office in Indonesia:** Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali.
 
 ## 2. The Unreal Studio brand and the entities operating under it
 

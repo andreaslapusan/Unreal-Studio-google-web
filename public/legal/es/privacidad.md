@@ -8,7 +8,6 @@ Esta Política explica cómo tratamos los datos personales de visitantes, intere
 
 **Responsable:** las Entidades Unreal que operan el Sitio Web bajo la marca comercial Unreal Studio, en los términos descritos en el Aviso Legal (el "Responsable").
 
-**Oficinas:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid (España) · Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali (Indonesia).
 
 **Contacto en materia de privacidad:** hello@unrealstudiobali.com
 

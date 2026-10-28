@@ -8,7 +8,6 @@ Kebijakan ini menjelaskan bagaimana kami memproses data pribadi pengunjung, piha
 
 **Pengendali:** Entitas Unreal yang mengoperasikan Situs Web di bawah merek dagang Unreal Studio, sebagaimana dijelaskan dalam Pemberitahuan Hukum ("Pengendali").
 
-**Kantor:** Unreal Studio Madrid, C. de San Nicolás 17, 28013 Madrid (Spanyol) · Unreal Studio Bali, Jl. Pratu Rai Madra No. 15, Cemagi, Mengwi, Kabupaten Badung, Bali (Indonesia).
 
 **Kontak terkait privasi:** hello@unrealstudiobali.com
 
