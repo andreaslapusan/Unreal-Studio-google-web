@@ -11,7 +11,7 @@ import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { projectPath } from '../lib/projectUrl';
 import { translateStatus } from '../lib/statusI18n';
-import { localizeFields, blogTagLabel } from '../lib/projectTerms';
+import { localizeFields, blogTagLabel, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
 
 const ANY_ZONE = 'Cualquier zona';
@@ -170,7 +170,7 @@ const Home: React.FC = () => {
       // Filtro de Zona
       const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());
       // Filtro de Tipo
-      const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
+      const typeMatch = filters.type === ANY_TYPE || propertyTypeKey(p.property_type) === propertyTypeKey(filters.type);
       
       // Filtro de Precio (con conversión de divisa)
       const rates = liveRates;
@@ -471,9 +471,7 @@ const Home: React.FC = () => {
                 <div className="relative">
                   <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
-                    <option value="Villa">Villa</option>
-                    <option value="Loft">Loft</option>
-                    {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                    {propertyTypeOptions(['Villa', 'Loft', ...config.customTypes]).map(ty => <option key={ty} value={ty}>{propertyTypeLabel(ty, i18n.language)}</option>)}
                   </select>
                   <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>

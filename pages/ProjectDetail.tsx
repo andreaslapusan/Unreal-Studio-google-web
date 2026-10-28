@@ -21,6 +21,16 @@ import { gtmViewItem, gtmWhatsappClick } from '../lib/gtm';
 import { translateStatus } from '../lib/statusI18n';
 import { useAuth } from '../lib/auth-context';
 
+// Nombre visible de un plano: el del fichero si es legible; si es un id autogenerado
+// (subidas "1791014938804-jtm08y.pdf") o un enlace Drive (".../preview") → "Plano N".
+const floorPlanLabel = (url: string, idx: number, t: (k: string, o?: any) => string) => {
+  let raw = (url.split('?')[0].split('/').pop() || '');
+  try { raw = decodeURIComponent(raw); } catch { /* nombre tal cual */ }
+  raw = raw.replace(/\.pdf$/i, '');
+  const auto = !raw || /^(preview|view|edit)$/i.test(raw) || /^\d{8,}/.test(raw) || /^[0-9a-f-]{16,}$/i.test(raw);
+  return auto ? t('projectDetail.planN', { n: idx + 1 }) : raw;
+};
+
 const ProjectDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
   // Descripción localizada: usa la traducción del idioma activo (auto-traducida
@@ -468,7 +478,7 @@ const ProjectDetail: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-primary text-white py-8 px-6 md:px-12 shadow-xl relative z-10">
+      <div className="bg-primary text-white py-8 pl-6 pr-16 md:px-12 shadow-xl relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
           <div className="px-4 first:pl-0 text-center md:text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
@@ -558,7 +568,7 @@ const ProjectDetail: React.FC = () => {
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">chair</span>
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelFurnishing')}</p>
-                  <p className="text-lg font-bold text-primary">{fmtFurnishing(project.furnishing)}</p>
+                  <p className="text-sm md:text-lg leading-tight font-bold text-primary [overflow-wrap:anywhere]">{fmtFurnishing(project.furnishing)}</p>
                 </div>
               )}
               {Number((project as any).land_size_m2 || (project as any).land_area_m2) > 0 && (
@@ -610,7 +620,7 @@ const ProjectDetail: React.FC = () => {
                             <span className="material-symbols-outlined">picture_as_pdf</span>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <p className="text-sm font-bold text-primary truncate">{pdf.split('/').pop()}</p>
+                            <p className="text-sm font-bold text-primary truncate">{floorPlanLabel(pdf, idx, t)}</p>
                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">{t('projectDetail.viewPdf')}</p>
                           </div>
                           <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition">open_in_new</span>

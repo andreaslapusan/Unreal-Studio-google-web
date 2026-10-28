@@ -212,8 +212,18 @@ const PROPERTY_TYPES: Record<string, Record<string, string>> = {
   Townhouse: { es: 'Adosado', en: 'Townhouse', ro: 'Casă înșiruită', id: 'Rumah deret' },
   Land: { es: 'Terreno', en: 'Land', ro: 'Teren', id: 'Tanah' },
 };
+/** Clave canónica (Villa/Apartment/Land…) para un tipo en cualquier idioma o mayúsculas ("Apartamento", "villa"). */
+export function propertyTypeKey(v: string | null | undefined): string {
+  const s = (v || '').trim().toLowerCase();
+  return Object.keys(PROPERTY_TYPES).find(k => k.toLowerCase() === s || Object.values(PROPERTY_TYPES[k]).some(l => l.toLowerCase() === s)) || (v || '').trim();
+}
+/** Opciones del filtro TIPO sin duplicados (normalizadas a clave canónica). */
+export function propertyTypeOptions(types: string[]): string[] {
+  return [...new Set(types.map(propertyTypeKey).filter(Boolean))];
+}
 export function propertyTypeLabel(v: string, lang: string | undefined): string {
-  return PROPERTY_TYPES[v]?.[(lang || 'es').slice(0, 2)] || v;
+  const k = propertyTypeKey(v);
+  return PROPERTY_TYPES[k]?.[(lang || 'es').slice(0, 2)] || v;
 }
 
 /** Copia del registro con `fields` en el idioma dado (columnas <campo>_<lang>; blogs, proyectos…). */

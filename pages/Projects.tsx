@@ -12,7 +12,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { statusBadgeClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
-import { localizedCompletion } from '../lib/projectTerms';
+import { localizedCompletion, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -99,7 +99,7 @@ const Projects: React.FC = () => {
       // se leía aquí) y hacía que Amante saliera en home pero no en proyectos.
 
       const zoneMatch = filters.zone === ANY_ZONE || (p.location || '').toLowerCase().includes(filters.zone.toLowerCase());
-      const typeMatch = filters.type === ANY_TYPE || p.property_type === filters.type;
+      const typeMatch = filters.type === ANY_TYPE || propertyTypeKey(p.property_type) === propertyTypeKey(filters.type);
 
       const statusMatch = filters.status === ANY_STATUS || (() => {
         const raw = (p.status || '').toLowerCase().trim();
@@ -181,10 +181,10 @@ const Projects: React.FC = () => {
                   </div>
                 </div>
                 <div className={`flex-1 flex flex-col text-left ${sold ? 'p-4 md:p-5' : 'p-4 md:p-8'}`}>
-                  <h3 title={proj.name} className={`${sold ? 'text-sm md:text-base xl:text-lg' : 'text-[15px] md:text-lg lg:text-base xl:text-xl'} font-serif text-primary mb-1 md:mb-2 leading-tight truncate`}>{proj.name}</h3>
+                  <h3 title={proj.name} className={`${sold ? 'text-[13px] md:text-base xl:text-lg line-clamp-2 md:line-clamp-none md:truncate' : 'text-[15px] md:text-lg lg:text-base xl:text-xl truncate'} font-serif text-primary mb-1 md:mb-2 leading-tight`}>{proj.name}</h3>
                   <p className={`flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-2 ${proj.location ? '' : 'invisible'}`}>
                     <span className="material-symbols-outlined text-[13px] md:text-base">location_on</span>
-                    <span className="truncate">{proj.location || '—'}</span>
+                    <span className={sold ? 'leading-tight md:truncate' : 'truncate'}>{proj.location || '—'}</span>
                   </p>
                   {/* Key specs row — beds / baths / area / tenure, like the top Bali agencies */}
                   {/* specs + pill en UNA línea; solo en la tarjeta compacta sold-out de móvil (~130px) puede bajar la pill */}
@@ -206,18 +206,18 @@ const Projects: React.FC = () => {
                       finalizada → "Entregado" + "Propiedad en rentabilidad"; si no → "Entrega: a partir de…" + barra OBRA. */}
                   {isFinished(proj.status) ? (
                     <>
-                      <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1 truncate">
+                      <p className={`flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1 ${sold ? 'leading-tight md:truncate' : 'truncate'}`}>
                         <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
                         {t('projects.card.delivered')}
                       </p>
-                      <div className="flex items-center gap-1.5 mt-2 h-[15px] min-w-0">
+                      <div className={`flex items-center gap-1.5 mt-2 min-w-0 ${sold ? 'md:h-[15px]' : 'h-[15px]'}`}>
                         <span className="material-symbols-outlined text-[14px] text-emerald-600">trending_up</span>
-                        <span className="text-[9px] font-black uppercase text-emerald-700/80 truncate">{t('projects.card.incomeGenerating')}</span>
+                        <span className={`text-[9px] font-black uppercase text-emerald-700/80 ${sold ? 'leading-tight md:truncate' : 'truncate'}`}>{t('projects.card.incomeGenerating')}</span>
                       </div>
                     </>
                   ) : (
                     <>
-                      <p className={`flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1 truncate ${localizedCompletion(proj, i18n.language) ? '' : 'invisible'}`}>
+                      <p className={`flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1 ${sold ? 'leading-tight md:truncate' : 'truncate'} ${localizedCompletion(proj, i18n.language) ? '' : 'invisible'}`}>
                         <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
                         {t('projects.card.delivery')}: {deliveryText(localizedCompletion(proj, i18n.language), t('projects.card.deliveryFrom')) || '—'}
                       </p>
@@ -379,9 +379,7 @@ const Projects: React.FC = () => {
                 <div className="relative">
                   <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] cursor-pointer outline-none appearance-none !pr-5 [background-position:right_0_center] xl:w-auto xl:min-w-full">
                     <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
-                    <option value="Villa">Villa</option>
-                    <option value="Loft">Loft</option>
-                    {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                    {propertyTypeOptions(['Villa', 'Loft', ...config.customTypes]).map(ty => <option key={ty} value={ty}>{propertyTypeLabel(ty, i18n.language)}</option>)}
                   </select>
                 </div>
               </div>

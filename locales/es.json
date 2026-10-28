@@ -231,6 +231,7 @@
     "constructionReport": "Informe de Obra",
     "plansTitle": "Planos del Proyecto",
     "viewPdf": "Ver PDF",
+    "planN": "Plano {{n}}",
     "servicesTitle": "Servicios incluidos",
     "equipmentTitle": "Equipamiento incluido",
     "investorAccessTitle": "Acceso exclusivo para inversores",

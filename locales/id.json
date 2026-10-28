@@ -231,6 +231,7 @@
     "constructionReport": "Laporan Konstruksi",
     "plansTitle": "Denah Proyek",
     "viewPdf": "Lihat PDF",
+    "planN": "Denah {{n}}",
     "servicesTitle": "Layanan termasuk",
     "equipmentTitle": "Peralatan termasuk",
     "investorAccessTitle": "Akses eksklusif untuk investor",

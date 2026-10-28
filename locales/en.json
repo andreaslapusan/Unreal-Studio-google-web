@@ -231,6 +231,7 @@
     "constructionReport": "Construction report",
     "plansTitle": "Project plans",
     "viewPdf": "View PDF",
+    "planN": "Plan {{n}}",
     "servicesTitle": "Services included",
     "equipmentTitle": "Equipment included",
     "investorAccessTitle": "Exclusive investor access",
