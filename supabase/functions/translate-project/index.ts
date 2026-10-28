@@ -60,11 +60,12 @@ Deno.serve(async (req) => {
       method: "POST",
       headers: { "Authorization": `Bearer ${groqKey}`, "Content-Type": "application/json",
                  "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36" },
-      body: JSON.stringify({ model: "llama-3.3-70b-versatile",
+      body: JSON.stringify({ model: "openai/gpt-oss-120b",
         messages: [{ role: "user", content: prompt }], temperature: 0.2,
         response_format: { type: "json_object" } }),
     });
     const j = await r.json();
+    if (!j.choices) throw new Error(JSON.stringify(j.error || j).slice(0, 300));
     out = JSON.parse(j.choices[0].message.content);
   } catch (e) {
     return json({ error: "translation_failed", detail: String(e) }, 502);
