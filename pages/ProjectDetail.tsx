@@ -850,9 +850,9 @@ const ProjectDetail: React.FC = () => {
               than the screen — without that, sticky never engages because the
               element's bottom never enters view before the parent ends. */}
           <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-6 [scrollbar-width:thin]">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5 text-left">
-              <h3 className="text-2xl font-serif text-primary mb-8 pb-4 border-b border-gray-100">{t('projectDetail.assetSummary')}</h3>
-              <div className="space-y-8 mb-10">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-primary/5 text-left">
+              <h3 className="text-2xl font-serif text-primary mb-5 pb-3 border-b border-gray-100">{t('projectDetail.assetSummary')}</h3>
+              <div className="space-y-5 mb-6">
                 {project.completion_percent > 0 && (
                 <div>
                   <div className="flex justify-between text-[11px] font-bold text-gray-500 mb-3 uppercase tracking-wider">
