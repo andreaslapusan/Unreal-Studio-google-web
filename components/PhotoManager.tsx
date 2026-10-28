@@ -11,8 +11,14 @@
  *
  * Trabaja sobre un array de URLs/paths (getImageUrl resuelve a URL pública).
  */
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  DndContext, DragOverlay, closestCenter, PointerSensor, KeyboardSensor, useSensor, useSensors,
+  type DragStartEvent, type DragEndEvent,
+} from '@dnd-kit/core';
+import { SortableContext, useSortable, rectSortingStrategy, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { getImageUrl } from '../lib/supabase';
 import { thumbSrc, imgFallback } from '../lib/imageOptimize';
 
@@ -30,26 +36,111 @@ interface PhotoManagerProps {
   cols?: number;
 }
 
+/** Miniatura LIGERA (~400px servida por Supabase) con caja fija: nunca decodifica la original de 2400px. */
+const Thumb: React.FC<{ img: string; alt: string; onClick?: () => void }> = ({ img, alt, onClick }) => (
+  <img
+    src={thumbSrc(getImageUrl(img), 400)}
+    onError={imgFallback(getImageUrl(img))}
+    loading="lazy"
+    decoding="async"
+    width={400}
+    height={400}
+    draggable={false}
+    onClick={onClick}
+    className="w-full h-full object-cover cursor-zoom-in select-none"
+    alt={alt}
+  />
+);
+
+interface ItemProps {
+  id: string; img: string; idx: number; main: boolean;
+  onOpen: (i: number) => void; onSetMain?: (url: string) => void; onRemove: (url: string, i: number) => void;
+}
+
+// Patrón estándar de @dnd-kit (rectSortingStrategy + DragOverlay): solo los items que se
+// desplazan durante el arrastre llevan transform; en reposo NO hay transform/will-change/capas
+// GPU por miniatura (el drag nativo HTML5 anterior repintaba todo el grid).
+const SortablePhoto: React.FC<ItemProps> = ({ id, img, idx, main, onOpen, onSetMain, onRemove }) => {
+  const { t } = useTranslation();
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  return (
+    <div
+      ref={setNodeRef}
+      data-photo-item
+      style={{ transform: CSS.Translate.toString(transform), transition }}
+      {...attributes}
+      {...listeners}
+      className={`relative aspect-square rounded-xl overflow-hidden group/photo border bg-gray-100 cursor-grab active:cursor-grabbing touch-none
+        ${main ? 'border-primary ring-2 ring-primary/40' : 'border-gray-200'}
+        ${isDragging ? 'opacity-30' : ''}`}
+    >
+      <Thumb img={img} alt={main ? t('photoManager.main') : ''} onClick={() => onOpen(idx)} />
+
+      {main && (
+        <span className="absolute top-1.5 left-1.5 text-[8px] font-black uppercase tracking-wider bg-primary text-white px-1.5 py-0.5 rounded-md shadow-sm pointer-events-none">
+          {t('photoManager.main')}
+        </span>
+      )}
+
+      {/* Acciones: esquina superior derecha, NO cubren la foto. onPointerDown parado → no inicia arrastre. */}
+      <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover/photo:opacity-100 focus-within:opacity-100" onPointerDown={(e) => e.stopPropagation()}>
+        {onSetMain && !main && (
+          <button type="button" title={t('photoManager.setMain')} aria-label={t('photoManager.setMain')}
+            onClick={(e) => { e.stopPropagation(); onSetMain(img); }}
+            className="w-7 h-7 rounded-lg bg-white text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
+            <span className="material-symbols-outlined text-[16px]">star</span>
+          </button>
+        )}
+        <button type="button" title={t('photoManager.enlarge')} aria-label={t('photoManager.enlarge')}
+          onClick={(e) => { e.stopPropagation(); onOpen(idx); }}
+          className="w-7 h-7 rounded-lg bg-white text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
+          <span className="material-symbols-outlined text-[16px]">zoom_in</span>
+        </button>
+        <button type="button" title={t('photoManager.remove')} aria-label={t('photoManager.remove')}
+          onClick={(e) => { e.stopPropagation(); onRemove(img, idx); }}
+          className="w-7 h-7 rounded-lg bg-white text-red-500/80 hover:text-white hover:bg-red-500 shadow flex items-center justify-center">
+          <span className="material-symbols-outlined text-[16px]">delete</span>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove, mainImage, onSetMain, onRemoveAll, cols = 6 }) => {
   const { t } = useTranslation();
-  const [dragIdx, setDragIdx] = useState<number | null>(null);
-  const [overIdx, setOverIdx] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<number | null>(null);
+  // El click que el navegador dispara al soltar un arrastre NO debe abrir el lightbox.
+  const justDragged = useRef(false);
+  const openLightbox = (i: number) => { if (!justDragged.current) setLightbox(i); };
+  // distance 6px: un click (abrir lightbox / botones) no se confunde con un arrastre.
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   if (!photos || photos.length === 0) return null;
+
+  // id estable por URL (+contador si hay duplicadas) → React/dnd-kit mueven nodos, no recrean <img>.
+  const ids = photos.map((img, idx) => {
+    const dup = photos.slice(0, idx).filter((p) => p === img).length;
+    return dup ? `${img}#${dup}` : img;
+  });
 
   const isMain = (url: string, idx: number) =>
     mainImage ? getImageUrl(url) === getImageUrl(mainImage) : idx === 0;
 
-  const handleDrop = (dropIdx: number) => {
-    if (dragIdx === null || dragIdx === dropIdx) { setDragIdx(null); setOverIdx(null); return; }
-    const next = [...photos];
-    const [moved] = next.splice(dragIdx, 1);
-    next.splice(dropIdx, 0, moved);
-    onReorder(next);
-    setDragIdx(null);
-    setOverIdx(null);
+  const onDragStart = (e: DragStartEvent) => setActiveId(String(e.active.id));
+  const onDragEnd = (e: DragEndEvent) => {
+    setActiveId(null);
+    justDragged.current = true;
+    setTimeout(() => { justDragged.current = false; }, 0);
+    if (!e.over || e.active.id === e.over.id) return;
+    const from = ids.indexOf(String(e.active.id));
+    const to = ids.indexOf(String(e.over.id));
+    if (from >= 0 && to >= 0) onReorder(arrayMove(photos, from, to));
   };
+  const activeIdx = activeId ? ids.indexOf(activeId) : -1;
 
   const gridCls = cols === 4
     ? 'grid grid-cols-3 sm:grid-cols-4 gap-3'
@@ -73,70 +164,23 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
           </button>
         )}
       </div>
-      <div className={gridCls}>
-        {photos.map((img, idx) => {
-          const main = isMain(img, idx);
-          // key estable por URL (no por índice): al reordenar React MUEVE los nodos en vez de
-          // recrear 20-30 <img> (re-decode + repintado). El contador cubre URLs duplicadas.
-          const dup = photos.slice(0, idx).filter((p) => p === img).length;
-          return (
-            <div
-              key={dup ? `${img}#${dup}` : img}
-              draggable
-              onDragStart={() => setDragIdx(idx)}
-              onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
-              onDragOver={(e) => { e.preventDefault(); if (overIdx !== idx) setOverIdx(idx); }}
-              onDrop={() => handleDrop(idx)}
-              className={`relative aspect-square rounded-xl overflow-hidden group border cursor-grab active:cursor-grabbing
-                ${main ? 'border-primary ring-2 ring-primary/40' : 'border-gray-200'}
-                ${overIdx === idx && dragIdx !== idx ? 'ring-2 ring-primary/60' : ''}
-                ${dragIdx === idx ? 'opacity-40' : ''}`}
-            >
-              {/* Miniatura LIGERA (thumbSrc ~400px/~40KB) para no congelar el scroll
-                  con 20-30 fotos grandes; si el proxy falla, cae a la imagen directa.
-                  El lightbox sí usa la original a tamaño/color real. */}
-              <img
-                src={thumbSrc(getImageUrl(img), 400)}
-                onError={imgFallback(getImageUrl(img))}
-                decoding="async"
-                draggable={false}
-                onClick={() => setLightbox(idx)}
-                className="w-full h-full object-cover cursor-zoom-in"
-                alt={main ? t('photoManager.main') : ''}
-              />
-
-              {/* Badge PRINCIPAL (esquina superior izquierda). */}
-              {main && (
-                <span className="absolute top-1.5 left-1.5 text-[8px] font-black uppercase tracking-wider bg-primary text-white px-1.5 py-0.5 rounded-md shadow-sm pointer-events-none">
-                  {t('photoManager.main')}
-                </span>
-              )}
-
-              {/* Acciones: esquina superior derecha, en un chip con degradado
-                  mínimo — NO cubren la foto (se ve el color real). */}
-              <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100">
-                {onSetMain && !main && (
-                  <button type="button" title={t('photoManager.setMain')} aria-label={t('photoManager.setMain')}
-                    onClick={(e) => { e.stopPropagation(); onSetMain(img); }}
-                    className="w-7 h-7 rounded-lg bg-white text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[16px]">star</span>
-                  </button>
-                )}
-                <button type="button" title={t('photoManager.enlarge')} aria-label={t('photoManager.enlarge')}
-                  onClick={(e) => { e.stopPropagation(); setLightbox(idx); }}
-                  className="w-7 h-7 rounded-lg bg-white text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[16px]">zoom_in</span>
-                </button>
-                <button type="button" title={t('photoManager.remove')} aria-label={t('photoManager.remove')}
-                  onClick={(e) => { e.stopPropagation(); onRemove(img, idx); }}
-                  className="w-7 h-7 rounded-lg bg-white text-red-500/80 hover:text-white hover:bg-red-500 shadow flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[16px]">delete</span>
-                </button>
-              </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
+        <SortableContext items={ids} strategy={rectSortingStrategy}>
+          <div className={gridCls}>
+            {photos.map((img, idx) => (
+              <SortablePhoto key={ids[idx]} id={ids[idx]} img={img} idx={idx} main={isMain(img, idx)}
+                onOpen={openLightbox} onSetMain={onSetMain} onRemove={onRemove} />
+            ))}
+          </div>
+        </SortableContext>
+        <DragOverlay>
+          {activeIdx >= 0 ? (
+            <div className="aspect-square rounded-xl overflow-hidden border border-primary shadow-2xl cursor-grabbing">
+              <Thumb img={photos[activeIdx]} alt="" />
             </div>
-          );
-        })}
-      </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       {/* Lightbox: foto a tamaño/color real sobre fondo oscuro. */}
       {lightbox !== null && photos[lightbox] && (

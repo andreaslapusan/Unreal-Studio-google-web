@@ -3294,7 +3294,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {([
                     ['zone',t('admin.dash.fldZone'),'text'],['owner_name',t('admin.dash.fldOwner'),'text'],['lease_end_date',t('admin.dash.fldLeaseEnd'),'text'],
-                    ['lease_years_paid',t('admin.dash.fldYearsPaid'),'number'],['extension_cost_usd',t('admin.dash.fldExtensionCost'),'number'],
+                    ['extension_cost_usd',t('admin.dash.fldExtensionCost'),'number'],
                     ['payment_plan_off_plan',t('admin.dash.fldPaymentPlan'),'text'],['zoning_type',t('admin.dash.fldZoning'),'text'],
                     ['building_permit_status',t('admin.dash.fldBuildingPermit'),'text'],['structural_warranty',t('admin.dash.fldStructuralWarranty'),'text'],
                     ['water_supply',t('admin.dash.fldWaterSupply'),'text'],['land_size_m2',t('admin.dash.fldLandSize'),'number'],
@@ -3314,7 +3314,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   ))}
                 </div>
                 <div className="flex gap-6 mt-4">
-                  {([['has_powder_room',t('admin.dash.fldPowderRoom')],['has_rooftop',t('admin.dash.fldRooftop')]] as [string,string][]).map(([k,label]) => (
+                  {([['lease_years_paid',t('admin.dash.fldYearsPaid')],['has_powder_room',t('admin.dash.fldPowderRoom')],['has_rooftop',t('admin.dash.fldRooftop')]] as [string,string][]).map(([k,label]) => (
                     <label key={k} className="flex items-center gap-2 text-xs font-bold text-primary/70 cursor-pointer">
                       <input type="checkbox" checked={!!(currentProject as any)[k]} onChange={(e) => setCurrentProject({ ...currentProject, [k]: e.target.checked } as any)} /> {label}
                     </label>

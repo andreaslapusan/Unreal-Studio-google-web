@@ -96,6 +96,12 @@ export function thumbSrc(url: string | null | undefined, width = 400): string {
   if (url.startsWith("data:")) return url;
   if (url.includes("wsrv.nl")) return url;
   if (url.startsWith("/")) return url; // asset local same-origin
+  // Fotos de NUESTRO Storage: transformación nativa de Supabase (mismo CDN que la
+  // original, WebP automático, sin depender de wsrv.nl). Si wsrv fallaba, imgFallback
+  // cargaba la original de 2400px x 20-30 → Chrome/Mac se quedaba sin memoria GPU y
+  // pintaba franjas en blanco en el editor (2026-10-28).
+  const m = url.match(/^(https:\/\/[^/]+\.supabase\.co\/storage\/v1)\/object\/public\/([^?]+)$/);
+  if (m) return `${m[1]}/render/image/public/${m[2]}?width=${width}&resize=contain&quality=72`;
   const params = new URLSearchParams();
   params.set("url", url);
   params.set("w", String(width));
