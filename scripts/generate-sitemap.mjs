@@ -116,6 +116,7 @@ async function main() {
     const { data: blogs, error: bErr } = await sb
       .from("blogs")
       .select("slug, published_date")
+      .eq("is_published", true)
       .order("published_date", { ascending: false });
     if (bErr) throw bErr;
     for (const b of blogs ?? []) {

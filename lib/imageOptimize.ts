@@ -23,6 +23,7 @@
  */
 
 const WSRV_BASE = "https://wsrv.nl/";
+const SUPABASE_OBJECT_RE = /^(https:\/\/[^/]+\.supabase\.co\/storage\/v1)\/object\/public\/([^?]+)$/;
 
 export interface ImgOpts {
   /** Target rendered width in CSS pixels. wsrv.nl will preserve aspect ratio. */
@@ -52,6 +53,12 @@ export function imgSrc(url: string | null | undefined, widthOrOpts: number | Img
   // usuarios (red/rate-limit) → fotos rotas. Servimos la imagen DIRECTA de Supabase
   // (siempre carga). Las del catálogo son WebP ~250KB; pendiente re-procesar a menor
   // tamaño en storage para recuperar la optimización sin depender de un proxy externo.
+  // 2026-10-28: las fotos de NUESTRO Storage pasan por la transformación nativa de
+  // Supabase (mismo CDN, WebP automático, redimensionada) — la home bajaba un PNG de
+  // 3,9 MB. Todos los <img> que la usan llevan imgFallback → si falla, va a la original.
+  const opts0: ImgOpts = typeof widthOrOpts === "number" ? { width: widthOrOpts } : widthOrOpts;
+  const sb = !opts0.bypass && url.match(SUPABASE_OBJECT_RE);
+  if (sb) return `${sb[1]}/render/image/public/${sb[2]}?width=${opts0.width ?? 1200}&resize=contain&quality=${opts0.quality ?? 78}`;
   return url;
 
   const opts: ImgOpts =
@@ -100,7 +107,7 @@ export function thumbSrc(url: string | null | undefined, width = 400): string {
   // original, WebP automático, sin depender de wsrv.nl). Si wsrv fallaba, imgFallback
   // cargaba la original de 2400px x 20-30 → Chrome/Mac se quedaba sin memoria GPU y
   // pintaba franjas en blanco en el editor (2026-10-28).
-  const m = url.match(/^(https:\/\/[^/]+\.supabase\.co\/storage\/v1)\/object\/public\/([^?]+)$/);
+  const m = url.match(SUPABASE_OBJECT_RE);
   if (m) return `${m[1]}/render/image/public/${m[2]}?width=${width}&resize=contain&quality=72`;
   const params = new URLSearchParams();
   params.set("url", url);

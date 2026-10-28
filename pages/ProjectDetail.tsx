@@ -282,7 +282,8 @@ const ProjectDetail: React.FC = () => {
                   url: 'https://unrealstudiobali.com',
                 },
               });
-              document.head.appendChild(ld);
+              // Si la URL de entrada trae el RealEstateListing pre-renderizado, no duplicar.
+              if (!document.querySelector('script[data-prerender-ld]')) document.head.appendChild(ld);
 
               // Proyectos similares: siempre 3 si hay disponibles; primero misma ubicación, luego misma zona, luego el resto
               const { data: similarData } = await supabase

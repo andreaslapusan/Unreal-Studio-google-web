@@ -12,6 +12,8 @@ import { SUPPORTED_LANGS } from './LocaleRoute';
 
 const ORIGIN = 'https://unrealstudiobali.com';
 const MARK = 'data-locale-seo';
+// URL de entrada: el JSON-LD pre-renderizado (scripts/prerender-og.mjs) solo describe esa.
+const ENTRY_PATH = typeof window !== 'undefined' ? window.location.pathname : '';
 
 function clear() {
   document.querySelectorAll(`[${MARK}]`).forEach((el) => el.remove());
@@ -22,6 +24,7 @@ export default function LocaleSeo() {
 
   useEffect(() => {
     clear();
+    if (pathname !== ENTRY_PATH) document.querySelectorAll('script[data-prerender-ld]').forEach((el) => el.remove());
     const seg = pathname.split('/').filter(Boolean);
     const first = seg[0];
     // Solo en rutas públicas con prefijo de idioma.

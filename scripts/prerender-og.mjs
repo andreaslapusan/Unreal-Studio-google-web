@@ -120,9 +120,127 @@ function removeMeta(html, key) {
 function setCanonical(html, url) {
   const u = esc(url);
   if (/<link\s+rel="canonical"[^>]*>/i.test(html)) {
-    return html.replace(/<link\s+rel="canonical"[^>]*>/i, `<link rel="canonical" href="${u}">`);
+    return html.replace(/<link\s+rel="canonical"[^>]*>/i, `<link rel="canonical" href="${u}" data-locale-seo="1">`);
   }
-  return html.replace(/<\/head>/i, `    <link rel="canonical" href="${u}">\n  </head>`);
+  return html.replace(/<\/head>/i, `    <link rel="canonical" href="${u}" data-locale-seo="1">\n  </head>`);
+}
+
+
+// ---- Contenido real pre-renderizado (crawlers sin JS: Bing, ChatGPT, Perplexity) ----
+const LANGS = ["es", "en", "ro", "id"];
+const OG_LOCALE = { es: "es_ES", en: "en_US", ro: "ro_RO", id: "id_ID" };
+const L10N = Object.fromEntries(
+  LANGS.map((c) => [c, JSON.parse(readFileSync(resolve(__dirname, "..", "locales", `${c}.json`), "utf8"))])
+);
+function tr(code, key, fallback = "") {
+  const get = (c) => key.split(".").reduce((o, k) => (o == null ? undefined : o[k]), L10N[c]);
+  const v = get(code) ?? get("es");
+  return typeof v === "string" ? v : fallback;
+}
+function loc(row, field, code) {
+  return (code !== "es" && row[`${field}_${code}`]) || row[field] || "";
+}
+function setLang(html, code) {
+  html = html.replace(/<html lang="[^"]*">/i, `<html lang="${code}">`);
+  return html.replace(/(<meta http-equiv="content-language" content=")[^"]*(")/i, `$1${code}$2`);
+}
+// hreflang con la MISMA marca que <LocaleSeo/>: al montar los sustituye por idénticos.
+function setAlternates(html, tail) {
+  const links = [
+    ...LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${ORIGIN}/${l}${tail}" data-locale-seo="1">`),
+    `<link rel="alternate" hreflang="x-default" href="${ORIGIN}/es${tail}" data-locale-seo="1">`,
+  ];
+  return html.replace(/<\/head>/i, `    ${links.join("\n    ")}\n  </head>`);
+}
+// data-prerender-ld: <LocaleSeo/> los quita al navegar a otra ruta y las páginas no duplican su JSON-LD.
+function addJsonLd(html, objs) {
+  const tags = objs
+    .filter(Boolean)
+    .map((o) => `<script type="application/ld+json" data-prerender-ld="1">${JSON.stringify({ "@context": "https://schema.org", ...o }).replace(/</g, "\\u003c")}</script>`);
+  return tags.length ? html.replace(/<\/head>/i, `    ${tags.join("\n    ")}\n  </head>`) : html;
+}
+function breadcrumb(items) {
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: items.map(([name, item], i) => ({ "@type": "ListItem", position: i + 1, name, item })),
+  };
+}
+// El HTML va DENTRO de #root: createRoot lo sustituye al montar y #app-boot lo tapa
+// hasta entonces (index.html ignora [data-prerender] al decidir quitar la capa) → sin flash.
+function setBody(html, inner) {
+  return html.replace(
+    '<div id="root"></div>',
+    `<div id="root"><div data-prerender="1">${inner}</div></div><noscript><style>#app-boot{display:none}</style></noscript>`
+  );
+}
+function sanitize(h) {
+  return String(h || "")
+    .replace(/<(script|style|iframe|object|embed|form)\b[\s\S]*?<\/\1>/gi, "")
+    .replace(/<(script|iframe|object|embed|link|meta)\b[^>]*>/gi, "")
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/javascript:/gi, "");
+}
+// Markdown mínimo de public/legal (#, ##, ###, párrafos, **negrita**).
+function mdToHtml(md) {
+  return md
+    .split(/\n{2,}/)
+    .map((b) => b.trim())
+    .filter(Boolean)
+    .map((b) => {
+      const m = b.match(/^(#{1,4})\s+(.*)$/);
+      const inline = (t) => esc(t).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+      if (m && !b.includes("\n")) return `<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`;
+      return `<p>${inline(b).replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("\n");
+}
+function navHtml(code) {
+  const items = [["", "nav.home"], ["/proyectos", "nav.projects"], ["/blog", "nav.blog"], ["/faq", "nav.faq"], ["/agendar", "nav.scheduleCall"], ["/contacto", "nav.contact"], ["/agencias", "nav.agencies"]];
+  return `<header><nav><ul>${items.map(([t, k]) => `<li><a href="/${code}${t}">${esc(tr(code, k))}</a></li>`).join("")}</ul></nav></header>`;
+}
+function footerHtml(code, tail) {
+  const legal = [["/privacidad", "footer.privacy"], ["/terminos", "footer.terms"], ["/aviso-legal", "footer.legalNotice"]];
+  return `<footer><p>Unreal Studio Bali · C. de San Nicolás 17, 28013 Madrid · Jl. Pratu Rai Madra No.15, Bali · <a href="mailto:hello@unrealstudiobali.com">hello@unrealstudiobali.com</a> · +34 625 710 770</p><ul>${legal.map(([t, k]) => `<li><a href="/${code}${t}">${esc(tr(code, k))}</a></li>`).join("")}</ul><ul>${LANGS.map((l) => `<li><a href="/${l}${tail}" hreflang="${l}">${l.toUpperCase()}</a></li>`).join("")}</ul></footer>`;
+}
+// Página completa: lang, title, description, OG, canonical, hreflang, JSON-LD y body.
+function renderPage(template, { code, tail, title, desc, main, ld = [], ogType = "website", image, canonical }) {
+  const url = canonical || `${ORIGIN}/${code}${tail}`;
+  let html = setLang(template, code);
+  html = setTitle(html, title);
+  html = setMeta(html, "description", desc, "name");
+  html = setMeta(html, "og:type", ogType);
+  html = setMeta(html, "og:title", title);
+  html = setMeta(html, "og:description", desc);
+  html = setMeta(html, "og:url", url);
+  html = setMeta(html, "og:locale", OG_LOCALE[code]);
+  html = setMeta(html, "twitter:title", title, "name");
+  html = setMeta(html, "twitter:description", desc, "name");
+  if (image) {
+    html = setMeta(html, "og:image", image);
+    html = setMeta(html, "twitter:image", image, "name");
+    html = removeMeta(html, "og:image:width");
+    html = removeMeta(html, "og:image:height");
+  }
+  html = setCanonical(html, url);
+  html = setAlternates(html, tail);
+  html = addJsonLd(html, ld);
+  return setBody(html, `${navHtml(code)}<main>${main}</main>${footerHtml(code, tail)}`);
+}
+function writeOut(rel, html) {
+  const out = resolve(DIST, rel);
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, html, "utf8");
+}
+function fmtDate(d, code) {
+  if (!d) return "";
+  try { return new Date(String(d).slice(0, 10)).toLocaleDateString({ es: "es-ES", en: "en-GB", ro: "ro-RO", id: "id-ID" }[code], { day: "numeric", month: "long", year: "numeric" }); } catch { return ""; }
+}
+// Mismo src/srcSet que el <img> destacado de Home.tsx (imgSrcSet de lib/imageOptimize.ts) →
+// el navegador reutiliza el preload. Si cambias uno, cambia el otro.
+function renderSrcSet(url, widths) {
+  const m = url.match(/^(https:\/\/[^/]+\.supabase\.co\/storage\/v1)\/object\/public\/([^?]+)$/);
+  if (!m) return "";
+  return widths.map((w) => `${m[1]}/render/image/public/${m[2]}?width=${w}&resize=contain&quality=78 ${w}w`).join(", ");
 }
 
 async function main() {
@@ -131,42 +249,6 @@ async function main() {
     return;
   }
   const template = readFileSync(TEMPLATE, "utf8");
-
-  // ---- HOME por idioma (independiente de Supabase) ----
-  // El dominio a secas (/) usa dist/index.html, que ya está en INGLÉS por defecto.
-  // Para /es /en /ro /id generamos dist/<prefix>.html con su OG (nginx: try_files
-  // $uri.html). Copy estático de marketing (no viene de BD).
-  const HOME = [
-    { prefix: "en", ogLocale: "en_US", title: "Unreal Studio Bali | Real estate investment in Bali from €75k", desc: "Real estate developer in Bali for international investors. Villas, lofts and apartments in Uluwatu, Canggu and Tabanan from €75,000. Projected ROI 15-28% per year. Remote purchase with POA. Offices in Madrid & Bali.", alt: "Investment villa in Bali — Unreal Studio" },
-    { prefix: "es", ogLocale: "es_ES", title: "Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€", desc: "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. ROI proyectado 15-28% anual. Compra remota con POA. Sede en Madrid + Bali.", alt: "Villa de inversión en Bali — Unreal Studio" },
-    { prefix: "ro", ogLocale: "ro_RO", title: "Unreal Studio Bali | Investiții imobiliare în Bali de la 75k€", desc: "Dezvoltator imobiliar în Bali pentru investitori internaționali. Vile, lofturi și apartamente în Uluwatu, Canggu și Tabanan de la 75.000€. ROI estimat 15-28% pe an. Achiziție la distanță cu POA. Birouri în Madrid și Bali.", alt: "Vilă de investiție în Bali — Unreal Studio" },
-    { prefix: "id", ogLocale: "id_ID", title: "Unreal Studio Bali | Investasi properti di Bali mulai €75rb", desc: "Pengembang properti di Bali untuk investor internasional. Vila, loft, dan apartemen di Uluwatu, Canggu, dan Tabanan mulai €75.000. Proyeksi ROI 15-28% per tahun. Pembelian jarak jauh dengan POA. Kantor di Madrid & Bali.", alt: "Vila investasi di Bali — Unreal Studio" },
-  ];
-  let homeCount = 0;
-  for (const h of HOME) {
-    const url = `${ORIGIN}/${h.prefix}`;
-    let html = template;
-    html = setTitle(html, h.title);
-    html = setMeta(html, "description", h.desc, "name");
-    html = setMeta(html, "og:type", "website");
-    html = setMeta(html, "og:title", h.title);
-    html = setMeta(html, "og:description", h.desc);
-    html = setMeta(html, "og:image:alt", h.alt);
-    html = setMeta(html, "og:url", url);
-    html = setMeta(html, "og:locale", h.ogLocale);
-    html = setMeta(html, "twitter:title", h.title, "name");
-    html = setMeta(html, "twitter:description", h.desc, "name");
-    html = setCanonical(html, url);
-    // Instagram por idioma: @unrealstudiomadrid solo en español (contenido ES);
-    // el resto de idiomas usan @unrealstudiobali (contenido en inglés). El template
-    // base ya trae "bali", así que solo hay que reescribir para /es.
-    if (h.prefix === "es") {
-      html = html.replace("https://instagram.com/unrealstudiobali", "https://instagram.com/unrealstudiomadrid");
-    }
-    writeFileSync(resolve(DIST, `${h.prefix}.html`), html, "utf8");
-    homeCount++;
-  }
-  console.log(`[prerender-og] Home por idioma: ${homeCount} ficheros (dist/<lang>.html).`);
 
   // ---- Enlaces de auto-alta (/listing/:token) ----
   // Son enlaces PRIVADOS que Andreas manda a un propietario para que suba su
@@ -192,19 +274,179 @@ async function main() {
     console.log("[prerender-og] listing.html (OG neutro + noindex) generado.");
   }
 
-  const sb = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
-  let projects = [];
-  try {
-    const { data, error } = await sb
-      .from("projects")
-      .select("slug,name,location,description,description_en,description_ro,description_id,image");
-    if (error) throw error;
-    projects = data || [];
-  } catch (e) {
-    console.warn("[prerender-og] No se pudo leer Supabase, se deja el OG genérico:", e?.message || e);
-    return;
+  // 404 real (nginx: rutas /<lang>/<desconocida>) — la SPA pinta su NotFound igual.
+  {
+    let html = setTitle(template, "404 · Unreal Studio Bali");
+    html = setMeta(html, "robots", "noindex, follow", "name");
+    writeFileSync(resolve(DIST, "404.html"), html, "utf8");
   }
 
+  // ---- Datos (si Supabase falla, se genera igual con lo que haya: copy estático) ----
+  const sb = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
+  const fetchRows = async (label, q) => {
+    try {
+      const { data, error } = await q;
+      if (error) throw error;
+      return data || [];
+    } catch (e) {
+      console.warn(`[prerender-og] No se pudo leer ${label}:`, e?.message || e);
+      return null;
+    }
+  };
+  const projects = await fetchRows("projects", sb.from("projects")
+    .select("slug,name,location,description,description_en,description_ro,description_id,image,is_hidden,is_featured,visibility_status,sort_order,property_type,bedrooms,bathrooms,area_m2,investor_price,price_currency,created_at,updated_at")
+    .order("sort_order", { ascending: true }));
+  const blogs = (await fetchRows("blogs", sb.from("blogs")
+    .select("slug,title,title_en,title_ro,title_id,description,description_en,description_ro,description_id,content,content_en,content_ro,content_id,image,tag,published_date,updated_at")
+    .eq("is_published", true)
+    .order("published_date", { ascending: false }))) || [];
+  const faqs = (await fetchRows("faqs", sb.from("faqs")
+    .select("question,answer,language,sort_order")
+    .eq("is_published", true)
+    .order("sort_order", { ascending: true }))) || [];
+  const publicProjects = (projects || []).filter((p) => p.slug && !p.is_hidden);
+  const available = publicProjects.filter((p) => p.visibility_status !== "sold_out");
+  const projectUrl = (code, p) => `/${code}/proyecto/${projectSeoSlug(p)}`;
+  const projectLi = (code, p) =>
+    `<li><a href="${projectUrl(code, p)}">${esc(p.name)}</a>${p.location ? ` — ${esc(p.location)}` : ""}${p.visibility_status === "sold_out" ? " (sold out)" : ""}<p>${esc(localizedDescription(p, code))}</p></li>`;
+  const blogTitle = (b, code) => loc(b, "title", code);
+  const blogLi = (code, b) =>
+    `<li><a href="/${code}/blog/${b.slug}">${esc(blogTitle(b, code))}</a> <time datetime="${esc((b.published_date || "").slice(0, 10))}">${esc(fmtDate(b.published_date, code))}</time><p>${esc(truncate(plain(loc(b, "description", code)), 220))}</p></li>`;
+  const home = (code) => [tr(code, "nav.home"), `${ORIGIN}/${code}`];
+
+  // ---- HOME por idioma ----
+  // El dominio a secas (/) usa dist/index.html (SPA). Para /es /en /ro /id generamos
+  // dist/<prefix>.html (nginx: try_files $uri.html). Copy estático de marketing.
+  const HOME = [
+    { prefix: "en", ogLocale: "en_US", title: "Unreal Studio Bali | Real estate investment in Bali from €75k", desc: "Real estate developer in Bali for international investors. Villas, lofts and apartments in Uluwatu, Canggu and Tabanan from €75,000. Projected ROI 15-28% per year. Remote purchase with POA. Offices in Madrid & Bali.", alt: "Investment villa in Bali — Unreal Studio" },
+    { prefix: "es", ogLocale: "es_ES", title: "Unreal Studio Bali | Inversión inmobiliaria en Bali desde 75k€", desc: "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y apartamentos en Uluwatu, Canggu y Tabanan desde 75.000€. ROI proyectado 15-28% anual. Compra remota con POA. Sede en Madrid + Bali.", alt: "Villa de inversión en Bali — Unreal Studio" },
+    { prefix: "ro", ogLocale: "ro_RO", title: "Unreal Studio Bali | Investiții imobiliare în Bali de la 75k€", desc: "Dezvoltator imobiliar în Bali pentru investitori internaționali. Vile, lofturi și apartamente în Uluwatu, Canggu și Tabanan de la 75.000€. ROI estimat 15-28% pe an. Achiziție la distanță cu POA. Birouri în Madrid și Bali.", alt: "Vilă de investiție în Bali — Unreal Studio" },
+    { prefix: "id", ogLocale: "id_ID", title: "Unreal Studio Bali | Investasi properti di Bali mulai €75rb", desc: "Pengembang properti di Bali untuk investor internasional. Vila, loft, dan apartemen di Uluwatu, Canggu, dan Tabanan mulai €75.000. Proyeksi ROI 15-28% per tahun. Pembelian jarak jauh dengan POA. Kantor di Madrid & Bali.", alt: "Vila investasi di Bali — Unreal Studio" },
+  ];
+  const eurPrices = available.filter((p) => (p.price_currency || "EUR").toUpperCase() === "EUR" && p.investor_price > 0).map((p) => Number(p.investor_price));
+  const minPrice = eurPrices.length ? `${Math.min(...eurPrices).toLocaleString("de-DE")}€` : "75.000€";
+  const featured = available.find((p) => p.is_featured) || available[0];
+  // Preload SOLO de la imagen LCP (la destacada) con el mismo srcset/sizes que Home.tsx.
+  const lcpSet = featured ? renderSrcSet(ogImage(featured.image), [480, 800, 1000, 1400]) : "";
+  const lcpPreload = lcpSet
+    ? `<link rel="preload" as="image" imagesrcset="${esc(lcpSet)}" imagesizes="(max-width: 768px) 40vw, 50vw" fetchpriority="high">`
+    : "";
+  for (const h of HOME) {
+    const code = h.prefix;
+    const main = `<h1>${esc(plain(tr(code, "home.heroTitle").replace("{{price}}", minPrice)))}</h1>
+<p>${esc(h.desc)}</p>
+<section><h2>${esc(tr(code, "nav.projects"))}</h2><ul>${publicProjects.map((p) => projectLi(code, p)).join("")}</ul></section>
+${blogs.length ? `<section><h2>${esc(tr(code, "nav.blog"))}</h2><ul>${blogs.slice(0, 3).map((b) => blogLi(code, b)).join("")}</ul></section>` : ""}
+<p><a href="/${code}/agendar">${esc(tr(code, "nav.scheduleCall"))}</a></p>`;
+    let html = renderPage(template, { code, tail: "", title: h.title, desc: h.desc, main });
+    html = setMeta(html, "og:image:alt", h.alt);
+    if (lcpPreload) html = html.replace(/<\/head>/i, `    ${lcpPreload}\n  </head>`);
+    // Instagram por idioma: @unrealstudiomadrid solo en español (contenido ES).
+    if (code === "es") html = html.replace("https://instagram.com/unrealstudiobali", "https://instagram.com/unrealstudiomadrid");
+    writeOut(`${code}.html`, html);
+  }
+
+  // ---- Páginas estáticas por idioma ----
+  let staticCount = 0;
+  for (const code of LANGS) {
+    const page = (path, title, desc, main, ld = []) => {
+      const crumbs = breadcrumb([home(code), [plain(title).split(" | ")[0], `${ORIGIN}/${code}${path}`]]);
+      writeOut(`${code}${path}.html`, renderPage(template, { code, tail: path, title, desc, main, ld: [crumbs, ...ld] }));
+      staticCount++;
+    };
+    // /proyectos
+    page("/proyectos", tr(code, "projects.title"), tr(code, "projects.metaDescription"),
+      `<h1>${esc(tr(code, "projects.heroTitle"))}</h1><p>${esc(tr(code, "projects.metaDescription"))}</p><ul>${publicProjects.map((p) => projectLi(code, p)).join("")}</ul>`,
+      [{ "@type": "ItemList", itemListElement: publicProjects.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.name, url: `${ORIGIN}${projectUrl(code, p)}` })) }]);
+    // /blog
+    page("/blog", tr(code, "blog.title"), tr(code, "blog.metaDescription"),
+      `<h1>${esc(tr(code, "blog.heroTitle"))}</h1><p>${esc(tr(code, "blog.heroSubtitle"))}</p><ul>${blogs.map((b) => blogLi(code, b)).join("")}</ul>`);
+    // /faq (filas del idioma; si no hay, ES — igual que Faq.tsx)
+    const fq = faqs.filter((f) => f.language === code).length ? faqs.filter((f) => f.language === code) : faqs.filter((f) => f.language === "es");
+    page("/faq", tr(code, "faq.title"), tr(code, "faq.metaDescription"),
+      `<h1>${esc(tr(code, "faq.heroTitle"))}</h1><p>${esc(tr(code, "faq.heroSubtitle"))}</p>${fq.map((f) => `<section><h2>${esc(f.question)}</h2><div>${sanitize(f.answer)}</div></section>`).join("\n")}`,
+      fq.length ? [{ "@type": "FAQPage", mainEntity: fq.slice(0, 50).map((f) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: plain(f.answer) } })) }] : []);
+    // /agendar, /contacto, /agencias
+    page("/agendar", tr(code, "booking.title"), tr(code, "contact.metaDescription"),
+      `<h1>${esc(tr(code, "booking.heroTitle"))}</h1><p>${esc(tr(code, "booking.heroSubtitle"))}</p>`);
+    page("/contacto", tr(code, "contact.title"), tr(code, "contact.metaDescription"),
+      `<h1>${esc(`${tr(code, "contact.heroTitle1")} ${tr(code, "contact.heroTitle2")}`.trim())}</h1><p>${esc(tr(code, "contact.heroSubtitle"))}</p><p><a href="mailto:hello@unrealstudiobali.com">hello@unrealstudiobali.com</a> · +34 625 710 770</p>`);
+    page("/agencias", `${tr(code, "nav.agencies")} | Unreal Studio Bali`, tr(code, "agenciasPartnership.metaDescription"),
+      `<h1>${esc(`${tr(code, "agenciasPartnership.heroTitle1")} ${tr(code, "agenciasPartnership.heroTitle2")}`)}</h1><p>${esc(tr(code, "agenciasPartnership.heroBody"))}</p>`);
+    // Legales (public/legal/<lang>/<doc>.md, fallback ES — igual que LegalPage.tsx)
+    for (const doc of ["privacidad", "terminos", "aviso-legal"]) {
+      const f = [code, "es"].map((l) => resolve(__dirname, "..", "public", "legal", l, `${doc}.md`)).find((x) => existsSync(x));
+      if (!f) continue;
+      const md = readFileSync(f, "utf8");
+      const h1 = (md.match(/^#\s+(.+)$/m) || [])[1] || doc;
+      const firstP = md.split(/\n{2,}/).map((b) => b.trim()).find((b) => b && !b.startsWith("#")) || h1;
+      page(`/${doc}`, `${h1} | Unreal Studio Bali`, truncate(plain(firstP.replace(/[*#_]/g, "")), 160), mdToHtml(md));
+    }
+  }
+  console.log(`[prerender-og] Home ×${HOME.length} + estáticas ×${staticCount} (con contenido, hreflang y JSON-LD).`);
+
+  // ---- Blog: un HTML por post e idioma ----
+  let blogCount = 0;
+  for (const b of blogs) {
+    if (!b.slug) continue;
+    for (const code of LANGS) {
+      const tail = `/blog/${b.slug}`;
+      const title = blogTitle(b, code);
+      const desc = truncate(plain(loc(b, "description", code)) || title, 200);
+      const content = sanitize(loc(b, "content", code));
+      const img = b.image ? ogImage(b.image) : undefined;
+      const url = `${ORIGIN}/${code}${tail}`;
+      const main = `<article><h1>${esc(title)}</h1><p><time datetime="${esc((b.published_date || "").slice(0, 10))}">${esc(fmtDate(b.published_date, code))}</time>${b.tag ? ` · ${esc(b.tag)}` : ""}</p>${content}</article>
+<section><h2>${esc(tr(code, "nav.projects"))}</h2><ul>${available.map((p) => `<li><a href="${projectUrl(code, p)}">${esc(p.name)}</a></li>`).join("")}</ul></section>`;
+      const ld = [
+        breadcrumb([home(code), [tr(code, "nav.blog"), `${ORIGIN}/${code}/blog`], [title, url]]),
+        {
+          "@type": "BlogPosting",
+          headline: truncate(title, 110),
+          description: desc,
+          image: img ? [img] : undefined,
+          datePublished: b.published_date || undefined,
+          dateModified: b.updated_at || b.published_date || undefined,
+          inLanguage: code,
+          wordCount: plain(content).split(" ").filter(Boolean).length,
+          author: { "@id": `${ORIGIN}/#organization`, "@type": "Organization", name: "Unreal Studio Bali", url: ORIGIN },
+          publisher: { "@id": `${ORIGIN}/#organization` },
+          mainEntityOfPage: url,
+        },
+      ];
+      writeOut(`${code}${tail}.html`, renderPage(template, { code, tail, title: `${title} | Unreal Studio`, desc, main, ld, ogType: "article", image: img }));
+      blogCount++;
+    }
+  }
+  console.log(`[prerender-og] Blog: ${blogCount} ficheros (${blogs.length} posts × ${LANGS.length} idiomas).`);
+
+  // ---- /llms.txt (llmstxt.org): resumen + URLs clave, regenerado en cada build ----
+  writeOut("llms.txt", `# Unreal Studio Bali
+
+> Real estate developer in Bali (Indonesia) with offices in Madrid (C. de San Nicolás 17) and Bali (Jl. Pratu Rai Madra No.15). Builds and sells leasehold villas, lofts and apartments in Uluwatu, Canggu/Pererenan and Tabanan to international investors, mainly from Spain. Remote purchase with power of attorney (POA). Site in Spanish (/es), English (/en), Romanian (/ro) and Indonesian (/id).
+
+Contact: hello@unrealstudiobali.com · +34 625 710 770 · ${ORIGIN}/es/agendar
+
+## Main pages
+- [Home (ES)](${ORIGIN}/es): overview and featured project
+- [Projects](${ORIGIN}/es/proyectos): current catalogue with availability
+- [FAQ](${ORIGIN}/es/faq): leasehold, payments, ownership, buying process
+- [Blog](${ORIGIN}/es/blog): guides on investing in Bali
+- [Partners / agencies](${ORIGIN}/es/agencias)
+- [Legal notice](${ORIGIN}/es/aviso-legal)
+
+## Projects
+${publicProjects.map((p) => `- [${p.name}](${ORIGIN}${projectUrl("es", p)})${p.location ? `: ${p.location}` : ""}${p.visibility_status === "sold_out" ? " (sold out)" : ""}`).join("\n")}
+
+## Guides
+${blogs.map((b) => `- [${b.title}](${ORIGIN}/es/blog/${b.slug})`).join("\n")}
+
+## Optional
+- [English site](${ORIGIN}/en)
+- [Sitemap](${ORIGIN}/sitemap.xml)
+`);
+
+  if (!projects) return;
   let count = 0;
   for (const p of projects) {
     if (!p.slug) continue;
@@ -212,37 +454,58 @@ async function main() {
     // Cubrimos el slug SEO (el que comparte la web) y el slug corto (enlaces viejos).
     const slugs = Array.from(new Set([seoSlug, p.slug]));
     const img = ogImage(p.image);
+    const sold = p.visibility_status === "sold_out";
 
-    for (const loc of LOCALES) {
-      const desc = localizedDescription(p, loc.code);
+    for (const L of LOCALES) {
+      const code = L.code;
+      const tail = `/proyecto/${seoSlug}`;
+      const desc = localizedDescription(p, code);
       const title = `${p.name} | Unreal Studio Bali`;
-      const canonical = `${ORIGIN}${loc.prefix ? "/" + loc.prefix : ""}/proyecto/${seoSlug}`;
+      const canonical = `${ORIGIN}/${code}${tail}`; // sin prefijo → canónica /es
+      const facts = [
+        p.location && esc(p.location),
+        p.property_type && esc(p.property_type),
+        p.bedrooms > 0 && `${esc(tr(code, "projectDetail.labelBedrooms"))}: ${p.bedrooms}`,
+        p.bathrooms > 0 && `${esc(tr(code, "projectDetail.labelBathrooms"))}: ${p.bathrooms}`,
+        p.area_m2 > 0 && `${esc(tr(code, "projectDetail.labelArea"))}: ${p.area_m2} m²`,
+      ].filter(Boolean).join(" · ");
+      const main = `<article><h1>${esc(p.name)}</h1><p>${facts}</p><p>${esc(plain(loc(p, "description", code)))}</p><p><a href="/${code}/agendar">${esc(tr(code, "nav.scheduleCall"))}</a> · <a href="/${code}/proyectos">${esc(tr(code, "nav.projects"))}</a></p></article>`;
+      const ld = [
+        breadcrumb([home(code), [tr(code, "nav.projects"), `${ORIGIN}/${code}/proyectos`], [p.name, canonical]]),
+        {
+          "@type": "RealEstateListing",
+          name: p.name,
+          description: desc,
+          url: canonical,
+          image: [img],
+          inLanguage: code,
+          datePosted: (p.created_at || "").slice(0, 10) || undefined,
+          about: {
+            "@type": /villa|house/i.test(p.property_type || "") ? "House" : "Apartment",
+            name: p.name,
+            numberOfBedrooms: p.bedrooms || undefined,
+            numberOfBathroomsTotal: p.bathrooms || undefined,
+            floorSize: p.area_m2 > 0 ? { "@type": "QuantitativeValue", value: p.area_m2, unitCode: "MTK" } : undefined,
+            address: { "@type": "PostalAddress", addressLocality: p.location || "Bali", addressRegion: "Bali", addressCountry: "ID" },
+          },
+          offers: p.investor_price > 0 ? {
+            "@type": "Offer",
+            price: Number(p.investor_price),
+            priceCurrency: (p.price_currency || "EUR").toUpperCase(),
+            availability: sold ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+            url: canonical,
+          } : undefined,
+        },
+      ];
+      let html = renderPage(template, { code, tail, title, desc, main, ld, ogType: "article", image: img, canonical });
+      html = setMeta(html, "og:image:alt", p.name);
+      html = setMeta(html, "og:locale", L.ogLocale);
 
       for (const slug of slugs) {
-        const url = `${ORIGIN}${loc.prefix ? "/" + loc.prefix : ""}/proyecto/${slug}`;
-        let html = template;
-        html = setTitle(html, title);
-        html = setMeta(html, "description", desc, "name");
-        html = setMeta(html, "og:type", "article");
-        html = setMeta(html, "og:title", title);
-        html = setMeta(html, "og:description", desc);
-        html = setMeta(html, "og:image", img);
-        html = setMeta(html, "og:image:alt", p.name);
-        // Dimensiones del template (1200x630) no aplican a la imagen real del proyecto.
-        html = removeMeta(html, "og:image:width");
-        html = removeMeta(html, "og:image:height");
-        html = setMeta(html, "og:url", url);
-        html = setMeta(html, "og:locale", loc.ogLocale);
-        html = setMeta(html, "twitter:title", title, "name");
-        html = setMeta(html, "twitter:description", desc, "name");
-        html = setMeta(html, "twitter:image", img, "name");
-        html = setCanonical(html, canonical);
-
+        const url = `${ORIGIN}${L.prefix ? "/" + L.prefix : ""}/proyecto/${slug}`;
         // Fichero <slug>.html (no carpeta/index.html) para que nginx lo sirva con
         // try_files $uri.html SIN redirigir a barra final.
-        const outDir = resolve(DIST, ...(loc.prefix ? [loc.prefix] : []), "proyecto");
-        mkdirSync(outDir, { recursive: true });
-        writeFileSync(resolve(outDir, `${slug}.html`), html, "utf8");
+        writeOut(`${L.prefix ? L.prefix + "/" : ""}proyecto/${slug}.html`, setMeta(html, "og:url", url));
         count++;
       }
     }

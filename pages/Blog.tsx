@@ -38,6 +38,7 @@ const Blog: React.FC = () => {
         const { data } = await supabase
             .from('blogs')
             .select('*')
+            .eq('is_published', true)
             .order('published_date', { ascending: false });
         if (data) setBlogs(data as unknown as BlogPost[]);
       } catch (error) {

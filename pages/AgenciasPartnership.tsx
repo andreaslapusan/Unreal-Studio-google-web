@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase, getImageUrl } from "../lib/supabase";
-import { imgSrc } from "../lib/imageOptimize";
+import { imgSrc, imgFallback } from "../lib/imageOptimize";
 import { translateStatus } from "../lib/statusI18n";
 
 interface ProjectCard {
@@ -119,7 +119,7 @@ export default function AgenciasPartnership() {
             {projects.map((p) => (
               <article key={p.slug ?? p.name} className="bg-almond rounded-2xl overflow-hidden border border-primary/5">
                 {p.image ? (
-                  <img src={imgSrc(getImageUrl(p.image), 600)} alt={p.name} loading="lazy" className="w-full h-48 object-cover" />
+                  <img src={imgSrc(getImageUrl(p.image), 600)} onError={imgFallback(getImageUrl(p.image))} alt={p.name} loading="lazy" className="w-full h-48 object-cover" />
                 ) : (
                   <div className="w-full h-48 bg-primary/5" />
                 )}

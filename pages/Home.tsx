@@ -89,6 +89,7 @@ const Home: React.FC = () => {
         const { data: blogsData } = await supabase
             .from('blogs')
             .select('*')
+            .eq('is_published', true)
             .order('published_date', { ascending: false })
             .limit(3);
 
@@ -498,8 +499,8 @@ const Home: React.FC = () => {
                 <img
                   loading="lazy"
                   src={imgSrc(getImageUrl(proj.image), 600)}
-                  srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900])}
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                   onError={imgFallback(getImageUrl(proj.image))}
                   alt={proj.name}

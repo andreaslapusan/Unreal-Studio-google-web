@@ -54,8 +54,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
 
-    <!-- Preload hero / og image SOLO en la home (en el resto de rutas robaba ancho de banda al JS con red lenta) -->
-    <script>if(/^\/(es|en|ro|id)?\/?$/.test(location.pathname)){var _pl=document.createElement('link');_pl.rel='preload';_pl.as='image';_pl.href='/img/og-image.webp';_pl.setAttribute('fetchpriority','high');document.head.appendChild(_pl);}</script>
+    <link rel="preconnect" href="https://rnielxgackkshnatvagj.supabase.co">
+    <link rel="preconnect" href="https://rnielxgackkshnatvagj.supabase.co" crossorigin>
+    <!-- Preload de la imagen LCP (destacada de la home): lo inyecta scripts/prerender-og.mjs
+         solo en dist/<lang>.html. (Antes se precargaba og-image.webp, que la home no muestra.) -->
 
     <!-- Analítica y publicidad (GTM GTM-NHNQM6VG, GA4 G-VM1PBTZ06W, Pixel de Meta) SOLO con
          consentimiento de cookies (RGPD/LSSI). El aviso (components/CookieNotice + lib/consent.ts)
@@ -217,7 +219,7 @@
     <script>
       // Solo se quita cuando React ya pintó algo en #root (antes: al cargar el CSS → con red lenta quedaba crema VACÍO sin ruedecita).
       // Y además el CSS diferido (defer-css.mjs) ya aplicado: si no, el fallback de Suspense sale sin estilos → crema vacío.
-      window.__hideBoot = function(){ var r=document.getElementById('root'), b=document.getElementById('app-boot'); if(!b||!r||!r.childElementCount) return false; if(document.querySelector('link[href*="/assets/index-"][media="print"]')) return false; b.style.opacity='0'; setTimeout(function(){ b && b.remove(); }, 250); return true; };
+      window.__hideBoot = function(){ var r=document.getElementById('root'), b=document.getElementById('app-boot'); if(!b||!r||!r.firstElementChild||r.firstElementChild.hasAttribute('data-prerender')) return false; if(document.querySelector('link[href*="/assets/index-"][media="print"]')) return false; b.style.opacity='0'; setTimeout(function(){ b && b.remove(); }, 250); return true; };
       (function(){ var n=0, iv=setInterval(function(){ if(window.__hideBoot()) return clearInterval(iv); if(++n===50){ var b=document.getElementById('app-boot'); if(!b) return;
         var l=(location.pathname.split('/')[1]||navigator.language||'es').slice(0,2), T={es:['Conexión lenta, seguimos cargando…','Reintentar'],en:['Slow connection, still loading…','Retry'],ro:['Conexiune lentă, se încarcă în continuare…','Reîncearcă'],id:['Koneksi lambat, masih memuat…','Coba lagi']}[l]||['Slow connection, still loading…','Retry'];
         var m=document.createElement('p'); m.style.cssText='position:absolute;top:calc(50% + 40px);left:0;right:0;text-align:center;font:14px sans-serif;color:#3F2305';

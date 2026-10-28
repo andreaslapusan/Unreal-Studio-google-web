@@ -27,7 +27,8 @@ const BlogDetail: React.FC = () => {
 
   // JSON-LD Article: resultados enriquecidos del artículo en Google.
   useEffect(() => {
-    if (!post) return;
+    // Si la URL de entrada trae el BlogPosting pre-renderizado, no duplicar.
+    if (!post || document.querySelector('script[data-prerender-ld]')) return;
     const schema = {
       '@context': 'https://schema.org', '@type': 'Article',
       headline: post.title,
@@ -66,6 +67,7 @@ const BlogDetail: React.FC = () => {
             .from('blogs')
             .select('*')
             .eq('slug', slug)
+            .eq('is_published', true)
             .single();
 
         if (data) {

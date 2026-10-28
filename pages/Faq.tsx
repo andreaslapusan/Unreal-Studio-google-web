@@ -129,7 +129,8 @@ export default function Faq() {
 
   // JSON-LD FAQPage: habilita resultados enriquecidos (acordeón) en Google.
   useEffect(() => {
-    if (!faqs.length) return;
+    // Si la URL de entrada trae el FAQPage pre-renderizado, no duplicar.
+    if (!faqs.length || document.querySelector('script[data-prerender-ld]')) return;
     const strip = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
     const schema = {
       '@context': 'https://schema.org', '@type': 'FAQPage',
