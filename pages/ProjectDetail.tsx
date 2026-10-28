@@ -898,14 +898,14 @@ const ProjectDetail: React.FC = () => {
                 })()}
 
                 {/* Botones en Sidebar */}
-                {brochureFor(project, i18n.language) && (
+                {(
                   <div className="pt-6 border-t border-gray-100 space-y-3">
                     {brochureFor(project, i18n.language) && (
                       <a href={getImageUrl(brochureFor(project, i18n.language))} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full">
                         <span className="material-symbols-outlined text-sm">download</span> {t('projectDetail.downloadBrochure')}
                       </a>
                     )}
-                    {/* Reporte de obra: privado → solo en el portal /cliente, gateado por asignación. */}
+                    <ConstructionReportButton projectName={project.name} className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-primary hover:text-white text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition group w-full [&>span]:text-sm" />
                   </div>
                 )}
               </div>

@@ -82,6 +82,15 @@ export const geoLanguageDetector: LanguageDetectorAsyncModule = {
       /* ignore */
     }
 
+    // 0b. Prefijo de idioma en la ruta (/es/…, /en/…): manda. Si no, el lookup
+    //     por IP (asíncrono) llegaba después de LangSetter y pisaba el idioma de
+    //     la URL (p.ej. /es/proyecto/… salía en inglés fuera de España).
+    const pathLang = window.location.pathname.split('/')[1];
+    if (['es', 'en', 'ro', 'id'].includes(pathLang)) {
+      callback(pathLang);
+      return pathLang;
+    }
+
     // 1. localStorage override
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
