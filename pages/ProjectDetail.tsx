@@ -503,7 +503,7 @@ const ProjectDetail: React.FC = () => {
           )}
           <div className="px-4 border-r-0 text-center md:text-left col-span-2 md:col-span-1">
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
-            <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-full uppercase tracking-tighter">
+            <p className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 h-9 uppercase tracking-tighter">
               <span className={`w-2 h-2 rounded-full ${soldOut ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'}`}></span>
               {soldOut ? t('projects.soldOutBadge') : translateStatus(project.status, t)}
             </p>
