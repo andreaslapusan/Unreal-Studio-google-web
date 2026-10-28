@@ -38,7 +38,7 @@ No solicitamos categorías especiales de datos (salud, ideología, etc.). Rogamo
 | Cumplir obligaciones legales: contables, fiscales, notariales, de prevención del blanqueo de capitales y requerimientos de autoridades | Obligación legal (art. 6.1.c RGPD) |
 | Enviar comunicaciones comerciales sobre nuevos proyectos y novedades | Consentimiento; o interés legítimo respecto de clientes por productos similares, con posibilidad de oposición en cada envío (art. 6.1.a y 6.1.f RGPD; art. 21 LSSI-CE) |
 | Gestionar la relación con agencias, colaboradores y proveedores, incluida la prospección comercial B2B con datos profesionales | Ejecución del contrato e interés legítimo (art. 6.1.b y 6.1.f RGPD) |
-| Analítica web, medición de campañas y publicidad personalizada mediante cookies no necesarias | Consentimiento (art. 6.1.a RGPD; art. 22.2 LSSI-CE) |
+| Analítica web, medición de campañas y publicidad personalizada mediante cookies no necesarias | Interés legítimo y aceptación al continuar navegando, informada mediante el aviso de cookies |
 | Grabar, transcribir y resumir reuniones y llamadas para documentar acuerdos y mejorar la atención | Interés legítimo con aviso previo, o consentimiento cuando la ley lo exija (art. 6.1.f / 6.1.a RGPD) |
 | Seguridad del Sitio Web, prevención del fraude, defensa de derechos y gestión de reclamaciones | Interés legítimo (art. 6.1.f RGPD) |
 
@@ -106,7 +106,7 @@ El Sitio Web utiliza cookies y tecnologías similares (píxeles, almacenamiento 
 | Publicidad y medición | Píxel de Meta (Facebook/Instagram) | Medir campañas, conversiones y mostrar publicidad personalizada | Hasta 90 días |
 | Atribución de campañas | Propias, HighLevel/LeadConnector | Registrar el origen (UTM) de las solicitudes y formularios | Hasta 1 año |
 
-Las cookies técnicas no requieren consentimiento. **Las cookies analíticas y publicitarias solo se instalan si el Usuario las acepta** mediante el aviso de cookies que se muestra en su primera visita, donde puede aceptarlas o rechazarlas, y puede retirar o cambiar su consentimiento en cualquier momento, con la misma facilidad, desde el enlace «Cookies» del pie de página. También puede eliminarlas o bloquearlas desde la configuración de su navegador; si bloquea las técnicas, algunas funciones podrían no funcionar. La información de terceros (Google y Meta) se rige además por sus propias políticas de privacidad.
+Las cookies técnicas no requieren consentimiento. **El Sitio Web utiliza cookies analíticas y publicitarias (Google y Meta) desde el inicio de la navegación**, lo que se informa mediante el aviso de cookies que se muestra en la primera visita. Al continuar navegando, el Usuario acepta su uso. Puede eliminarlas o bloquearlas en cualquier momento desde la configuración de su navegador o mediante las herramientas de exclusión de Google y Meta; si bloquea las técnicas, algunas funciones podrían no funcionar. La información de terceros (Google y Meta) se rige además por sus propias políticas de privacidad.
 
 ## 11. Seguridad y brechas
 

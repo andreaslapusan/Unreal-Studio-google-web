@@ -83,7 +83,7 @@
       window.addEventListener('load', function () {
         var c = null;
         try { c = localStorage.getItem('cookie_consent'); } catch (e) {}
-        if (c === 'granted') setTimeout(window.__loadTracking, 1500);
+        setTimeout(window.__loadTracking, 1500); // Andreas 28-oct: se carga siempre (sin esperar consentimiento)
       });
     </script>
     <!-- Meta's <noscript> img fallback intentionally omitted — this is an SPA

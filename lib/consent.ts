@@ -17,9 +17,8 @@ export function getConsent(): Consent | null {
 
 export function setConsent(v: Consent): void {
   try { localStorage.setItem(CONSENT_KEY, v); } catch { /* sin storage: vale solo para esta visita */ }
+  // Andreas 28-oct: el tracking se carga siempre desde index.html; el aviso solo informa.
   if (v === 'granted') window.__loadTracking?.();
-  // Revocar tras haber cargado los scripts: recargar para que dejen de ejecutarse.
-  else if (window.__trackingLoaded) window.location.reload();
 }
 
 /** Vuelve a mostrar el aviso (enlace «Cookies» del pie). */

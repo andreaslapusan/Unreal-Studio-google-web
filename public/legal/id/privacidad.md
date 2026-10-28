@@ -38,7 +38,7 @@ Kami tidak meminta data pribadi yang bersifat spesifik (kesehatan, ideologi, dan
 | Memenuhi kewajiban hukum: akuntansi, perpajakan, kenotariatan, pencegahan pencucian uang, dan permintaan otoritas | Kewajiban hukum (pasal 6.1.c GDPR (RGPD)) |
 | Mengirimkan komunikasi komersial tentang proyek baru dan kabar terbaru | Persetujuan; atau kepentingan yang sah terhadap klien untuk produk serupa, dengan kemungkinan menolak pada setiap pengiriman (pasal 6.1.a dan 6.1.f GDPR (RGPD); pasal 21 LSSI-CE) |
 | Mengelola hubungan dengan agensi, mitra, dan pemasok, termasuk prospeksi komersial B2B dengan data profesional | Pelaksanaan kontrak dan kepentingan yang sah (pasal 6.1.b dan 6.1.f GDPR (RGPD)) |
-| Analitik web, pengukuran kampanye, dan iklan yang dipersonalisasi melalui cookies yang tidak diperlukan | Persetujuan (pasal 6.1.a GDPR (RGPD); pasal 22.2 LSSI-CE) |
+| Analitik web, pengukuran kampanye, dan iklan yang dipersonalisasi melalui cookies yang tidak diperlukan | Kepentingan yang sah dan persetujuan dengan melanjutkan penjelajahan, sebagaimana diinformasikan dalam pemberitahuan cookies |
 | Merekam, mentranskripsikan, dan meringkas rapat dan panggilan untuk mendokumentasikan kesepakatan dan meningkatkan layanan | Kepentingan yang sah dengan pemberitahuan sebelumnya, atau persetujuan apabila diwajibkan oleh hukum (pasal 6.1.f / 6.1.a GDPR (RGPD)) |
 | Keamanan Situs Web, pencegahan penipuan, pembelaan hak, dan penanganan keluhan | Kepentingan yang sah (pasal 6.1.f GDPR (RGPD)) |
 
@@ -106,7 +106,7 @@ Situs Web menggunakan cookies dan teknologi serupa (piksel, penyimpanan lokal) m
 | Periklanan dan pengukuran | Piksel Meta (Facebook/Instagram) | Mengukur kampanye, konversi, dan menampilkan iklan yang dipersonalisasi | Hingga 90 hari |
 | Atribusi kampanye | Milik sendiri, HighLevel/LeadConnector | Mencatat asal (UTM) permintaan dan formulir | Hingga 1 tahun |
 
-Cookies teknis tidak memerlukan persetujuan. **Cookies analitik dan periklanan hanya dipasang apabila Pengguna menerimanya** melalui pemberitahuan cookies yang ditampilkan pada kunjungan pertamanya, di mana Pengguna dapat menerima atau menolaknya, dan Pengguna dapat menarik atau mengubah persetujuannya sewaktu-waktu, dengan kemudahan yang sama, melalui tautan «Cookies» di bagian bawah halaman. Pengguna juga dapat menghapus atau memblokirnya melalui pengaturan perambannya; apabila cookies teknis diblokir, beberapa fungsi mungkin tidak berjalan. Informasi pihak ketiga (Google dan Meta) juga diatur oleh kebijakan privasi masing-masing.
+Cookies teknis tidak memerlukan persetujuan. **Situs Web menggunakan cookies analitik dan periklanan (Google dan Meta) sejak awal penjelajahan**, sebagaimana diinformasikan melalui pemberitahuan cookies yang ditampilkan pada kunjungan pertama. Dengan melanjutkan penjelajahan, Pengguna menyetujui penggunaannya. Pengguna dapat menghapus atau memblokirnya sewaktu-waktu melalui pengaturan perambannya atau alat penolakan (opt-out) Google dan Meta; apabila cookies teknis diblokir, beberapa fungsi mungkin tidak berjalan. Informasi pihak ketiga (Google dan Meta) juga diatur oleh kebijakan privasi masing-masing.
 
 ## 11. Keamanan dan kebocoran
 

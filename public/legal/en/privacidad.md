@@ -38,7 +38,7 @@ We do not request special categories of data (health, ideology, etc.). Please do
 | Complying with legal obligations: accounting, tax, notarial, anti-money laundering and requests from authorities | Legal obligation (art. 6.1.c GDPR (RGPD)) |
 | Sending commercial communications about new projects and news | Consent; or legitimate interest in respect of clients for similar products, with the option to object in each communication (art. 6.1.a and 6.1.f GDPR (RGPD); art. 21 LSSI-CE) |
 | Managing the relationship with agencies, partners and suppliers, including B2B commercial prospecting using professional data | Performance of the contract and legitimate interest (art. 6.1.b and 6.1.f GDPR (RGPD)) |
-| Web analytics, campaign measurement and personalised advertising by means of non-essential cookies | Consent (art. 6.1.a GDPR (RGPD); art. 22.2 LSSI-CE) |
+| Web analytics, campaign measurement and personalised advertising by means of non-essential cookies | Legitimate interest and acceptance by continuing to browse, as informed in the cookie notice |
 | Recording, transcribing and summarising meetings and calls to document agreements and improve service | Legitimate interest with prior notice, or consent where required by law (art. 6.1.f / 6.1.a GDPR (RGPD)) |
 | Website security, fraud prevention, defence of rights and handling of claims | Legitimate interest (art. 6.1.f GDPR (RGPD)) |
 
@@ -106,7 +106,7 @@ The Website uses first-party and third-party cookies and similar technologies (p
 | Advertising and measurement | Meta Pixel (Facebook/Instagram) | Measuring campaigns and conversions and displaying personalised advertising | Up to 90 days |
 | Campaign attribution | First-party, HighLevel/LeadConnector | Recording the origin (UTM) of requests and forms | Up to 1 year |
 
-Technical cookies do not require consent. **Analytics and advertising cookies are only installed if the User accepts them** through the cookie notice displayed on their first visit, where they may accept or reject them, and they may withdraw or change their consent at any time, with the same ease, from the «Cookies» link in the footer. They may also delete or block them from their browser settings; if they block technical cookies, some features may not work. Third-party information (Google and Meta) is also governed by their own privacy policies.
+Technical cookies do not require consent. **The Website uses analytics and advertising cookies (Google and Meta) from the start of browsing**, as stated in the cookie notice displayed on the first visit. By continuing to browse, the User accepts their use. They may delete or block them at any time from their browser settings or through the Google and Meta opt-out tools; if they block technical cookies, some features may not work. Third-party information (Google and Meta) is also governed by their own privacy policies.
 
 ## 11. Security and breaches
 

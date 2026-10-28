@@ -38,7 +38,7 @@ Nu solicităm categorii speciale de date (sănătate, ideologie etc.). Vă rugă
 | Îndeplinirea obligațiilor legale: contabile, fiscale, notariale, de prevenire a spălării banilor și a solicitărilor autorităților | Obligație legală (art. 6.1.c GDPR (RGPD)) |
 | Trimiterea de comunicări comerciale despre proiecte noi și noutăți | Consimțământ; sau interes legitim în privința clienților, pentru produse similare, cu posibilitatea de opoziție la fiecare trimitere (art. 6.1.a și 6.1.f GDPR (RGPD); art. 21 LSSI-CE) |
 | Gestionarea relației cu agențiile, colaboratorii și furnizorii, inclusiv prospectarea comercială B2B cu date profesionale | Executarea contractului și interes legitim (art. 6.1.b și 6.1.f GDPR (RGPD)) |
-| Analiza web, măsurarea campaniilor și publicitatea personalizată prin cookie-uri care nu sunt necesare | Consimțământ (art. 6.1.a GDPR (RGPD); art. 22.2 LSSI-CE) |
+| Analiza web, măsurarea campaniilor și publicitatea personalizată prin cookie-uri care nu sunt necesare | Interes legitim și acceptare prin continuarea navigării, comunicată prin notificarea privind cookie-urile |
 | Înregistrarea, transcrierea și rezumarea întâlnirilor și apelurilor pentru documentarea acordurilor și îmbunătățirea serviciului | Interes legitim cu informare prealabilă sau consimțământ atunci când legea îl impune (art. 6.1.f / 6.1.a GDPR (RGPD)) |
 | Securitatea Site-ului Web, prevenirea fraudei, apărarea drepturilor și gestionarea reclamațiilor | Interes legitim (art. 6.1.f GDPR (RGPD)) |
 
@@ -106,7 +106,7 @@ Site-ul Web utilizează cookie-uri și tehnologii similare (pixeli, stocare loca
 | Publicitate și măsurare | Pixelul Meta (Facebook/Instagram) | Măsurarea campaniilor și a conversiilor și afișarea de publicitate personalizată | Până la 90 de zile |
 | Atribuirea campaniilor | Proprii, HighLevel/LeadConnector | Înregistrarea originii (UTM) solicitărilor și a formularelor | Până la 1 an |
 
-Cookie-urile tehnice nu necesită consimțământ. **Cookie-urile analitice și publicitare sunt instalate numai dacă Utilizatorul le acceptă** prin intermediul notificării privind cookie-urile afișate la prima sa vizită, unde le poate accepta sau respinge, și își poate retrage sau modifica consimțământul în orice moment, cu aceeași ușurință, din linkul „Cookies” din subsolul paginii. De asemenea, le poate șterge sau bloca din setările browserului său; dacă le blochează pe cele tehnice, este posibil ca unele funcții să nu funcționeze. Informațiile terților (Google și Meta) sunt reglementate, în plus, de propriile lor politici de confidențialitate.
+Cookie-urile tehnice nu necesită consimțământ. **Site-ul Web utilizează cookie-uri analitice și publicitare (Google și Meta) de la începutul navigării**, aspect comunicat prin notificarea privind cookie-urile afișată la prima vizită. Continuând navigarea, Utilizatorul acceptă utilizarea lor. Le poate șterge sau bloca oricând din setările browserului său sau prin instrumentele de dezactivare ale Google și Meta; dacă le blochează pe cele tehnice, este posibil ca unele funcții să nu funcționeze. Informațiile terților (Google și Meta) sunt reglementate, în plus, de propriile lor politici de confidențialitate.
 
 ## 11. Securitate și încălcări ale securității
 
