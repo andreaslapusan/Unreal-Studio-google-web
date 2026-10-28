@@ -73,6 +73,12 @@ const ProjectDetail: React.FC = () => {
   };
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
+  // Para el botón flotante de WhatsApp: mensaje con el nombre de este proyecto.
+  useEffect(() => {
+    if (!project?.name) return;
+    document.body.dataset.projectName = project.name;
+    return () => { delete document.body.dataset.projectName; };
+  }, [project?.name]);
   const [similarProjects, setSimilarProjects] = useState<Project[]>([]);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
   const [matchedUnitId, setMatchedUnitId] = useState<string | null>(null);

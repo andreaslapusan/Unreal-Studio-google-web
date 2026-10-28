@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { WHATSAPP_URL } from '../constants';
+import { WHATSAPP_URL, whatsappProjectUrl } from '../constants';
 import { gtmWhatsappClick } from '../lib/gtm';
 
 export default function FloatingWhatsApp() {
@@ -15,7 +15,11 @@ export default function FloatingWhatsApp() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => { try { gtmWhatsappClick({ source: 'floating_fab', phone: '34684733361' }); } catch { /* noop */ } }}
+      onClick={(e) => {
+        // Dentro de una ficha, mensaje con el nombre del proyecto (ProjectDetail lo publica en body[data-project-name]).
+        const pn = document.body.dataset.projectName;
+        if (pn) e.currentTarget.href = whatsappProjectUrl(pn);
+        try { gtmWhatsappClick({ source: 'floating_fab', phone: '34684733361' }); } catch { /* noop */ } }}
       aria-label="WhatsApp"
       className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 bg-[#25D366] text-white rounded-full shadow-2xl shadow-black/20 pl-3.5 pr-4 py-3 hover:scale-105 active:scale-95 transition-transform"
     >
