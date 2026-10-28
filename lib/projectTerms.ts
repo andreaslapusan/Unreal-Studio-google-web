@@ -7,6 +7,8 @@
 // Así, añadir un amenity nuevo en la BD nunca rompe nada — solo saldría sin
 // traducir hasta que se añada aquí. Mismo comportamiento que antes para lo no mapeado.
 
+import i18n from "./i18n";
+
 type Tr = { en: string; ro: string; id: string };
 
 const TERMS: Record<string, Tr> = {
@@ -121,4 +123,38 @@ export function translateProjectTerm(term: string, lang: string | undefined): st
   const tr = TERMS[term];
   if (!tr) return term;
   return (tr as Record<string, string>)[l] || term;
+}
+
+// Amenities llegan de la BD en dos formatos: etiqueta española (admin) o clave
+// camelCase (auto-alta /listing: "sharedPool", "ac"…). Las claves se traducen con
+// las MISMAS cadenas de locales que usa ListingIntake (listingIntake.amenity.*).
+const AMENITY_ICONS: Record<string, string> = {
+  'Piscina privada': 'pool', 'Piscina compartida': 'pool', 'Gimnasio': 'fitness_center',
+  'Coworking': 'desktop_windows', 'Jardín tropical': 'park', 'Terraza': 'deck',
+  'Parking': 'local_parking', 'Seguridad 24h': 'shield', 'Cámaras de seguridad': 'videocam',
+  'WiFi': 'wifi', 'Aire acondicionado': 'ac_unit', 'Ventilador': 'mode_fan_off',
+  'Cocina equipada': 'kitchen', 'Lavandería': 'local_laundry_service', 'Zona barbacoa': 'outdoor_grill',
+  'Vistas al mar': 'water', 'Cercano a la playa': 'beach_access', 'Recepción': 'concierge',
+  'Bar': 'local_bar', 'Almacén': 'warehouse', 'Spa': 'spa',
+  'Sala de juegos': 'sports_esports', 'Servicio de limpieza': 'cleaning_services', 'Alquiler de motos': 'two_wheeler',
+  privatePool: 'pool', sharedPool: 'pool', garden: 'park', parking: 'local_parking', security: 'shield',
+  gym: 'fitness_center', kitchen: 'kitchen', ac: 'ac_unit', wifi: 'wifi', rooftop: 'deck',
+  oceanView: 'water', nearBeach: 'beach_access', coworking: 'desktop_windows', cleaning: 'cleaning_services',
+};
+
+export function amenityIcon(term: string): string {
+  return AMENITY_ICONS[term] || 'check_circle';
+}
+
+const capitalize = (s: string) => s.charAt(0).toLocaleUpperCase() + s.slice(1);
+
+/** Etiqueta visible de un amenity en el idioma dado, siempre con mayúscula inicial. */
+export function amenityLabel(term: string, lang: string | undefined): string {
+  const key = `listingIntake.amenity.${term}`;
+  if (i18n.exists(key)) return capitalize(i18n.t(key, { lng: (lang || 'es').slice(0, 2) }));
+  // Clave desconocida tipo "seaView"/"sea_view" → "Sea view".
+  if (/^[a-z][a-zA-Z0-9_]*$/.test(term)) {
+    return capitalize(term.replace(/_/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase());
+  }
+  return capitalize(translateProjectTerm(term, lang));
 }

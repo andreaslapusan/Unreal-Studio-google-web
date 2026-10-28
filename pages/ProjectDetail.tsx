@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
-import { translateProjectTerm } from '../lib/projectTerms';
+import { translateProjectTerm, amenityLabel, amenityIcon } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -621,20 +621,10 @@ const ProjectDetail: React.FC = () => {
               <h2 className="text-3xl text-primary mb-8">{t('projectDetail.servicesTitle')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {project.amenities.map((amenity, idx) => {
-                  const icons: Record<string, string> = {
-                    'Piscina privada': 'pool', 'Piscina compartida': 'pool', 'Gimnasio': 'fitness_center',
-                    'Coworking': 'desktop_windows', 'Jardín tropical': 'park', 'Terraza': 'deck',
-                    'Parking': 'local_parking', 'Seguridad 24h': 'shield', 'Cámaras de seguridad': 'videocam',
-                    'WiFi': 'wifi', 'Aire acondicionado': 'ac_unit', 'Ventilador': 'mode_fan_off',
-                    'Cocina equipada': 'kitchen', 'Lavandería': 'local_laundry_service', 'Zona barbacoa': 'outdoor_grill',
-                    'Vistas al mar': 'water', 'Cercano a la playa': 'beach_access', 'Recepción': 'concierge',
-                    'Bar': 'local_bar', 'Almacén': 'warehouse', 'Spa': 'spa',
-                    'Sala de juegos': 'sports_esports', 'Servicio de limpieza': 'cleaning_services', 'Alquiler de motos': 'two_wheeler'
-                  };
                   return (
                     <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-primary/5">
-                      <span className="material-symbols-outlined text-primary/40">{icons[amenity] || 'check_circle'}</span>
-                      <span className="text-sm font-medium text-primary">{translateProjectTerm(amenity, i18n.language)}</span>
+                      <span className="material-symbols-outlined text-primary/40">{amenityIcon(amenity)}</span>
+                      <span className="text-sm font-medium text-primary">{amenityLabel(amenity, i18n.language)}</span>
                     </div>
                   );
                 })}
