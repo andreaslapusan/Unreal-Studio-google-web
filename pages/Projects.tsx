@@ -162,7 +162,7 @@ const Projects: React.FC = () => {
 
   // Tarjeta de proyecto; sold=true → badge "Sold out" + precio de mercado (sin precio de oferta).
   const renderCard = (proj: Project, idx: number, sold = false) => (
-              <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full border border-white/50">
+              <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group flex flex-col h-full">
                 <div className={`relative overflow-hidden ${sold ? 'h-40 md:h-48' : 'h-52 sm:h-56 md:h-80'}`}>
                   <img
                     loading={idx === 0 ? "eager" : "lazy"}
@@ -230,7 +230,7 @@ const Projects: React.FC = () => {
                       </div>
                     </>
                   )}
-                  <div className="mt-auto">
+                  <div className="mt-auto pt-4 md:pt-6">
                     <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
                       {sold ? (
                         <div>

@@ -377,9 +377,11 @@ const ProjectDetail: React.FC = () => {
 
   if (loading) {
       return (
-          <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
-              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('projectDetail.loading')}</p>
+          // Solo el spinner, centrado en la pantalla (no en el hueco bajo el header). Andreas 28-oct: sin texto "Cargando…".
+          <div className="min-h-screen bg-almond">
+              <div className="fixed inset-0 flex items-center justify-center pointer-events-none" role="status" aria-label={t('projectDetail.loading')}>
+                  <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+              </div>
           </div>
       );
   }
