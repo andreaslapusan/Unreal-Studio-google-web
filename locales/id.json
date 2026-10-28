@@ -129,7 +129,9 @@
         "freehold": "Hak Milik"
       },
       "deliveryFrom": "mulai",
-      "marketPrice": "Harga pasar"
+      "marketPrice": "Harga pasar",
+      "delivered": "Sudah diserahkan",
+      "incomeGenerating": "Properti menghasilkan pendapatan"
     },
     "noResults": "Tidak ada hasil",
     "clearFilters": "Hapus filter",
@@ -265,7 +267,11 @@
     "extensionPossibleYears": "(+ kemungkinan perpanjangan {{years}} tahun)",
     "alreadyRented": "Disewa · ada penyewa",
     "labelAnnualRent": "Perk. sewa tahunan",
-    "perYear": "/tahun"
+    "perYear": "/tahun",
+    "labelExtensions": "Perpanjangan",
+    "extensionLine": "Perpanjangan {{years}} tahun (total {{total}} tahun)",
+    "extensionLineNoTotal": "Perpanjangan {{years}} tahun",
+    "roiDisclaimer": "Imbal hasil perkiraan dan bersifat estimasi; bukan jaminan kinerja."
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",

@@ -129,7 +129,9 @@
         "freehold": "Freehold"
       },
       "deliveryFrom": "începând cu",
-      "marketPrice": "Preț de piață"
+      "marketPrice": "Preț de piață",
+      "delivered": "Livrat",
+      "incomeGenerating": "Proprietate care generează venit"
     },
     "noResults": "Nu s-au găsit rezultate",
     "clearFilters": "Șterge filtrele",
@@ -265,7 +267,11 @@
     "extensionPossibleYears": "(+ extindere posibilă de {{years}} ani)",
     "alreadyRented": "Închiriat · cu chiriaș",
     "labelAnnualRent": "Chirie anuală est.",
-    "perYear": "/an"
+    "perYear": "/an",
+    "labelExtensions": "Extensii",
+    "extensionLine": "Extensie {{years}} ani (total {{total}} ani)",
+    "extensionLineNoTotal": "Extensie {{years}} ani",
+    "roiDisclaimer": "Randamente estimate și aproximative; nu constituie o garanție de performanță."
   },
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",

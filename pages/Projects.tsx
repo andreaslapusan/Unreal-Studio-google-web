@@ -185,24 +185,16 @@ const Projects: React.FC = () => {
                       ? <span className="bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg">{t('projects.soldOutBadge')}</span>
                       : <span className={`${statusBadgeClass(proj.status)} text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-full shadow-lg`}>{translateStatus(proj.status, t)}</span>}
                   </div>
-                  {proj.has_real_photos && (
-                    <div className="absolute top-2 right-2 md:top-5 md:right-5 z-10">
-                      <span className="flex items-center gap-1 bg-white/95 text-emerald-700 text-[8px] md:text-[9px] font-black px-2 py-1 md:px-3 md:py-1.5 uppercase rounded-md md:rounded-full shadow-lg">
-                        <span className="material-symbols-outlined text-[11px] md:text-sm">photo_camera</span>{t('projects.card.realPhotos')}
-                      </span>
-                    </div>
-                  )}
                 </div>
                 <div className={`flex-1 flex flex-col text-left ${sold ? 'p-4 md:p-5' : 'p-4 md:p-8'}`}>
-                  <h3 className={`${sold ? 'text-base md:text-xl' : 'text-base md:text-3xl'} font-serif text-primary mb-1 md:mb-2 leading-tight line-clamp-2 md:line-clamp-none`}>{proj.name}</h3>
-                  {proj.location && (
-                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-2">
-                      <span className="material-symbols-outlined text-[13px] md:text-base">location_on</span>
-                      <span className="truncate">{proj.location}</span>
-                    </p>
-                  )}
+                  <h3 title={proj.name} className={`${sold ? 'text-sm md:text-base xl:text-lg' : 'text-[15px] md:text-lg lg:text-base xl:text-xl'} font-serif text-primary mb-1 md:mb-2 leading-tight truncate`}>{proj.name}</h3>
+                  <p className={`flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-2 ${proj.location ? '' : 'invisible'}`}>
+                    <span className="material-symbols-outlined text-[13px] md:text-base">location_on</span>
+                    <span className="truncate">{proj.location || '—'}</span>
+                  </p>
                   {/* Key specs row — beds / baths / area / tenure, like the top Bali agencies */}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] md:text-[11px] font-bold text-primary/70 mb-2">
+                  {/* specs + pill en UNA línea; solo en la tarjeta compacta sold-out de móvil (~130px) puede bajar la pill */}
+                  <div className={`flex ${sold ? 'flex-wrap gap-y-1 md:flex-nowrap' : 'flex-nowrap'} items-center gap-x-2 xl:gap-x-3 whitespace-nowrap text-[10px] md:text-[11px] font-bold text-primary/70 mb-2`}>
                     {Number(proj.bedrooms) > 0 && (
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bed</span>{proj.bedrooms}</span>
                     )}
@@ -213,23 +205,36 @@ const Projects: React.FC = () => {
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">square_foot</span>{proj.area_m2} m²</span>
                     )}
                     {proj.tenure && (
-                      <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
+                      <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full shrink-0 ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
                     )}
                   </div>
-                  {!isFinished(proj.status) && localizedCompletion(proj, i18n.language) && (
-                    <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1">
-                      <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
-                      {t('projects.card.delivery')}: {deliveryText(localizedCompletion(proj, i18n.language), t('projects.card.deliveryFrom'))}
-                    </p>
-                  )}
-                  {proj.completion_percent > 0 && proj.completion_percent < 100 && (
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
-                      <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                        <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
+                  {/* Mismas 2 filas en TODAS las tarjetas (alineadas por fila de grid):
+                      finalizada → "Entregado" + "Propiedad en rentabilidad"; si no → "Entrega: a partir de…" + barra OBRA. */}
+                  {isFinished(proj.status) ? (
+                    <>
+                      <p className="flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1 truncate">
+                        <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
+                        {t('projects.card.delivered')}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-2 h-[15px] min-w-0">
+                        <span className="material-symbols-outlined text-[14px] text-emerald-600">trending_up</span>
+                        <span className="text-[9px] font-black uppercase text-emerald-700/80 truncate">{t('projects.card.incomeGenerating')}</span>
                       </div>
-                      <span className="text-[10px] font-bold text-primary">{proj.completion_percent}%</span>
-                    </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className={`flex items-center gap-1 text-[10px] md:text-xs text-primary/50 font-semibold mb-1 truncate ${localizedCompletion(proj, i18n.language) ? '' : 'invisible'}`}>
+                        <span className="material-symbols-outlined text-[13px] md:text-base">event_available</span>
+                        {t('projects.card.delivery')}: {deliveryText(localizedCompletion(proj, i18n.language), t('projects.card.deliveryFrom')) || '—'}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2 h-[15px]">
+                        <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
+                        <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                          <div className="bg-primary h-full rounded-full" style={{ width: `${Math.min(100, Math.max(0, Number(proj.completion_percent) || 0))}%`, minWidth: Number(proj.completion_percent) > 0 ? 4 : 0 }}></div>
+                        </div>
+                        <span className="text-[10px] font-bold text-primary">{Number(proj.completion_percent) || 0}%</span>
+                      </div>
+                    </>
                   )}
                   <div className="mt-auto">
                     <div className="flex justify-between items-end border-t border-primary/5 pt-3 md:pt-6">
@@ -250,7 +255,7 @@ const Projects: React.FC = () => {
                       </div>
                       )}
                       <span className="flex items-center gap-1 text-xs md:text-xs font-black uppercase tracking-widest text-primary group-hover:gap-2 transition-all whitespace-nowrap bg-primary/5 rounded-full px-3 py-1.5 md:px-0 md:py-0 md:bg-transparent">
-                        {t('projects.card.viewDetails', 'Ver detalles')}
+                        <span className={sold ? 'hidden md:inline' : ''}>{t('projects.card.viewDetails', 'Ver detalles')}</span>
                         <span className="material-symbols-outlined text-sm md:text-xl">arrow_forward</span>
                       </span>
                     </div>
@@ -310,11 +315,11 @@ const Projects: React.FC = () => {
       {/* Redesigned Filter Bar for Consistency and Modern Look */}
       <div className="px-4 md:px-12 relative z-30 -mt-12 mb-16 max-w-7xl mx-auto">
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
-          <div className="grid grid-cols-2 md:flex md:flex-row items-stretch md:items-center">
+          <div className="grid grid-cols-2 grid-flow-row-dense xl:flex xl:flex-row items-stretch xl:items-center">
 
             {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
+            <div className="col-span-2 md:col-span-1 flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b xl:border-b-0 xl:border-r border-gray-100 group">
+              <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
                 <div className="relative">
@@ -322,21 +327,20 @@ const Projects: React.FC = () => {
                     aria-label={t('projects.filters.sortBy')}
                     value={filters.sort}
                     onChange={(e) => handleFilterChange('sort', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
+                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] cursor-pointer outline-none appearance-none !pr-5 [background-position:right_0_center] xl:w-auto xl:min-w-full"
                   >
                     <option value="featured">{t('projects.sort.featured')}</option>
                     <option value="roi">{t('projects.sort.roi')}</option>
                     <option value="asc">{t('projects.sort.asc')}</option>
                     <option value="desc">{t('projects.sort.desc')}</option>
                   </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
               </div>
             </div>
 
             {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
+            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b xl:border-b-0 xl:border-r border-gray-100 group">
+              <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
                 <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5 border border-transparent hover:border-primary/10 transition-all">
@@ -345,7 +349,7 @@ const Projects: React.FC = () => {
                     placeholder={t('projects.filters.min')}
                     value={filters.minPrice}
                     onChange={(e) => handlePriceChange('minPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
+                    className="w-full min-w-[3.5rem] bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] placeholder:text-gray-300 text-center"
                   />
                   <span className="text-gray-300 text-[10px]">•</span>
                   <input
@@ -353,74 +357,70 @@ const Projects: React.FC = () => {
                     placeholder={t('projects.filters.max')}
                     value={filters.maxPrice}
                     onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
+                    className="w-full min-w-[3.5rem] bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] placeholder:text-gray-300 text-center"
                   />
                 </div>
               </div>
             </div>
 
             {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
+            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b xl:border-b-0 xl:border-r border-gray-100 group">
+              <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
-                  <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => handleFilterChange('zone', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => handleFilterChange('zone', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] cursor-pointer outline-none appearance-none !pr-5 [background-position:right_0_center] xl:w-auto xl:min-w-full">
                     <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
                     {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
                   </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
               </div>
             </div>
 
             {/* Type Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
+            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b xl:border-b-0 xl:border-r border-gray-100 group">
+              <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
-                  <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] cursor-pointer outline-none appearance-none !pr-5 [background-position:right_0_center] xl:w-auto xl:min-w-full">
                     <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
                     <option value="Villa">Villa</option>
                     <option value="Loft">Loft</option>
                     {config.customTypes.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
               </div>
             </div>
 
             {/* Status Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">verified</span>
+            <div className="col-span-2 md:col-span-1 flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto xl:border-r border-gray-100 group">
+              <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">verified</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.status')}</label>
                 <div className="relative">
-                  <select aria-label={t('projects.filters.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] cursor-pointer outline-none appearance-none !pr-5 [background-position:right_0_center] xl:w-auto xl:min-w-full">
                     <option value={ANY_STATUS}>{t('projects.filters.anyStatus')}</option>
                     <option value="off_plan">{t('admin.statusBadge.off_plan')}</option>
                     <option value="en_construccion">{t('admin.statusBadge.en_construccion')}</option>
                     <option value="obra_finalizada">{t('admin.statusBadge.obra_finalizada')}</option>
                   </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
               </div>
             </div>
 
             {/* Bedrooms Filter */}
-            <div className="flex-1 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">bed</span>
+            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b md:border-b-0 border-gray-100 group">
+              <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">bed</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.bedrooms')}</label>
                 <div className="relative">
-                  <select aria-label={t('projects.filters.bedrooms')} value={filters.beds} onChange={(e) => handleFilterChange('beds', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.bedrooms')} value={filters.beds} onChange={(e) => handleFilterChange('beds', e.target.value)} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-xs xl:text-[13px] cursor-pointer outline-none appearance-none !pr-5 [background-position:right_0_center] xl:w-auto xl:min-w-full">
                     <option value={ANY_BEDS}>{t('projects.filters.anyBeds')}</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3+</option>
                   </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
                 </div>
               </div>
             </div>

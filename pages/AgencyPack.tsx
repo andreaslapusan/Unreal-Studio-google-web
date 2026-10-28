@@ -272,11 +272,6 @@ const AgencyPack: React.FC = () => {
             </Field>
             <Field label={t('agencyPack.fieldPaymentPlan')}>{tr(project,'payment_plan_off_plan')}</Field>
             <Field label={t('agencyPack.fieldEstimatedDelivery')}>{tr(project,'completion_date')}</Field>
-            <Field label={t('agencyPack.fieldRoiProjected')}>
-              {project.annual_rental_projection != null
-                ? t('agencyPack.roiPerYear', { value: project.annual_rental_projection.toLocaleString('en-US') })
-                : null}
-            </Field>
           </section>
         </div>
 

@@ -76,17 +76,20 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
       <div className={gridCls}>
         {photos.map((img, idx) => {
           const main = isMain(img, idx);
+          // key estable por URL (no por índice): al reordenar React MUEVE los nodos en vez de
+          // recrear 20-30 <img> (re-decode + repintado). El contador cubre URLs duplicadas.
+          const dup = photos.slice(0, idx).filter((p) => p === img).length;
           return (
             <div
-              key={`${img}-${idx}`}
+              key={dup ? `${img}#${dup}` : img}
               draggable
               onDragStart={() => setDragIdx(idx)}
               onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
               onDragOver={(e) => { e.preventDefault(); if (overIdx !== idx) setOverIdx(idx); }}
               onDrop={() => handleDrop(idx)}
-              className={`relative aspect-square rounded-xl overflow-hidden group border transition-[border-color,box-shadow,transform,opacity] duration-200 cursor-grab active:cursor-grabbing
+              className={`relative aspect-square rounded-xl overflow-hidden group border cursor-grab active:cursor-grabbing
                 ${main ? 'border-primary ring-2 ring-primary/40' : 'border-gray-200'}
-                ${overIdx === idx && dragIdx !== idx ? 'ring-2 ring-primary/60 scale-[0.97]' : ''}
+                ${overIdx === idx && dragIdx !== idx ? 'ring-2 ring-primary/60' : ''}
                 ${dragIdx === idx ? 'opacity-40' : ''}`}
             >
               {/* Miniatura LIGERA (thumbSrc ~400px/~40KB) para no congelar el scroll
@@ -96,6 +99,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
                 src={thumbSrc(getImageUrl(img), 400)}
                 onError={imgFallback(getImageUrl(img))}
                 decoding="async"
+                draggable={false}
                 onClick={() => setLightbox(idx)}
                 className="w-full h-full object-cover cursor-zoom-in"
                 alt={main ? t('photoManager.main') : ''}
@@ -110,22 +114,22 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onReorder, onRemove
 
               {/* Acciones: esquina superior derecha, en un chip con degradado
                   mínimo — NO cubren la foto (se ve el color real). */}
-              <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+              <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100">
                 {onSetMain && !main && (
                   <button type="button" title={t('photoManager.setMain')} aria-label={t('photoManager.setMain')}
                     onClick={(e) => { e.stopPropagation(); onSetMain(img); }}
-                    className="w-7 h-7 rounded-lg bg-white/90 backdrop-blur text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
+                    className="w-7 h-7 rounded-lg bg-white text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
                     <span className="material-symbols-outlined text-[16px]">star</span>
                   </button>
                 )}
                 <button type="button" title={t('photoManager.enlarge')} aria-label={t('photoManager.enlarge')}
                   onClick={(e) => { e.stopPropagation(); setLightbox(idx); }}
-                  className="w-7 h-7 rounded-lg bg-white/90 backdrop-blur text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
+                  className="w-7 h-7 rounded-lg bg-white text-primary/70 hover:text-primary hover:bg-white shadow flex items-center justify-center">
                   <span className="material-symbols-outlined text-[16px]">zoom_in</span>
                 </button>
                 <button type="button" title={t('photoManager.remove')} aria-label={t('photoManager.remove')}
                   onClick={(e) => { e.stopPropagation(); onRemove(img, idx); }}
-                  className="w-7 h-7 rounded-lg bg-white/90 backdrop-blur text-red-500/80 hover:text-white hover:bg-red-500 shadow flex items-center justify-center">
+                  className="w-7 h-7 rounded-lg bg-white text-red-500/80 hover:text-white hover:bg-red-500 shadow flex items-center justify-center">
                   <span className="material-symbols-outlined text-[16px]">delete</span>
                 </button>
               </div>

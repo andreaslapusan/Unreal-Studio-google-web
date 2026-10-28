@@ -2824,7 +2824,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       {/* MODALS */}
       {/* ... Project Edit Modal ... */}
       {isEditing && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-end bg-black/60 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
+        <div className="fixed inset-0 z-[150] flex items-center justify-end bg-black/60 p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
+          {/* sin backdrop-blur en este overlay: con 20-30 fotos en el panel con scroll, Chrome/Mac dejaba franjas en blanco (GPU) y el scroll iba a tirones */}
           <div className="bg-white w-full max-w-[90vw] h-full shadow-2xl p-6 md:p-12 overflow-y-auto rounded-2xl md:rounded-l-[3rem]">
             <div className="flex justify-between items-center mb-8 pb-4 border-b">
               <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}</h2>

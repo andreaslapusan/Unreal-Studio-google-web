@@ -129,7 +129,9 @@
         "freehold": "Freehold"
       },
       "deliveryFrom": "a partir de",
-      "marketPrice": "Precio de mercado"
+      "marketPrice": "Precio de mercado",
+      "delivered": "Entregado",
+      "incomeGenerating": "Propiedad en rentabilidad"
     },
     "noResults": "No se encontraron resultados",
     "clearFilters": "Limpiar filtros",
@@ -265,7 +267,11 @@
     "extensionPossibleYears": "(+ extensión posible de {{years}} años)",
     "alreadyRented": "Alquilado · con inquilino",
     "labelAnnualRent": "Renta anual estimada",
-    "perYear": "/año"
+    "perYear": "/año",
+    "labelExtensions": "Extensiones",
+    "extensionLine": "Extensión {{years}} años (total {{total}} años)",
+    "extensionLineNoTotal": "Extensión {{years}} años",
+    "roiDisclaimer": "Rentabilidades estimadas y aproximadas; no constituyen una garantía de rendimiento."
   },
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",

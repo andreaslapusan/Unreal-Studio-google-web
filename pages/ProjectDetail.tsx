@@ -52,25 +52,24 @@ const ProjectDetail: React.FC = () => {
     const sym = CUR_SYM[c] || c;
     return `${fmtThousands(String(amount))} ${sym}`.trim();
   };
-  // Cláusula de extensión del leasehold en el formato que ve el cliente:
-  // "(+ extensión posible de 15 años por 15.000 €)". Soporta varias extensiones
-  // (array `extensions` del listing) con respaldo al campo único `years_extension`.
-  const extensionClause = (): string => {
+  // Extensiones del leasehold, una por línea: "Extensión 5 años (total 25 años) · 7.500 €".
+  // Array `extensions` [{years, price}] (precio en la divisa del proyecto); respaldo al campo
+  // único `years_extension` (+ extension_cost_usd si > 0). Sin extensión → [] (card oculta).
+  const extensionLines = (): string[] => {
     const p = project as any;
-    if (!p) return '';
-    const cur = p.rent_currency || p.price_currency || 'EUR';
-    const exts = Array.isArray(p.extensions)
-      ? p.extensions.filter((e: any) => e && (e.years != null || e.price != null))
-      : [];
-    if (exts.length) {
-      return exts
-        .map((e: any) => e.price != null
-          ? t('projectDetail.extensionPossible', { years: e.years, price: fmtMoney(e.price, p.price_currency || cur) })
-          : t('projectDetail.extensionPossibleYears', { years: e.years }))
-        .join(' ');
-    }
-    if (p.years_extension) return t('projectDetail.extensionPossibleYears', { years: p.years_extension });
-    return '';
+    if (!p) return [];
+    const base = Number(p.years_contract) || 0;
+    const line = (years: any, price: string | null) => {
+      const total = base && Number(years) ? base + Number(years) : null;
+      const txt = total
+        ? t('projectDetail.extensionLine', { years, total })
+        : t('projectDetail.extensionLineNoTotal', { years });
+      return price ? `${txt} · ${price}` : txt;
+    };
+    const exts = Array.isArray(p.extensions) ? p.extensions.filter((e: any) => e && e.years != null) : [];
+    if (exts.length) return exts.map((e: any) => line(e.years, e.price != null && Number(e.price) > 0 ? fmtMoney(e.price, p.price_currency) : null));
+    if (p.years_extension) return [line(p.years_extension, Number(p.extension_cost_usd) > 0 ? fmtMoney(p.extension_cost_usd, 'USD') : null)];
+    return [];
   };
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
@@ -506,11 +505,10 @@ const ProjectDetail: React.FC = () => {
               // Regla del dueño: un campo sin valor NO se muestra (ni card ni label).
               const specs = [
                 project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: project.distance_beach },
-                project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}${extensionClause() ? ' ' + extensionClause() : ''}` },
-                ((project as any).annual_rental_projection > 0) && { icon: 'payments', label: t('projectDetail.labelAnnualRent'), value: `${fmtMoney((project as any).annual_rental_projection, (project as any).rent_currency || project.price_currency)} ${t('projectDetail.perYear')}` },
-                project.available_units && { icon: 'apartment', label: t('projectDetail.labelAvailableUnits'), value: t('projectDetail.unitsValue', { count: project.available_units }) },
+                project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}` },
+                project.tenure !== 'Freehold' && extensionLines().length > 0 && { icon: 'update', label: t('projectDetail.labelExtensions'), value: <>{extensionLines().map((l, i) => <span key={i} className="block">{l}</span>)}</> },
                 (project.completion_percent > 0) && { icon: 'construction', label: t('projectDetail.labelConstructionProgress'), value: t('projectDetail.completedValue', { pct: project.completion_percent }) },
-              ].filter(Boolean) as { icon: string; label: string; value: string }[];
+              ].filter(Boolean) as { icon: string; label: string; value: React.ReactNode }[];
               return specs.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {specs.map((item, idx) => (
@@ -892,6 +890,7 @@ const ProjectDetail: React.FC = () => {
                           <span className="text-primary">{resale}</span>
                         </div>
                       )}
+                      <p className="text-[10px] leading-snug text-gray-400">{t('projectDetail.roiDisclaimer')}</p>
                     </div>
                   ) : null;
                 })()}

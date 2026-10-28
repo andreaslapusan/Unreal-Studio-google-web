@@ -129,7 +129,9 @@
         "freehold": "Freehold"
       },
       "deliveryFrom": "from",
-      "marketPrice": "Market price"
+      "marketPrice": "Market price",
+      "delivered": "Delivered",
+      "incomeGenerating": "Income-generating property"
     },
     "noResults": "No results found",
     "clearFilters": "Clear filters",
@@ -265,7 +267,11 @@
     "extensionPossibleYears": "(+ possible extension of {{years}} years)",
     "alreadyRented": "Rented · tenant in place",
     "labelAnnualRent": "Est. annual rent",
-    "perYear": "/year"
+    "perYear": "/year",
+    "labelExtensions": "Extensions",
+    "extensionLine": "{{years}}-year extension ({{total}} years total)",
+    "extensionLineNoTotal": "{{years}}-year extension",
+    "roiDisclaimer": "Estimated, approximate returns; not a guarantee of performance."
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",

@@ -23,5 +23,6 @@ export function isFinished(status?: string | null): boolean {
 export function deliveryText(rawDate: string | null | undefined, fromWord: string): string {
   const clean = (rawDate || '').replace(/^\s*(a partir de|from|de la|mulai|începând cu)\s+/i, '').trim();
   if (!clean) return '';
-  return `${fromWord} ${clean}`;
+  const txt = `${fromWord} ${clean}`;
+  return txt.charAt(0).toUpperCase() + txt.slice(1); // "A partir de …" siempre con mayúscula
 }
