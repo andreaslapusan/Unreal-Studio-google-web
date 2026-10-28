@@ -19,8 +19,9 @@
 /* Con un pop-up abierto (fondo oscuro fixed inset-0) la página de detrás NO se
    desliza — en TODOS los modales a la vez, sin tocar cada componente (queja
    recurrente de Andreas, 2026-10-27). */
-html:has(.fixed.inset-0[class*="bg-black/"]),
-html:has(.fixed.inset-0[class*="bg-black/"]) body {
+/* Solo en <html>: si también se pone en <body>, el body pasa a ser contenedor de
+   scroll y el menú lateral sticky del admin "salta" hacia arriba al abrir un pop-up. */
+html:has(.fixed.inset-0[class*="bg-black/"]) {
   overflow: hidden;
   overscroll-behavior: none;
 }

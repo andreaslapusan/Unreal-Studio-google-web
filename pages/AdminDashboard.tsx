@@ -2823,14 +2823,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       {/* MODALS */}
       {/* ... Project Edit Modal ... */}
       {isEditing && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-end bg-black/60 p-4" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 overscroll-contain" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
           {/* sin backdrop-blur en este overlay: con 20-30 fotos en el panel con scroll, Chrome/Mac dejaba franjas en blanco (GPU) y el scroll iba a tirones */}
-          <div className="bg-white w-full max-w-[90vw] h-full shadow-2xl p-6 md:p-12 overflow-y-auto rounded-2xl md:rounded-l-[3rem]">
+          <div className="bg-white w-full max-w-6xl max-h-[92vh] shadow-2xl px-6 pt-6 md:px-12 md:pt-10 overflow-y-auto overscroll-contain rounded-3xl">
             <div className="flex justify-between items-center mb-8 pb-4 border-b">
               <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}</h2>
               <button onClick={() => setIsEditing(false)} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
-            <form onSubmit={handleSaveProject} className="space-y-3 pb-10">
+            <form onSubmit={handleSaveProject} className="space-y-3">
                {/* ===== A. BÁSICOS ===== */}
                <details name="propedit" open className="group rounded-2xl bg-gray-50 border border-gray-100">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
@@ -3340,7 +3340,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
               </details>
 
-              <div className="flex gap-3 pt-4 sticky bottom-0 bg-white/95 backdrop-blur -mx-1 px-1">
+              <div className="flex gap-3 sticky bottom-0 z-10 bg-white -mx-6 md:-mx-12 px-6 md:px-12 pt-4 pb-6 md:pb-8 border-t border-gray-100 shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.08)]">
                 <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg hover:bg-black disabled:opacity-60 inline-flex items-center justify-center gap-2">
                   {uploading && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {uploading ? t('admin.common.saving') : t('admin.adminDash.saveProperty')}
