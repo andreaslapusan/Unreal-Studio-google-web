@@ -289,18 +289,20 @@ const ProjectDetail: React.FC = () => {
               });
               document.head.appendChild(ld);
 
-              // Cargar Proyectos Similares (Misma ubicación/zona)
+              // Proyectos similares: siempre 3 si hay disponibles; primero misma ubicación, luego misma zona, luego el resto
               const { data: similarData } = await supabase
                 .from('projects')
                 .select(PUBLIC_PROJECT_COLS)
-                .eq('location', loadedProject.location) // Usamos location como zone
                 .neq('id', loadedProject.id)
                 .eq('is_hidden', false)
-                .neq('visibility_status', 'sold_out')
-                .limit(3);
-              
+                .neq('visibility_status', 'sold_out');
+
               if (similarData) {
-                const safeSimilar = similarData.map((p: any) => ({
+                const zones = new Set(String(loadedProject.location || '').split(',').map((z: string) => z.trim()).filter(Boolean));
+                const score = (p: any) => p.location === loadedProject.location ? 2
+                  : String(p.location || '').split(',').some((z: string) => zones.has(z.trim())) ? 1 : 0;
+                const ranked = [...similarData].sort((a: any, b: any) => score(b) - score(a)).slice(0, 3);
+                const safeSimilar = ranked.map((p: any) => ({
                     ...p,
                     gallery: parseJsonField(p.gallery, []),
                     investor_tiers: parseJsonField(p.investor_tiers, [])
@@ -956,8 +958,8 @@ const ProjectDetail: React.FC = () => {
       </main>
 
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-20 border-t border-primary/10">
-        <h3 className="text-3xl text-primary mb-12 text-left">{t('projectDetail.similarTitle')}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <h3 className="text-3xl text-primary mb-12 text-center">{t('projectDetail.similarTitle')}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {similarProjects.map((similar) => (
             <Link key={similar.id} to={projectPath(similar)} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group border border-primary/5">
               <div className="h-48 overflow-hidden relative">

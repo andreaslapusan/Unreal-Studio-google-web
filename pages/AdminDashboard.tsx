@@ -1034,9 +1034,8 @@ const AMENITIES_LIST = [
     const projectToSave = {
         ...currentProject,
         gallery: mergedGallery,
-        // La imagen principal ya no es un campo aparte: se marca desde la galería.
-        // Si no hay ninguna marcada, usamos la 1ª foto de la galería por defecto.
-        image: (currentProject.image && currentProject.image.trim()) ? currentProject.image : (mergedGallery[0] || ''),
+        // La foto principal es SIEMPRE la 1ª de la galería (Andreas 28-oct): se elige reordenando.
+        image: mergedGallery[0] || currentProject.image || '',
         investor_tiers: processedTiers || null
     } as Project;
 
@@ -2974,8 +2973,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                      onReorder={(next) => setCurrentProject({ ...currentProject, gallery: next })}
                      onRemove={(url) => removePhoto(url, 'gallery')}
                      onRemoveAll={(currentProject.gallery || []).length ? (() => setCurrentProject(prev => ({ ...prev, gallery: [], image: (prev.gallery || []).includes(prev.image) ? '' : prev.image }))) : undefined}
-                     mainImage={currentProject.image}
-                     onSetMain={(url) => setCurrentProject({ ...currentProject, image: url })}
                    />
                 </div>
 
