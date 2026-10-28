@@ -393,8 +393,6 @@ const LandingGlobalitae: React.FC = () => {
               </div>
 
               <ConstructionReportButton projectName={project.name} className="w-full bg-primary text-white border border-primary px-8 h-14 rounded-2xl font-bold hover:bg-almond hover:text-primary transition flex items-center justify-center gap-3 shadow-sm" />
-                </a>
-              )}
             </div>
           </div>
         </div>
