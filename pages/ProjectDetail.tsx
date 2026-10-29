@@ -15,7 +15,6 @@ import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import LazyMap from '../components/LazyMap';
 import ConstructionReportButton from '../components/ConstructionReportButton';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
-import { fmtThousands } from '../lib/numberFormat';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent, trackLead } from '../lib/fbPixel';
 import { gtmViewItem, gtmWhatsappClick } from '../lib/gtm';
@@ -69,13 +68,6 @@ const ProjectDetail: React.FC = () => {
       unfurnished: t('listingIntake.unfurnished'),
     };
     return map[String(v).toLowerCase()] || localizedField(project, 'furnishing', i18n.language) || v;
-  };
-  // Importe con separador de miles + símbolo de divisa (para la renta).
-  const CUR_SYM: Record<string, string> = { EUR: '€', USD: '$', IDR: 'Rp', AUD: 'A$' };
-  const fmtMoney = (amount: any, cur?: string | null): string => {
-    const c = (cur || 'EUR').toUpperCase();
-    const sym = CUR_SYM[c] || c;
-    return `${fmtThousands(String(amount))} ${sym}`.trim();
   };
   // Extensiones del leasehold como filas de tabla: +5 años · Total 25 años.
   // Andreas 29-oct: en la web NUNCA el precio de la extensión, solo los años (el precio queda en BD/admin).
@@ -449,7 +441,6 @@ const ProjectDetail: React.FC = () => {
               const specs = [
                 project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: localizedField(project, 'distance_beach', i18n.language) },
                 project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}` },
-                ((project as any).annual_rental_projection > 0) && { icon: 'payments', label: t('projectDetail.labelAnnualRent'), value: `${fmtMoney((project as any).annual_rental_projection, (project as any).rent_currency || project.price_currency)} ${t('projectDetail.perYear')}` },
                 project.tenure !== 'Freehold' && extensionRows().length > 0 && { icon: 'update', label: t('projectDetail.labelExtensions'), value: (
                   <table className="w-full mt-1 text-sm"><tbody>
                     {extensionRows().map((r, i) => (
