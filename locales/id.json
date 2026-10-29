@@ -126,7 +126,8 @@
       "delivery": "Serah terima",
       "tenure": {
         "leasehold": "Hak Sewa",
-        "freehold": "Hak Milik"
+        "freehold": "Hak Milik",
+        "freehold / leasehold": "Hak Milik / Hak Sewa"
       },
       "deliveryFrom": "mulai",
       "marketPrice": "Harga pasar",
@@ -284,7 +285,8 @@
     "reportLogin": "Masuk ke portal klien",
     "reportRequest": "Minta akses ke tim Unreal Studio",
     "reportMailSubject": "Permintaan laporan konstruksi – {{project}}",
-    "reportMailBody": "Halo tim Unreal Studio,\n\nSaya tertarik dengan proyek {{project}} dan ingin melihat laporan konstruksi terbaru.\n\nTerima kasih,\n"
+    "reportMailBody": "Halo tim Unreal Studio,\n\nSaya tertarik dengan proyek {{project}} dan ingin melihat laporan konstruksi terbaru.\n\nTerima kasih,\n",
+    "labelTotalUnits": "Unit dalam kompleks"
   },
   "faq": {
     "title": "FAQ | Unreal Studio Bali",
@@ -843,7 +845,8 @@
       "visHidden": "Tersembunyi",
       "visSoldOut": "Sold out",
       "visAll": "Semua status",
-      "visHelp": "Tersedia: tampil di web. Tersembunyi: tidak tampil. Sold out: tampil di bagian \"Sold out\" dengan harga pasar dan tanpa opsi pembelian."
+      "visHelp": "Tersedia: tampil di web. Tersembunyi: tidak tampil. Sold out: tampil di bagian \"Sold out\" dengan harga pasar dan tanpa opsi pembelian.",
+      "totalUnits": "Unit dalam kompleks (total)"
     },
     "blogTab": {
       "title": "Artikel Blog",

@@ -126,7 +126,8 @@
       "delivery": "Predare",
       "tenure": {
         "leasehold": "Leasehold",
-        "freehold": "Freehold"
+        "freehold": "Freehold",
+        "freehold / leasehold": "Freehold / Leasehold"
       },
       "deliveryFrom": "începând cu",
       "marketPrice": "Preț de piață",
@@ -284,7 +285,8 @@
     "reportLogin": "Autentificare în portalul clienților",
     "reportRequest": "Solicită acces echipei Unreal Studio",
     "reportMailSubject": "Solicitare raport de șantier – {{project}}",
-    "reportMailBody": "Bună ziua, echipa Unreal Studio,\n\nSunt interesat/ă de proiectul {{project}} și aș dori să văd ultimul raport de șantier.\n\nMulțumesc,\n"
+    "reportMailBody": "Bună ziua, echipa Unreal Studio,\n\nSunt interesat/ă de proiectul {{project}} și aș dori să văd ultimul raport de șantier.\n\nMulțumesc,\n",
+    "labelTotalUnits": "Unități în complex"
   },
   "faq": {
     "title": "Întrebări frecvente | Unreal Studio Bali",
@@ -711,7 +713,8 @@
       "visHidden": "Ascuns",
       "visSoldOut": "Sold out",
       "visAll": "Toate stările",
-      "visHelp": "Disponibil: pe site. Ascuns: nu apare. Sold out: apare în secțiunea „Sold out” cu preț de piață și fără opțiuni de cumpărare."
+      "visHelp": "Disponibil: pe site. Ascuns: nu apare. Sold out: apare în secțiunea „Sold out” cu preț de piață și fără opțiuni de cumpărare.",
+      "totalUnits": "Unități în complex (total)"
     },
     "blogTab": {
       "title": "Articole Blog",

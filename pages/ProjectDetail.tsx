@@ -539,6 +539,13 @@ const ProjectDetail: React.FC = () => {
                   <p className="text-sm md:text-base leading-tight font-bold text-primary hyphens-auto">{fmtFurnishing(project.furnishing)}</p>
                 </div>
               )}
+              {Number(project.total_units) > 0 && (
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
+                  <span className="material-symbols-outlined text-primary/40 text-2xl">apartment</span>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelTotalUnits')}</p>
+                  <p className="text-lg font-bold text-primary">{project.total_units}</p>
+                </div>
+              )}
               {Number((project as any).land_size_m2 || (project as any).land_area_m2) > 0 && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">landscape</span>
@@ -793,6 +800,7 @@ const ProjectDetail: React.FC = () => {
                     {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
                     {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
                     {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
+                    {Number(project.total_units) > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelTotalUnits')}</span><span className="text-sm font-bold">{project.total_units}</span></div>}
                     {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
                     {project.has_pool && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}
                     {!isFinished(project.status) && project.completion_date && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelCompletion')}</span><span className="text-sm font-bold">{deliveryText(formatDate(localizedCompletion(project, i18n.language)), t('projects.card.deliveryFrom'))}</span></div>}

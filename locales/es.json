@@ -126,7 +126,8 @@
       "delivery": "Entrega",
       "tenure": {
         "leasehold": "Leasehold",
-        "freehold": "Freehold"
+        "freehold": "Freehold",
+        "freehold / leasehold": "Freehold / Leasehold"
       },
       "deliveryFrom": "a partir de",
       "marketPrice": "Precio de mercado",
@@ -284,7 +285,8 @@
     "reportLogin": "Iniciar sesión en el portal de clientes",
     "reportRequest": "Solicitar acceso al equipo de Unreal Studio",
     "reportMailSubject": "Solicitud de reporte de obra – {{project}}",
-    "reportMailBody": "Hola equipo de Unreal Studio,\n\nEstoy interesado/a en el proyecto {{project}} y me gustaría ver el último reporte de obra.\n\nGracias,\n"
+    "reportMailBody": "Hola equipo de Unreal Studio,\n\nEstoy interesado/a en el proyecto {{project}} y me gustaría ver el último reporte de obra.\n\nGracias,\n",
+    "labelTotalUnits": "Unidades en el complejo"
   },
   "faq": {
     "title": "Preguntas frecuentes | Unreal Studio Bali",
@@ -711,7 +713,8 @@
       "visHidden": "Oculto",
       "visSoldOut": "Sold out",
       "visAll": "Todos los estados",
-      "visHelp": "Disponible: en la web. Oculto: no aparece. Sold out: aparece en la sección \"Sold out\" con precio de mercado y sin opciones de compra."
+      "visHelp": "Disponible: en la web. Oculto: no aparece. Sold out: aparece en la sección \"Sold out\" con precio de mercado y sin opciones de compra.",
+      "totalUnits": "Unidades en el complejo (total)"
     },
     "blogTab": {
       "title": "Artículos del Blog",

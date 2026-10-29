@@ -36,6 +36,7 @@ export interface Project {
   property_type: string;
   distance_beach: string;
   available_units: string;
+  total_units?: number | null;
   completion_percent: number;
   years_contract: number;
   years_extension: number;
