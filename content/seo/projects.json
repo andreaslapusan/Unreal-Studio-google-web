@@ -1,0 +1,46 @@
+{
+  "deseo-studio-1bd": {
+    "es": { "title": "Deseo Studio | Villa 1 dormitorio en Melasti, Uluwatu", "description": "Villa-estudio de 1 dormitorio con piscina privada a 4 min de la playa de Melasti, Uluwatu. En construcción, leasehold notarial y pagos por hitos.", "h1sub": "Villa de 1 dormitorio en Melasti, Uluwatu" },
+    "en": { "title": "Deseo Studio | 1-Bed Villa with Pool, Melasti, Uluwatu", "description": "One-bedroom studio villa with a private pool, 4 minutes from Melasti beach in Uluwatu. Under construction, notarised leasehold and staged payments.", "h1sub": "1-bedroom villa in Melasti, Uluwatu" }
+  },
+  "amante-villas-1bd": {
+    "es": { "title": "Amante Villas | Villa 1 dormitorio en Pandawa, Uluwatu", "description": "Villa de 1 dormitorio con piscina propia sobre plano junto a la playa de Pandawa, en Uluwatu. Pagos por hitos durante la obra.", "h1sub": "Villa de 1 dormitorio sobre plano en Pandawa, Uluwatu" },
+    "en": { "title": "Amante Villas | 1-Bed Off-Plan Villa, Pandawa, Uluwatu", "description": "Off-plan one-bedroom villa with its own pool next to Pandawa beach in Uluwatu. Staged payments during construction.", "h1sub": "1-bedroom off-plan villa in Pandawa, Uluwatu" }
+  },
+  "vista-mar-villas-2bd": {
+    "es": { "title": "Vista Mar Villas | Villa 2 dormitorios en Karma Beach", "description": "Villas de 2 dormitorios con vistas al océano en Karma Beach, Uluwatu, a 5 min de las playas de Karma, Melasti y Nyang Nyang. En construcción.", "h1sub": "Villa de 2 dormitorios con vistas al mar en Karma Beach" },
+    "en": { "title": "Vista Mar Villas | 2-Bed Ocean-View Villa, Uluwatu", "description": "Two-bedroom ocean-view villas at Karma Beach, Uluwatu, 5 minutes from Karma, Melasti and Nyang Nyang beaches. Under construction.", "h1sub": "2-bedroom ocean-view villa at Karma Beach" }
+  },
+  "marina-sand-apartments-1bd": {
+    "es": { "title": "Marina Sand | Apartamento 1 dormitorio en Melasti", "description": "Apartamentos de 1 dormitorio llave en mano a 4 min de la playa de Melasti, Uluwatu. Obra terminada y lista para alquilar. Leasehold notarial.", "h1sub": "Apartamento de 1 dormitorio en Melasti, Uluwatu" },
+    "en": { "title": "Marina Sand | 1-Bed Apartment for Sale, Melasti, Uluwatu", "description": "Turnkey one-bedroom apartments 4 minutes from Melasti beach, Uluwatu. Completed and ready to rent out. Notarised leasehold.", "h1sub": "1-bedroom apartment in Melasti, Uluwatu" }
+  },
+  "golf-bay-lofts-1bd": {
+    "es": { "title": "Golf Bay Lofts | Loft 1 dormitorio en Balangan, Uluwatu", "description": "Lofts de doble altura a 3 min de la playa de Balangan y junto al golf New Kuta, en Uluwatu. Obra terminada. Leasehold notarial.", "h1sub": "Loft de 1 dormitorio en Balangan, Uluwatu" },
+    "en": { "title": "Golf Bay Lofts | 1-Bed Loft for Sale, Balangan, Uluwatu", "description": "Double-height lofts 3 minutes from Balangan beach and next to New Kuta golf course in Uluwatu. Completed. Notarised leasehold.", "h1sub": "1-bedroom loft in Balangan, Uluwatu" }
+  },
+  "golf-bay-villa-3bd": {
+    "es": { "title": "Golf Bay Villa | Villa 3 dormitorios en Balangan", "description": "Villa de 3 dormitorios con salón de doble altura y piscina privada a 3 min de la playa de Balangan, Uluwatu. En construcción, leasehold notarial.", "h1sub": "Villa de 3 dormitorios en Balangan, Uluwatu" },
+    "en": { "title": "Golf Bay Villa | 3-Bed Villa for Sale, Balangan, Uluwatu", "description": "Three-bedroom villa with a double-height living room and private pool, 3 minutes from Balangan beach, Uluwatu. Under construction, notarised leasehold.", "h1sub": "3-bedroom villa in Balangan, Uluwatu" }
+  },
+  "golf-bay-apartments-1bd": {
+    "es": { "title": "Golf Bay Apartments, Balangan (vendido) | Unreal Studio", "description": "Apartamentos de 1 dormitorio en Balangan, Uluwatu, con piscina infinity compartida. Vendido: descubre proyectos similares en Uluwatu.", "h1sub": "Apartamentos de 1 dormitorio en Balangan (vendido)" },
+    "en": { "title": "Golf Bay Apartments, Balangan (Sold Out) | Unreal Studio", "description": "One-bedroom apartments in Balangan, Uluwatu, with a shared infinity pool. Sold out: discover similar projects in Uluwatu.", "h1sub": "1-bedroom apartments in Balangan (sold out)" }
+  },
+  "coral-bay-apartments-1bd": {
+    "es": { "title": "Coral Bay Apartments, Balangan (vendido) | Unreal Studio", "description": "Apartamentos amueblados de 1 dormitorio junto a la playa de Balangan, Uluwatu. Vendido: mira las villas y apartamentos disponibles en Uluwatu.", "h1sub": "Apartamentos de 1 dormitorio en Balangan (vendido)" },
+    "en": { "title": "Coral Bay Apartments, Balangan (Sold Out) | Unreal Studio", "description": "Furnished one-bedroom apartments near Balangan beach, Uluwatu. Sold out: see the villas and apartments available in Uluwatu.", "h1sub": "1-bedroom apartments in Balangan (sold out)" }
+  },
+  "the-nook-1bd": {
+    "es": { "title": "The Nook, Pererenan (vendido) | Unreal Studio Bali", "description": "Villa de diseño con piscina privada en Pererenan, Canggu, a 5 min de la playa. Vendida: descubre otros proyectos de Unreal Studio en Bali.", "h1sub": "Villa de 1 dormitorio en Pererenan, Canggu (vendida)" },
+    "en": { "title": "The Nook, Pererenan Canggu (Sold Out) | Unreal Studio", "description": "Design villa with a private pool in Pererenan, Canggu, 5 minutes from the beach. Sold out: discover other Unreal Studio projects in Bali.", "h1sub": "1-bedroom villa in Pererenan, Canggu (sold out)" }
+  },
+  "obsidian-villa-4bd": {
+    "es": { "title": "Obsidian Villa, Cemagi (vendida) | Unreal Studio Bali", "description": "Villa de 4 dormitorios con vistas al mar y a los arrozales en Cemagi, Canggu, a 300 m de la playa. Vendida: mira proyectos disponibles.", "h1sub": "Villa de 4 dormitorios en Cemagi, Canggu (vendida)" },
+    "en": { "title": "Obsidian Villa, Cemagi Canggu (Sold Out) | Unreal Studio", "description": "Four-bedroom villa with ocean and rice-field views in Cemagi, Canggu, 300 m from the beach. Sold out: see available projects.", "h1sub": "4-bedroom villa in Cemagi, Canggu (sold out)" }
+  },
+  "venaso-3bd": {
+    "es": { "title": "Venaso, Tabanan (vendida) | Unreal Studio Bali", "description": "Villa premium de 3 dormitorios entre arrozales en Tabanan, a 6 min de la playa de Pasut. Vendida: descubre otros proyectos en Bali.", "h1sub": "Villa de 3 dormitorios en Tabanan (vendida)" },
+    "en": { "title": "Venaso Villa, Tabanan (Sold Out) | Unreal Studio Bali", "description": "Premium three-bedroom villa among the rice fields of Tabanan, 6 minutes from Pasut beach. Sold out: discover other projects in Bali.", "h1sub": "3-bedroom villa in Tabanan (sold out)" }
+  }
+}

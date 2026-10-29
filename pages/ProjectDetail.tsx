@@ -21,6 +21,8 @@ import { trackViewContent, trackLead } from '../lib/fbPixel';
 import { gtmViewItem, gtmWhatsappClick } from '../lib/gtm';
 import { translateStatus } from '../lib/statusI18n';
 import { useAuth } from '../lib/auth-context';
+import { usePageMeta } from '../components/PageMeta';
+import seoMap from '../content/seo/projects.json';
 
 // Nombre visible de un plano: el del fichero si es legible; si es un id autogenerado
 // (subidas "1791014938804-jtm08y.pdf") o un enlace Drive (".../preview") → "Plano N".
@@ -30,6 +32,18 @@ const floorPlanLabel = (url: string, idx: number, t: (k: string, o?: any) => str
   raw = raw.replace(/\.pdf$/i, '');
   const auto = !raw || /^(preview|view|edit)$/i.test(raw) || /^\d{8,}/.test(raw) || /^[0-9a-f-]{16,}$/i.test(raw);
   return auto ? t('projectDetail.planN', { n: idx + 1 }) : raw;
+};
+
+// 3 preguntas de la ficha. Réplica en scripts/prerender-og.mjs (projectFaq): mantener sincronizado.
+const projectFaq = (p: Project, t: (k: string, o?: any) => string): [string, string][] => {
+  const name = p.name;
+  const years = Number((p as any).years_contract) || 0;
+  const tenure = String((p as any).tenure || '');
+  const out: [string, string][] = [];
+  if (years > 0) out.push([t('projectDetail.faq.tenureQ', { name }), t(/freehold/i.test(tenure) && /leasehold/i.test(tenure) ? 'projectDetail.faq.tenureBothA' : 'projectDetail.faq.tenureLeaseholdA', { years })]);
+  out.push([t('projectDetail.faq.payQ'), t(isFinished(p.status) ? 'projectDetail.faq.payDoneA' : 'projectDetail.faq.payBuildA')]);
+  out.push([t('projectDetail.faq.remoteQ'), t('projectDetail.faq.remoteA')]);
+  return out;
 };
 
 const ProjectDetail: React.FC = () => {
@@ -95,6 +109,16 @@ const ProjectDetail: React.FC = () => {
   const { role } = useAuth();
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ open: boolean, index: number }>({ open: false, index: 0 });
+  // Title/meta/subtítulo del H1: mismo JSON que el prerender (content/seo/projects.json).
+  const lang2 = (i18n.language || 'es').slice(0, 2);
+  const seoEntry = project ? (seoMap as Record<string, Record<string, { title: string; description: string; h1sub: string }>>)[project.slug] : undefined;
+  const seo = seoEntry && (seoEntry[lang2] || seoEntry.en || seoEntry.es);
+  usePageMeta({
+    title: project ? (seo?.title ?? `${project.name} | Unreal Studio Bali`) : '',
+    description: project ? (seo?.description ?? localizedDescription().replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200)) : undefined,
+    image: project ? getImageUrl(project.image) : undefined,
+    type: 'article',
+  });
 
 
   // Helper date formatter
@@ -214,77 +238,6 @@ const ProjectDetail: React.FC = () => {
               } catch {
                 // schema may not be migrated yet on this Supabase project — that's fine
               }
-              document.title = `${loadedProject.name} | Unreal Studio Madrid`;
-
-              // Dynamic OG meta tags
-              const setMeta = (property: string, content: string) => {
-                let el = document.querySelector(`meta[property="${property}"]`) || document.querySelector(`meta[name="${property}"]`);
-                if (el) { el.setAttribute('content', content); }
-                else {
-                  el = document.createElement('meta');
-                  el.setAttribute(property.startsWith('og:') ? 'property' : 'name', property);
-                  el.setAttribute('content', content);
-                  document.head.appendChild(el);
-                }
-              };
-              setMeta('og:title', `${loadedProject.name} | Unreal Studio Madrid`);
-              setMeta('og:description', loadedProject.description?.substring(0, 160) || '');
-              setMeta('og:image', getImageUrl(loadedProject.image));
-              setMeta('og:url', window.location.href);
-              setMeta('twitter:title', `${loadedProject.name} | Unreal Studio Madrid`);
-              setMeta('twitter:description', loadedProject.description?.substring(0, 160) || '');
-              setMeta('twitter:image', getImageUrl(loadedProject.image));
-
-              // JSON-LD Schema.org RealEstateListing — gives Google a structured
-              // record per project with price, currency, photos, geo, amenities.
-              // Replaces any prior listing block on this page so revisits don't
-              // accumulate stale schemas in the head.
-              const oldLd = document.getElementById('ld-project-listing');
-              if (oldLd) oldLd.remove();
-              const ld = document.createElement('script');
-              ld.type = 'application/ld+json';
-              ld.id = 'ld-project-listing';
-              const priceCurrency = (loadedProject.price_currency ?? 'EUR').toUpperCase();
-              const galleryUrls = [
-                getImageUrl(loadedProject.image),
-                ...((loadedProject.gallery ?? []) as string[]).slice(0, 6).map((p) => getImageUrl(p)),
-              ].filter(Boolean);
-              ld.textContent = JSON.stringify({
-                '@context': 'https://schema.org',
-                '@type': 'Apartment',
-                name: loadedProject.name,
-                description: (loadedProject.description ?? '').slice(0, 500),
-                url: window.location.href,
-                image: galleryUrls,
-                numberOfBedrooms: loadedProject.bedrooms || undefined,
-                numberOfBathroomsTotal: loadedProject.bathrooms || undefined,
-                floorSize:
-                  loadedProject.area_m2 > 0
-                    ? { '@type': 'QuantitativeValue', value: loadedProject.area_m2, unitCode: 'MTK' }
-                    : undefined,
-                address: loadedProject.location
-                  ? { '@type': 'PostalAddress', addressLocality: loadedProject.location, addressCountry: 'ID' }
-                  : undefined,
-                offers:
-                  loadedProject.investor_price > 0
-                    ? {
-                        '@type': 'Offer',
-                        price: loadedProject.investor_price,
-                        priceCurrency,
-                        availability: 'https://schema.org/InStock',
-                        url: window.location.href,
-                      }
-                    : undefined,
-                provider: {
-                  '@type': 'RealEstateAgent',
-                  '@id': 'https://unrealstudiobali.com/#organization',
-                  name: 'Unreal Studio Bali',
-                  url: 'https://unrealstudiobali.com',
-                },
-              });
-              // Si la URL de entrada trae el RealEstateListing pre-renderizado, no duplicar.
-              if (!document.querySelector('script[data-prerender-ld]')) document.head.appendChild(ld);
-
               // Proyectos similares: siempre 3 si hay disponibles; primero misma ubicación, luego misma zona, luego el resto
               const { data: similarData } = await supabase
                 .from('projects')
@@ -410,7 +363,7 @@ const ProjectDetail: React.FC = () => {
                 {propertyTypeLabel(project.property_type, i18n.language)}
               </span>
             )}
-            <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}</h1>
+            <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}{seo?.h1sub && <span className="block text-base md:text-lg font-sans font-normal text-primary/60 mt-2">{seo.h1sub}</span>}</h1>
             {project.tenure && (
               <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
             )}
@@ -887,6 +840,21 @@ const ProjectDetail: React.FC = () => {
           </div>
         </section>
       </main>
+
+      {/* FAQ visible = mismo texto que el FAQPage del prerender (scripts/prerender-og.mjs). */}
+      <section className="max-w-7xl mx-auto px-6 md:px-12 pb-16">
+        <h2 className="text-3xl text-primary mb-8">{t('projectDetail.faq.faqTitle', { name: project.name })}</h2>
+        <div className="space-y-3 max-w-4xl">
+          {projectFaq(project, t).map(([q, a]) => (
+            <details key={q} className="group bg-white rounded-2xl border border-primary/5 shadow-sm p-5">
+              <summary className="cursor-pointer list-none flex justify-between items-center gap-4 font-bold text-primary">
+                {q}<span className="material-symbols-outlined text-primary/40 group-open:rotate-180 transition">expand_more</span>
+              </summary>
+              <p className="mt-3 text-primary/70 font-light">{a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-20 border-t border-primary/10">
         <h3 className="text-3xl text-primary mb-12 text-center">{t('projectDetail.similarTitle')}</h3>
