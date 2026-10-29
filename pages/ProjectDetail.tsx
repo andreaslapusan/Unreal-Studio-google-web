@@ -15,6 +15,7 @@ import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import LazyMap from '../components/LazyMap';
 import ConstructionReportButton from '../components/ConstructionReportButton';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
+import { fmtThousands } from '../lib/numberFormat';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent, trackLead } from '../lib/fbPixel';
 import { gtmViewItem, gtmWhatsappClick } from '../lib/gtm';
@@ -69,20 +70,29 @@ const ProjectDetail: React.FC = () => {
     };
     return map[String(v).toLowerCase()] || localizedField(project, 'furnishing', i18n.language) || v;
   };
-  // Extensiones del leasehold como filas de tabla: +5 años · Total 25 años.
-  // Sin precio: regla del dueño, no publicar precios de extensión. Array `extensions`
-  // [{years}]; respaldo al campo único `years_extension`. Sin extensión → [] (card oculta).
-  const extensionRows = (): { years: string; total: string }[] => {
+  // Importe con separador de miles + símbolo de divisa (para extensión y renta).
+  const CUR_SYM: Record<string, string> = { EUR: '€', USD: '$', IDR: 'Rp', AUD: 'A$' };
+  const fmtMoney = (amount: any, cur?: string | null): string => {
+    const c = (cur || 'EUR').toUpperCase();
+    const sym = CUR_SYM[c] || c;
+    return `${fmtThousands(String(amount))} ${sym}`.trim();
+  };
+  // Extensiones del leasehold como filas de tabla: +5 años · Total 25 años · 7.500 €.
+  // Array `extensions` [{years, price}] (precio en la divisa del proyecto); respaldo al campo
+  // único `years_extension` (+ extension_cost_usd si > 0). Sin extensión → [] (card oculta).
+  // Pendiente OK de Andreas (29-oct) sobre quitar los precios de extensión que ya se muestran.
+  const extensionRows = (): { years: string; total: string; price: string }[] => {
     const p = project as any;
     if (!p) return [];
     const base = Number(p.years_contract) || 0;
-    const row = (years: any) => ({
+    const row = (years: any, price: string | null) => ({
       years: t('projectDetail.extYears', { years }),
       total: base && Number(years) ? t('projectDetail.extTotal', { total: base + Number(years) }) : '',
+      price: price || '',
     });
     const exts = Array.isArray(p.extensions) ? p.extensions.filter((e: any) => e && e.years != null) : [];
-    if (exts.length) return exts.map((e: any) => row(e.years));
-    if (p.years_extension) return [row(p.years_extension)];
+    if (exts.length) return exts.map((e: any) => row(e.years, e.price != null && Number(e.price) > 0 ? fmtMoney(e.price, p.price_currency) : null));
+    if (p.years_extension) return [row(p.years_extension, Number(p.extension_cost_usd) > 0 ? fmtMoney(p.extension_cost_usd, 'USD') : null)];
     return [];
   };
   const { slug } = useParams<{ slug: string }>();
@@ -435,7 +445,8 @@ const ProjectDetail: React.FC = () => {
                     {extensionRows().map((r, i) => (
                       <tr key={i} className="border-t first:border-t-0 border-primary/10">
                         <td className="py-1 pr-3 whitespace-nowrap">{r.years}</td>
-                        <td className="py-1 whitespace-nowrap font-normal text-primary/60">{r.total}</td>
+                        <td className="py-1 pr-3 whitespace-nowrap font-normal text-primary/60">{r.total}</td>
+                        <td className="py-1 text-right whitespace-nowrap">{r.price}</td>
                       </tr>
                     ))}
                   </tbody></table>

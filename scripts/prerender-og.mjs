@@ -532,7 +532,8 @@ ${blogs.map((b) => `- [${b.title}](${ORIGIN}/es/blog/${b.slug})`).join("\n")}
 - [Sitemap](${ORIGIN}/sitemap.xml)
 `);
 
-  if (!projects) return;
+  // Sin proyectos (Supabase caído en el build) → fallar el build: mejor mantener el deploy anterior que publicar sin fichas.
+  if (!projects?.length) throw new Error('[prerender-og] 0 proyectos desde Supabase: abortando build');
   let count = 0;
   for (const p of projects) {
     if (!p.slug) continue;
