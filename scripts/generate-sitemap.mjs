@@ -14,7 +14,7 @@
  * up the build.
  */
 import { createClient } from "@supabase/supabase-js";
-import { writeFileSync, existsSync } from "node:fs";
+import { writeFileSync, existsSync, readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -67,15 +67,17 @@ function seoSlug(project) {
 // Cada ruta lógica se expande a una URL por idioma (/es/…, /en/…, /ro/…, /id/…),
 // y cada una declara sus alternativas hreflang (incl. x-default = es). Así Google
 // indexa la versión correcta por idioma sin contenido duplicado.
-function urlEntry({ path, priority, changefreq, lastmod }) {
-  const tail = path === "/" ? "" : path; // "/" → raíz del idioma (/es, no /es/)
+// `paths` ({es:'/invertir-en-bali', en:'/invest-in-bali'}) para rutas con slug por idioma:
+// solo emite los idiomas presentes.
+function urlEntry({ path, paths, priority, changefreq, lastmod }) {
+  const tails = paths || Object.fromEntries(LANGS.map((l) => [l, path === "/" ? "" : path])); // "/" → /es, no /es/
   const alts = [
-    ...LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${ORIGIN}/${l}${tail}"/>`),
-    `    <xhtml:link rel="alternate" hreflang="x-default" href="${ORIGIN}/es${tail}"/>`,
+    ...Object.entries(tails).map(([l, t]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${ORIGIN}/${l}${t}"/>`),
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${ORIGIN}/es${tails.es ?? Object.values(tails)[0]}"/>`,
   ].join("\n");
   const lm = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : "";
-  return LANGS.map(
-    (l) => `  <url>
+  return Object.entries(tails).map(
+    ([l, tail]) => `  <url>
     <loc>${ORIGIN}/${l}${tail}</loc>${lm}
 ${alts}
     <changefreq>${changefreq}</changefreq>
@@ -89,6 +91,20 @@ async function main() {
   // el sitio se mantiene fresco). Las dinámicas ya llevan su updated_at real.
   const today = new Date().toISOString().slice(0, 10);
   const entries = STATIC_ROUTES.map((r) => urlEntry({ ...r, lastmod: today }));
+
+  // Landings SEO (content/landings): mismo filtro de borradores que lib/landings.ts y el prerender.
+  const LDIR = resolve(__dirname, "..", "content", "landings");
+  const landings = JSON.parse(readFileSync(resolve(LDIR, "index.json"), "utf8"))
+    .filter((l) => l.published || process.env.VITE_SEO_DRAFTS === "1");
+  for (const l of landings) {
+    const paths = Object.fromEntries(Object.entries(l.slugs)
+      .filter(([c]) => existsSync(resolve(LDIR, l.id, `${c}.html`)))
+      .map(([c, s]) => [c, `/${s}`]));
+    entries.push(urlEntry({ paths, priority: "0.9", changefreq: "monthly", lastmod: l.dateModified }));
+  }
+  // Posts con 301 a una landing publicada (mismo mapa que REDIRECTED_POSTS del prerender).
+  const REDIRECTED = { "financiar-una-propiedad-en-bali-opciones-para-inversores": "comprar-sobre-plano-bali" };
+  const redirected = (slug) => REDIRECTED[slug] && landings.some((l) => l.id === REDIRECTED[slug]);
 
   try {
     const { data: projects, error: pErr } = await sb
@@ -115,18 +131,18 @@ async function main() {
   try {
     const { data: blogs, error: bErr } = await sb
       .from("blogs")
-      .select("slug, published_date")
+      .select("slug, published_date, updated_at")
       .eq("is_published", true)
       .order("published_date", { ascending: false });
     if (bErr) throw bErr;
     for (const b of blogs ?? []) {
-      if (!b.slug) continue;
+      if (!b.slug || redirected(b.slug)) continue;
       entries.push(
         urlEntry({
           path: `/blog/${b.slug}`,
           priority: "0.6",
           changefreq: "monthly",
-          lastmod: b.published_date?.slice(0, 10),
+          lastmod: (b.updated_at || b.published_date)?.slice(0, 10),
         })
       );
     }
@@ -136,7 +152,7 @@ async function main() {
   }
 
   // Bail out if we got nothing extra — keep the existing checked-in sitemap.
-  if (entries.length <= STATIC_ROUTES.length && existsSync(OUT)) {
+  if (entries.length <= STATIC_ROUTES.length + landings.length && existsSync(OUT)) {
     console.warn("[sitemap] no dynamic entries fetched; preserving existing file");
     return;
   }
