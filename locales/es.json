@@ -40,9 +40,9 @@
     "scheduleShort": "Agendar"
   },
   "home": {
-    "title": "Unreal Studio Madrid | Inversiones Inmobiliarias en Bali",
+    "title": "Unreal Studio Bali | Promotora inmobiliaria en Bali",
     "heroTitle": "Invierte en <i>Bali</i> desde {{price}} con <i>Unreal Studio</i>",
-    "heroBody": "Genera hasta un <b>28% anual bruto</b> invirtiendo a coste directo de promotor junto a nuestro estudio propio de arquitectura en Bali.",
+    "heroBody": "ROI <b>proyectado</b> de hasta un 28 % bruto anual* invirtiendo a coste directo de promotor, con estudio de arquitectura propio en Bali. *Estimación, no garantizada.",
     "ctaMeeting": "Agenda una reunión",
     "ctaVideo": "Ver video intro",
     "investorsCount": "+150 inversores en todo el mundo.",
@@ -83,7 +83,7 @@
     "v2Body": "Precios ajustados frente al mercado",
     "v3Title": "Plusvalía Inmediata",
     "v3Body": "Compras a precio de promotor. Tú capturas la diferencia sobre mercado.",
-    "metaDescription": "Promotor inmobiliario en Bali para inversores españoles. Villas, lofts y estudios desde 75.000€, ROI 15-28% anual. Compra directa, sin intermediarios.",
+    "metaDescription": "Promotora en Bali con oficina en Madrid. Villas y apartamentos en Uluwatu y Canggu desde {{price}}. ROI proyectado 15-28% anual. Compra remota.",
     "profit": {
       "immediateGain": "Plusvalía Inmediata",
       "estimatedGain": "Ganancia Estimada",
@@ -94,8 +94,8 @@
     "videoUnsupported": "Tu navegador no soporta video HTML5."
   },
   "projects": {
-    "title": "Proyectos | Unreal Studio Madrid",
-    "heroTitle": "Proyectos y Oportunidades de Inversión",
+    "title": "Villas y apartamentos en venta en Bali | Unreal Studio",
+    "heroTitle": "Villas y apartamentos en venta en Bali",
     "heroSubtitle": "Explora nuestra selección completa de activos inmobiliarios.",
     "filters": {
       "sortBy": "Ordenar por",
@@ -138,15 +138,15 @@
     "clearFilters": "Limpiar filtros",
     "soldTitle": "Proyectos Vendidos",
     "statusSold": "VENDIDO",
-    "metaDescription": "Catálogo de propiedades de inversión en Bali: villas, lofts y estudios en Uluwatu, Canggu y Tabanan. Precios, ROI y disponibilidad actualizada.",
+    "metaDescription": "Villas, lofts y apartamentos en venta en Bali a precio de promotor: Uluwatu, Canggu-Pererenan y Tabanan. Leasehold notarial y pagos por hitos.",
     "soldOutBadge": "Sold out",
     "soldOutTitle": "Sold out",
     "soldOutNotice": "Esta propiedad está agotada (sold out). Ya no hay unidades disponibles."
   },
   "contact": {
-    "title": "Contacto | Unreal Studio Madrid",
-    "heroTitle1": "Hablemos de tu",
-    "heroTitle2": "próxima inversión",
+    "title": "Contacto | Unreal Studio Bali, oficinas en Madrid y Bali",
+    "heroTitle1": "Contacta con",
+    "heroTitle2": "Unreal Studio Bali",
     "heroSubtitle": "Eliminamos la burocracia. Rellena el formulario y hablarás al instante por WhatsApp con un asesor con propuestas concretas.",
     "formTitle": "Solicitud Rápida",
     "emailOptional": "Email (opcional)",
@@ -193,7 +193,7 @@
       "m3": "En 3 meses",
       "exploring": "Solo estoy explorando"
     },
-    "metaDescription": "Contacta con Unreal Studio. Resolvemos tus dudas sobre invertir en propiedades en Bali y agendamos una llamada sin compromiso.",
+    "metaDescription": "Habla con Unreal Studio Bali, con oficinas en Madrid y en Bali. Teléfono y email para resolver tus dudas sobre invertir en una villa en Bali.",
     "successTitle": "¡Perfecto! Hemos recibido tus datos.",
     "successBody": "Te hemos abierto tu correo para enviarnos los datos. Si no se abrió, usa el botón:",
     "successBlocked": "Tu navegador no pudo abrir el correo. Toca el botón para enviárnoslo:",
@@ -286,11 +286,22 @@
     "reportRequest": "Solicitar acceso al equipo de Unreal Studio",
     "reportMailSubject": "Solicitud de reporte de obra – {{project}}",
     "reportMailBody": "Hola equipo de Unreal Studio,\n\nEstoy interesado/a en el proyecto {{project}} y me gustaría ver el último reporte de obra.\n\nGracias,\n",
-    "labelTotalUnits": "Unidades en el complejo"
+    "labelTotalUnits": "Unidades en el complejo",
+    "faq": {
+      "faqTitle": "Preguntas frecuentes sobre {{name}}",
+      "tenureQ": "¿Qué compro exactamente en {{name}}?",
+      "tenureLeaseholdA": "Un leasehold de {{years}} años inscrito ante notario.",
+      "tenureBothA": "Puedes elegir entre un leasehold de {{years}} años inscrito ante notario o freehold.",
+      "payQ": "¿Cómo se paga?",
+      "payBuildA": "Con una reserva y después por hitos de obra según el contrato, mientras se construye. No ofrecemos financiación.",
+      "payDoneA": "Según el calendario de pagos del contrato de compraventa.",
+      "remoteQ": "¿Tengo que viajar a Bali?",
+      "remoteA": "No. Puedes firmar a distancia con poder notarial y recibir reportes de obra con fotos."
+    }
   },
   "faq": {
-    "title": "Preguntas frecuentes | Unreal Studio Bali",
-    "heroTitle": "Preguntas frecuentes",
+    "title": "Preguntas frecuentes sobre invertir en Bali | Unreal Studio",
+    "heroTitle": "Preguntas frecuentes sobre invertir en Bali",
     "heroSubtitle": "Las preguntas que más nos hacen los inversores antes de cerrar — con la respuesta directa de nuestro equipo, sin rellenos ni corporativismo.",
     "search": "Buscar pregunta...",
     "noResults": "Sin resultados. Prueba con otra búsqueda o escríbenos directamente.",
@@ -307,11 +318,11 @@
     "ctaTitle": "¿Tu pregunta no está aquí?",
     "ctaBody": "30 minutos por videollamada con nuestro equipo. Te respondemos cualquier duda sin compromiso.",
     "ctaBtn": "Hablar con un asesor →",
-    "metaDescription": "Preguntas frecuentes sobre invertir en Bali con Unreal Studio: leasehold, pagos, propiedad, rentabilidad y proceso de compra."
+    "metaDescription": "¿Puede un español comprar en Bali? ¿Qué es el leasehold? ¿Cómo se paga? ¿Qué rentabilidad se proyecta? Respuestas claras de una promotora en Bali."
   },
   "blog": {
-    "title": "Blog | Unreal Studio Madrid",
-    "heroTitle": "Blog & Noticias",
+    "title": "Guías para invertir en Bali desde España | Unreal Studio",
+    "heroTitle": "Guías para invertir en Bali",
     "heroSubtitle": "Actualidad del mercado inmobiliario en Bali, tendencias de inversión y guías legales.",
     "loading": "Cargando noticias...",
     "search": "Buscar artículos...",
@@ -325,7 +336,7 @@
     "articleNotFound": "Artículo no encontrado",
     "shareTitle": "¿Te ha gustado este artículo?",
     "shareBody": "Compártelo con otros inversores interesados en el mercado internacional.",
-    "metaDescription": "Guías y novedades sobre invertir en propiedades en Bali: leasehold, rentabilidad, zonas y proceso de compra para inversores.",
+    "metaDescription": "Guías para invertir en Bali: leasehold, impuestos en España, zonas, rentabilidad proyectada y compra a distancia. Escritas por una promotora en Bali.",
     "copyLink": "Copiar enlace",
     "share": "Compartir",
     "cat": {
@@ -392,23 +403,8 @@
         "body": "Acompañamos cada operación con tu cliente hasta la firma y la entrega de la propiedad."
       }
     ],
-    "metaDescription": "Programa de partners y agencias de Unreal Studio. Gana comisiones refiriendo inversores a proyectos inmobiliarios en Bali."
-  },
-  "inversoresPartnership": {
-    "tag": "Programa Inversor",
-    "heroTitle1": "Invierte en Bali.",
-    "heroTitle2": "Cobra 1.300€/mes desde el primer alquiler.",
-    "heroBody": "Villas y lofts en Uluwatu, Pererenan y Tabanan desde 75.000€. ROI 15–28% bruto anual validado. Compra 100% remota desde España, sin intermediarios.",
-    "ctaTalk": "Hablar con un asesor",
-    "ctaSeeProjects": "Ver proyectos",
-    "ctaLogin": "Ya soy inversor — login",
-    "whyTitle": "Por qué invertir con nosotros",
-    "projectsTitle": "Proyectos disponibles",
-    "projectsSubtitle": "Snapshot a {{date}}",
-    "faqTitle": "Preguntas frecuentes",
-    "ctaFinalTitle": "¿Hablamos?",
-    "ctaFinalBody": "30 minutos por videollamada. Te respondemos cualquier duda y te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
-    "ctaFinalBtn": "Agendar llamada con un asesor →"
+    "metaDescription": "Agencias inmobiliarias: vende proyectos en Bali con material completo, portal de partners y acompañamiento del equipo de Unreal Studio Bali.",
+    "title": "Programa para agencias inmobiliarias | Unreal Studio Bali"
   },
   "agenciasRegistrar": {
     "title": "Conviértete en Listing Partner",
@@ -926,7 +922,7 @@
       "passwordWrong": "Contraseña actual incorrecta.",
       "passwordChangeError": "Error al cambiar contraseña.",
       "passwordChangeSuccess": "Contraseña actualizada correctamente.",
-      "pageTitle": "Mi Portal | Unreal Studio Madrid",
+      "pageTitle": "Mi Portal | Unreal Studio Bali",
       "calcNetRentalShort": "Alquiler neto ({{years}}a)",
       "calcGross": "Bruto: {{value}} | Deduc: {{pct}}%",
       "calcResaleValueYear": "Valor reventa año {{year}}",
@@ -2006,7 +2002,7 @@
     "statusPending": "pendiente"
   },
   "booking": {
-    "title": "Agendar llamada | Unreal Studio Bali",
+    "title": "Agenda una llamada sobre invertir en Bali | Unreal Studio",
     "heroTitle": "Reserva una llamada con un asesor",
     "heroSubtitle": "30 minutos por videollamada con nuestro equipo. Te enviamos los dossiers actualizados de los proyectos que mejor encajen con tu perfil.",
     "altCta": "Si prefieres, también puedes",
@@ -2859,5 +2855,8 @@
   },
   "legal": {
     "loadError": "No se pudo cargar el texto legal. Escríbenos a"
+  },
+  "landings": {
+    "guidesTitle": "Guías para invertir en Bali"
   }
 }

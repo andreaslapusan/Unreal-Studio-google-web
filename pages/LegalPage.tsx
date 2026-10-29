@@ -51,7 +51,7 @@ const LegalPage: React.FC<{ doc: LegalDoc }> = ({ doc }) => {
         const b = parseMarkdown(md);
         setBlocks(b);
         const h1 = b.find((x) => x.type === 'h1');
-        if (h1 && 'text' in h1) document.title = `${h1.text} | Unreal Studio`;
+        if (h1 && 'text' in h1) document.title = `${h1.text} | Unreal Studio Bali`;
       })
       .catch(() => { if (alive) setFailed(true); });
     return () => { alive = false; };

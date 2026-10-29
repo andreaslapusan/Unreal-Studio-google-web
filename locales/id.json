@@ -40,9 +40,9 @@
     "scheduleShort": "Jadwalkan"
   },
   "home": {
-    "title": "Unreal Studio Madrid | Investasi Real Estate di Bali",
+    "title": "Unreal Studio Bali | Pengembang Properti di Bali",
     "heroTitle": "Investasi di <i>Bali</i> mulai {{price}} bersama <i>Unreal Studio</i>",
-    "heroBody": "Hasilkan hingga <b>28% kotor per tahun</b> dengan investasi di harga pengembang langsung bersama studio arsitektur kami di Bali.",
+    "heroBody": "Proyeksi ROI hingga <b>28% kotor per tahun</b>* dengan harga langsung dari pengembang yang memiliki studio arsitektur sendiri di Bali. *Proyeksi, bukan jaminan.",
     "ctaMeeting": "Atur pertemuan",
     "ctaVideo": "Tonton video intro",
     "investorsCount": "+150 investor di seluruh dunia.",
@@ -83,7 +83,7 @@
     "v2Body": "Harga yang disesuaikan dengan pasar",
     "v3Title": "Plusvalía Langsung",
     "v3Body": "Membeli dengan harga promotor. Anda mendapatkan perbedaan di pasar.",
-    "metaDescription": "Pengembang properti di Bali untuk investor. Vila, loft, dan studio mulai €75.000, ROI 15-28% per tahun. Pembelian langsung tanpa perantara.",
+    "metaDescription": "Pengembang properti di Bali dengan kantor di Madrid dan Bali. Vila dan apartemen di Uluwatu dan Canggu mulai {{price}}. Proyeksi ROI 15-28% per tahun. Beli dari jauh.",
     "profit": {
       "immediateGain": "Keuntungan Modal Langsung",
       "estimatedGain": "Perkiraan Keuntungan",
@@ -94,8 +94,8 @@
     "videoUnsupported": "Browser Anda tidak mendukung video HTML5."
   },
   "projects": {
-    "title": "Proyek | Unreal Studio Madrid",
-    "heroTitle": "Proyek & Peluang Investasi",
+    "title": "Vila dan Apartemen Dijual di Bali | Unreal Studio Bali",
+    "heroTitle": "Vila dan apartemen dijual di Bali",
     "heroSubtitle": "Jelajahi pilihan lengkap aset real estate kami.",
     "filters": {
       "sortBy": "Urutkan berdasarkan",
@@ -138,15 +138,15 @@
     "clearFilters": "Hapus filter",
     "soldTitle": "Proyek Terjual",
     "statusSold": "TERJUAL",
-    "metaDescription": "Katalog properti investasi di Bali: vila, loft, dan studio di Uluwatu, Canggu, dan Tabanan. Harga, ROI, dan ketersediaan terkini.",
+    "metaDescription": "Vila, loft, dan apartemen dijual di Bali dengan harga pengembang: Uluwatu, Canggu-Pererenan, dan Tabanan. Leasehold notaris dan pembayaran bertahap.",
     "soldOutBadge": "Sold out",
     "soldOutTitle": "Sold out",
     "soldOutNotice": "Properti ini sudah habis terjual (sold out). Tidak ada unit tersedia."
   },
   "contact": {
-    "title": "Kontak | Unreal Studio Madrid",
-    "heroTitle1": "Mari bicara tentang",
-    "heroTitle2": "investasi Anda berikutnya",
+    "title": "Kontak Unreal Studio Bali | Kantor di Madrid & Bali",
+    "heroTitle1": "Hubungi",
+    "heroTitle2": "Unreal Studio Bali",
     "heroSubtitle": "Kami pangkas birokrasi. Isi formulir dan langsung mengobrol via WhatsApp dengan penasihat berisi proposal konkret.",
     "formTitle": "Permintaan cepat",
     "emailOptional": "Email (opsional)",
@@ -193,7 +193,7 @@
       "m3": "Dalam 3 bulan",
       "exploring": "Hanya sedang menjelajahi"
     },
-    "metaDescription": "Hubungi Unreal Studio. Kami menjawab pertanyaan Anda tentang investasi properti di Bali dan menjadwalkan panggilan tanpa komitmen.",
+    "metaDescription": "Hubungi Unreal Studio Bali, dengan kantor di Madrid dan Bali. Telepon dan email untuk pertanyaan Anda tentang investasi properti di Bali.",
     "successTitle": "Bagus! Data Anda sudah kami terima.",
     "successBody": "Kami telah membuka aplikasi email Anda untuk mengirimkan datanya. Jika tidak terbuka, gunakan tombol:",
     "successBlocked": "Browser Anda tidak dapat membuka aplikasi email. Ketuk tombol untuk mengirimkannya:",
@@ -286,11 +286,22 @@
     "reportRequest": "Minta akses ke tim Unreal Studio",
     "reportMailSubject": "Permintaan laporan konstruksi – {{project}}",
     "reportMailBody": "Halo tim Unreal Studio,\n\nSaya tertarik dengan proyek {{project}} dan ingin melihat laporan konstruksi terbaru.\n\nTerima kasih,\n",
-    "labelTotalUnits": "Unit dalam kompleks"
+    "labelTotalUnits": "Unit dalam kompleks",
+    "faq": {
+      "faqTitle": "Pertanyaan umum tentang {{name}}",
+      "tenureQ": "Apa yang sebenarnya saya beli di {{name}}?",
+      "tenureLeaseholdA": "Leasehold {{years}} tahun yang dicatatkan di hadapan notaris.",
+      "tenureBothA": "Anda dapat memilih leasehold {{years}} tahun yang dicatatkan di hadapan notaris atau freehold.",
+      "payQ": "Bagaimana cara pembayarannya?",
+      "payBuildA": "Dengan reservasi, lalu bertahap sesuai tahapan pembangunan dalam kontrak selama proses konstruksi. Kami tidak menawarkan pembiayaan.",
+      "payDoneA": "Sesuai jadwal pembayaran dalam kontrak jual beli.",
+      "remoteQ": "Apakah saya harus datang ke Bali?",
+      "remoteA": "Tidak. Anda dapat menandatangani dari jauh dengan surat kuasa notaris dan menerima laporan pembangunan beserta foto."
+    }
   },
   "faq": {
-    "title": "FAQ | Unreal Studio Bali",
-    "heroTitle": "Pertanyaan yang sering diajukan",
+    "title": "FAQ Investasi Properti di Bali | Unreal Studio Bali",
+    "heroTitle": "Pertanyaan umum tentang investasi di Bali",
     "heroSubtitle": "Pertanyaan yang paling sering diajukan investor sebelum memutuskan — dijawab langsung oleh tim kami, tanpa basa-basi.",
     "search": "Cari pertanyaan...",
     "noResults": "Tidak ada hasil. Coba kata kunci lain atau hubungi kami langsung.",
@@ -307,11 +318,11 @@
     "ctaTitle": "Pertanyaan Anda tidak ada di sini?",
     "ctaBody": "Panggilan video 30 menit dengan tim kami. Gratis, tanpa komitmen.",
     "ctaBtn": "Bicara dengan penasihat →",
-    "metaDescription": "Pertanyaan umum tentang investasi di Bali bersama Unreal Studio: leasehold, pembayaran, kepemilikan, imbal hasil, dan proses pembelian."
+    "metaDescription": "Bisakah orang asing membeli properti di Bali? Apa itu leasehold? Bagaimana pembayaran bertahap? Jawaban jelas dari pengembang di Bali."
   },
   "blog": {
-    "title": "Blog | Unreal Studio Madrid",
-    "heroTitle": "Blog & Berita",
+    "title": "Panduan Investasi Properti di Bali | Unreal Studio Bali",
+    "heroTitle": "Panduan investasi properti di Bali",
     "heroSubtitle": "Berita pasar real estate Bali, tren investasi, dan panduan hukum.",
     "loading": "Memuat berita...",
     "search": "Cari artikel...",
@@ -325,7 +336,7 @@
     "articleNotFound": "Artikel tidak ditemukan",
     "shareTitle": "Suka artikel ini?",
     "shareBody": "Bagikan dengan investor lain yang tertarik pada real estate internasional.",
-    "metaDescription": "Panduan dan berita tentang investasi properti di Bali: leasehold, imbal hasil, area, dan proses pembelian untuk investor.",
+    "metaDescription": "Panduan investasi properti di Bali: leasehold, pajak, area, proyeksi imbal hasil, dan pembelian jarak jauh, ditulis oleh pengembang di Bali.",
     "copyLink": "Salin tautan",
     "share": "Bagikan",
     "cat": {
@@ -393,23 +404,8 @@
         "body": "Kami mendampingi setiap operasi dengan klien Anda hingga tanda tangan dan penyerahan properti."
       }
     ],
-    "metaDescription": "Program mitra & agensi Unreal Studio. Dapatkan komisi dengan mereferensikan investor ke proyek properti di Bali."
-  },
-  "inversoresPartnership": {
-    "tag": "Program Investor",
-    "heroTitle1": "Investasi di Bali.",
-    "heroTitle2": "Dapatkan €1.300/bulan dari sewa pertama.",
-    "heroBody": "Villa dan loft di Uluwatu, Pererenan dan Tabanan mulai €75.000. ROI tahunan kotor 15-28% tervalidasi. Pembelian 100% jarak jauh, tanpa perantara.",
-    "ctaTalk": "Bicara dengan penasihat",
-    "ctaSeeProjects": "Lihat proyek",
-    "ctaLogin": "Sudah investor — masuk",
-    "whyTitle": "Mengapa investasi dengan kami",
-    "projectsTitle": "Proyek yang tersedia",
-    "projectsSubtitle": "Snapshot per {{date}}",
-    "faqTitle": "Pertanyaan yang sering diajukan",
-    "ctaFinalTitle": "Mari bicara",
-    "ctaFinalBody": "Panggilan video 30 menit. Kami jawab pertanyaan Anda dan kirim dossier terbaru dari proyek yang sesuai profil Anda.",
-    "ctaFinalBtn": "Atur panggilan dengan penasihat →"
+    "metaDescription": "Agen properti: jual proyek di Bali dengan materi penjualan lengkap, portal mitra, dan dukungan tim Unreal Studio Bali.",
+    "title": "Program Mitra Agen Properti | Unreal Studio Bali"
   },
   "agenciasRegistrar": {
     "title": "Jadilah Mitra Listing",
@@ -1031,7 +1027,7 @@
       "passwordWrong": "Kata sandi saat ini salah.",
       "passwordChangeError": "Kesalahan saat mengganti kata sandi.",
       "passwordChangeSuccess": "Kata sandi diperbarui dengan sukses.",
-      "pageTitle": "Portal Saya | Unreal Studio Madrid",
+      "pageTitle": "Portal Saya | Unreal Studio Bali",
       "calcNetRentalShort": "Sewa neto ({{years}} tahun)",
       "calcGross": "Bruto: {{value}} | Potongan: {{pct}}%",
       "calcResaleValueYear": "Nilai penjualan kembali tahun {{year}}",
@@ -2007,7 +2003,7 @@
     "statusPending": "tertunda"
   },
   "booking": {
-    "title": "Agendar panggilan | Unreal Studio Bali",
+    "title": "Jadwalkan Panggilan Investasi Bali | Unreal Studio Bali",
     "heroTitle": "Reservasi panggilan dengan konsultan",
     "heroSubtitle": "30 menit per videopanggilan dengan tim kami. Kami mengirimkan dossiers terbaru dari proyek yang paling sesuai dengan profil Anda.",
     "altCta": "Jika Anda lebih suka, Anda juga bisa",
@@ -2858,5 +2854,8 @@
   },
   "legal": {
     "loadError": "Teks hukum tidak dapat dimuat. Hubungi kami di"
+  },
+  "landings": {
+    "guidesTitle": "Panduan investasi di Bali"
   }
 }

@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { supabase, getImageUrl } from "../lib/supabase";
 import { imgSrc, imgFallback } from "../lib/imageOptimize";
 import { translateStatus } from "../lib/statusI18n";
+import { usePageMeta } from "../components/PageMeta";
 
 interface ProjectCard {
   name: string;
@@ -26,6 +27,7 @@ interface Step { title: string; body: string }
 
 export default function AgenciasPartnership() {
   const { t } = useTranslation();
+  usePageMeta({ title: t("agenciasPartnership.title"), description: t("agenciasPartnership.metaDescription") });
   // Estado público del proyecto (Sobre Plano / En Construcción / Obra Finalizada…): mismo traductor que /proyectos.
   const statusLabel = (st?: string) => translateStatus(st, t);
   const [projects, setProjects] = useState<ProjectCard[]>([]);

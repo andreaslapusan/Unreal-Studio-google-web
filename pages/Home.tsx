@@ -19,7 +19,6 @@ const ANY_TYPE = 'Cualquier tipo';
 
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation();
-  usePageMeta({ title: t('home.title'), description: t('home.metaDescription'), image: '/img/og-image.webp' });
   // SWR: hydrate from localStorage cache so the first paint already has the
   // featured project + grid + blog teasers. Background fetch refreshes.
   const [projects, setProjects] = useState<Project[]>(() => readSWR<Project[]>('home_projects') ?? []);
@@ -143,7 +142,7 @@ const Home: React.FC = () => {
   // Cálculo del precio mínimo dinámico
   const minPriceDisplay = useMemo(() => {
     const visibleProjects = projects.filter(p => !p.is_hidden && p.visibility_status !== 'sold_out');
-    if (visibleProjects.length === 0) return "80.000€";
+    if (visibleProjects.length === 0) return "90.000€";
 
     const rates = liveRates;
     let minEur = Infinity;
@@ -159,10 +158,11 @@ const Home: React.FC = () => {
         }
     });
 
-    if (minEur === Infinity || !minProject) return "80.000€";
+    if (minEur === Infinity || !minProject) return "90.000€";
 
     return formatPrice(minProject.investor_price, minProject.price_currency);
   }, [projects, config, formatPrice]);
+  usePageMeta({ title: t('home.title'), description: t('home.metaDescription', { price: minPriceDisplay }), image: '/img/og-image.webp' });
 
   const filteredGridProjects = useMemo(() => {
     let result = projects.filter(p => {

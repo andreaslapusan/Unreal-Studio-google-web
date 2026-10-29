@@ -40,9 +40,9 @@
     "scheduleShort": "Programează"
   },
   "home": {
-    "title": "Unreal Studio Madrid | Investiții Imobiliare în Bali",
+    "title": "Unreal Studio Bali | Dezvoltator imobiliar în Bali",
     "heroTitle": "Investește în <i>Bali</i> de la {{price}} cu <i>Unreal Studio</i>",
-    "heroBody": "Generează până la <b>28% anual brut</b> investind la cost direct de promotor împreună cu studioul nostru de arhitectură din Bali.",
+    "heroBody": "ROI <b>estimat</b> de până la 28% brut pe an*, investind la cost direct de dezvoltator, cu studio de arhitectură propriu în Bali. *Estimare, negarantat.",
     "ctaMeeting": "Programează o întâlnire",
     "ctaVideo": "Vezi video intro",
     "investorsCount": "+150 investitori în întreaga lume.",
@@ -83,7 +83,7 @@
     "v2Body": "Prețuri ajustate față de piață",
     "v3Title": "Plusvaloare imediată",
     "v3Body": "Cumperi la prețul dezvoltatorului. Tu câștigi diferența față de piață.",
-    "metaDescription": "Dezvoltator imobiliar în Bali pentru investitori. Vile, lofturi și studiouri de la 75.000€, ROI 15-28% anual. Achiziție directă, fără intermediari.",
+    "metaDescription": "Dezvoltator imobiliar în Bali, cu birouri în Madrid și Bali. Vile și apartamente în Uluwatu și Canggu de la {{price}}. ROI estimat 15-28% pe an. Cumpărare la distanță.",
     "profit": {
       "immediateGain": "Plusvaloare Imediată",
       "estimatedGain": "Câștig Estimat",
@@ -94,8 +94,8 @@
     "videoUnsupported": "Browserul tău nu acceptă video HTML5."
   },
   "projects": {
-    "title": "Proiecte | Unreal Studio Madrid",
-    "heroTitle": "Proiecte și Oportunități de Investiție",
+    "title": "Vile și apartamente de vânzare în Bali | Unreal Studio",
+    "heroTitle": "Vile și apartamente de vânzare în Bali",
     "heroSubtitle": "Explorează selecția noastră completă de active imobiliare.",
     "filters": {
       "sortBy": "Sortează după",
@@ -138,15 +138,15 @@
     "clearFilters": "Șterge filtrele",
     "soldTitle": "Proiecte Vândute",
     "statusSold": "VÂNDUT",
-    "metaDescription": "Catalog de proprietăți de investiție în Bali: vile, lofturi și studiouri în Uluwatu, Canggu și Tabanan. Prețuri, ROI și disponibilitate actualizate.",
+    "metaDescription": "Vile, lofturi și apartamente de vânzare în Bali la preț de dezvoltator: Uluwatu, Canggu-Pererenan și Tabanan. Leasehold notarial și plăți pe etape.",
     "soldOutBadge": "Sold out",
     "soldOutTitle": "Sold out",
     "soldOutNotice": "Această proprietate este vândută integral (sold out). Nu mai sunt unități disponibile."
   },
   "contact": {
-    "title": "Contact | Unreal Studio Madrid",
-    "heroTitle1": "Hai să vorbim despre",
-    "heroTitle2": "următoarea ta investiție",
+    "title": "Contact | Unreal Studio Bali, birouri în Madrid și Bali",
+    "heroTitle1": "Contactează",
+    "heroTitle2": "Unreal Studio Bali",
     "heroSubtitle": "Eliminăm birocrația. Completează formularul și vorbești instant pe WhatsApp cu un consultant cu propuneri concrete.",
     "formTitle": "Cerere Rapidă",
     "emailOptional": "Email (opțional)",
@@ -193,7 +193,7 @@
       "m3": "În 3 luni",
       "exploring": "Doar explorez"
     },
-    "metaDescription": "Contactează Unreal Studio. Răspundem întrebărilor tale despre investiții în Bali și programăm un apel fără obligații.",
+    "metaDescription": "Vorbește cu Unreal Studio Bali, cu birouri în Madrid și Bali. Telefon și email pentru întrebările tale despre investiții imobiliare în Bali.",
     "successTitle": "Perfect! Ți-am primit datele.",
     "successBody": "Ți-am deschis aplicația de email pentru a ne trimite datele. Dacă nu s-a deschis, folosește butonul:",
     "successBlocked": "Browserul nu a putut deschide aplicația de email. Apasă butonul pentru a-l trimite:",
@@ -286,11 +286,22 @@
     "reportRequest": "Solicită acces echipei Unreal Studio",
     "reportMailSubject": "Solicitare raport de șantier – {{project}}",
     "reportMailBody": "Bună ziua, echipa Unreal Studio,\n\nSunt interesat/ă de proiectul {{project}} și aș dori să văd ultimul raport de șantier.\n\nMulțumesc,\n",
-    "labelTotalUnits": "Unități în complex"
+    "labelTotalUnits": "Unități în complex",
+    "faq": {
+      "faqTitle": "Întrebări frecvente despre {{name}}",
+      "tenureQ": "Ce cumpăr exact la {{name}}?",
+      "tenureLeaseholdA": "Un leasehold de {{years}} de ani înregistrat la notar.",
+      "tenureBothA": "Poți alege între un leasehold de {{years}} de ani înregistrat la notar sau freehold.",
+      "payQ": "Cum se plătește?",
+      "payBuildA": "Cu o rezervare și apoi pe etape de construcție, conform contractului, pe măsură ce se construiește. Nu oferim finanțare.",
+      "payDoneA": "Conform calendarului de plăți din contractul de vânzare-cumpărare.",
+      "remoteQ": "Trebuie să călătoresc în Bali?",
+      "remoteA": "Nu. Poți semna de la distanță prin procură notarială și primești rapoarte de șantier cu fotografii."
+    }
   },
   "faq": {
-    "title": "Întrebări frecvente | Unreal Studio Bali",
-    "heroTitle": "Întrebări frecvente",
+    "title": "Întrebări despre investiții în Bali | Unreal Studio Bali",
+    "heroTitle": "Întrebări frecvente despre investiții în Bali",
     "heroSubtitle": "Întrebările pe care ni le pun investitorii înainte de a închide — cu răspunsul direct al echipei noastre, fără umpluturi sau corporatism.",
     "search": "Caută întrebare...",
     "noResults": "Niciun rezultat. Încearcă altă căutare sau scrie-ne direct.",
@@ -307,11 +318,11 @@
     "ctaTitle": "Întrebarea ta nu este aici?",
     "ctaBody": "30 de minute prin videoconferință cu echipa noastră. Răspundem la orice întrebare fără obligații.",
     "ctaBtn": "Vorbește cu un consultant →",
-    "metaDescription": "Întrebări frecvente despre investiții în Bali cu Unreal Studio: leasehold, plăți, proprietate, randament și procesul de achiziție."
+    "metaDescription": "Poate un străin să cumpere în Bali? Ce este leasehold-ul? Cum funcționează plata pe etape? Răspunsuri clare de la un dezvoltator din Bali."
   },
   "blog": {
-    "title": "Blog | Unreal Studio Madrid",
-    "heroTitle": "Blog & Știri",
+    "title": "Ghiduri pentru investiții în Bali | Unreal Studio Bali",
+    "heroTitle": "Ghiduri pentru investiții în Bali",
     "heroSubtitle": "Actualitatea pieței imobiliare din Bali, tendințe de investiție și ghiduri legale.",
     "loading": "Se încarcă știrile...",
     "search": "Caută articole...",
@@ -325,7 +336,7 @@
     "articleNotFound": "Articolul nu a fost găsit",
     "shareTitle": "Ți-a plăcut acest articol?",
     "shareBody": "Distribuie-l altor investitori interesați de piața internațională.",
-    "metaDescription": "Ghiduri și noutăți despre investiții în proprietăți în Bali: leasehold, randament, zone și procesul de achiziție pentru investitori.",
+    "metaDescription": "Ghiduri pentru investiții imobiliare în Bali din România/UE: leasehold, zone, randament estimat și cumpărare la distanță, scrise de un dezvoltator din Bali.",
     "copyLink": "Copiază linkul",
     "share": "Distribuie",
     "cat": {
@@ -392,23 +403,8 @@
         "body": "Sprijinim fiecare tranzacție cu clientul tău până la semnare și predarea proprietății."
       }
     ],
-    "metaDescription": "Program de parteneri și agenții Unreal Studio. Câștigă comisioane recomandând investitori către proiecte imobiliare în Bali."
-  },
-  "inversoresPartnership": {
-    "tag": "Program Investitor",
-    "heroTitle1": "Investește în Bali.",
-    "heroTitle2": "Câștigă 1.300€/lună din prima închiriere.",
-    "heroBody": "Vile și loft-uri în Uluwatu, Pererenan și Tabanan de la 75.000€. ROI 15–28% brut anual validat. Achiziție 100% remote din Spania, fără intermediari.",
-    "ctaTalk": "Vorbește cu un consultant",
-    "ctaSeeProjects": "Vezi proiecte",
-    "ctaLogin": "Sunt deja investitor — login",
-    "whyTitle": "De ce să investești cu noi",
-    "projectsTitle": "Proiecte disponibile",
-    "projectsSubtitle": "Snapshot la {{date}}",
-    "faqTitle": "Întrebări frecvente",
-    "ctaFinalTitle": "Vorbim?",
-    "ctaFinalBody": "30 de minute prin videoconferință. Răspundem la orice întrebare și îți trimitem dosarele actualizate ale proiectelor care se potrivesc profilului tău.",
-    "ctaFinalBtn": "Programează apel cu un consultant →"
+    "metaDescription": "Agenții imobiliare: vindeți proiecte din Bali cu materiale complete, portal de parteneri și sprijinul echipei Unreal Studio Bali.",
+    "title": "Program pentru agenții imobiliare | Unreal Studio Bali"
   },
   "agenciasRegistrar": {
     "title": "Devino Listing Partner",
@@ -926,7 +922,7 @@
       "passwordWrong": "Parola curentă este incorectă.",
       "passwordChangeError": "Eroare la schimbarea parolei.",
       "passwordChangeSuccess": "Parolă actualizată cu succes.",
-      "pageTitle": "Portalul Meu | Unreal Studio Madrid",
+      "pageTitle": "Portalul Meu | Unreal Studio Bali",
       "calcNetRentalShort": "Chirie netă ({{years}}a)",
       "calcGross": "Brut: {{value}} | Deduceri: {{pct}}%",
       "calcResaleValueYear": "Valoare revânzare anul {{year}}",
@@ -2006,7 +2002,7 @@
     "statusPending": "în așteptare"
   },
   "booking": {
-    "title": "Programează un apel | Unreal Studio Bali",
+    "title": "Programează un apel despre Bali | Unreal Studio Bali",
     "heroTitle": "Rezervă un apel cu un consilier",
     "heroSubtitle": "30 de minute prin apel video cu echipa noastră. Îți trimitem dosarele actualizate ale proiectelor care se potrivesc cel mai bine profilului tău.",
     "altCta": "Dacă preferi, ne poți și",
@@ -2857,5 +2853,8 @@
   },
   "legal": {
     "loadError": "Textul juridic nu a putut fi încărcat. Scrie-ne la"
+  },
+  "landings": {
+    "guidesTitle": "Ghiduri pentru investiții în Bali"
   }
 }

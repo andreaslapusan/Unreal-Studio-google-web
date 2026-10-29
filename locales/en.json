@@ -40,9 +40,9 @@
     "scheduleShort": "Schedule"
   },
   "home": {
-    "title": "Unreal Studio Madrid | Real Estate Investments in Bali",
+    "title": "Unreal Studio Bali | Bali Villa & Apartment Developer",
     "heroTitle": "Invest in <i>Bali</i> from {{price}} with <i>Unreal Studio</i>",
-    "heroBody": "Earn up to <b>28% gross annual</b> investing at developer cost alongside our in-house architecture studio in Bali.",
+    "heroBody": "Projected gross ROI of up to <b>28% per year</b>*, buying at developer cost from a Bali developer with its own architecture studio. *Estimate, not guaranteed.",
     "ctaMeeting": "Book a meeting",
     "ctaVideo": "Watch intro video",
     "investorsCount": "+150 investors worldwide.",
@@ -83,7 +83,7 @@
     "v2Body": "Prices adjusted against the market",
     "v3Title": "Immediate capital gain",
     "v3Body": "You buy at developer price. You capture the difference over market value.",
-    "metaDescription": "Real estate developer in Bali for international investors. Villas, lofts and studios from €75,000, 15-28% annual ROI. Direct purchase, no middlemen.",
+    "metaDescription": "Bali developer with offices in Madrid and Bali. Villas and apartments in Uluwatu and Canggu from {{price}}. Projected ROI 15-28% per year. Buy remotely.",
     "profit": {
       "immediateGain": "Immediate Capital Gain",
       "estimatedGain": "Estimated Gain",
@@ -94,8 +94,8 @@
     "videoUnsupported": "Your browser does not support HTML5 video."
   },
   "projects": {
-    "title": "Projects | Unreal Studio Madrid",
-    "heroTitle": "Projects & Investment Opportunities",
+    "title": "Bali Villas & Apartments for Sale | Unreal Studio Bali",
+    "heroTitle": "Bali villas and apartments for sale",
     "heroSubtitle": "Explore our complete selection of real estate assets.",
     "filters": {
       "sortBy": "Sort by",
@@ -138,15 +138,15 @@
     "clearFilters": "Clear filters",
     "soldTitle": "Sold projects",
     "statusSold": "SOLD",
-    "metaDescription": "Investment property catalogue in Bali: villas, lofts and studios in Uluwatu, Canggu and Tabanan. Live prices, ROI and availability.",
+    "metaDescription": "Off-plan and completed villas, lofts and apartments for sale in Uluwatu, Canggu and Tabanan. Notarised leasehold and staged payments.",
     "soldOutBadge": "Sold out",
     "soldOutTitle": "Sold out",
     "soldOutNotice": "This property is sold out. There are no units available."
   },
   "contact": {
-    "title": "Contact | Unreal Studio Madrid",
-    "heroTitle1": "Let's talk about your",
-    "heroTitle2": "next investment",
+    "title": "Contact Unreal Studio Bali | Offices in Madrid & Bali",
+    "heroTitle1": "Contact",
+    "heroTitle2": "Unreal Studio Bali",
     "heroSubtitle": "We cut the bureaucracy. Fill in the form and chat instantly on WhatsApp with an advisor with concrete proposals.",
     "formTitle": "Quick request",
     "emailOptional": "Email (optional)",
@@ -193,7 +193,7 @@
       "m3": "Within 3 months",
       "exploring": "Just exploring"
     },
-    "metaDescription": "Contact Unreal Studio. We answer your questions about investing in Bali property and schedule a no-commitment call.",
+    "metaDescription": "Talk to Unreal Studio Bali, with offices in Madrid and Bali. Phone and email to answer your questions about investing in a villa in Bali.",
     "successTitle": "Great! We've received your details.",
     "successBody": "We've opened your email app to send us the details. If it didn't open, use the button:",
     "successBlocked": "Your browser couldn't open your email app. Tap the button to send it:",
@@ -286,11 +286,22 @@
     "reportRequest": "Request access from the Unreal Studio team",
     "reportMailSubject": "Construction report request – {{project}}",
     "reportMailBody": "Hello Unreal Studio team,\n\nI am interested in the {{project}} project and would like to see the latest construction report.\n\nThank you,\n",
-    "labelTotalUnits": "Units in the complex"
+    "labelTotalUnits": "Units in the complex",
+    "faq": {
+      "faqTitle": "Frequently asked questions about {{name}}",
+      "tenureQ": "What exactly am I buying at {{name}}?",
+      "tenureLeaseholdA": "A {{years}}-year leasehold registered before a notary.",
+      "tenureBothA": "You can choose between a {{years}}-year leasehold registered before a notary or freehold.",
+      "payQ": "How do I pay?",
+      "payBuildA": "With a reservation and then in construction milestones set out in the contract, while it is being built. We do not offer financing.",
+      "payDoneA": "According to the payment schedule in the purchase contract.",
+      "remoteQ": "Do I need to travel to Bali?",
+      "remoteA": "No. You can sign remotely with a power of attorney and receive construction reports with photos."
+    }
   },
   "faq": {
-    "title": "FAQ | Unreal Studio Bali",
-    "heroTitle": "Frequently asked questions",
+    "title": "Bali Property FAQ: Buying as a Foreigner | Unreal Studio",
+    "heroTitle": "Bali property FAQ: buying as a foreigner",
     "heroSubtitle": "The questions investors keep asking before closing — answered directly by our team, no fluff.",
     "search": "Search question...",
     "noResults": "No matches. Try a different search or contact us directly.",
@@ -307,11 +318,11 @@
     "ctaTitle": "Question not here?",
     "ctaBody": "30-minute video call with our team. Free, no commitment, just clear answers.",
     "ctaBtn": "Talk to an advisor →",
-    "metaDescription": "Frequently asked questions about investing in Bali with Unreal Studio: leasehold, payments, ownership, returns and the buying process."
+    "metaDescription": "Can foreigners buy property in Bali? What is leasehold? How do staged payments work? Clear answers from a Bali developer."
   },
   "blog": {
-    "title": "Blog | Unreal Studio Madrid",
-    "heroTitle": "Blog & News",
+    "title": "Bali Property Investment Guides | Unreal Studio Bali",
+    "heroTitle": "Bali property investment guides",
     "heroSubtitle": "Bali real estate market news, investment trends and legal guides.",
     "loading": "Loading news...",
     "search": "Search articles...",
@@ -325,7 +336,7 @@
     "articleNotFound": "Article not found",
     "shareTitle": "Enjoyed this article?",
     "shareBody": "Share it with other investors interested in international real estate.",
-    "metaDescription": "Guides and news on investing in Bali property: leasehold, returns, areas and the buying process for investors.",
+    "metaDescription": "Guides to investing in Bali property: leasehold, taxes, areas, projected yields and buying remotely, written by a Bali developer.",
     "copyLink": "Copy link",
     "share": "Share",
     "cat": {
@@ -392,23 +403,8 @@
         "body": "We support every deal with your client all the way to signing and handover of the property."
       }
     ],
-    "metaDescription": "Unreal Studio partner & agency program. Earn commissions referring investors to real estate projects in Bali."
-  },
-  "inversoresPartnership": {
-    "tag": "Investor Program",
-    "heroTitle1": "Invest in Bali.",
-    "heroTitle2": "Earn €1,300/month from your first rental.",
-    "heroBody": "Villas and lofts in Uluwatu, Pererenan and Tabanan from €75,000. 15-28% gross annual ROI validated. Fully remote purchase, no middlemen.",
-    "ctaTalk": "Talk to an advisor",
-    "ctaSeeProjects": "See projects",
-    "ctaLogin": "Already an investor — log in",
-    "whyTitle": "Why invest with us",
-    "projectsTitle": "Available projects",
-    "projectsSubtitle": "Snapshot as of {{date}}",
-    "faqTitle": "Frequently asked questions",
-    "ctaFinalTitle": "Let's talk",
-    "ctaFinalBody": "30-minute video call. We answer your questions and send you up-to-date dossiers for the projects that fit your profile.",
-    "ctaFinalBtn": "Book a call with an advisor →"
+    "metaDescription": "Real estate agencies: sell Bali projects with complete sales material, a partner portal and support from the Unreal Studio Bali team.",
+    "title": "Real Estate Agency Partner Programme | Unreal Studio Bali"
   },
   "agenciasRegistrar": {
     "title": "Become a Listing Partner",
@@ -926,7 +922,7 @@
       "passwordWrong": "Current password is incorrect.",
       "passwordChangeError": "Error changing password.",
       "passwordChangeSuccess": "Password updated successfully.",
-      "pageTitle": "My Portal | Unreal Studio Madrid",
+      "pageTitle": "My Portal | Unreal Studio Bali",
       "calcNetRentalShort": "Net rental ({{years}}y)",
       "calcGross": "Gross: {{value}} | Deduct: {{pct}}%",
       "calcResaleValueYear": "Resale value year {{year}}",
@@ -2006,7 +2002,7 @@
     "statusPending": "pending"
   },
   "booking": {
-    "title": "Book a call | Unreal Studio Bali",
+    "title": "Book a Call About Investing in Bali | Unreal Studio Bali",
     "heroTitle": "Book a call with an advisor",
     "heroSubtitle": "30 minutes by video call with our team. We'll send you up-to-date dossiers for the projects that best match your profile.",
     "altCta": "If you prefer, you can also",
@@ -2857,5 +2853,8 @@
   },
   "legal": {
     "loadError": "The legal text could not be loaded. Write to us at"
+  },
+  "landings": {
+    "guidesTitle": "Bali investment guides"
   }
 }
