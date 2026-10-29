@@ -3,7 +3,7 @@ import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
 import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, propertyTypeLabel } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, whatsappProjectUrl, PUBLIC_PROJECT_COLS } from '../constants';
 import { Project, AppConfig } from '../types';
@@ -15,7 +15,6 @@ import ProjectTimeline, { TimelinePhase } from '../components/ProjectTimeline';
 import LazyMap from '../components/LazyMap';
 import ConstructionReportButton from '../components/ConstructionReportButton';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
-import { fmtThousands } from '../lib/numberFormat';
 import { resolveCanonicalSlug, projectSeoSlug, projectPath } from '../lib/projectUrl';
 import { trackViewContent, trackLead } from '../lib/fbPixel';
 import { gtmViewItem, gtmWhatsappClick } from '../lib/gtm';
@@ -70,31 +69,24 @@ const ProjectDetail: React.FC = () => {
     };
     return map[String(v).toLowerCase()] || localizedField(project, 'furnishing', i18n.language) || v;
   };
-  // Importe con separador de miles + símbolo de divisa (para extensión y renta).
-  const CUR_SYM: Record<string, string> = { EUR: '€', USD: '$', IDR: 'Rp', AUD: 'A$' };
-  const fmtMoney = (amount: any, cur?: string | null): string => {
-    const c = (cur || 'EUR').toUpperCase();
-    const sym = CUR_SYM[c] || c;
-    return `${fmtThousands(String(amount))} ${sym}`.trim();
-  };
-  // Extensiones del leasehold como filas de tabla: +5 años · Total 25 años · 7.500 €.
-  // Array `extensions` [{years, price}] (precio en la divisa del proyecto); respaldo al campo
-  // único `years_extension` (+ extension_cost_usd si > 0). Sin extensión → [] (card oculta).
-  const extensionRows = (): { years: string; total: string; price: string }[] => {
+  // Extensiones del leasehold como filas de tabla: +5 años · Total 25 años.
+  // Sin precio: regla del dueño, no publicar precios de extensión. Array `extensions`
+  // [{years}]; respaldo al campo único `years_extension`. Sin extensión → [] (card oculta).
+  const extensionRows = (): { years: string; total: string }[] => {
     const p = project as any;
     if (!p) return [];
     const base = Number(p.years_contract) || 0;
-    const row = (years: any, price: string | null) => ({
+    const row = (years: any) => ({
       years: t('projectDetail.extYears', { years }),
       total: base && Number(years) ? t('projectDetail.extTotal', { total: base + Number(years) }) : '',
-      price: price || '',
     });
     const exts = Array.isArray(p.extensions) ? p.extensions.filter((e: any) => e && e.years != null) : [];
-    if (exts.length) return exts.map((e: any) => row(e.years, e.price != null && Number(e.price) > 0 ? fmtMoney(e.price, p.price_currency) : null));
-    if (p.years_extension) return [row(p.years_extension, Number(p.extension_cost_usd) > 0 ? fmtMoney(p.extension_cost_usd, 'USD') : null)];
+    if (exts.length) return exts.map((e: any) => row(e.years));
+    if (p.years_extension) return [row(p.years_extension)];
     return [];
   };
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   // Para el botón flotante de WhatsApp: mensaje con el nombre de este proyecto.
   useEffect(() => {
@@ -112,7 +104,8 @@ const ProjectDetail: React.FC = () => {
   // Title/meta/subtítulo del H1: mismo JSON que el prerender (content/seo/projects.json).
   const lang2 = (i18n.language || 'es').slice(0, 2);
   const seoEntry = project ? (seoMap as Record<string, Record<string, { title: string; description: string; h1sub: string }>>)[project.slug] : undefined;
-  const seo = seoEntry && (seoEntry[lang2] || seoEntry.en || seoEntry.es);
+  // Solo el idioma exacto: ro/id sin entrada usan nombre + descripción localizada (sin mezclar EN).
+  const seo = seoEntry?.[lang2];
   usePageMeta({
     title: project ? (seo?.title ?? `${project.name} | Unreal Studio Bali`) : '',
     description: project ? (seo?.description ?? localizedDescription().replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200)) : undefined,
@@ -195,8 +188,10 @@ const ProjectDetail: React.FC = () => {
               // source of truth in the address bar without a 301 round-trip.
               const seoSlug = projectSeoSlug(loadedProject);
               if (slug !== seoSlug) {
-                const search = window.location.search;
-                window.history.replaceState({}, '', `/proyecto/${seoSlug}${search}`);
+                // Conserva el prefijo de idioma (sin él nginx manda 301 a /es) y deja que
+                // el router/LocaleSeo vean el slug largo (canonical coherente con el prerender).
+                const pathLang = window.location.pathname.match(/^\/(es|en|ro|id)\//)?.[1] || (i18n.language || 'es').slice(0, 2);
+                navigate(`/${pathLang}/proyecto/${seoSlug}${window.location.search}`, { replace: true });
               }
 
               // Meta Pixel: track that a specific project was viewed.
@@ -440,8 +435,7 @@ const ProjectDetail: React.FC = () => {
                     {extensionRows().map((r, i) => (
                       <tr key={i} className="border-t first:border-t-0 border-primary/10">
                         <td className="py-1 pr-3 whitespace-nowrap">{r.years}</td>
-                        <td className="py-1 pr-3 whitespace-nowrap font-normal text-primary/60">{r.total}</td>
-                        <td className="py-1 text-right whitespace-nowrap">{r.price}</td>
+                        <td className="py-1 whitespace-nowrap font-normal text-primary/60">{r.total}</td>
                       </tr>
                     ))}
                   </tbody></table>

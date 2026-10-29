@@ -288,7 +288,8 @@ function projectFaq(p, code) {
 }
 const faqLd = (pairs) => (pairs.length ? { "@type": "FAQPage", mainEntity: pairs.map(([q, a]) => ({ "@type": "Question", name: plain(q), acceptedAnswer: { "@type": "Answer", text: plain(a) } })) } : null);
 const SEO_PROJECTS = JSON.parse(readFileSync(resolve(__dirname, "..", "content", "seo", "projects.json"), "utf8"));
-const seoFor = (p, code) => { const e = SEO_PROJECTS[p.slug]; return e && (e[code] || e.en || e.es); };
+// Solo el idioma exacto (ro/id sin entrada → título/descr. por defecto, sin texto EN).
+const seoFor = (p, code) => SEO_PROJECTS[p.slug]?.[code];
 
 async function main() {
   if (!existsSync(TEMPLATE)) {

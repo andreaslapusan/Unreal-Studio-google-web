@@ -7,6 +7,28 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Fuera de beta (VITE_SEO_DRAFTS != 1) las landings en borrador no deben llegar al bundle:
+// cuerpo vacío y en index.json solo id/slugs/published (lib/landings.ts los usa para desenlazar).
+function stripSeoDrafts(enabled: boolean) {
+  const idx = path.resolve(__dirname, 'content/landings/index.json');
+  const drafts = (): Set<string> =>
+    new Set(JSON.parse(fs.readFileSync(idx, 'utf8')).filter((l: any) => !l.published).map((l: any) => l.id));
+  return {
+    name: 'strip-seo-drafts',
+    enforce: 'pre' as const,
+    load(id: string) {
+      if (enabled) return null;
+      const m = id.match(/content\/landings\/([^/]+)\/[a-z]{2}\.html\?raw$/);
+      return m && drafts().has(m[1]) ? 'export default ""' : null;
+    },
+    transform(code: string, id: string) {
+      if (enabled || path.resolve(id.split('?')[0]) !== idx) return null;
+      const out = JSON.parse(code).map((l: any) => (l.published ? l : { id: l.id, published: false, slugs: l.slugs, meta: {} }));
+      return { code: JSON.stringify(out), map: null };
+    },
+  };
+}
+
 // Note: previously we shipped per-route /<name>/index.html stubs that
 // redirected to the HashRouter prefix. After moving to BrowserRouter
 // (commit Apr 30 2026), Firebase rewrites every path to /index.html
@@ -23,7 +45,7 @@ export default defineConfig(({ mode }) => {
         port: 3000,
         host: '0.0.0.0',
       },
-      plugins: [react()],
+      plugins: [stripSeoDrafts(env.VITE_SEO_DRAFTS === '1'), react()],
       // NOTE: We deliberately do NOT inline GEMINI_API_KEY into the client bundle.
       // If Gemini calls are needed from the SPA, route them through a Supabase
       // Edge Function or a server proxy that holds the key securely.
