@@ -1,0 +1,210 @@
+[
+  {
+    "id": "invertir-en-bali",
+    "published": true,
+    "type": "Article",
+    "zone": null,
+    "image": "projects/1773610757538-gi4aaewvc.webp",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "invertir-en-bali",
+      "en": "invest-in-bali"
+    },
+    "meta": {
+      "es": {
+        "title": "Invertir en Bali en 2027: guía para inversores españoles",
+        "description": "Cómo invertir en Bali desde España: leasehold, zonas, precios en euros, pago por hitos, impuestos y riesgos. ROI proyectado 15-28 % anual, no garantizado.",
+        "h1": "Invertir en Bali: guía completa para inversores españoles (2027)",
+        "crumb": "Invertir en Bali"
+      },
+      "en": {
+        "title": "Invest in Bali (2027): A Property Investor's Guide",
+        "description": "How to invest in Bali property as a foreigner: leasehold, best areas, prices in euros, staged payments, taxes and risks. Projected 15-28% yield, not guaranteed.",
+        "h1": "Invest in Bali: The Complete Guide for Property Investors (2027)",
+        "crumb": "Invest in Bali"
+      }
+    }
+  },
+  {
+    "id": "comprar-sobre-plano-bali",
+    "published": true,
+    "type": "Article",
+    "zone": null,
+    "image": "projects/migrated/golf-bay-villa-3bd/02-3.webp",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "comprar-sobre-plano-bali",
+      "en": "buy-off-plan-bali"
+    },
+    "meta": {
+      "es": {
+        "title": "Comprar sobre plano en Bali: pagos por hitos y seguimiento",
+        "description": "Cómo funciona comprar una villa sobre plano en Bali: reserva, contrato ante notario, pagos por hitos durante la obra, reportes con fotos y entrega de llaves.",
+        "h1": "Comprar sobre plano en Bali: así funcionan los pagos por hitos",
+        "crumb": "Comprar sobre plano"
+      },
+      "en": {
+        "title": "Buy Off-Plan Villas in Bali: Staged Payments Guide",
+        "description": "How buying off-plan in Bali works: reservation, notarial contract, staged payments during construction, photo progress reports, handover and rental launch.",
+        "h1": "Buying Off-Plan in Bali: How Staged Payments Work",
+        "crumb": "Buying off-plan"
+      }
+    }
+  },
+  {
+    "id": "zonas-uluwatu",
+    "published": true,
+    "type": "Article",
+    "zone": "Uluwatu",
+    "image": "https://rnielxgackkshnatvagj.supabase.co/storage/v1/object/public/intake-uploads/1966bd4afef14edcb4a407162ce466d712c316dbe5b14f7889bd9c5558acef0d/photos/1791014695027-iqj1wy.jpg",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "zonas/uluwatu",
+      "en": "areas/uluwatu"
+    },
+    "meta": {
+      "es": {
+        "title": "Invertir en Uluwatu: villas y apartamentos en venta",
+        "description": "Guía para invertir en Uluwatu (Bali): Melasti, Pandawa, Balangan y Karma Beach. Playas, distancias, precios orientativos y proyectos en venta y vendidos.",
+        "h1": "Invertir en Uluwatu: guía de zona y propiedades en venta",
+        "crumb": "Uluwatu"
+      },
+      "en": {
+        "title": "Uluwatu Villas for Sale: Area Guide for Investors",
+        "description": "Uluwatu property guide: Melasti, Pandawa, Balangan and Karma Beach. Beaches, distances, indicative prices, rental seasons and villas for sale or sold.",
+        "h1": "Investing in Uluwatu: area guide and properties for sale",
+        "crumb": "Uluwatu"
+      }
+    }
+  },
+  {
+    "id": "zonas-canggu-pererenan",
+    "published": true,
+    "type": "Article",
+    "zone": "Canggu",
+    "image": "https://rnielxgackkshnatvagj.supabase.co/storage/v1/object/public/images/projects/drive/1791207252537-14-photo-26-09-26-12-28-52-pm.jpg",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "zonas/canggu-pererenan",
+      "en": "areas/canggu-pererenan"
+    },
+    "meta": {
+      "es": {
+        "title": "Invertir en Canggu y Pererenan: guía y villas en Bali",
+        "description": "Canggu, Pererenan, Seseh y Cemagi para invertir: demanda, saturación, precios orientativos y qué revisar. Proyectos de Unreal Studio Bali en la zona.",
+        "h1": "Invertir en Canggu, Pererenan y Cemagi",
+        "crumb": "Canggu y Pererenan"
+      },
+      "en": {
+        "title": "Canggu & Pererenan Villas for Sale: Investor Guide",
+        "description": "Canggu, Pererenan, Seseh and Cemagi for investors: demand, oversupply, indicative prices and what to check. Unreal Studio Bali projects in the area.",
+        "h1": "Investing in Canggu, Pererenan and Cemagi",
+        "crumb": "Canggu & Pererenan"
+      }
+    }
+  },
+  {
+    "id": "zonas-tabanan",
+    "published": true,
+    "type": "Article",
+    "zone": "Tabanan",
+    "image": "projects/real/venaso-3bd-real/005.webp",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "zonas/tabanan",
+      "en": "areas/tabanan"
+    },
+    "meta": {
+      "es": {
+        "title": "Invertir en Tabanan (Bali): villas entre arrozales",
+        "description": "Tabanan, Kedungu y Pasut: la costa que crece después de Canggu. Arrozales, playas, distancias, precios orientativos y la villa Venaso de Unreal Studio Bali.",
+        "h1": "Invertir en Tabanan: el Bali que viene después de Canggu",
+        "crumb": "Tabanan"
+      },
+      "en": {
+        "title": "Tabanan Bali Villas for Sale: Investor Area Guide",
+        "description": "Tabanan, Kedungu and Pasut: the coast growing after Canggu. Rice fields, beaches, distances, indicative prices and Venaso villas by Unreal Studio Bali.",
+        "h1": "Investing in Tabanan: the Bali that comes after Canggu",
+        "crumb": "Tabanan"
+      }
+    }
+  },
+  {
+    "id": "rentabilidad-inversion-bali",
+    "published": false,
+    "type": "Article",
+    "zone": null,
+    "image": "projects/1773610757538-gi4aaewvc.webp",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "rentabilidad-inversion-bali",
+      "en": "bali-investment-returns"
+    },
+    "meta": {
+      "es": {
+        "title": "Rentabilidad en Bali: cómo calculamos el ROI proyectado",
+        "description": "ROI proyectado del 15-28% bruto anual en Bali: fórmula, ocupación, tarifa, gestión e impuestos, y cómo queda en neto en 3 escenarios. No garantizado.",
+        "h1": "Rentabilidad de una villa en Bali: cómo calculamos el ROI proyectado",
+        "crumb": "Rentabilidad"
+      },
+      "en": {
+        "title": "Bali Investment Returns: How We Project Rental Yield",
+        "description": "Projected 15-28% gross yield in Bali explained: formula, occupancy, nightly rate, management and tax, and gross-to-net in 3 scenarios. Not guaranteed.",
+        "h1": "Bali Villa Returns: How We Calculate Projected Yield",
+        "crumb": "Returns"
+      }
+    }
+  },
+  {
+    "id": "mercado-inmobiliario-bali",
+    "published": true,
+    "type": "Article",
+    "zone": null,
+    "image": "projects/1773614267061-j8umrqce4.webp",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "mercado-inmobiliario-bali",
+      "en": "bali-property-market-report"
+    },
+    "meta": {
+      "es": {
+        "title": "Mercado inmobiliario en Bali 2026-2027: datos e informe",
+        "description": "Informe del mercado inmobiliario de Bali 2026-2027: turismo récord, ocupación hotelera, tarifas de alquiler, precio del suelo por zona y normativa, con fuentes.",
+        "h1": "Mercado inmobiliario en Bali: informe 2026-2027 con datos y fuentes",
+        "crumb": "Mercado inmobiliario"
+      },
+      "en": {
+        "title": "Bali Property Market Report 2026-2027: Data & Trends",
+        "description": "Bali property market report 2026-2027: record tourism, hotel occupancy, holiday-rental rates, land prices by area and new regulation, each with its source.",
+        "h1": "Bali Property Market Report 2026-2027: Data and Sources",
+        "crumb": "Property market"
+      }
+    }
+  },
+  {
+    "id": "sobre-nosotros",
+    "published": true,
+    "type": "AboutPage",
+    "zone": null,
+    "image": "projects/real/golf-bay-lofts-1bd-real/013.webp",
+    "dateModified": "2026-10-29",
+    "slugs": {
+      "es": "sobre-nosotros",
+      "en": "about-us"
+    },
+    "meta": {
+      "es": {
+        "title": "Sobre Unreal Studio Bali: promotora en Bali y Madrid",
+        "description": "Quiénes somos: promotora y estudio de arquitectura en Bali con oficina en Madrid. Cómo trabajamos del diseño a la gestión y qué proyectos hemos entregado.",
+        "h1": "Unreal Studio Bali: promotora inmobiliaria en Bali y Madrid",
+        "crumb": "Sobre nosotros"
+      },
+      "en": {
+        "title": "About Unreal Studio Bali: Developer in Bali & Madrid",
+        "description": "Who we are: a property developer and architecture studio in Bali with an office in Madrid. How we work from design to management, and what we have delivered.",
+        "h1": "Unreal Studio Bali: property developer in Bali and Madrid",
+        "crumb": "About us"
+      }
+    }
+  }
+]

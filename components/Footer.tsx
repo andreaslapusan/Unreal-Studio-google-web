@@ -7,17 +7,13 @@ import { supabase } from '../lib/supabase';
 import { SocialIcon, networkClass } from '../lib/socials';
 import BrandLogo from './BrandLogo';
 import { reopenConsent } from '../lib/consent';
+import { landingLink } from '../lib/landings';
 
 const DAY_LABEL: Record<string, string> = { mon: 'Lun', tue: 'Mar', wed: 'Mié', thu: 'Jue', fri: 'Vie', sat: 'Sáb', sun: 'Dom' };
 
-// Una dirección puede ser texto plano (compat) o {text, maps}. Normaliza.
-interface AddressN { text: string; maps: string; }
-const normAddress = (a: any): AddressN =>
-  typeof a === 'string' ? { text: a, maps: '' } : { text: a?.text || '', maps: a?.maps || '' };
-const addressHref = (a: AddressN) => a.maps || `https://maps.google.com/?q=${encodeURIComponent(a.text)}`;
-
 const Footer: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const guides = ['invertir-en-bali', 'sobre-nosotros'].map((id) => landingLink(id, (i18n.language || 'es').slice(0, 2))).filter((l): l is NonNullable<typeof l> => !!l);
   const [brand, setBrand] = useState<any>(null);
   useEffect(() => {
     void (async () => {
@@ -26,8 +22,6 @@ const Footer: React.FC = () => {
     })();
   }, []);
 
-  const addresses: AddressN[] = ((brand?.addresses && brand.addresses.length) ? brand.addresses : ['Jl. Pratu Rai Madra No.15, Cemagi, Bali'])
-    .map(normAddress).filter((a: AddressN) => a.text);
   const socials: { network?: string; label?: string; url: string }[] = ((brand?.socials && brand.socials.length)
     ? brand.socials.filter((s: any) => s?.url)
     : [{ network: 'instagram', url: 'https://instagram.com/unrealstudiobali' }])
@@ -61,6 +55,7 @@ const Footer: React.FC = () => {
             <li><Link className="hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/blog">{t('footer.blog')}</Link></li>
             <li><Link className="hover:text-primary transition" to="/faq">{t('nav.faq')}</Link></li>
+            {guides.map((g) => <li key={g.href}><Link className="hover:text-primary transition" to={g.href}>{g.label}</Link></li>)}
             <li><Link className="hover:text-primary transition" to="/contacto">{t('footer.contact')}</Link></li>
           </ul>
         </div>
@@ -69,13 +64,12 @@ const Footer: React.FC = () => {
         <div>
           <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-3">{t('footer.offices')}</h5>
           <ul className="space-y-3 text-primary/50 text-xs font-bold tracking-wider mb-6">
-            {addresses.map((addr, i) => (
-              <li key={i}>
-                <a href={addressHref(addr)} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 hover:text-primary transition">
-                  <span className="material-symbols-outlined text-base">location_on</span> {addr.text}
-                </a>
-              </li>
-            ))}
+            {/* Direcciones completas solo en /contacto (regla de negocio + SEO). */}
+            <li>
+              <Link to="/contacto" className="flex items-start gap-2 hover:text-primary transition">
+                <span className="material-symbols-outlined text-base">location_on</span> Madrid · Bali
+              </Link>
+            </li>
           </ul>
 
           {hoursEntries.length > 0 && (

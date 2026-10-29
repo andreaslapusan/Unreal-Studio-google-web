@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SUPPORTED_LANGS } from "./LocaleRoute";
 import { matchPortalPath, portalPath } from "../lib/portalUrls";
+import { landingAltPaths } from "../lib/landings";
 
 const LANGS: { code: "es" | "en" | "ro" | "id"; label: string }[] = [
   { code: "es", label: "ES" },
@@ -37,6 +38,12 @@ export default function LanguageSwitcher({ inverted = false }: { inverted?: bool
     const pm = matchPortalPath(location.pathname);
     if (pm) {
       navigate(`${portalPath(pm.portal, code as 'es' | 'en' | 'ro' | 'id', pm.sub || undefined)}${location.search}${location.hash}`);
+      return;
+    }
+    // Landing SEO: su slug en el otro idioma, o la home de ese idioma si no existe.
+    const alts = landingAltPaths(location.pathname);
+    if (alts) {
+      navigate(`/${code}${alts[code] ?? ""}`);
       return;
     }
     // Ruta pública con prefijo de idioma: mismo path bajo el nuevo prefijo.

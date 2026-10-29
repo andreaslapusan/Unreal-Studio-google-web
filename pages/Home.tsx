@@ -13,6 +13,7 @@ import { projectPath } from '../lib/projectUrl';
 import { translateStatus } from '../lib/statusI18n';
 import { localizeFields, blogTagLabel, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
+import LandingLinks from '../components/LandingLinks';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -778,6 +779,7 @@ const Home: React.FC = () => {
             </Link>
           ))}
         </div>
+        <LandingLinks className="mt-12 text-center" />
       </section>
     </div>
   );

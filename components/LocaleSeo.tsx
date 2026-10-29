@@ -9,6 +9,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SUPPORTED_LANGS } from './LocaleRoute';
+import { landingAltPaths } from '../lib/landings';
 
 const ORIGIN = 'https://unrealstudiobali.com';
 const MARK = 'data-locale-seo';
@@ -43,8 +44,10 @@ export default function LocaleSeo() {
     };
 
     add('canonical', `${ORIGIN}/${first}${tail}`);
-    for (const l of SUPPORTED_LANGS) add('alternate', `${ORIGIN}/${l}${tail}`, l);
-    add('alternate', `${ORIGIN}/es${tail}`, 'x-default');
+    // Landings: slug distinto por idioma y solo los idiomas que existen.
+    const alts: Record<string, string> = landingAltPaths(pathname) ?? Object.fromEntries(SUPPORTED_LANGS.map((l) => [l, tail]));
+    for (const [l, t] of Object.entries(alts)) add('alternate', `${ORIGIN}/${l}${t}`, l);
+    add('alternate', `${ORIGIN}/es${alts.es ?? tail}`, 'x-default');
 
     // Actualiza el content-language al idioma de la URL (en index.html es estático
     // "es" y quedaba mal en /en /ro /id). También el atributo lang del <html>.

@@ -11,6 +11,7 @@ import { readSWR, writeSWR } from '../lib/swrCache';
 import { translateStatus } from '../lib/statusI18n';
 import { statusBadgeClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
+import LandingLinks from '../components/LandingLinks';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
 import { localizedCompletion, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
 
@@ -437,6 +438,7 @@ const Projects: React.FC = () => {
             </div>
           </div>
         )}
+        <LandingLinks className="mt-16 text-center" />
       </section>
     </div>
   );

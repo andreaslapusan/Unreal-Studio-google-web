@@ -67,6 +67,8 @@ const AdminPortalManager = lazyWithReload(() => import('./pages/AdminPortalManag
 const AdminAgencias = lazyWithReload(() => import('./pages/AdminAgencias'));
 const AgencyPack = lazyWithReload(() => import('./pages/AgencyPack'));
 const ListingIntake = lazyWithReload(() => import('./pages/ListingIntake'));
+const LandingPage = lazyWithReload(() => import('./pages/LandingPage'));
+import { landingRoutes } from './lib/landings';
 import AdminShell from './components/AdminShell';
 import { AuthProvider, useAuth } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
@@ -338,6 +340,10 @@ const App: React.FC = () => {
               <Route key={`pl-${L}-adm`} path={`/${L}/admin/login`} element={<LangSetter lang={L}><AdminLogin /></LangSetter>} />,
             ])}
 
+            {/* Landings SEO (content/landings): una ruta por idioma con su propio slug. */}
+            {landingRoutes().map((r) => (
+              <Route key={`ld-${r.lang}-${r.id}`} path={`/${r.lang}/${r.path}`} element={<LangSetter lang={r.lang}><LandingPage id={r.id} lang={r.lang} /></LangSetter>} />
+            ))}
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
