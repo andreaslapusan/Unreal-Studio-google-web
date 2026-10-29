@@ -219,6 +219,7 @@
     "notFound": "Project not found",
     "backToProjects": "Back to Projects",
     "kpiRoiRental": "Rental ROI",
+    "kpiRent": "Est. rent",
     "kpiRoiResale": "Resale ROI",
     "kpiRoiSuffix": "Gross/year",
     "kpiStatus": "Status",

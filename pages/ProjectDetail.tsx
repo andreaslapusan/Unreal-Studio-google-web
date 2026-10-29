@@ -392,37 +392,48 @@ const ProjectDetail: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-primary text-white py-8 pl-6 pr-16 md:px-12 shadow-xl relative z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-7 md:gap-8 md:divide-x divide-white/10">
-          <div className="px-4 first:pl-0 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiRental')}</p>
-            <p className="text-2xl md:text-3xl font-serif">{project.annual_rental_projection && project.investor_price ? ((project.annual_rental_projection / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult')} <span className="text-xs font-sans opacity-80">{t('projectDetail.kpiRoiSuffix')}</span></p>
-          </div>
-          <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiRoiResale')}</p>
-            <p className="text-2xl md:text-3xl font-serif">{project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult')}</p>
-          </div>
-          {!soldOut && (project.investor_price ?? 0) > 0 && (
-          <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiInvestorPrice')}</p>
-            <p className="text-2xl md:text-3xl font-serif">{formatPrice(project.investor_price, project.price_currency)}</p>
-          </div>
-          )}
-          {(project.market_price ?? 0) > 0 && (
-          <div className="px-4 text-center md:text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiMarketPrice')}</p>
-            <p className={`text-2xl md:text-3xl font-serif ${soldOut ? '' : 'line-through opacity-40'}`}>{formatPrice(project.market_price, project.price_currency)}</p>
-          </div>
-          )}
-          <div className="px-4 border-r-0 text-center md:text-left col-span-2 md:col-span-1">
+      {/* Bloque KPI: cuadrícula con líneas finas (gap-px sobre fondo white/10), 2 / 3 / 6 columnas.
+          Estado se estira hasta el final de la última fila para que nunca quede un hueco. */}
+      {(() => {
+        const rent = Number((project as any).annual_rental_projection) || 0;
+        const roiRental = rent && project.investor_price ? ((rent / project.investor_price) * 100).toFixed(1) + '%' : project.roi || t('projectDetail.consult');
+        const roiResale = project.market_price && project.investor_price && project.investor_price > 0 ? (((project.market_price - project.investor_price) / project.investor_price) * 100).toFixed(1) + '%' : t('projectDetail.consult');
+        const cells = [
+          { key: 'roiRental', label: t('projectDetail.kpiRoiRental'), value: roiRental, caption: t('projectDetail.kpiRoiSuffix') },
+          rent > 0 && { key: 'rent', label: t('projectDetail.kpiRent'), value: formatPrice(rent, (project as any).rent_currency || project.price_currency), caption: t('projectDetail.kpiRoiSuffix') },
+          !soldOut && (project.investor_price ?? 0) > 0 && { key: 'investor', label: t('projectDetail.kpiInvestorPrice'), value: formatPrice(project.investor_price, project.price_currency) },
+          (project.market_price ?? 0) > 0 && { key: 'market', label: t('projectDetail.kpiMarketPrice'), value: formatPrice(project.market_price, project.price_currency), strike: !soldOut },
+          { key: 'roiResale', label: t('projectDetail.kpiRoiResale'), value: roiResale },
+        ].filter(Boolean) as { key: string; label: string; value: string; caption?: string; strike?: boolean }[];
+        const n = cells.length;
+        // literales completos para que Tailwind genere las clases
+        const statusSpan = [
+          ['col-span-2', 'col-span-1'][n % 2],
+          ['md:col-span-3', 'md:col-span-2', 'md:col-span-1'][n % 3],
+          ['xl:col-span-6', 'xl:col-span-5', 'xl:col-span-4', 'xl:col-span-3', 'xl:col-span-2', 'xl:col-span-1'][n % 6],
+        ].join(' ');
+        return (
+      <div className="bg-primary text-white py-4 px-4 md:px-12 shadow-xl relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-px bg-white/10">
+          {cells.map((c) => (
+            <div key={c.key} className="bg-primary px-3 py-5 md:px-6 text-center md:text-left">
+              <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{c.label}</p>
+              <p className={`text-2xl md:text-3xl font-serif ${c.strike ? 'line-through opacity-40' : ''}`}>{c.value}</p>
+              {c.caption && <p className="mt-1 text-[10px] md:text-xs opacity-70">{c.caption}</p>}
+            </div>
+          ))}
+          <div className={`bg-primary px-3 py-5 md:px-6 text-center md:text-left ${statusSpan}`}>
             <p className="text-[10px] uppercase tracking-widest opacity-70 mb-2">{t('projectDetail.kpiStatus')}</p>
-            <p className="text-base font-bold flex items-center justify-center md:justify-start gap-2 min-h-8 md:min-h-9 leading-tight uppercase">
-              <span className={`w-2 h-2 shrink-0 rounded-full ${soldOut ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'}`}></span>
+            {/* punto en línea: si el texto no cabe (EN CONSTRUCCIÓN en media columna) parte limpio; pt-1.5 lo centra con los valores */}
+            <p className="text-sm md:text-base font-bold uppercase leading-5 md:leading-6 pt-1.5">
+              <span className={`inline-block w-2 h-2 mr-2 -mt-0.5 align-middle rounded-full ${soldOut ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'}`}></span>
               {soldOut ? t('projects.soldOutBadge') : translateStatus(project.status, t)}
             </p>
           </div>
         </div>
       </div>
+        );
+      })()}
 
       <main className="max-w-7xl mx-auto px-6 md:px-12 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-8 space-y-20">
