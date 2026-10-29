@@ -310,7 +310,7 @@ const Projects: React.FC = () => {
           <div className="grid grid-cols-2 grid-flow-row-dense xl:flex xl:flex-row items-stretch xl:items-center">
 
             {/* Sort Filter */}
-            <div className="col-span-2 md:col-span-1 flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b xl:border-b-0 xl:border-r border-gray-100 group">
+            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b xl:border-b-0 xl:border-r border-gray-100 group">
               <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
@@ -384,7 +384,7 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Status Filter */}
-            <div className="col-span-2 md:col-span-1 flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto xl:border-r border-gray-100 group">
+            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto xl:border-r border-gray-100 group">
               <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">verified</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.status')}</label>
@@ -400,7 +400,7 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Bedrooms Filter */}
-            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-b md:border-b-0 border-gray-100 group">
+            <div className="flex items-center gap-2 xl:gap-3 px-2.5 sm:px-3 md:px-5 xl:px-4 py-3 md:py-4 xl:flex-auto border-gray-100 group">
               <span className="!hidden md:!inline-block material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">bed</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.bedrooms')}</label>
