@@ -440,6 +440,7 @@ const ProjectDetail: React.FC = () => {
               const specs = [
                 project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: localizedField(project, 'distance_beach', i18n.language) },
                 project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}` },
+                ((project as any).annual_rental_projection > 0) && { icon: 'payments', label: t('projectDetail.labelAnnualRent'), value: `${fmtMoney((project as any).annual_rental_projection, (project as any).rent_currency || project.price_currency)} ${t('projectDetail.perYear')}` },
                 project.tenure !== 'Freehold' && extensionRows().length > 0 && { icon: 'update', label: t('projectDetail.labelExtensions'), value: (
                   <table className="w-full mt-1 text-sm"><tbody>
                     {extensionRows().map((r, i) => (
