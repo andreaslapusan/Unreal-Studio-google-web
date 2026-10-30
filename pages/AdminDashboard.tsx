@@ -2831,21 +2831,21 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       {/* MODALS */}
       {/* ... Project Edit Modal ... */}
       {isEditing && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 overscroll-contain" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-0 md:p-4 overscroll-contain" onClick={(e) => { if (e.target === e.currentTarget) setIsEditing(false); }}>
           {/* sin backdrop-blur en este overlay: con 20-30 fotos en el panel con scroll, Chrome/Mac dejaba franjas en blanco (GPU) y el scroll iba a tirones */}
-          <div className="bg-white w-full max-w-[96vw] h-[92vh] shadow-2xl rounded-3xl flex flex-col overflow-hidden">
-            <div className="flex justify-between items-center px-6 md:px-10 py-5 border-b shrink-0">
-              <h2 className="text-2xl font-serif text-primary">{t('admin.props.editorTitle')}{currentProject.name ? <span className="text-primary/40 text-lg"> · {currentProject.name}</span> : null}</h2>
+          <div className="bg-white w-full md:max-w-[96vw] h-[100dvh] md:h-[92vh] shadow-2xl rounded-none md:rounded-3xl flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center gap-3 px-4 md:px-10 py-4 md:py-5 border-b shrink-0">
+              <h2 className="text-xl md:text-2xl font-serif text-primary truncate">{t('admin.props.editorTitle')}{currentProject.name ? <span className="text-primary/40 text-lg"> · {currentProject.name}</span> : null}</h2>
               <button type="button" onClick={() => setIsEditing(false)} className="p-2 text-gray-400 hover:text-primary"><span className="material-symbols-outlined">close</span></button>
             </div>
-            <div className="flex flex-1 min-h-0">
+            <div className="flex flex-col md:flex-row flex-1 min-h-0">
             {/* Menú fijo de secciones (Andreas 28-oct): se pincha una y a la derecha se ve solo esa. */}
-            <nav className="w-56 shrink-0 border-r border-gray-100 p-4 space-y-1 overflow-y-auto bg-gray-50/60">
+            <nav className="flex md:block gap-2 md:gap-0 md:w-56 shrink-0 border-b md:border-b-0 md:border-r border-gray-100 p-2 md:p-4 md:space-y-1 overflow-x-auto md:overflow-y-auto bg-gray-50/60">
               {PROP_SECTIONS.map((k, i) => (
-                <button key={k} type="button" onClick={() => setPropSec(i)} className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition ${propSec === i ? 'bg-primary text-white' : 'text-primary/70 hover:bg-almond hover:text-primary'}`}>{t(k)}</button>
+                <button key={k} type="button" onClick={() => setPropSec(i)} className={`shrink-0 md:w-full whitespace-nowrap md:whitespace-normal text-left px-4 py-2.5 md:py-3 rounded-xl text-sm font-bold transition ${propSec === i ? 'bg-primary text-white' : 'text-primary/70 hover:bg-almond hover:text-primary'}`}>{t(k)}</button>
               ))}
             </nav>
-            <form onSubmit={handleSaveProject} className="flex-1 min-w-0 overflow-y-auto overscroll-contain px-6 md:px-10 pt-6 space-y-3 flex flex-col">
+            <form onSubmit={handleSaveProject} className="flex-1 min-w-0 min-h-0 overflow-y-auto overscroll-contain px-3 md:px-10 pt-4 md:pt-6 space-y-3 flex flex-col">
                {/* ===== A. BÁSICOS ===== */}
                <details open className={`group rounded-2xl bg-gray-50 border border-gray-100 [&>summary]:hidden ${propSec === 0 ? '' : 'hidden'}`}>
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
@@ -2870,7 +2870,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     </div>
                     <div className="md:col-span-2"><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.description')}</label><textarea rows={3} value={currentProject.description || ''} onChange={(e) => setCurrentProject({...currentProject, description: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-medium" /></div>
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.investorPrice')}</label><NumberInput decimal value={currentProject.investor_price ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, investor_price: v === '' ? null : (parseFloat(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.marketPrice')}</label><NumberInput decimal value={currentProject.market_price ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, market_price: v === '' ? null : (parseFloat(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
                     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.currency')}</label><select value={currentProject.price_currency || 'EUR'} onChange={(e) => setCurrentProject({...currentProject, price_currency: e.target.value as any})} className="w-full px-4 py-3 bg-primary text-white rounded-2xl font-bold">{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}</select></div>
@@ -3044,7 +3044,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   <span className="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
                 <div className="px-4 pb-4 pt-1 space-y-4">
-  <div className="grid grid-cols-3 gap-3">
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bedrooms')}</label><NumberInput value={currentProject.bedrooms ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, bedrooms: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.bathrooms')}</label><NumberInput value={currentProject.bathrooms ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, bathrooms: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><NumberInput value={currentProject.area_m2 ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, area_m2: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
@@ -3071,7 +3071,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     </div>
   </div>
 
-  <div className="grid grid-cols-2 gap-3">
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.furnishing')}</label>
       <select value={currentProject.furnishing || ''} onChange={(e) => setCurrentProject({...currentProject, furnishing: e.target.value})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold">
         <option value="">{t('admin.props.furnishNone')}</option>
@@ -3206,7 +3206,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
   <div className="bg-white p-4 rounded-2xl">
     <p className="text-[10px] font-black uppercase text-gray-400 mb-3">{t('admin.dash.roiCalculated')}</p>
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div className="bg-gray-50 p-4 rounded-xl">
         <p className="text-[10px] font-black uppercase text-gray-400">{t('admin.dash.roiRental')}</p>
         <p className="text-2xl font-serif text-primary">{currentProject.investor_price && currentProject.annual_rental_projection ? ((currentProject.annual_rental_projection / currentProject.investor_price) * 100).toFixed(1) + '%' : '—'}</p>
@@ -3363,7 +3363,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
               </details>
 
-              <div className="flex gap-3 sticky bottom-0 z-10 bg-white -mx-6 md:-mx-10 px-6 md:px-10 pt-4 pb-6 mt-auto border-t border-gray-100 shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.08)]">
+              <div className="flex gap-3 sticky bottom-0 z-10 bg-white -mx-3 md:-mx-10 px-3 md:px-10 pt-3 md:pt-4 pb-4 md:pb-6 mt-auto border-t border-gray-100 shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.08)]">
                 <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg hover:bg-black disabled:opacity-60 inline-flex items-center justify-center gap-2">
                   {uploading && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {uploading ? t('admin.common.saving') : t('admin.adminDash.saveProperty')}
