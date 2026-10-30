@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 // Dashboard en tiempo casi-real de la Raspberry Pi de casa (Madrid). Lee la fila pi_status (id=1) que
 // alimenta el daemon ~/jobs/pi_metrics_push.py cada ~8s. Solo lectura; es una herramienta interna de ops.
 type PiData = Record<string, any>;
+const PORTAL_NAMES: Record<string, string> = { idealista: 'Idealista', fotocasa: 'Fotocasa', habitaclia: 'Habitaclia', pisos: 'pisos.com', indomio: 'Indomio' };
 
 const fmtUptime = (s: number): string => {
   if (!s) return '—';
@@ -123,7 +124,7 @@ const PiDashboard: React.FC = () => {
 
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Scraper inmobiliarias · Idealista · Fotocasa · pisos.com</div>
+          <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Scraper inmobiliarias · rotación de portales (15 min c/u)</div>
           <Badge ok={d.scraper_running} label={d.scraper_status || (d.scraper_running ? 'En marcha' : 'Parado')} />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 items-start">
@@ -131,6 +132,23 @@ const PiDashboard: React.FC = () => {
           <div><div className="text-2xl font-bold text-primary">{d.agencies_pushed_qm ?? 0}</div><div className="text-xs text-primary/50">nuevas → QuickMail</div></div>
           <div className="col-span-2 sm:col-span-1"><div className="text-[11px] font-mono text-primary/40 break-all leading-snug">{d.scraper_last || ''}</div></div>
         </div>
+        {d.portal_counts && (
+          <div className="mt-4">
+            <div className="text-xs text-primary/50 mb-2">
+              En turno: <span className="font-bold text-primary">{PORTAL_NAMES[d.scraper_portal] || d.scraper_portal || '—'}</span>
+              {d.turn_ends ? ` · hasta ${new Date(d.turn_ends * 1000).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}` : ''}
+              {d.turn_n ? ` · turno ${d.turn_n}` : ''}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(d.portal_counts as Record<string, number>).map(([p, n]) => (
+                <div key={p} className={`px-3 py-1.5 rounded-xl text-sm border ${p === d.scraper_portal ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold' : 'bg-gray-50 border-gray-100 text-primary/70'}`}>
+                  {p === d.scraper_portal && <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse" />}
+                  {PORTAL_NAMES[p] || p} <span className="font-mono">{n}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {d.dns_today != null && (
