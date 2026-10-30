@@ -41,10 +41,10 @@ const PiDashboard: React.FC = () => {
   const timer = useRef<ReturnType<typeof setInterval>>();
 
   const load = async () => {
-    const { data } = await supabase.from('pi_status').select('data,updated_at').eq('id', 1).maybeSingle();
-    if (data) { setD((data as any).data || {}); setUpdatedAt((data as any).updated_at); }
+    const { data } = await supabase.from('pi_status').select('data,ops,updated_at').eq('id', 1).maybeSingle();
+    if (data) { setD({ ...((data as any).data || {}), ...((data as any).ops || {}) }); setUpdatedAt((data as any).updated_at); }
   };
-  useEffect(() => { void load(); timer.current = setInterval(() => void load(), 4000); return () => clearInterval(timer.current); }, []);
+  useEffect(() => { void load(); timer.current = setInterval(() => void load(), 1000); return () => clearInterval(timer.current); }, []);
   useEffect(() => {
     const t = setInterval(() => { if (updatedAt) setStale(Math.round((Date.now() - new Date(updatedAt).getTime()) / 1000)); }, 1000);
     return () => clearInterval(t);
@@ -83,10 +83,19 @@ const PiDashboard: React.FC = () => {
         </div>
       </div>
 
+      {Array.isArray(d.tasks) && d.tasks.length > 0 && (
+        <div>
+          <div className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">Tareas activas en la Pi</div>
+          <div className="flex flex-wrap gap-2">
+            {d.tasks.map((tk: any, i: number) => <Badge key={i} ok={tk.on} label={tk.name} />)}
+          </div>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Scraper Idealista · toda España</div>
-          <Badge ok={d.scraper_running} label={d.scraper_running ? 'En marcha' : 'Parado'} />
+          <Badge ok={d.scraper_running} label={d.scraper_status || (d.scraper_running ? 'En marcha' : 'Parado')} />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 items-start">
           <div><div className="text-2xl font-bold text-primary">{d.agencies_scraped ?? 0}</div><div className="text-xs text-primary/50">inmobiliarias sacadas</div></div>
@@ -102,7 +111,7 @@ const PiDashboard: React.FC = () => {
         </div>
       )}
 
-      <div className="text-[11px] text-primary/30">Se actualiza cada ~8 s desde casa. Última lectura: {updatedAt ? new Date(updatedAt).toLocaleTimeString() : '—'}.</div>
+      <div className="text-[11px] text-primary/30">En vivo (~1 s) desde casa. Última lectura: {updatedAt ? new Date(updatedAt).toLocaleTimeString() : '—'}.</div>
     </div>
   );
 };
