@@ -73,6 +73,7 @@ const AdminSidebar: React.FC = () => {
     { key: 'users', icon: 'security', label: t('admin.nav.users'), to: '/admin?view=users', view: 'users' },
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
     { key: 'faqs', icon: 'help', label: t('admin.nav.faqs', 'FAQs'), to: '/admin?view=faqs', view: 'faqs' },
+    { key: 'pi', icon: '🍓', label: t('admin.nav.pi', 'Raspberry Pi'), to: '/admin?view=pi', view: 'pi' },
     { key: 'marketing', icon: 'campaign', label: t('admin.nav.marketing'), to: '/admin/marketing', path: '/admin/marketing' },
     { key: 'agencias', icon: 'public', label: t('admin.nav.agenciesMgmt', 'Agencias'), to: '/admin?view=agencias', view: 'agencias' },
     { key: 'agencyPacks', icon: 'handshake', label: t('admin.nav.agencyPacks', 'Packs Agencia'), to: '/admin/agencias', path: '/admin/agencias' },

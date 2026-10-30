@@ -19,6 +19,7 @@ import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
 import EmployeeEditModal, { EmployeeRow } from '../components/admin/EmployeeEditModal';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import EventsCalendar from '../components/admin/EventsCalendar';
+import PiDashboard from '../components/admin/PiDashboard';
 import AsyncButton from '../components/AsyncButton';
 import CobrosPanel from '../components/admin/CobrosPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
@@ -39,8 +40,8 @@ import { portalPath } from '../lib/portalUrls';
 import i18n from '../lib/i18n';
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura'];
+type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines' | 'pi';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura', 'pi'];
 
 // Titulares que PARTICIPAN en una propiedad concreta (+ % opcional). Si la
 // propiedad no tiene participantes definidos (null/[]), participan TODOS los
@@ -410,6 +411,7 @@ const AMENITIES_LIST = [
     { key: 'faqs', view: 'faqs' },
     { key: 'marketing', to: '/admin/marketing' },
     { key: 'agencias', view: 'agencias' },
+    { key: 'pi', view: 'pi' },
     { key: 'config', view: 'config' },
   ];
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
@@ -2823,6 +2825,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           />
         )}
         {activeView === 'calendar' && <VacationManager />}
+        {activeView === 'pi' && <PiDashboard />}
       </main>
 
       {/* MODALS */}
