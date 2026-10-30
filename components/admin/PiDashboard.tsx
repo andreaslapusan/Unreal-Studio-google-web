@@ -92,6 +92,35 @@ const PiDashboard: React.FC = () => {
         </div>
       )}
 
+      <div>
+        <div className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">Internet</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Stat label="Bajada" value={d.speed_down_mbps != null ? `${d.speed_down_mbps} Mbps` : '—'} color="text-emerald-600" />
+          <Stat label="Subida" value={d.speed_up_mbps != null ? `${d.speed_up_mbps} Mbps` : '—'} />
+          <Stat label="Ping" value={d.ping_ms != null ? `${d.ping_ms} ms` : '—'} />
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">IP pública</div>
+            <div className="text-base font-bold mt-1 text-primary break-all">{d.pub_ip || '—'}</div>
+            <div className="text-xs text-primary/50 mt-1">{d.isp || ''}{d.city ? ' · ' + d.city : ''}</div>
+          </div>
+        </div>
+        {(d.speed_down_mbps != null) && <div className="text-[10px] text-primary/30 mt-1">Velocidad medida cada ~30 min.</div>}
+      </div>
+
+      {Array.isArray(d.devices) && d.devices.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+          <div className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-3">Dispositivos conectados ({d.device_count ?? d.devices.length})</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+            {d.devices.map((dev: any, i: number) => (
+              <div key={i} className="flex items-center justify-between text-sm border-b border-gray-50 pb-1.5 gap-2">
+                <span className="font-medium text-primary truncate">{dev.name || dev.vendor || 'Dispositivo'}</span>
+                <span className="text-xs text-primary/40 font-mono shrink-0">{dev.ip}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Scraper Idealista · toda España</div>
