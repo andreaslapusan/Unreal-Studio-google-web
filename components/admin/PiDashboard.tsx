@@ -123,7 +123,7 @@ const PiDashboard: React.FC = () => {
 
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Scraper Idealista · toda España</div>
+          <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Scraper inmobiliarias · Idealista · Fotocasa · pisos.com</div>
           <Badge ok={d.scraper_running} label={d.scraper_status || (d.scraper_running ? 'En marcha' : 'Parado')} />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 items-start">
