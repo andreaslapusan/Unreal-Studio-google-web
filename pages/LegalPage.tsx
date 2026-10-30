@@ -58,7 +58,7 @@ const LegalPage: React.FC<{ doc: LegalDoc }> = ({ doc }) => {
   }, [lang, doc]);
 
   return (
-    <div className="bg-almond min-h-screen pt-12 pb-20 px-4 md:px-12 transition-colors duration-300">
+    <div className="bg-almond min-h-screen pt-4 md:pt-12 pb-20 px-4 md:px-12 transition-colors duration-300">
       <article className="max-w-3xl mx-auto bg-white rounded-[2rem] p-6 md:p-12 shadow-xl text-left border border-primary/5 text-primary/70 text-sm leading-relaxed space-y-3">
         {failed ? (
           <p>{t('legal.loadError')} <a className="underline" href="mailto:hello@unrealstudiobali.com">hello@unrealstudiobali.com</a></p>

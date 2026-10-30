@@ -92,7 +92,9 @@
       "ctaQuestion": "Vrei să investești într-o unitate cu această rentabilitate?",
       "seeFeatured": "Vezi proprietatea recomandată"
     },
-    "videoUnsupported": "Browserul tău nu acceptă video HTML5."
+    "videoUnsupported": "Browserul tău nu acceptă video HTML5.",
+    "opportunitiesTitle": "Oportunități de investiții",
+    "viewAllProperties": "Vezi toate proprietățile"
   },
   "projects": {
     "title": "Vile și apartamente de vânzare în Bali | Unreal Studio",

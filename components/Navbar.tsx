@@ -218,7 +218,7 @@ const Navbar: React.FC = () => {
       )}
 
       {/* Espaciador para compensar el header fijo */}
-      <div className="h-28 w-full bg-almond transition-colors duration-300"></div>
+      <div className="h-20 md:h-28 w-full bg-almond transition-colors duration-300"></div>
 
       {/* CTA flotante "Agendar llamada" (bottom-center, deslizante) RETIRADO
           (Globalitae 2026-10-13). El contacto va por el botón flotante de WhatsApp. */}

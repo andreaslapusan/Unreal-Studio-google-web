@@ -398,8 +398,8 @@ const Home: React.FC = () => {
         </div>
       </header>
 
-      {/* Filter Bar */}
-      <div className="px-4 md:px-12 relative z-30 -mt-12 md:-mt-16 mb-12 md:mb-16 max-w-7xl mx-auto">
+      {/* Filter Bar — solo tablet/escritorio; en el móvil ocupaba media pantalla y el filtro ya está en /proyectos (Andreas 30-oct) */}
+      <div className="hidden md:block px-4 md:px-12 relative z-30 -mt-12 md:-mt-16 mb-12 md:mb-16 max-w-7xl mx-auto">
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
             
@@ -493,6 +493,7 @@ const Home: React.FC = () => {
 
       {/* Listings Section */}
       <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
+        <h2 className="md:hidden text-3xl text-primary leading-tight mt-2 mb-6">{t('home.opportunitiesTitle')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {filteredGridProjects.slice(0, 3).map((proj) => (
             <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group border border-primary/5">
@@ -543,7 +544,12 @@ const Home: React.FC = () => {
           ))}
         </div>
         
-        <div className="mt-12 md:mt-16 text-center">
+        <div className="md:hidden mt-8">
+          <Link to={`/${(i18n.language || 'es').slice(0, 2)}/proyectos`} className="bg-primary text-white border border-primary px-8 py-4 rounded-full font-bold shadow-xl hover:bg-almond hover:text-primary transition flex items-center justify-center gap-2 w-full">
+            {t('home.viewAllProperties')} <span className="material-symbols-outlined text-base">arrow_forward</span>
+          </Link>
+        </div>
+        <div className="hidden md:block mt-12 md:mt-16 text-center">
           <button onClick={handleSearch} className="inline-flex items-center gap-2 border-b-2 border-primary text-primary font-bold pb-1 uppercase tracking-widest text-xs hover:text-primary/70 hover:border-primary/70 transition">
             {t('home.viewMoreProperties')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
           </button>

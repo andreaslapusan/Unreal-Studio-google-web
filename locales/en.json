@@ -92,7 +92,9 @@
       "ctaQuestion": "Want to invest in a unit with this return?",
       "seeFeatured": "See featured property"
     },
-    "videoUnsupported": "Your browser does not support HTML5 video."
+    "videoUnsupported": "Your browser does not support HTML5 video.",
+    "opportunitiesTitle": "Investment opportunities",
+    "viewAllProperties": "View all properties"
   },
   "projects": {
     "title": "Bali Villas & Apartments for Sale | Unreal Studio Bali",

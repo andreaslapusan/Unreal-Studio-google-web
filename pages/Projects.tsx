@@ -293,7 +293,7 @@ const Projects: React.FC = () => {
 
   return (
     <div className="bg-almond transition-colors duration-300">
-      <header className="px-6 md:px-12 pt-20 pb-28 text-center relative overflow-hidden bg-almond">
+      <header className="px-6 md:px-12 pt-4 md:pt-20 pb-28 text-center relative overflow-hidden bg-almond">
         <div className="relative z-10 max-w-5xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl leading-[1.1] text-primary tracking-tight">
             {t('projects.heroTitle')}

@@ -22,7 +22,7 @@ export default function Booking() {
 
   return (
     <div className="bg-almond min-h-screen pb-16">
-      <header className="px-6 md:px-12 pt-16 pb-8 max-w-4xl mx-auto text-center">
+      <header className="px-6 md:px-12 pt-4 md:pt-16 pb-8 max-w-4xl mx-auto text-center">
         <h1 className="text-4xl md:text-6xl text-primary font-serif mb-4 leading-tight">
           {t("booking.heroTitle", { defaultValue: "Reserva una llamada con un asesor" })}
         </h1>

@@ -54,7 +54,7 @@ export default function AgenciasPartnership() {
     <div className="bg-almond text-primary">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="max-w-5xl mx-auto px-6 pt-20 pb-16">
+        <div className="max-w-5xl mx-auto px-6 pt-4 md:pt-20 pb-16">
           <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold tracking-wide mb-5">
             {t("agenciasPartnership.tag")}
           </div>

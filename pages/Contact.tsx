@@ -68,7 +68,7 @@ const Contact: React.FC = () => {
 
   return (
     <div className="bg-almond transition-colors duration-300 min-h-screen">
-      <main className="px-6 md:px-12 pt-16 pb-24">
+      <main className="px-6 md:px-12 pt-4 md:pt-16 pb-24">
         <div className="max-w-4xl mx-auto text-center mb-20">
           <h1 className="text-5xl md:text-7xl leading-tight text-primary mb-8">
             {t('contact.heroTitle1')} <br className="hidden md:block" />{t('contact.heroTitle2')}

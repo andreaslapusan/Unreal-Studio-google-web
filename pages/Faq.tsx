@@ -164,7 +164,7 @@ export default function Faq() {
 
   return (
     <div className="bg-almond min-h-screen pb-24">
-      <header className="px-6 md:px-12 pt-20 pb-16 max-w-5xl mx-auto text-center">
+      <header className="px-6 md:px-12 pt-4 md:pt-20 pb-16 max-w-5xl mx-auto text-center">
         <h1 className="text-5xl md:text-7xl text-primary font-serif mb-6">
           {t("faq.heroTitle")}
         </h1>
@@ -186,7 +186,7 @@ export default function Faq() {
           />
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-8">
           {categories.map((c) => (
             <button
               key={c}

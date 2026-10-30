@@ -92,7 +92,9 @@
       "ctaQuestion": "¿Quieres invertir en una unidad con esta rentabilidad?",
       "seeFeatured": "Ver propiedad destacada"
     },
-    "videoUnsupported": "Tu navegador no soporta video HTML5."
+    "videoUnsupported": "Tu navegador no soporta video HTML5.",
+    "opportunitiesTitle": "Oportunidades de inversión",
+    "viewAllProperties": "Ver todas las propiedades"
   },
   "projects": {
     "title": "Villas y apartamentos en venta en Bali | Unreal Studio",

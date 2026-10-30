@@ -86,7 +86,7 @@ const Blog: React.FC = () => {
   }
 
   return (
-    <div className="bg-almond min-h-screen pt-20 pb-24 px-6 md:px-12 transition-colors duration-300">
+    <div className="bg-almond min-h-screen pt-4 md:pt-20 pb-24 px-6 md:px-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <header className="mb-12 text-center">
           <h1 className="text-5xl md:text-7xl text-primary font-serif mb-6">{t('blog.heroTitle')}</h1>
@@ -109,7 +109,7 @@ const Blog: React.FC = () => {
             />
           </div>
 
-          <div className="flex gap-3 items-center flex-wrap">
+          <div className="flex gap-3 items-center flex-wrap justify-center lg:justify-start">
             {/* Tags */}
             {allTags.map(tag => (
               <button 
