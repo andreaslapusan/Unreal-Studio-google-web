@@ -740,6 +740,10 @@ const Home: React.FC = () => {
             >
               {t('home.ctaWhatsapp')} <span className="material-symbols-outlined text-base">chat</span>
             </a>
+            {/* Módulo comercial (Andreas): enseñar el portal de clientes en /demo */}
+            <Link to="/demo" className="text-almond/80 hover:text-almond text-sm font-medium inline-flex items-center gap-2 underline-offset-4 hover:underline transition">
+              {t('home.demoCta')} <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </Link>
           </div>
         </div>
       </section>
