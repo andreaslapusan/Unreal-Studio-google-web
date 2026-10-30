@@ -11,7 +11,6 @@ import { Project, AppConfig, BlogPost, User, Client, ClientProject } from '../ty
 import { useCurrency } from '../App';
 import { supabase, uploadImage, getImageUrl, parseJsonField } from '../lib/supabase';
 import { runDriveImport, extractDriveFolder } from '../lib/driveImport';
-import Footer from '../components/Footer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
 import { translateStatus } from '../lib/statusI18n';
@@ -714,9 +713,14 @@ const AMENITIES_LIST = [
       // Cargar TODO en PARALELO (antes era secuencial → 5 viajes encadenados =
       // panel "ultra lento" en conexiones lentas). Cada bloque es independiente.
       const userId = getAdminUserId();
-      const [projectsRes, blogsRes, usersRes, clientsRes, configRes] = await Promise.all([
+      // Blogs (~800 KB con los 4 idiomas) fuera del camino crítico: en móvil retrasaba
+      // el arranque del panel >10 s ("Cargando panel…") en vistas que ni los usan.
+      void supabase.from('blogs').select('*').order('published_date', { ascending: false }).then((blogsRes) => {
+        if (blogsRes.data) setBlogs(blogsRes.data as unknown as BlogPost[]);
+        else if (blogsRes.error) console.error('Error loading blogs:', blogsRes.error);
+      });
+      const [projectsRes, usersRes, clientsRes, configRes] = await Promise.all([
           supabase.from('projects').select('*').order('sort_order', { ascending: true }),
-          supabase.from('blogs').select('*').order('published_date', { ascending: false }),
           userId ? supabase.rpc('admin_list_users', { p_user_id: userId }) : Promise.resolve({ data: null, error: null }),
           userId ? supabase.rpc('admin_list_clients', { p_user_id: userId }) : Promise.resolve({ data: null, error: null }),
           supabase.from('app_config').select('*'),
@@ -740,9 +744,6 @@ const AMENITIES_LIST = [
           setProjectCostCurrencies(curMap);
         });
       }
-
-      if (blogsRes.data) setBlogs(blogsRes.data as unknown as BlogPost[]);
-      else if (blogsRes.error) console.error('Error loading blogs:', blogsRes.error);
 
       if ((usersRes.data as any)?.success) setUsers((usersRes.data as any).users || []);
       if ((clientsRes.data as any)?.success) setClients((clientsRes.data as any).clients || []);
@@ -3946,7 +3947,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   </div>
 )}
 
-    <Footer />
       </div>
     </div>
   );

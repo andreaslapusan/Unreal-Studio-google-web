@@ -1840,7 +1840,7 @@
     "choosePortalSub": "Tu cuenta tiene acceso a varios portales.",
     "portal_cliente": "Clientes",
     "portal_agencias": "Agencias",
-    "portal_empleados": "Team",
+    "portal_empleados": "Empleados",
     "portal_inversores": "Inversores",
     "portal_admin": "Admin",
     "noAccessHere": "Tu cuenta no tiene acceso a este portal.",
@@ -1850,7 +1850,7 @@
   },
   "empleados": {
     "header": {
-      "subtitleFallback": "Team",
+      "subtitleFallback": "Empleados",
       "instructions": "Instrucciones"
     },
     "fichaje": {

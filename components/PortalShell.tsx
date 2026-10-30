@@ -29,7 +29,8 @@ const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => 
         <LanguageSwitcher />
       </header>
 
-      <main className="flex-grow flex items-center justify-center px-6 py-12">{children}</main>
+      {/* el pie queda bajo el pliegue: sin franja blanca bajo la tarjeta de login en móvil */}
+      <main className="flex-grow flex items-center justify-center px-6 py-12 min-h-[calc(100dvh-5rem)]">{children}</main>
 
       <Footer />
     </div>

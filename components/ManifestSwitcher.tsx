@@ -6,6 +6,7 @@
  */
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { matchPortalPath } from '../lib/portalUrls';
 
 const PORTAL: Record<string, { manifest: string; title: string }> = {
   empleados: { manifest: '/manifest-empleados.webmanifest', title: 'Unreal · Empleados' },
@@ -17,7 +18,7 @@ const PORTAL: Record<string, { manifest: string; title: string }> = {
 export default function ManifestSwitcher() {
   const { pathname } = useLocation();
   useEffect(() => {
-    const seg = pathname.split('/')[1] || '';
+    const seg = matchPortalPath(pathname)?.portal || pathname.split('/')[1] || '';
     const p = PORTAL[seg];
     const href = p?.manifest || '/manifest.webmanifest';
     const title = p?.title || 'Unreal Studio';

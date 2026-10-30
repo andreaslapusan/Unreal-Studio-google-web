@@ -12,7 +12,7 @@ export type Portal = 'cliente' | 'empleados' | 'agencias' | 'admin';
 export const PORTAL_SEGMENTS: Record<Portal, Record<Lang, string>> = {
   cliente: { es: 'clientes', en: 'clients', ro: 'clienti', id: 'klien' },
   empleados: { es: 'empleados', en: 'employees', ro: 'angajati', id: 'karyawan' },
-  agencias: { es: 'agencias', en: 'agencies', ro: 'agentii', id: 'agensi' },
+  agencias: { es: 'portal-agencias', en: 'agencies', ro: 'agentii', id: 'agensi' },
   admin: { es: 'admin', en: 'admin', ro: 'admin', id: 'admin' },
 };
 

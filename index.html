@@ -32,7 +32,10 @@
          el swap en navegación cliente; este script lo fija en carga directa/recarga. -->
     <script>
       (function () {
-        var seg = (location.pathname.split('/')[1] || '');
+        var parts = location.pathname.split('/'); var seg = parts[1] || '';
+        // logins localizados: /es/empleados, /en/clients, /es/portal-agencias, /ro/admin/login…
+        var LOC = { empleados: 'empleados', employees: 'empleados', angajati: 'empleados', karyawan: 'empleados', clientes: 'cliente', clients: 'cliente', clienti: 'cliente', klien: 'cliente', 'portal-agencias': 'agencias', agencies: 'agencias', agentii: 'agencias', agensi: 'agencias', admin: 'admin' };
+        if (/^(es|en|ro|id)$/.test(seg)) seg = LOC[parts[2]] || '';
         var P = {
           empleados: ['/manifest-empleados.webmanifest', 'Unreal · Empleados'],
           cliente:   ['/manifest-cliente.webmanifest',   'Unreal · Cliente'],
