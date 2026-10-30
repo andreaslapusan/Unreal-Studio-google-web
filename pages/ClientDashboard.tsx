@@ -663,7 +663,7 @@ const ClientDashboard: React.FC = () => {
       />
 
       {walkthroughStep !== null && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+        <div className="modal-keep fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
           <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 mx-4 border border-gray-100">
             <button onClick={() => finishWalkthrough()} className="absolute top-4 right-4 text-gray-400 hover:text-primary transition" title={t('admin.clientDash.closeGuide')}>
               <span className="material-symbols-outlined">close</span>

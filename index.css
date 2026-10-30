@@ -26,6 +26,33 @@ html:has(.fixed.inset-0[class*="bg-black/"]) {
   overscroll-behavior: none;
 }
 
+/* Tablas de artículos/landings: en móvil se desplazan dentro de su caja, no la página. */
+@media (max-width: 1023px) {
+  .prose table { display: block; overflow-x: auto; max-width: 100%; }
+  .prose th, .prose td { min-width: 7.5rem; }
+}
+
+/* Móvil (98 % de usuarios): TODO pop-up de formulario (fondo bg-black/40-60) a pantalla
+   completa con scroll propio, sin tocar cada componente (30-oct-2026). Los avisos
+   pequeños (guía, confirmaciones) llevan .modal-keep y siguen como tarjeta. Las galerías
+   (bg-black/80+) no entran. */
+@media (max-width: 639px) {
+  .fixed.inset-0:is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.modal-keep) {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+  .fixed.inset-0:is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.modal-keep) > div {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100dvh;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 /* Custom site styles formerly inlined in index.html. Kept here so that
    PostCSS picks them up at build time and ships a single CSS file. */
 body {

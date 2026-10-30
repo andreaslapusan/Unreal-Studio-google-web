@@ -667,7 +667,7 @@ const EmpleadosDashboard: React.FC = () => {
 
       {/* Error de cámara: tarjeta persistente con instrucciones + reintentar */}
       {cameraError && (
-        <div className="fixed inset-0 z-[70] bg-black/60 flex items-center justify-center px-6" onClick={() => setCameraError(null)}>
+        <div className="modal-keep fixed inset-0 z-[70] bg-black/60 flex items-center justify-center px-6" onClick={() => setCameraError(null)}>
           <div className="relative bg-white rounded-3xl p-7 max-w-sm w-full shadow-2xl text-center" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => setCameraError(null)} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
             <div className="text-5xl mb-3">📷</div>

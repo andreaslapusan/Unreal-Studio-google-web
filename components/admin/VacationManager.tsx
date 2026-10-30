@@ -150,7 +150,7 @@ const VacationManager: React.FC = () => {
         <h2 className="text-3xl font-serif text-primary">{t('admin.vac.title')}</h2>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Selector de empleado */}
-          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="flex-1 sm:flex-none min-w-0 pl-4 pr-8 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
+          <select value={selected} onChange={(e) => setSelected(e.target.value)} className="w-full sm:w-auto min-w-0 pl-4 pr-8 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-primary">
             <option value="all">{t('admin.vac.allEmployees')}</option>
             {employees.map((e) => <option key={e.id} value={e.email}>{e.full_name || e.email}</option>)}
           </select>
@@ -275,7 +275,7 @@ const VacationManager: React.FC = () => {
               <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.to')}</span>
                 <input type="date" value={editing.end_date} min={editing.start_date} onChange={(e) => setEditing({ ...editing, end_date: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1" /></label>
               <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.type')}</span>
-                <select value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg mt-1 bg-white">
+                <select value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className="w-full pl-3 pr-8 py-2 border border-gray-200 rounded-lg mt-1 bg-white">
                   <option value="vacaciones">{t('admin.vac.typeVacation')}</option><option value="baja">{t('admin.vac.typeSickLeave')}</option><option value="personal">{t('admin.vac.typePersonal')}</option>
                 </select></label>
               <label className="block"><span className="text-xs font-bold text-gray-500">{t('admin.vac.note')}</span>

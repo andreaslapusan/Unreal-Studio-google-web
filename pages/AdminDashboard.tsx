@@ -1970,7 +1970,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
       {/* 5-STEP CENTERED GUIDE OVERLAY */}
       {walkthroughStep !== null && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+        <div className="modal-keep fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
           <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 mx-4 border border-gray-100">
             
             {/* Close Button */}
@@ -2056,7 +2056,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <div className="flex flex-col gap-1 mb-2">
               {ADMIN_MOBILE_NAV.map((it) => (
                 <button key={it.key} onClick={() => { if (it.to) navigate(it.to); else setActiveView(it.view as any); setAdminMenuOpen(false); }}
-                  className={`text-left px-3 py-2 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
+                  className={`text-left px-3 py-2.5 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
                   {t(`admin.nav.${it.key}`)}
                 </button>
               ))}
@@ -2533,7 +2533,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'config' && (
            <div className="animate-in fade-in duration-500 flex flex-col md:flex-row gap-6">
              {/* Submenú lateral ordenado */}
-             <nav className="md:w-48 shrink-0 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible">
+             <nav className="md:w-48 shrink-0 flex flex-wrap md:flex-nowrap md:flex-col gap-1.5">
                {([['etiquetas',t('fix.adm.cfgTabLabels'),'sell'],['permisos',t('fix.adm.cfgTabPermissions'),'tune'],['marca',t('fix.adm.cfgTabBrand'),'storefront']] as [typeof configTab,string,string][]).map(([k,label,icon]) => (
                  <button key={k} onClick={() => setConfigTab(k)}
                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition ${configTab === k ? 'bg-primary text-white shadow-sm' : 'text-primary/60 hover:bg-gray-100'}`}>
@@ -2672,7 +2672,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    <p className="text-[10px] text-gray-400 mb-2">{t('admin.dash.socialsHint')}</p>
                    {(((config as any).brand?.socials) || []).map((s: any, i: number) => (
                      <div key={i} className="flex gap-2 mb-2">
-                       <select className="w-40 px-3 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.network || s?.label || 'instagram'}
+                       <select className="w-40 pl-3 pr-8 py-3 bg-gray-50 border rounded-xl text-sm text-primary" value={s?.network || s?.label || 'instagram'}
                          onChange={(e) => { const arr = [...(((config as any).brand?.socials) || [])]; arr[i] = { ...arr[i], network: e.target.value, label: undefined }; setBrandKey('socials', arr); }}>
                          {SOCIAL_NETWORKS.map((n) => <option key={n.key} value={n.key}>{n.label}</option>)}
                        </select>
@@ -2703,7 +2703,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
                  <div>
                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.defaultCurrencyClients')}</label>
-                   <select className="w-full px-4 py-3 bg-gray-50 border rounded-xl font-bold text-sm text-primary"
+                   <select className="w-full pl-4 pr-8 py-3 bg-gray-50 border rounded-xl font-bold text-sm text-primary"
                      value={(config as any).brand?.default_currency_clients || 'EUR'} onChange={(e) => setBrandKey('default_currency_clients', e.target.value)}>
                      <option value="EUR">EUR</option><option value="USD">USD</option><option value="IDR">IDR</option>
                    </select>
@@ -2956,7 +2956,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
                    {/* Modal de progreso de importación: X de Y fotos + % + Cancelar */}
                    {driveBusyAdmin && (
-                     <div className="fixed inset-0 z-[400] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+                     <div className="modal-keep fixed inset-0 z-[400] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
                        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-7 text-center">
                          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
                            <span className="material-symbols-outlined text-3xl animate-pulse">cloud_download</span>

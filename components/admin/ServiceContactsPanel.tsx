@@ -167,7 +167,7 @@ const ServiceContactsPanel: React.FC = () => {
             <div className="space-y-4">
               <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.name", { defaultValue: "Nombre" })}</label>
                 <input value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" /></div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.category", { defaultValue: "Categoría" })}</label>
                   <input list="sc-categories" value={editing.category || ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} placeholder={t("admin.contacts.categoryPlaceholder", { defaultValue: "Elige o crea una nueva…" })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" />
                   <datalist id="sc-categories">{categories.map((c) => <option key={c} value={c} />)}</datalist>
@@ -176,7 +176,7 @@ const ServiceContactsPanel: React.FC = () => {
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.area", { defaultValue: "Zona" })}</label>
                   <input value={editing.area || ""} onChange={(e) => setEditing({ ...editing, area: e.target.value })} placeholder="Uluwatu, Canggu…" className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" /></div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.phone", { defaultValue: "Teléfono" })}</label>
                   <input value={editing.phone || ""} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" /></div>
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.whatsapp", { defaultValue: "WhatsApp" })}</label>
@@ -184,7 +184,7 @@ const ServiceContactsPanel: React.FC = () => {
               </div>
               <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.tags", { defaultValue: "Tags (separados por coma)" })}</label>
                 <input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="puertas, madera, barato, rápido" className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-medium" /></div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.rating", { defaultValue: "Valoración (1-5)" })}</label>
                   <input type="number" min={1} max={5} value={editing.rating ?? ""} onChange={(e) => setEditing({ ...editing, rating: e.target.value ? Number(e.target.value) : undefined })} className="w-full px-4 py-3 bg-gray-50 rounded-2xl font-bold" /></div>
                 <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-1">{t("admin.contacts.source", { defaultValue: "Origen" })}</label>

@@ -401,10 +401,10 @@ const Home: React.FC = () => {
       {/* Filter Bar */}
       <div className="px-4 md:px-12 relative z-30 -mt-12 md:-mt-16 mb-12 md:mb-16 max-w-7xl mx-auto">
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
             
             {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b lg:border-b-0 lg:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
@@ -413,7 +413,7 @@ const Home: React.FC = () => {
                     aria-label={t('projects.filters.sortBy')}
                     value={filters.sort}
                     onChange={(e) => setFilters({...filters, sort: e.target.value})}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
+                    className="w-full bg-transparent bg-none border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
                   >
                     <option value="featured">{t('projects.sort.featured')}</option>
                     <option value="roi">{t('projects.sort.roi')}</option>
@@ -426,7 +426,7 @@ const Home: React.FC = () => {
             </div>
 
             {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b lg:border-b-0 lg:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
@@ -451,12 +451,12 @@ const Home: React.FC = () => {
             </div>
 
             {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 group">
+            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b lg:border-b-0 lg:border-r border-gray-100 group">
               <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
                 <div className="relative">
-                  <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({...filters, zone: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({...filters, zone: e.target.value})} className="w-full bg-transparent bg-none border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
                     {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
                   </select>
@@ -471,7 +471,7 @@ const Home: React.FC = () => {
               <div className="flex-1 text-left">
                 <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
                 <div className="relative">
-                  <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
+                  <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent bg-none border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
                     <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
                     {propertyTypeOptions(['Villa', 'Loft', ...config.customTypes]).map(ty => <option key={ty} value={ty}>{propertyTypeLabel(ty, i18n.language)}</option>)}
                   </select>

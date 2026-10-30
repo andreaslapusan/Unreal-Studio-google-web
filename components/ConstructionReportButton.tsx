@@ -17,7 +17,7 @@ const ConstructionReportButton: React.FC<{ projectName: string; className?: stri
         {t('projectDetail.reportBtn')}
       </button>
       {open && (
-        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4" onClick={() => setOpen(false)} role="dialog" aria-modal="true">
+        <div className="modal-keep fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4" onClick={() => setOpen(false)} role="dialog" aria-modal="true">
           <div className="relative bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => setOpen(false)} aria-label={t('common.close', { defaultValue: 'Cerrar' })} className="absolute top-4 right-4 text-primary/50 hover:text-primary">
               <span className="material-symbols-outlined">close</span>
