@@ -493,7 +493,7 @@ const Home: React.FC = () => {
 
       {/* Listings Section */}
       <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
-        <h2 className="md:hidden text-3xl text-primary leading-tight mt-2 mb-6">{t('home.opportunitiesTitle')}</h2>
+        <h2 className="md:hidden text-3xl text-primary leading-tight mt-2 mb-6 text-center">{t('home.opportunitiesTitle')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {filteredGridProjects.slice(0, 3).map((proj) => (
             <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group border border-primary/5">
