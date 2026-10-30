@@ -42,7 +42,7 @@
   "home": {
     "title": "Unreal Studio Bali | Pengembang Properti di Bali",
     "heroTitle": "Investasi di <i>Bali</i> mulai {{price}} bersama <i>Unreal Studio</i>",
-    "heroBody": "Proyeksi ROI hingga <b>28% kotor per tahun</b>* dengan harga langsung dari pengembang yang memiliki studio arsitektur sendiri di Bali. *Proyeksi, bukan jaminan.",
+    "heroBody": "Proyeksi ROI hingga <b>28% kotor per tahun</b>* dengan harga langsung dari pengembang yang memiliki studio arsitektur sendiri di Bali.",
     "ctaMeeting": "Atur pertemuan",
     "ctaVideo": "Tonton video intro",
     "investorsCount": "+150 investor di seluruh dunia.",
@@ -1892,6 +1892,7 @@
     "team": "Tim",
     "admin": "Admin",
     "rights": "© 2026 Unreal Studio Bali. Seluruh hak cipta dilindungi.",
+    "disclaimer": "*Proyeksi, bukan jaminan. Angka ROI dan apresiasi nilai bersifat indikatif.",
     "privacy": "Privasi",
     "terms": "Ketentuan",
     "agencies": "Agen",

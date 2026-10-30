@@ -42,7 +42,7 @@
   "home": {
     "title": "Unreal Studio Bali | Promotora inmobiliaria en Bali",
     "heroTitle": "Invierte en <i>Bali</i> desde {{price}} con <i>Unreal Studio</i>",
-    "heroBody": "ROI <b>proyectado</b> de hasta un 28 % bruto anual* invirtiendo a coste directo de promotor, con estudio de arquitectura propio en Bali. *Estimación, no garantizada.",
+    "heroBody": "ROI <b>proyectado</b> de hasta un 28 % bruto anual* invirtiendo a coste directo de promotor, con estudio de arquitectura propio en Bali.",
     "ctaMeeting": "Agenda una reunión",
     "ctaVideo": "Ver video intro",
     "investorsCount": "+150 inversores en todo el mundo.",
@@ -1787,6 +1787,7 @@
     "team": "Team",
     "admin": "Admin",
     "rights": "© 2026 Unreal Studio Bali. Todos los derechos reservados.",
+    "disclaimer": "*Estimación, no garantizada. Las cifras de rentabilidad y revalorización son orientativas.",
     "privacy": "Privacidad",
     "terms": "Términos",
     "agencies": "Agencias",

@@ -96,6 +96,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+      <p className="max-w-7xl mx-auto text-[10px] italic text-primary/40 leading-snug mb-4">{t('footer.disclaimer')}</p>
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-6">
         <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
