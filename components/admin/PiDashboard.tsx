@@ -44,9 +44,9 @@ const PiDashboard: React.FC = () => {
     const { data } = await supabase.from('pi_status').select('data,ops,updated_at').eq('id', 1).maybeSingle();
     if (data) { setD({ ...((data as any).data || {}), ...((data as any).ops || {}) }); setUpdatedAt((data as any).updated_at); }
   };
-  useEffect(() => { void load(); timer.current = setInterval(() => void load(), 1000); return () => clearInterval(timer.current); }, []);
+  useEffect(() => { void load(); timer.current = setInterval(() => void load(), 500); return () => clearInterval(timer.current); }, []);
   useEffect(() => {
-    const t = setInterval(() => { if (updatedAt) setStale(Math.round((Date.now() - new Date(updatedAt).getTime()) / 1000)); }, 1000);
+    const t = setInterval(() => { if (updatedAt) setStale(Math.round((Date.now() - new Date(updatedAt).getTime()) / 1000)); }, 500);
     return () => clearInterval(t);
   }, [updatedAt]);
 
