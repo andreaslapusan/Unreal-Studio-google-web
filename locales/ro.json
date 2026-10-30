@@ -19,7 +19,8 @@
     "sending": "Se trimite…",
     "next": "Următorul",
     "continue": "Continuă",
-    "whatsappFab": "Vorbim?"
+    "whatsappFab": "Vorbim?",
+    "close": "Închide"
   },
   "lang": {
     "name": "Limbă",
@@ -712,7 +713,10 @@
       "visSoldOut": "Sold out",
       "visAll": "Toate stările",
       "visHelp": "Disponibil: pe site. Ascuns: nu apare. Sold out: apare în secțiunea „Sold out” cu preț de piață și fără opțiuni de cumpărare.",
-      "totalUnits": "Unități în complex (total)"
+      "totalUnits": "Unități în complex (total)",
+      "areaM2Label": "Interval m² construiți (opțional)",
+      "landM2Label": "Interval m² teren (opțional)",
+      "m2LabelHint": "Dacă introduci un interval (ex. 70-110), apare în locul numărului."
     },
     "blogTab": {
       "title": "Articole Blog",

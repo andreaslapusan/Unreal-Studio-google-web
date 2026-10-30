@@ -46,6 +46,8 @@ export interface Project {
   bedrooms: number;
   bathrooms: number;
   area_m2: number;
+  area_m2_label?: string | null;
+  land_m2_label?: string | null;
   has_pool: boolean;
   amenities: string[];
   furnishing: string;

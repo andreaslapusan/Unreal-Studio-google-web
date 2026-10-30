@@ -7,6 +7,7 @@ import { bookingLink } from '../lib/bookingLink';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useAuth } from '../lib/auth-context';
 import BrandLogo from './BrandLogo';
+import { useLangPath } from './LocaleRoute';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,6 +17,7 @@ const Navbar: React.FC = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { currency, setCurrency } = useCurrency();
   const location = useLocation();
+  const lp = useLangPath();
   const { user, role, signOut } = useAuth();
 
   // Para admin/team mandamos al hub /admin desde donde se accede a Marketing,
@@ -88,7 +90,7 @@ const Navbar: React.FC = () => {
             : 'opacity-100 translate-y-0'
         }`}
       >
-        <Link to="/" className="flex items-center shrink-0">
+        <Link to={lp("/")} className="flex items-center shrink-0">
           <BrandLogo imgClassName="h-9 md:h-11 w-auto object-contain" textClassName="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter" />
         </Link>
 
@@ -97,7 +99,7 @@ const Navbar: React.FC = () => {
           {navLinks.map((link) => (
             <Link
               key={link.path}
-              to={link.path}
+              to={lp(link.path)}
               className={`hover:text-primary transition pb-1 ${
                 isActive(link.path) ? 'text-primary border-b-2 border-primary' : ''
               }`}
@@ -161,7 +163,7 @@ const Navbar: React.FC = () => {
         <div className="fixed inset-0 z-[60] bg-[#F3E5D8] lg:hidden flex flex-col animate-in fade-in duration-300">
           {/* Cabecera del Menú Móvil - Alineada exactamente con el Navbar */}
           <div className="flex justify-between items-center px-4 py-4 md:px-12 border-b border-primary/5 shrink-0">
-              <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center shrink-0">
+              <Link to={lp("/")} onClick={() => setIsMenuOpen(false)} className="flex items-center shrink-0">
                 <BrandLogo imgClassName="h-9 md:h-11 w-auto object-contain" textClassName="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tighter" />
               </Link>
               <button onClick={() => setIsMenuOpen(false)} className="text-primary p-2 flex items-center justify-center bg-primary/5 rounded-full">
@@ -175,7 +177,7 @@ const Navbar: React.FC = () => {
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
-                  to={link.path}
+                  to={lp(link.path)}
                   onClick={() => setIsMenuOpen(false)}
                   className={`text-xl md:text-2xl font-black uppercase tracking-wider ${isActive(link.path) ? 'text-primary' : 'text-primary/50'} hover:text-primary transition-colors`}
                 >

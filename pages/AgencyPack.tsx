@@ -16,6 +16,8 @@ interface ProjectAgencyRow {
   bathrooms: number | null;
   area_m2: number | null;
   land_size_m2: number | null;
+  area_m2_label?: string | null;
+  land_m2_label?: string | null;
   pool_size_m2: number | null;
   has_powder_room: boolean | null;
   has_rooftop: boolean | null;
@@ -253,8 +255,8 @@ const AgencyPack: React.FC = () => {
             <Field label={t('agencyPack.fieldRooftop')}>
               {project.has_rooftop == null ? null : project.has_rooftop ? t('agencyPack.yes') : t('agencyPack.no')}
             </Field>
-            <Field label={t('agencyPack.fieldBuildingM2')}>{project.area_m2}</Field>
-            <Field label={t('agencyPack.fieldLandM2')}>{project.land_size_m2}</Field>
+            <Field label={t('agencyPack.fieldBuildingM2')}>{project.area_m2_label?.trim() || project.area_m2}</Field>
+            <Field label={t('agencyPack.fieldLandM2')}>{project.land_m2_label?.trim() || project.land_size_m2}</Field>
             <Field label={t('agencyPack.fieldPoolM2')}>{project.pool_size_m2}</Field>
             <Field label={t('agencyPack.fieldParking')}>{tr(project,'parking')}</Field>
             <Field label={t('agencyPack.fieldView')}>{tr(project,'view')}</Field>

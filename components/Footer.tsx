@@ -6,6 +6,7 @@ import { APP_VERSION } from '../lib/version';
 import { supabase } from '../lib/supabase';
 import { SocialIcon, networkClass } from '../lib/socials';
 import BrandLogo from './BrandLogo';
+import { useLangPath } from './LocaleRoute';
 import { reopenConsent } from '../lib/consent';
 import { landingLink } from '../lib/landings';
 
@@ -13,6 +14,7 @@ const DAY_LABEL: Record<string, string> = { mon: 'Lun', tue: 'Mar', wed: 'Mié',
 
 const Footer: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const lp = useLangPath();
   const guides = ['invertir-en-bali', 'sobre-nosotros'].map((id) => landingLink(id, (i18n.language || 'es').slice(0, 2))).filter((l): l is NonNullable<typeof l> => !!l);
   const [brand, setBrand] = useState<any>(null);
   useEffect(() => {
@@ -39,7 +41,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 md:gap-16 mb-8 md:mb-16 text-left">
         {/* Brand Column */}
         <div className="col-span-2 md:col-span-1">
-          <Link to="/" className="block mb-4 md:mb-8">
+          <Link to={lp("/")} className="block mb-4 md:mb-8">
             <BrandLogo tagline imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tight" taglineClassName="brand-lema text-primary/50 text-sm tracking-wide mt-1.5" />
           </Link>
           <p className="text-primary/60 text-sm leading-relaxed max-w-xs font-medium">
@@ -51,12 +53,12 @@ const Footer: React.FC = () => {
         <div>
           <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-3">{t('footer.menu')}</h5>
           <ul className="space-y-2 text-primary/50 text-xs font-bold uppercase tracking-wider">
-            <li><Link className="hover:text-primary transition" to="/">{t('footer.home')}</Link></li>
-            <li><Link className="hover:text-primary transition" to="/proyectos">{t('footer.projects')}</Link></li>
-            <li><Link className="hover:text-primary transition" to="/blog">{t('footer.blog')}</Link></li>
-            <li><Link className="hover:text-primary transition" to="/faq">{t('nav.faq')}</Link></li>
+            <li><Link className="hover:text-primary transition" to={lp("/")}>{t('footer.home')}</Link></li>
+            <li><Link className="hover:text-primary transition" to={lp("/proyectos")}>{t('footer.projects')}</Link></li>
+            <li><Link className="hover:text-primary transition" to={lp("/blog")}>{t('footer.blog')}</Link></li>
+            <li><Link className="hover:text-primary transition" to={lp("/faq")}>{t('nav.faq')}</Link></li>
             {guides.map((g) => <li key={g.href}><Link className="hover:text-primary transition" to={g.href}>{g.label}</Link></li>)}
-            <li><Link className="hover:text-primary transition" to="/contacto">{t('footer.contact')}</Link></li>
+            <li><Link className="hover:text-primary transition" to={lp("/contacto")}>{t('footer.contact')}</Link></li>
           </ul>
         </div>
 
@@ -66,7 +68,7 @@ const Footer: React.FC = () => {
           <ul className="space-y-3 text-primary/50 text-xs font-bold tracking-wider mb-6">
             {/* Direcciones completas solo en /contacto (regla de negocio + SEO). */}
             <li>
-              <Link to="/contacto" className="flex items-start gap-2 hover:text-primary transition">
+              <Link to={lp("/contacto")} className="flex items-start gap-2 hover:text-primary transition">
                 <span className="material-symbols-outlined text-base">location_on</span> Madrid · Bali
               </Link>
             </li>
@@ -90,7 +92,7 @@ const Footer: React.FC = () => {
                 </a>
               );
             })}
-            <Link to="/contacto" className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300" aria-label={t('footer.scheduleVideocall')}>
+            <Link to={lp("/contacto")} className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300" aria-label={t('footer.scheduleVideocall')}>
               <span className="material-symbols-outlined text-xl">videocam</span>
             </Link>
           </div>
@@ -100,9 +102,9 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-6">
         <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 mt-6 md:mt-0">
-          <Link className="hover:text-primary transition" to="/privacidad">{t('footer.privacy')}</Link>
-          <Link className="hover:text-primary transition" to="/terminos">{t('footer.terms')}</Link>
-          <Link className="hover:text-primary transition" to="/aviso-legal">{t('footer.legalNotice')}</Link>
+          <Link className="hover:text-primary transition" to={lp("/privacidad")}>{t('footer.privacy')}</Link>
+          <Link className="hover:text-primary transition" to={lp("/terminos")}>{t('footer.terms')}</Link>
+          <Link className="hover:text-primary transition" to={lp("/aviso-legal")}>{t('footer.legalNotice')}</Link>
           <button type="button" className="hover:text-primary transition uppercase tracking-widest font-bold" onClick={reopenConsent}>{t('footer.cookies')}</button>
           {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
               para que al entrar quede fijado el manifest del portal y se pueda instalar

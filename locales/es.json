@@ -19,7 +19,8 @@
     "sending": "Enviando…",
     "next": "Siguiente",
     "continue": "Continuar",
-    "whatsappFab": "¿Hablamos?"
+    "whatsappFab": "¿Hablamos?",
+    "close": "Cerrar"
   },
   "lang": {
     "name": "Idioma",
@@ -712,7 +713,10 @@
       "visSoldOut": "Sold out",
       "visAll": "Todos los estados",
       "visHelp": "Disponible: en la web. Oculto: no aparece. Sold out: aparece en la sección \"Sold out\" con precio de mercado y sin opciones de compra.",
-      "totalUnits": "Unidades en el complejo (total)"
+      "totalUnits": "Unidades en el complejo (total)",
+      "areaM2Label": "Rango m² construidos (opcional)",
+      "landM2Label": "Rango m² terreno (opcional)",
+      "m2LabelHint": "Si pones un rango (p. ej. 70-110), se muestra en lugar del número."
     },
     "blogTab": {
       "title": "Artículos del Blog",

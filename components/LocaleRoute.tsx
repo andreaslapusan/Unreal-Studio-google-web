@@ -43,3 +43,11 @@ export const BareRedirect: React.FC = () => {
   const target = pathname === '/' ? `/${lang}` : `/${lang}${pathname}`;
   return <Navigate to={`${target}${search}${hash}`} replace />;
 };
+
+/** Enlaces internos con el prefijo de idioma (evita que Google vea /, /proyectos… → 301 a /es). */
+export function useLangPath() {
+  const { pathname } = useLocation();
+  const seg = pathname.split('/')[1];
+  const lang = (SUPPORTED_LANGS as readonly string[]).includes(seg) ? seg : currentLang();
+  return (p: string) => `/${lang}${p === '/' ? '' : p}`;
+}

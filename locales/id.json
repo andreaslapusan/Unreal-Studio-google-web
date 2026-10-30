@@ -19,7 +19,8 @@
     "sending": "Mengirim…",
     "next": "Berikutnya",
     "continue": "Lanjutkan",
-    "whatsappFab": "Ngobrol yuk"
+    "whatsappFab": "Ngobrol yuk",
+    "close": "Tutup"
   },
   "lang": {
     "name": "Bahasa",
@@ -844,7 +845,10 @@
       "visSoldOut": "Sold out",
       "visAll": "Semua status",
       "visHelp": "Tersedia: tampil di web. Tersembunyi: tidak tampil. Sold out: tampil di bagian \"Sold out\" dengan harga pasar dan tanpa opsi pembelian.",
-      "totalUnits": "Unit dalam kompleks (total)"
+      "totalUnits": "Unit dalam kompleks (total)",
+      "areaM2Label": "Rentang m² bangunan (opsional)",
+      "landM2Label": "Rentang m² tanah (opsional)",
+      "m2LabelHint": "Jika diisi rentang (mis. 70-110), ditampilkan menggantikan angka."
     },
     "blogTab": {
       "title": "Artikel Blog",

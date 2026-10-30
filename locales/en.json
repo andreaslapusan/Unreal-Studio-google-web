@@ -19,7 +19,8 @@
     "sending": "Sending…",
     "next": "Next",
     "continue": "Continue",
-    "whatsappFab": "Chat with us"
+    "whatsappFab": "Chat with us",
+    "close": "Close"
   },
   "lang": {
     "name": "Language",
@@ -712,7 +713,10 @@
       "visSoldOut": "Sold out",
       "visAll": "All statuses",
       "visHelp": "Available: on the website. Hidden: not shown. Sold out: shown in the \"Sold out\" section with market price and no purchase options.",
-      "totalUnits": "Units in the complex (total)"
+      "totalUnits": "Units in the complex (total)",
+      "areaM2Label": "Built m² range (optional)",
+      "landM2Label": "Land m² range (optional)",
+      "m2LabelHint": "If you enter a range (e.g. 70-110), it is shown instead of the number."
     },
     "blogTab": {
       "title": "Blog Articles",

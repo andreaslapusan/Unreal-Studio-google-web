@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
-import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, propertyTypeLabel } from '../lib/projectTerms';
+import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, propertyTypeLabel, m2Text } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -483,11 +483,11 @@ const ProjectDetail: React.FC = () => {
                   <p className="text-lg font-bold text-primary">{project.bathrooms}</p>
                 </div>
               )}
-              {project.area_m2 > 0 && (
+              {(project.area_m2 > 0 || project.area_m2_label) && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">straighten</span>
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelArea')}</p>
-                  <p className="text-lg font-bold text-primary">{project.area_m2} m²</p>
+                  <p className="text-lg font-bold text-primary">{m2Text(project.area_m2_label, project.area_m2)} m²</p>
                 </div>
               )}
               {project.furnishing && (
@@ -504,11 +504,11 @@ const ProjectDetail: React.FC = () => {
                   <p className="text-lg font-bold text-primary">{project.total_units}</p>
                 </div>
               )}
-              {Number((project as any).land_size_m2 || (project as any).land_area_m2) > 0 && (
+              {(Number((project as any).land_size_m2 || (project as any).land_area_m2) > 0 || project.land_m2_label) && (
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/5 text-center">
                   <span className="material-symbols-outlined text-primary/40 text-2xl">landscape</span>
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">{t('projectDetail.labelLandArea')}</p>
-                  <p className="text-lg font-bold text-primary">{(project as any).land_size_m2 || (project as any).land_area_m2} m²</p>
+                  <p className="text-lg font-bold text-primary">{m2Text(project.land_m2_label, (project as any).land_size_m2 || (project as any).land_area_m2)} m²</p>
                 </div>
               )}
               {(project as any).view_type && (
@@ -757,7 +757,7 @@ const ProjectDetail: React.FC = () => {
                 <div>
                     {project.bedrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBedrooms')}</span><span className="text-sm font-bold">{project.bedrooms}</span></div>}
                     {project.bathrooms > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelBathrooms')}</span><span className="text-sm font-bold">{project.bathrooms}</span></div>}
-                    {project.area_m2 > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{project.area_m2} m²</span></div>}
+                    {(project.area_m2 > 0 || project.area_m2_label) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelArea')}</span><span className="text-sm font-bold">{m2Text(project.area_m2_label, project.area_m2)} m²</span></div>}
                     {Number(project.total_units) > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelTotalUnits')}</span><span className="text-sm font-bold">{project.total_units}</span></div>}
                     {project.furnishing && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelFurnishing')}</span><span className="text-sm font-bold">{fmtFurnishing(project.furnishing)}</span></div>}
                     {project.has_pool && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-xs text-primary/50">{t('projectDetail.labelPool')}</span><span className="text-sm font-bold">{t('projectDetail.yes')}</span></div>}

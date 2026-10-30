@@ -8,7 +8,7 @@ import { useCurrency } from '../App';
 import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { translateStatus } from '../lib/statusI18n';
 import { imgFallback } from '../lib/imageOptimize';
-import { amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion } from '../lib/projectTerms';
+import { amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, m2Text } from '../lib/projectTerms';
 
 const LandingGlobalitae: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -341,7 +341,7 @@ const LandingGlobalitae: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.area')}</p>
-                  <p className="text-xl font-bold">{project.area_m2 ? `${project.area_m2} m²` : t('fix.lg.consult')}</p>
+                  <p className="text-xl font-bold">{(project.area_m2_label || project.area_m2) ? `${m2Text(project.area_m2_label, project.area_m2)} m²` : t('fix.lg.consult')}</p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-primary/40 mb-2">{t('fix.lg.furnishing')}</p>
@@ -367,7 +367,7 @@ const LandingGlobalitae: React.FC = () => {
                   </li>
                   <li className="flex justify-between items-center">
                     <span className="text-sm text-primary/60">{t('fix.lg.area')}</span>
-                    <span className="font-bold">{project.area_m2 ? `${project.area_m2} m²` : t('fix.lg.consult')}</span>
+                    <span className="font-bold">{(project.area_m2_label || project.area_m2) ? `${m2Text(project.area_m2_label, project.area_m2)} m²` : t('fix.lg.consult')}</span>
                   </li>
                   <li className="flex justify-between items-center">
                     <span className="text-sm text-primary/60">{t('fix.lg.furnishing')}</span>

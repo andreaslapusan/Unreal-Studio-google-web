@@ -3050,6 +3050,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
     <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2')}</label><NumberInput value={currentProject.area_m2 ?? ''} onChangeValue={(v) => setCurrentProject({...currentProject, area_m2: v === '' ? null : (parseInt(v) || 0)})} className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
   </div>
 
+  {/* Rangos de m² opcionales (texto): si existen, la web los muestra en lugar del entero. */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.areaM2Label')}</label><input type="text" value={(currentProject as any).area_m2_label || ''} onChange={(e) => setCurrentProject({...currentProject, area_m2_label: e.target.value} as any)} placeholder="70-110" className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <div><label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.props.landM2Label')}</label><input type="text" value={(currentProject as any).land_m2_label || ''} onChange={(e) => setCurrentProject({...currentProject, land_m2_label: e.target.value} as any)} placeholder="60-100" className="w-full px-4 py-3 bg-white rounded-2xl font-bold" /></div>
+    <p className="text-[10px] text-gray-400 sm:col-span-2 -mt-2">{t('admin.props.m2LabelHint')}</p>
+  </div>
+
   {/* m² totales del complejo (terreno compartido) + Vídeo del proyecto. Se muestran en la ficha SOLO si se rellenan. */}
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <div>

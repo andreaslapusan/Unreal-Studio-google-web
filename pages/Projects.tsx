@@ -13,7 +13,7 @@ import { statusBadgeClass } from '../lib/statusColor';
 import { usePageMeta } from '../components/PageMeta';
 import LandingLinks from '../components/LandingLinks';
 import { isFinished, deliveryText } from '../lib/deliveryDate';
-import { localizedCompletion, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
+import { localizedCompletion, propertyTypeKey, propertyTypeLabel, propertyTypeOptions, m2Text } from '../lib/projectTerms';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -196,8 +196,8 @@ const Projects: React.FC = () => {
                     {Number(proj.bathrooms) > 0 && (
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">bathtub</span>{proj.bathrooms}</span>
                     )}
-                    {Number(proj.area_m2) > 0 && (
-                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">square_foot</span>{proj.area_m2} m²</span>
+                    {(Number(proj.area_m2) > 0 || proj.area_m2_label) && (
+                      <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px] md:text-base text-primary/40">square_foot</span>{m2Text(proj.area_m2_label, proj.area_m2)} m²</span>
                     )}
                     {proj.tenure && (
                       <span className={`inline-flex items-center gap-1 font-black uppercase px-2 py-0.5 rounded-full shrink-0 ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[14px] md:text-base">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>

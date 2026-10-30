@@ -207,6 +207,13 @@ function footerHtml(code, tail) {
   // Direcciones completas solo en /contacto (regla de negocio).
   return `<footer><p>Unreal Studio Bali · Madrid · Bali · <a href="mailto:hello@unrealstudiobali.com">hello@unrealstudiobali.com</a> · +34 625 710 770</p><ul>${legal.map(([t, k]) => `<li><a href="/${code}${t}">${esc(tr(code, k))}</a></li>`).join("")}</ul><ul>${Object.entries(tailsOf(tail)).map(([l, t]) => `<li><a href="/${l}${t}" hreflang="${l}">${l.toUpperCase()}</a></li>`).join("")}</ul></footer>`;
 }
+// Rango "70-110" → min/max; si no, el entero.
+function floorSize(p) {
+  const m = /^\s*(\d+)\s*[-–]\s*(\d+)\s*$/.exec(p.area_m2_label || "");
+  if (m) return { "@type": "QuantitativeValue", minValue: +m[1], maxValue: +m[2], unitCode: "MTK" };
+  return p.area_m2 > 0 ? { "@type": "QuantitativeValue", value: p.area_m2, unitCode: "MTK" } : undefined;
+}
+
 // Página completa: lang, title, description, OG, canonical, hreflang, JSON-LD y body.
 function renderPage(template, { code, tail, title, desc, main, ld = [], ogType = "website", image, canonical }) {
   const url = canonical || `${ORIGIN}/${code}${tailsOf(tail)[code]}`;
@@ -342,7 +349,7 @@ async function main() {
     }
   };
   const projects = await fetchRows("projects", sb.from("projects")
-    .select("slug,name,location,description,description_en,description_ro,description_id,image,gallery,status,tenure,years_contract,is_hidden,is_featured,visibility_status,sort_order,property_type,bedrooms,bathrooms,area_m2,investor_price,price_currency,created_at,updated_at")
+    .select("slug,name,location,description,description_en,description_ro,description_id,image,gallery,status,tenure,years_contract,is_hidden,is_featured,visibility_status,sort_order,property_type,bedrooms,bathrooms,area_m2,area_m2_label,investor_price,price_currency,created_at,updated_at")
     .order("sort_order", { ascending: true }));
   const allBlogs = (await fetchRows("blogs", sb.from("blogs")
     .select("slug,title,title_en,title_ro,title_id,description,description_en,description_ro,description_id,content,content_en,content_ro,content_id,image,tag,published_date,updated_at")
@@ -558,7 +565,7 @@ ${blogs.map((b) => `- [${b.title}](${ORIGIN}/es/blog/${b.slug})`).join("\n")}
         p.property_type && esc(p.property_type),
         p.bedrooms > 0 && `${esc(tr(code, "projectDetail.labelBedrooms"))}: ${p.bedrooms}`,
         p.bathrooms > 0 && `${esc(tr(code, "projectDetail.labelBathrooms"))}: ${p.bathrooms}`,
-        p.area_m2 > 0 && `${esc(tr(code, "projectDetail.labelArea"))}: ${p.area_m2} m²`,
+        (p.area_m2 > 0 || p.area_m2_label) && `${esc(tr(code, "projectDetail.labelArea"))}: ${esc(p.area_m2_label || p.area_m2)} m²`,
       ].filter(Boolean).join(" · ");
       const main = `<article><h1>${esc(p.name)}${seo?.h1sub ? `<span> ${esc(seo.h1sub)}</span>` : ""}</h1><p>${facts}</p><p>${esc(plain(loc(p, "description", code)))}</p>
 <section><h2>${esc(tr(code, "projectDetail.faq.faqTitle").replace("{{name}}", p.name))}</h2>${faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("")}</section>
@@ -579,7 +586,7 @@ ${blogs.map((b) => `- [${b.title}](${ORIGIN}/es/blog/${b.slug})`).join("\n")}
             name: p.name,
             numberOfBedrooms: p.bedrooms || undefined,
             numberOfBathroomsTotal: p.bathrooms || undefined,
-            floorSize: p.area_m2 > 0 ? { "@type": "QuantitativeValue", value: p.area_m2, unitCode: "MTK" } : undefined,
+            floorSize: floorSize(p),
             address: { "@type": "PostalAddress", addressLocality: p.location || "Bali", addressRegion: "Bali", addressCountry: "ID" },
           },
           offers: p.investor_price > 0 ? {

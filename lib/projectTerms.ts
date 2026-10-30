@@ -236,3 +236,8 @@ export function blogTagLabel(tag: string | undefined, t: (k: string, o?: any) =>
   const k = ({ MERCADO: 'market', 'INVERSIÓN': 'investment', LEGAL: 'legal' } as Record<string, string>)[(tag || '').toUpperCase()];
   return k ? t('blog.cat.' + k, { defaultValue: tag }) : tag || '';
 }
+
+/** m² a mostrar: el texto de rango (p.ej. "60-100") si existe; si no, el entero. */
+export function m2Text(label: string | null | undefined, n: number | null | undefined): string | number | null | undefined {
+  return label?.trim() || n;
+}
