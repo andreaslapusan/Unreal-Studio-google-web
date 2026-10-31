@@ -122,6 +122,25 @@ const PiDashboard: React.FC = () => {
         </div>
       )}
 
+      {d.presence && (
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Presencia en casa · sensor WiFi</div>
+            <Badge ok={d.presence.status === 'movimiento' || d.presence.status === 'alguien en casa' ? true : d.presence.std == null ? null : false} label={d.presence.status} />
+          </div>
+          {Array.isArray(d.presence.series) && d.presence.series.length > 1 && (() => {
+            const s: number[] = d.presence.series; const max = Math.max(2, ...s);
+            const pts = s.map((v, i) => `${(i / (s.length - 1)) * 100},${30 - (v / max) * 28}`).join(' ');
+            return <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-16"><polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke" className="text-emerald-600" /></svg>;
+          })()}
+          <div className="text-xs text-primary/50 mt-2">
+            Señal {d.presence.rssi ?? '—'} dBm · agitación {d.presence.std ?? '—'} (fondo {d.presence.base ?? '—'})
+            {d.presence.last_motion ? ` · último movimiento ${new Date(d.presence.last_motion * 1000).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}` : ''}
+          </div>
+          <div className="text-[10px] text-primary/30 mt-1">Detecta movimiento por cómo varía la señal WiFi entre la Pi y el router (últimos 2 min).</div>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div className="text-[11px] font-black uppercase tracking-widest text-primary/40">Scraper inmobiliarias · rotación de portales (15 min c/u)</div>
