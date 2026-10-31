@@ -26,3 +26,8 @@ functions/node_modules/
 functions/lib/
 .claude-flow/
 supabase/.temp/
+
+# Secrets / local env (nunca commitear)
+.env
+.env.*
+!.env.example

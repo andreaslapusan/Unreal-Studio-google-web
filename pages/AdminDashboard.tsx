@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { propertyTypeKey } from '../lib/projectTerms';
 import NumberInput from "../components/NumberInput";
 import PhotoManager from "../components/PhotoManager";
@@ -3550,7 +3551,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           {!emailPreview.raw && <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>}
           {emailPreview.raw
             ? <iframe title="email" srcDoc={emailPreview.html} sandbox="" className="w-full min-h-[60vh] bg-white rounded-2xl shadow-sm" />
-            : <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm overflow-x-auto" dangerouslySetInnerHTML={{ __html: emailPreview.html }} />}
+            : <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm overflow-x-auto" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(emailPreview.html) }} />}
         </div>
       </div>
       <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">

@@ -11,6 +11,7 @@
  * Sin emojis (regla de marca): estados con iconos Material Symbols.
  */
 import React, { useEffect, useState } from 'react';
+import DOMPurify from 'dompurify';
 import { dateOnly, baliToday } from '../lib/timezone';
 import { uiLocale } from '../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
@@ -156,7 +157,7 @@ const ClientPaymentsSection: React.FC<Props> = ({ clientId, filterName, filterUn
           <h3 className="font-serif text-lg text-primary">{t('fix.pay.receipt')}</h3>
           <button onClick={() => setPreview(null)} className="text-primary/40 hover:text-primary p-1"><span className="material-symbols-outlined">close</span></button>
         </div>
-        <div className="overflow-y-auto p-4" dangerouslySetInnerHTML={{ __html: previewHtml(preview) }} />
+        <div className="overflow-y-auto p-4" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(previewHtml(preview)) }} />
         <div className="px-5 py-3 border-t border-primary/10 shrink-0">
           <button
             onClick={() => void viewReceipt(preview.kw, preview.payId)}

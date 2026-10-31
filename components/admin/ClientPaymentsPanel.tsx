@@ -11,6 +11,7 @@
  * is manual from here, exactly as Andreas asked: he presses "Enviar kwitansi".
  */
 import React, { useEffect, useState, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { uiLocale } from '../../lib/dateLocale';
 import { baliToday , dateOnly} from '../../lib/timezone';
 import { useTranslation } from 'react-i18next';
@@ -475,7 +476,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw((pv: any) => ({ ...pv, date: e.target.value }))} />
             </div>
             <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
-            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: kwitansiHtml(kw.displayNo, !!kw.signed) || '' }} />
+            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(kwitansiHtml(kw.displayNo, !!kw.signed) || '') }} />
             {(() => {
               const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;
               return (
@@ -536,7 +537,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             </div>
             <div className="overflow-y-auto p-5 bg-[#F3E5D8] flex-1">
               <div className="text-center mb-4"><span style={{ fontFamily: "'DM Serif Display',Georgia,serif" }} className="text-2xl font-bold text-primary">Unreal Studio Bali</span></div>
-              <div className="bg-white rounded-2xl p-6 shadow-sm" dangerouslySetInnerHTML={{ __html: recibiSend.buildBody(recibiSend.previewEmail) }} />
+              <div className="bg-white rounded-2xl p-6 shadow-sm" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(recibiSend.buildBody(recibiSend.previewEmail)) }} />
             </div>
             <div className="flex gap-2 p-4 border-t">
               <button onClick={() => setRecibiSend(null)} disabled={recibiSend.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
