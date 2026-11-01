@@ -29,6 +29,15 @@ export function initVersionGuard(): void {
         const reg = await navigator.serviceWorker?.getRegistration();
         await reg?.update();
       } catch { /* ignore */ }
+      // Borra el shell HTML ('/') cacheado por el SW antes de recargar. En 4G lento
+      // el SW servía el '/' viejo por su timeout de 3 s → la recarga volvía a cargar
+      // el bundle antiguo y, como solo reintentamos 1 vez por versión, se quedaba
+      // atascado en la versión vieja (menús Contactos/Raspberry desaparecidos). Al
+      // borrarlo, la recarga no tiene fallback y espera la red → index.html fresco.
+      try {
+        const names = await caches.keys();
+        await Promise.all(names.map((n) => caches.open(n).then((c) => c.delete('/')).catch(() => {})));
+      } catch { /* ignore */ }
       window.location.reload();
     } catch { /* offline o sin red → no hacer nada */ }
   };
