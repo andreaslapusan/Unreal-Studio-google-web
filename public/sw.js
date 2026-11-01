@@ -1,24 +1,37 @@
 /* Service worker de Unreal Studio (PWA).
  *
- * Estrategia equilibrada (rápido + fresco):
- *  - NAVEGACIÓN (HTML): network-first → el index.html siempre fresco (referencia
- *    los chunks con hash actuales). Offline → último shell cacheado.
+ * Estrategia (rápido + fresco, y AUTO-SANADO):
+ *  - NAVEGACIÓN (HTML): network-first de verdad. Solo si la red FALLA (offline)
+ *    se sirve el último shell cacheado. Antes hacíamos una carrera a 3 s que
+ *    servía el '/' cacheado en redes lentas-pero-vivas → la app quedaba clavada
+ *    en el index viejo, cuyo bundle con hash ya no existe en el servidor tras un
+ *    deploy → 404 → pantalla "cargando" eterna. Eliminado: con red viva SIEMPRE
+ *    se baja el HTML fresco (que referencia los chunks con hash actuales).
  *  - ASSETS (JS/CSS con hash, imágenes, fuentes): cache-first + refresco en
- *    segundo plano. Los ficheros de Vite llevan hash inmutable, así que servirlos
- *    desde caché es seguro y MUY rápido (no se re-descarga el bundle en cada
- *    arranque de la app instalada). Un deploy nuevo = hash nuevo = se baja de red.
+ *    segundo plano. Los ficheros de Vite llevan hash inmutable → caché seguro.
  *
- * NO usamos clients.claim() ni recargas automáticas: provocaban una doble carga
- * (negro → blanco → recarga) en cada arranque en iOS standalone.
+ * AUTO-SANADO: al activarse una versión NUEVA de este SW (el navegador lo baja
+ * siempre fresco, updateViaCache:'none') se BORRA toda la caché vieja y se recarga
+ * cada pestaña abierta UNA vez. Así una app instalada atascada en un bundle muerto
+ * se arregla sola al abrirla, sin que el usuario borre nada ni reinstale.
  */
-const CACHE = 'unreal-pwa-v5';
+const CACHE = 'unreal-pwa-v6';
 
 self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
+    // Borra TODA caché previa (incl. bundles muertos que dejaban la app clavada).
     const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+    await Promise.all(keys.map((k) => caches.delete(k)));
+    await self.clients.claim();
+    // Solo si había caché vieja (= app potencialmente atascada en bundle muerto)
+    // recargamos cada pestaña una vez. En la primera visita (sin caché) no se
+    // recarga → sin doble carga para visitantes nuevos.
+    if (keys.length) {
+      const clients = await self.clients.matchAll({ type: 'window' });
+      await Promise.all(clients.map((c) => c.navigate(c.url).catch(() => {})));
+    }
   })());
 });
 
@@ -28,30 +41,24 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // cross-origin (Supabase, fonts) sin tocar
 
-  // version.json: SIEMPRE de red, NUNCA cache → el guard de versión detecta
-  // deploys nuevos y fuerza una recarga (clave para que las apps PWA instaladas
-  // del equipo reciban los arreglos sin quedarse con el bundle viejo).
+  // version.json: SIEMPRE de red, NUNCA cache → el guard de versión detecta deploys.
   if (url.pathname === '/version.json') {
     event.respondWith(fetch(req, { cache: 'no-store' }).catch(() => caches.match(req)));
     return;
   }
 
-  // NAVEGACIONES (HTML): siempre red; offline → shell cacheado.
+  // NAVEGACIONES (HTML): red primero; SOLO offline → shell cacheado.
   if (req.mode === 'navigate') {
-    // Con red lenta/inestable el fetch no falla, se queda colgado → en iOS standalone
-    // pantalla NEGRA indefinida. Si hay shell cacheado, a los 3 s se sirve ese
-    // (el guard de versión recarga luego si hubo deploy).
     event.respondWith((async () => {
-      const network = fetch(req).then((res) => {
+      try {
+        const res = await fetch(req);
         if (res && res.status === 200) {
           caches.open(CACHE).then((c) => c.put('/', res.clone())).catch(() => {});
         }
         return res;
-      });
-      const cached = await caches.match('/');
-      if (!cached) return network.catch(() => Response.error());
-      const timeout = new Promise((r) => setTimeout(() => r(cached), 3000));
-      return Promise.race([network.catch(() => cached), timeout]);
+      } catch {
+        return (await caches.match('/')) || Response.error();
+      }
     })());
     return;
   }
