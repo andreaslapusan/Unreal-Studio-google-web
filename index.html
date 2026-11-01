@@ -23,6 +23,10 @@
     <script>
       (function () {
         if (!('serviceWorker' in navigator)) return;
+        // Solo para visitantes que YA tienen un SW controlando (posiblemente viejo):
+        // en primera visita controller es null → NO hacemos nada (evita una recarga
+        // espuria al reclamar el SW por primera vez, que rompía el login).
+        if (!navigator.serviceWorker.controller) return;
         var reloaded = false;
         navigator.serviceWorker.addEventListener('controllerchange', function () {
           if (reloaded) return; reloaded = true; location.reload();
