@@ -73,6 +73,9 @@
       window.gtag = gtag;
       window.__loadTracking = function () {
         if (window.__trackingLoaded) return;
+        // No cargar analítica/publicidad en los paneles internos (admin y portales):
+        // ahí no aporta nada y ralentizaba la carga (GTM + GA4 + Pixel ~2s cada uno).
+        if (/^\/(admin|empleados|clientes|agencias)(\/|\?|$)/.test(location.pathname)) return;
         window.__trackingLoaded = true;
         function inject(src) { var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s); }
         window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
