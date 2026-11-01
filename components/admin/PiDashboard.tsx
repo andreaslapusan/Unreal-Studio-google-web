@@ -53,6 +53,14 @@ const PiDashboard: React.FC = () => {
 
   if (!d) return <div className="text-primary/50 p-8">Cargando estado del Pi…</div>;
   const live = stale < 25;
+  // Flags de vcgencmd get_throttled (d.throttled, p.ej. "0x80000"). Bit 0 = bajo
+  // voltaje AHORA (eso sí es problema de alimentación); bits 0-3 = algún recorte
+  // activo ahora (voltaje/freq/temp). 0x80000 = solo "hubo límite de temperatura
+  // alguna vez" → NO es fallo de corriente, por eso Alimentación debe salir verde.
+  const thr = typeof d.throttled === 'string' ? (parseInt(d.throttled, 16) || 0) : 0;
+  const powerOk = (thr & 0x1) === 0;            // bajo voltaje ahora mismo
+  const throttlingNow = (thr & 0xF) !== 0;      // algún recorte activo ahora
+  const powerLabel = powerOk ? 'Alimentación OK' : 'Alimentación: bajo voltaje';
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -66,7 +74,7 @@ const PiDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Stat label="Temperatura" value={`${d.temp_c ?? '—'}°C`} color={tempColor(d.temp_c)} sub={d.throttled_ok ? 'Sin throttling' : '⚠ Throttling'} />
+        <Stat label="Temperatura" value={`${d.temp_c ?? '—'}°C`} color={tempColor(d.temp_c)} sub={throttlingNow ? '⚠ Throttling' : 'Sin throttling'} />
         <Stat label="CPU" value={`${d.load_pct ?? 0}%`} sub={`carga ${(d.load || []).join(' / ')} · ${d.cpu_mhz || 0} MHz`} />
         <Gauge label="RAM" pct={d.mem_pct || 0} sub={`${d.mem_used_mb} / ${d.mem_total_mb} MB`} />
         <Gauge label="Disco" pct={d.disk_pct || 0} sub={`${d.disk_used_gb} / ${d.disk_total_gb} GB`} />
@@ -75,7 +83,7 @@ const PiDashboard: React.FC = () => {
       <div>
         <div className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-2">Servicios</div>
         <div className="flex flex-wrap gap-2">
-          <Badge ok={d.throttled_ok} label="Alimentación OK" />
+          <Badge ok={powerOk} label={powerLabel} />
           <Badge ok={d.tailscale_up} label="Tailscale (VPN casa)" />
           <Badge ok={d.adguard_up} label="AdGuard (DNS / anuncios)" />
           <Badge ok={d.tunnel_up} label="Túnel SSH" />
