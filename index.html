@@ -15,6 +15,23 @@
         }
       })();
     </script>
+    <!-- Auto-sanado del service worker: corre desde el HTML (servido no-cache,
+         sin depender del bundle). En apps instaladas atascadas en un SW/bundle
+         viejo (iOS no re-comprueba el sw.js al reanudar), fuerza la comprobación
+         del sw.js nuevo en cada arranque y, cuando un worker nuevo toma el control,
+         recarga UNA vez (guardia anti-bucle) para salir del bundle viejo. -->
+    <script>
+      (function () {
+        if (!('serviceWorker' in navigator)) return;
+        var reloaded = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+          if (reloaded) return; reloaded = true; location.reload();
+        });
+        navigator.serviceWorker.getRegistration().then(function (reg) {
+          if (reg) reg.update().catch(function () {});
+        }).catch(function () {});
+      })();
+    </script>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
     <meta name="theme-color" content="#F3E5D8"/>
     <meta name="color-scheme" content="light"/>
