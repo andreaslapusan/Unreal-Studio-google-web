@@ -2831,6 +2831,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'calendar' && <VacationManager />}
         {activeView === 'pi' && <PiDashboard />}
       </main>
+      <footer className="py-4 text-center text-[11px] text-primary/30 shrink-0">v{APP_VERSION}</footer>
 
       {/* MODALS */}
       {/* ... Project Edit Modal ... */}
