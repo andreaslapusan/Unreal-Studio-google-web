@@ -18,7 +18,6 @@ import { Link, useLocation, useSearchParams, useNavigate } from 'react-router-do
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import BrandLogo from './BrandLogo';
-import { APP_VERSION } from '../lib/version';
 
 interface NavItem {
   key: string;
@@ -148,7 +147,6 @@ const AdminSidebar: React.FC = () => {
         >
           {t('admin.common.logout')}
         </button>
-        <p className="text-center text-[10px] text-white/30 mt-2">v{APP_VERSION}</p>
       </div>
     </aside>
   );

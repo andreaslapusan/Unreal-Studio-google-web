@@ -2075,7 +2075,6 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <span className="material-symbols-outlined text-sm">help</span> {t('admin.common.viewGuide')}
               </button>
               <button onClick={handleLogout} className="text-left px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
-              <p className="text-center text-[10px] text-primary/30 pt-1">v{APP_VERSION}</p>
             </div>
           </div>
         </div>
