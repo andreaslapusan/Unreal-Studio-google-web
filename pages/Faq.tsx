@@ -11,6 +11,7 @@
  */
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { langPath } from "../components/LocaleRoute";
 import { usePageMeta } from "../components/PageMeta";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase";
@@ -243,7 +244,7 @@ export default function Faq() {
           <h2 className="font-serif text-3xl mb-3">{t("faq.ctaTitle")}</h2>
           <p className="text-white/80 mb-6 max-w-xl mx-auto">{t("faq.ctaBody")}</p>
           <Link
-            to="/contacto"
+            to={langPath("/contacto")}
             className="inline-block bg-white text-primary px-8 py-4 rounded-full font-bold hover:translate-y-[-2px] transition shadow-lg"
           >
             {t("faq.ctaBtn")}

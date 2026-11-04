@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
 import { Link } from 'react-router-dom';
+import { langPath } from '../components/LocaleRoute';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
@@ -150,7 +151,7 @@ const Blog: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {filteredBlogs.map(post => (
-              <Link key={post.id} to={`/blog/${post.slug || post.id}`} className="group block h-full">
+              <Link key={post.id} to={langPath(`/blog/${post.slug || post.id}`)} className="group block h-full">
                 <div className="aspect-[16/10] rounded-[2rem] overflow-hidden mb-6 relative shadow-lg">
                   <img
                     loading="lazy"

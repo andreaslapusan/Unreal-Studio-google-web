@@ -6,6 +6,7 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { langPath } from '../components/LocaleRoute';
 import { useTranslation } from 'react-i18next';
 import { getImageUrl } from '../lib/supabase';
 import { uiLocale } from '../lib/dateLocale';
@@ -200,7 +201,7 @@ export default function DemoPortal() {
           <a href={WA} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-primary font-black rounded-full px-7 py-3.5 hover:bg-white/90 transition">
             <span className="material-symbols-outlined">chat</span> {t('demoPortal.ctaButton', 'Reservar mi unidad')}
           </a>
-          <div className="mt-4 text-xs opacity-70"><Link to="/proyectos" className="underline">{t('demoPortal.allProjects', 'Ver todos los proyectos')}</Link></div>
+          <div className="mt-4 text-xs opacity-70"><Link to={langPath("/proyectos")} className="underline">{t('demoPortal.allProjects', 'Ver todos los proyectos')}</Link></div>
         </section>
 
         <p className="text-center text-[11px] text-gray-400 mt-8">{t('demoPortal.footer', 'Demo con datos de ejemplo · Unreal Studio')}</p>

@@ -4,6 +4,7 @@ import { dateOnly } from '../lib/timezone';
 import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, propertyTypeLabel, m2Text } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { langPath } from '../components/LocaleRoute';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_CONFIG, whatsappProjectUrl, PUBLIC_PROJECT_COLS } from '../constants';
 import { Project, AppConfig } from '../types';
@@ -312,7 +313,7 @@ const ProjectDetail: React.FC = () => {
       return (
           <div className="min-h-screen bg-almond flex flex-col items-center justify-center p-6 text-center">
               <h1 className="text-4xl font-serif text-primary mb-4">{t('projectDetail.notFound')}</h1>
-              <Link to="/proyectos" className="text-primary font-bold uppercase tracking-widest border-b border-primary text-xs">{t('projectDetail.backToProjects')}</Link>
+              <Link to={langPath("/proyectos")} className="text-primary font-bold uppercase tracking-widest border-b border-primary text-xs">{t('projectDetail.backToProjects')}</Link>
           </div>
       );
   }

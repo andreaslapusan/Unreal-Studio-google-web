@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
 import { useParams, Link } from 'react-router-dom';
+import { langPath } from '../components/LocaleRoute';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
 import { supabase, getImageUrl } from '../lib/supabase';
@@ -77,7 +78,7 @@ const BlogDetail: React.FC = () => {
       return (
           <div className="h-screen flex flex-col items-center justify-center bg-almond text-primary gap-4">
               <h1 className="font-serif text-3xl">{t('blog.articleNotFound')}</h1>
-              <Link to="/blog" className="text-xs font-bold uppercase tracking-widest border-b border-primary">{t('blog.backToBlog')}</Link>
+              <Link to={langPath("/blog")} className="text-xs font-bold uppercase tracking-widest border-b border-primary">{t('blog.backToBlog')}</Link>
           </div>
       );
   }

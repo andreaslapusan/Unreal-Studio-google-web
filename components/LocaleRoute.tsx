@@ -51,3 +51,11 @@ export function useLangPath() {
   const lang = (SUPPORTED_LANGS as readonly string[]).includes(seg) ? seg : currentLang();
   return (p: string) => `/${lang}${p === '/' ? '' : p}`;
 }
+
+/**
+ * Versión no-hook de useLangPath: prefija una ruta interna con el idioma activo.
+ * Útil en enlaces sueltos y en navigate() sin tener que añadir el hook al componente.
+ */
+export function langPath(p: string): string {
+  return `/${currentLang()}${p === '/' ? '' : p}`;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { langPath } from './LocaleRoute';
 import { useTranslation } from 'react-i18next';
 import { getConsent, setConsent, Consent } from '../lib/consent';
 
@@ -26,7 +27,7 @@ export default function CookieNotice() {
       <button type="button" onClick={() => setOpen(false)} aria-label={t('cookies.close')} className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full text-primary/50 hover:text-primary hover:bg-primary/5 text-base leading-none">×</button>
       <p>
         {t('cookies.text')}{' '}
-        <Link to="/privacidad" className="underline hover:text-primary whitespace-nowrap">{t('cookies.more')}</Link>
+        <Link to={langPath("/privacidad")} className="underline hover:text-primary whitespace-nowrap">{t('cookies.more')}</Link>
       </p>
       <button type="button" onClick={() => choose('granted')} className="mt-2 max-sm:mt-0 max-sm:shrink-0 px-4 py-1 rounded-full bg-primary text-white border border-primary hover:bg-almond hover:text-primary transition">{t('cookies.accept')}</button>
     </div>

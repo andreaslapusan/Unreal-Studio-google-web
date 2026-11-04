@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { uiLocale } from '../lib/dateLocale';
 import { Navigate, Link } from "react-router-dom";
+import { langPath } from "../components/LocaleRoute";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
@@ -173,7 +174,7 @@ export default function AgenciasStats() {
               <ul className="space-y-2">
                 {topProperties.map(([slug, count]) => (
                   <li key={slug} className="flex items-center justify-between bg-white/60 rounded-lg p-3 text-sm">
-                    <Link to={`/proyecto/${slug}`} className="font-medium underline">
+                    <Link to={langPath(`/proyecto/${slug}`)} className="font-medium underline">
                       {slug}
                     </Link>
                     <span className="text-primary/60">{count} {t('agenciasStats.events')}</span>

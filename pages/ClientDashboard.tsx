@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { langPath } from '../components/LocaleRoute';
 import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgFallback } from '../lib/imageOptimize';
@@ -778,7 +779,7 @@ const ClientDashboard: React.FC = () => {
                     <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
                       <div>
                         <h3 className="text-xl font-bold text-primary">
-                          <Link to={`/proyecto/${proj.project_slug}`} className="hover:underline">{proj.project_name}</Link>
+                          <Link to={langPath(`/proyecto/${proj.project_slug}`)} className="hover:underline">{proj.project_name}</Link>
                         </h3>
                         <p className="text-sm text-primary/50">{proj.project_location}</p>
                       </div>
@@ -868,7 +869,7 @@ const ClientDashboard: React.FC = () => {
                               </a>
                           )}
                           {proj.project_slug && feat('viewProject') && (
-                              <Link to={`/proyecto/${proj.project_slug}`} className="flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/20 text-primary text-xs font-bold uppercase hover:bg-primary hover:text-white transition">
+                              <Link to={langPath(`/proyecto/${proj.project_slug}`)} className="flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/20 text-primary text-xs font-bold uppercase hover:bg-primary hover:text-white transition">
                                   <span className="material-symbols-outlined text-sm">visibility</span> {t('admin.clientDash.btnViewProject')}
                               </Link>
                           )}

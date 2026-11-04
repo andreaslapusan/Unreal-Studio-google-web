@@ -105,7 +105,7 @@ function ogImage(image) {
 function ogImageSized(url) {
   const m = url.match(/^(https:\/\/[^/]+\.supabase\.co\/storage\/v1)\/object\/public\/([^?]+)$/);
   if (!m) return url;
-  return `${m[1]}/render/image/public/${m[2]}?width=1200&height=630&resize=cover&quality=70`;
+  return `${m[1]}/render/image/public/${m[2]}?width=1200&height=630&resize=cover&quality=80`;
 }
 
 // Reemplaza (o inserta antes de </head>) un <meta property|name="key" content="...">.

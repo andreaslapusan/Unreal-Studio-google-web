@@ -10,6 +10,7 @@ import { supabase, getImageUrl, parseJsonField } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { readSWR, writeSWR } from '../lib/swrCache';
 import { projectPath } from '../lib/projectUrl';
+import { langPath } from '../components/LocaleRoute';
 import { translateStatus } from '../lib/statusI18n';
 import { localizeFields, blogTagLabel, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
@@ -231,7 +232,7 @@ const Home: React.FC = () => {
     if (filters.maxPrice) params.append('maxPrice', filters.maxPrice.replace(/\./g, ''));
     params.append('sort', filters.sort);
     
-    navigate(`/proyectos?${params.toString()}`);
+    navigate(langPath(`/proyectos?${params.toString()}`));
   };
 
   const handlePriceChange = (field: 'minPrice' | 'maxPrice', value: string) => {
@@ -741,7 +742,7 @@ const Home: React.FC = () => {
               {t('home.ctaWhatsapp')} <span className="material-symbols-outlined text-base">chat</span>
             </a>
             {/* Módulo comercial (Andreas): enseñar el portal de clientes en /demo */}
-            <Link to="/demo" className="text-almond/80 hover:text-almond text-sm font-medium inline-flex items-center gap-2 underline-offset-4 hover:underline transition">
+            <Link to={langPath("/demo")} className="text-almond/80 hover:text-almond text-sm font-medium inline-flex items-center gap-2 underline-offset-4 hover:underline transition">
               {t('home.demoCta')} <span className="material-symbols-outlined text-base">arrow_forward</span>
             </Link>
           </div>
@@ -754,14 +755,14 @@ const Home: React.FC = () => {
           <div className="text-left">
             <h2 className="text-4xl md:text-5xl text-primary font-serif">{t('home.blogTitle')}</h2>
           </div>
-          <Link to="/blog" className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group whitespace-nowrap shrink-0">
+          <Link to={langPath("/blog")} className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group whitespace-nowrap shrink-0">
             {t('home.blogCta')} <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </Link>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
           {blogs.map((b) => localizeFields(b, ['title', 'description', 'content'], i18n.language)).map((post) => (
-            <Link key={post.id} to={`/blog/${post.slug}`} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
+            <Link key={post.id} to={langPath(`/blog/${post.slug}`)} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
               {/* Imagen */}
               <div className="order-1 md:order-2">
                  <div className="aspect-[16/10] rounded-[2rem] overflow-hidden relative shadow-lg">

@@ -10,6 +10,8 @@
  * working and new shares get the SEO boost.
  */
 
+import { currentLang } from "../components/LocaleRoute";
+
 interface ProjectLike {
   slug: string;
   location?: string | null;
@@ -61,10 +63,13 @@ export function projectSeoSlug(project: ProjectLike): string {
 }
 
 /**
- * Build a project URL ready for <Link to>, including any UTM string.
+ * Build a project URL ready for <Link to>, always prefixed with the active
+ * language slug (/es, /en, /ro, /id) so every internal link carries the locale
+ * — a bare /proyecto/... redirects to the default (es) and loses the user's
+ * language (and the right OG preview when shared).
  */
 export function projectPath(project: ProjectLike): string {
-  return `/proyecto/${projectSeoSlug(project)}`;
+  return `/${currentLang()}/proyecto/${projectSeoSlug(project)}`;
 }
 
 /**

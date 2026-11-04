@@ -8,6 +8,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { langPath } from "../components/LocaleRoute";
 import { usePageMeta } from "../components/PageMeta";
 import { WHATSAPP_URL } from "../constants";
 import { gtmWhatsappClick } from "../lib/gtm";
@@ -49,7 +50,7 @@ export default function Booking() {
 
       <p className="text-center text-xs text-primary/50 mt-6 px-6">
         {t("booking.altCta", { defaultValue: "Si prefieres, también puedes" })}{" "}
-        <Link to="/contacto" className="underline">
+        <Link to={langPath("/contacto")} className="underline">
           {t("booking.altCtaLink", { defaultValue: "escribirnos" })}
         </Link>
         .
