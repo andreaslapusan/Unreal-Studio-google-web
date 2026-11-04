@@ -96,9 +96,16 @@ function localizedDescription(p, code) {
 function ogImage(image) {
   if (!image) return `${ORIGIN}/img/og-image.webp`;
   if (/^https?:\/\//i.test(image)) return image;
-  // URL pública directa del bucket. (El endpoint /render/image da 403: las
-  // transformaciones no están habilitadas en este plan.)
+  // URL pública directa del bucket (sin transformar): también la usa renderSrcSet.
   return `${SUPABASE_URL}/storage/v1/object/public/images/${image}`;
+}
+// Versión redimensionada (1200x630, ~100KB) SOLO para og:image/twitter:image: una foto
+// cruda de 2-3MB rompe la previa de WhatsApp/Facebook (no muestra imagen). Las
+// transformaciones /render/image están habilitadas en Supabase (verificado 2026-11-04).
+function ogImageSized(url) {
+  const m = url.match(/^(https:\/\/[^/]+\.supabase\.co\/storage\/v1)\/object\/public\/([^?]+)$/);
+  if (!m) return url;
+  return `${m[1]}/render/image/public/${m[2]}?width=1200&height=630&resize=cover&quality=70`;
 }
 
 // Reemplaza (o inserta antes de </head>) un <meta property|name="key" content="...">.
@@ -228,10 +235,17 @@ function renderPage(template, { code, tail, title, desc, main, ld = [], ogType =
   html = setMeta(html, "twitter:title", title, "name");
   html = setMeta(html, "twitter:description", desc, "name");
   if (image) {
-    html = setMeta(html, "og:image", image);
-    html = setMeta(html, "twitter:image", image, "name");
-    html = removeMeta(html, "og:image:width");
-    html = removeMeta(html, "og:image:height");
+    const ogImg = ogImageSized(image);
+    html = setMeta(html, "og:image", ogImg);
+    html = setMeta(html, "twitter:image", ogImg, "name");
+    if (ogImg.includes("/render/image/")) {
+      // El transform garantiza 1200x630: declararlo ayuda a la previa.
+      html = setMeta(html, "og:image:width", "1200");
+      html = setMeta(html, "og:image:height", "630");
+    } else {
+      html = removeMeta(html, "og:image:width");
+      html = removeMeta(html, "og:image:height");
+    }
   }
   html = setCanonical(html, url);
   html = setAlternates(html, tail);
