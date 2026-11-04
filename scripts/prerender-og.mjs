@@ -592,7 +592,7 @@ ${blogs.map((b) => `- [${b.title}](${ORIGIN}/es/blog/${b.slug})`).join("\n")}
           name: p.name,
           description: desc,
           url: canonical,
-          image: [img, ...(Array.isArray(p.gallery) ? p.gallery : []).slice(0, 6).map(ogImage)],
+          image: [...new Set([img, ...(Array.isArray(p.gallery) ? p.gallery : []).slice(0, 6).map(ogImage)])],
           inLanguage: code,
           datePosted: (p.created_at || "").slice(0, 10) || undefined,
           about: {
