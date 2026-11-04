@@ -291,6 +291,17 @@ const ProjectDetail: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKey);
   }, [lightbox.open, lightbox.index]);
 
+  // Precarga la imagen anterior y la siguiente del lightbox: la transformación de
+  // Supabase en frío tarda 2-4s, así que al pulsar la flecha ya está lista (instantánea).
+  useEffect(() => {
+    if (!lightbox.open || allImages.length < 2) return;
+    const n = allImages.length;
+    for (const j of [(lightbox.index + 1) % n, (lightbox.index - 1 + n) % n]) {
+      const im = new Image();
+      im.src = thumbSrc(allImages[j], 1600);
+    }
+  }, [lightbox.open, lightbox.index, allImages]);
+
   const tiersArray = useMemo(() => {
     if (!project || !project.investor_tiers) return [];
     return typeof project.investor_tiers === 'string'
