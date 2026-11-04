@@ -78,6 +78,10 @@ const PiDashboard: React.FC = () => {
         <Stat label="CPU" value={`${d.load_pct ?? 0}%`} sub={`carga ${(d.load || []).join(' / ')} · ${d.cpu_mhz || 0} MHz`} />
         <Gauge label="RAM" pct={d.mem_pct || 0} sub={`${d.mem_used_mb} / ${d.mem_total_mb} MB`} />
         <Gauge label="Disco" pct={d.disk_pct || 0} sub={`${d.disk_used_gb} / ${d.disk_total_gb} GB`} />
+        {d.ext_disk_present && (
+          <Gauge label="Disco externo" pct={d.ext_disk_pct || 0}
+            sub={`${d.ext_disk_used_gb} / ${Math.round(d.ext_disk_total_gb)} GB`} />
+        )}
       </div>
 
       <div>
