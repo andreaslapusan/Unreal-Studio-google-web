@@ -15,7 +15,7 @@
  * cada pestaña abierta UNA vez. Así una app instalada atascada en un bundle muerto
  * se arregla sola al abrirla, sin que el usuario borre nada ni reinstale.
  */
-const CACHE = 'unreal-pwa-v6';
+const CACHE = 'unreal-pwa-v7';
 
 self.addEventListener('install', () => self.skipWaiting());
 
