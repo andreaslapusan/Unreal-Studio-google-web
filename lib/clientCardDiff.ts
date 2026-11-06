@@ -25,3 +25,40 @@ export function clientSavePayload(base: Row, current: Row): Row {
   const pick = (o: Row) => Object.fromEntries(keys.map((k) => [k, o[k] ?? null]));
   return { id: base.id, expected_updated_at: base.updated_at ?? null, base: pick(base), ...pick(current) };
 }
+
+/** Titulares tal como los muestra la ficha: los de la fila o, si no tiene, uno con nombre/email/teléfono/idioma + uno por email extra. */
+export const cardHolders = (cc: Row): Row[] => (Array.isArray(cc.holders) && cc.holders.length ? cc.holders : [
+  { name: cc.name || '', email: cc.email || '', phone: cc.phone || '', lang: cc.preferred_language || 'es' },
+  ...((cc.extra_emails as string[] | null) || []).map((e) => ({ name: '', email: e, phone: '', lang: cc.preferred_language || 'es' })),
+]);
+
+const isObj = (x: unknown): x is Row => !!x && typeof x === 'object' && !Array.isArray(x);
+const mailOf = (h: unknown): string => (isObj(h) && typeof h.email === 'string' ? h.email.trim().toLowerCase() : '');
+
+// Fusión a 3 vías: sobre el valor actual (fresh) solo se reaplica lo que el usuario cambió (base → mine), hasta el
+// subcampo: cada permiso y cada dato de cada titular (emparejados por email; altas/bajas/orden = los del usuario,
+// un titular que añadió otro se conserva). Si ambos cambiaron lo mismo gana lo tecleado (es lo que promete el aviso).
+export function mergeEdit(base: unknown, mine: unknown, fresh: unknown): unknown {
+  if (canon(base) === canon(mine)) return fresh;
+  if (isObj(mine) && isObj(fresh) && (isObj(base) || base == null)) {
+    const b: Row = isObj(base) ? base : {};
+    return Object.fromEntries([...new Set([...Object.keys(b), ...Object.keys(mine), ...Object.keys(fresh)])]
+      .map((k) => [k, mergeEdit(b[k], mine[k], fresh[k])]).filter(([, v]) => v !== undefined));
+  }
+  if (Array.isArray(base) && Array.isArray(mine) && Array.isArray(fresh)) {
+    // un titular sin email no se puede emparejar: queda tal cual lo tiene el usuario
+    const find = (list: unknown[], h: unknown) => (mailOf(h) ? list.find((x) => mailOf(x) === mailOf(h)) : undefined);
+    return [...mine.map((m) => { const b = find(base, m); const f = find(fresh, m); return b && f ? mergeEdit(b, m, f) : m; }),
+      ...fresh.filter((f) => mailOf(f) && !find(base, f) && !find(mine, f))];
+  }
+  return mine;
+}
+
+/** «Recargar» tras un conflicto: la fila actual + encima lo que el usuario cambió desde que abrió la ficha (fusionado).
+ *  Reaplicar el campo entero devolvía, al guardar, el teléfono viejo de otro titular o el permiso que otro quitó. */
+export const reloadedClientCard = (base: Row, current: Row, fresh: Row): Row => ({
+  ...fresh,
+  ...Object.fromEntries(changedClientFields(base, current).map((k) => [k, k === 'holders'
+    ? mergeEdit(cardHolders(base), current.holders, cardHolders(fresh))
+    : mergeEdit(base[k], current[k], fresh[k])])),
+});

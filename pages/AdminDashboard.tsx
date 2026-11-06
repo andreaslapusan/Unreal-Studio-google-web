@@ -38,7 +38,7 @@ import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import { welcomeEmailHtml } from '../lib/clientEmails';
-import { changedClientFields, clientSavePayload } from '../lib/clientCardDiff';
+import { cardHolders, clientSavePayload, reloadedClientCard } from '../lib/clientCardDiff';
 import { portalPath } from '../lib/portalUrls';
 import i18n, { preloadAllLocales } from '../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
@@ -1332,7 +1332,7 @@ const openEditClient = (client?: Client) => {
 
 // Campo en conflicto → sección de la ficha (nombre/email/teléfono/idioma van en el bloque de titulares).
 const CLIENT_FIELD_LABEL: Record<string, string> = { notes: 'notesLabel', drive_folder_url: 'clientDriveFolder', status: 'clientStatus', is_active: 'clientStatus', auto_emails_enabled: 'autoEmails', feature_overrides: 'clientPermsTitle' };
-// «Recargar» tras un conflicto: ficha fresca + encima SOLO lo que el usuario cambió (sigue viéndolo).
+// «Recargar» tras un conflicto: ficha fresca + encima SOLO lo que el usuario cambió, fusionado hasta el subcampo (sigue viéndolo).
 const reloadClientKeepingEdits = async () => {
   const uid = getAdminUserId();
   if (!uid) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
@@ -1342,9 +1342,8 @@ const reloadClientKeepingEdits = async () => {
     const fresh = (data as any)?.clients?.find((c: any) => c.id === currentClient.id);
     if (error || !fresh) throw error || new Error('client not found');
     setClients((data as any).clients);
-    const mine = Object.fromEntries(changedClientFields(clientBase, currentClient).map((k) => [k, (currentClient as any)[k]]));
     setClientBase(fresh);
-    setCurrentClient({ ...fresh, ...mine });
+    setCurrentClient(reloadedClientCard(clientBase, currentClient, fresh) as Partial<Client>);
     setClientConflict(null);
   } catch (err) {
     console.error('Error reloading client:', err);
@@ -3661,9 +3660,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             junta los nombres con " & " y los correos van a todos. */}
         {(() => {
           const cc: any = currentClient;
-          const hs: any[] = (cc.holders && cc.holders.length)
-            ? cc.holders
-            : [{ name: cc.name || '', email: cc.email || '', phone: cc.phone || '', lang: cc.preferred_language || 'es' }, ...((cc.extra_emails) || []).map((e: string) => ({ name: '', email: e, phone: '', lang: cc.preferred_language || 'es' }))];
+          const hs: any[] = cardHolders(cc);
           const setH = (next: any[]) => setCurrentClient((prev: any) => ({
             ...prev, holders: next,
             name: (next.map((h) => (h.name || '').trim()).filter(Boolean).join(' & ')) || prev.name,
