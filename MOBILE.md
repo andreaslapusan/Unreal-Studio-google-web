@@ -38,3 +38,18 @@ así no hace falta ningún iPhone registrado. Solo iPhone (`TARGETED_DEVICE_FAMI
 
 **Antes del primer build:** cada app debe existir en App Store Connect → Apps → “+” → Nueva app
 (plataforma iOS, nombre, idioma, bundle id de la tabla, SKU). La API de Apple no permite crearlas.
+
+## 06-nov-2026 — Sensación de app nativa
+- **Web (en vivo desde v3.840, commit `394834e` en main)**: `lib/nativeApp.ts` solo actúa dentro de la app
+  (`window.Capacitor.isNativePlatform()`; en el navegador no cambia nada). Android Atrás = cierra pop-up/menú →
+  sección anterior → app a segundo plano; vibración ligera (casillas, envíos, idioma); fundido 220 ms entre secciones
+  (no en "atrás" ni con "reducir movimiento"); sin selección ni menú de pulsación larga en controles/enlaces; iOS sin
+  zoom al enfocar; el splash nativo se funde con la carga; sin service worker en la app; tirar-para-refrescar (nunca
+  con un pop-up abierto); no se auto-recarga con un pop-up o un campo activos.
+- **Nativo (commit `fbc96ea`)**: iOS deslizar-atrás (`AppViewController`) y `allowsLinkPreview:false`; Android insets en
+  `MainActivity` + `SystemBars.insetsHandling:'disable'` + crema detrás de las barras; `@capacitor/haptics@8.0.2`.
+- **Builds**: Android versionCode 2 (1.0.0) ×4 en `~/jobs/apps/builds/`; iOS build 31 (Actions run 3) VALID y asignada a la
+  versión 1.0 de las 4 apps en App Store Connect (solo metadatos: nada enviado a revisión).
+- **Pruebas**: web `node --experimental-strip-types scripts/check-native-app.ts`; `BASE=<url> node ~/jobs/apps/bin/native-feel-check.mjs`
+  (window.Capacitor falso, 28 comprobaciones); vídeo `node ~/jobs/apps/bin/native-motions-video.mjs`.
+  Falta en dispositivo real: iPhone (TestFlight) y un Android 15+ (insets/teclado/Atrás).
