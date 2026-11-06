@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { projectSeoSlug } from '../../lib/projectUrl';
-import { AgencyData, PropertyRow, UnitRow, shortProjectName, unitLabel, copyText, fmtEUR, isUnitAvailable, partnerParam, unitCommission, unitPct } from './useAgencyData';
+import { AgencyData, PropertyRow, UnitRow, shortProjectName, groupUnits, copyText, fmtEUR, isUnitAvailable, partnerParam, unitCommission, unitPct } from './useAgencyData';
 import { card, btnGhost, Empty, ListRow, SectionTitle } from './ui';
 
 export default function AgencyProjects({ data }: { data: AgencyData }) {
@@ -91,10 +91,10 @@ const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef
         <div className="border-t border-gray-100">
           <p className="px-5 pt-4 pb-1 text-[10px] font-black uppercase tracking-widest text-primary/40">{t('agencyPortal.projects.unitsTitle')}</p>
           <ul className="divide-y divide-gray-50">
-            {avail.map((u) => (
+            {groupUnits(avail).map(({ u, n }) => (
               <ListRow key={u.id}
-                title={<>{unitLabel(u.unit_name, p.name)}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
-                sub={[u.bedrooms ? t('agencyPortal.projects.bedsN', { n: u.bedrooms }) : null, u.price_agencia ? `${t('agencyPortal.projects.agencyPriceShort')} ${fmtEUR(u.price_agencia)}` : null].filter(Boolean).join(' · ') || undefined}
+                title={<>{[shortProjectName(p.name), u.bedrooms ? t('agencyPortal.projects.bedrooms', { count: u.bedrooms }) : null].filter(Boolean).join(' · ')}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
+                sub={[t('agencyPortal.projects.availableN', { n }), u.price_agencia ? `${t('agencyPortal.projects.agencyPriceShort')} ${fmtEUR(u.price_agencia)}` : null].filter(Boolean).join(' · ') || undefined}
                 right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{u.price_agencia ? fmtEUR(unitCommission(u, partnerId)) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{unitPct(u, partnerId)}%</span></>}
               />
             ))}

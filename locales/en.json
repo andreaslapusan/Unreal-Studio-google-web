@@ -2987,7 +2987,9 @@
       "reserved": "Reserved",
       "unitsTitle": "Available units",
       "bedsN": "{{n}} bed",
-      "agencyPriceShort": "Agency"
+      "agencyPriceShort": "Agency",
+      "bedrooms_one": "1 bedroom",
+      "bedrooms_other": "{{count}} bedrooms"
     },
     "clients": {
       "search": "Search client, email, project…",

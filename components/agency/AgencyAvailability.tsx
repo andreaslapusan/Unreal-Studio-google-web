@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { whatsappUrl } from '../../constants';
-import { AgencyData, fmtEUR, isUnitAvailable, shortProjectName, unitCommission, unitLabel, unitPct } from './useAgencyData';
+import { AgencyData, fmtEUR, isUnitAvailable, shortProjectName, groupUnits, unitCommission, unitPct } from './useAgencyData';
 import { card, Empty, ListRow, SectionTitle, Stat } from './ui';
 
 export default function AgencyAvailability({ data }: { data: AgencyData }) {
@@ -15,9 +15,8 @@ export default function AgencyAvailability({ data }: { data: AgencyData }) {
   const nameOf = (id: string) => shortProjectName(projects.find((p) => p.id === id)?.name ?? '');
   const avail = units.filter(isUnitAvailable);
   const withUnits = projects.filter((p) => avail.some((u) => u.property_id === p.id));
-  const shown = avail
-    .filter((u) => project === 'all' || u.property_id === project)
-    .sort((a, b) => (sort === 'commission'
+  const shown = groupUnits(avail.filter((u) => project === 'all' || u.property_id === project))
+    .sort(({ u: a }, { u: b }) => (sort === 'commission'
       ? unitCommission(b, partner.id) - unitCommission(a, partner.id)
       : (a.price_agencia ?? Infinity) - (b.price_agencia ?? Infinity)));
   const best = Math.max(0, ...avail.map((u) => unitCommission(u, partner.id)));
@@ -52,13 +51,13 @@ export default function AgencyAvailability({ data }: { data: AgencyData }) {
 
           <div className={`${card} !p-0 overflow-hidden`}>
             <ul className="divide-y divide-gray-100">
-              {shown.map((u) => {
+              {shown.map(({ u, n }) => {
                 const pName = nameOf(u.property_id);
-                const uName = unitLabel(u.unit_name, pName);
+                const uName = [pName, u.bedrooms ? t('agencyPortal.projects.bedrooms', { count: u.bedrooms }) : null].filter(Boolean).join(' · ');
                 return (
                   <ListRow key={u.id}
                     title={<>{uName}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
-                    sub={[pName, u.bedrooms ? t('agencyPortal.projects.bedsN', { n: u.bedrooms }) : null].filter(Boolean).join(' · ')}
+                    sub={t('agencyPortal.projects.availableN', { n })}
                     extra={<>
                       {u.price_agencia ? `${t('agencyPortal.projects.agencyPriceShort')} ${fmtEUR(u.price_agencia)} · ` : ''}
                       <a href={whatsappUrl(t('agencyPortal.availability.waUnit', { agency: partner.agency_name, unit: uName, project: pName }))} target="_blank" rel="noopener noreferrer" className="font-bold text-primary/70 underline underline-offset-2">{t('agencyPortal.availability.ask')}</a>

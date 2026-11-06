@@ -2988,7 +2988,9 @@
       "reserved": "Dipesan",
       "unitsTitle": "Unit tersedia",
       "bedsN": "{{n}} KT",
-      "agencyPriceShort": "Hrg agensi"
+      "agencyPriceShort": "Hrg agensi",
+      "bedrooms_one": "{{count}} kamar tidur",
+      "bedrooms_other": "{{count}} kamar tidur"
     },
     "clients": {
       "search": "Cari klien, email, proyek…",

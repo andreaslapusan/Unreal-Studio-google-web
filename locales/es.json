@@ -2989,7 +2989,9 @@
       "reserved": "Reservada",
       "unitsTitle": "Unidades disponibles",
       "bedsN": "{{n}} hab.",
-      "agencyPriceShort": "P. agencia"
+      "agencyPriceShort": "P. agencia",
+      "bedrooms_one": "1 habitación",
+      "bedrooms_other": "{{count}} habitaciones"
     },
     "clients": {
       "search": "Buscar cliente, email, proyecto…",

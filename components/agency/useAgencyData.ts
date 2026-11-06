@@ -109,8 +109,20 @@ export const unitCommission = (u: UnitRow, partnerId: string): number =>
 
 export const isUnitAvailable = (u: UnitRow) => !!u.available && !u.sold;
 
+// useGrouping 'always': sin esto es-ES pinta "7475 €" (no agrupa números de 4 cifras).
 export const fmtEUR = (n: number) =>
-  new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n);
+
+/** Une las unidades equivalentes (mismo proyecto, habitaciones, precio, comisión y estado) en una fila con su número. */
+export const groupUnits = (units: UnitRow[]) => {
+  const groups = new Map<string, { u: UnitRow; n: number }>();
+  for (const u of units) {
+    const k = [u.property_id, u.bedrooms, u.price_agencia, u.commission_default_pct, JSON.stringify(u.commission_per_partner ?? {}), !!u.reserved].join('|');
+    const g = groups.get(k);
+    groups.set(k, { u: g?.u ?? u, n: (g?.n ?? 0) + 1 });
+  }
+  return [...groups.values()];
+};
 
 export const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric' });
@@ -236,9 +248,3 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
 /** Nombre de proyecto para listas: sin el sufijo de tipología ("Vista Mar Villas - 2bd" → "Vista Mar Villas"). */
 export const shortProjectName = (name: string) => name.replace(/\s*[-–]\s*\d+\s*(bd|br|bed|beds|hab)\b.*$/i, '').trim() || name;
 
-/** "Vista Mar Villas · Unidad tipo 1" dentro de la tarjeta de Vista Mar → "Unidad tipo 1". */
-export const unitLabel = (unit: string, project: string) => {
-  const base = shortProjectName(project);
-  if (!unit.toLowerCase().startsWith(base.toLowerCase())) return unit;
-  return unit.slice(base.length).replace(/^\s*[·\-–:]\s*/, '') || unit;
-};

@@ -2987,7 +2987,9 @@
       "reserved": "Rezervată",
       "unitsTitle": "Unități disponibile",
       "bedsN": "{{n}} dorm.",
-      "agencyPriceShort": "Preț ag."
+      "agencyPriceShort": "Preț ag.",
+      "bedrooms_one": "1 dormitor",
+      "bedrooms_other": "{{count}} dormitoare"
     },
     "clients": {
       "search": "Caută client, email, proiect…",
