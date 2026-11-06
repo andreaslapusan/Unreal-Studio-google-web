@@ -123,7 +123,7 @@ Datele angajaților (inclusiv evidența timpului de lucru) și ale agențiilor c
 
 ## 14. Aplicații mobile
 
-Aplicațiile **Unreal Clientes**, **Unreal Agencias**, **Unreal Equipo** și **Unreal Admin** (iOS și Android) afișează aceleași portaluri ca Site-ul web și sunt guvernate de prezenta Politică. Pe lângă cele de mai sus, în aplicații:
+Aplicațiile **Unreal Studio Clientes**, **Unreal Studio Agencias**, **Unreal Studio Equipo** și **Unreal Studio Admin** (iOS și Android) afișează aceleași portaluri ca Site-ul web și sunt guvernate de prezenta Politică. Pe lângă cele de mai sus, în aplicații:
 
 - **Camera și locația (doar Unreal Equipo, pontaj):** la înregistrarea intrării sau ieșirii, aplicația preia o fotografie și locația dispozitivului **numai în acel moment**, pentru a dovedi evidența timpului de lucru. Locația nu este colectată niciodată în fundal sau în mod continuu. Temei juridic: respectarea obligațiilor legale de evidență a timpului de lucru și executarea contractului de muncă. Se păstrează pe durata legală aplicabilă evidenței timpului de lucru.
 - **Notificări push:** dacă Utilizatorul le permite, prelucrăm un identificator al dispozitivului (token) pentru a-i trimite notificări legate de contul său (plăți, documente, rapoarte). Le poate dezactiva oricând din setările dispozitivului. Tokenurile sunt transmise prin Apple Push Notification service și Firebase Cloud Messaging (Google).

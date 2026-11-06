@@ -123,7 +123,7 @@ The data of employees (including working time records) and of partner agencies p
 
 ## 14. Mobile apps
 
-The **Unreal Clientes**, **Unreal Agencias**, **Unreal Equipo** and **Unreal Admin** apps (iOS and Android) display the same portals as the Website and are governed by this Policy. In addition to the sections above, in the apps:
+The **Unreal Studio Clientes**, **Unreal Studio Agencias**, **Unreal Studio Equipo** and **Unreal Studio Admin** apps (iOS and Android) display the same portals as the Website and are governed by this Policy. In addition to the sections above, in the apps:
 
 - **Camera and location (Unreal Equipo only, attendance check-in):** when an employee clocks in or out, the app takes a photo and the device location **only at that moment**, to evidence the working-time record. Location is never collected in the background or continuously. Legal basis: compliance with legal working-time recording obligations and performance of the employment contract. Retained for the legal period applicable to working-time records.
 - **Push notifications:** if the User allows them, we process a device identifier (token) to send notices related to their account (payments, documents, reports). They can be disabled at any time in the device settings. Tokens are transmitted through Apple Push Notification service and Firebase Cloud Messaging (Google).

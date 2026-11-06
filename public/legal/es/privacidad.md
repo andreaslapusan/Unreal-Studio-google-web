@@ -123,7 +123,7 @@ Los datos de empleados (incluidos registros de jornada) y de agencias colaborado
 
 ## 14. Aplicaciones móviles
 
-Las aplicaciones **Unreal Clientes**, **Unreal Agencias**, **Unreal Equipo** y **Unreal Admin** (iOS y Android) muestran los mismos portales del Sitio Web y se rigen por esta Política. Además de lo indicado en los apartados anteriores, en las aplicaciones:
+Las aplicaciones **Unreal Studio Clientes**, **Unreal Studio Agencias**, **Unreal Studio Equipo** y **Unreal Studio Admin** (iOS y Android) muestran los mismos portales del Sitio Web y se rigen por esta Política. Además de lo indicado en los apartados anteriores, en las aplicaciones:
 
 - **Cámara y ubicación (solo Unreal Equipo, fichaje de jornada):** al registrar una entrada o salida, la aplicación toma una fotografía y la ubicación del dispositivo **únicamente en ese momento**, para acreditar el registro de jornada. No se recoge la ubicación en segundo plano ni de forma continua. Base jurídica: cumplimiento de obligaciones legales de registro de jornada y ejecución del contrato laboral. Se conservan durante el plazo legal aplicable al registro de jornada.
 - **Notificaciones push:** si el Usuario lo autoriza, tratamos un identificador del dispositivo (token) para enviarle avisos relacionados con su cuenta (pagos, documentos, reportes). Puede desactivarlas en cualquier momento en los ajustes del dispositivo. Los tokens se transmiten a través de Apple Push Notification service y Firebase Cloud Messaging (Google).

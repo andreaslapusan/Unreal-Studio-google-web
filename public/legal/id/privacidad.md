@@ -123,7 +123,7 @@ Data karyawan (termasuk catatan jam kerja) dan agensi mitra yang diproses di por
 
 ## 14. Aplikasi seluler
 
-Aplikasi **Unreal Clientes**, **Unreal Agencias**, **Unreal Equipo**, dan **Unreal Admin** (iOS dan Android) menampilkan portal yang sama dengan Situs Web dan tunduk pada Kebijakan ini. Selain hal-hal di atas, dalam aplikasi:
+Aplikasi **Unreal Studio Clientes**, **Unreal Studio Agencias**, **Unreal Studio Equipo**, dan **Unreal Studio Admin** (iOS dan Android) menampilkan portal yang sama dengan Situs Web dan tunduk pada Kebijakan ini. Selain hal-hal di atas, dalam aplikasi:
 
 - **Kamera dan lokasi (hanya Unreal Equipo, absensi):** saat karyawan mencatat masuk atau pulang, aplikasi mengambil foto dan lokasi perangkat **hanya pada saat itu**, sebagai bukti pencatatan jam kerja. Lokasi tidak pernah dikumpulkan di latar belakang atau secara terus-menerus. Dasar hukum: pemenuhan kewajiban hukum pencatatan jam kerja dan pelaksanaan perjanjian kerja. Disimpan selama jangka waktu yang berlaku menurut hukum untuk catatan jam kerja.
 - **Notifikasi push:** jika Pengguna mengizinkan, kami memproses pengenal perangkat (token) untuk mengirim pemberitahuan terkait akunnya (pembayaran, dokumen, laporan). Notifikasi dapat dinonaktifkan kapan saja melalui pengaturan perangkat. Token dikirim melalui Apple Push Notification service dan Firebase Cloud Messaging (Google).
