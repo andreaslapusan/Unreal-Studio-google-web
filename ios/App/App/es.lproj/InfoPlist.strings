@@ -1,0 +1,6 @@
+/* Textos de los permisos del sistema (cámara, micrófono, ubicación, fotos). */
+"NSCameraUsageDescription" = "La cámara se usa para la foto del fichaje de empleados y para las fotos o vídeos que decidas adjuntar.";
+"NSMicrophoneUsageDescription" = "El micrófono solo graba sonido cuando grabas un vídeo para adjuntarlo.";
+"NSLocationWhenInUseUsageDescription" = "Tu ubicación se registra solo en el momento de fichar la entrada o la salida, para confirmar la asistencia en el lugar de trabajo.";
+"NSPhotoLibraryUsageDescription" = "Las fotos solo se usan cuando eliges adjuntar una imagen o un documento.";
+"NSPhotoLibraryAddUsageDescription" = "Te permite guardar imágenes en Fotos cuando tú lo decidas.";

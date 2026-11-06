@@ -1,0 +1,6 @@
+/* Textos de los permisos del sistema (cámara, micrófono, ubicación, fotos). */
+"NSCameraUsageDescription" = "The camera is used for the employee check-in photo and for any photos or videos you choose to attach.";
+"NSMicrophoneUsageDescription" = "The microphone records sound only when you film a video to attach.";
+"NSLocationWhenInUseUsageDescription" = "Your location is recorded only at the moment of an employee check-in or check-out to confirm attendance on site.";
+"NSPhotoLibraryUsageDescription" = "Photos are used only when you choose to attach an image or document.";
+"NSPhotoLibraryAddUsageDescription" = "Lets you save images to your Photos when you choose to.";

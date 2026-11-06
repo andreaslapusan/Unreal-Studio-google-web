@@ -6,14 +6,25 @@
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>es</string>
+		<string>ro</string>
+		<string>id</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>$(APP_DISPLAY_NAME)</string>
 	<key>NSCameraUsageDescription</key>
-	<string>The camera is used to take the photo that confirms an employee check-in or check-out.</string>
+	<string>The camera is used for the employee check-in photo and for any photos or videos you choose to attach.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The microphone records sound only when you film a video to attach.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location is recorded only at the moment of an employee check-in or check-out to confirm attendance on site.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photos are used only when you choose to attach an image or document.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Lets you save images to your Photos when you choose to.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>CFBundleExecutable</key>

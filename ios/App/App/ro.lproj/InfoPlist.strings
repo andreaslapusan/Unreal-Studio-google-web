@@ -1,0 +1,6 @@
+/* Textos de los permisos del sistema (cámara, micrófono, ubicación, fotos). */
+"NSCameraUsageDescription" = "Camera este folosită pentru fotografia de pontaj a angajaților și pentru fotografiile sau videoclipurile pe care alegi să le atașezi.";
+"NSMicrophoneUsageDescription" = "Microfonul înregistrează sunet doar când filmezi un videoclip pe care vrei să-l atașezi.";
+"NSLocationWhenInUseUsageDescription" = "Locația ta este înregistrată doar în momentul pontajului la intrare sau la ieșire, pentru a confirma prezența la locul de muncă.";
+"NSPhotoLibraryUsageDescription" = "Fotografiile sunt folosite doar când alegi să atașezi o imagine sau un document.";
+"NSPhotoLibraryAddUsageDescription" = "Îți permite să salvezi imagini în Poze atunci când alegi tu.";

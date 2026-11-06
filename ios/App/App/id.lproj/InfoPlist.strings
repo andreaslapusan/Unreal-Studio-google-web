@@ -1,0 +1,6 @@
+/* Textos de los permisos del sistema (cámara, micrófono, ubicación, fotos). */
+"NSCameraUsageDescription" = "Kamera digunakan untuk foto absensi karyawan serta foto atau video yang Anda pilih untuk dilampirkan.";
+"NSMicrophoneUsageDescription" = "Mikrofon hanya merekam suara saat Anda merekam video untuk dilampirkan.";
+"NSLocationWhenInUseUsageDescription" = "Lokasi Anda hanya dicatat saat absen masuk atau keluar untuk memastikan kehadiran di lokasi kerja.";
+"NSPhotoLibraryUsageDescription" = "Foto hanya digunakan saat Anda memilih untuk melampirkan gambar atau dokumen.";
+"NSPhotoLibraryAddUsageDescription" = "Memungkinkan Anda menyimpan gambar ke Foto saat Anda memilihnya.";
