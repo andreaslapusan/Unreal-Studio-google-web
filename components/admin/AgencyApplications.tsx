@@ -116,6 +116,7 @@ const AgencyApplications: React.FC = () => {
   const pendingCount = applications.filter((a) => a.status === 'pending').length;
 
   return (
+    <>
     <div className="animate-in fade-in duration-500 space-y-10">
       <h2 className="text-2xl font-serif text-primary">{t('admin.agencyApps.title', { defaultValue: 'Agencias' })}{pendingCount > 0 ? ` · ${t('admin.agencyApps.pendingCount', { defaultValue: '{{n}} solicitud(es) pendiente(s)', n: pendingCount })}` : ''}</h2>
       <section>
@@ -171,16 +172,6 @@ const AgencyApplications: React.FC = () => {
           </>
         )}
       </section>
-      {editing && <AgencyPartnerEditor partner={editing} properties={properties} onClose={() => setEditing(null)} onSaved={reload} />}
-      {openLead && (
-        <LeadDrawer
-          lead={openLead}
-          agencyId={openLead.agency_id}
-          projectName={shortProjectName(properties.find((p) => p.id === openLead.property_id)?.name ?? '') || '—'}
-          team={{ agencyName: partners.find((p) => p.id === openLead.agency_id)?.agency_name ?? t('admin.agencyLeads.col.agency') }}
-          onClose={() => setOpenLead(null)}
-        />
-      )}
       <section>
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyRequests.title')}</h3>
         {requests.length === 0 ? <p className="text-sm text-primary/50">{t('admin.agencyRequests.empty')}</p> : (
@@ -211,6 +202,18 @@ const AgencyApplications: React.FC = () => {
         )}
       </section>
     </div>
+    {/* Pop-ups fuera del space-y-10: su margin-top (40px) bajaba el fondo fixed y dejaba la cabecera del admin sin tapar. */}
+    {editing && <AgencyPartnerEditor partner={editing} properties={properties} onClose={() => setEditing(null)} onSaved={reload} />}
+    {openLead && (
+      <LeadDrawer
+        lead={openLead}
+        agencyId={openLead.agency_id}
+        projectName={shortProjectName(properties.find((p) => p.id === openLead.property_id)?.name ?? '') || '—'}
+        team={{ agencyName: partners.find((p) => p.id === openLead.agency_id)?.agency_name ?? t('admin.agencyLeads.col.agency') }}
+        onClose={() => setOpenLead(null)}
+      />
+    )}
+    </>
   );
 };
 
