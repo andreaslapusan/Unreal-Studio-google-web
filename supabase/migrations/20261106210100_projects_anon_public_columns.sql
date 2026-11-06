@@ -1,10 +1,10 @@
 -- PART 2 (apply ONLY after the web with the new PUBLIC_PROJECT_COLS is live and verified).
--- Allow-list for anonymous visitors. REVOKE on the table also drops every column-level SELECT anon holds
+-- Allow-list for anonymous visitors. REVOKE ALL on the table also drops every column-level privilege anon holds
 -- (PostgreSQL docs), then anon gets back exactly the 63 columns in constants.ts PUBLIC_PROJECT_COLS.
 -- One transaction: no moment where anon has fewer columns than the live web needs.
 begin;
 set local lock_timeout = '5s';
-revoke select on public.projects from anon;
+revoke all on public.projects from anon;  -- also drops the leftover table-level MAINTAIN (anon=m); anon never writes projects
 grant select (
   id, name, slug, location, zone, property_type, description, distance_beach, available_units,
   completion_percent, years_contract, years_extension, market_price, investor_price, price_currency,
@@ -30,7 +30,8 @@ begin
     into n, bad
     from pg_attribute a
    where a.attrelid = 'public.projects'::regclass and a.attnum > 0 and not a.attisdropped;
-  if n <> 63 or bad is not null or has_table_privilege('anon', 'public.projects', 'SELECT') then
+  if n <> 63 or bad is not null or has_table_privilege('anon', 'public.projects', 'SELECT')
+     or has_table_privilege('anon', 'public.projects', 'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN') then
     raise exception 'anon allow-list check failed: % readable columns (want 63), internal readable: %', n, bad;
   end if;
 end
