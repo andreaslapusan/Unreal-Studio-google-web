@@ -68,7 +68,7 @@ const AgencyPack = lazyWithReload(() => import('./pages/AgencyPack'));
 const ListingIntake = lazyWithReload(() => import('./pages/ListingIntake'));
 const LandingPage = lazyWithReload(() => import('./pages/LandingPage'));
 import { landingRoutes } from './lib/landings';
-import AdminShell from './components/AdminShell';
+const AdminShell = lazyWithReload(() => import('./components/AdminShell'));
 import { AuthProvider, useAuth } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';

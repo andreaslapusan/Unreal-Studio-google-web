@@ -6,21 +6,23 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { initWebVitals } from './lib/webVitals';
 import { initVersionGuard } from './lib/versionGuard';
 import './index.css';
-import './lib/i18n';
+import { i18nReady } from './lib/i18n';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </React.StrictMode>
-);
+// Montar cuando el JSON del idioma de la URL ya está (en/ro/id se cargan aparte).
+void i18nReady.then(() => {
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </React.StrictMode>
+  );
+});
 
 // Boot real-user metrics after first paint so we don't compete with hydration.
 initWebVitals();

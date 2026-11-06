@@ -6,7 +6,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import i18n from 'i18next';
+import i18n, { preloadAllLocales } from '../../lib/i18n';
+void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import { projectSeoSlug } from '../../lib/projectUrl';
 import { AgencyData, PropertyRow, copyText, fmtEUR, isUnitAvailable, partnerParam, shortProjectName } from './useAgencyData';
 import { card, btnGhost, Empty, SectionTitle } from './ui';

@@ -38,7 +38,8 @@ import PropertyReportsModal from '../components/admin/PropertyReportsModal';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import { welcomeEmailHtml } from '../lib/clientEmails';
 import { portalPath } from '../lib/portalUrls';
-import i18n from '../lib/i18n';
+import i18n, { preloadAllLocales } from '../lib/i18n';
+void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import BrandLogo from '../components/BrandLogo';
 
 type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines' | 'pi';

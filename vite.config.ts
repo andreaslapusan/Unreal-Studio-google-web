@@ -57,6 +57,19 @@ export default defineConfig(({ mode }) => {
       },
       build: {
         chunkSizeWarningLimit: 700,
+        // Vendors estables en chunks propios: el entry baja y, como se despliega varias veces al
+        // día, el navegador reutiliza react/supabase/router/i18n de caché entre deploys.
+        rollupOptions: {
+          output: {
+            manualChunks(id: string) {
+              if (!id.includes('node_modules')) return;
+              if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'vendor-react';
+              if (/node_modules\/(react-router|react-router-dom)\//.test(id)) return 'vendor-router';
+              if (/node_modules\/(@supabase|iceberg-js|tslib)\//.test(id)) return 'vendor-supabase';
+              if (/node_modules\/(i18next|react-i18next|i18next-browser-languagedetector)\//.test(id)) return 'vendor-i18n';
+            },
+          },
+        },
       },
       // Quita console.log/debug/info del bundle de producción (ruido en consola,
       // hallazgo de la auditoría). Mantiene console.error/warn para diagnóstico.

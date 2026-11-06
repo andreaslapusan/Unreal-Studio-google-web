@@ -5,7 +5,8 @@
  * i18n: se renderizan en el idioma del CLIENTE (preferred_language) vía
  * i18n.getFixedT(lang). Las claves viven en locales/*.json bajo `emails.*`.
  */
-import i18n from './i18n';
+import i18n, { preloadAllLocales } from './i18n';
+void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 
 const BROWN = '#3F2305';
 

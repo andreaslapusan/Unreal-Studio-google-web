@@ -17,7 +17,8 @@ import { baliToday , dateOnly} from '../../lib/timezone';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { renderKwitansiHtml, formatFigure } from '../../lib/kwitansi';
-import i18n from '../../lib/i18n';
+import i18n, { preloadAllLocales } from '../../lib/i18n';
+void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import { withLoading } from '../../lib/loading';
 import AsyncButton from '../AsyncButton';
 
