@@ -1,6 +1,6 @@
 # Politica de Confidențialitate
 
-**Site-ul web unrealstudiobali.com, portalurile asociate și canalele de contact** · Ultima actualizare: 28 octombrie 2026
+**Site-ul web unrealstudiobali.com, portalurile asociate, aplicațiile mobile și canalele de contact** · Ultima actualizare: 6 noiembrie 2026
 
 Prezenta Politică explică modul în care prelucrăm datele cu caracter personal ale vizitatorilor, persoanelor interesate, clienților, colaboratorilor și ale celorlalte persoane care intră în relație cu Unreal Studio, în conformitate cu Regulamentul (UE) 2016/679 privind protecția datelor („GDPR (RGPD)”), Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos digitales („LOPDGDD”), Ley 34/2002 de Servicios de la Sociedad de la Información („LSSI-CE”) și Legea Republicii Indonezia nr. 27 din 2022 privind protecția datelor cu caracter personal („Legea PDP”), precum și cu orice altă normă aplicabilă.
 
@@ -121,6 +121,16 @@ Site-ul Web nu se adresează minorilor sub 18 ani și nu prelucrăm în mod con�
 
 Datele angajaților (inclusiv evidența timpului de lucru) și ale agențiilor colaboratoare prelucrate în portalurile respective sunt reglementate de prezenta Politică și de informațiile specifice care le sunt furnizate în cadrul relației lor de muncă sau de colaborare.
 
-## 14. Modificări ale prezentei Politici
+## 14. Aplicații mobile
+
+Aplicațiile **Unreal Clientes**, **Unreal Agencias**, **Unreal Equipo** și **Unreal Admin** (iOS și Android) afișează aceleași portaluri ca Site-ul web și sunt guvernate de prezenta Politică. Pe lângă cele de mai sus, în aplicații:
+
+- **Camera și locația (doar Unreal Equipo, pontaj):** la înregistrarea intrării sau ieșirii, aplicația preia o fotografie și locația dispozitivului **numai în acel moment**, pentru a dovedi evidența timpului de lucru. Locația nu este colectată niciodată în fundal sau în mod continuu. Temei juridic: respectarea obligațiilor legale de evidență a timpului de lucru și executarea contractului de muncă. Se păstrează pe durata legală aplicabilă evidenței timpului de lucru.
+- **Notificări push:** dacă Utilizatorul le permite, prelucrăm un identificator al dispozitivului (token) pentru a-i trimite notificări legate de contul său (plăți, documente, rapoarte). Le poate dezactiva oricând din setările dispozitivului. Tokenurile sunt transmise prin Apple Push Notification service și Firebase Cloud Messaging (Google).
+- **Date tehnice:** versiunea aplicației și a sistemului de operare, modelul dispozitivului și limba, pentru funcționarea corectă și securitatea serviciului.
+- **Fără publicitate și fără urmărire între aplicații:** aplicațiile nu afișează publicitate, nu urmăresc Utilizatorul prin aplicații sau site-uri terțe și nu vând date personale.
+- **Conturi și ștergere:** conturile portalurilor sunt create de Unreal Studio pentru clienți, agenții și personal. Utilizatorul poate solicita oricând **ștergerea contului și a datelor sale** scriind la hello@unrealstudiobali.com cu subiectul „Ștergere cont”; vom da curs cererii în cel mult 30 de zile, cu excepția datelor pe care trebuie să le păstrăm conform legii (secțiunea 9).
+
+## 15. Modificări ale prezentei Politici
 
 Putem actualiza prezenta Politică pentru a o adapta la modificările legislative sau ale prelucrărilor noastre. Versiunea în vigoare este cea publicată pe Site-ul Web, cu data actualizării sale. Dacă modificările sunt relevante, le vom comunica printr-un mijloc adecvat.

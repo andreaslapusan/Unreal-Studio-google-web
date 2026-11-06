@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Website unrealstudiobali.com, associated portals and contact channels** · Last updated: 28 October 2026
+**Website unrealstudiobali.com, associated portals, mobile apps and contact channels** · Last updated: 6 November 2026
 
 This Policy explains how we process the personal data of visitors, prospective clients, clients, partners and other persons who interact with Unreal Studio, in accordance with Regulation (EU) 2016/679, the General Data Protection Regulation ("GDPR (RGPD)"), Organic Law 3/2018 on the Protection of Personal Data and Guarantee of Digital Rights ("LOPDGDD"), Law 34/2002 on Information Society Services ("LSSI-CE") and Law of the Republic of Indonesia No. 27 of 2022 on Personal Data Protection ("PDP Law"), as well as any other applicable regulation.
 
@@ -121,6 +121,16 @@ The Website is not directed at persons under 18 years of age and we do not knowi
 
 The data of employees (including working time records) and of partner agencies processed on their respective portals are governed by this Policy and by the specific information provided to them in the context of their employment or partnership relationship.
 
-## 14. Changes to this Policy
+## 14. Mobile apps
+
+The **Unreal Clientes**, **Unreal Agencias**, **Unreal Equipo** and **Unreal Admin** apps (iOS and Android) display the same portals as the Website and are governed by this Policy. In addition to the sections above, in the apps:
+
+- **Camera and location (Unreal Equipo only, attendance check-in):** when an employee clocks in or out, the app takes a photo and the device location **only at that moment**, to evidence the working-time record. Location is never collected in the background or continuously. Legal basis: compliance with legal working-time recording obligations and performance of the employment contract. Retained for the legal period applicable to working-time records.
+- **Push notifications:** if the User allows them, we process a device identifier (token) to send notices related to their account (payments, documents, reports). They can be disabled at any time in the device settings. Tokens are transmitted through Apple Push Notification service and Firebase Cloud Messaging (Google).
+- **Technical data:** app and operating-system version, device model and language, for the proper functioning and security of the service.
+- **No advertising or cross-app tracking:** the apps show no advertising, do not track the User across third-party apps or websites, and do not sell personal data.
+- **Accounts and deletion:** portal accounts are created by Unreal Studio for clients, agencies and staff. The User may request **deletion of their account and data** at any time by writing to hello@unrealstudiobali.com with the subject "Delete account"; we will handle it within 30 days at most, except for data we must keep by law (section 9).
+
+## 15. Changes to this Policy
 
 We may update this Policy to adapt it to legal changes or changes in our processing. The version in force is the one published on the Website, with its date of update. If the changes are significant, we will communicate them by appropriate means.

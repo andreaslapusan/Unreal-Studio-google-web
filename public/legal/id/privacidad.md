@@ -1,6 +1,6 @@
 # Kebijakan Privasi
 
-**Situs web unrealstudiobali.com, portal terkait, dan saluran kontak** · Pembaruan terakhir: 28 Oktober 2026
+**Situs web unrealstudiobali.com, portal terkait, aplikasi seluler, dan saluran kontak** · Pembaruan terakhir: 6 November 2026
 
 Kebijakan ini menjelaskan bagaimana kami memproses data pribadi pengunjung, pihak yang berminat, klien, mitra, dan orang lain yang berhubungan dengan Unreal Studio, sesuai dengan Peraturan (UE) 2016/679 tentang Pelindungan Data Umum ("GDPR (RGPD)"), Undang-Undang Organik 3/2018 tentang Pelindungan Data Pribadi dan jaminan hak-hak digital ("LOPDGDD"), Undang-Undang 34/2002 tentang Layanan Masyarakat Informasi ("LSSI-CE"), dan Undang-Undang Republik Indonesia Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi ("UU PDP (Undang-Undang No. 27 Tahun 2022)"), serta peraturan lain yang berlaku.
 
@@ -121,6 +121,16 @@ Situs Web tidak ditujukan bagi anak di bawah usia 18 tahun dan kami tidak secara
 
 Data karyawan (termasuk catatan jam kerja) dan agensi mitra yang diproses di portal masing-masing diatur oleh Kebijakan ini dan oleh informasi khusus yang diberikan kepada mereka dalam rangka hubungan kerja atau kemitraan mereka.
 
-## 14. Perubahan Kebijakan ini
+## 14. Aplikasi seluler
+
+Aplikasi **Unreal Clientes**, **Unreal Agencias**, **Unreal Equipo**, dan **Unreal Admin** (iOS dan Android) menampilkan portal yang sama dengan Situs Web dan tunduk pada Kebijakan ini. Selain hal-hal di atas, dalam aplikasi:
+
+- **Kamera dan lokasi (hanya Unreal Equipo, absensi):** saat karyawan mencatat masuk atau pulang, aplikasi mengambil foto dan lokasi perangkat **hanya pada saat itu**, sebagai bukti pencatatan jam kerja. Lokasi tidak pernah dikumpulkan di latar belakang atau secara terus-menerus. Dasar hukum: pemenuhan kewajiban hukum pencatatan jam kerja dan pelaksanaan perjanjian kerja. Disimpan selama jangka waktu yang berlaku menurut hukum untuk catatan jam kerja.
+- **Notifikasi push:** jika Pengguna mengizinkan, kami memproses pengenal perangkat (token) untuk mengirim pemberitahuan terkait akunnya (pembayaran, dokumen, laporan). Notifikasi dapat dinonaktifkan kapan saja melalui pengaturan perangkat. Token dikirim melalui Apple Push Notification service dan Firebase Cloud Messaging (Google).
+- **Data teknis:** versi aplikasi dan sistem operasi, model perangkat, dan bahasa, untuk kelancaran dan keamanan layanan.
+- **Tanpa iklan dan tanpa pelacakan lintas aplikasi:** aplikasi tidak menampilkan iklan, tidak melacak Pengguna di aplikasi atau situs pihak ketiga, dan tidak menjual data pribadi.
+- **Akun dan penghapusan:** akun portal dibuat oleh Unreal Studio untuk klien, agensi, dan staf. Pengguna dapat sewaktu-waktu meminta **penghapusan akun dan datanya** dengan menulis ke hello@unrealstudiobali.com dengan subjek "Hapus akun"; permintaan akan kami proses paling lambat 30 hari, kecuali data yang wajib kami simpan menurut hukum (bagian 9).
+
+## 15. Perubahan Kebijakan ini
 
 Kami dapat memperbarui Kebijakan ini untuk menyesuaikannya dengan perubahan hukum atau perubahan pemrosesan kami. Versi yang berlaku adalah versi yang dipublikasikan di Situs Web, beserta tanggal pembaruannya. Apabila perubahannya signifikan, kami akan memberitahukannya melalui sarana yang sesuai.
