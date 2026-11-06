@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { logoFileError, uploadPartnerLogo } from '../agency/partnerLogo';
+import { shortProjectName } from '../agency/useAgencyData';
 
 const TEXT_FIELDS = ['agency_name', 'manager_name', 'email', 'phone', 'whatsapp', 'website', 'country', 'personal_link_slug'] as const;
 type TextField = typeof TEXT_FIELDS[number];
@@ -93,7 +94,7 @@ export default function AgencyPartnerEditor({ partner, properties, onClose, onSa
           {properties.map((p) => (
             <label key={p.id} className="flex items-center gap-2 text-sm py-1 cursor-pointer">
               <input type="checkbox" checked={projects.includes(p.id)} onChange={() => toggle(p.id)} />
-              {p.name}
+              {shortProjectName(p.name)}
             </label>
           ))}
         </div>

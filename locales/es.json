@@ -94,8 +94,7 @@
     },
     "videoUnsupported": "Tu navegador no soporta video HTML5.",
     "opportunitiesTitle": "Oportunidades de inversión",
-    "viewAllProperties": "Ver todas las propiedades",
-    "demoCta": "¿Quieres ver cómo funciona nuestra tecnología para clientes? Ver demo"
+    "viewAllProperties": "Ver todas las propiedades"
   },
   "projects": {
     "title": "Villas y apartamentos en venta en Bali | Unreal Studio",
@@ -2890,59 +2889,6 @@
       "az": "Nombre: A → Z",
       "za": "Nombre: Z → A"
     }
-  },
-  "demoPortal": {
-    "metaTitle": "Demo del portal · Unreal Studio",
-    "waMessage": "Hola, he visto la demo del portal y me interesa reservar una unidad en Unreal Studio.",
-    "banner": "DEMO · Datos de ejemplo. Así verás TU propiedad como cliente de Unreal.",
-    "headerBadge": "Portal cliente · Demo",
-    "heroAlt": "Villa Deseo",
-    "status": "En construcción",
-    "villaTitle": "Villa Deseo — Demo",
-    "location": "Melasti, Uluwatu · Bali",
-    "progressLabel": "Avance de obra",
-    "estimatedDelivery": "Entrega estimada",
-    "type": "Tipo",
-    "typeValue": "Villa · 2 dorm.",
-    "liveTitle": "Obra en vivo",
-    "liveSubtitle": "Fotos reales fechadas de tu construcción. Transparencia total, sin sorpresas.",
-    "updates": {
-      "u1": {
-        "title": "Cimentación completada",
-        "note": "Estructura de cimientos y replanteo terminados. Obra iniciada en plazo."
-      },
-      "u2": {
-        "title": "Estructura planta baja",
-        "note": "Pilares y forjado de planta baja levantados."
-      },
-      "u3": {
-        "title": "Estructura primera planta",
-        "note": "Muros de la primera planta en curso. Avance según calendario."
-      }
-    },
-    "paymentsTitle": "Tu calendario de pagos",
-    "paymentsSubtitle": "Siempre sabes qué has pagado y qué falta. Cero letra pequeña.",
-    "paid": "Pagado",
-    "total": "Total",
-    "payments": {
-      "p1": "Reserva",
-      "p2": "Firma de contrato (25%)",
-      "p3": "Inicio de obra (25%)",
-      "p4": "Estructura completada (25%)",
-      "p5": "Entrega (20%)"
-    },
-    "due": "Vence {{date}}",
-    "received": "Recibido",
-    "pending": "Pendiente",
-    "receiptsTitle": "Recibos al instante",
-    "receiptsSubtitle": "Cada pago genera su recibo oficial (kwitansi), descargable al momento.",
-    "receiptName": "Recibo DEMO-02 · Firma de contrato",
-    "ctaTitle": "Esto es lo que verás como propietario.",
-    "ctaText": "Obra en vivo, pagos claros y recibos al momento. Una empresa real detrás de cada villa.",
-    "ctaButton": "Reservar mi unidad",
-    "allProjects": "Ver todos los proyectos",
-    "footer": "Demo con datos de ejemplo · Unreal Studio",
-    "close": "Cerrar"
   },
   "cookies": {
     "label": "Aviso de cookies",

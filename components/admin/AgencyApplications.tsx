@@ -12,6 +12,7 @@ import { ApplicationsTab, PartnersTab } from '../../pages/AdminPortalManager';
 import { uiLocale } from '../../lib/dateLocale';
 import LeadDrawer from '../agency/LeadDrawer';
 import AgencyPartnerEditor from './AgencyPartnerEditor';
+import { shortProjectName } from '../agency/useAgencyData';
 
 const AgencyApplications: React.FC = () => {
   const { user } = useAuth();
@@ -137,7 +138,7 @@ const AgencyApplications: React.FC = () => {
                   <button type="button" onClick={() => setOpenLead(l)} className="text-left font-bold text-primary underline decoration-primary/30 underline-offset-2">{l.client_name}</button>
                   <span className="text-[11px] text-primary/40 whitespace-nowrap">{new Date(l.created_at).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short' })}</span>
                 </div>
-                <p className="text-xs text-primary/60 mt-1">{[partners.find((p) => p.id === l.agency_id)?.agency_name, properties.find((p) => p.id === l.property_id)?.name, l.budget].filter(Boolean).join(' · ')}</p>
+                <p className="text-xs text-primary/60 mt-1">{[partners.find((p) => p.id === l.agency_id)?.agency_name, shortProjectName(properties.find((p) => p.id === l.property_id)?.name ?? ''), l.budget].filter(Boolean).join(' · ')}</p>
                 {(l.client_email || l.client_phone) && <p className="text-xs text-primary/40 mt-0.5 break-all">{[l.client_email, l.client_phone].filter(Boolean).join(' · ')}</p>}
                 <div className="mt-3">{leadActions(l)}</div>
               </li>
@@ -158,7 +159,7 @@ const AgencyApplications: React.FC = () => {
                       {l.country ? <span className="block text-xs text-primary/50">{l.country}</span> : null}
                     </td>
                     <td className="p-3 text-xs">{[l.client_email, l.client_phone].filter(Boolean).join(' · ') || '—'}</td>
-                    <td className="p-3 text-xs">{properties.find((p) => p.id === l.property_id)?.name ?? '—'}</td>
+                    <td className="p-3 text-xs">{shortProjectName(properties.find((p) => p.id === l.property_id)?.name ?? '') || '—'}</td>
                     <td className="p-3 text-xs">{l.budget ?? '—'}</td>
                     <td className="p-3 text-xs max-w-[220px] whitespace-pre-wrap">{l.notes ?? '—'}</td>
                     <td className="p-3">{leadActions(l)}</td>
@@ -175,7 +176,7 @@ const AgencyApplications: React.FC = () => {
         <LeadDrawer
           lead={openLead}
           agencyId={openLead.agency_id}
-          projectName={properties.find((p) => p.id === openLead.property_id)?.name ?? '—'}
+          projectName={shortProjectName(properties.find((p) => p.id === openLead.property_id)?.name ?? '') || '—'}
           team={{ agencyName: partners.find((p) => p.id === openLead.agency_id)?.agency_name ?? t('admin.agencyLeads.col.agency') }}
           onClose={() => setOpenLead(null)}
         />

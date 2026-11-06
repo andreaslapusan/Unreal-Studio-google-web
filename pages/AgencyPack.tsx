@@ -183,6 +183,7 @@ const AgencyPack: React.FC = () => {
     return map[v] || tr(project, 'furnishing') || '';
   })();
   const title = shortProjectName(project.name);
+  const floorPlans = (project.floor_plans || []).filter((u) => typeof u === 'string' && u.trim()).slice(0, 3);
   const beds = project.bedrooms ? t('agencyPortal.projects.bedrooms', { count: project.bedrooms }) : null;
   const planSteps = (tr(project, 'payment_plan_off_plan') || '').split(/\s*,\s*/).filter(Boolean);
   const gallery = (project.gallery || []).filter(Boolean);
@@ -308,17 +309,26 @@ const AgencyPack: React.FC = () => {
           </section>
         )}
 
-        {project.floor_plans && project.floor_plans.length > 0 && (
+        {floorPlans.length > 0 && (
           <section>
             <Kicker>{t('agencyPack.floorPlansTitle')}</Kicker>
             <div className="grid gap-4">
-              {project.floor_plans.slice(0, 3).map((src, i) =>
-                src.includes('drive.google.com') ? (
-                  <iframe key={i} src={src} className="w-full h-[70vh] md:h-[600px] rounded-3xl border border-primary/5 bg-white" title={`${t('agencyPack.floorPlansTitle')} ${i + 1}`} />
-                ) : (
-                  <img key={i} src={getImageUrl(src)} alt={`${t('agencyPack.floorPlansTitle')} ${i + 1}`} className="w-full rounded-3xl bg-white" loading="lazy" />
-                ),
-              )}
+              {floorPlans.map((src, i) => {
+                const label = `${t('agencyPack.floorPlansTitle')} ${i + 1}`;
+                // Drive: miniatura (el iframe de Drive salía en blanco en móvil → bloque vacío gigante)
+                const driveId = src.match(/drive\.google\.com\/file\/d\/([^/?#]+)/)?.[1];
+                if (driveId)
+                  return (
+                    <a key={i} href={src} target="_blank" rel="noopener noreferrer" className="block">
+                      <img src={`https://drive.google.com/thumbnail?id=${driveId}&sz=w1600`} alt={label} className="w-full rounded-3xl bg-white" loading="lazy"
+                        onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }} />
+                    </a>
+                  );
+                // PDF u otro documento: enlace (un <img> de un PDF sale roto)
+                if (/^https?:/i.test(src) && !/\.(png|jpe?g|webp|avif|gif)(\?|$)/i.test(src))
+                  return <DocRow key={i} href={src} icon="architecture">{label}</DocRow>;
+                return <img key={i} src={getImageUrl(src)} alt={label} className="w-full rounded-3xl bg-white" loading="lazy" />;
+              })}
             </div>
           </section>
         )}

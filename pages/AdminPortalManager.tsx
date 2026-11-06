@@ -14,6 +14,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
+import { shortProjectName } from "../components/agency/useAgencyData";
 import { hasPermission } from "../lib/permissions";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import BrandLogo from "../components/BrandLogo";
@@ -643,7 +644,7 @@ export function PartnersTab({
   actionLabel?: string;
 }) {
   const { t } = useTranslation();
-  const propertyName = (id: string) => properties.find((p) => p.id === id)?.name ?? id.slice(0, 8);
+  const propertyName = (id: string) => { const n = properties.find((p) => p.id === id)?.name; return n ? shortProjectName(n) : id.slice(0, 8); };
 
   return (
     <div className="space-y-3">

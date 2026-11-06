@@ -43,7 +43,6 @@ const Contact = lazyWithReload(() => import('./pages/Contact'));
 const AdminLogin = lazyWithReload(() => import('./pages/AdminLogin'));
 const AdminDashboard = lazyWithReload(() => import('./pages/AdminDashboard'));
 const AdminMarketing = lazyWithReload(() => import('./pages/AdminMarketing'));
-const DemoPortal = lazyWithReload(() => import('./pages/DemoPortal'));
 const ClientLogin = lazyWithReload(() => import('./pages/ClientLogin'));
 const ClientDashboard = lazyWithReload(() => import('./pages/ClientDashboard'));
 const LegalPage = lazyWithReload(() => import('./pages/LegalPage'));
@@ -328,7 +327,7 @@ const App: React.FC = () => {
             <Route path="/admin/agencias" element={<ProtectedRoute><AdminShell><AdminAgencias /></AdminShell></ProtectedRoute>} />
             <Route path="/agencias/:slug" element={<AgencyPack />} />
             <Route path="/listing/:token" element={<ListingIntake />} />
-            <Route path="/demo" element={<DemoPortal />} />
+            <Route path="/demo" element={<Navigate to="/es" replace />} />
             <Route path="/cliente" element={<Navigate to={portalPath('cliente')} replace />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { shortProjectName } from '../components/agency/useAgencyData';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 
 interface ProjectAgencyRow {
@@ -212,7 +213,7 @@ const AdminAgencias: React.FC = () => {
                       {totals.pct}%
                     </span>
                     <div>
-                      <h2 className="text-2xl font-serif text-primary">{p.name}</h2>
+                      <h2 className="text-2xl font-serif text-primary">{shortProjectName(p.name)}</h2>
                       <p className="text-sm text-primary/50">
                         {t('admin.agencias.fieldsComplete', { done: totals.done, total: totals.total })} · {p.location || '—'}
                       </p>

@@ -94,8 +94,7 @@
     },
     "videoUnsupported": "Browser Anda tidak mendukung video HTML5.",
     "opportunitiesTitle": "Peluang investasi",
-    "viewAllProperties": "Lihat semua properti",
-    "demoCta": "Ingin melihat cara kerja teknologi kami untuk klien? Lihat demo"
+    "viewAllProperties": "Lihat semua properti"
   },
   "projects": {
     "title": "Vila dan Apartemen Dijual di Bali | Unreal Studio Bali",
@@ -2889,59 +2888,6 @@
       "az": "Nama: A → Z",
       "za": "Nama: Z → A"
     }
-  },
-  "demoPortal": {
-    "metaTitle": "Demo portal · Unreal Studio",
-    "waMessage": "Halo, saya telah melihat demo portal dan tertarik untuk memesan unit di Unreal Studio.",
-    "banner": "DEMO · Data contoh. Beginilah Anda akan melihat properti ANDA sebagai klien Unreal.",
-    "headerBadge": "Portal klien · Demo",
-    "heroAlt": "Villa Deseo",
-    "status": "Dalam pembangunan",
-    "villaTitle": "Villa Deseo — Demo",
-    "location": "Melasti, Uluwatu · Bali",
-    "progressLabel": "Progres pembangunan",
-    "estimatedDelivery": "Perkiraan serah terima",
-    "type": "Tipe",
-    "typeValue": "Villa · 2 kamar tidur",
-    "liveTitle": "Pembangunan langsung",
-    "liveSubtitle": "Foto asli bertanggal dari pembangunan Anda. Transparansi penuh, tanpa kejutan.",
-    "updates": {
-      "u1": {
-        "title": "Pondasi selesai",
-        "note": "Struktur pondasi dan pematokan telah selesai. Pekerjaan dimulai tepat waktu."
-      },
-      "u2": {
-        "title": "Struktur lantai dasar",
-        "note": "Kolom dan pelat lantai dasar telah berdiri."
-      },
-      "u3": {
-        "title": "Struktur lantai satu",
-        "note": "Dinding lantai satu sedang dikerjakan. Progres sesuai jadwal."
-      }
-    },
-    "paymentsTitle": "Jadwal pembayaran Anda",
-    "paymentsSubtitle": "Anda selalu tahu apa yang telah dibayar dan apa yang tersisa. Tanpa ketentuan tersembunyi.",
-    "paid": "Dibayar",
-    "total": "Total",
-    "payments": {
-      "p1": "Pemesanan",
-      "p2": "Penandatanganan kontrak (25%)",
-      "p3": "Mulai pembangunan (25%)",
-      "p4": "Struktur selesai (25%)",
-      "p5": "Serah terima (20%)"
-    },
-    "due": "Jatuh tempo {{date}}",
-    "received": "Diterima",
-    "pending": "Tertunda",
-    "receiptsTitle": "Kuitansi instan",
-    "receiptsSubtitle": "Setiap pembayaran menghasilkan kuitansi resmi (kwitansi), dapat diunduh seketika.",
-    "receiptName": "Kuitansi DEMO-02 · Penandatanganan kontrak",
-    "ctaTitle": "Inilah yang akan Anda lihat sebagai pemilik.",
-    "ctaText": "Pembangunan langsung, pembayaran yang jelas, dan kuitansi seketika. Perusahaan nyata di balik setiap villa.",
-    "ctaButton": "Pesan unit saya",
-    "allProjects": "Lihat semua proyek",
-    "footer": "Demo dengan data contoh · Unreal Studio",
-    "close": "Tutup"
   },
   "cookies": {
     "label": "Pemberitahuan cookie",

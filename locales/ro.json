@@ -94,8 +94,7 @@
     },
     "videoUnsupported": "Browserul tău nu acceptă video HTML5.",
     "opportunitiesTitle": "Oportunități de investiții",
-    "viewAllProperties": "Vezi toate proprietățile",
-    "demoCta": "Vrei să vezi cum funcționează tehnologia noastră pentru clienți? Vezi demo"
+    "viewAllProperties": "Vezi toate proprietățile"
   },
   "projects": {
     "title": "Vile și apartamente de vânzare în Bali | Unreal Studio",
@@ -2888,59 +2887,6 @@
       "az": "Nume: A → Z",
       "za": "Nume: Z → A"
     }
-  },
-  "demoPortal": {
-    "metaTitle": "Demo portal · Unreal Studio",
-    "waMessage": "Bună, am văzut demo-ul portalului și sunt interesat să rezerv o unitate la Unreal Studio.",
-    "banner": "DEMO · Date de exemplu. Așa vei vedea PROPRIETATEA TA ca și client Unreal.",
-    "headerBadge": "Portal client · Demo",
-    "heroAlt": "Villa Deseo",
-    "status": "În construcție",
-    "villaTitle": "Villa Deseo — Demo",
-    "location": "Melasti, Uluwatu · Bali",
-    "progressLabel": "Progresul lucrărilor",
-    "estimatedDelivery": "Predare estimată",
-    "type": "Tip",
-    "typeValue": "Vilă · 2 dorm.",
-    "liveTitle": "Șantier în direct",
-    "liveSubtitle": "Fotografii reale și datate ale construcției tale. Transparență totală, fără surprize.",
-    "updates": {
-      "u1": {
-        "title": "Fundație finalizată",
-        "note": "Structura fundației și trasarea au fost finalizate. Lucrările au început la termen."
-      },
-      "u2": {
-        "title": "Structura parterului",
-        "note": "Stâlpii și planșeul parterului au fost ridicați."
-      },
-      "u3": {
-        "title": "Structura etajului întâi",
-        "note": "Pereții etajului întâi sunt în lucru. Progres conform calendarului."
-      }
-    },
-    "paymentsTitle": "Calendarul tău de plăți",
-    "paymentsSubtitle": "Știi mereu ce ai plătit și ce mai rămâne. Fără clauze ascunse.",
-    "paid": "Plătit",
-    "total": "Total",
-    "payments": {
-      "p1": "Rezervare",
-      "p2": "Semnarea contractului (25%)",
-      "p3": "Începerea lucrărilor (25%)",
-      "p4": "Structură finalizată (25%)",
-      "p5": "Predare (20%)"
-    },
-    "due": "Scadent {{date}}",
-    "received": "Primit",
-    "pending": "În așteptare",
-    "receiptsTitle": "Chitanțe pe loc",
-    "receiptsSubtitle": "Fiecare plată generează chitanța oficială (kwitansi), descărcabilă imediat.",
-    "receiptName": "Chitanța DEMO-02 · Semnarea contractului",
-    "ctaTitle": "Asta vei vedea ca proprietar.",
-    "ctaText": "Șantier în direct, plăți clare și chitanțe pe loc. O companie reală în spatele fiecărei vile.",
-    "ctaButton": "Rezervă unitatea mea",
-    "allProjects": "Vezi toate proiectele",
-    "footer": "Demo cu date de exemplu · Unreal Studio",
-    "close": "Închide"
   },
   "cookies": {
     "label": "Aviz privind cookie-urile",
