@@ -1413,6 +1413,10 @@
       "autoEmails": "Pause automatic emails",
       "autoEmailsOff": "Emails paused",
       "autoEmailsHint": "While this is on, no AUTOMATIC email is sent to this client (payment reminders, new construction report notices, welcome…). Emails you send manually from the admin still go out, after confirming.",
+      "portalLastLogin": "Last portal login: {{when}}",
+      "portalNever": "never",
+      "portalLogins": "Logins: last 7 days {{d7}} · last 30 days {{d30}}",
+      "portalLoginsHint": "Each portal visit more than 1 hour after the previous one counts as a login.",
       "pausedConfirm": "This client has automatic emails paused. Send this email anyway?"
     },
     "mkt": {

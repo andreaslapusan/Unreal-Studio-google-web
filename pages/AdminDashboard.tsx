@@ -2337,7 +2337,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 </div>
                 <p className="text-sm text-gray-500 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}{client.phone && ` · ${client.phone}`}</p>
                 {(client as any).last_login && (
-                  <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
+                  <p className="text-[11px] text-green-700 font-medium mt-0.5"><span className="material-symbols-outlined text-xs align-middle">login</span> {t('admin.clientsTab.lastLogin', { defaultValue: 'Último acceso' })}: {new Date((client as any).last_login).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })} · {t('admin.dash.portalLogins', { d7: client.logins_7d ?? 0, d30: client.logins_30d ?? 0 })}</p>
                 )}
                 <div className="mt-1 space-y-0.5">
                   {(() => {
@@ -3609,6 +3609,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <h2 className="text-2xl font-serif text-primary mb-2 pr-10">{currentClient.id?.startsWith('client-') ? t('admin.adminDash.newClient') : t('admin.adminDash.editClient')}</h2>
       <p className="text-sm text-gray-400 mb-8">{t('admin.dash.fillClientData')}</p>
       <form onSubmit={handleSaveClient} onKeyDown={(e) => { if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') e.preventDefault(); }} className="space-y-5">
+        {/* Accesos al portal (solo lectura): último acceso + nº de accesos 7/30 días (admin_list_clients). */}
+        {currentClient.id && !currentClient.id.startsWith('client-') && (() => {
+          const ms = Date.parse(currentClient.last_login || ''); // NaN = nunca (y RelativeTimeFormat no peta)
+          const secs = (ms - Date.now()) / 1000;
+          const [v, u]: [number, Intl.RelativeTimeFormatUnit] = Math.abs(secs) < 3600 ? [secs / 60, 'minute'] : Math.abs(secs) < 86400 ? [secs / 3600, 'hour'] : [secs / 86400, 'day'];
+          const when = Number.isFinite(ms)
+            ? `${new Date(ms).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })} (${new Intl.RelativeTimeFormat(uiLocale(), { numeric: 'auto' }).format(Math.round(v), u)})`
+            : t('admin.dash.portalNever');
+          return (
+            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-xs text-primary">
+              <p className="font-bold"><span className="material-symbols-outlined text-sm align-middle text-green-700">login</span> {t('admin.dash.portalLastLogin', { when })}</p>
+              <p className="mt-1 font-medium">{t('admin.dash.portalLogins', { d7: currentClient.logins_7d ?? 0, d30: currentClient.logins_30d ?? 0 })}</p>
+              <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.portalLoginsHint')}</p>
+            </div>
+          );
+        })()}
         {/* TITULARES: cada titular con su NOMBRE y su EMAIL. El título de la ficha
             junta los nombres con " & " y los correos van a todos. */}
         {(() => {

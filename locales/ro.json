@@ -1413,6 +1413,10 @@
       "autoEmails": "Suspendă e-mailurile automate",
       "autoEmailsOff": "E-mailuri suspendate",
       "autoEmailsHint": "Cât timp este activat, acestui client nu i se trimite niciun e-mail AUTOMAT (mementouri de plată, anunțuri de raport nou de șantier, bun venit…). E-mailurile pe care le trimiți manual din admin pleacă, după confirmare.",
+      "portalLastLogin": "Ultima conectare la portal: {{when}}",
+      "portalNever": "niciodată",
+      "portalLogins": "Conectări: ultimele 7 zile {{d7}} · ultimele 30 de zile {{d30}}",
+      "portalLoginsHint": "Fiecare intrare în portal la peste 1 oră după cea anterioară contează ca o conectare.",
       "pausedConfirm": "Acest client are e-mailurile automate suspendate. Trimiți totuși acest e-mail?"
     },
     "mkt": {

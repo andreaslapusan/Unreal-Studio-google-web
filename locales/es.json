@@ -1413,6 +1413,10 @@
       "autoEmails": "Pausar correos automáticos",
       "autoEmailsOff": "Emails pausados",
       "autoEmailsHint": "Mientras esté activado no sale ningún correo AUTOMÁTICO a este cliente (recordatorios de pago, avisos de nuevo reporte de obra, bienvenida…). Los que envíes tú a mano desde el admin sí salen, tras confirmar.",
+      "portalLastLogin": "Último acceso al portal: {{when}}",
+      "portalNever": "nunca",
+      "portalLogins": "Accesos: últimos 7 días {{d7}} · últimos 30 días {{d30}}",
+      "portalLoginsHint": "Cuenta como acceso cada entrada al portal separada más de 1 hora de la anterior.",
       "pausedConfirm": "Este cliente tiene los correos automáticos en pausa. ¿Enviar este correo igualmente?"
     },
     "mkt": {

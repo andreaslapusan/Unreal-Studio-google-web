@@ -97,6 +97,9 @@ export interface Client {
   is_active: boolean;
   created_at?: string;
   last_login?: string;
+  /** Accesos al portal (entradas separadas >1 h) en los últimos 7/30 días (admin_list_clients) */
+  logins_7d?: number;
+  logins_30d?: number;
   /** false = no sale ningún correo a este cliente hasta reactivarlo (clients.auto_emails_enabled) */
   auto_emails_enabled?: boolean;
   projects?: ClientProject[];
