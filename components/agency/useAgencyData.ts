@@ -164,6 +164,9 @@ export const groupUnits = (units: UnitRow[]) => {
 export const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric' });
 
+export const fmtDateTime = (iso: string) =>
+  new Date(iso).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
 export const partnerParam = (p: PartnerRow) => p.personal_link_slug ?? p.id;
 
 export const catalogLink = (p: PartnerRow) =>

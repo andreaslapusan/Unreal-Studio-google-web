@@ -1845,7 +1845,10 @@
       "ev": {
         "reservation": "Reserva",
         "sale": "Venta"
-      }
+      },
+      "notePh": "Nota del Equipo Unreal (la agencia la verá en su portal)…",
+      "registeredBy": "Cliente registrado por {{agency}}",
+      "confirmDeleteNote": "¿Borrar esta nota? La agencia dejará de verla."
     },
     "agencyRequests": {
       "title": "Solicitudes de agencias",

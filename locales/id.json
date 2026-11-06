@@ -1950,7 +1950,10 @@
       "ev": {
         "reservation": "Reservasi",
         "sale": "Penjualan"
-      }
+      },
+      "notePh": "Catatan tim Unreal (agensi akan melihatnya di portalnya)…",
+      "registeredBy": "Klien didaftarkan oleh {{agency}}",
+      "confirmDeleteNote": "Hapus catatan ini? Agensi tidak akan melihatnya lagi."
     },
     "agencyRequests": {
       "title": "Permintaan agensi",

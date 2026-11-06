@@ -1845,7 +1845,10 @@
       "ev": {
         "reservation": "Reservation",
         "sale": "Sale"
-      }
+      },
+      "notePh": "Unreal team note (the agency will see it in its portal)…",
+      "registeredBy": "Client registered by {{agency}}",
+      "confirmDeleteNote": "Delete this note? The agency will no longer see it."
     },
     "agencyRequests": {
       "title": "Agency requests",

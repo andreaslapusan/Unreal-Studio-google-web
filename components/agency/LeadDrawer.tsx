@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { useEscapeKey } from '../../lib/useEscapeKey';
-import { AgencyLead, fmtDate } from './useAgencyData';
+import { AgencyLead, fmtDate, fmtDateTime } from './useAgencyData';
 import { btnGhost, btnPrimary, input, StatusPill } from './ui';
 
 interface Note { id: string; created_at: string; author: 'agency' | 'unreal'; body: string }
@@ -33,6 +33,15 @@ export default function LeadDrawer({ lead, agencyId, projectName, onClose, onReq
     setSaving(false);
     if (error) { setErr(error.message); return; }
     setBody('');
+    await load();
+  };
+
+  // Solo admin (RLS aln_admin_delete) y solo notas del Equipo Unreal; no hay edición (sin política UPDATE).
+  const del = async (id: string) => {
+    if (!confirm(t('admin.agencyLeads.confirmDeleteNote'))) return;
+    setErr('');
+    const { error } = await supabase.from('agency_lead_notes').delete().eq('id', id);
+    if (error) setErr(error.message);
     await load();
   };
 
@@ -86,20 +95,27 @@ export default function LeadDrawer({ lead, agencyId, projectName, onClose, onReq
             <ol className="relative border-l-2 border-gray-100 ml-2 space-y-5">
               <li className="pl-5 relative">
                 <span className="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-blue-500" />
-                <p className="text-sm font-bold text-primary">{t('agencyPortal.lead.registered')}</p>
+                <p className="text-sm font-bold text-primary">{team ? t('admin.agencyLeads.registeredBy', { agency: team.agencyName }) : t('agencyPortal.lead.registered')}</p>
                 <p className="text-xs text-primary/40">{fmtDate(lead.created_at)}</p>
               </li>
               {notes.map((n) => (
                 <li key={n.id} className="pl-5 relative">
                   <span className={`absolute -left-[7px] top-1 w-3 h-3 rounded-full ${n.author === 'unreal' ? 'bg-primary' : 'bg-amber-500'}`} />
-                  <p className="text-xs font-black uppercase tracking-widest text-primary/40">{n.author === 'unreal' ? t('agencyPortal.lead.unreal') : team ? team.agencyName : t('agencyPortal.lead.you')} · {fmtDate(n.created_at)}</p>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-xs font-black uppercase tracking-widest text-primary/40">{n.author === 'unreal' ? t('agencyPortal.lead.unreal') : team ? team.agencyName : t('agencyPortal.lead.you')} · {fmtDateTime(n.created_at)}</p>
+                    {team && n.author === 'unreal' && (
+                      <button type="button" onClick={() => void del(n.id)} aria-label={t('admin.common.delete')} title={t('admin.common.delete')} className="shrink-0 -mt-1 p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white transition">
+                        <span className="material-symbols-outlined text-sm">delete</span>
+                      </button>
+                    )}
+                  </div>
                   <p className="text-sm text-primary/80 mt-0.5 whitespace-pre-wrap break-words">{n.body}</p>
                 </li>
               ))}
             </ol>
 
             <form onSubmit={add} className="mt-5 space-y-2">
-              <textarea className={input} rows={3} maxLength={2000} placeholder={t('agencyPortal.lead.notePh')} value={body} onChange={(e) => setBody(e.target.value)} aria-label={t('agencyPortal.lead.addNote')} />
+              <textarea className={input} rows={3} maxLength={2000} placeholder={t(team ? 'admin.agencyLeads.notePh' : 'agencyPortal.lead.notePh')} value={body} onChange={(e) => setBody(e.target.value)} aria-label={t('agencyPortal.lead.addNote')} />
               {err && <p className="text-xs text-red-600">{err}</p>}
               <button type="submit" disabled={saving || !body.trim()} className={`${btnPrimary} w-full`}>
                 <span className="material-symbols-outlined text-base">add</span>{t('agencyPortal.lead.save')}

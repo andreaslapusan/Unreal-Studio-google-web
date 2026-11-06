@@ -1845,7 +1845,10 @@
       "ev": {
         "reservation": "Rezervare",
         "sale": "Vânzare"
-      }
+      },
+      "notePh": "Notă a echipei Unreal (agenția o va vedea în portalul său)…",
+      "registeredBy": "Client înregistrat de {{agency}}",
+      "confirmDeleteNote": "Ștergi această notă? Agenția nu o va mai vedea."
     },
     "agencyRequests": {
       "title": "Solicitări agenții",
