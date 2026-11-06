@@ -11,6 +11,7 @@
  * sigue viéndose viejo" (traducciones, etc.).
  */
 import { APP_VERSION } from './version';
+import { isNativeApp } from './nativeApp';
 
 export function initVersionGuard(): void {
   if (typeof window === 'undefined') return;
@@ -22,6 +23,8 @@ export function initVersionGuard(): void {
       const data = await r.json();
       const latest = data?.version;
       if (!latest || latest === APP_VERSION) return;
+      // App nativa: no recargar al volver con un pop-up o un campo activos (se perdería lo escrito); reintenta al volver.
+      if (isNativeApp() && (document.querySelector('.fixed.inset-0') || document.activeElement?.matches('input, textarea, select'))) return;
       const key = `unreal_reloaded_${latest}`;
       if (sessionStorage.getItem(key)) return; // ya recargamos para esta versión
       sessionStorage.setItem(key, '1');

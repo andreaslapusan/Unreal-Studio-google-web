@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, useNavigationType, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
@@ -75,6 +75,7 @@ import { supabase } from './lib/supabase';
 import { trackPageVisit } from './lib/attribution';
 import { trackPageView } from './lib/fbPixel';
 import { gtmPageView } from './lib/gtm';
+import { isNativeApp } from './lib/nativeApp';
 
 interface CurrencyContextType {
   currency: CurrencyCode;
@@ -117,6 +118,23 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
+// App nativa: fundido corto del contenido al ir a otra ruta o sección (?view=). Solo opacidad (no re-ancla
+// pop-ups fixed), sin remontar; no en "atrás" ni con "reducir movimiento". En el navegador no hace nada.
+const NativeTransition = () => {
+  const { pathname, search } = useLocation();
+  const navType = useNavigationType();
+  const key = `${pathname}|${new URLSearchParams(search).get('view') ?? ''}`;
+  const prev = useRef(key);
+  useLayoutEffect(() => {
+    if (prev.current === key) return;
+    prev.current = key;
+    if (navType === 'POP' || !isNativeApp() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    (document.querySelector('main main') ?? document.querySelector('main'))
+      ?.animate({ opacity: [0, 1] }, { duration: 220, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+  }, [key, navType]);
   return null;
 };
 
@@ -274,6 +292,7 @@ const App: React.FC = () => {
       <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <NativeTransition />
         <ManifestSwitcher />
         <PullToRefresh />
         <GlobalLoading />

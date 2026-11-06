@@ -1,12 +1,13 @@
 /**
  * PullToRefresh — gesto "tirar para refrescar" SOLO en modo app instalada
- * (standalone). iOS, cuando la web está guardada en la pantalla de inicio, no
+ * (PWA standalone o app nativa). iOS, cuando la web está guardada en la pantalla de inicio, no
  * tiene el pull-to-refresh nativo del navegador, así que lo añadimos nosotros:
  * al arrastrar hacia abajo desde lo más arriba de la página, recarga.
  *
  * En el navegador normal NO se activa (ya existe el gesto nativo).
  */
 import React, { useEffect, useRef, useState } from 'react';
+import { isNativeApp } from '../lib/nativeApp';
 
 const THRESHOLD = 70; // px de arrastre (con resistencia) para disparar recarga
 const MAX = 110;
@@ -23,13 +24,14 @@ export default function PullToRefresh() {
   useEffect(() => {
     const standalone =
       (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches) ||
-      (navigator as unknown as { standalone?: boolean }).standalone === true;
+      (navigator as unknown as { standalone?: boolean }).standalone === true || isNativeApp();
     if (!standalone) return;
 
     const setP = (v: number) => { pullRef.current = v; setPull(v); };
 
     const onStart = (e: TouchEvent) => {
-      if (window.scrollY > 0 || refreshing) { active.current = false; return; }
+      // Con un pop-up abierto el arrastre es scroll dentro del pop-up: nunca recargar (se perdía el formulario).
+      if (window.scrollY > 0 || refreshing || document.querySelector('.fixed.inset-0')) { active.current = false; return; }
       startY.current = e.touches[0].clientY;
       startX.current = e.touches[0].clientX;
       lockDir.current = null;

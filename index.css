@@ -132,3 +132,8 @@ select {
   font-weight: 300;
   font-style: italic;
 }
+
+/* App nativa (Capacitor) — clase de lib/nativeApp.ts; en el navegador no aplica. Sin selección ni menú de
+   pulsación larga en controles/enlaces (como una app); texto de lectura y campos siguen seleccionables. */
+html.native-app :is(button, [role="button"], a, nav, header, label) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+html.native-app :is(input, textarea, [contenteditable="true"]) { -webkit-user-select: text; user-select: text; }
