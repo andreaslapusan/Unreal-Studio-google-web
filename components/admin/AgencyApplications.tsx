@@ -10,6 +10,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth-context';
 import { ApplicationsTab, PartnersTab } from '../../pages/AdminPortalManager';
 import { uiLocale } from '../../lib/dateLocale';
+import LeadDrawer from '../agency/LeadDrawer';
 
 const AgencyApplications: React.FC = () => {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ const AgencyApplications: React.FC = () => {
   const [leads, setLeads] = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openLead, setOpenLead] = useState<any | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -125,7 +127,10 @@ const AgencyApplications: React.FC = () => {
                   <tr key={l.id} className="border-t border-primary/10 align-top">
                     <td className="p-3 whitespace-nowrap text-xs">{new Date(l.created_at).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' })}</td>
                     <td className="p-3">{partners.find((p) => p.id === l.agency_id)?.agency_name ?? '—'}</td>
-                    <td className="p-3 font-medium">{l.client_name}{l.country ? <span className="block text-xs text-primary/50">{l.country}</span> : null}</td>
+                    <td className="p-3 font-medium">
+                      <button type="button" onClick={() => setOpenLead(l)} className="text-left underline decoration-primary/30 underline-offset-2 hover:decoration-primary" title={t('admin.agencyLeads.open')}>{l.client_name}</button>
+                      {l.country ? <span className="block text-xs text-primary/50">{l.country}</span> : null}
+                    </td>
                     <td className="p-3 text-xs">{[l.client_email, l.client_phone].filter(Boolean).join(' · ') || '—'}</td>
                     <td className="p-3 text-xs">{properties.find((p) => p.id === l.property_id)?.name ?? '—'}</td>
                     <td className="p-3 text-xs">{l.budget ?? '—'}</td>
@@ -142,6 +147,15 @@ const AgencyApplications: React.FC = () => {
           </div>
         )}
       </section>
+      {openLead && (
+        <LeadDrawer
+          lead={openLead}
+          agencyId={openLead.agency_id}
+          projectName={properties.find((p) => p.id === openLead.property_id)?.name ?? '—'}
+          team={{ agencyName: partners.find((p) => p.id === openLead.agency_id)?.agency_name ?? t('admin.agencyLeads.col.agency') }}
+          onClose={() => setOpenLead(null)}
+        />
+      )}
       <section>
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyRequests.title')}</h3>
         {requests.length === 0 ? <p className="text-sm text-primary/50">{t('admin.agencyRequests.empty')}</p> : (

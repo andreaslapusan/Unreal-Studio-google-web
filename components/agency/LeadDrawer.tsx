@@ -8,9 +8,10 @@ import { btnGhost, btnPrimary, input, StatusPill } from './ui';
 
 interface Note { id: string; created_at: string; author: 'agency' | 'unreal'; body: string }
 
-interface Props { lead: AgencyLead; agencyId: string; projectName: string; onClose: () => void; onRequestCall: () => void }
+// `team`: vista del admin (Equipo Unreal) — sus notas van como author='unreal' y las de la agencia se firman con su nombre.
+interface Props { lead: AgencyLead; agencyId: string; projectName: string; onClose: () => void; onRequestCall?: () => void; team?: { agencyName: string } }
 
-export default function LeadDrawer({ lead, agencyId, projectName, onClose, onRequestCall }: Props) {
+export default function LeadDrawer({ lead, agencyId, projectName, onClose, onRequestCall, team }: Props) {
   const { t } = useTranslation();
   const [notes, setNotes] = useState<Note[]>([]);
   const [body, setBody] = useState('');
@@ -28,7 +29,7 @@ export default function LeadDrawer({ lead, agencyId, projectName, onClose, onReq
     e.preventDefault();
     if (!body.trim()) return;
     setSaving(true); setErr('');
-    const { error } = await supabase.from('agency_lead_notes').insert({ lead_id: lead.id, agency_id: agencyId, author: 'agency', body: body.trim() });
+    const { error } = await supabase.from('agency_lead_notes').insert({ lead_id: lead.id, agency_id: agencyId, author: team ? 'unreal' : 'agency', body: body.trim() });
     setSaving(false);
     if (error) { setErr(error.message); return; }
     setBody('');
@@ -73,9 +74,11 @@ export default function LeadDrawer({ lead, agencyId, projectName, onClose, onReq
               ))}
             </dl>
             {lead.notes && <p className="text-sm text-primary/70 mt-3 pt-3 border-t border-gray-100 whitespace-pre-wrap">{lead.notes}</p>}
-            <div className="flex flex-wrap gap-2 mt-4">
-              <button onClick={onRequestCall} className={btnGhost}><span className="material-symbols-outlined text-base">call</span>{t('agencyPortal.lead.requestCall')}</button>
-            </div>
+            {onRequestCall && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                <button onClick={onRequestCall} className={btnGhost}><span className="material-symbols-outlined text-base">call</span>{t('agencyPortal.lead.requestCall')}</button>
+              </div>
+            )}
           </section>
 
           <section className="bg-white rounded-2xl p-5 shadow-sm border border-primary/5">
@@ -89,7 +92,7 @@ export default function LeadDrawer({ lead, agencyId, projectName, onClose, onReq
               {notes.map((n) => (
                 <li key={n.id} className="pl-5 relative">
                   <span className={`absolute -left-[7px] top-1 w-3 h-3 rounded-full ${n.author === 'unreal' ? 'bg-primary' : 'bg-amber-500'}`} />
-                  <p className="text-xs font-black uppercase tracking-widest text-primary/40">{n.author === 'unreal' ? t('agencyPortal.lead.unreal') : t('agencyPortal.lead.you')} · {fmtDate(n.created_at)}</p>
+                  <p className="text-xs font-black uppercase tracking-widest text-primary/40">{n.author === 'unreal' ? t('agencyPortal.lead.unreal') : team ? team.agencyName : t('agencyPortal.lead.you')} · {fmtDate(n.created_at)}</p>
                   <p className="text-sm text-primary/80 mt-0.5 whitespace-pre-wrap break-words">{n.body}</p>
                 </li>
               ))}

@@ -1827,7 +1827,8 @@
         "budget": "Presupuesto",
         "notes": "Notas",
         "status": "Estado"
-      }
+      },
+      "open": "Abrir ficha y añadir notas del equipo"
     },
     "agencyRequests": {
       "title": "Solicitudes de agencias",

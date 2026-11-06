@@ -1827,7 +1827,8 @@
         "budget": "Buget",
         "notes": "Note",
         "status": "Stare"
-      }
+      },
+      "open": "Deschide fișa și adaugă note ale echipei"
     },
     "agencyRequests": {
       "title": "Solicitări agenții",

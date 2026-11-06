@@ -1932,7 +1932,8 @@
         "budget": "Anggaran",
         "notes": "Catatan",
         "status": "Status"
-      }
+      },
+      "open": "Buka prospek dan tambahkan catatan tim"
     },
     "agencyRequests": {
       "title": "Permintaan agensi",

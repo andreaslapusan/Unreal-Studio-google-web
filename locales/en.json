@@ -1827,7 +1827,8 @@
         "budget": "Budget",
         "notes": "Notes",
         "status": "Status"
-      }
+      },
+      "open": "Open lead and add team notes"
     },
     "agencyRequests": {
       "title": "Agency requests",
