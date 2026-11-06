@@ -37,6 +37,42 @@ const Footer: React.FC<{ compact?: boolean }> = ({ compact }) => {
   const hours: Record<string, string> = brand?.hours || {};
   const hoursEntries = Object.entries(hours).filter(([, v]) => v);
 
+  const bottomBar = (
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-4">
+        <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
+        <div className="flex flex-wrap justify-center md:justify-end gap-x-5 gap-y-2 mt-3 md:mt-0">
+          <Link className="hover:text-primary transition" to={lp("/privacidad")}>{t('footer.privacy')}</Link>
+          <Link className="hover:text-primary transition" to={lp("/terminos")}>{t('footer.terms')}</Link>
+          <Link className="hover:text-primary transition" to={lp("/aviso-legal")}>{t('footer.legalNotice')}</Link>
+          <button type="button" className="hover:text-primary transition uppercase tracking-widest font-bold" onClick={reopenConsent}>{t('footer.cookies')}</button>
+          {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
+              para que al entrar quede fijado el manifest del portal y se pueda instalar
+              cada uno como su propia app desde aquí. Ver index.html (script de manifest). */}
+          <a className="hover:text-primary transition flex items-center gap-1" href="/cliente">
+            <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
+          </a>
+          <a className="hover:text-primary transition flex items-center gap-1" href="/agencias/login">
+            <span className="material-symbols-outlined text-xs">handshake</span> {t('footer.agencies')}
+          </a>
+          <a className="hover:text-primary transition flex items-center gap-1" href="/empleados">
+            <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
+          </a>
+          <a className="hover:text-primary transition flex items-center gap-1" href="/admin/login">
+            <span className="material-symbols-outlined text-xs">settings</span> {t('footer.admin')}
+          </a>
+        </div>
+      </div>
+  );
+
+  // Portales: solo una línea mínima (Andreas 6-nov: "muchísimo más pequeño" en portales; la web pública intacta).
+  if (compact) {
+    return (
+      <footer className="bg-white border-t border-gray-100 py-3 px-4 md:px-12 text-[9px]">
+        {bottomBar}
+      </footer>
+    );
+  }
+
   return (
     <footer className={`bg-white border-t border-gray-100 pt-8 md:pt-12 ${compact ? 'pb-6 md:pb-6' : 'pb-20 md:pb-8'} px-6 md:px-12 text-sm`}>
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-6 md:gap-12 mb-6 md:mb-8 text-left">
@@ -100,30 +136,7 @@ const Footer: React.FC<{ compact?: boolean }> = ({ compact }) => {
         </div>
       </div>
       <p className="max-w-7xl mx-auto text-[10px] italic text-primary/40 leading-snug mb-3">{t('footer.disclaimer')}</p>
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-4">
-        <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
-        <div className="flex flex-wrap justify-center md:justify-end gap-x-5 gap-y-2 mt-3 md:mt-0">
-          <Link className="hover:text-primary transition" to={lp("/privacidad")}>{t('footer.privacy')}</Link>
-          <Link className="hover:text-primary transition" to={lp("/terminos")}>{t('footer.terms')}</Link>
-          <Link className="hover:text-primary transition" to={lp("/aviso-legal")}>{t('footer.legalNotice')}</Link>
-          <button type="button" className="hover:text-primary transition uppercase tracking-widest font-bold" onClick={reopenConsent}>{t('footer.cookies')}</button>
-          {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
-              para que al entrar quede fijado el manifest del portal y se pueda instalar
-              cada uno como su propia app desde aquí. Ver index.html (script de manifest). */}
-          <a className="hover:text-primary transition flex items-center gap-1" href="/cliente">
-            <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
-          </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/agencias/login">
-            <span className="material-symbols-outlined text-xs">handshake</span> {t('footer.agencies')}
-          </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/empleados">
-            <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
-          </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/admin/login">
-            <span className="material-symbols-outlined text-xs">settings</span> {t('footer.admin')}
-          </a>
-        </div>
-      </div>
+      {bottomBar}
     </footer>
   );
 };
