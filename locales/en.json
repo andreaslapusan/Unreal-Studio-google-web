@@ -530,7 +530,9 @@
     "anon": "anon",
     "eventType": {
       "visit": "Visit",
-      "form_submit": "Form submitted"
+      "form_submit": "Form submitted",
+      "reservation": "Reservation",
+      "sale": "Sale"
     }
   },
   "inversoresDashboard": {
@@ -2912,5 +2914,115 @@
   },
   "landings": {
     "guidesTitle": "Bali investment guides"
+  },
+  "agencyPortal": {
+    "panel": "Agency portal",
+    "copyMyLink": "Copy my link",
+    "copiedShort": "Copied",
+    "nav": {
+      "dashboard": "Home",
+      "projects": "Projects",
+      "clients": "My clients",
+      "stats": "Statistics",
+      "commissions": "Commissions",
+      "profile": "My agency",
+      "help": "Help & contact"
+    },
+    "kpi": {
+      "registered": "Registered clients",
+      "following": "In progress",
+      "won": "Won",
+      "visits": "Visits to your link",
+      "potential": "Potential commission"
+    },
+    "overview": {
+      "hello": "Hi, {{name}}",
+      "sub": "Your activity with Unreal Studio at a glance.",
+      "actLead": "Client registered: {{name}}",
+      "activity": "Recent activity",
+      "noActivity": "No activity yet. Register your first client or share your link.",
+      "shortcuts": "Shortcuts",
+      "projectsCount": "{{n}} assigned project(s)",
+      "clientsCount": "{{n}} registered client(s)",
+      "commissionsSub": "Estimate per client and per inventory",
+      "helpSub": "How the program works and contact"
+    },
+    "projects": {
+      "sub": "Projects assigned to you, with available units, agency price and your commission. Share each project link: visits are attributed to your agency.",
+      "availableN": "{{n}} available",
+      "soldOut": "Sold out",
+      "soldN": "{{n}} sold",
+      "copyLink": "Copy client link",
+      "pack": "Agency pack",
+      "dossier": "Brochure",
+      "tour": "3D tour",
+      "agencyPrice": "Agency price",
+      "commission": "Your commission",
+      "reserved": "Reserved",
+      "unitsTitle": "Available units",
+      "bedsN": "{{n}} bed",
+      "agencyPriceShort": "Agency"
+    },
+    "clients": {
+      "search": "Search client, email, project…",
+      "all": "All",
+      "noMatch": "No clients match the filter.",
+      "registeredOn": "Registered on {{date}}",
+      "statusHint": "The Unreal team updates the status as each client progresses."
+    },
+    "stats": {
+      "sub": "What your personal link and the project links you share generate."
+    },
+    "commissions": {
+      "sub": "Estimate of your commission based on the agency price of each project's units and your percentage.",
+      "noProject": "No project specified",
+      "wonEst": "Won clients (est. minimum)",
+      "pipelineEst": "In progress (est. minimum)",
+      "wonTitle": "Won clients",
+      "wonEmpty": "No won clients yet. When one of your clients buys, it will appear here with its commission.",
+      "pipelineTitle": "Clients in progress",
+      "pipelineEmpty": "You have no clients in progress right now.",
+      "disclaimer": "Indicative figures: the final commission depends on the unit sold, your agency agreement and the mode (own closing or referral). Payment is confirmed by the Unreal team."
+    },
+    "profile": {
+      "sub": "Your brand, your attribution link and your agency details.",
+      "data": "Agency details",
+      "agency": "Agency",
+      "manager": "Manager",
+      "email": "Email",
+      "phone": "Phone",
+      "website": "Website",
+      "country": "Country",
+      "status": "Status",
+      "since": "Partner since",
+      "st": {
+        "approved": "Approved",
+        "active": "Active",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "editHint": "Something wrong? Message us from Help & contact and we will update it."
+    },
+    "help": {
+      "sub": "How to work with Unreal Studio as a partner agency.",
+      "howTitle": "How it works",
+      "step1Title": "Pick a project",
+      "step1Body": "In Projects you see available units, agency price and your commission, with brochure, tour and material pack.",
+      "step2Title": "Register your client",
+      "step2Body": "Do it before they contact us: the registration date protects your commission.",
+      "step3Title": "Share your link",
+      "step3Body": "Use your personal link or each project link: visits, forms and reservations are attributed to your agency.",
+      "step4Title": "Track progress",
+      "step4Body": "In My clients and Commissions you see each client's status; the Unreal team keeps it updated.",
+      "commTitle": "Commissions",
+      "modeATitle": "You close the sale",
+      "modeABody": "Your agency guides the client through to signing.",
+      "modeBTitle": "You refer the client",
+      "modeBBody": "You register the client and our team handles the closing.",
+      "commNote": "Each unit's percentage (5% of the agency price by default) is shown in Projects; special agreements are arranged with the team.",
+      "contactTitle": "Contact the Unreal team",
+      "contactBody": "Questions about a project, a client or your commission: write to us and we will reply.",
+      "waText": "Hi, I am from the agency {{agency}} (Unreal Studio agency portal)."
+    }
   }
 }

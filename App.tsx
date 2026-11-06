@@ -56,7 +56,6 @@ const AgenciasLogin = lazyWithReload(() => import('./pages/AgenciasLogin'));
 const AgenciasPartnership = lazyWithReload(() => import('./pages/AgenciasPartnership'));
 const AgenciasRegistrar = lazyWithReload(() => import('./pages/AgenciasRegistrar'));
 const AgenciasDashboard = lazyWithReload(() => import('./pages/AgenciasDashboard'));
-const AgenciasStats = lazyWithReload(() => import('./pages/AgenciasStats'));
 const AuthFinish = lazyWithReload(() => import('./pages/AuthFinish'));
 const ResetPassword = lazyWithReload(() => import('./pages/ResetPassword'));
 const EquipoUpload = lazyWithReload(() => import('./pages/EquipoUpload'));
@@ -301,7 +300,7 @@ const App: React.FC = () => {
             <Route path="/agencias/login" element={<Navigate to={portalPath('agencias')} replace />} />
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
-            <Route path="/agencias/stats" element={<AgenciasStats />} />
+            <Route path="/agencias/stats" element={<Navigate to="/agencias/dashboard?view=stats" replace />} />
             {/* Portal Empleados (ÚNICO portal de equipo). Roster único = tabla
                 `employees`. Fichaje + vacaciones + edición de propiedades + subir
                 partes. Las rutas legacy /manager/* y /equipo/* redirigen aquí para

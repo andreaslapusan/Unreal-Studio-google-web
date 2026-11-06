@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import BrandLogo from './BrandLogo';
 
-interface NavItem {
+export interface NavItem {
   key: string;
   label: string;
   to: string;
@@ -31,20 +31,30 @@ interface NavItem {
   path?: string;
 }
 
-const AdminSidebar: React.FC = () => {
+/** Props opcionales para reutilizar el MISMO sidebar en otros portales (p.ej. agencias). Sin props = admin. */
+interface AdminSidebarProps {
+  items?: NavItem[];
+  footerItem?: NavItem;
+  basePath?: string;
+  panelLabel?: string;
+  onLogout?: () => void;
+}
+
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath = '/admin', panelLabel, onLogout }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const currentView = searchParams.get('view') || 'dashboard';
-  const onDashboard = location.pathname === '/admin';
+  const onDashboard = location.pathname === basePath;
 
   // Contador de notificaciones sin leer (badge). Refresca cada 60s.
   const [unread, setUnread] = useState(0);
   // Listings pendientes de revisar (propietarios que subieron su propiedad).
   const [intakesPending, setIntakesPending] = useState(0);
   useEffect(() => {
+    if (items) return; // badges solo en el panel admin
     let alive = true;
     const fetchUnread = async () => {
       const { data } = await supabase.rpc('admin_unread_count');
@@ -55,10 +65,10 @@ const AdminSidebar: React.FC = () => {
     void fetchUnread();
     const iv = setInterval(fetchUnread, 60000);
     return () => { alive = false; clearInterval(iv); };
-  }, [currentView]);
+  }, [currentView, items]);
 
   // Orden único pedido por Andreas (móvil + escritorio).
-  const nav: NavItem[] = [
+  const nav: NavItem[] = items ?? [
     { key: 'dashboard', icon: 'dashboard', label: t('admin.nav.dashboard', 'Dashboard'), to: '/admin?view=dashboard', view: 'dashboard' },
     { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'cobros', icon: 'payments', label: t('admin.nav.cobros'), to: '/admin?view=cobros', view: 'cobros' },
@@ -80,12 +90,13 @@ const AdminSidebar: React.FC = () => {
   ];
 
   // Configuración siempre al fondo del todo.
-  const configItem: NavItem = { key: 'config', icon: 'settings', label: t('admin.nav.config'), to: '/admin?view=config', view: 'config' };
+  const configItem: NavItem = footerItem ?? { key: 'config', icon: 'settings', label: t('admin.nav.config'), to: '/admin?view=config', view: 'config' };
 
   const isSectionActive = (it: NavItem) => onDashboard && it.view === currentView;
   const isPageActive = (it: NavItem) => it.path && location.pathname.startsWith(it.path);
 
   const handleLogout = async () => {
+    if (onLogout) { onLogout(); return; }
     localStorage.removeItem('_ust_sh_');
     sessionStorage.removeItem('_ust_sh_');
     try { await supabase.auth.signOut(); } catch { /* ignore */ }
@@ -120,9 +131,9 @@ const AdminSidebar: React.FC = () => {
 
   return (
     <aside className="hidden lg:flex flex-col w-60 shrink-0 bg-primary text-white h-screen sticky top-0 self-start overflow-y-auto">
-      <Link to="/admin?view=dashboard" className="px-5 py-6 border-b border-white/10 block">
+      <Link to={`${basePath}?view=dashboard`} className="px-5 py-6 border-b border-white/10 block">
         <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="font-serif text-xl tracking-tight text-white" />
-        <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{t('admin.nav.panel', 'Panel de administración')}</span>
+        <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{panelLabel ?? t('admin.nav.panel', 'Panel de administración')}</span>
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-3">

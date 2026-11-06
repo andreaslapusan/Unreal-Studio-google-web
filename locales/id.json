@@ -531,7 +531,9 @@
     "anon": "anon",
     "eventType": {
       "visit": "Kunjungan",
-      "form_submit": "Formulir dikirim"
+      "form_submit": "Formulir dikirim",
+      "reservation": "Pemesanan",
+      "sale": "Penjualan"
     }
   },
   "inversoresDashboard": {
@@ -2913,5 +2915,115 @@
   },
   "landings": {
     "guidesTitle": "Panduan investasi di Bali"
+  },
+  "agencyPortal": {
+    "panel": "Portal agensi",
+    "copyMyLink": "Salin tautan saya",
+    "copiedShort": "Disalin",
+    "nav": {
+      "dashboard": "Beranda",
+      "projects": "Proyek",
+      "clients": "Klien saya",
+      "stats": "Statistik",
+      "commissions": "Komisi",
+      "profile": "Agensi saya",
+      "help": "Bantuan & kontak"
+    },
+    "kpi": {
+      "registered": "Klien terdaftar",
+      "following": "Dalam proses",
+      "won": "Berhasil",
+      "visits": "Kunjungan tautan Anda",
+      "potential": "Potensi komisi"
+    },
+    "overview": {
+      "hello": "Halo, {{name}}",
+      "sub": "Aktivitas Anda bersama Unreal Studio secara ringkas.",
+      "actLead": "Klien terdaftar: {{name}}",
+      "activity": "Aktivitas terbaru",
+      "noActivity": "Belum ada aktivitas. Daftarkan klien pertama Anda atau bagikan tautan Anda.",
+      "shortcuts": "Pintasan",
+      "projectsCount": "{{n}} proyek ditugaskan",
+      "clientsCount": "{{n}} klien terdaftar",
+      "commissionsSub": "Estimasi per klien dan per inventaris",
+      "helpSub": "Cara kerja program dan kontak"
+    },
+    "projects": {
+      "sub": "Proyek yang ditugaskan kepada Anda, dengan unit tersedia, harga agensi, dan komisi Anda. Bagikan tautan setiap proyek: kunjungan tercatat atas nama agensi Anda.",
+      "availableN": "{{n}} tersedia",
+      "soldOut": "Habis terjual",
+      "soldN": "{{n}} terjual",
+      "copyLink": "Salin tautan untuk klien",
+      "pack": "Paket agensi",
+      "dossier": "Brosur",
+      "tour": "Tur 3D",
+      "agencyPrice": "Harga agensi",
+      "commission": "Komisi Anda",
+      "reserved": "Dipesan",
+      "unitsTitle": "Unit tersedia",
+      "bedsN": "{{n}} KT",
+      "agencyPriceShort": "Hrg agensi"
+    },
+    "clients": {
+      "search": "Cari klien, email, proyek…",
+      "all": "Semua",
+      "noMatch": "Tidak ada klien yang cocok dengan filter.",
+      "registeredOn": "Terdaftar pada {{date}}",
+      "statusHint": "Tim Unreal memperbarui status seiring perkembangan setiap klien."
+    },
+    "stats": {
+      "sub": "Hasil dari tautan pribadi Anda dan tautan proyek yang Anda bagikan."
+    },
+    "commissions": {
+      "sub": "Estimasi komisi Anda berdasarkan harga agensi unit di setiap proyek dan persentase Anda.",
+      "noProject": "Proyek belum ditentukan",
+      "wonEst": "Klien berhasil (estimasi minimum)",
+      "pipelineEst": "Dalam proses (estimasi minimum)",
+      "wonTitle": "Klien berhasil",
+      "wonEmpty": "Belum ada klien yang berhasil. Saat klien Anda membeli, akan muncul di sini beserta komisinya.",
+      "pipelineTitle": "Klien dalam proses",
+      "pipelineEmpty": "Saat ini tidak ada klien dalam proses.",
+      "disclaimer": "Angka indikatif: komisi akhir tergantung pada unit yang terjual, perjanjian dengan agensi Anda, dan modelnya (closing sendiri atau rujukan). Pembayaran dikonfirmasi oleh tim Unreal."
+    },
+    "profile": {
+      "sub": "Merek Anda, tautan atribusi, dan data agensi Anda.",
+      "data": "Data agensi",
+      "agency": "Agensi",
+      "manager": "Penanggung jawab",
+      "email": "Email",
+      "phone": "Telepon",
+      "website": "Situs web",
+      "country": "Negara",
+      "status": "Status",
+      "since": "Mitra sejak",
+      "st": {
+        "approved": "Disetujui",
+        "active": "Aktif",
+        "pending": "Menunggu",
+        "rejected": "Ditolak"
+      },
+      "editHint": "Ada data yang salah? Hubungi kami dari Bantuan & kontak dan kami akan memperbaruinya."
+    },
+    "help": {
+      "sub": "Cara bekerja sama dengan Unreal Studio sebagai agensi mitra.",
+      "howTitle": "Cara kerjanya",
+      "step1Title": "Pilih proyek",
+      "step1Body": "Di Proyek Anda melihat unit tersedia, harga agensi dan komisi Anda, lengkap dengan brosur, tur, dan paket materi.",
+      "step2Title": "Daftarkan klien Anda",
+      "step2Body": "Lakukan sebelum klien menghubungi kami: tanggal pendaftaran melindungi komisi Anda.",
+      "step3Title": "Bagikan tautan Anda",
+      "step3Body": "Gunakan tautan pribadi Anda atau tautan tiap proyek: kunjungan, formulir, dan pemesanan tercatat atas nama agensi Anda.",
+      "step4Title": "Pantau perkembangan",
+      "step4Body": "Di Klien saya dan Komisi Anda melihat status setiap klien; tim Unreal memperbaruinya.",
+      "commTitle": "Komisi",
+      "modeATitle": "Anda yang closing",
+      "modeABody": "Agensi Anda mendampingi klien hingga penandatanganan.",
+      "modeBTitle": "Anda merujuk klien",
+      "modeBBody": "Anda mendaftarkan klien dan tim kami yang melakukan closing.",
+      "commNote": "Persentase tiap unit (default 5% dari harga agensi) tercantum di Proyek; perjanjian khusus diatur bersama tim.",
+      "contactTitle": "Hubungi tim Unreal",
+      "contactBody": "Pertanyaan tentang proyek, klien, atau komisi Anda: hubungi kami dan kami akan membalas.",
+      "waText": "Halo, saya dari agensi {{agency}} (portal agensi Unreal Studio)."
+    }
   }
 }

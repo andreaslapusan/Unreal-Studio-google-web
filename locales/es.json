@@ -530,7 +530,9 @@
     "anon": "anon",
     "eventType": {
       "visit": "Visita",
-      "form_submit": "Formulario enviado"
+      "form_submit": "Formulario enviado",
+      "reservation": "Reserva",
+      "sale": "Venta"
     }
   },
   "inversoresDashboard": {
@@ -2914,5 +2916,115 @@
   },
   "landings": {
     "guidesTitle": "Guías para invertir en Bali"
+  },
+  "agencyPortal": {
+    "panel": "Portal de agencia",
+    "copyMyLink": "Copiar mi link",
+    "copiedShort": "Copiado",
+    "nav": {
+      "dashboard": "Inicio",
+      "projects": "Proyectos",
+      "clients": "Mis clientes",
+      "stats": "Estadísticas",
+      "commissions": "Comisiones",
+      "profile": "Mi agencia",
+      "help": "Ayuda y contacto"
+    },
+    "kpi": {
+      "registered": "Clientes registrados",
+      "following": "En seguimiento",
+      "won": "Ganados",
+      "visits": "Visitas de tu link",
+      "potential": "Comisión potencial"
+    },
+    "overview": {
+      "hello": "Hola, {{name}}",
+      "sub": "Tu actividad con Unreal Studio de un vistazo.",
+      "actLead": "Cliente registrado: {{name}}",
+      "activity": "Actividad reciente",
+      "noActivity": "Aún no hay actividad. Registra tu primer cliente o comparte tu link.",
+      "shortcuts": "Accesos rápidos",
+      "projectsCount": "{{n}} proyecto(s) asignado(s)",
+      "clientsCount": "{{n}} cliente(s) registrado(s)",
+      "commissionsSub": "Estimación por cliente y por inventario",
+      "helpSub": "Cómo funciona el programa y contacto"
+    },
+    "projects": {
+      "sub": "Proyectos que tienes asignados, con unidades disponibles, precio agencia y tu comisión. Comparte el link de cada proyecto: las visitas quedan atribuidas a tu agencia.",
+      "availableN": "{{n}} disponible(s)",
+      "soldOut": "Agotado",
+      "soldN": "{{n}} vendida(s)",
+      "copyLink": "Copiar link para cliente",
+      "pack": "Pack agencia",
+      "dossier": "Dossier",
+      "tour": "Recorrido 3D",
+      "agencyPrice": "Precio agencia",
+      "commission": "Tu comisión",
+      "reserved": "Reservada",
+      "unitsTitle": "Unidades disponibles",
+      "bedsN": "{{n}} hab.",
+      "agencyPriceShort": "P. agencia"
+    },
+    "clients": {
+      "search": "Buscar cliente, email, proyecto…",
+      "all": "Todos",
+      "noMatch": "Ningún cliente coincide con el filtro.",
+      "registeredOn": "Registrado el {{date}}",
+      "statusHint": "El estado lo actualiza el equipo Unreal a medida que avanza cada cliente."
+    },
+    "stats": {
+      "sub": "Lo que generan tu link personal y los links de proyecto que compartes."
+    },
+    "commissions": {
+      "sub": "Estimación de tu comisión según el precio agencia de las unidades de cada proyecto y tu porcentaje.",
+      "noProject": "Sin proyecto indicado",
+      "wonEst": "Clientes ganados (mín. estimado)",
+      "pipelineEst": "En seguimiento (mín. estimado)",
+      "wonTitle": "Clientes ganados",
+      "wonEmpty": "Todavía no hay clientes ganados. Cuando uno de tus clientes compre, aparecerá aquí con su comisión.",
+      "pipelineTitle": "Clientes en seguimiento",
+      "pipelineEmpty": "No tienes clientes en seguimiento ahora mismo.",
+      "disclaimer": "Cifras orientativas: la comisión final depende de la unidad vendida, del acuerdo con tu agencia y de la modalidad (cierre propio o referido). La liquidación la confirma el equipo Unreal."
+    },
+    "profile": {
+      "sub": "Tu marca, tu link de atribución y los datos de tu agencia.",
+      "data": "Datos de la agencia",
+      "agency": "Agencia",
+      "manager": "Responsable",
+      "email": "Email",
+      "phone": "Teléfono",
+      "website": "Web",
+      "country": "País",
+      "status": "Estado",
+      "since": "Colaborador desde",
+      "st": {
+        "approved": "Aprobada",
+        "active": "Activa",
+        "pending": "Pendiente",
+        "rejected": "Rechazada"
+      },
+      "editHint": "¿Algún dato incorrecto? Escríbenos desde Ayuda y contacto y lo actualizamos."
+    },
+    "help": {
+      "sub": "Cómo trabajar con Unreal Studio como agencia colaboradora.",
+      "howTitle": "Cómo funciona",
+      "step1Title": "Elige proyecto",
+      "step1Body": "En Proyectos ves las unidades disponibles, el precio agencia y tu comisión, con dossier, recorrido y pack de material.",
+      "step2Title": "Registra a tu cliente",
+      "step2Body": "Hazlo antes de que contacte con nosotros: la fecha de registro protege tu comisión.",
+      "step3Title": "Comparte tu link",
+      "step3Body": "Usa tu link personal o el de cada proyecto: visitas, formularios y reservas quedan atribuidos a tu agencia.",
+      "step4Title": "Sigue el avance",
+      "step4Body": "En Mis clientes y Comisiones ves el estado de cada cliente; el equipo Unreal lo actualiza.",
+      "commTitle": "Comisiones",
+      "modeATitle": "Cierras tú la venta",
+      "modeABody": "Tu agencia acompaña al cliente hasta la firma.",
+      "modeBTitle": "Nos pasas el cliente",
+      "modeBBody": "Registras el cliente y el cierre lo hace nuestro equipo.",
+      "commNote": "El porcentaje de cada unidad (por defecto 5% sobre el precio agencia) aparece en Proyectos; los acuerdos especiales se pactan con el equipo.",
+      "contactTitle": "Contacto con el equipo Unreal",
+      "contactBody": "Dudas sobre un proyecto, un cliente o tu comisión: escríbenos y te respondemos.",
+      "waText": "Hola, soy de la agencia {{agency}} (portal de agencias de Unreal Studio)."
+    }
   }
 }

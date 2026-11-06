@@ -32,6 +32,7 @@ for (const f of walk('pages').concat(walk('components'))) {
   for (const m of s.matchAll(/material-symbols-(?:outlined|rounded|sharp)[^>]*>\s*([a-z0-9_]+)\s*</g)) icons.add(m[1]);
   for (const line of s.split('\n')) { if (!ICON_RE.test(line)) continue; for (const m of line.matchAll(/['"]([a-z][a-z0-9_]{2,})['"]/g)) icons.add(m[1]); }
   for (const m of s.matchAll(/icon:\s*['"]([a-z0-9_]+)['"]/g)) icons.add(m[1]);
+  for (const m of s.matchAll(/\bicon=\{?['"]([a-z0-9_]+)['"]/g)) icons.add(m[1]); // props JSX: <Stat icon="group" />
 }
 const list = [...icons].filter((i) => !BAD.has(i) && !/\d{2,}/.test(i)).sort();
 const names = list.join(',');

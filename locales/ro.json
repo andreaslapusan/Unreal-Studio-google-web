@@ -530,7 +530,9 @@
     "anon": "anon",
     "eventType": {
       "visit": "Vizită",
-      "form_submit": "Formular trimis"
+      "form_submit": "Formular trimis",
+      "reservation": "Rezervare",
+      "sale": "Vânzare"
     }
   },
   "inversoresDashboard": {
@@ -2912,5 +2914,115 @@
   },
   "landings": {
     "guidesTitle": "Ghiduri pentru investiții în Bali"
+  },
+  "agencyPortal": {
+    "panel": "Portal agenție",
+    "copyMyLink": "Copiază linkul meu",
+    "copiedShort": "Copiat",
+    "nav": {
+      "dashboard": "Acasă",
+      "projects": "Proiecte",
+      "clients": "Clienții mei",
+      "stats": "Statistici",
+      "commissions": "Comisioane",
+      "profile": "Agenția mea",
+      "help": "Ajutor și contact"
+    },
+    "kpi": {
+      "registered": "Clienți înregistrați",
+      "following": "În lucru",
+      "won": "Câștigați",
+      "visits": "Vizite pe linkul tău",
+      "potential": "Comision potențial"
+    },
+    "overview": {
+      "hello": "Bună, {{name}}",
+      "sub": "Activitatea ta cu Unreal Studio dintr-o privire.",
+      "actLead": "Client înregistrat: {{name}}",
+      "activity": "Activitate recentă",
+      "noActivity": "Încă nu există activitate. Înregistrează primul client sau distribuie linkul.",
+      "shortcuts": "Acces rapid",
+      "projectsCount": "{{n}} proiect(e) alocat(e)",
+      "clientsCount": "{{n}} client(i) înregistrat(i)",
+      "commissionsSub": "Estimare per client și per inventar",
+      "helpSub": "Cum funcționează programul și contact"
+    },
+    "projects": {
+      "sub": "Proiectele alocate ție, cu unități disponibile, preț de agenție și comisionul tău. Distribuie linkul fiecărui proiect: vizitele sunt atribuite agenției tale.",
+      "availableN": "{{n}} disponibil(e)",
+      "soldOut": "Epuizat",
+      "soldN": "{{n}} vândut(e)",
+      "copyLink": "Copiază link pentru client",
+      "pack": "Pachet agenție",
+      "dossier": "Broșură",
+      "tour": "Tur 3D",
+      "agencyPrice": "Preț agenție",
+      "commission": "Comisionul tău",
+      "reserved": "Rezervată",
+      "unitsTitle": "Unități disponibile",
+      "bedsN": "{{n}} dorm.",
+      "agencyPriceShort": "Preț ag."
+    },
+    "clients": {
+      "search": "Caută client, email, proiect…",
+      "all": "Toți",
+      "noMatch": "Niciun client nu corespunde filtrului.",
+      "registeredOn": "Înregistrat pe {{date}}",
+      "statusHint": "Echipa Unreal actualizează starea pe măsură ce avansează fiecare client."
+    },
+    "stats": {
+      "sub": "Ce generează linkul tău personal și linkurile de proiect pe care le distribui."
+    },
+    "commissions": {
+      "sub": "Estimarea comisionului tău pe baza prețului de agenție al unităților fiecărui proiect și a procentului tău.",
+      "noProject": "Fără proiect indicat",
+      "wonEst": "Clienți câștigați (minim estimat)",
+      "pipelineEst": "În lucru (minim estimat)",
+      "wonTitle": "Clienți câștigați",
+      "wonEmpty": "Încă nu există clienți câștigați. Când unul dintre clienții tăi cumpără, va apărea aici cu comisionul.",
+      "pipelineTitle": "Clienți în lucru",
+      "pipelineEmpty": "Nu ai clienți în lucru acum.",
+      "disclaimer": "Cifre orientative: comisionul final depinde de unitatea vândută, de acordul cu agenția ta și de modalitate (închidere proprie sau recomandare). Plata este confirmată de echipa Unreal."
+    },
+    "profile": {
+      "sub": "Brandul tău, linkul de atribuire și datele agenției.",
+      "data": "Datele agenției",
+      "agency": "Agenție",
+      "manager": "Responsabil",
+      "email": "Email",
+      "phone": "Telefon",
+      "website": "Website",
+      "country": "Țară",
+      "status": "Stare",
+      "since": "Partener din",
+      "st": {
+        "approved": "Aprobată",
+        "active": "Activă",
+        "pending": "În așteptare",
+        "rejected": "Respinsă"
+      },
+      "editHint": "Ceva greșit? Scrie-ne din Ajutor și contact și actualizăm."
+    },
+    "help": {
+      "sub": "Cum să lucrezi cu Unreal Studio ca agenție parteneră.",
+      "howTitle": "Cum funcționează",
+      "step1Title": "Alege proiectul",
+      "step1Body": "În Proiecte vezi unitățile disponibile, prețul de agenție și comisionul, cu broșură, tur și pachet de materiale.",
+      "step2Title": "Înregistrează clientul",
+      "step2Body": "Fă-o înainte să ne contacteze: data înregistrării îți protejează comisionul.",
+      "step3Title": "Distribuie linkul",
+      "step3Body": "Folosește linkul personal sau pe cel al fiecărui proiect: vizitele, formularele și rezervările sunt atribuite agenției tale.",
+      "step4Title": "Urmărește progresul",
+      "step4Body": "În Clienții mei și Comisioane vezi starea fiecărui client; echipa Unreal o actualizează.",
+      "commTitle": "Comisioane",
+      "modeATitle": "Închizi tu vânzarea",
+      "modeABody": "Agenția ta însoțește clientul până la semnare.",
+      "modeBTitle": "Ne recomanzi clientul",
+      "modeBBody": "Înregistrezi clientul și echipa noastră face închiderea.",
+      "commNote": "Procentul fiecărei unități (implicit 5% din prețul de agenție) apare în Proiecte; acordurile speciale se stabilesc cu echipa.",
+      "contactTitle": "Contact echipa Unreal",
+      "contactBody": "Întrebări despre un proiect, un client sau comision: scrie-ne și îți răspundem.",
+      "waText": "Bună, sunt de la agenția {{agency}} (portalul de agenții Unreal Studio)."
+    }
   }
 }
