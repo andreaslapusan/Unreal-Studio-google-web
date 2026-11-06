@@ -1406,12 +1406,13 @@
       "reportsActive": "Active",
       "reportsPaused": "Paused",
       "reportsHint": "If paused, they stop receiving the automatic report email and the view-report button is hidden in their portal.",
-      "emailsPaused": "Emails are paused for this client: nothing was sent. Re-enable them on the client card whenever you want.",
-      "autoEmails": "Client emails",
-      "autoEmailsOn": "Emails ON",
-      "autoEmailsOff": "Emails paused",
-      "autoEmailsHint": "While paused, no email at all is sent to this client (payment reminders, construction updates, receipts, welcome or manual emails) until you re-enable them.",
-      "autoEmailsConfirmOn": "Re-enable emails to this client? They will receive automatic reminders, updates and receipts again."
+      "emailsPaused": "Automatic emails are paused for this client: nothing was sent. You can send it manually from the client's mail center.",
+      "autoEmails": "Automatic emails",
+      "autoEmailsOn": "Auto emails ON",
+      "autoEmailsOff": "Auto emails paused",
+      "autoEmailsHint": "While paused, no automatic email is sent to this client (payment reminders, construction updates, automatic welcome). Manual sends from the panel still work after a confirmation.",
+      "autoEmailsConfirmOn": "Re-enable automatic emails to this client? They will receive automatic reminders and updates again.",
+      "pausedConfirm": "This client has automatic emails paused. Send this email anyway?"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

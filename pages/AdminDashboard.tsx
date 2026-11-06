@@ -1451,8 +1451,8 @@ const sendWelcomeCore = async (args: { name: string; email: string; emails?: str
 const blockIfNotActive = (client: Client) => {
   const st = (client as any).status || (client.is_active ? 'active' : 'inactive');
   if (st !== 'active') { alert(t('admin.dash.inactiveNoEmail')); return true; }
-  // Emails pausados (clients.auto_emails_enabled=false): el mailer los rechaza igualmente; avisamos antes.
-  if (client.auto_emails_enabled === false) { alert(t('admin.dash.emailsPaused')); return true; }
+  // Correos AUTOMÁTICOS en pausa: un envío manual sale solo si el admin lo confirma (y va con manual:true).
+  if (client.auto_emails_enabled === false && !window.confirm(t('admin.dash.pausedConfirm'))) return true;
   return false;
 };
 
@@ -1516,11 +1516,11 @@ const sendPreviewedEmail = async () => {
       // Un correo PERSONALIZADO por cada destinatario (su propio email de acceso).
       for (const to of ep.selected) {
         const subj = ep.buildSubject ? ep.buildSubject(to) : ep.subject; // asunto en el idioma de CADA titular
-        const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to, lang: ep.lang, subject: subj, html: ep.buildHtml(to) });
+        const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to, lang: ep.lang, subject: subj, html: ep.buildHtml(to), manual: true });
         if (error || !sent?.success) { alert(mailError(sent, error)); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
       }
     } else {
-      const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html });
+      const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html, manual: true });
       if (error || !sent?.success) { alert(mailError(sent, error)); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
     }
     alert(ep.sentMsg(ep.selected));
@@ -1629,7 +1629,7 @@ const sendReportForProjects = async (client: Client, cps: any[], allowed?: strin
       const lg = holderLangByEmail(client, to);
       const subject = i18n.getFixedT(lg)('emails.report.subject', { project: cp.project_name });
       try {
-        const { data, error } = await invokeSendEmail({ adminUserId: userId, to, lang: lg, subject, html: buildHtml(to) });
+        const { data, error } = await invokeSendEmail({ adminUserId: userId, to, lang: lg, subject, html: buildHtml(to), manual: true });
         if (error || !data?.success) failed++; else sent++;
       } catch { failed++; }
     }

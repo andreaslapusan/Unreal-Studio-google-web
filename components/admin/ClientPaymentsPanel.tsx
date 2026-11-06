@@ -301,6 +301,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     if (!recibiSend || recibiSend.selected.length === 0) return;
     const rs = recibiSend;
     setRecibiSend((p) => p ? { ...p, sending: true } : p);
+    let manual = false; // pasa a true si el admin confirma enviar a un cliente con correos automáticos en pausa
     for (const to of rs.selected) {
       const lg = holderLangByEmail(to);
       const subj = i18n.getFixedT(lg)('emails.recibi.subject', { no: rs.no });
@@ -310,9 +311,11 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
       let sent: any = null, sErr: any = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         const r = await supabase.functions.invoke('send-client-email', {
-          body: { adminUserId, to, kwitansiId: rs.kwitansiId, lang: lg, subject: subj, html: rs.buildBody(to) },
+          body: { adminUserId, to, kwitansiId: rs.kwitansiId, lang: lg, subject: subj, html: rs.buildBody(to), manual },
         });
         sent = r.data; sErr = r.error;
+        // Envío manual a un cliente con correos automáticos en pausa: confirmar y reenviar como manual.
+        if (sent?.error === 'client_emails_paused' && !manual && window.confirm(t('admin.dash.pausedConfirm'))) { manual = true; attempt--; continue; }
         if (!sErr || sent?.success) break; // llegó a la función (ok o error de app) → no reintentar
         await new Promise((res) => setTimeout(res, 800 * (attempt + 1)));
       }

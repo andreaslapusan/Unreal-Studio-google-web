@@ -91,7 +91,7 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ success: false, error: "Method not allowed" }, 405);
 
   let p: { adminUserId?: string; to?: string; subject?: string; html?: string; kwitansiId?: string; lang?: string;
-    raw?: boolean; fromName?: string; attachmentPath?: string; attachmentName?: string; clientId?: string; emailType?: string };
+    raw?: boolean; fromName?: string; attachmentPath?: string; attachmentName?: string; clientId?: string; emailType?: string; manual?: boolean };
   try { p = await req.json(); } catch { return json({ success: false, error: "Bad JSON" }, 400); }
   if (!p.adminUserId || !p.to || !p.subject || !p.html) {
     return json({ success: false, error: "adminUserId, to, subject, html required" }, 400);
@@ -114,12 +114,15 @@ Deno.serve(async (req) => {
     .from("admin_users").select("id").eq("id", p.adminUserId).eq("is_active", true).maybeSingle();
   if (!admin) return json({ success: false, error: "Unauthorized" }, 401);
 
-  // Pausa por cliente (clients.auto_emails_enabled=false): no sale NINGÚN correo a ese cliente, ni por
-  // su clientId ni a cualquiera de sus emails. 200 + success:false para que el panel muestre el aviso.
-  const toList = (Array.isArray(p.to) ? p.to : [p.to]).map((e) => String(e || "").trim().toLowerCase()).filter(Boolean);
-  const { data: paused, error: pausedErr } = await supabase.rpc("client_emails_paused", { p_client_id: p.clientId || null, p_emails: toList });
-  if (pausedErr) return json({ success: false, error: "paused_check_failed" }, 500);
-  if (paused === true) return json({ success: false, error: "client_emails_paused", message: "Emails paused for this client (clients.auto_emails_enabled = false)" });
+  // Correos AUTOMÁTICOS en pausa (clients.auto_emails_enabled=false), por clientId o por cualquiera de sus
+  // emails. Solo pasa un envío MANUAL: manual===true lo manda el panel tras un clic + confirmación del admin
+  // (ya verificado arriba). 200 + success:false para que el panel pueda avisar/confirmar.
+  if (p.manual !== true) {
+    const toList = (Array.isArray(p.to) ? p.to : [p.to]).map((e) => String(e || "").trim().toLowerCase()).filter(Boolean);
+    const { data: paused, error: pausedErr } = await supabase.rpc("client_emails_paused", { p_client_id: p.clientId || null, p_emails: toList });
+    if (pausedErr) return json({ success: false, error: "paused_check_failed" }, 500);
+    if (paused === true) return json({ success: false, error: "client_emails_paused", message: "Automatic emails are paused for this client (clients.auto_emails_enabled = false)" });
+  }
 
   const host = Deno.env.get("SMTP_HOST");
   const user = Deno.env.get("SMTP_USER");
