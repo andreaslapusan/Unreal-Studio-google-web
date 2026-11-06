@@ -84,14 +84,20 @@ function truncate(s, n) {
   if (s.length <= n) return s;
   return s.slice(0, n - 1).trimEnd() + "…";
 }
-function localizedDescription(p, code) {
+// Corte en frontera de palabra (meta description: 140-155 caracteres).
+function truncateWords(s, n) {
+  if (s.length <= n) return s;
+  const cut = s.slice(0, n - 1);
+  return cut.slice(0, Math.max(cut.lastIndexOf(" "), n * 0.8)).replace(/[\s,.;:–-]+$/, "") + "…";
+}
+function localizedDescription(p, code, n = 200) {
   const raw =
     (code === "en" && p.description_en) ||
     (code === "ro" && p.description_ro) ||
     (code === "id" && p.description_id) ||
     p.description ||
     "";
-  return truncate(plain(raw), 200);
+  return (n === 200 ? truncate : truncateWords)(plain(raw), n);
 }
 function ogImage(image) {
   if (!image) return `${ORIGIN}/img/og-image.webp`;
@@ -221,6 +227,31 @@ function floorSize(p) {
   return p.area_m2 > 0 ? { "@type": "QuantitativeValue", value: p.area_m2, unitCode: "MTK" } : undefined;
 }
 
+// Oficinas (mismos datos que pages/Contact.tsx). Solo en el JSON-LD de /contacto: las direcciones
+// completas solo se publican en esa página (regla de negocio). Sin geo: no hay coordenadas en el repo.
+const OFFICES = [
+  { id: "madrid", city: "Madrid", street: "C. de San Nicolás, 17", postal: "28013", region: "Madrid", country: "ES", map: "https://maps.app.goo.gl/abmGvNJzsbuM3pxr5" },
+  { id: "bali", city: "Cemagi, Mengwi", street: "Jl. Pratu Rai Madra", region: "Bali", country: "ID", map: "https://maps.app.goo.gl/bnYDvKsJu7GWdUfA8" },
+];
+const officeLd = (o) => ({
+  "@type": "RealEstateAgent",
+  "@id": `${ORIGIN}/#office-${o.id}`,
+  name: `Unreal Studio ${o.id === "bali" ? "Bali" : "Madrid"}`,
+  parentOrganization: { "@id": `${ORIGIN}/#organization` },
+  url: `${ORIGIN}/es/contacto`,
+  image: `${ORIGIN}/img/og-image.webp`,
+  telephone: "+34625710770",
+  email: "hello@unrealstudiobali.com",
+  address: { "@type": "PostalAddress", streetAddress: o.street, addressLocality: o.city, postalCode: o.postal, addressRegion: o.region, addressCountry: o.country },
+  hasMap: o.map,
+});
+// og:image:alt de la imagen genérica (og-image.webp), por idioma.
+const DEFAULT_ALT = {
+  en: "Investment villa in Bali — Unreal Studio",
+  es: "Villa de inversión en Bali — Unreal Studio",
+  ro: "Vilă de investiție în Bali — Unreal Studio",
+  id: "Vila investasi di Bali — Unreal Studio",
+};
 // Página completa: lang, title, description, OG, canonical, hreflang, JSON-LD y body.
 function renderPage(template, { code, tail, title, desc, main, ld = [], ogType = "website", image, canonical }) {
   const url = canonical || `${ORIGIN}/${code}${tailsOf(tail)[code]}`;
@@ -234,6 +265,7 @@ function renderPage(template, { code, tail, title, desc, main, ld = [], ogType =
   html = setMeta(html, "og:locale", OG_LOCALE[code]);
   html = setMeta(html, "twitter:title", title, "name");
   html = setMeta(html, "twitter:description", desc, "name");
+  html = setMeta(html, "og:image:alt", image ? title : DEFAULT_ALT[code]);
   if (image) {
     const ogImg = ogImageSized(image);
     html = setMeta(html, "og:image", ogImg);
@@ -387,12 +419,7 @@ async function main() {
   // ---- HOME por idioma ----
   // El dominio a secas (/) usa dist/index.html (SPA). Para /es /en /ro /id generamos
   // dist/<prefix>.html (nginx: try_files $uri.html). Copy estático de marketing.
-  const HOME = [
-    { prefix: "en", alt: "Investment villa in Bali — Unreal Studio" },
-    { prefix: "es", alt: "Villa de inversión en Bali — Unreal Studio" },
-    { prefix: "ro", alt: "Vilă de investiție în Bali — Unreal Studio" },
-    { prefix: "id", alt: "Vila investasi di Bali — Unreal Studio" },
-  ];
+  const HOME = ["en", "es", "ro", "id"].map((prefix) => ({ prefix }));
   const eurPrices = available.filter((p) => (p.price_currency || "EUR").toUpperCase() === "EUR" && p.investor_price > 0).map((p) => Number(p.investor_price));
   const minPrice = eurPrices.length ? `${Math.min(...eurPrices).toLocaleString("de-DE")}€` : "90.000€";
   // priceRange del schema Organization (index.html) con el rango real del catálogo disponible.
@@ -417,7 +444,6 @@ ${blogs.length ? `<section><h2>${esc(tr(code, "nav.blog"))}</h2><ul>${blogs.slic
 ${guidesHtml(code)}
 <p><a href="/${code}/agendar">${esc(tr(code, "nav.scheduleCall"))}</a></p>`;
     let html = renderPage(template, { code, tail: "", title, desc, main });
-    html = setMeta(html, "og:image:alt", h.alt);
     if (lcpPreload) html = html.replace(/<\/head>/i, `    ${lcpPreload}\n  </head>`);
     writeOut(`${code}.html`, html);
   }
@@ -446,7 +472,8 @@ ${guidesHtml(code)}
     page("/agendar", tr(code, "booking.title"), tr(code, "contact.metaDescription"),
       `<h1>${esc(tr(code, "booking.heroTitle"))}</h1><p>${esc(tr(code, "booking.heroSubtitle"))}</p>`);
     page("/contacto", tr(code, "contact.title"), tr(code, "contact.metaDescription"),
-      `<h1>${esc(`${tr(code, "contact.heroTitle1")} ${tr(code, "contact.heroTitle2")}`.trim())}</h1><p>${esc(tr(code, "contact.heroSubtitle"))}</p><p><a href="mailto:hello@unrealstudiobali.com">hello@unrealstudiobali.com</a> · +34 625 710 770</p>`);
+      `<h1>${esc(`${tr(code, "contact.heroTitle1")} ${tr(code, "contact.heroTitle2")}`.trim())}</h1><p>${esc(tr(code, "contact.heroSubtitle"))}</p><p><a href="mailto:hello@unrealstudiobali.com">hello@unrealstudiobali.com</a> · +34 625 710 770</p>`,
+      OFFICES.map(officeLd));
     page("/agencias", tr(code, "agenciasPartnership.title"), tr(code, "agenciasPartnership.metaDescription"),
       `<h1>${esc(`${tr(code, "agenciasPartnership.heroTitle1")} ${tr(code, "agenciasPartnership.heroTitle2")}`)}</h1><p>${esc(tr(code, "agenciasPartnership.heroBody"))}</p>`);
     // Legales (public/legal/<lang>/<doc>.md, fallback ES — igual que LegalPage.tsx)
@@ -568,8 +595,11 @@ ${blogs.map((b) => `- [${b.title}](${ORIGIN}/es/blog/${b.slug})`).join("\n")}
       const code = L.code;
       const tail = `/proyecto/${seoSlug}`;
       const seo = seoFor(p, code);
-      const desc = seo?.description ?? localizedDescription(p, code);
-      const title = seo?.title ?? `${p.name} | Unreal Studio Bali`;
+      // Sin entrada en content/seo/projects.json: descripción del idioma (description_ro/_id…) a ≤155
+      // y título con la zona (nombre propio, válido en los 4 idiomas).
+      const desc = seo?.description ?? localizedDescription(p, code, 155);
+      const zone = String(p.location || "").split(",")[0].trim();
+      const title = seo?.title ?? withBrand(zone && !p.name.includes(zone) ? `${p.name}, ${zone}` : p.name);
       const faq = projectFaq(p, code);
       // Zona en el breadcrumb solo si hay landing publicada de esa zona en este idioma.
       const zoneLanding = LANDINGS.find((l) => l.zone && landingLangs(l).includes(code) && String(p.location || "").toLowerCase().includes(l.zone.toLowerCase()));
@@ -614,7 +644,6 @@ ${blogs.map((b) => `- [${b.title}](${ORIGIN}/es/blog/${b.slug})`).join("\n")}
         faqLd(faq),
       ];
       let html = renderPage(template, { code, tail, title, desc, main, ld, ogType: "article", image: img, canonical });
-      html = setMeta(html, "og:image:alt", p.name);
       html = setMeta(html, "og:locale", L.ogLocale);
 
       for (const slug of slugs) {

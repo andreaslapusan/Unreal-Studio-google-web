@@ -31,17 +31,19 @@ const sb = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false 
 // Idiomas con URL propia (prefijo en la ruta). 'es' es el x-default.
 const LANGS = ["es", "en", "ro", "id"];
 
+// `from`: de dónde sale el lastmod real (projects/blogs = max updated_at). Sin `from` → sin lastmod
+// (Google ignora changefreq/priority y desconfía de un lastmod = fecha de build).
 const STATIC_ROUTES = [
-  { path: "/", priority: "1.0", changefreq: "weekly" },
-  { path: "/proyectos", priority: "0.9", changefreq: "weekly" },
-  { path: "/agencias", priority: "0.8", changefreq: "weekly" },
-  { path: "/blog", priority: "0.7", changefreq: "weekly" },
-  { path: "/faq", priority: "0.7", changefreq: "weekly" },
-  { path: "/agendar", priority: "0.8", changefreq: "monthly" },
-  { path: "/contacto", priority: "0.5", changefreq: "monthly" },
-  { path: "/privacidad", priority: "0.3", changefreq: "yearly" },
-  { path: "/terminos", priority: "0.3", changefreq: "yearly" },
-  { path: "/aviso-legal", priority: "0.3", changefreq: "yearly" },
+  { path: "/", from: "projects" },
+  { path: "/proyectos", from: "projects" },
+  { path: "/agencias" },
+  { path: "/blog", from: "blogs" },
+  { path: "/faq" },
+  { path: "/agendar" },
+  { path: "/contacto" },
+  { path: "/privacidad" },
+  { path: "/terminos" },
+  { path: "/aviso-legal" },
 ];
 
 function slugify(s) {
@@ -69,7 +71,7 @@ function seoSlug(project) {
 // indexa la versión correcta por idioma sin contenido duplicado.
 // `paths` ({es:'/invertir-en-bali', en:'/invest-in-bali'}) para rutas con slug por idioma:
 // solo emite los idiomas presentes.
-function urlEntry({ path, paths, priority, changefreq, lastmod }) {
+function urlEntry({ path, paths, lastmod }) {
   const tails = paths || Object.fromEntries(LANGS.map((l) => [l, path === "/" ? "" : path])); // "/" → /es, no /es/
   const alts = [
     ...Object.entries(tails).map(([l, t]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${ORIGIN}/${l}${t}"/>`),
@@ -80,17 +82,13 @@ function urlEntry({ path, paths, priority, changefreq, lastmod }) {
     ([l, tail]) => `  <url>
     <loc>${ORIGIN}/${l}${tail}</loc>${lm}
 ${alts}
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
   </url>`
   ).join("\n");
 }
 
 async function main() {
-  // lastmod en las rutas estáticas = fecha de build (ayuda a Google a saber que
-  // el sitio se mantiene fresco). Las dinámicas ya llevan su updated_at real.
-  const today = new Date().toISOString().slice(0, 10);
-  const entries = STATIC_ROUTES.map((r) => urlEntry({ ...r, lastmod: today }));
+  const entries = [];
+  const latest = { projects: "", blogs: "" }; // max updated_at (YYYY-MM-DD) para las rutas estáticas
 
   // Landings SEO (content/landings): mismo filtro de borradores que lib/landings.ts y el prerender.
   const LDIR = resolve(__dirname, "..", "content", "landings");
@@ -100,7 +98,7 @@ async function main() {
     const paths = Object.fromEntries(Object.entries(l.slugs)
       .filter(([c]) => existsSync(resolve(LDIR, l.id, `${c}.html`)))
       .map(([c, s]) => [c, `/${s}`]));
-    entries.push(urlEntry({ paths, priority: "0.9", changefreq: "monthly", lastmod: l.dateModified }));
+    entries.push(urlEntry({ paths, lastmod: l.dateModified }));
   }
   // Posts con 301 a una landing publicada (mismo mapa que REDIRECTED_POSTS del prerender).
   const REDIRECTED = { "financiar-una-propiedad-en-bali-opciones-para-inversores": "comprar-sobre-plano-bali" };
@@ -114,14 +112,9 @@ async function main() {
     if (pErr) throw pErr;
     for (const p of projects ?? []) {
       if (p.is_hidden || !p.slug) continue;
-      entries.push(
-        urlEntry({
-          path: `/proyecto/${seoSlug(p)}`,
-          priority: "0.85",
-          changefreq: "weekly",
-          lastmod: p.updated_at?.slice(0, 10),
-        })
-      );
+      const lastmod = p.updated_at?.slice(0, 10);
+      if (lastmod > latest.projects) latest.projects = lastmod;
+      entries.push(urlEntry({ path: `/proyecto/${seoSlug(p)}`, lastmod }));
     }
     console.log(`[sitemap] ${(projects ?? []).filter((p) => !p.is_hidden).length} projects`);
   } catch (err) {
@@ -137,14 +130,9 @@ async function main() {
     if (bErr) throw bErr;
     for (const b of blogs ?? []) {
       if (!b.slug || redirected(b.slug)) continue;
-      entries.push(
-        urlEntry({
-          path: `/blog/${b.slug}`,
-          priority: "0.6",
-          changefreq: "monthly",
-          lastmod: (b.updated_at || b.published_date)?.slice(0, 10),
-        })
-      );
+      const lastmod = (b.updated_at || b.published_date)?.slice(0, 10);
+      if (lastmod > latest.blogs) latest.blogs = lastmod;
+      entries.push(urlEntry({ path: `/blog/${b.slug}`, lastmod }));
     }
     console.log(`[sitemap] ${(blogs ?? []).length} blog posts`);
   } catch (err) {
@@ -152,10 +140,11 @@ async function main() {
   }
 
   // Bail out if we got nothing extra — keep the existing checked-in sitemap.
-  if (entries.length <= STATIC_ROUTES.length + landings.length && existsSync(OUT)) {
+  if (entries.length <= landings.length && existsSync(OUT)) {
     console.warn("[sitemap] no dynamic entries fetched; preserving existing file");
     return;
   }
+  entries.unshift(...STATIC_ROUTES.map((r) => urlEntry({ path: r.path, lastmod: latest[r.from] || undefined })));
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">

@@ -1,4 +1,13 @@
+# Buscadores con IA (búsqueda/citas, NO entrenamiento): permitidos explícitamente.
+# Los crawlers de entrenamiento (GPTBot, ClaudeBot, CCBot, Google-Extended…) siguen
+# bloqueados por el bloque gestionado de Cloudflare que se antepone a este fichero.
 User-agent: *
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
 Allow: /
 
 # Bloquea las áreas privadas/internas de la indexación (siguen accesibles con login).
