@@ -38,7 +38,7 @@ import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import { welcomeEmailHtml } from '../lib/clientEmails';
-import { cardHolders, clientSavePayload, reloadedClientCard } from '../lib/clientCardDiff';
+import { cardHolders, clientSavePayload, reloadedClientCard, withHolders } from '../lib/clientCardDiff';
 import { portalPath } from '../lib/portalUrls';
 import i18n, { preloadAllLocales } from '../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
@@ -3661,14 +3661,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {(() => {
           const cc: any = currentClient;
           const hs: any[] = cardHolders(cc);
-          const setH = (next: any[]) => setCurrentClient((prev: any) => ({
-            ...prev, holders: next,
-            name: (next.map((h) => (h.name || '').trim()).filter(Boolean).join(' & ')) || prev.name,
-            email: (next.find((h) => (h.email || '').trim())?.email || prev.email),
-            // El teléfono/idioma del cliente = los del 1er titular (default para la ficha y el portal).
-            phone: (next.find((h) => (h.phone || '').trim())?.phone ?? prev.phone),
-            preferred_language: (next.find((h) => (h.lang || '').trim())?.lang || prev.preferred_language),
-          }));
+          // edited = el admin cambió el teléfono/idioma del 1er titular → solo entonces pasan al cliente.
+          const setH = (next: any[], edited?: 'phone' | 'lang') => setCurrentClient((prev: any) => withHolders(prev, next, edited) as Partial<Client>);
           return (
             <div>
               <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.holders', { defaultValue: 'Titular(es) — nombre, email, teléfono e idioma' })}</label>
@@ -3679,8 +3673,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input type="text" value={h.name || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, name: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderNamePh', { defaultValue: 'Nombre' })} />
                         <input type="email" value={h.email || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, email: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderEmailPh', { defaultValue: 'Email' })} />
-                        <input type="text" value={h.phone || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, phone: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderPhonePh', { defaultValue: 'Teléfono' })} />
-                        <select value={h.lang || 'es'} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, lang: e.target.value } : x); setH(n); }} className="px-4 py-3 bg-white rounded-xl font-bold border border-gray-100 focus:border-primary/20 focus:outline-none text-sm">
+                        <input type="text" value={h.phone || ''} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, phone: e.target.value } : x); setH(n, i === 0 ? 'phone' : undefined); }} className="px-4 py-3 bg-white rounded-xl font-medium border border-gray-100 focus:border-primary/20 focus:outline-none text-sm" placeholder={t('admin.dash.holderPhonePh', { defaultValue: 'Teléfono' })} />
+                        <select value={h.lang || 'es'} onChange={(e) => { const n = hs.map((x, j) => j === i ? { ...x, lang: e.target.value } : x); setH(n, i === 0 ? 'lang' : undefined); }} className="px-4 py-3 bg-white rounded-xl font-bold border border-gray-100 focus:border-primary/20 focus:outline-none text-sm">
                           <option value="es">Español</option><option value="en">English</option><option value="ro">Română</option><option value="id">Indonesia</option>
                         </select>
                       </div>

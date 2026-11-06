@@ -32,6 +32,17 @@ export const cardHolders = (cc: Row): Row[] => (Array.isArray(cc.holders) && cc.
   ...((cc.extra_emails as string[] | null) || []).map((e) => ({ name: '', email: e, phone: '', lang: cc.preferred_language || 'es' })),
 ]);
 
+/** La ficha tras editar sus titulares: nombre/email del cliente salen de ellos; su teléfono/idioma = los del 1er titular
+ *  SOLO cuando el admin cambia ese dato del 1er titular (`edited`) o el cliente aún no tiene. Copiarlos en cada edición
+ *  pisaba el idioma que el cliente eligió en el portal (client_set_my_language solo toca preferred_language). */
+export const withHolders = (prev: Row, next: Row[], edited?: 'phone' | 'lang'): Row => ({
+  ...prev, holders: next,
+  name: next.map((h) => String(h.name || '').trim()).filter(Boolean).join(' & ') || prev.name,
+  email: next.find((h) => String(h.email || '').trim())?.email || prev.email,
+  phone: edited === 'phone' ? next[0]?.phone : prev.phone || next[0]?.phone,
+  preferred_language: edited === 'lang' ? next[0]?.lang : prev.preferred_language || next[0]?.lang,
+});
+
 const isObj = (x: unknown): x is Row => !!x && typeof x === 'object' && !Array.isArray(x);
 const mailOf = (h: unknown): string => (isObj(h) && typeof h.email === 'string' ? h.email.trim().toLowerCase() : '');
 

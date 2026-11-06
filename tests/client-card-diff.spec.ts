@@ -1,7 +1,7 @@
 // Unit test (sin navegador) del diff de la ficha de cliente → admin_save_client.
 // npx playwright test tests/client-card-diff.spec.ts --project=chromium-desktop
 import { test, expect } from '@playwright/test';
-import { changedClientFields, clientSavePayload, reloadedClientCard } from '../lib/clientCardDiff';
+import { cardHolders, changedClientFields, clientSavePayload, reloadedClientCard, withHolders } from '../lib/clientCardDiff';
 
 // Ficha tal como se cargó al abrirla (admin_list_clients); superadmin → también trae contraseñas.
 const opened = {
@@ -85,4 +85,33 @@ test('Reload matches holders by email (user reordered), keeps a holder someone e
   // fila nueva aún sin email: no impide fusionar a los demás
   const noMail = { name: 'Eva', email: '', phone: '', lang: 'es' };
   expect(reloadedClientCard(two, { ...two, holders: [...two.holders, noMail] }, fresh).holders).toEqual([...fresh.holders.slice(0, 2), noMail, di]);
+});
+
+// Editar titulares (setH de la ficha): el teléfono/idioma del cliente solo cambian si el admin toca los del 1er titular
+// o el cliente aún no tiene. Antes cualquier edición copiaba los del 1er titular y pisaba el idioma elegido en el portal.
+const picked = { ...two, preferred_language: 'en', phone: '+34 611' }; // eligió inglés en el portal; su teléfono ≠ el del titular 1
+
+test('editing holder 2 (rename, reorder, add) keeps the client language and phone', () => {
+  const card = withHolders(picked, [picked.holders[0], { ...picked.holders[1], name: 'Bob' }]);
+  expect(card).toMatchObject({ preferred_language: 'en', phone: '+34 611', name: 'Ana & Bob', email: 'ana@x.com' });
+  const p = clientSavePayload(picked, card);
+  expect(p).toMatchObject({ holders: card.holders, name: 'Ana & Bob' });
+  expect(p).not.toHaveProperty('preferred_language');
+  expect(p).not.toHaveProperty('phone');
+  expect(withHolders(picked, [picked.holders[1], picked.holders[0]])).toMatchObject({ preferred_language: 'en', phone: '+34 611' });
+  expect(withHolders(picked, [...picked.holders, { name: '', email: '', phone: '', lang: 'id' }])).toMatchObject({ preferred_language: 'en', phone: '+34 611' });
+  // cliente sin titulares (la ficha monta el 1º desde sus columnas): renombrarlo no toca idioma ni teléfono
+  const bare = { ...opened, holders: [], preferred_language: 'en', phone: '+34 611' };
+  expect(Object.keys(clientSavePayload(bare, withHolders(bare, [{ ...cardHolders(bare)[0], name: 'Ana B' }]))).sort())
+    .toEqual(['base', 'email', 'expected_updated_at', 'extra_emails', 'holders', 'id', 'name']);
+});
+
+test('editing holder 1 language / phone does reach the client (only that field); an empty client value gets filled', () => {
+  const lang = withHolders(picked, [{ ...picked.holders[0], lang: 'ro' }, picked.holders[1]], 'lang');
+  expect(lang).toMatchObject({ preferred_language: 'ro', phone: '+34 611' });
+  expect(clientSavePayload(picked, lang)).toMatchObject({ preferred_language: 'ro', base: { preferred_language: 'en' } });
+  expect(clientSavePayload(picked, lang)).not.toHaveProperty('phone');
+  expect(withHolders(picked, [{ ...picked.holders[0], phone: '+34 622' }, picked.holders[1]], 'phone'))
+    .toMatchObject({ phone: '+34 622', preferred_language: 'en' });
+  expect(withHolders({ ...picked, phone: '' }, [picked.holders[0], { ...picked.holders[1], name: 'Bob' }])).toMatchObject({ phone: '+34 600', preferred_language: 'en' });
 });

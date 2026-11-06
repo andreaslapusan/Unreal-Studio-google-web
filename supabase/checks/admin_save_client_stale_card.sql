@@ -1,4 +1,4 @@
--- Self-check de 20261106213000_admin_save_client_stale_card.sql. Reproduce el bug del 6-nov (una ficha
+-- Self-check de 20261106213000_admin_save_client_stale_card.sql (+ 20261106220500, paso e). Reproduce el bug del 6-nov (una ficha
 -- de cliente abierta ANTES de otros cambios los revertía al guardar) sobre el cliente DEMO (App Review),
 -- dentro de una transacción que SIEMPRE se deshace (rollback): no cambia datos reales ni manda correos
 -- (admin_save_client no envía nada y aquí no cambia ningún email → ni siquiera llama a ensure_auth_user).
@@ -55,26 +55,32 @@ begin
          'base', json_build_object('phone', v_card->'phone'), 'phone', '+00 typed'))::jsonb;
   assert (r->>'success')::boolean and (select phone from clients where id = v_id) = '+00 typed', 'tras recargar no guardó: ' || r::text;
 
-  -- e) Contraseña por titular cambiada en el portal (client_change_password) con la ficha abierta.
+  -- e) Con la ficha abierta, el titular cambia su contraseña del portal (client_change_password: password_hash/_plain,
+  --    temp_password → null, must_change_password → false) y elige otro idioma (client_set_my_language → preferred_language).
+  --    La ficha vieja cambia otro dato del titular (nombre; ya no manda idioma/teléfono si no se tocan los del 1er titular)
+  --    → se guarda SIN conflicto y conserva la contraseña nueva, el idioma y el teléfono del cliente.
   h_old := jsonb_build_array(jsonb_build_object('name', 'DEMO', 'email', 'demo.cliente@unrealstudiobali.com', 'phone', '', 'lang', 'es',
-             'password_plain', 'pw-old', 'password_hash', 'hash-old', 'must_change_password', true));
+             'password_plain', 'pw-old', 'password_hash', 'hash-old', 'temp_password', 'pw-old', 'must_change_password', true));
   update clients set holders = h_old where id = v_id;
   select x into v_card from jsonb_array_elements((admin_list_clients('')->'clients')::jsonb) x where x->>'id' = v_id::text;
-  h_new := jsonb_set(jsonb_set(jsonb_set(h_old, '{0,password_plain}', '"pw-new"'), '{0,password_hash}', '"hash-new"'), '{0,must_change_password}', 'false');
-  update clients set holders = h_new where id = v_id;
-  h_typed := jsonb_set(h_old, '{0,phone}', '"+00 holder"'); -- el admin cambia el teléfono del titular en la ficha vieja
+  h_new := jsonb_build_array((h_old->0) || '{"password_hash":"hash-new","password_plain":"pw-new","temp_password":null,"must_change_password":false}'::jsonb);
+  update clients set holders = h_new, preferred_language = 'ro' where id = v_id;
+  h_typed := jsonb_set(h_old, '{0,name}', '"DEMO renamed"');
   r := admin_save_client('', json_build_object('id', v_id, 'expected_updated_at', v_card->'updated_at',
          'base', json_build_object('holders', v_card->'holders'), 'holders', h_typed))::jsonb;
-  assert r->>'error' = 'conflict' and r->'fields' = '["holders"]'::jsonb, 'titulares en conflicto no rechazados: ' || r::text;
-  -- Recargar conserva lo tecleado (holders con la contraseña VIEJA dentro) → al guardar, la de la BD se mantiene.
-  select x into v_card from jsonb_array_elements((admin_list_clients('')->'clients')::jsonb) x where x->>'id' = v_id::text;
-  r := admin_save_client('', json_build_object('id', v_id, 'expected_updated_at', v_card->'updated_at',
-         'base', json_build_object('holders', v_card->'holders'), 'holders', h_typed))::jsonb;
-  assert (r->>'success')::boolean, 'guardar titulares tras recargar falló: ' || r::text;
+  assert (r->>'success')::boolean, 'contraseña del titular cambiada en el portal = conflicto: ' || r::text;
   select * into c from clients where id = v_id;
-  assert c.holders->0->>'phone' = '+00 holder', 'no guardó el teléfono del titular';
-  assert c.holders->0->>'password_plain' = 'pw-new' and c.holders->0->>'password_hash' = 'hash-new'
-     and c.holders->0->>'must_change_password' = 'false', 'la ficha revirtió la contraseña del titular: ' || c.holders::text;
+  assert c.holders->0->>'name' = 'DEMO renamed', 'no guardó el nombre del titular';
+  assert c.holders->0 @> '{"password_plain":"pw-new","password_hash":"hash-new","temp_password":null,"must_change_password":false}'::jsonb,
+    'la ficha revirtió la contraseña del titular: ' || c.holders::text;
+  assert c.preferred_language = 'ro' and c.phone = '+00 typed', 'pisó el idioma elegido en el portal o el teléfono';
+
+  -- f) Pero si otro cambió un dato de verdad de ese titular (su teléfono), la misma ficha vieja sigue en conflicto.
+  update clients set holders = jsonb_set(holders, '{0,phone}', '"+00 other"') where id = v_id;
+  r := admin_save_client('', json_build_object('id', v_id, 'expected_updated_at', v_card->'updated_at',
+         'base', json_build_object('holders', v_card->'holders'), 'holders', h_typed))::jsonb;
+  assert r->>'error' = 'conflict' and r->'fields' = '["holders"]'::jsonb, 'titular cambiado por otro no rechazado: ' || r::text;
+  assert (select holders->0->>'phone' from clients where id = v_id) = '+00 other', 'el conflicto escribió los titulares';
 end $$;
 
 select 'OK' as result;
