@@ -6,6 +6,7 @@ import { localizeMonthYear, propertyTypeLabel } from '../lib/projectTerms';
 import { uiLocale } from '../lib/dateLocale';
 import { translateStatus } from '../lib/statusI18n';
 import BrandLogo from '../components/BrandLogo';
+import { useCurrency } from '../App';
 import { fmtDate, shortProjectName } from '../components/agency/useAgencyData';
 
 interface ProjectAgencyRow {
@@ -90,6 +91,7 @@ interface ProjectAgencyRow {
   description_id: string | null;
   annual_rental_projection: number | null;
   agency_pack_status: Record<string, any> | null;
+  visibility_status: string | null;
 }
 
 const ACCENT = 'text-[#A0522D]';
@@ -127,6 +129,7 @@ const DocRow: React.FC<{ href: string | null | undefined; icon: string; children
 const AgencyPack: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t, i18n } = useTranslation();
+  const { formatPrice: webFormat } = useCurrency();
   const [project, setProject] = useState<ProjectAgencyRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -175,7 +178,9 @@ const AgencyPack: React.FC = () => {
 
   const money = (v: number | null | undefined, cur?: string | null) =>
     v == null ? null : new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: cur || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(v);
-  const formatPrice = (v: number | null) => money(v, project.price_currency);
+  // Precio = el de la web: mismo campo (investor_price) y mismo formato que la ficha pública.
+  const formatPrice = (v: number | null) => (v == null ? null : webFormat(Number(v), (project.price_currency || 'EUR') as any));
+  const soldOut = project.visibility_status === 'sold_out'; // como la web: agotado → sin precio de venta
   // Mismas claves que el formulario de auto-alta (semi/furnished/turnkey), como en ProjectDetail.
   const furnishingLabel = (() => {
     const v = String(project.furnishing || '').toLowerCase();
@@ -210,7 +215,7 @@ const AgencyPack: React.FC = () => {
           </div>
           <div className={cardCls + ' !p-5 md:!p-6'}>
             <p className="text-[11px] font-black uppercase tracking-widest text-primary/50">{t('agencyPack.priceLabel')}</p>
-            <p className="font-serif text-4xl md:text-5xl mt-1 leading-none">{formatPrice(project.investor_price) ?? '—'}</p>
+            <p className="font-serif text-4xl md:text-5xl mt-1 leading-none">{soldOut ? t('projects.soldOutBadge') : formatPrice(project.investor_price) ?? '—'}</p>
             <p className="text-xs text-primary/60 mt-3 leading-relaxed">{t('agencyPack.commissionIncluded', { furnishing: furnishingLabel })}</p>
           </div>
         </div>
@@ -235,7 +240,7 @@ const AgencyPack: React.FC = () => {
 
         <div className="grid md:grid-cols-2 gap-5 md:gap-6 items-start">
           <Card title={t('agencyPack.sectionPricing')}>
-            <Field label={t('agencyPack.fieldNetSalePrice')}>{formatPrice(project.investor_price)}</Field>
+            <Field label={t('agencyPack.fieldNetSalePrice')}>{soldOut ? null : formatPrice(project.investor_price)}</Field>
             <Field label={t('agencyPack.fieldFurnishing')}>{furnishingLabel || null}</Field>
             <Field label={t('agencyPack.fieldPackFurnished')}>{project.furnishing_pack_cost_usd != null ? `+ ${money(project.furnishing_pack_cost_usd, 'USD')}` : null}</Field>
             <Field label={t('agencyPack.fieldEstimatedDelivery')}>{localizeMonthYear(tr(project, 'completion_date') || '', i18n.language) || null}</Field>

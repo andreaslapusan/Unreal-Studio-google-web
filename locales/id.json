@@ -450,7 +450,7 @@
     "navLogout": "Keluar",
     "loadingProjects": "Memuat proyek…",
     "loadingAuth": "Memuat…",
-    "noProjectsYet": "Belum ada proyek yang ditugaskan. Hubungi manajer Anda untuk mengaktifkan proyek yang akan Anda tangani.",
+    "noProjectsYet": "Saat ini tidak ada proyek yang dijual di website. Begitu ada yang baru, akan muncul di sini.",
     "accessDenied": "Akses ditolak",
     "accessDeniedBody": "Akun Anda tidak memiliki peran sebagai agensi mitra.",
     "constructionProgress": "Progres konstruksi",
@@ -1977,7 +1977,8 @@
         "country": "Negara",
         "personal_link_slug": "Tautan pribadi (slug)",
         "status": "Status"
-      }
+      },
+      "projectsAll": "Proyek: agensi ini melihat semua yang dijual di website, dengan harga yang sama seperti di website."
     },
     "demoBanner": "Akun demo hanya-baca: Anda dapat melihat proyek dan blog. Data klien, pembayaran, dan tim tidak tersedia di akun ini."
   },
@@ -2960,7 +2961,7 @@
       "requestsSub_other": "{{count}} permintaan terbuka"
     },
     "projects": {
-      "sub": "Proyek yang ditugaskan kepada Anda, dengan unit tersedia, harga agensi, dan komisi Anda. Bagikan tautan setiap proyek: kunjungan tercatat atas nama agensi Anda.",
+      "sub": "Semua yang dijual di website, dengan harga yang sama seperti di website, unit tersedia, dan komisi Anda. Bagikan tautan setiap proyek: kunjungan tercatat atas nama agensi Anda.",
       "availableN": "Tersedia: {{count}}",
       "soldOut": "Habis terjual",
       "soldN": "Terjual: {{count}}",
@@ -2979,7 +2980,8 @@
       "availableN_one": "1 tersedia",
       "availableN_other": "{{count}} tersedia",
       "soldN_one": "1 terjual",
-      "soldN_other": "{{count}} terjual"
+      "soldN_other": "{{count}} terjual",
+      "onSale": "Dijual"
     },
     "clients": {
       "search": "Cari klien, email, proyek…",
@@ -2993,7 +2995,7 @@
       "catalog": "Katalog umum"
     },
     "commissions": {
-      "sub": "Estimasi komisi Anda berdasarkan harga agensi unit di setiap proyek dan persentase Anda.",
+      "sub": "Estimasi komisi Anda berdasarkan harga di website untuk setiap proyek dan persentase Anda.",
       "noProject": "Proyek belum ditentukan",
       "wonEst": "Klien berhasil (estimasi minimum)",
       "pipelineEst": "Dalam proses (estimasi minimum)",
@@ -3028,7 +3030,7 @@
       "sub": "Cara bekerja sama dengan Unreal Studio sebagai agensi mitra.",
       "howTitle": "Cara kerjanya",
       "step1Title": "Pilih proyek",
-      "step1Body": "Di Proyek Anda melihat unit tersedia, harga agensi dan komisi Anda, lengkap dengan brosur, tur, dan paket materi.",
+      "step1Body": "Di Proyek Anda melihat semua yang dijual di website, dengan harga yang sama seperti di website, dan komisi Anda, lengkap dengan brosur, tur, dan paket materi.",
       "step2Title": "Daftarkan klien Anda",
       "step2Body": "Lakukan sebelum klien menghubungi kami: tanggal pendaftaran melindungi komisi Anda.",
       "step3Title": "Bagikan tautan Anda",
@@ -3040,19 +3042,19 @@
       "modeABody": "Agensi Anda mendampingi klien hingga penandatanganan.",
       "modeBTitle": "Anda merujuk klien",
       "modeBBody": "Anda mendaftarkan klien dan tim kami yang melakukan closing.",
-      "commNote": "Persentase tiap unit (default 5% dari harga agensi) tercantum di Proyek; perjanjian khusus diatur bersama tim.",
+      "commNote": "Persentase tiap unit (default 5% dari harga di website) tercantum di Proyek; perjanjian khusus diatur bersama tim.",
       "contactTitle": "Hubungi tim Unreal",
       "contactBody": "Pertanyaan tentang proyek, klien, atau komisi Anda: hubungi kami dan kami akan membalas.",
       "waText": "Halo, saya dari agensi {{agency}} (portal agensi Unreal Studio)."
     },
     "availability": {
-      "sub": "Semua yang bisa Anda jual hari ini: unit tersedia di proyek Anda dengan harga agensi dan komisi Anda. Konfirmasikan unit dengan tim sebelum mempresentasikannya.",
+      "sub": "Semua yang bisa Anda jual hari ini: listing yang sama dengan yang dijual di website, dengan harga yang sama, beserta komisi Anda. Konfirmasikan unit dengan tim sebelum mempresentasikannya.",
       "allProjects": "Semua proyek",
       "sortCommission": "Komisi tertinggi",
       "sortPrice": "Harga terendah",
       "units": "Unit tersedia",
       "reservedN": "Dipesan",
-      "empty": "Saat ini tidak ada unit tersedia di proyek Anda.",
+      "empty": "Saat ini tidak ada yang dijual di website.",
       "ask": "Tanya unit ini",
       "waUnit": "Halo, saya dari {{agency}}. Bisa konfirmasi ketersediaan {{unit}} ({{project}})?"
     },
@@ -3092,7 +3094,7 @@
       }
     },
     "news": {
-      "sub": "Progres konstruksi dan perubahan pada proyek Anda.",
+      "sub": "Progres konstruksi dan perubahan pada proyek yang dijual.",
       "construction": "Laporan konstruksi baru",
       "updated": "Data proyek diperbarui",
       "state": "Status: {{status}} · Progres {{pct}}%",

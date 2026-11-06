@@ -392,7 +392,7 @@ const ProjectDetail: React.FC = () => {
           stats strip so partners see their personalized number first. */}
       {role && matchedUnitId && (
         <div className="max-w-7xl mx-auto px-6 md:px-12 -mt-4 mb-2 flex justify-end">
-          <RolePricingBadge unitId={matchedUnitId} />
+          <RolePricingBadge unitId={matchedUnitId} webPrice={project.investor_price} webCurrency={project.price_currency} />
         </div>
       )}
 

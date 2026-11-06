@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { logoFileError, uploadPartnerLogo } from '../agency/partnerLogo';
-import { shortProjectName } from '../agency/useAgencyData';
 
 const TEXT_FIELDS = ['agency_name', 'manager_name', 'email', 'phone', 'whatsapp', 'website', 'country', 'personal_link_slug'] as const;
 type TextField = typeof TEXT_FIELDS[number];
@@ -21,16 +20,13 @@ interface Props {
 
 const cls = 'mt-1 block w-full rounded-lg border border-primary/20 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40';
 
-export default function AgencyPartnerEditor({ partner, properties, onClose, onSaved }: Props) {
+export default function AgencyPartnerEditor({ partner, onClose, onSaved }: Props) {
   const { t } = useTranslation();
   const [form, setForm] = useState<Record<TextField, string>>(() => Object.fromEntries(TEXT_FIELDS.map((k) => [k, partner[k] ?? ''])) as Record<TextField, string>);
   const [status, setStatus] = useState<string>(partner.status ?? 'pending');
-  const [projects, setProjects] = useState<string[]>(partner.projects_assigned ?? []);
   const [logo, setLogo] = useState<string | null>(partner.logo_url ?? null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-
-  const toggle = (id: string) => setProjects((ps) => (ps.includes(id) ? ps.filter((x) => x !== id) : [...ps, id]));
 
   const onLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -48,7 +44,6 @@ export default function AgencyPartnerEditor({ partner, properties, onClose, onSa
     const patch: Record<string, unknown> = Object.fromEntries(TEXT_FIELDS.map((k) => [k, form[k].trim() || null]));
     patch.email = form.email.trim().toLowerCase();
     patch.status = status;
-    patch.projects_assigned = projects;
     if (status === 'approved' && !partner.approved_at) patch.approved_at = new Date().toISOString();
     const { error } = await supabase.from('listing_partners').update(patch).eq('id', partner.id);
     setBusy(false);
@@ -89,15 +84,8 @@ export default function AgencyPartnerEditor({ partner, properties, onClose, onSa
         </div>
         <p className="text-[11px] text-primary/50 mt-2">{t('admin.agencyEdit.slugHint')}</p>
 
-        <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mt-6 mb-2">{t('admin.agencyEdit.projects', { n: projects.length })}</h3>
-        <div className="grid sm:grid-cols-2 gap-1 max-h-60 overflow-y-auto border border-primary/10 rounded-lg p-2">
-          {properties.map((p) => (
-            <label key={p.id} className="flex items-center gap-2 text-sm py-1 cursor-pointer">
-              <input type="checkbox" checked={projects.includes(p.id)} onChange={() => toggle(p.id)} />
-              {shortProjectName(p.name)}
-            </label>
-          ))}
-        </div>
+        {/* Ya no hay asignación por agencia: todas ven lo que está a la venta en la web (Andreas 6-nov). */}
+        <p className="text-xs text-primary/60 mt-6 bg-almond/60 rounded-lg px-3 py-2">{t('admin.agencyEdit.projectsAll')}</p>
 
         {err && <p className="text-xs text-red-600 mt-3">{err}</p>}
         <div className="flex gap-2 mt-6">

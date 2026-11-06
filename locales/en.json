@@ -449,7 +449,7 @@
     "navLogout": "Sign out",
     "loadingProjects": "Loading projects…",
     "loadingAuth": "Loading…",
-    "noProjectsYet": "You don't have any projects assigned yet. Reach out to your manager to activate the projects you'll be listing.",
+    "noProjectsYet": "There are no projects for sale on the website right now. As soon as a new one is published it will appear here.",
     "accessDenied": "Access denied",
     "accessDeniedBody": "Your account does not have a partner agency role.",
     "constructionProgress": "Build progress",
@@ -1872,7 +1872,8 @@
         "country": "Country",
         "personal_link_slug": "Personal link (slug)",
         "status": "Status"
-      }
+      },
+      "projectsAll": "Projects: this agency sees everything for sale on the website, at the same price as the website."
     },
     "demoBanner": "Read-only demo account: you can browse projects and the blog. Client, payment and team data are not available in this account."
   },
@@ -2959,7 +2960,7 @@
       "requestsSub_other": "{{count}} open requests"
     },
     "projects": {
-      "sub": "Projects assigned to you, with available units, agency price and your commission. Share each project link: visits are attributed to your agency.",
+      "sub": "Everything for sale on the website, at the same price as the website, with available units and your commission. Share each project link: visits are attributed to your agency.",
       "availableN": "Available: {{count}}",
       "soldOut": "Sold out",
       "soldN": "Sold: {{count}}",
@@ -2978,7 +2979,8 @@
       "availableN_one": "1 available",
       "availableN_other": "{{count}} available",
       "soldN_one": "1 sold",
-      "soldN_other": "{{count}} sold"
+      "soldN_other": "{{count}} sold",
+      "onSale": "For sale"
     },
     "clients": {
       "search": "Search client, email, project…",
@@ -2992,7 +2994,7 @@
       "catalog": "General catalogue"
     },
     "commissions": {
-      "sub": "Estimate of your commission based on the agency price of each project's units and your percentage.",
+      "sub": "Estimate of your commission based on each project's website price and your percentage.",
       "noProject": "No project specified",
       "wonEst": "Won clients (est. minimum)",
       "pipelineEst": "In progress (est. minimum)",
@@ -3027,7 +3029,7 @@
       "sub": "How to work with Unreal Studio as a partner agency.",
       "howTitle": "How it works",
       "step1Title": "Pick a project",
-      "step1Body": "In Projects you see available units, agency price and your commission, with brochure, tour and material pack.",
+      "step1Body": "In Projects you see everything for sale on the website, at the same price as the website, and your commission, with brochure, tour and material pack.",
       "step2Title": "Register your client",
       "step2Body": "Do it before they contact us: the registration date protects your commission.",
       "step3Title": "Share your link",
@@ -3039,19 +3041,19 @@
       "modeABody": "Your agency guides the client through to signing.",
       "modeBTitle": "You refer the client",
       "modeBBody": "You register the client and our team handles the closing.",
-      "commNote": "Each unit's percentage (5% of the agency price by default) is shown in Projects; special agreements are arranged with the team.",
+      "commNote": "Each unit's percentage (5% of the website price by default) is shown in Projects; special agreements are arranged with the team.",
       "contactTitle": "Contact the Unreal team",
       "contactBody": "Questions about a project, a client or your commission: write to us and we will reply.",
       "waText": "Hi, I am from the agency {{agency}} (Unreal Studio agency portal)."
     },
     "availability": {
-      "sub": "Everything you can sell today: available units in your projects with agency price and your commission. Confirm the unit with the team before presenting it.",
+      "sub": "Everything you can sell today: the same listings that are for sale on the website, at the same price, with your commission. Confirm the unit with the team before presenting it.",
       "allProjects": "All projects",
       "sortCommission": "Highest commission",
       "sortPrice": "Lowest price",
       "units": "Available units",
       "reservedN": "Reserved",
-      "empty": "No units available in your projects right now.",
+      "empty": "There is nothing for sale on the website right now.",
       "ask": "Ask about this unit",
       "waUnit": "Hi, this is {{agency}}. Could you confirm availability of {{unit}} ({{project}})?"
     },
@@ -3091,7 +3093,7 @@
       }
     },
     "news": {
-      "sub": "Construction progress and changes in your assigned projects.",
+      "sub": "Construction progress and changes in the projects for sale.",
       "construction": "New construction report",
       "updated": "Project listing updated",
       "state": "Status: {{status}} · Progress {{pct}}%",

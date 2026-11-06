@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
+import { useCurrency } from "../App";
 
 interface UnitPricing {
   price_publico: number | null;
@@ -22,6 +23,9 @@ interface UnitPricing {
 
 interface Props {
   unitId: string;
+  /** Precio de la web de este proyecto (investor_price): las agencias ven SIEMPRE el precio de la web. */
+  webPrice?: number | null;
+  webCurrency?: string | null;
 }
 
 const fmt = (n: number | null | undefined) =>
@@ -29,8 +33,9 @@ const fmt = (n: number | null | undefined) =>
     ? new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n)
     : "—";
 
-export default function RolePricingBadge({ unitId }: Props) {
+export default function RolePricingBadge({ unitId, webPrice, webCurrency }: Props) {
   const { t } = useTranslation();
+  const { formatPrice } = useCurrency();
   const { user, role } = useAuth();
   const [pricing, setPricing] = useState<UnitPricing | null>(null);
   const [partnerId, setPartnerId] = useState<string | null>(null);
@@ -75,15 +80,13 @@ export default function RolePricingBadge({ unitId }: Props) {
       (partnerId && pricing.commission_per_partner?.[partnerId]) ??
       pricing.commission_default_pct ??
       5;
-    const commission = pricing.price_agencia ? Math.round((pricing.price_agencia * pct) / 100) : null;
+    // Sin "precio agencia" aparte: la agencia vende al precio de la web (el que ya enseña esta ficha).
+    const price = Number(webPrice) || 0;
+    if (!price) return null;
     return (
       <div className="inline-flex flex-col gap-1 bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm">
-        <div className="flex items-center gap-3">
-          <span className="font-bold text-green-900">{t('fix.pricing.agencyPrice')}:</span>
-          <span className="font-serif text-lg text-green-900">{fmt(pricing.price_agencia)}</span>
-        </div>
         <div className="text-xs text-green-800">
-          {t('fix.pricing.commissionLabel', { pct })} = <strong>{fmt(commission)}</strong> {t('fix.pricing.perClosedUnit')}
+          {t('fix.pricing.commissionLabel', { pct })} = <strong>{formatPrice(Math.round((price * pct) / 100), (webCurrency || 'EUR') as any)}</strong> {t('fix.pricing.perClosedUnit')}
         </div>
       </div>
     );

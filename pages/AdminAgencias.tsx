@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { shortProjectName } from '../components/agency/useAgencyData';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useCurrency } from '../App';
 
 interface ProjectAgencyRow {
   id: string;
@@ -64,7 +65,7 @@ const ok = (v: any): boolean => {
   return false;
 };
 
-const buildChecklist = (p: ProjectAgencyRow, t: (k: string) => string): ChecklistGroup[] => [
+const buildChecklist = (p: ProjectAgencyRow, t: (k: string) => string, price: (n: number, cur: any) => string): ChecklistGroup[] => [
   {
     title: 'groupIdentification',
     items: [
@@ -106,7 +107,8 @@ const buildChecklist = (p: ProjectAgencyRow, t: (k: string) => string): Checklis
   {
     title: 'groupPricing',
     items: [
-      { label: t('admin.agc.labelNetSalePrice'), value: p.investor_price ? `${p.investor_price} ${p.price_currency || 'USD'}` : null },
+      // Mismo campo y formato que la web (las agencias venden al precio de la web).
+      { label: t('admin.agc.labelNetSalePrice'), value: p.investor_price ? price(Number(p.investor_price), p.price_currency || 'EUR') : null },
       { label: t('admin.agc.labelFurnishing'), value: p.furnishing },
       { label: t('admin.agc.labelFurnishingPack'), value: p.furnishing_pack_cost_usd },
       { label: t('admin.agc.labelPaymentPlan'), value: p.payment_plan_off_plan },
@@ -131,6 +133,7 @@ const buildChecklist = (p: ProjectAgencyRow, t: (k: string) => string): Checklis
 
 const AdminAgencias: React.FC = () => {
   const { t } = useTranslation();
+  const { formatPrice } = useCurrency();
   const [projects, setProjects] = useState<ProjectAgencyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -153,7 +156,7 @@ const AdminAgencias: React.FC = () => {
   }, []);
 
   const totalsFor = (p: ProjectAgencyRow) => {
-    const groups = buildChecklist(p, t);
+    const groups = buildChecklist(p, t, formatPrice);
     const total = groups.reduce((s, g) => s + g.items.length, 0);
     const done = groups.reduce(
       (s, g) => s + g.items.filter((it) => ok(it.value)).length,
@@ -190,7 +193,7 @@ const AdminAgencias: React.FC = () => {
           {projects.map((p) => {
             const totals = totalsFor(p);
             const isOpen = !!expanded[p.id];
-            const groups = buildChecklist(p, t);
+            const groups = buildChecklist(p, t, formatPrice);
             return (
               <div
                 key={p.id}

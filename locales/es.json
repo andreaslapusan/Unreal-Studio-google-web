@@ -449,7 +449,7 @@
     "navLogout": "Salir",
     "loadingProjects": "Cargando proyectos…",
     "loadingAuth": "Cargando…",
-    "noProjectsYet": "Aún no tienes proyectos asignados. Contacta con tu manager para que te active los proyectos en los que vas a colaborar.",
+    "noProjectsYet": "Ahora mismo no hay proyectos a la venta en la web. En cuanto salga uno nuevo aparecerá aquí.",
     "accessDenied": "Acceso no autorizado",
     "accessDeniedBody": "Tu cuenta no tiene rol de agencia colaboradora.",
     "constructionProgress": "Avance obra",
@@ -1872,7 +1872,8 @@
         "country": "País",
         "personal_link_slug": "Link personal (slug)",
         "status": "Estado"
-      }
+      },
+      "projectsAll": "Proyectos: esta agencia ve todo lo que está a la venta en la web, al mismo precio que la web."
     },
     "demoBanner": "Cuenta demo de solo lectura: puedes ver proyectos y blog. Los datos de clientes, cobros y equipo no están disponibles en esta cuenta."
   },
@@ -2961,7 +2962,7 @@
       "requestsSub_other": "{{count}} solicitudes abiertas"
     },
     "projects": {
-      "sub": "Proyectos que tienes asignados, con unidades disponibles, precio agencia y tu comisión. Comparte el link de cada proyecto: las visitas quedan atribuidas a tu agencia.",
+      "sub": "Todo lo que está a la venta en la web, al mismo precio que la web, con las unidades disponibles y tu comisión. Comparte el link de cada proyecto: las visitas quedan atribuidas a tu agencia.",
       "availableN": "Disponibles: {{count}}",
       "soldOut": "Agotado",
       "soldN": "Vendidas: {{count}}",
@@ -2980,7 +2981,8 @@
       "availableN_one": "1 disponible",
       "availableN_other": "{{count}} disponibles",
       "soldN_one": "1 vendida",
-      "soldN_other": "{{count}} vendidas"
+      "soldN_other": "{{count}} vendidas",
+      "onSale": "A la venta"
     },
     "clients": {
       "search": "Buscar cliente, email, proyecto…",
@@ -2994,7 +2996,7 @@
       "catalog": "Catálogo general"
     },
     "commissions": {
-      "sub": "Estimación de tu comisión según el precio agencia de las unidades de cada proyecto y tu porcentaje.",
+      "sub": "Estimación de tu comisión según el precio de la web de cada proyecto y tu porcentaje.",
       "noProject": "Sin proyecto indicado",
       "wonEst": "Clientes ganados (mín. estimado)",
       "pipelineEst": "En seguimiento (mín. estimado)",
@@ -3029,7 +3031,7 @@
       "sub": "Cómo trabajar con Unreal Studio como agencia colaboradora.",
       "howTitle": "Cómo funciona",
       "step1Title": "Elige proyecto",
-      "step1Body": "En Proyectos ves las unidades disponibles, el precio agencia y tu comisión, con dossier, recorrido y pack de material.",
+      "step1Body": "En Proyectos ves todo lo que está a la venta en la web, al mismo precio que la web, y tu comisión, con dossier, recorrido y pack de material.",
       "step2Title": "Registra a tu cliente",
       "step2Body": "Hazlo antes de que contacte con nosotros: la fecha de registro protege tu comisión.",
       "step3Title": "Comparte tu link",
@@ -3041,19 +3043,19 @@
       "modeABody": "Tu agencia acompaña al cliente hasta la firma.",
       "modeBTitle": "Nos pasas el cliente",
       "modeBBody": "Registras el cliente y el cierre lo hace nuestro equipo.",
-      "commNote": "El porcentaje de cada unidad (por defecto 5% sobre el precio agencia) aparece en Proyectos; los acuerdos especiales se pactan con el equipo.",
+      "commNote": "El porcentaje de cada unidad (por defecto 5% sobre el precio de la web) aparece en Proyectos; los acuerdos especiales se pactan con el equipo.",
       "contactTitle": "Contacto con el equipo Unreal",
       "contactBody": "Dudas sobre un proyecto, un cliente o tu comisión: escríbenos y te respondemos.",
       "waText": "Hola, soy de la agencia {{agency}} (portal de agencias de Unreal Studio)."
     },
     "availability": {
-      "sub": "Todo lo que puedes vender hoy: unidades disponibles de tus proyectos con precio agencia y tu comisión. Confirma la unidad con el equipo antes de presentarla.",
+      "sub": "Todo lo que puedes vender hoy: lo mismo que está a la venta en la web, al mismo precio, con tu comisión. Confirma la unidad con el equipo antes de presentarla.",
       "allProjects": "Todos los proyectos",
       "sortCommission": "Mayor comisión",
       "sortPrice": "Menor precio",
       "units": "Unidades disponibles",
       "reservedN": "Reservadas",
-      "empty": "No hay unidades disponibles en tus proyectos ahora mismo.",
+      "empty": "Ahora mismo no hay nada a la venta en la web.",
       "ask": "Preguntar por esta unidad",
       "waUnit": "Hola, soy de {{agency}}. ¿Me confirmáis disponibilidad de {{unit}} ({{project}})?"
     },
@@ -3093,7 +3095,7 @@
       }
     },
     "news": {
-      "sub": "Avances de obra y cambios en tus proyectos asignados.",
+      "sub": "Avances de obra y cambios en los proyectos a la venta.",
       "construction": "Nuevo informe de obra",
       "updated": "Ficha del proyecto actualizada",
       "state": "Estado: {{status}} · Avance {{pct}}%",

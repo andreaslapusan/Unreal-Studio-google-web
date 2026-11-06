@@ -9,7 +9,8 @@ import { useTranslation } from 'react-i18next';
 import i18n, { preloadAllLocales } from '../../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import { projectSeoSlug } from '../../lib/projectUrl';
-import { AgencyData, PropertyRow, copyText, fmtEUR, isUnitAvailable, partnerParam, shortProjectName } from './useAgencyData';
+import { useCurrency } from '../../App';
+import { AgencyData, PropertyRow, availableUnits, copyText, partnerParam, shortProjectName } from './useAgencyData';
 import { card, btnGhost, Empty, SectionTitle } from './ui';
 
 const LANGS = ['es', 'en', 'ro', 'id'] as const;
@@ -17,6 +18,7 @@ const CHANNELS = ['whatsapp', 'instagram', 'email'] as const;
 
 export default function AgencyKit({ data }: { data: AgencyData }) {
   const { t, i18n: { language } } = useTranslation();
+  const { formatPrice } = useCurrency();
   const { partner, projects, units, projectInfo } = data;
   const [pid, setPid] = useState(projects[0]?.id ?? '');
   const [lang, setLang] = useState<string>((LANGS as readonly string[]).includes(language?.slice(0, 2)) ? language.slice(0, 2) : 'es');
@@ -44,15 +46,15 @@ export default function AgencyKit({ data }: { data: AgencyData }) {
   ].filter((f) => !!f.url);
 
   // Datos para los textos (todos de la ficha).
-  const avail = units.filter((u) => u.property_id === p.id && isUnitAvailable(u));
-  const prices = avail.map((u) => u.price_agencia ?? u.price_publico) // price_agencia = PVP cerrado del canal agencias (FAQ 7).filter((n): n is number => !!n);
-  const beds = avail.map((u) => u.bedrooms).filter((n): n is number => !!n);
+  // Precio = el de la web (projects.investor_price, "Desde" de la tarjeta pública), nunca un precio de canal aparte.
+  const price = Number(p.investor_price) || 0;
+  const beds = [p.bedrooms, ...availableUnits(p, units).map((u) => u.bedrooms)].filter((n): n is number => !!n);
   const ft = i18n.getFixedT(lang);
   const pct = info?.completion_percent ?? p.pct_progress;
   const facts = [
     beds.length ? ft('agencyPortal.kit.tpl.beds', { n: Math.min(...beds), count: Math.min(...beds) }) : null,
     pct === 100 ? ft('agencyPortal.kit.tpl.finished') : typeof pct === 'number' && pct > 0 ? ft('agencyPortal.kit.tpl.building', { pct }) : ft('agencyPortal.kit.tpl.offPlan'),
-    prices.length ? ft('agencyPortal.kit.tpl.from', { price: fmtEUR(Math.min(...prices)) }) : null,
+    price ? ft('agencyPortal.kit.tpl.from', { price: formatPrice(price, (p.price_currency || 'EUR') as any) }) : null,
     info?.tenure ? [info.tenure, info.years_contract ? ft('agencyPortal.kit.tpl.years', { n: info.years_contract }) : null].filter(Boolean).join(' ') : null,
   ].filter(Boolean).join(' · ');
   const vars = { name: shortProjectName(p.name), area: p.area || info?.location || 'Bali', facts, agency: partner.agency_name, link };

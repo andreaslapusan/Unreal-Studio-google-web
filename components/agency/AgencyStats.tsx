@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { langPath } from '../LocaleRoute';
 import { uiLocale } from '../../lib/dateLocale';
-import { AgencyData, shortProjectName } from './useAgencyData';
+import { AgencyData } from './useAgencyData';
 import { card, SectionTitle, Stat } from './ui';
 
 export default function AgencyStats({ data }: { data: AgencyData }) {
@@ -19,7 +19,7 @@ export default function AgencyStats({ data }: { data: AgencyData }) {
   rows.forEach((r) => { if (r.property_slug) counts.set(r.property_slug, (counts.get(r.property_slug) ?? 0) + 1); });
   const top = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const max = top[0]?.[1] ?? 1;
-  const nameOf = (slug: string) => { const n = data.projects.find((p) => p.slug === slug)?.name; return n ? shortProjectName(n) : slug; };
+  const nameOf = (slug: string) => data.nameOf(slug) ?? slug;
 
   return (
     <div className="animate-in fade-in duration-500 space-y-6">

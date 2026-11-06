@@ -1,9 +1,10 @@
-/** Proyectos asignados a la agencia: disponibilidad, precio agencia y comisión por unidad + material y link con su UTM. */
+/** Proyectos a la venta en la web: disponibilidad, precio de la web y comisión por unidad + material y link con su UTM. */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { projectSeoSlug } from '../../lib/projectUrl';
-import { AgencyData, PropertyRow, UnitRow, shortProjectName, groupUnits, copyText, fmtEUR, isUnitAvailable, partnerParam, unitCommission, unitPct } from './useAgencyData';
+import { useCurrency } from '../../App';
+import { AgencyData, PropertyRow, UnitRow, shortProjectName, groupUnits, copyText, isUnitAvailable, partnerParam, unitPct } from './useAgencyData';
 import { card, btnGhost, Empty, ListRow, SectionTitle } from './ui';
 
 export default function AgencyProjects({ data }: { data: AgencyData }) {
@@ -30,8 +31,11 @@ interface CardProps { p: PropertyRow; units: UnitRow[]; partnerId: string; partn
 
 const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef }) => {
   const { t } = useTranslation();
+  const { formatPrice } = useCurrency();
   const [copied, setCopied] = useState(false);
   const avail = all.filter(isUnitAvailable);
+  const cur = (p.price_currency || 'EUR') as any;
+  const price = Number(p.investor_price) || 0;
   const soldN = all.filter((u) => u.sold).length;
   const publicUrl = p.slug
     ? `${window.location.origin}/proyecto/${projectSeoSlug({ slug: p.slug, location: p.area ?? null })}?utm_source=lister&utm_partner=${partnerRef}&utm_property=${p.slug}`
@@ -53,11 +57,13 @@ const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef
               {p.area && <p className="text-xs text-primary/50 mt-0.5">{p.area}</p>}
             </div>
             <span className={`shrink-0 mt-1 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full whitespace-nowrap ${avail.length ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-              {avail.length ? t('agencyPortal.projects.availableN', { count: avail.length }) : t('agencyPortal.projects.soldOut')}
+              {avail.length ? t('agencyPortal.projects.availableN', { count: avail.length }) : t('agencyPortal.projects.onSale')}
             </span>
           </div>
           {p.short_pitch && <p className="text-sm text-primary/70 mt-2 line-clamp-2">{p.short_pitch}</p>}
           <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-primary/60 mt-3">
+            {/* Mismo precio y formato que la tarjeta de la web */}
+            {price > 0 && <span>{t('projects.card.from')} <strong className="text-primary">{formatPrice(price, cur)}</strong></span>}
             {typeof p.pct_progress === 'number' && <span>{t('agenciasDashboard.constructionProgress')}: <strong className="text-primary">{p.pct_progress}%</strong></span>}
             {p.delivery_date && <span>{t('agenciasDashboard.estimatedDelivery')} <strong className="text-primary">{p.delivery_date}</strong></span>}
             {soldN > 0 && <span>{t('agencyPortal.projects.soldN', { count: soldN })}</span>}
@@ -94,8 +100,8 @@ const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef
             {groupUnits(avail).map(({ u, n }) => (
               <ListRow key={u.id}
                 title={<>{[shortProjectName(p.name), u.bedrooms ? t('agencyPortal.projects.bedrooms', { count: u.bedrooms }) : null].filter(Boolean).join(' · ')}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
-                sub={[t('agencyPortal.projects.availableN', { count: n }), u.price_agencia ? `${t('agencyPortal.projects.agencyPriceShort')} ${fmtEUR(u.price_agencia)}` : null].filter(Boolean).join(' · ') || undefined}
-                right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{u.price_agencia ? fmtEUR(unitCommission(u, partnerId)) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{unitPct(u, partnerId)}%</span></>}
+                sub={t('agencyPortal.projects.availableN', { count: n })}
+                right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{price ? formatPrice((price * unitPct(u, partnerId)) / 100, cur) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{unitPct(u, partnerId)}%</span></>}
               />
             ))}
           </ul>

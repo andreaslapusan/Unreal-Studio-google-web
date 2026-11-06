@@ -1,24 +1,25 @@
 /** Inicio del portal de agencias: KPIs, accesos rápidos y actividad reciente. */
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AgencyData, shortProjectName, catalogLink, copyText, fmtDate, fmtEUR, isUnitAvailable, unitCommission } from './useAgencyData';
+import { useCurrency } from '../../App';
+import { AgencyData, catalogLink, copyText, fmtDate, isUnitAvailable, potentialEUR } from './useAgencyData';
 import { card, btnPrimary, btnGhost, ListRow, Stat, StatusPill } from './ui';
 
 interface Props { data: AgencyData; go: (view: string, extra?: Record<string, string>) => void }
 
 export default function AgencyOverview({ data, go }: Props) {
   const { t } = useTranslation();
-  const { partner, leads, events, units, projects } = data;
+  const { formatPrice, convert } = useCurrency();
+  const { partner, leads, events, units } = data;
   const [copied, setCopied] = useState(false);
   if (!partner) return null;
 
   const following = leads.filter((l) => l.status === 'new' || l.status === 'contacted').length;
   const won = leads.filter((l) => l.status === 'won').length;
   const visits = events.filter((e) => e.event_type === 'visit').length;
-  const potential = units.filter(isUnitAvailable).reduce((s, u) => s + unitCommission(u, partner.id), 0);
-  const projectName = (id: string | null) => { const n = projects.find((p) => p.id === id)?.name; return n ? shortProjectName(n) : undefined; };
-
-  const slugName = (slug: string) => { const n = projects.find((p) => p.slug === slug)?.name; return n ? shortProjectName(n) : slug; };
+  const potential = potentialEUR(data, partner.id, convert);
+  const projectName = (id: string | null) => data.nameOf(id);
+  const slugName = (slug: string) => data.nameOf(slug) ?? slug;
   // Actividad: clientes registrados + eventos de su link, lo más reciente primero.
   const activity = [
     ...leads.map((l) => ({ id: `l-${l.id}`, at: l.created_at, icon: 'person_add', text: t('agencyPortal.overview.actLead', { name: l.client_name }), sub: projectName(l.property_id), status: l.status })),
@@ -55,7 +56,7 @@ export default function AgencyOverview({ data, go }: Props) {
         <Stat icon="emoji_events" label={t('agencyPortal.kpi.won')} value={won} onClick={() => go('commissions')} accent={won > 0} />
         <Stat icon="visibility" label={t('agencyPortal.kpi.visits')} value={visits} onClick={() => go('stats')} />
         <div className="col-span-2 lg:col-span-1">
-          <Stat icon="payments" label={t('agencyPortal.kpi.potential')} value={fmtEUR(potential)} onClick={() => go('commissions')} />
+          <Stat icon="payments" label={t('agencyPortal.kpi.potential')} value={formatPrice(potential, 'EUR')} onClick={() => go('commissions')} />
         </div>
       </div>
 

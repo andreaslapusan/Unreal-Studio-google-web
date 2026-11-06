@@ -1,4 +1,4 @@
-/** Novedades: avance de obra y actualizaciones de las fichas de los proyectos asignados (solo lectura). */
+/** Novedades: avance de obra y actualizaciones de las fichas de los proyectos a la venta (solo lectura). */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { translateStatus } from '../../lib/statusI18n';

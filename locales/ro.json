@@ -449,7 +449,7 @@
     "navLogout": "Ieșire",
     "loadingProjects": "Se încarcă proiectele…",
     "loadingAuth": "Se încarcă…",
-    "noProjectsYet": "Nu ai încă proiecte alocate. Contactează-ți managerul pentru a-ți activa proiectele la care vei colabora.",
+    "noProjectsYet": "Momentan nu există proiecte de vânzare pe site. Imediat ce apare unul nou, îl vei vedea aici.",
     "accessDenied": "Acces neautorizat",
     "accessDeniedBody": "Contul tău nu are rol de agenție colaboratoare.",
     "constructionProgress": "Progres construcție",
@@ -1872,7 +1872,8 @@
         "country": "Țară",
         "personal_link_slug": "Link personal (slug)",
         "status": "Status"
-      }
+      },
+      "projectsAll": "Proiecte: această agenție vede tot ce este de vânzare pe site, la același preț ca pe site."
     },
     "demoBanner": "Cont demo doar pentru citire: poți vedea proiectele și blogul. Datele clienților, plăților și echipei nu sunt disponibile în acest cont."
   },
@@ -2961,7 +2962,7 @@
       "requestsSub_few": "{{count}} solicitări deschise"
     },
     "projects": {
-      "sub": "Proiectele alocate ție, cu unități disponibile, preț de agenție și comisionul tău. Distribuie linkul fiecărui proiect: vizitele sunt atribuite agenției tale.",
+      "sub": "Tot ce este de vânzare pe site, la același preț ca pe site, cu unitățile disponibile și comisionul tău. Distribuie linkul fiecărui proiect: vizitele sunt atribuite agenției tale.",
       "availableN": "Disponibile: {{count}}",
       "soldOut": "Epuizat",
       "soldN": "Vândute: {{count}}",
@@ -2982,7 +2983,8 @@
       "availableN_few": "{{count}} disponibile",
       "soldN_one": "1 vândută",
       "soldN_other": "{{count}} vândute",
-      "soldN_few": "{{count}} vândute"
+      "soldN_few": "{{count}} vândute",
+      "onSale": "De vânzare"
     },
     "clients": {
       "search": "Caută client, email, proiect…",
@@ -2996,7 +2998,7 @@
       "catalog": "Catalog general"
     },
     "commissions": {
-      "sub": "Estimarea comisionului tău pe baza prețului de agenție al unităților fiecărui proiect și a procentului tău.",
+      "sub": "Estimarea comisionului tău pe baza prețului de pe site al fiecărui proiect și a procentului tău.",
       "noProject": "Fără proiect indicat",
       "wonEst": "Clienți câștigați (minim estimat)",
       "pipelineEst": "În lucru (minim estimat)",
@@ -3031,7 +3033,7 @@
       "sub": "Cum să lucrezi cu Unreal Studio ca agenție parteneră.",
       "howTitle": "Cum funcționează",
       "step1Title": "Alege proiectul",
-      "step1Body": "În Proiecte vezi unitățile disponibile, prețul de agenție și comisionul, cu broșură, tur și pachet de materiale.",
+      "step1Body": "În Proiecte vezi tot ce este de vânzare pe site, la același preț ca pe site, și comisionul tău, cu broșură, tur și pachet de materiale.",
       "step2Title": "Înregistrează clientul",
       "step2Body": "Fă-o înainte să ne contacteze: data înregistrării îți protejează comisionul.",
       "step3Title": "Distribuie linkul",
@@ -3043,19 +3045,19 @@
       "modeABody": "Agenția ta însoțește clientul până la semnare.",
       "modeBTitle": "Ne recomanzi clientul",
       "modeBBody": "Înregistrezi clientul și echipa noastră face închiderea.",
-      "commNote": "Procentul fiecărei unități (implicit 5% din prețul de agenție) apare în Proiecte; acordurile speciale se stabilesc cu echipa.",
+      "commNote": "Procentul fiecărei unități (implicit 5% din prețul de pe site) apare în Proiecte; acordurile speciale se stabilesc cu echipa.",
       "contactTitle": "Contact echipa Unreal",
       "contactBody": "Întrebări despre un proiect, un client sau comision: scrie-ne și îți răspundem.",
       "waText": "Bună, sunt de la agenția {{agency}} (portalul de agenții Unreal Studio)."
     },
     "availability": {
-      "sub": "Tot ce poți vinde azi: unitățile disponibile din proiectele tale cu preț de agenție și comisionul tău. Confirmă unitatea cu echipa înainte de a o prezenta.",
+      "sub": "Tot ce poți vinde azi: aceleași proprietăți care sunt de vânzare pe site, la același preț, cu comisionul tău. Confirmă unitatea cu echipa înainte de a o prezenta.",
       "allProjects": "Toate proiectele",
       "sortCommission": "Comision maxim",
       "sortPrice": "Preț minim",
       "units": "Unități disponibile",
       "reservedN": "Rezervate",
-      "empty": "Nu există unități disponibile acum în proiectele tale.",
+      "empty": "Momentan nu este nimic de vânzare pe site.",
       "ask": "Întreabă despre unitate",
       "waUnit": "Bună, sunt de la {{agency}}. Îmi confirmați disponibilitatea pentru {{unit}} ({{project}})?"
     },
@@ -3096,7 +3098,7 @@
       }
     },
     "news": {
-      "sub": "Progresul lucrărilor și schimbări în proiectele tale.",
+      "sub": "Progresul lucrărilor și schimbări în proiectele de vânzare.",
       "construction": "Raport nou de șantier",
       "updated": "Fișa proiectului actualizată",
       "state": "Stare: {{status}} · Progres {{pct}}%",

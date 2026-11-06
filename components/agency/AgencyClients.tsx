@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
-import { AgencyData, fmtDate, shortProjectName } from './useAgencyData';
+import { AgencyData, fmtDate } from './useAgencyData';
 import LeadDrawer from './LeadDrawer';
 import { card, btnPrimary, input, Empty, ListRow, SectionTitle, StatusPill } from './ui';
 
@@ -44,6 +44,9 @@ export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: 
     setSaving(true);
     setErr('');
     const row = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, (v as string).trim() || null]));
+    // agency_leads.property_id apunta a properties: un proyecto de la web aún sin ficha de agencia va en la nota.
+    const sel = projects.find((p) => p.id === form.property_id);
+    if (sel && !sel.in_catalog) { row.property_id = null; row.notes = [sel.name, row.notes].filter(Boolean).join(' · '); }
     const { error } = await supabase.from('agency_leads').insert({ ...row, agency_id: partner.id });
     setSaving(false);
     if (error) { setErr(error.message); return; }
@@ -52,7 +55,7 @@ export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: 
     await reloadLeads();
   };
 
-  const projectName = (id: string | null) => { const n = projects.find((p) => p.id === id)?.name; return n ? shortProjectName(n) : t('agencyPortal.commissions.noProject'); };
+  const projectName = (id: string | null) => data.nameOf(id) ?? t('agencyPortal.commissions.noProject');
   const needle = q.trim().toLowerCase();
   const shown = leads.filter((l) =>
     (status === 'all' || (status === 'open' ? l.status === 'new' || l.status === 'contacted' : l.status === status)) &&
