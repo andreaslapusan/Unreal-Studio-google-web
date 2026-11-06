@@ -102,6 +102,8 @@ export interface Client {
   logins_30d?: number;
   /** false = no sale ningún correo a este cliente hasta reactivarlo (clients.auto_emails_enabled) */
   auto_emails_enabled?: boolean;
+  /** Versión de fila (clients.updated_at): la ficha la manda al guardar para detectar cambios de otros */
+  updated_at?: string;
   projects?: ClientProject[];
 }
 

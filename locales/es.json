@@ -1417,7 +1417,9 @@
       "portalNever": "nunca",
       "portalLogins": "Accesos: últimos 7 días {{d7}} · últimos 30 días {{d30}}",
       "portalLoginsHint": "Cuenta como acceso cada entrada al portal separada más de 1 hora de la anterior.",
-      "pausedConfirm": "Este cliente tiene los correos automáticos en pausa. ¿Enviar este correo igualmente?"
+      "pausedConfirm": "Este cliente tiene los correos automáticos en pausa. ¿Enviar este correo igualmente?",
+      "clientConflict": "Otra persona ha cambiado este cliente mientras tenías la ficha abierta. No se ha guardado nada para no pisar su cambio. Pulsa «Recargar» para traer la versión actual: lo que has escrito se mantiene en el formulario.",
+      "clientConflictReload": "Recargar"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

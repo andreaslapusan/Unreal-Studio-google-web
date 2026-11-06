@@ -1417,7 +1417,9 @@
       "portalNever": "niciodată",
       "portalLogins": "Conectări: ultimele 7 zile {{d7}} · ultimele 30 de zile {{d30}}",
       "portalLoginsHint": "Fiecare intrare în portal la peste 1 oră după cea anterioară contează ca o conectare.",
-      "pausedConfirm": "Acest client are e-mailurile automate suspendate. Trimiți totuși acest e-mail?"
+      "pausedConfirm": "Acest client are e-mailurile automate suspendate. Trimiți totuși acest e-mail?",
+      "clientConflict": "Altcineva a modificat acest client cât timp aveai fișa deschisă. Nu s-a salvat nimic, ca să nu-i suprascriem modificarea. Apasă „Reîncarcă” pentru versiunea actuală: ce ai scris rămâne în formular.",
+      "clientConflictReload": "Reîncarcă"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",

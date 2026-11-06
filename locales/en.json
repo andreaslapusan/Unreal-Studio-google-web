@@ -1417,7 +1417,9 @@
       "portalNever": "never",
       "portalLogins": "Logins: last 7 days {{d7}} · last 30 days {{d30}}",
       "portalLoginsHint": "Each portal visit more than 1 hour after the previous one counts as a login.",
-      "pausedConfirm": "This client has automatic emails paused. Send this email anyway?"
+      "pausedConfirm": "This client has automatic emails paused. Send this email anyway?",
+      "clientConflict": "Someone else changed this client while you had the card open. Nothing was saved, so their change is not overwritten. Press “Reload” to get the current version: what you typed stays in the form.",
+      "clientConflictReload": "Reload"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

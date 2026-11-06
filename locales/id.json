@@ -1522,7 +1522,9 @@
       "portalNever": "belum pernah",
       "portalLogins": "Login: 7 hari terakhir {{d7}} · 30 hari terakhir {{d30}}",
       "portalLoginsHint": "Setiap kunjungan ke portal lebih dari 1 jam setelah kunjungan sebelumnya dihitung sebagai login.",
-      "pausedConfirm": "Email otomatis untuk klien ini sedang dijeda. Tetap kirim email ini?"
+      "pausedConfirm": "Email otomatis untuk klien ini sedang dijeda. Tetap kirim email ini?",
+      "clientConflict": "Orang lain mengubah klien ini saat kartunya masih Anda buka. Tidak ada yang disimpan agar perubahannya tidak tertimpa. Tekan “Muat ulang” untuk mengambil versi terbaru: yang sudah Anda ketik tetap ada di formulir.",
+      "clientConflictReload": "Muat ulang"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",

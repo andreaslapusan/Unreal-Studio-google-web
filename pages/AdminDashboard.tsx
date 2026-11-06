@@ -38,6 +38,7 @@ import DashboardOverview from '../components/admin/DashboardOverview';
 import PropertyReportsModal from '../components/admin/PropertyReportsModal';
 import { SOCIAL_NETWORKS } from '../lib/socials';
 import { welcomeEmailHtml } from '../lib/clientEmails';
+import { changedClientFields, clientSavePayload } from '../lib/clientCardDiff';
 import { portalPath } from '../lib/portalUrls';
 import i18n, { preloadAllLocales } from '../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
@@ -222,6 +223,9 @@ const AMENITIES_LIST = [
   const [clients, setClients] = useState<Client[]>([]);
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [currentClient, setCurrentClient] = useState<Partial<Client>>({});
+  // La ficha tal como se cargó al abrirla (base del diff al guardar) y los campos en conflicto si otro la cambió.
+  const [clientBase, setClientBase] = useState<Partial<Client>>({});
+  const [clientConflict, setClientConflict] = useState<string[] | null>(null);
   const [clientSearch, setClientSearch] = useState('');
   // Herramientas de filtro/orden del listado de clientes.
   const [clientFilterProjects, setClientFilterProjects] = useState<string[]>([]); // multi-selección por proyecto
@@ -1317,11 +1321,37 @@ const bulkClients = async (action: 'delete' | 'status', status?: string) => {
 };
 
 const openEditClient = (client?: Client) => {
+  setClientBase(client || {});
+  setClientConflict(null);
   setCurrentClient(client ? { ...client } : {
     id: `client-${Date.now()}`,
     name: '', email: '', phone: '', notes: '', tags: [], is_active: true
   });
   setIsEditingClient(true);
+};
+
+// Campo en conflicto → sección de la ficha (nombre/email/teléfono/idioma van en el bloque de titulares).
+const CLIENT_FIELD_LABEL: Record<string, string> = { notes: 'notesLabel', drive_folder_url: 'clientDriveFolder', status: 'clientStatus', is_active: 'clientStatus', auto_emails_enabled: 'autoEmails', feature_overrides: 'clientPermsTitle' };
+// «Recargar» tras un conflicto: ficha fresca + encima SOLO lo que el usuario cambió (sigue viéndolo).
+const reloadClientKeepingEdits = async () => {
+  const uid = getAdminUserId();
+  if (!uid) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
+  setUploading(true);
+  try {
+    const { data, error } = await supabase.rpc('admin_list_clients', { p_user_id: uid });
+    const fresh = (data as any)?.clients?.find((c: any) => c.id === currentClient.id);
+    if (error || !fresh) throw error || new Error('client not found');
+    setClients((data as any).clients);
+    const mine = Object.fromEntries(changedClientFields(clientBase, currentClient).map((k) => [k, (currentClient as any)[k]]));
+    setClientBase(fresh);
+    setCurrentClient({ ...fresh, ...mine });
+    setClientConflict(null);
+  } catch (err) {
+    console.error('Error reloading client:', err);
+    alert(t('admin.dash.saveClientError'));
+  } finally {
+    setUploading(false);
+  }
 };
 
 const handleSaveClient = async (e: React.FormEvent) => {
@@ -1331,7 +1361,8 @@ const handleSaveClient = async (e: React.FormEvent) => {
     const userId = getAdminUserId();
     if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
     const isNewClient = !currentClient.id || currentClient.id.startsWith('client-');
-    const clientData = currentClient.id?.startsWith('client-') ? { ...currentClient, id: undefined } : currentClient;
+    // Editar = solo lo cambiado + versión cargada; mandar la ficha entera revertía cambios hechos mientras tanto.
+    const clientData = isNewClient ? { ...currentClient, id: undefined } : clientSavePayload(clientBase, currentClient);
     // Emails NUEVOS añadidos (principal o cualquier co-titular) → se les manda la
     // bienvenida. Comparamos el conjunto de correos ANTES vs DESPUÉS, para no
     // reenviar a los que ya estaban y para cubrir también a los co-titulares.
@@ -1346,6 +1377,7 @@ const handleSaveClient = async (e: React.FormEvent) => {
       p_client: clientData
     });
     if (error) throw error;
+    if (data?.error === 'conflict') { setClientConflict(data.fields || []); return; }
     if (data && !data.success) throw new Error(data.error);
     await loadData();
     setIsEditingClient(false);
@@ -3726,6 +3758,13 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             })}
           </div>
         </div>
+        {clientConflict && (
+          <div role="alert" className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-2xl text-xs">
+            <p className="font-medium">{t('admin.dash.clientConflict')}</p>
+            {clientConflict.length > 0 && <p className="mt-1 font-bold">{[...new Set(clientConflict.map((f) => t(`admin.dash.${CLIENT_FIELD_LABEL[f] || 'holders'}`)))].join(' · ')}</p>}
+            <button type="button" onClick={() => void reloadClientKeepingEdits()} disabled={uploading} className="mt-3 inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest hover:bg-black transition disabled:opacity-50"><span className="material-symbols-outlined text-sm">refresh</span> {t('admin.dash.clientConflictReload')}</button>
+          </div>
+        )}
         <div className="flex gap-4 pt-4">
           <button type="button" onClick={() => setIsEditingClient(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-gray-200 text-gray-400 hover:bg-gray-50 transition">{t('admin.common.cancel')}</button>
           <button type="submit" disabled={uploading} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg hover:bg-black transition disabled:opacity-50">{uploading ? t('admin.adminDash.savingEllipsis') : t('admin.adminDash.save')}</button>
