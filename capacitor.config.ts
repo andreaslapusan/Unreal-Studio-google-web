@@ -38,7 +38,7 @@ const config: CapacitorConfig = {
     // Dominios que se abren DENTRO de la app (login Supabase, storage, mapas).
     allowNavigation: ['unrealstudiobali.com', '*.unrealstudiobali.com', '*.supabase.co'],
   },
-  ios: { contentInset: 'automatic', backgroundColor: BRAND_CREAM },
+  ios: { contentInset: 'automatic', backgroundColor: BRAND_CREAM, allowsLinkPreview: false },
   android: { backgroundColor: BRAND_CREAM },
   plugins: {
     SplashScreen: {
@@ -49,6 +49,8 @@ const config: CapacitorConfig = {
       androidScaleType: 'CENTER_CROP',
     },
     StatusBar: { style: 'LIGHT', backgroundColor: BRAND_CREAM, overlaysWebView: false },
+    // Android: la web no usa safe-area → MainActivity pone la WebView entre las barras; iconos oscuros sobre crema.
+    SystemBars: { insetsHandling: 'disable', style: 'LIGHT' },
     PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] },
   },
 };

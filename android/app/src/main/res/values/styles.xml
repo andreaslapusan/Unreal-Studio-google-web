@@ -13,6 +13,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- Crema detrás de la barra de estado y la de navegación (SystemBars pinta el decor con windowBackground) -->
+        <item name="android:windowBackground">#F3E5D8</item>
     </style>
 
 

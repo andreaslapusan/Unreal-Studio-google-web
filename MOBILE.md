@@ -14,6 +14,7 @@ llegan a las apps sin pasar por tienda). Rama: `apps/capacitor-2026-11` — **no
 - `app-shell/`: solo la página **sin conexión** (`server.errorPath`), en es/en/ro/id.
 - `scripts/app-assets.mjs`: icono (marca + etiqueta del flavor) y splash → `android/`, `ios/` y `~/jobs/apps/store-assets/<flavor>/`.
 - Nativo: cámara + ubicación (fichaje de empleados, ya en la web por `getUserMedia`/`geolocation`), push (plugin instalado; falta FCM/APNs + backend para enviar).
+- Nativo (sensación de app): iOS deslizar-atrás (`AppViewController` en `SceneDelegate.swift`), Android atrás/pop-ups (web `lib/nativeApp.ts`) e insets (`MainActivity`), vibración (`@capacitor/haptics`), sin vista previa de enlaces.
 
 ## Android (se compila en el VPS)
 ```bash
