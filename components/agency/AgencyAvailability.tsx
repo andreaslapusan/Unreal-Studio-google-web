@@ -57,7 +57,7 @@ export default function AgencyAvailability({ data }: { data: AgencyData }) {
                 return (
                   <ListRow key={u.id}
                     title={<>{uName}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
-                    sub={t('agencyPortal.projects.availableN', { n })}
+                    sub={t('agencyPortal.projects.availableN', { count: n })}
                     extra={<>
                       {u.price_agencia ? `${t('agencyPortal.projects.agencyPriceShort')} ${fmtEUR(u.price_agencia)} · ` : ''}
                       <a href={whatsappUrl(t('agencyPortal.availability.waUnit', { agency: partner.agency_name, unit: uName, project: pName }))} target="_blank" rel="noopener noreferrer" className="font-bold text-primary/70 underline underline-offset-2">{t('agencyPortal.availability.ask')}</a>

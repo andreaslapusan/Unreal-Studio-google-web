@@ -20,7 +20,6 @@ import { uiLocale, weekdaysFor } from '../lib/dateLocale';
 import { realEmailOf } from '../lib/portalAuth';
 import { baliTime, baliToday, baliDayStartISO } from '../lib/timezone';
 import VacationCalendar from '../components/VacationCalendar';
-import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 import ConstructionReportModal from '../components/ConstructionReportModal';
 
@@ -691,10 +690,6 @@ const EmpleadosDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Footer compartido (rompe el padding lateral del contenedor con -mx-5) */}
-      <div className="-mx-5 mt-12">
-        <Footer />
-      </div>
       </div>
     </div>
   );

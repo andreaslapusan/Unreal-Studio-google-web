@@ -9,7 +9,6 @@ import { dateOnly, baliToday } from '../lib/timezone';
 import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
-import Footer from '../components/Footer';
 import PortalHeader from '../components/PortalHeader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 import ClientPaymentsSection from '../components/ClientPaymentsSection';
@@ -912,8 +911,6 @@ const ClientDashboard: React.FC = () => {
           </a>
         </div>
       </main>
-
-      <Footer />
 
       {calculatorProject && <CalculatorModal project={calculatorProject} onClose={() => setCalculatorProject(null)} />}
 

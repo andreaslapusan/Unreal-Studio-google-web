@@ -6,7 +6,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
-import Footer from './Footer';
 import BrandLogo from './BrandLogo';
 
 interface PortalShellProps {
@@ -32,7 +31,6 @@ const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => 
       {/* el pie queda bajo el pliegue: sin franja blanca bajo la tarjeta de login en móvil */}
       <main className="flex-grow flex items-center justify-center px-6 py-12 min-h-[calc(100dvh-4rem)]">{children}</main>
 
-      <Footer />
     </div>
   );
 };

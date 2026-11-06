@@ -2,8 +2,8 @@
 import React from 'react';
 
 export const card = 'bg-white rounded-2xl p-5 shadow-sm border border-primary/5';
-export const btnPrimary = 'inline-flex items-center justify-center gap-1.5 bg-primary text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-black transition disabled:opacity-50';
-export const btnGhost = 'inline-flex items-center justify-center gap-1.5 bg-white border border-primary/15 text-primary px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition';
+export const btnPrimary = 'inline-flex items-center justify-center gap-1.5 whitespace-nowrap bg-primary text-white px-3 sm:px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black transition disabled:opacity-50';
+export const btnGhost = 'inline-flex items-center justify-center gap-1.5 whitespace-nowrap bg-white border border-primary/15 text-primary px-3 sm:px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-50 transition';
 export const input = 'w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white text-primary focus:outline-none focus:border-primary/40';
 
 export const SectionTitle: React.FC<{ title: string; sub?: string; action?: React.ReactNode }> = ({ title, sub, action }) => (
@@ -17,12 +17,12 @@ export const SectionTitle: React.FC<{ title: string; sub?: string; action?: Reac
 );
 
 export const Stat: React.FC<{ icon: string; label: string; value: React.ReactNode; onClick?: () => void; accent?: boolean }> = ({ icon, label, value, onClick, accent }) => (
-  <button type="button" onClick={onClick} disabled={!onClick} className={`${card} text-left w-full hover:border-primary/20 transition disabled:cursor-default`}>
-    <div className="flex items-center justify-between gap-2">
-      <span className={`material-symbols-outlined text-2xl ${accent ? 'text-green-600' : 'text-primary/40'}`}>{icon}</span>
-      <span className={`text-2xl md:text-3xl font-black truncate ${accent ? 'text-green-700' : 'text-primary'}`}>{value}</span>
-    </div>
-    <p className="text-[11px] font-black uppercase tracking-widest text-primary/40 mt-3">{label}</p>
+  <button type="button" onClick={onClick} disabled={!onClick} className={`${card} !p-4 md:!p-5 h-full text-left w-full flex flex-col gap-2.5 enabled:hover:border-primary/20 enabled:hover:shadow-md transition disabled:cursor-default`}>
+    <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${accent ? 'bg-green-50 text-green-700' : 'bg-almond/60 text-primary/60'}`}>
+      <span className="material-symbols-outlined text-[18px]">{icon}</span>
+    </span>
+    <span className={`text-2xl md:text-3xl font-black leading-none tabular-nums whitespace-nowrap ${accent ? 'text-green-700' : 'text-primary'}`}>{value}</span>
+    <span className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-primary/45 leading-snug">{label}</span>
   </button>
 );
 

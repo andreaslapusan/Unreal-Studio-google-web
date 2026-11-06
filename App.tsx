@@ -149,12 +149,16 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
     || location.pathname.startsWith('/empleados')
     || location.pathname.startsWith('/manager')
     || location.pathname.startsWith('/auth')
-    || location.pathname === '/lofts-globalitae';
+    || location.pathname === '/lofts-globalitae'
+    // Pack de agencia (/agencias/:slug): página del portal, con su propia cabecera.
+    || /^\/agencias\/(?!registrar\/?$)[^/]+\/?$/.test(location.pathname);
+  // Portales (admin/clientes/equipo/agencias) también llevan pie, en versión compacta; no la landing Globalitae ni /auth.
+  const showFooter = !isHiddenPath || !(location.pathname === '/lofts-globalitae' || location.pathname.startsWith('/auth'));
   return (
     <div className="flex flex-col min-h-screen">
       {!isHiddenPath && <Navbar />}
       <main className="flex-grow">{children}</main>
-      {!isHiddenPath && <Footer />}
+      {showFooter && <Footer compact={isHiddenPath} />}
       {/* FloatingWhatsApp: activado por Andreas (2026-08-09). Bottom-right, no colisiona
           con el CTA "Agendar" (bottom-center). Manda al +34 625710770 (WHATSAPP_URL). */}
       {!isHiddenPath && <FloatingWhatsApp />}

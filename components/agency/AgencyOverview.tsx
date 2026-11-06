@@ -39,7 +39,7 @@ export default function AgencyOverview({ data, go }: Props) {
           <h1 className="text-2xl font-serif text-primary">{t('agencyPortal.overview.hello', { name: partner.manager_name || partner.agency_name })}</h1>
           <p className="text-sm text-primary/60 mt-1">{t('agencyPortal.overview.sub')}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:flex sm:flex-wrap gap-2">
           <button onClick={() => go('clients', { new: '1' })} className={btnPrimary}>
             <span className="material-symbols-outlined text-base">person_add</span>{t('agenciasDashboard.leads.register')}
           </button>
@@ -80,9 +80,9 @@ export default function AgencyOverview({ data, go }: Props) {
         <section className={`${card} space-y-3`}>
           <h3 className="text-sm font-black uppercase tracking-widest text-primary/40">{t('agencyPortal.overview.shortcuts')}</h3>
           {[
-            { v: 'availability', icon: 'sell', label: t('agencyPortal.nav.availability'), sub: t('agencyPortal.overview.availSub', { n: units.filter(isUnitAvailable).length }) },
+            { v: 'availability', icon: 'sell', label: t('agencyPortal.nav.availability'), sub: t('agencyPortal.overview.availSub', { count: units.filter(isUnitAvailable).length }) },
             { v: 'kit', icon: 'folder_open', label: t('agencyPortal.nav.kit'), sub: t('agencyPortal.overview.kitSub') },
-            { v: 'requests', icon: 'event_available', label: t('agencyPortal.nav.requests'), sub: t('agencyPortal.overview.requestsSub', { n: data.requests.filter((r) => r.status === 'pending' || r.status === 'scheduled').length }) },
+            { v: 'requests', icon: 'event_available', label: t('agencyPortal.nav.requests'), sub: t('agencyPortal.overview.requestsSub', { count: data.requests.filter((r) => r.status === 'pending' || r.status === 'scheduled').length }) },
             { v: 'news', icon: 'campaign', label: t('agencyPortal.nav.news'), sub: t('agencyPortal.news.sub') },
             { v: 'training', icon: 'school', label: t('agencyPortal.nav.training'), sub: t('agencyPortal.overview.trainingSub') },
           ].map((s) => (
@@ -90,7 +90,7 @@ export default function AgencyOverview({ data, go }: Props) {
               <span className="material-symbols-outlined text-xl text-primary/50">{s.icon}</span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold text-primary">{s.label}</span>
-                <span className="block text-xs text-primary/50 truncate">{s.sub}</span>
+                <span className="block text-xs text-primary/50 leading-snug line-clamp-2">{s.sub}</span>
               </span>
               <span className="material-symbols-outlined text-primary/30">chevron_right</span>
             </button>

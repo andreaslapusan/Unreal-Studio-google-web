@@ -101,6 +101,17 @@ const AgencyApplications: React.FC = () => {
 
   if (loading) return <div className="py-12 text-center text-primary/40"><span className="material-symbols-outlined animate-spin text-3xl">refresh</span></div>;
 
+  const leadActions = (l: any) => (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <select value={l.status} onChange={(e) => void setLeadStatus(l.id, e.target.value)} className="border border-primary/15 rounded-lg px-2 py-1 text-xs bg-white">
+        {['new', 'contacted', 'won', 'lost'].map((s) => <option key={s} value={s}>{t(`agenciasDashboard.leads.status.${s}`)}</option>)}
+      </select>
+      {(['reservation', 'sale'] as const).map((ev) => (
+        <button key={ev} type="button" onClick={() => void addEvent(l, ev)} className="text-[11px] font-bold border border-primary/15 rounded-full px-2.5 py-1 hover:bg-primary hover:text-white transition whitespace-nowrap">+ {t(`admin.agencyLeads.ev.${ev}`)}</button>
+      ))}
+    </div>
+  );
+
   const pendingCount = applications.filter((a) => a.status === 'pending').length;
 
   return (
@@ -117,7 +128,22 @@ const AgencyApplications: React.FC = () => {
       <section>
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyLeads.title')}</h3>
         {leads.length === 0 ? <p className="text-sm text-primary/50">{t('admin.agencyLeads.empty')}</p> : (
-          <div className="overflow-x-auto bg-white/60 rounded-xl">
+          <>
+          {/* Móvil: tarjetas (la tabla obligaba a desplazar en horizontal y escondía + Reserva/+ Venta) */}
+          <ul className="md:hidden space-y-3">
+            {leads.map((l) => (
+              <li key={l.id} className="bg-white rounded-2xl p-4 border border-primary/5 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <button type="button" onClick={() => setOpenLead(l)} className="text-left font-bold text-primary underline decoration-primary/30 underline-offset-2">{l.client_name}</button>
+                  <span className="text-[11px] text-primary/40 whitespace-nowrap">{new Date(l.created_at).toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short' })}</span>
+                </div>
+                <p className="text-xs text-primary/60 mt-1">{[partners.find((p) => p.id === l.agency_id)?.agency_name, properties.find((p) => p.id === l.property_id)?.name, l.budget].filter(Boolean).join(' · ')}</p>
+                {(l.client_email || l.client_phone) && <p className="text-xs text-primary/40 mt-0.5 break-all">{[l.client_email, l.client_phone].filter(Boolean).join(' · ')}</p>}
+                <div className="mt-3">{leadActions(l)}</div>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden md:block overflow-x-auto bg-white/60 rounded-xl">
             <table className="w-full text-sm">
               <thead className="text-left text-[10px] uppercase tracking-widest text-primary/40">
                 <tr>{['date', 'agency', 'client', 'contact', 'project', 'budget', 'notes', 'status'].map((c) => <th key={c} className="p-3">{t(`admin.agencyLeads.col.${c}`)}</th>)}</tr>
@@ -135,21 +161,13 @@ const AgencyApplications: React.FC = () => {
                     <td className="p-3 text-xs">{properties.find((p) => p.id === l.property_id)?.name ?? '—'}</td>
                     <td className="p-3 text-xs">{l.budget ?? '—'}</td>
                     <td className="p-3 text-xs max-w-[220px] whitespace-pre-wrap">{l.notes ?? '—'}</td>
-                    <td className="p-3">
-                      <select value={l.status} onChange={(e) => void setLeadStatus(l.id, e.target.value)} className="border border-primary/15 rounded-lg px-2 py-1 text-xs bg-white">
-                        {['new', 'contacted', 'won', 'lost'].map((s) => <option key={s} value={s}>{t(`agenciasDashboard.leads.status.${s}`)}</option>)}
-                      </select>
-                      <div className="flex gap-1 mt-1">
-                        {(['reservation', 'sale'] as const).map((ev) => (
-                          <button key={ev} type="button" onClick={() => void addEvent(l, ev)} className="text-[10px] border border-primary/15 rounded-full px-2 py-0.5 hover:bg-primary hover:text-white transition whitespace-nowrap">+ {t(`admin.agencyLeads.ev.${ev}`)}</button>
-                        ))}
-                      </div>
-                    </td>
+                    <td className="p-3">{leadActions(l)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          </>
         )}
       </section>
       {editing && <AgencyPartnerEditor partner={editing} properties={properties} onClose={() => setEditing(null)} onSaved={reload} />}

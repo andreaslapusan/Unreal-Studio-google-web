@@ -515,7 +515,7 @@
     "accessDenied": "Access restricted",
     "accessDeniedBody": "Partner agencies only.",
     "kpiVisits": "Attributed visits",
-    "kpiSubmissions": "Form submissions",
+    "kpiSubmissions": "Forms submitted",
     "kpiReservations": "Reservations",
     "kpiSales": "Closed sales",
     "kpiConversion": "Conversion",
@@ -2114,7 +2114,7 @@
     "pageTitleProject": "Agency Pack · {{name}} — Unreal Studio Bali",
     "headerKicker": "Agency Pack",
     "priceLabel": "Price",
-    "commissionIncluded": "{{furnishing}} (5% commission included)",
+    "commissionIncluded": "{{furnishing}} · 5% commission included",
     "summaryTitle": "Summary",
     "galleryTitle": "Gallery",
     "sectionIdentification": "Identification",
@@ -2151,7 +2151,7 @@
     "fieldView": "View",
     "fieldLivingRoom": "Living room",
     "fieldWaterSupply": "Water supply",
-    "sectionPricing": "Pricing & Furnishing",
+    "sectionPricing": "Price & furnishing",
     "fieldNetSalePrice": "Net Sale Price",
     "fieldFurnishing": "Furnishing",
     "fieldPackFurnished": "Pack fully-furnished",
@@ -2159,19 +2159,21 @@
     "fieldEstimatedDelivery": "Estimated delivery",
     "fieldRoiProjected": "Projected annual ROI",
     "roiPerYear": "USD {{value}}/year",
-    "sectionDocs": "Documentation & Media",
-    "docBrochure": "📄 Brochure ESP",
-    "docRenders": "🎨 3D Renders",
-    "doc2dPlans": "📐 2D Plans",
-    "docPermits": "📋 Permits",
-    "docLegal": "⚖️ Land Legal Docs",
-    "docVideo": "🎬 Video",
-    "docConstruction": "🏗️ Latest Construction Report",
-    "docDriveFolder": "📂 Full Drive Folder",
+    "sectionDocs": "Documents & media",
+    "docBrochure": "Brochure",
+    "docRenders": "3D renders",
+    "doc2dPlans": "2D plans",
+    "docPermits": "Permits",
+    "docLegal": "Land legal documents",
+    "docVideo": "Video",
+    "docConstruction": "Latest construction report",
+    "docDriveFolder": "Full Drive folder",
     "notAvailable": "not available",
     "floorPlansTitle": "Floor Plans",
-    "footerLine1": "Agency pack · Unreal Studio Bali · Live data from Supabase",
-    "footerLine2": "Default commission: 5% included in the price. For special agreements, contact us directly."
+    "footerLine1": "Agency pack · Unreal Studio Bali · Live, up-to-date data",
+    "footerLine2": "Default commission: 5% included in the price. For special agreements, contact us directly.",
+    "backToPortal": "Portal",
+    "goLogin": "Sign in"
   },
   "fix": {
     "att": {
@@ -2992,16 +2994,20 @@
       "clientsCount": "{{n}} registered client(s)",
       "commissionsSub": "Estimate per client and per inventory",
       "helpSub": "How the program works and contact",
-      "availSub": "{{n}} unit(s) available today",
+      "availSub": "Units available today: {{count}}",
       "kitSub": "Brochures, plans and texts with your link",
-      "requestsSub": "{{n}} open request(s)",
-      "trainingSub": "Pitch, objections and buying process"
+      "requestsSub": "Open requests: {{count}}",
+      "trainingSub": "Pitch, objections and buying process",
+      "availSub_one": "1 unit available today",
+      "availSub_other": "{{count}} units available today",
+      "requestsSub_one": "1 open request",
+      "requestsSub_other": "{{count}} open requests"
     },
     "projects": {
       "sub": "Projects assigned to you, with available units, agency price and your commission. Share each project link: visits are attributed to your agency.",
-      "availableN": "{{n}} available",
+      "availableN": "Available: {{count}}",
       "soldOut": "Sold out",
-      "soldN": "{{n}} sold",
+      "soldN": "Sold: {{count}}",
       "copyLink": "Copy client link",
       "pack": "Agency pack",
       "dossier": "Brochure",
@@ -3013,7 +3019,11 @@
       "bedsN": "{{n}} bed",
       "agencyPriceShort": "Agency",
       "bedrooms_one": "1 bedroom",
-      "bedrooms_other": "{{count}} bedrooms"
+      "bedrooms_other": "{{count}} bedrooms",
+      "availableN_one": "1 available",
+      "availableN_other": "{{count}} available",
+      "soldN_one": "1 sold",
+      "soldN_other": "{{count}} sold"
     },
     "clients": {
       "search": "Search client, email, project…",
@@ -3023,7 +3033,8 @@
       "statusHint": "The Unreal team updates the status as each client progresses."
     },
     "stats": {
-      "sub": "What your personal link and the project links you share generate."
+      "sub": "What your personal link and the project links you share generate.",
+      "catalog": "General catalogue"
     },
     "commissions": {
       "sub": "Estimate of your commission based on the agency price of each project's units and your percentage.",
@@ -3111,7 +3122,7 @@
       "pick": "Project",
       "disclaimer": "Texts only use data from the project listing. Do not add guaranteed returns or promises not included in Unreal's information.",
       "tpl": {
-        "beds": "{{n}} bedroom(s)",
+        "beds": "{{n}} bedrooms",
         "finished": "construction finished",
         "building": "under construction ({{pct}}%)",
         "offPlan": "off-plan",
@@ -3119,7 +3130,9 @@
         "years": "{{n}} years",
         "whatsapp": "Hi, sharing {{name}} in {{area}} with you.\n{{facts}}.\nDesigned and built by Unreal Studio, a direct architect and developer in Bali.\nFull details: {{link}}",
         "instagram": "{{name}} · {{area}}\n{{facts}}.\nArchitecture by Unreal Studio, designed and built with no intermediaries.\nMore info: {{link}}\n#Bali #Uluwatu #RealEstateInvestment #UnrealStudio",
-        "email": "Subject: {{name}}, {{area}}\n\nHello,\n\nPlease find the details of {{name}}, an Unreal Studio project in {{area}}.\n{{facts}}.\n\nUnreal Studio designs and builds its own projects in Bali, with no intermediaries, and handles the whole legal side of the purchase.\n\nPhotos, plans and more information: {{link}}\n\nHappy to answer any questions.\n{{agency}}"
+        "email": "Subject: {{name}}, {{area}}\n\nHello,\n\nPlease find the details of {{name}}, an Unreal Studio project in {{area}}.\n{{facts}}.\n\nUnreal Studio designs and builds its own projects in Bali, with no intermediaries, and handles the whole legal side of the purchase.\n\nPhotos, plans and more information: {{link}}\n\nHappy to answer any questions.\n{{agency}}",
+        "beds_one": "1 bedroom",
+        "beds_other": "{{count}} bedrooms"
       }
     },
     "news": {

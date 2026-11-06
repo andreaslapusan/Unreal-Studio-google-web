@@ -516,7 +516,7 @@
     "accessDenied": "Akses dibatasi",
     "accessDeniedBody": "Hanya untuk agensi mitra.",
     "kpiVisits": "Kunjungan atribusi",
-    "kpiSubmissions": "Form terkirim",
+    "kpiSubmissions": "Formulir terkirim",
     "kpiReservations": "Reservasi",
     "kpiSales": "Penjualan tutup",
     "kpiConversion": "Konversi",
@@ -2115,7 +2115,7 @@
     "pageTitleProject": "Paket Agen · {{name}} — Unreal Studio Bali",
     "headerKicker": "Paket untuk Agen",
     "priceLabel": "Harga",
-    "commissionIncluded": "{{furnishing}} (5% komisi termasuk)",
+    "commissionIncluded": "{{furnishing}} · termasuk komisi 5%",
     "summaryTitle": "Ringkasan",
     "galleryTitle": "Galeri",
     "sectionIdentification": "Identifikasi",
@@ -2152,7 +2152,7 @@
     "fieldView": "Pemandangan",
     "fieldLivingRoom": "Ruang tamu",
     "fieldWaterSupply": "Pasokan air",
-    "sectionPricing": "Harga dan Perlengkapan",
+    "sectionPricing": "Harga dan perabot",
     "fieldNetSalePrice": "Harga jual netto",
     "fieldFurnishing": "Perlengkapan",
     "fieldPackFurnished": "Paket lengkap dengan furnitur",
@@ -2160,19 +2160,21 @@
     "fieldEstimatedDelivery": "Pengiriman diperkirakan",
     "fieldRoiProjected": "ROI proyeksi tahunan",
     "roiPerYear": "USD {{value}}/tahun",
-    "sectionDocs": "Dokumen dan Media",
-    "docBrochure": "📄 Brosur ESP",
-    "docRenders": "🎨 Renders 3D",
-    "doc2dPlans": "📐 Rencana 2D",
-    "docPermits": "📋 Izin",
-    "docLegal": "⚖️ Dokumen hukum lahan",
-    "docVideo": "🎬 Video",
-    "docConstruction": "🏗️ Laporan terakhir konstruksi",
-    "docDriveFolder": "📂 Folder Drive lengkap",
+    "sectionDocs": "Dokumen dan media",
+    "docBrochure": "Brosur",
+    "docRenders": "Render 3D",
+    "doc2dPlans": "Denah 2D",
+    "docPermits": "Izin",
+    "docLegal": "Dokumen hukum lahan",
+    "docVideo": "Video",
+    "docConstruction": "Laporan konstruksi terbaru",
+    "docDriveFolder": "Folder Drive lengkap",
     "notAvailable": "tidak tersedia",
     "floorPlansTitle": "Rencana lantai",
-    "footerLine1": "Pack agen · Unreal Studio Bali · Data langsung dari Supabase",
-    "footerLine2": "Komisi default: 5% sudah termasuk dalam harga. Untuk kesepakatan khusus, hubungi langsung."
+    "footerLine1": "Pack agen · Unreal Studio Bali · Data terkini secara langsung",
+    "footerLine2": "Komisi default: 5% sudah termasuk dalam harga. Untuk kesepakatan khusus, hubungi langsung.",
+    "backToPortal": "Portal",
+    "goLogin": "Masuk"
   },
   "fix": {
     "att": {
@@ -2993,16 +2995,20 @@
       "clientsCount": "{{n}} klien terdaftar",
       "commissionsSub": "Estimasi per klien dan per inventaris",
       "helpSub": "Cara kerja program dan kontak",
-      "availSub": "{{n}} unit tersedia hari ini",
+      "availSub": "Unit tersedia hari ini: {{count}}",
       "kitSub": "Brosur, denah, dan teks dengan tautan Anda",
-      "requestsSub": "{{n}} permintaan terbuka",
-      "trainingSub": "Argumen, keberatan, dan proses pembelian"
+      "requestsSub": "Permintaan terbuka: {{count}}",
+      "trainingSub": "Argumen, keberatan, dan proses pembelian",
+      "availSub_one": "1 unit tersedia hari ini",
+      "availSub_other": "{{count}} unit tersedia hari ini",
+      "requestsSub_one": "1 permintaan terbuka",
+      "requestsSub_other": "{{count}} permintaan terbuka"
     },
     "projects": {
       "sub": "Proyek yang ditugaskan kepada Anda, dengan unit tersedia, harga agensi, dan komisi Anda. Bagikan tautan setiap proyek: kunjungan tercatat atas nama agensi Anda.",
-      "availableN": "{{n}} tersedia",
+      "availableN": "Tersedia: {{count}}",
       "soldOut": "Habis terjual",
-      "soldN": "{{n}} terjual",
+      "soldN": "Terjual: {{count}}",
       "copyLink": "Salin tautan untuk klien",
       "pack": "Paket agensi",
       "dossier": "Brosur",
@@ -3014,7 +3020,11 @@
       "bedsN": "{{n}} KT",
       "agencyPriceShort": "Hrg agensi",
       "bedrooms_one": "{{count}} kamar tidur",
-      "bedrooms_other": "{{count}} kamar tidur"
+      "bedrooms_other": "{{count}} kamar tidur",
+      "availableN_one": "1 tersedia",
+      "availableN_other": "{{count}} tersedia",
+      "soldN_one": "1 terjual",
+      "soldN_other": "{{count}} terjual"
     },
     "clients": {
       "search": "Cari klien, email, proyek…",
@@ -3024,7 +3034,8 @@
       "statusHint": "Tim Unreal memperbarui status seiring perkembangan setiap klien."
     },
     "stats": {
-      "sub": "Hasil dari tautan pribadi Anda dan tautan proyek yang Anda bagikan."
+      "sub": "Hasil dari tautan pribadi Anda dan tautan proyek yang Anda bagikan.",
+      "catalog": "Katalog umum"
     },
     "commissions": {
       "sub": "Estimasi komisi Anda berdasarkan harga agensi unit di setiap proyek dan persentase Anda.",
@@ -3120,7 +3131,9 @@
         "years": "{{n}} tahun",
         "whatsapp": "Halo, saya bagikan {{name}} di {{area}}.\n{{facts}}.\nDidesain dan dibangun oleh Unreal Studio, arsitek dan pengembang langsung di Bali.\nDetail lengkap: {{link}}",
         "instagram": "{{name}} · {{area}}\n{{facts}}.\nArsitektur Unreal Studio, didesain dan dibangun tanpa perantara.\nInfo lengkap: {{link}}\n#Bali #Uluwatu #InvestasiProperti #UnrealStudio",
-        "email": "Subjek: {{name}}, {{area}}\n\nHalo,\n\nBerikut informasi {{name}}, proyek Unreal Studio di {{area}}.\n{{facts}}.\n\nUnreal Studio mendesain dan membangun proyeknya sendiri di Bali tanpa perantara, serta menangani seluruh sisi hukum pembelian.\n\nFoto, denah, dan info lengkap: {{link}}\n\nSilakan hubungi saya jika ada pertanyaan.\n{{agency}}"
+        "email": "Subjek: {{name}}, {{area}}\n\nHalo,\n\nBerikut informasi {{name}}, proyek Unreal Studio di {{area}}.\n{{facts}}.\n\nUnreal Studio mendesain dan membangun proyeknya sendiri di Bali tanpa perantara, serta menangani seluruh sisi hukum pembelian.\n\nFoto, denah, dan info lengkap: {{link}}\n\nSilakan hubungi saya jika ada pertanyaan.\n{{agency}}",
+        "beds_one": "1 kamar tidur",
+        "beds_other": "{{count}} kamar tidur"
       }
     },
     "news": {

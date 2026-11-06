@@ -50,7 +50,7 @@ export default function AgencyKit({ data }: { data: AgencyData }) {
   const ft = i18n.getFixedT(lang);
   const pct = info?.completion_percent ?? p.pct_progress;
   const facts = [
-    beds.length ? ft('agencyPortal.kit.tpl.beds', { n: Math.min(...beds) }) : null,
+    beds.length ? ft('agencyPortal.kit.tpl.beds', { n: Math.min(...beds), count: Math.min(...beds) }) : null,
     pct === 100 ? ft('agencyPortal.kit.tpl.finished') : typeof pct === 'number' && pct > 0 ? ft('agencyPortal.kit.tpl.building', { pct }) : ft('agencyPortal.kit.tpl.offPlan'),
     prices.length ? ft('agencyPortal.kit.tpl.from', { price: fmtEUR(Math.min(...prices)) }) : null,
     info?.tenure ? [info.tenure, info.years_contract ? ft('agencyPortal.kit.tpl.years', { n: info.years_contract }) : null].filter(Boolean).join(' ') : null,
@@ -94,7 +94,7 @@ export default function AgencyKit({ data }: { data: AgencyData }) {
                 </li>
               ))}
             </ul>
-            <div className="flex flex-wrap gap-2 mt-4">
+            <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-2 mt-4">
               {link && (
                 <button onClick={() => copy('link', link)} className={copied === 'link' ? `${btnGhost} !bg-green-600 !text-white !border-green-600` : btnGhost}>
                   <span className="material-symbols-outlined text-base">{copied === 'link' ? 'check' : 'link'}</span>{copied === 'link' ? t('agencyPortal.copiedShort') : t('agencyPortal.kit.listing')}

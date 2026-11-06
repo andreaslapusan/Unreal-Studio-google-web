@@ -13,6 +13,7 @@ import { supabase, getImageUrl } from "../lib/supabase";
 import { imgSrc, imgFallback } from "../lib/imageOptimize";
 import { translateStatus } from "../lib/statusI18n";
 import { usePageMeta } from "../components/PageMeta";
+import { shortProjectName } from "../components/agency/useAgencyData";
 
 interface ProjectCard {
   name: string;
@@ -58,19 +59,19 @@ export default function AgenciasPartnership() {
           <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold tracking-wide mb-5">
             {t("agenciasPartnership.tag")}
           </div>
-          <h1 className="font-serif text-5xl md:text-6xl leading-tight mb-5">
+          <h1 className="font-serif text-[2.6rem] sm:text-5xl md:text-6xl leading-[1.05] tracking-tight mb-5">
             {t("agenciasPartnership.heroTitle1")}
             <br />
             <span className="text-primary/60">{t("agenciasPartnership.heroTitle2")}</span>
           </h1>
-          <p className="text-lg text-primary/70 max-w-2xl mb-8 leading-relaxed">
+          <p className="text-base md:text-lg text-primary/70 max-w-2xl mb-8 leading-relaxed">
             {t("agenciasPartnership.heroBody")}
           </p>
-          <div className="flex flex-wrap gap-3">
-            <Link to="/agencias/registrar" className="inline-flex justify-center min-w-[15rem] bg-primary text-white border border-primary px-8 py-4 rounded-full font-semibold hover:bg-almond hover:text-primary transition shadow-lg">
+          <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-3">
+            <Link to="/agencias/registrar" className="inline-flex justify-center sm:min-w-[15rem] bg-primary text-white border border-primary px-8 py-4 rounded-full font-semibold hover:bg-almond hover:text-primary transition shadow-lg">
               {t("agenciasPartnership.ctaApply")}
             </Link>
-            <Link to="/agencias/login" className="inline-flex justify-center min-w-[15rem] bg-primary text-white border border-primary px-8 py-4 rounded-full font-semibold hover:bg-almond hover:text-primary transition shadow-lg">
+            <Link to="/agencias/login" className="inline-flex justify-center sm:min-w-[15rem] bg-white/60 text-primary border border-primary/20 px-8 py-4 rounded-full font-semibold hover:bg-primary hover:text-white transition">
               {t("agenciasPartnership.ctaLogin")}
             </Link>
           </div>
@@ -79,9 +80,9 @@ export default function AgenciasPartnership() {
 
       {/* Benefits */}
       <section className="bg-white">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-12 text-center">{t("agenciasPartnership.whyTitle")}</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+        <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
+          <h2 className="font-serif text-3xl mb-8 md:mb-12 text-center">{t("agenciasPartnership.whyTitle")}</h2>
+          <div className="grid md:grid-cols-3 gap-4 md:gap-8">
             {benefits.map((b, i) => (
               <article key={i} className="bg-almond rounded-2xl p-6 border border-primary/5">
                 <h3 className="font-serif text-xl mb-3">{b.title}</h3>
@@ -94,12 +95,12 @@ export default function AgenciasPartnership() {
 
       {/* How it works */}
       <section className="bg-almond">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="font-serif text-3xl mb-12 text-center">{t("agenciasPartnership.howTitle")}</h2>
-          <ol className="space-y-6">
+        <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
+          <h2 className="font-serif text-3xl mb-8 md:mb-12 text-center">{t("agenciasPartnership.howTitle")}</h2>
+          <ol className="space-y-4 md:space-y-6">
             {steps.map((s, i) => (
-              <li key={i} className="flex gap-6 bg-white rounded-2xl p-6 border border-primary/5">
-                <div className="text-5xl font-serif text-primary/25 shrink-0">{String(i + 1).padStart(2, "0")}</div>
+              <li key={i} className="flex gap-4 md:gap-6 bg-white rounded-2xl p-5 md:p-6 border border-primary/5">
+                <div className="text-4xl md:text-5xl font-serif text-[#A0522D]/40 shrink-0 w-12 md:w-16">{String(i + 1).padStart(2, "0")}</div>
                 <div>
                   <h3 className="font-serif text-xl mb-1">{s.title}</h3>
                   <p className="text-sm text-primary/70 leading-relaxed">{s.body}</p>
@@ -112,21 +113,21 @@ export default function AgenciasPartnership() {
 
       {/* Projects (reales de la BD, sin precios) */}
       <section className="bg-white">
-        <div className="max-w-5xl mx-auto px-6 py-16">
+        <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
           <h2 className="font-serif text-3xl mb-2 text-center">{t("agenciasPartnership.projectsTitle")}</h2>
-          <p className="text-primary/60 text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-primary/60 text-center mb-8 md:mb-12 max-w-2xl mx-auto">
             {t("agenciasPartnership.projectsSubtitle")}
           </p>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
             {projects.map((p) => (
               <article key={p.slug ?? p.name} className="bg-almond rounded-2xl overflow-hidden border border-primary/5">
                 {p.image ? (
-                  <img src={imgSrc(getImageUrl(p.image), 600)} onError={imgFallback(getImageUrl(p.image))} alt={p.name} loading="lazy" className="w-full h-48 object-cover" />
+                  <img src={imgSrc(getImageUrl(p.image), 600)} onError={imgFallback(getImageUrl(p.image))} alt={shortProjectName(p.name)} loading="lazy" className="w-full aspect-[4/3] object-cover bg-primary/5" />
                 ) : (
-                  <div className="w-full h-48 bg-primary/5" />
+                  <div className="w-full aspect-[4/3] bg-primary/5" />
                 )}
-                <div className="p-5">
-                  <h3 className="font-serif text-lg leading-tight">{p.name}</h3>
+                <div className="p-3 md:p-5">
+                  <h3 className="font-serif text-base md:text-lg leading-tight">{shortProjectName(p.name)}</h3>
                   {p.zone && <p className="text-xs text-primary/60 mt-1">{p.zone}</p>}
                   {p.status && <p className="text-xs text-primary/50 mt-1">{statusLabel(p.status)}</p>}
                 </div>
@@ -138,8 +139,8 @@ export default function AgenciasPartnership() {
 
       {/* CTA */}
       <section className="bg-primary text-white">
-        <div className="max-w-3xl mx-auto px-6 py-16 text-center">
-          <h2 className="font-serif text-4xl mb-4">{t("agenciasPartnership.ctaFinalTitle")}</h2>
+        <div className="max-w-3xl mx-auto px-6 py-12 md:py-16 text-center">
+          <h2 className="font-serif text-3xl md:text-4xl mb-4">{t("agenciasPartnership.ctaFinalTitle")}</h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto leading-relaxed">
             {t("agenciasPartnership.ctaFinalBody")}
           </p>

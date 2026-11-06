@@ -650,14 +650,14 @@ export function PartnersTab({
       {data.length === 0 && <p className="text-primary/60">{t('fix.apm.noActiveAgencies')}</p>}
       {data.map((p) => (
         <article key={p.id} className="bg-white/60 rounded-xl p-4 flex items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <h3 className="font-serif text-lg text-primary">{p.agency_name}</h3>
             <p className="text-xs text-primary/60">{p.email} · {t(`admin.partnerStatus.${p.status}`, { defaultValue: p.status })}</p>
             <p className="text-xs mt-2">
               {t('fix.apm.projectsLabel')} {p.projects_assigned?.length ? p.projects_assigned.map(propertyName).join(", ") : "—"}
             </p>
           </div>
-          <button onClick={() => void onAssign(p)} className="text-xs bg-primary text-white px-3 py-2 rounded-full">
+          <button onClick={() => void onAssign(p)} className="shrink-0 whitespace-nowrap text-xs bg-primary text-white px-3 py-2 rounded-full">
             {actionLabel ?? t('fix.apm.assignProjects')}
           </button>
         </article>

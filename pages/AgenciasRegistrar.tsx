@@ -122,7 +122,7 @@ export default function AgenciasRegistrar() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-almond px-6 py-16">
         <div className="max-w-md text-center glass-card rounded-2xl p-10 shadow-xl">
-          <div className="text-5xl mb-4">✅</div>
+          <span className="material-symbols-outlined text-5xl text-green-600 mb-3">check_circle</span>
           <h1 className="text-3xl font-serif text-primary mb-3">{t('agenciasRegistrar.successTitle')}</h1>
           <p className="text-primary/70 mb-6">{t('agenciasRegistrar.successBody')}</p>
           <button
@@ -135,12 +135,13 @@ export default function AgenciasRegistrar() {
   }
 
   return (
-    <div className="min-h-screen bg-almond px-6 py-16">
+    <div className="min-h-screen bg-almond px-4 md:px-6 pt-6 pb-12 md:py-16">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-serif text-primary mb-3">{t('agenciasRegistrar.title')}</h1>
-        <p className="text-primary/70 mb-8">{t('agenciasRegistrar.intro')}</p>
+        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#A0522D] mb-3">{t('agenciasPartnership.tag')}</p>
+        <h1 className="text-4xl md:text-5xl font-serif text-primary leading-[1.05] mb-3">{t('agenciasRegistrar.title')}</h1>
+        <p className="text-primary/70 mb-6 md:mb-8 leading-relaxed">{t('agenciasRegistrar.intro')}</p>
 
-        <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-2xl p-8 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-5 bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-primary/5">
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="block">
               <span className="text-sm font-medium text-primary">{t('agenciasRegistrar.agencyName')}</span>

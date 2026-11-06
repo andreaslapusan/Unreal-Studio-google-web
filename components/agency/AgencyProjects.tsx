@@ -53,18 +53,18 @@ const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef
               {p.area && <p className="text-xs text-primary/50 mt-0.5">{p.area}</p>}
             </div>
             <span className={`shrink-0 mt-1 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full whitespace-nowrap ${avail.length ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-              {avail.length ? t('agencyPortal.projects.availableN', { n: avail.length }) : t('agencyPortal.projects.soldOut')}
+              {avail.length ? t('agencyPortal.projects.availableN', { count: avail.length }) : t('agencyPortal.projects.soldOut')}
             </span>
           </div>
           {p.short_pitch && <p className="text-sm text-primary/70 mt-2 line-clamp-2">{p.short_pitch}</p>}
           <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-primary/60 mt-3">
             {typeof p.pct_progress === 'number' && <span>{t('agenciasDashboard.constructionProgress')}: <strong className="text-primary">{p.pct_progress}%</strong></span>}
             {p.delivery_date && <span>{t('agenciasDashboard.estimatedDelivery')} <strong className="text-primary">{p.delivery_date}</strong></span>}
-            {soldN > 0 && <span>{t('agencyPortal.projects.soldN', { n: soldN })}</span>}
+            {soldN > 0 && <span>{t('agencyPortal.projects.soldN', { count: soldN })}</span>}
           </div>
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mt-4">
             {publicUrl && (
-              <button onClick={share} className={copied ? `${btnGhost} !bg-green-600 !text-white !border-green-600` : btnGhost}>
+              <button onClick={share} className={`col-span-2 ${copied ? `${btnGhost} !bg-green-600 !text-white !border-green-600` : btnGhost}`}>
                 <span className="material-symbols-outlined text-base">{copied ? 'check' : 'share'}</span>{copied ? t('agencyPortal.copiedShort') : t('agencyPortal.projects.copyLink')}
               </button>
             )}
@@ -94,7 +94,7 @@ const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef
             {groupUnits(avail).map(({ u, n }) => (
               <ListRow key={u.id}
                 title={<>{[shortProjectName(p.name), u.bedrooms ? t('agencyPortal.projects.bedrooms', { count: u.bedrooms }) : null].filter(Boolean).join(' · ')}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
-                sub={[t('agencyPortal.projects.availableN', { n }), u.price_agencia ? `${t('agencyPortal.projects.agencyPriceShort')} ${fmtEUR(u.price_agencia)}` : null].filter(Boolean).join(' · ') || undefined}
+                sub={[t('agencyPortal.projects.availableN', { count: n }), u.price_agencia ? `${t('agencyPortal.projects.agencyPriceShort')} ${fmtEUR(u.price_agencia)}` : null].filter(Boolean).join(' · ') || undefined}
                 right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{u.price_agencia ? fmtEUR(unitCommission(u, partnerId)) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{unitPct(u, partnerId)}%</span></>}
               />
             ))}

@@ -515,7 +515,7 @@
     "accessDenied": "Acces restricționat",
     "accessDeniedBody": "Doar pentru agenții colaboratoare.",
     "kpiVisits": "Vizite atribuite",
-    "kpiSubmissions": "Form submissions",
+    "kpiSubmissions": "Formulare trimise",
     "kpiReservations": "Rezervări",
     "kpiSales": "Vânzări închise",
     "kpiConversion": "Conversie",
@@ -2114,7 +2114,7 @@
     "pageTitleProject": "Pachet Agenție · {{name}} — Unreal Studio Bali",
     "headerKicker": "Pachet pentru Agenții",
     "priceLabel": "Preț",
-    "commissionIncluded": "{{furnishing}} (comision 5% inclus)",
+    "commissionIncluded": "{{furnishing}} · comision 5% inclus",
     "summaryTitle": "Rezumat",
     "galleryTitle": "Galerie",
     "sectionIdentification": "Identificare",
@@ -2151,7 +2151,7 @@
     "fieldView": "Priveliște",
     "fieldLivingRoom": "Living",
     "fieldWaterSupply": "Alimentare cu apă",
-    "sectionPricing": "Prețuri și Mobilier",
+    "sectionPricing": "Preț și mobilier",
     "fieldNetSalePrice": "Preț net de vânzare",
     "fieldFurnishing": "Mobilier",
     "fieldPackFurnished": "Pachet complet mobilat",
@@ -2159,19 +2159,21 @@
     "fieldEstimatedDelivery": "Livrare estimată",
     "fieldRoiProjected": "ROI anual estimat",
     "roiPerYear": "USD {{value}}/an",
-    "sectionDocs": "Documente și Media",
-    "docBrochure": "📄 Brochure ESP",
-    "docRenders": "🎨 Randări 3D",
-    "doc2dPlans": "📐 Planuri 2D",
-    "docPermits": "📋 Autorizații",
-    "docLegal": "⚖️ Documente legale teren",
-    "docVideo": "🎬 Video",
-    "docConstruction": "🏗️ Ultimul Raport de Șantier",
-    "docDriveFolder": "📂 Folder Drive Complet",
+    "sectionDocs": "Documente și media",
+    "docBrochure": "Broșură",
+    "docRenders": "Randări 3D",
+    "doc2dPlans": "Planuri 2D",
+    "docPermits": "Autorizații",
+    "docLegal": "Documente legale teren",
+    "docVideo": "Video",
+    "docConstruction": "Ultimul raport de șantier",
+    "docDriveFolder": "Folder Drive complet",
     "notAvailable": "indisponibil",
     "floorPlansTitle": "Planuri",
-    "footerLine1": "Pachet agenție · Unreal Studio Bali · Date live din Supabase",
-    "footerLine2": "Comision implicit: 5% inclus în preț. Pentru acorduri speciale, contactează-ne direct."
+    "footerLine1": "Pachet agenție · Unreal Studio Bali · Date actualizate în timp real",
+    "footerLine2": "Comision implicit: 5% inclus în preț. Pentru acorduri speciale, contactează-ne direct.",
+    "backToPortal": "Portal",
+    "goLogin": "Autentificare"
   },
   "fix": {
     "att": {
@@ -2992,16 +2994,22 @@
       "clientsCount": "{{n}} client(i) înregistrat(i)",
       "commissionsSub": "Estimare per client și per inventar",
       "helpSub": "Cum funcționează programul și contact",
-      "availSub": "{{n}} unitate(ți) disponibile azi",
+      "availSub": "Unități disponibile azi: {{count}}",
       "kitSub": "Broșuri, planuri și texte cu linkul tău",
-      "requestsSub": "{{n}} solicitare(ări) deschise",
-      "trainingSub": "Argumente, obiecții și procesul de cumpărare"
+      "requestsSub": "Solicitări deschise: {{count}}",
+      "trainingSub": "Argumente, obiecții și procesul de cumpărare",
+      "availSub_one": "1 unitate disponibilă azi",
+      "availSub_other": "{{count}} unități disponibile azi",
+      "availSub_few": "{{count}} unități disponibile azi",
+      "requestsSub_one": "1 solicitare deschisă",
+      "requestsSub_other": "{{count}} solicitări deschise",
+      "requestsSub_few": "{{count}} solicitări deschise"
     },
     "projects": {
       "sub": "Proiectele alocate ție, cu unități disponibile, preț de agenție și comisionul tău. Distribuie linkul fiecărui proiect: vizitele sunt atribuite agenției tale.",
-      "availableN": "{{n}} disponibil(e)",
+      "availableN": "Disponibile: {{count}}",
       "soldOut": "Epuizat",
-      "soldN": "{{n}} vândut(e)",
+      "soldN": "Vândute: {{count}}",
       "copyLink": "Copiază link pentru client",
       "pack": "Pachet agenție",
       "dossier": "Broșură",
@@ -3013,7 +3021,13 @@
       "bedsN": "{{n}} dorm.",
       "agencyPriceShort": "Preț ag.",
       "bedrooms_one": "1 dormitor",
-      "bedrooms_other": "{{count}} dormitoare"
+      "bedrooms_other": "{{count}} dormitoare",
+      "availableN_one": "1 disponibilă",
+      "availableN_other": "{{count}} disponibile",
+      "availableN_few": "{{count}} disponibile",
+      "soldN_one": "1 vândută",
+      "soldN_other": "{{count}} vândute",
+      "soldN_few": "{{count}} vândute"
     },
     "clients": {
       "search": "Caută client, email, proiect…",
@@ -3023,7 +3037,8 @@
       "statusHint": "Echipa Unreal actualizează starea pe măsură ce avansează fiecare client."
     },
     "stats": {
-      "sub": "Ce generează linkul tău personal și linkurile de proiect pe care le distribui."
+      "sub": "Ce generează linkul tău personal și linkurile de proiect pe care le distribui.",
+      "catalog": "Catalog general"
     },
     "commissions": {
       "sub": "Estimarea comisionului tău pe baza prețului de agenție al unităților fiecărui proiect și a procentului tău.",
@@ -3111,7 +3126,7 @@
       "pick": "Proiect",
       "disclaimer": "Textele folosesc doar datele din fișa proiectului. Nu adăuga randamente garantate sau promisiuni care nu sunt în informațiile Unreal.",
       "tpl": {
-        "beds": "{{n}} dormitor(oare)",
+        "beds": "{{n}} dormitoare",
         "finished": "construcție finalizată",
         "building": "în construcție ({{pct}}%)",
         "offPlan": "în faza de proiect",
@@ -3119,7 +3134,10 @@
         "years": "{{n}} ani",
         "whatsapp": "Bună, îți trimit {{name}}, în {{area}}.\n{{facts}}.\nProiectat și construit de Unreal Studio, arhitect și dezvoltator direct în Bali.\nDetalii complete: {{link}}",
         "instagram": "{{name}} · {{area}}\n{{facts}}.\nArhitectură Unreal Studio, proiectată și construită fără intermediari.\nMai multe informații: {{link}}\n#Bali #Uluwatu #InvestitiiImobiliare #UnrealStudio",
-        "email": "Subiect: {{name}}, {{area}}\n\nBună ziua,\n\nVă trimit fișa {{name}}, un proiect Unreal Studio în {{area}}.\n{{facts}}.\n\nUnreal Studio proiectează și construiește propriile proiecte în Bali, fără intermediari, și se ocupă de toată partea legală a cumpărării.\n\nFotografii, planuri și mai multe informații: {{link}}\n\nRămân la dispoziție pentru orice întrebare.\n{{agency}}"
+        "email": "Subiect: {{name}}, {{area}}\n\nBună ziua,\n\nVă trimit fișa {{name}}, un proiect Unreal Studio în {{area}}.\n{{facts}}.\n\nUnreal Studio proiectează și construiește propriile proiecte în Bali, fără intermediari, și se ocupă de toată partea legală a cumpărării.\n\nFotografii, planuri și mai multe informații: {{link}}\n\nRămân la dispoziție pentru orice întrebare.\n{{agency}}",
+        "beds_one": "1 dormitor",
+        "beds_other": "{{count}} dormitoare",
+        "beds_few": "{{count}} dormitoare"
       }
     },
     "news": {

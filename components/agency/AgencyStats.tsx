@@ -58,9 +58,9 @@ export default function AgencyStats({ data }: { data: AgencyData }) {
           <ul className="divide-y divide-gray-100 text-sm">
             {rows.slice(0, 25).map((r) => (
               <li key={r.id} className="py-2.5 flex items-center gap-3">
-                <span className="text-xs text-primary/50 w-24 shrink-0">{new Date(r.created_at).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' })}</span>
+                <span className="text-xs text-primary/50 w-24 shrink-0">{new Date(r.created_at).toLocaleString(uiLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                 <span className="font-medium text-primary shrink-0">{t(`agenciasStats.eventType.${r.event_type}`, { defaultValue: r.event_type })}</span>
-                <span className="text-primary/60 truncate flex-1 text-right">{r.property_slug ? nameOf(r.property_slug) : '—'}</span>
+                <span className="text-primary/60 truncate flex-1 text-right">{r.property_slug ? nameOf(r.property_slug) : t('agencyPortal.stats.catalog')}</span>
               </li>
             ))}
           </ul>

@@ -515,7 +515,7 @@
     "accessDenied": "Acceso restringido",
     "accessDeniedBody": "Solo agencias colaboradoras.",
     "kpiVisits": "Visitas atribuidas",
-    "kpiSubmissions": "Form submissions",
+    "kpiSubmissions": "Formularios enviados",
     "kpiReservations": "Reservas",
     "kpiSales": "Ventas cerradas",
     "kpiConversion": "Conversión",
@@ -2114,7 +2114,7 @@
     "pageTitleProject": "Pack Agencia · {{name}} — Unreal Studio Bali",
     "headerKicker": "Pack para Agencias",
     "priceLabel": "Precio",
-    "commissionIncluded": "{{furnishing}} (5% comisión incluida)",
+    "commissionIncluded": "{{furnishing}} · 5 % de comisión incluida",
     "summaryTitle": "Resumen",
     "galleryTitle": "Galería",
     "sectionIdentification": "Identificación",
@@ -2151,7 +2151,7 @@
     "fieldView": "Vistas",
     "fieldLivingRoom": "Salón",
     "fieldWaterSupply": "Suministro de agua",
-    "sectionPricing": "Pricing y Mobiliario",
+    "sectionPricing": "Precio y mobiliario",
     "fieldNetSalePrice": "Precio neto de venta",
     "fieldFurnishing": "Mobiliario",
     "fieldPackFurnished": "Pack totalmente amueblado",
@@ -2159,21 +2159,23 @@
     "fieldEstimatedDelivery": "Entrega estimada",
     "fieldRoiProjected": "ROI proyectado anual",
     "roiPerYear": "USD {{value}}/año",
-    "sectionDocs": "Documentación y Media",
-    "docBrochure": "📄 Brochure ESP",
-    "docRenders": "🎨 Renders 3D",
-    "doc2dPlans": "📐 Planos 2D",
-    "docPermits": "📋 Licencias",
-    "docLegal": "⚖️ Docs legales del terreno",
-    "docVideo": "🎬 Vídeo",
-    "docConstruction": "🏗️ Último Report Obra",
-    "docDriveFolder": "📂 Drive Folder Completo",
+    "sectionDocs": "Documentación y multimedia",
+    "docBrochure": "Brochure",
+    "docRenders": "Renders 3D",
+    "doc2dPlans": "Planos 2D",
+    "docPermits": "Licencias",
+    "docLegal": "Documentos legales del terreno",
+    "docVideo": "Vídeo",
+    "docConstruction": "Último informe de obra",
+    "docDriveFolder": "Carpeta completa en Drive",
     "notAvailable": "no disponible",
     "floorPlansTitle": "Planos",
-    "footerLine1": "Pack agencia · Unreal Studio Bali · Datos en vivo desde Supabase",
+    "footerLine1": "Pack para agencias · Unreal Studio Bali · Datos actualizados en tiempo real",
     "footerLine2": "Comisión por defecto: 5% incluida en el precio. Para acuerdos especiales, contacta directamente.",
     "earningsBody": "Comisión estimada si vendes todo el inventario disponible que tienes asignado:",
-    "earningsHint": "Calculada al 5% sobre el precio de agencia (puede variar por ajustes individuales)."
+    "earningsHint": "Calculada al 5% sobre el precio de agencia (puede variar por ajustes individuales).",
+    "backToPortal": "Portal",
+    "goLogin": "Iniciar sesión"
   },
   "fix": {
     "att": {
@@ -2994,16 +2996,20 @@
       "clientsCount": "{{n}} cliente(s) registrado(s)",
       "commissionsSub": "Estimación por cliente y por inventario",
       "helpSub": "Cómo funciona el programa y contacto",
-      "availSub": "{{n}} unidad(es) disponibles hoy",
+      "availSub": "Unidades disponibles hoy: {{count}}",
       "kitSub": "Brochures, planos y textos con tu link",
-      "requestsSub": "{{n}} solicitud(es) abierta(s)",
-      "trainingSub": "Argumentos, objeciones y proceso de compra"
+      "requestsSub": "Solicitudes abiertas: {{count}}",
+      "trainingSub": "Argumentos, objeciones y proceso de compra",
+      "availSub_one": "1 unidad disponible hoy",
+      "availSub_other": "{{count}} unidades disponibles hoy",
+      "requestsSub_one": "1 solicitud abierta",
+      "requestsSub_other": "{{count}} solicitudes abiertas"
     },
     "projects": {
       "sub": "Proyectos que tienes asignados, con unidades disponibles, precio agencia y tu comisión. Comparte el link de cada proyecto: las visitas quedan atribuidas a tu agencia.",
-      "availableN": "{{n}} disponible(s)",
+      "availableN": "Disponibles: {{count}}",
       "soldOut": "Agotado",
-      "soldN": "{{n}} vendida(s)",
+      "soldN": "Vendidas: {{count}}",
       "copyLink": "Copiar link para cliente",
       "pack": "Pack agencia",
       "dossier": "Dossier",
@@ -3015,7 +3021,11 @@
       "bedsN": "{{n}} hab.",
       "agencyPriceShort": "P. agencia",
       "bedrooms_one": "1 habitación",
-      "bedrooms_other": "{{count}} habitaciones"
+      "bedrooms_other": "{{count}} habitaciones",
+      "availableN_one": "1 disponible",
+      "availableN_other": "{{count}} disponibles",
+      "soldN_one": "1 vendida",
+      "soldN_other": "{{count}} vendidas"
     },
     "clients": {
       "search": "Buscar cliente, email, proyecto…",
@@ -3025,7 +3035,8 @@
       "statusHint": "El estado lo actualiza el equipo Unreal a medida que avanza cada cliente."
     },
     "stats": {
-      "sub": "Lo que generan tu link personal y los links de proyecto que compartes."
+      "sub": "Lo que generan tu link personal y los links de proyecto que compartes.",
+      "catalog": "Catálogo general"
     },
     "commissions": {
       "sub": "Estimación de tu comisión según el precio agencia de las unidades de cada proyecto y tu porcentaje.",
@@ -3113,7 +3124,7 @@
       "pick": "Proyecto",
       "disclaimer": "Los textos solo usan datos de la ficha del proyecto. No añadas rentabilidades garantizadas ni promesas que no estén en la información de Unreal.",
       "tpl": {
-        "beds": "{{n}} dormitorio(s)",
+        "beds": "{{n}} dormitorios",
         "finished": "obra terminada",
         "building": "en construcción ({{pct}} %)",
         "offPlan": "sobre plano",
@@ -3121,7 +3132,9 @@
         "years": "{{n}} años",
         "whatsapp": "Hola, te comparto {{name}}, en {{area}}.\n{{facts}}.\nDiseñado y construido por Unreal Studio, arquitecto y promotor directo en Bali.\nFicha completa: {{link}}",
         "instagram": "{{name}} · {{area}}\n{{facts}}.\nArquitectura de Unreal Studio, diseñada y construida sin intermediarios.\nMás información: {{link}}\n#Bali #Uluwatu #InversionInmobiliaria #UnrealStudio",
-        "email": "Asunto: {{name}}, {{area}}\n\nHola:\n\nTe envío la ficha de {{name}}, un proyecto de Unreal Studio en {{area}}.\n{{facts}}.\n\nUnreal Studio diseña y construye sus propios proyectos en Bali, sin intermediarios, y se encarga de toda la parte legal de la compra.\n\nFotos, planos y más información: {{link}}\n\nQuedo a tu disposición para cualquier duda.\n{{agency}}"
+        "email": "Asunto: {{name}}, {{area}}\n\nHola:\n\nTe envío la ficha de {{name}}, un proyecto de Unreal Studio en {{area}}.\n{{facts}}.\n\nUnreal Studio diseña y construye sus propios proyectos en Bali, sin intermediarios, y se encarga de toda la parte legal de la compra.\n\nFotos, planos y más información: {{link}}\n\nQuedo a tu disposición para cualquier duda.\n{{agency}}",
+        "beds_one": "1 dormitorio",
+        "beds_other": "{{count}} dormitorios"
       }
     },
     "news": {
