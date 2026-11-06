@@ -52,6 +52,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     }
 
     // Telemetría con traza completa para diagnóstico (best-effort, no debe romper).
+    // .then() es obligatorio: el query builder de supabase-js es perezoso y sin él no envía nada.
     try {
       void supabase.from("client_errors").insert({
         message: `${error.name}: ${error.message}`.slice(0, 500),
@@ -59,7 +60,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
         component_stack: (info.componentStack ?? "").slice(0, 4000),
         url: href,
         user_agent: typeof navigator !== "undefined" ? navigator.userAgent : "",
-      });
+      }).then(() => {}, () => {});
     } catch {
       /* ignore */
     }
