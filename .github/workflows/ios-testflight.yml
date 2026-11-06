@@ -1,0 +1,84 @@
+# iOS → TestFlight (Capacitor). Se lanza al hacer push a una rama apps/** o a mano (Actions → Run workflow).
+# Secrets necesarios (Settings → Secrets and variables → Actions):
+#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (contenido completo del .p8)  — clave App Store Connect con rol Admin
+# Variable (Settings → Variables): APPLE_TEAM_ID = 8CX5UN59YK
+# Requisito previo: la app (bundle id) debe existir en App Store Connect → Apps (no se puede crear por API).
+name: iOS TestFlight
+
+on:
+  push:
+    branches: ['apps/**']
+    paths: ['ios/**', 'capacitor.config.ts', 'app-shell/**', 'package.json', '.github/workflows/ios-testflight.yml']
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: 'all | clientes | agencias | equipo | admin'
+        default: 'all'
+        required: true
+
+concurrency:
+  group: ios-testflight-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testflight:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        flavor: ${{ fromJSON((github.event_name == 'push' || inputs.flavor == 'all') && '["clientes","agencias","equipo","admin"]' || format('["{0}"]', inputs.flavor)) }}
+    env:
+      APP_FLAVOR: ${{ matrix.flavor }}
+      TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --ignore-scripts
+      - name: Xcode 26 (App Store exige SDK iOS 26 desde abr-2026)
+        run: |
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$X" ]; then sudo xcode-select -s "$X"; fi
+          xcodebuild -version
+      - run: node scripts/app-assets.mjs "$RUNNER_TEMP/store"   # icono + splash del flavor
+      - run: npx cap sync ios
+      - name: Clave App Store Connect
+        env: { ASC_KEY_P8: '${{ secrets.ASC_KEY_P8 }}' }
+        run: |
+          test -n "$ASC_KEY_P8" || { echo "Falta el secret ASC_KEY_P8"; exit 1; }
+          mkdir -p ~/.appstoreconnect/private_keys
+          printf '%s' "$ASC_KEY_P8" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8
+      - name: Archive
+        run: |
+          APP_ID=$(node -p "require('./ios/App/App/capacitor.config.json').appId")
+          APP_NAME=$(node -p "require('./ios/App/App/capacitor.config.json').appName")
+          xcodebuild archive -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
+            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_ID" APP_DISPLAY_NAME="$APP_NAME" \
+            CURRENT_PROJECT_VERSION="${{ github.run_number }}"
+      - name: Export + subir a TestFlight
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
+            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}"
+      - if: always()
+        run: rm -rf ~/.appstoreconnect

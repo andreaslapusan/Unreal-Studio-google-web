@@ -8,3 +8,6 @@ test-results
 playwright-report
 .claude
 *.log
+android
+ios
+app-shell

@@ -31,3 +31,4 @@ supabase/.temp/
 .env
 .env.*
 !.env.example
+app-shell/start.js
