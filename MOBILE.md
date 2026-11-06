@@ -53,3 +53,26 @@ así no hace falta ningún iPhone registrado. Solo iPhone (`TARGETED_DEVICE_FAMI
 - **Pruebas**: web `node --experimental-strip-types scripts/check-native-app.ts`; `BASE=<url> node ~/jobs/apps/bin/native-feel-check.mjs`
   (window.Capacitor falso, 28 comprobaciones); vídeo `node ~/jobs/apps/bin/native-motions-video.mjs`.
   Falta en dispositivo real: iPhone (TestFlight) y un Android 15+ (insets/teclado/Atrás).
+
+## 06-nov-2026 (noche) — 4 idiomas en iOS + documentos dentro de la app
+- **Idiomas iOS** (`7409e31`): `CFBundleLocalizations` es/en/ro/id + `ios/App/App/<idioma>.lproj/InfoPlist.strings`
+  (grupo `InfoPlist.strings` en el pbxproj) con los textos de permisos: cámara, ubicación, fotos y, nuevos, micrófono
+  (grabar un vídeo para adjuntar en Equipo) y guardar en Fotos ("Guardar imagen"): sin esas dos claves iOS cierra la app.
+  ASC confirma `locales` = es/en/ro/id en la build 41 (la 31 solo tenía `en`): es lo que la App Store muestra como "Idiomas".
+- **Documentos iOS** (`DocumentHandler` en `SceneDelegate.swift`, delante de los delegados de Capacitor, que siguen
+  atendiendo todo lo demás por reenvío): descargas `<a download>` / blob: / data: (recibos jsPDF, informes html2pdf) →
+  fichero temporal → vista previa QuickLook (compartir, Archivos, imprimir). Ventanas nuevas (`target=_blank`,
+  `window.open`) a nuestros dominios: ficheros (PDF, imágenes; Supabase y `/r/…`) en Safari dentro de la app
+  (SFSafariViewController); páginas del portal (p. ej. pack de agencia) en la misma vista, con la sesión. Otros dominios
+  (WhatsApp, Maps, Drive) → sistema, como antes.
+- **Documentos Android** (`29823b9`, `MainActivity`): Capacitor no pone `DownloadListener` → pulsar un PDF no hacía nada.
+  http(s) → visor del sistema (`ACTION_VIEW`: navegador / app de PDF). blob:/data: (recibos jsPDF) → la página pasa el
+  contenido en base64 a `UnrealDocs` → `cache/docs/<nombre>` → FileProvider → visor (o compartir si no hay visor). El
+  nombre del `<a download>` lo apunta un gancho JS inyectado al cargar. Prueba sin móvil:
+  `node scripts/check-android-documents.mjs` (ejecuta en Chromium el JS embebido en el Java).
+- **Builds**: Android versionCode 3 (1.0.0) ×4 → `~/jobs/apps/builds/com.unrealstudio.<flavor>-1.0.0-3.aab` (firmados,
+  manifest verificado). iOS Actions run 4 (https://github.com/andreaslapusan/Unreal-Studio-google-web/actions/runs/42305160742)
+  4/4 OK → **build 41 VALID asignada a la versión 1.0 de las 4 apps** (PATCH relationships/build 204; 0 reviewSubmissions;
+  nada enviado).
+- Falta en dispositivo real: recibo "Descargar PDF" (Clientes) → vista previa / visor; folleto → Safari interno (iOS) /
+  visor (Android); textos de permisos en el idioma del teléfono; "Grabar vídeo" en Equipo pide micrófono sin cerrarse.
