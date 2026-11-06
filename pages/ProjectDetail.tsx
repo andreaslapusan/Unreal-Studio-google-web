@@ -72,7 +72,8 @@ const ProjectDetail: React.FC = () => {
   };
   // Extensiones del leasehold como filas de tabla: +5 años · Total 25 años.
   // Andreas 29-oct: en la web NUNCA el precio de la extensión, solo los años (el precio queda en BD/admin).
-  // Array `extensions` [{years, price}]; respaldo al campo único `years_extension`. Sin extensión → [] (card oculta).
+  // `extension_years` = columna generada extensions[*].years (sin precio; anon no puede leer `extensions`);
+  // respaldo al campo único `years_extension`. Sin extensión → [] (card oculta).
   const extensionRows = (): { years: string; total: string }[] => {
     const p = project as any;
     if (!p) return [];
@@ -81,8 +82,8 @@ const ProjectDetail: React.FC = () => {
       years: t('projectDetail.extYears', { years }),
       total: base && Number(years) ? t('projectDetail.extTotal', { total: base + Number(years) }) : '',
     });
-    const exts = Array.isArray(p.extensions) ? p.extensions.filter((e: any) => e && e.years != null) : [];
-    if (exts.length) return exts.map((e: any) => row(e.years));
+    const exts = Array.isArray(p.extension_years) ? p.extension_years.filter((y: any) => y != null) : [];
+    if (exts.length) return exts.map((y: any) => row(y));
     if (p.years_extension) return [row(p.years_extension)];
     return [];
   };
