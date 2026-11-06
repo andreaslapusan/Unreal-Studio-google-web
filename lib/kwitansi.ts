@@ -7,6 +7,8 @@
  * manda a la edge function `send-client-email`. Mismo diseño en portal/email/PDF.
  */
 
+import { centsDigits } from './numberFormat';
+
 export interface KwitansiData {
   no: string | number;
   receivedFrom: string;
@@ -163,22 +165,29 @@ export function localizeConcept(text: string | undefined, lang = 'es'): string {
 
 /** Cantidad en letras + divisa, capitalizado. */
 export function amountInWords(amount: number, currency = 'IDR', lang = 'es'): string {
-  let words: string;
-  if (lang === 'id') words = terbilang(amount);
-  else if (lang === 'en') words = numberToWordsEN(amount);
-  else words = numeroALetras(amount); // es/ro -> español (marca ES)
-  // apócope final antes de la divisa: "...uno euros" -> "...un euro"? mantenemos plural "euros"
-  words = words.replace(/\buno$/, 'un');
+  const say = (n: number) => (lang === 'id' ? terbilang(n) : lang === 'en' ? numberToWordsEN(n) : numeroALetras(n)) // es/ro -> español (marca ES)
+    .replace(/\buno$/, 'un'); // apócope antes de la divisa: "...uno euros" -> "...un euros"
+  // Céntimos reales (nunca en IDR): "… euros con treinta y un céntimos".
+  const cents = centsDigits(amount, currency) ? Math.round(Math.abs(amount) * 100) % 100 : 0;
+  const whole = cents ? Math.floor(Math.round(Math.abs(amount) * 100) / 100) : amount;
   const cur = (CURRENCY_WORD[lang] || CURRENCY_WORD.es)[currency] ?? currency;
-  const full = `${words} ${cur}`.trim();
+  const c = CENTS_WORD[lang] || CENTS_WORD.es;
+  const full = `${say(whole)} ${cur}${cents ? ` ${c.and} ${say(cents)} ${c[currency] ?? c.EUR}` : ''}`.replace(/\s+/g, ' ').trim();
   return full.charAt(0).toUpperCase() + full.slice(1);
 }
+const CENTS_WORD: Record<string, Record<string, string>> = {
+  es: { and: 'con', EUR: 'céntimos', USD: 'centavos' },
+  en: { and: 'and', EUR: 'cents', USD: 'cents' },
+  id: { and: '', EUR: 'sen', USD: 'sen' },
+};
 
 const SYMBOL: Record<string, string> = { IDR: 'Rp', EUR: '€', USD: '$' };
 export function formatFigure(amount: number, currency = 'IDR'): string {
   const loc = currency === 'IDR' ? 'id-ID' : 'es-ES';
-  const sep = new Intl.NumberFormat(loc, { useGrouping: 'always' } as any);
-  return `${SYMBOL[currency] ?? currency} ${sep.format(Math.round(amount))},-`;
+  // Con céntimos: "€ 4.989,31" (lo que llegó de verdad); entero: "€ 9.000,-" como siempre.
+  const d = centsDigits(amount, currency);
+  const sep = new Intl.NumberFormat(loc, { useGrouping: 'always', minimumFractionDigits: d, maximumFractionDigits: d } as any);
+  return `${SYMBOL[currency] ?? currency} ${sep.format(d ? amount : Math.round(amount))}${d ? '' : ',-'}`;
 }
 
 function fmtDate(iso: string | undefined, lang: string): string {

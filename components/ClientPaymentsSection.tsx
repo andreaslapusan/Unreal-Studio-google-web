@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { dateOnly, baliToday } from '../lib/timezone';
 import { uiLocale } from '../lib/dateLocale';
+import { centsDigits } from '../lib/numberFormat';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { renderKwitansiHtml, localizeConcept } from '../lib/kwitansi';
@@ -38,7 +39,8 @@ interface Props {
 }
 
 const fmt = (n: number, c: string) => {
-  try { return new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
+  const d = centsDigits(n, c || 'IDR'); // céntimos reales (4.989,31 €); enteros sin decimales
+  try { return new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: c || 'IDR', minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: 'always' } as any).format(n); }
   catch { return `${c} ${n}`; }
 };
 const fmtDate = (s: string | null) => {

@@ -34,3 +34,11 @@ export function parseNum(display: string | number | null | undefined): string {
   const digits = s.replace(/\./g, "").replace(/,/g, ".").replace(/[^\d.]/g, "");
   return (neg && digits ? "-" : "") + digits;
 }
+
+/**
+ * Decimales de un importe: 2 si lleva céntimos, 0 si es entero; IDR siempre 0.
+ * Recibís y pagos enseñan lo que llegó de verdad (4.989,31 €) sin ensuciar los enteros (9.000 €).
+ */
+export function centsDigits(amount: number, currency?: string | null): 0 | 2 {
+  return currency !== 'IDR' && Math.round(Math.abs(Number(amount) || 0) * 100) % 100 !== 0 ? 2 : 0;
+}

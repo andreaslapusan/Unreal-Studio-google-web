@@ -13,6 +13,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import DOMPurify from 'dompurify';
 import { uiLocale } from '../../lib/dateLocale';
+import { centsDigits } from '../../lib/numberFormat';
+import NumberInput from '../NumberInput';
 import { baliToday , dateOnly} from '../../lib/timezone';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
@@ -75,12 +77,10 @@ const projectPrefix = (name: string) => {
   return ini.slice(0, 2) || 'US'; // 2 letras del proyecto (Deseo Studio → DS)
 };
 const fmt = (n: number, c: string) => {
-  try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
+  const d = centsDigits(n, c || 'IDR'); // céntimos reales (4.989,31 €); enteros sin decimales
+  try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'IDR', minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: 'always' } as any).format(n); }
   catch { return `${c} ${n}`; }
 };
-// Para inputs de importe: muestra con puntos de miles y parsea de vuelta a número.
-const grp = (n: number) => (n ? n.toLocaleString('es-ES', { useGrouping: 'always' } as any) : '');
-const parseNum = (s: string) => Number(String(s).replace(/\D/g, '')) || 0;
 
 
 const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmail, clientExtraEmails, clientHolders, adminUserId, brand, adminSignature, clientLang, filterName, filterUnit, onClose }) => {
@@ -90,7 +90,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   const [editing, setEditing] = useState<{ cp: string; cur: string; pay: Partial<Payment> } | null>(null);
   const [saving, setSaving] = useState(false);
   const [kw, setKw] = useState<null | {
-    cp: string; payId?: string; received_from: string; amount: number; currency: string;
+    cp: string; payId?: string; received_from: string; amount: number | string; currency: string; // string mientras se teclea ("4989,")
     for_payment: string; place: string; date: string; dueDate?: string; sending: boolean; displayNo: string;
     signed?: boolean; kwitansiId?: string;
   }>(null);
@@ -206,7 +206,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   };
 
   const kwitansiHtml = (no: string | number, withSignature = true) => kw && renderKwitansiHtml({
-    no, receivedFrom: kw.received_from, amount: kw.amount, currency: kw.currency,
+    no, receivedFrom: kw.received_from, amount: Number(kw.amount) || 0, currency: kw.currency,
     forPayment: kw.for_payment, place: kw.place, date: kw.date, dueDate: kw.dueDate, lang: clientLang || 'es',
     logoUrl: brand?.logo || undefined,
     signatureUrl: withSignature ? (adminSignature || undefined) : undefined,
@@ -229,7 +229,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     // (aunque no esté firmado y se cierre la ventana). Se puede re-marcar para
     // CORREGIR la fecha de cobro. La fecha se ancla a mediodía UTC para que el día
     // se conserve igual en cualquier huso (evita el off-by-one que la movía un día).
-    await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: { id: kw.payId, client_project_id: '', received: true, received_amount: kw.amount ?? null, paid_at: (kw.date ? `${kw.date}T12:00:00.000Z` : new Date().toISOString()) } });
+    await supabase.rpc('admin_save_client_payment', { p_user_id: adminUserId, p_payment: { id: kw.payId, client_project_id: '', received: true, received_amount: kw.amount === '' ? null : Number(kw.amount), paid_at: (kw.date ? `${kw.date}T12:00:00.000Z` : new Date().toISOString()) } });
     await load();
     setKw((cur) => cur ? { ...cur, sending: false } : cur);
   };
@@ -265,7 +265,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
     const kwPay = units.flatMap((u) => u.payments || []).find((p) => p?.id === kw.payId);
     const dueStr = kwPay?.due_date ? new Date(dateOnly(kwPay.due_date)).toLocaleDateString(loc) : '';
     const paidStr = kw.date ? new Date(dateOnly(kw.date)).toLocaleDateString(loc) : '';
-    const fig = formatFigure(kw.amount, kw.currency);
+    const fig = formatFigure(Number(kw.amount) || 0, kw.currency);
     // Cuerpo PERSONALIZADO por destinatario: su nombre Y su idioma.
     const buildBody = (em: string) => {
       const lg = holderLangByEmail(em); const e2 = i18n.getFixedT(lg);
@@ -429,8 +429,9 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.labelPlaceholder')}
               value={editing.pay.label || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, label: e.target.value } }))} />
             <div className="flex gap-2 items-stretch">
-              <input type="text" inputMode="numeric" className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.amountPlaceholder')}
-                value={grp(editing.pay.amount || 0)} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, amount: parseNum(e.target.value) } }))} />
+              {/* decimal: los céntimos se pueden teclear ("4.989,31"); antes se borraba la coma y salía 498931 */}
+              <NumberInput decimal className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.amountPlaceholder')}
+                value={editing.pay.amount ?? ''} onChangeValue={(v) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, amount: v } }))} />
               {/* La divisa la fija la venta (asignación de la propiedad), no se elige aquí. */}
               <span className="px-3 flex items-center bg-gray-100 border rounded-lg text-sm font-bold text-primary/70" title={t('admin.pay.currencyFromSale', { defaultValue: 'La divisa la fija la venta de la propiedad' })}>
                 {units.find((x) => x.client_project_id === editing.cp)?.currency || editing.pay.currency || 'EUR'}
@@ -469,8 +470,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <div className="grid grid-cols-2 gap-2 text-sm">
               <input className="px-3 py-2 bg-gray-50 border rounded-lg col-span-2" placeholder={t('admin.pay.receivedFromPlaceholder')}
                 value={kw.received_from} onChange={(e) => setKw((pv: any) => ({ ...pv, received_from: e.target.value }))} />
-              <input type="text" inputMode="numeric" className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.amountPlaceholder')}
-                value={grp(kw.amount || 0)} onChange={(e) => setKw((pv: any) => ({ ...pv, amount: parseNum(e.target.value) }))} />
+              <NumberInput decimal className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.amountPlaceholder')}
+                value={kw.amount} onChangeValue={(v) => setKw((pv: any) => ({ ...pv, amount: v }))} />
               <select className="pl-3 pr-8 py-2 bg-gray-50 border rounded-lg" value={kw.currency} onChange={(e) => setKw((pv: any) => ({ ...pv, currency: e.target.value }))}>
                 <option>IDR</option><option>EUR</option><option>USD</option>
               </select>
@@ -479,7 +480,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               <input className="px-3 py-2 bg-gray-50 border rounded-lg" placeholder={t('admin.pay.placePlaceholder')} value={kw.place} onChange={(e) => setKw((pv: any) => ({ ...pv, place: e.target.value }))} />
               <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw((pv: any) => ({ ...pv, date: e.target.value }))} />
             </div>
-            <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(kw.amount, kw.currency)}</b></div>
+            <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(Number(kw.amount) || 0, kw.currency)}</b></div>
             <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(kwitansiHtml(kw.displayNo, !!kw.signed) || '') }} />
             {(() => {
               const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;

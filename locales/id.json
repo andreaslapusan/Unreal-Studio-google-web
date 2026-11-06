@@ -879,7 +879,10 @@
       "totalUnits": "Unit dalam kompleks (total)",
       "areaM2Label": "Rentang m² bangunan (opsional)",
       "landM2Label": "Rentang m² tanah (opsional)",
-      "m2LabelHint": "Jika diisi rentang (mis. 70-110), ditampilkan menggantikan angka."
+      "m2LabelHint": "Jika diisi rentang (mis. 70-110), ditampilkan menggantikan angka.",
+      "leaseExtTitle": "Perpanjangan leasehold · harga",
+      "leaseExtHint": "Opsi perpanjangan (tahun + harga) dan biaya perpanjangan dalam USD. Website publik hanya menampilkan tahunnya; biaya USD muncul di paket agensi.",
+      "viewType": "Pemandangan (tampil di website)"
     },
     "blogTab": {
       "title": "Artikel Blog",

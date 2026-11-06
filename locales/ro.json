@@ -747,7 +747,10 @@
       "totalUnits": "Unități în complex (total)",
       "areaM2Label": "Interval m² construiți (opțional)",
       "landM2Label": "Interval m² teren (opțional)",
-      "m2LabelHint": "Dacă introduci un interval (ex. 70-110), apare în locul numărului."
+      "m2LabelHint": "Dacă introduci un interval (ex. 70-110), apare în locul numărului.",
+      "leaseExtTitle": "Prelungirea leasehold · prețuri",
+      "leaseExtHint": "Opțiuni de prelungire (ani + preț) și costul prelungirii în USD. Site-ul public arată doar anii; costul în USD apare în pachetul pentru agenții.",
+      "viewType": "Vedere (afișată pe site)"
     },
     "blogTab": {
       "title": "Articole Blog",

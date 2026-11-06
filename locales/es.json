@@ -747,7 +747,10 @@
       "totalUnits": "Unidades en el complejo (total)",
       "areaM2Label": "Rango m² construidos (opcional)",
       "landM2Label": "Rango m² terreno (opcional)",
-      "m2LabelHint": "Si pones un rango (p. ej. 70-110), se muestra en lugar del número."
+      "m2LabelHint": "Si pones un rango (p. ej. 70-110), se muestra en lugar del número.",
+      "leaseExtTitle": "Extensión del leasehold · precios",
+      "leaseExtHint": "Opciones de extensión (años + precio) y coste de extensión en USD. La web pública solo enseña los años; el coste en USD sale en el pack de agencias.",
+      "viewType": "Vistas (se muestra en la web)"
     },
     "blogTab": {
       "title": "Artículos del Blog",
