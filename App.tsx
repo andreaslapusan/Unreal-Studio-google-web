@@ -70,7 +70,7 @@ import { landingRoutes } from './lib/landings';
 const AdminShell = lazyWithReload(() => import('./components/AdminShell'));
 import { AuthProvider, useAuth } from './lib/auth-context';
 import { CurrencyCode, AppConfig } from './types';
-import { DEFAULT_CONFIG } from './constants';
+import { DEFAULT_CONFIG, CURRENCIES } from './constants';
 import { supabase } from './lib/supabase';
 import { trackPageVisit } from './lib/attribution';
 import { trackPageView } from './lib/fbPixel';
@@ -188,8 +188,21 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
+// Divisa elegida (Navbar, admin, portal de agencias): se guarda para que sobreviva a recargas y reinicios de la app.
+const CURRENCY_KEY = '_unreal_currency';
+
 const App: React.FC = () => {
-  const [currentCurrency, setCurrentCurrency] = useState<CurrencyCode>('EUR');
+  const [currentCurrency, setCurrentCurrency] = useState<CurrencyCode>(() => {
+    try {
+      const saved = localStorage.getItem(CURRENCY_KEY);
+      if (CURRENCIES.some((c) => c.code === saved)) return saved as CurrencyCode;
+    } catch { /* sin almacenamiento: EUR */ }
+    return 'EUR';
+  });
+  const setCurrency = (code: CurrencyCode) => {
+    setCurrentCurrency(code);
+    try { localStorage.setItem(CURRENCY_KEY, code); } catch { /* sin almacenamiento: solo esta sesión */ }
+  };
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
 
   useEffect(() => {
@@ -288,7 +301,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency: setCurrentCurrency, formatPrice, formatMoney, rates: config.exchangeRates, convert: (amount, from, to) => (amount / (config.exchangeRates[from] || 1)) * (config.exchangeRates[to] || 1) }}>
+    <CurrencyContext.Provider value={{ currency: currentCurrency, setCurrency, formatPrice, formatMoney, rates: config.exchangeRates, convert: (amount, from, to) => (amount / (config.exchangeRates[from] || 1)) * (config.exchangeRates[to] || 1) }}>
       <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />

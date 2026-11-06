@@ -610,7 +610,7 @@ const AMENITIES_LIST = [
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
 
   const [blogSearch, setBlogSearch] = useState('');
-  const [blogTagFilter, setBlogTagFilter] = useState('Todos');
+  const [blogTagFilter, setBlogTagFilter] = useState(''); // '' = todas las etiquetas
   const [blogSortOrder, setBlogSortOrder] = useState<'newest' | 'oldest'>('newest');
   
   const [galleryInput, setGalleryInput] = useState('');
@@ -843,7 +843,7 @@ const AMENITIES_LIST = [
 
   const filteredAdminBlogs = useMemo(() => {
     let result = [...blogs];
-    if (blogTagFilter !== 'Todos') {
+    if (blogTagFilter) {
       result = result.filter(b => b.tag === blogTagFilter);
     }
     if (blogSearch.trim()) {
@@ -858,10 +858,7 @@ const AMENITIES_LIST = [
     return result;
   }, [blogs, blogTagFilter, blogSearch, blogSortOrder]);
 
-  const adminBlogTags = useMemo(() => {
-    const tags = blogs.map(b => b.tag).filter(Boolean);
-    return ['Todos', ...Array.from(new Set(tags))];
-  }, [blogs]);
+  const adminBlogTags = useMemo(() => Array.from(new Set(blogs.map(b => b.tag).filter(Boolean))), [blogs]);
 
   // --- IMAGE UPLOAD LOGIC ---
   // Sube un brochure para un IDIOMA concreto → currentProject.brochures[lang].
@@ -2230,7 +2227,8 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <input type="text" placeholder={t('admin.blogTab.search')} value={blogSearch} onChange={(e) => setBlogSearch(e.target.value)} className="bg-transparent border-none outline-none text-sm w-full font-bold text-primary" />
               </div>
               <select value={blogTagFilter} onChange={(e) => setBlogTagFilter(e.target.value)} className="bg-white rounded-xl px-4 py-2 text-sm border border-gray-100 outline-none font-bold text-primary cursor-pointer">
-                {adminBlogTags.map(t => <option key={t} value={t}>{t}</option>)}
+                <option value="">{t('blog.all')}</option>
+                {adminBlogTags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
               </select>
               <select value={blogSortOrder} onChange={(e) => setBlogSortOrder(e.target.value as 'newest' | 'oldest')} className="bg-white rounded-xl px-4 py-2 text-sm border border-gray-100 outline-none font-bold text-primary cursor-pointer">
                 <option value="newest">{t('admin.blogTab.sortNewest')}</option>

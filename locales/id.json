@@ -610,7 +610,7 @@
     },
     "fichaje": {
       "msg": {
-        "break_end": "Pausa selesai, lanjutkan 💪",
+        "break_end": "Istirahat selesai, lanjutkan 💪",
         "check_out": "Keluar tercatat! Sampai jumpa lagi 👋",
         "check_in": "Pendaftaran masuk telah tercatat! Kerja bagus ",
         "break_start": "Istirahat dimulai  Selamat menikmati!"
@@ -624,16 +624,16 @@
     },
     "today": {
       "title": "Hari ini",
-      "onBreak": "Sedang pausa 🍽️",
+      "onBreak": "Sedang istirahat 🍽️",
       "checkIn": "Masuk",
       "checkOut": "Keluar",
-      "breakStart": "Mulai pausa",
-      "breakEnd": "Akhir pausa"
+      "breakStart": "Mulai istirahat",
+      "breakEnd": "Selesai istirahat"
     },
     "buttons": {
       "checkIn": "Check-in (Masuk)",
-      "breakStart": "Mulai pausa",
-      "breakEnd": "Akhir pausa",
+      "breakStart": "Mulai istirahat",
+      "breakEnd": "Selesai istirahat",
       "checkOut": "Check-out (Keluar)"
     },
     "help": "Tekan, ambil foto tempat Anda dan selesai. Waktu dan lokasi disimpan secara otomatis. Jika Anda lupa mencatat sesuatu, Anda dapat mencatatnya kapan saja.",

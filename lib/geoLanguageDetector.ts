@@ -8,9 +8,12 @@
  *  - Everything else → "en"
  *
  * Runs only when the user has not stored an explicit choice in localStorage,
- * so the manual switcher always wins.
+ * so the manual switcher always wins. Inside the native app (Capacitor) the
+ * device language goes before the IP lookup; browsers are unchanged.
  */
 import type { LanguageDetectorAsyncModule } from "i18next";
+// Con extensión: scripts/check-native-app.ts importa este módulo con node (sin bundler).
+import { isNativeApp } from "./nativeApp.ts";
 
 const LATAM_ES = new Set([
   "ES", // Spain
@@ -29,6 +32,16 @@ function countryToLang(country: string | null | undefined): Supported {
   if (c === "RO") return "ro";
   if (LATAM_ES.has(c)) return "es";
   return "en";
+}
+
+// Idioma del dispositivo: el primero de navigator.languages que tengamos ("in" = código antiguo del indonesio en Android).
+function deviceLang(): string | null {
+  for (const tag of navigator.languages?.length ? navigator.languages : [navigator.language]) {
+    const l = String(tag || "").toLowerCase().split(/[-_]/)[0];
+    const m = l === "in" ? "id" : l;
+    if (["es", "en", "ro", "id"].includes(m)) return m;
+  }
+  return null;
 }
 
 async function fetchCountry(): Promise<string | null> {
@@ -100,6 +113,15 @@ export const geoLanguageDetector: LanguageDetectorAsyncModule = {
       }
     } catch {
       /* ignore */
+    }
+
+    // 1b. Solo dentro de la app nativa: idioma del móvil antes que la IP (en el navegador, igual que antes).
+    if (isNativeApp()) {
+      const dev = deviceLang();
+      if (dev) {
+        callback(dev);
+        return dev;
+      }
     }
 
     // 2. IP-based country lookup

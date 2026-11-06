@@ -7,7 +7,7 @@
  * En el navegador normal NO se activa (ya existe el gesto nativo).
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { isNativeApp } from '../lib/nativeApp';
+import { isNativeApp, nativeOverlayOpen } from '../lib/nativeApp';
 
 const THRESHOLD = 70; // px de arrastre (con resistencia) para disparar recarga
 const MAX = 110;
@@ -30,8 +30,9 @@ export default function PullToRefresh() {
     const setP = (v: number) => { pullRef.current = v; setPull(v); };
 
     const onStart = (e: TouchEvent) => {
-      // Con un pop-up abierto el arrastre es scroll dentro del pop-up: nunca recargar (se perdía el formulario).
-      if (window.scrollY > 0 || refreshing || document.querySelector('.fixed.inset-0')) { active.current = false; return; }
+      // App nativa: con un pop-up abierto el arrastre es scroll dentro del pop-up → no recargar (se perdía el formulario).
+      // La PWA instalada sigue exactamente como antes (sin esta guarda).
+      if (window.scrollY > 0 || refreshing || nativeOverlayOpen()) { active.current = false; return; }
       startY.current = e.touches[0].clientY;
       startX.current = e.touches[0].clientX;
       lockDir.current = null;

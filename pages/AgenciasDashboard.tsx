@@ -11,6 +11,8 @@ import { useAuth } from '../lib/auth-context';
 import AdminSidebar, { NavItem } from '../components/AdminSidebar';
 import BrandLogo from '../components/BrandLogo';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useCurrency } from '../App';
+import { CURRENCIES } from '../constants';
 import { useAgencyData } from '../components/agency/useAgencyData';
 import AgencyOverview from '../components/agency/AgencyOverview';
 import AgencyProjects from '../components/agency/AgencyProjects';
@@ -43,6 +45,7 @@ const ICONS = Object.fromEntries(ICON_LIST.map((x) => [x.view, x.icon])) as Reco
 export default function AgenciasDashboard() {
   const { t } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
+  const { currency, setCurrency } = useCurrency(); // los precios del portal se convierten a esta divisa
   const data = useAgencyData(user?.id, t('agenciasDashboard.accountNotLinked'));
   const [sp, setSp] = useSearchParams();
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -75,6 +78,9 @@ export default function AgenciasDashboard() {
           <div className="flex items-center gap-2 md:gap-3">
             {partner?.logo_url && <img src={partner.logo_url} alt={partner.agency_name} className="hidden lg:block h-8 w-8 rounded-full object-contain bg-gray-50 border border-gray-100" />}
             <span className="hidden lg:block text-xs font-bold text-primary/70 max-w-[200px] truncate">{partner?.agency_name ?? user.email}</span>
+            <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} aria-label={t('fix.nav.currency')} className="hidden lg:block bg-white/50 border border-primary/10 rounded-full px-3 py-1.5 text-[10px] font-bold text-primary focus:ring-0 cursor-pointer hover:bg-white transition">
+              {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
+            </select>
             <div className="hidden lg:block"><LanguageSwitcher /></div>
             <button onClick={logout} className="hidden lg:block bg-red-50 text-red-600 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
             <button onClick={() => setMenuOpen((o) => !o)} aria-label={t('fix.adm.menuAria')} className="lg:hidden w-10 h-10 rounded-full bg-gray-100 text-primary flex items-center justify-center active:scale-95 transition">
@@ -96,7 +102,12 @@ export default function AgenciasDashboard() {
                 ))}
               </div>
               <div className="border-t border-gray-100 pt-2 flex flex-col gap-2">
-                <div className="px-1"><LanguageSwitcher /></div>
+                <div className="flex flex-col gap-2 px-1">
+                  <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} aria-label={t('fix.nav.currency')} className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-3 pr-9 py-1.5 text-xs font-bold text-primary">
+                    {CURRENCIES.map(c => (<option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>))}
+                  </select>
+                  <LanguageSwitcher />
+                </div>
                 <button onClick={logout} className="text-left px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition">{t('admin.common.logout')}</button>
               </div>
             </div>

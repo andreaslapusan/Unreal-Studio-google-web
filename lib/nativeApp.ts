@@ -6,6 +6,9 @@ const cap = (): { isNativePlatform?: () => boolean; getPlatform?: () => string; 
 
 export const isNativeApp = (): boolean => cap()?.isNativePlatform?.() === true;
 
+// Pop-up/menú a pantalla completa abierto, SOLO en la app (navegador y PWA: siempre false, sin tocar el DOM).
+export const nativeOverlayOpen = (): boolean => isNativeApp() && !!document.querySelector('.fixed.inset-0');
+
 export function initNativeApp(): void {
   if (!isNativeApp()) return;
   const c = cap()!;
