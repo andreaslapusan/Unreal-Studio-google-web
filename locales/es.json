@@ -480,7 +480,30 @@
     "infoStep3": "Usa tu enlace personal para que las visitas y reservas queden atribuidas a tu agencia.",
     "infoStep4": "Revisa tus estadísticas desde el botón de estadísticas del menú superior.",
     "infoTitle": "Cómo usar tu portal de agencia",
-    "instructions": "Instrucciones"
+    "instructions": "Instrucciones",
+    "leads": {
+      "title": "Clientes registrados",
+      "body": "Registra a tu cliente antes de que contacte con nosotros: la fecha de registro protege tu comisión.",
+      "register": "Registrar cliente",
+      "empty": "Aún no has registrado clientes.",
+      "close": "Cerrar",
+      "name": "Nombre del cliente *",
+      "email": "Email",
+      "phone": "Teléfono / WhatsApp",
+      "country": "País",
+      "project": "Proyecto de interés (opcional)",
+      "budget": "Presupuesto (opcional)",
+      "notes": "Notas",
+      "submit": "Registrar",
+      "saving": "Guardando…",
+      "errRequired": "Indica el nombre y al menos un email o teléfono.",
+      "status": {
+        "new": "Nuevo",
+        "contacted": "Contactado",
+        "won": "Ganado",
+        "lost": "Perdido"
+      }
+    }
   },
   "agenciasStats": {
     "headerTitle": "Mis estadísticas",
@@ -1780,6 +1803,20 @@
       "notes": "Notas",
       "cancel": "Cancelar",
       "save": "Guardar"
+    },
+    "agencyLeads": {
+      "title": "Clientes registrados por agencias",
+      "empty": "Ninguna agencia ha registrado clientes todavía.",
+      "col": {
+        "date": "Fecha",
+        "agency": "Agencia",
+        "client": "Cliente",
+        "contact": "Contacto",
+        "project": "Proyecto",
+        "budget": "Presupuesto",
+        "notes": "Notas",
+        "status": "Estado"
+      }
     }
   },
   "footer": {

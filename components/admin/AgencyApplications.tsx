@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth-context';
 import { ApplicationsTab, PartnersTab } from '../../pages/AdminPortalManager';
+import { uiLocale } from '../../lib/dateLocale';
 
 const AgencyApplications: React.FC = () => {
   const { user } = useAuth();
@@ -16,15 +17,18 @@ const AgencyApplications: React.FC = () => {
   const [applications, setApplications] = useState<any[]>([]);
   const [partners, setPartners] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
+  const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const reload = useCallback(async () => {
     setLoading(true);
-    const [app, lp, props] = await Promise.all([
+    const [app, lp, props, al] = await Promise.all([
       supabase.from('listing_partner_applications').select('id, agency_name, manager_name, email, whatsapp, country, projects_interested, monthly_volume, notes, status, created_at').order('created_at', { ascending: false }),
       supabase.from('listing_partners').select('id, agency_name, email, status, projects_assigned, user_id').order('agency_name'),
       supabase.from('properties').select('id, slug, name, area, pct_progress, delivery_date, hero_image_url, walkthrough_url, brand_pdf_url').order('name'),
+      supabase.from('agency_leads').select('id, agency_id, created_at, client_name, client_email, client_phone, country, property_id, budget, notes, status').order('created_at', { ascending: false }),
     ]);
+    setLeads(al.data ?? []);
     setApplications(app.data ?? []);
     setPartners(lp.data ?? []);
     setProperties(props.data ?? []);
@@ -78,6 +82,12 @@ const AgencyApplications: React.FC = () => {
     }
   };
 
+  const setLeadStatus = async (id: string, status: string) => {
+    const { error } = await supabase.from('agency_leads').update({ status }).eq('id', id);
+    if (error) { alert(t('admin.agencyApps.actionError', { msg: error.message, defaultValue: 'Error: {{msg}}' })); return; }
+    setLeads((ls) => ls.map((l) => (l.id === id ? { ...l, status } : l)));
+  };
+
   if (loading) return <div className="py-12 text-center text-primary/40"><span className="material-symbols-outlined animate-spin text-3xl">refresh</span></div>;
 
   const pendingCount = applications.filter((a) => a.status === 'pending').length;
@@ -92,6 +102,36 @@ const AgencyApplications: React.FC = () => {
       <section>
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyApps.activePartners', { defaultValue: 'Agencias activas' })}</h3>
         <PartnersTab data={partners} properties={properties} onAssign={handleAssign} onChange={reload} />
+      </section>
+      <section>
+        <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyLeads.title')}</h3>
+        {leads.length === 0 ? <p className="text-sm text-primary/50">{t('admin.agencyLeads.empty')}</p> : (
+          <div className="overflow-x-auto bg-white/60 rounded-xl">
+            <table className="w-full text-sm">
+              <thead className="text-left text-[10px] uppercase tracking-widest text-primary/40">
+                <tr>{['date', 'agency', 'client', 'contact', 'project', 'budget', 'notes', 'status'].map((c) => <th key={c} className="p-3">{t(`admin.agencyLeads.col.${c}`)}</th>)}</tr>
+              </thead>
+              <tbody>
+                {leads.map((l) => (
+                  <tr key={l.id} className="border-t border-primary/10 align-top">
+                    <td className="p-3 whitespace-nowrap text-xs">{new Date(l.created_at).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' })}</td>
+                    <td className="p-3">{partners.find((p) => p.id === l.agency_id)?.agency_name ?? '—'}</td>
+                    <td className="p-3 font-medium">{l.client_name}{l.country ? <span className="block text-xs text-primary/50">{l.country}</span> : null}</td>
+                    <td className="p-3 text-xs">{[l.client_email, l.client_phone].filter(Boolean).join(' · ') || '—'}</td>
+                    <td className="p-3 text-xs">{properties.find((p) => p.id === l.property_id)?.name ?? '—'}</td>
+                    <td className="p-3 text-xs">{l.budget ?? '—'}</td>
+                    <td className="p-3 text-xs max-w-[220px] whitespace-pre-wrap">{l.notes ?? '—'}</td>
+                    <td className="p-3">
+                      <select value={l.status} onChange={(e) => void setLeadStatus(l.id, e.target.value)} className="border border-primary/15 rounded-lg px-2 py-1 text-xs bg-white">
+                        {['new', 'contacted', 'won', 'lost'].map((s) => <option key={s} value={s}>{t(`agenciasDashboard.leads.status.${s}`)}</option>)}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </div>
   );

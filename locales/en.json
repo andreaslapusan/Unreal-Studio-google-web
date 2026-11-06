@@ -480,7 +480,30 @@
     "infoStep3": "Use your personal link so that visits and bookings are attributed to your agency.",
     "infoStep4": "Review your statistics from the statistics button in the top menu.",
     "infoTitle": "How to use your agency portal",
-    "instructions": "Instructions"
+    "instructions": "Instructions",
+    "leads": {
+      "title": "Registered clients",
+      "body": "Register your client before they contact us: the registration date protects your commission.",
+      "register": "Register client",
+      "empty": "You haven't registered any clients yet.",
+      "close": "Close",
+      "name": "Client name *",
+      "email": "Email",
+      "phone": "Phone / WhatsApp",
+      "country": "Country",
+      "project": "Project of interest (optional)",
+      "budget": "Budget (optional)",
+      "notes": "Notes",
+      "submit": "Register",
+      "saving": "Saving…",
+      "errRequired": "Enter the name and at least an email or phone.",
+      "status": {
+        "new": "New",
+        "contacted": "Contacted",
+        "won": "Won",
+        "lost": "Lost"
+      }
+    }
   },
   "agenciasStats": {
     "headerTitle": "My stats",
@@ -1780,6 +1803,20 @@
       "notes": "Notes",
       "cancel": "Cancel",
       "save": "Save"
+    },
+    "agencyLeads": {
+      "title": "Clients registered by agencies",
+      "empty": "No agency has registered clients yet.",
+      "col": {
+        "date": "Date",
+        "agency": "Agency",
+        "client": "Client",
+        "contact": "Contact",
+        "project": "Project",
+        "budget": "Budget",
+        "notes": "Notes",
+        "status": "Status"
+      }
     }
   },
   "footer": {

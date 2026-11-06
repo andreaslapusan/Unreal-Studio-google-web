@@ -480,7 +480,30 @@
     "infoStep3": "Folosește linkul tău personal pentru ca vizitele și rezervările să fie atribuite agenției tale.",
     "infoStep4": "Verifică-ți statisticile din butonul de statistici din meniul de sus.",
     "infoTitle": "Cum să folosești portalul tău de agenție",
-    "instructions": "Instrucțiuni"
+    "instructions": "Instrucțiuni",
+    "leads": {
+      "title": "Clienți înregistrați",
+      "body": "Înregistrează clientul înainte să ne contacteze: data înregistrării îți protejează comisionul.",
+      "register": "Înregistrează client",
+      "empty": "Nu ai înregistrat încă niciun client.",
+      "close": "Închide",
+      "name": "Numele clientului *",
+      "email": "Email",
+      "phone": "Telefon / WhatsApp",
+      "country": "Țară",
+      "project": "Proiect de interes (opțional)",
+      "budget": "Buget (opțional)",
+      "notes": "Note",
+      "submit": "Înregistrează",
+      "saving": "Se salvează…",
+      "errRequired": "Introdu numele și cel puțin un email sau telefon.",
+      "status": {
+        "new": "Nou",
+        "contacted": "Contactat",
+        "won": "Câștigat",
+        "lost": "Pierdut"
+      }
+    }
   },
   "agenciasStats": {
     "headerTitle": "Statisticile mele",
@@ -1780,6 +1803,20 @@
       "notes": "Note",
       "cancel": "Anulează",
       "save": "Salvează"
+    },
+    "agencyLeads": {
+      "title": "Clienți înregistrați de agenții",
+      "empty": "Nicio agenție nu a înregistrat încă clienți.",
+      "col": {
+        "date": "Data",
+        "agency": "Agenție",
+        "client": "Client",
+        "contact": "Contact",
+        "project": "Proiect",
+        "budget": "Buget",
+        "notes": "Note",
+        "status": "Stare"
+      }
     }
   },
   "footer": {

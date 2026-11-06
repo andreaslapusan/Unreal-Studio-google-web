@@ -481,7 +481,30 @@
     "infoStep3": "Gunakan tautan pribadi Anda agar kunjungan dan pemesanan diatribusikan ke agensi Anda.",
     "infoStep4": "Tinjau statistik Anda dari tombol statistik di menu atas.",
     "infoTitle": "Cara menggunakan portal agensi Anda",
-    "instructions": "Petunjuk"
+    "instructions": "Petunjuk",
+    "leads": {
+      "title": "Klien terdaftar",
+      "body": "Daftarkan klien Anda sebelum mereka menghubungi kami: tanggal pendaftaran melindungi komisi Anda.",
+      "register": "Daftarkan klien",
+      "empty": "Anda belum mendaftarkan klien.",
+      "close": "Tutup",
+      "name": "Nama klien *",
+      "email": "Email",
+      "phone": "Telepon / WhatsApp",
+      "country": "Negara",
+      "project": "Proyek yang diminati (opsional)",
+      "budget": "Anggaran (opsional)",
+      "notes": "Catatan",
+      "submit": "Daftarkan",
+      "saving": "Menyimpan…",
+      "errRequired": "Isi nama dan setidaknya email atau telepon.",
+      "status": {
+        "new": "Baru",
+        "contacted": "Dihubungi",
+        "won": "Berhasil",
+        "lost": "Gagal"
+      }
+    }
   },
   "agenciasStats": {
     "headerTitle": "Statistik saya",
@@ -1885,6 +1908,20 @@
       "notes": "Catatan",
       "cancel": "Batal",
       "save": "Simpan"
+    },
+    "agencyLeads": {
+      "title": "Klien yang didaftarkan agensi",
+      "empty": "Belum ada agensi yang mendaftarkan klien.",
+      "col": {
+        "date": "Tanggal",
+        "agency": "Agensi",
+        "client": "Klien",
+        "contact": "Kontak",
+        "project": "Proyek",
+        "budget": "Anggaran",
+        "notes": "Catatan",
+        "status": "Status"
+      }
     }
   },
   "footer": {

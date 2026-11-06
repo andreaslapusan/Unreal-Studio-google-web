@@ -9,6 +9,7 @@ import { useAuth } from "../lib/auth-context";
 import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
 import { projectSeoSlug } from "../lib/projectUrl";
+import { uiLocale } from "../lib/dateLocale";
 import PortalHeader from "../components/PortalHeader";
 import Footer from "../components/Footer";
 
@@ -147,6 +148,8 @@ export default function AgenciasDashboard() {
           />
         )}
 
+        {partner && <AgencyLeadsPanel partnerId={partner.id} projects={projects} />}
+
         {loading && <p>{t('agenciasDashboard.loadingProjects')}</p>}
         {error && <p className="text-red-600">{error}</p>}
 
@@ -213,6 +216,117 @@ export default function AgenciasDashboard() {
         <Footer />
       </div>
     </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+
+interface AgencyLead {
+  id: string;
+  created_at: string;
+  client_name: string;
+  client_email: string | null;
+  property_id: string | null;
+  status: string;
+}
+
+const EMPTY_LEAD = { client_name: "", client_email: "", client_phone: "", country: "", property_id: "", budget: "", notes: "" };
+
+function AgencyLeadsPanel({ partnerId, projects }: { partnerId: string; projects: PropertyRow[] }) {
+  const { t } = useTranslation();
+  const [leads, setLeads] = useState<AgencyLead[]>([]);
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState(EMPTY_LEAD);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+
+  const load = async () => {
+    const { data, error } = await supabase
+      .from("agency_leads")
+      .select("id, created_at, client_name, client_email, property_id, status")
+      .eq("agency_id", partnerId)
+      .order("created_at", { ascending: false });
+    if (error) setErr(error.message);
+    else setLeads((data ?? []) as AgencyLead[]);
+  };
+  useEffect(() => { void load(); }, [partnerId]);
+
+  const set = (k: keyof typeof EMPTY_LEAD) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.client_name.trim() || (!form.client_email.trim() && !form.client_phone.trim())) {
+      setErr(t('agenciasDashboard.leads.errRequired'));
+      return;
+    }
+    setSaving(true);
+    setErr("");
+    const row = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, (v as string).trim() || null]));
+    const { error } = await supabase.from("agency_leads").insert({ ...row, agency_id: partnerId });
+    setSaving(false);
+    if (error) { setErr(error.message); return; }
+    setForm(EMPTY_LEAD);
+    setOpen(false);
+    void load();
+  };
+
+  const projectName = (id: string | null) => projects.find((p) => p.id === id)?.name ?? "—";
+  const input = "w-full border border-primary/15 rounded-lg px-3 py-2 text-sm bg-white";
+
+  return (
+    <section className="bg-white rounded-2xl p-6 shadow-sm border border-primary/5">
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h3 className="font-serif text-lg text-primary">{t('agenciasDashboard.leads.title')}</h3>
+          <p className="text-xs text-primary/60">{t('agenciasDashboard.leads.body')}</p>
+        </div>
+        <button onClick={() => { setErr(""); setOpen(true); }} className="shrink-0 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full bg-primary text-white hover:translate-y-[-1px] transition">
+          {t('agenciasDashboard.leads.register')}
+        </button>
+      </div>
+
+      {!open && err && <p className="text-xs text-red-600 mb-2">{err}</p>}
+      {leads.length === 0 ? (
+        <p className="text-sm text-primary/50">{t('agenciasDashboard.leads.empty')}</p>
+      ) : (
+        <ul className="divide-y divide-primary/10 text-sm">
+          {leads.map((l) => (
+            <li key={l.id} className="py-2 flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium text-primary">{l.client_name}</span>
+              <span className="text-primary/60 truncate">{projectName(l.property_id)}</span>
+              <span className="text-xs text-primary/50">{new Date(l.created_at).toLocaleString(uiLocale(), { dateStyle: "short", timeStyle: "short" })}</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest bg-almond px-2 py-1 rounded-full">{t(`agenciasDashboard.leads.status.${l.status}`)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {open && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setOpen(false)}>
+          <form onSubmit={submit} className="ust-modal bg-white rounded-2xl shadow-2xl p-7 relative w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-3" onClick={(e) => e.stopPropagation()}>
+            <button type="button" onClick={() => setOpen(false)} aria-label={t('agenciasDashboard.leads.close')} className="absolute top-4 right-4 text-gray-400 hover:text-primary transition">
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <h2 className="text-2xl font-serif text-primary">{t('agenciasDashboard.leads.register')}</h2>
+            <input className={input} placeholder={t('agenciasDashboard.leads.name')} value={form.client_name} onChange={set("client_name")} required maxLength={200} />
+            <input className={input} type="email" placeholder={t('agenciasDashboard.leads.email')} value={form.client_email} onChange={set("client_email")} maxLength={200} />
+            <input className={input} type="tel" placeholder={t('agenciasDashboard.leads.phone')} value={form.client_phone} onChange={set("client_phone")} maxLength={50} />
+            <input className={input} placeholder={t('agenciasDashboard.leads.country')} value={form.country} onChange={set("country")} maxLength={100} />
+            <select className={input} value={form.property_id} onChange={set("property_id")}>
+              <option value="">{t('agenciasDashboard.leads.project')}</option>
+              {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
+            <input className={input} placeholder={t('agenciasDashboard.leads.budget')} value={form.budget} onChange={set("budget")} maxLength={100} />
+            <textarea className={input} rows={3} placeholder={t('agenciasDashboard.leads.notes')} value={form.notes} onChange={set("notes")} maxLength={2000} />
+            {err && <p className="text-xs text-red-600">{err}</p>}
+            <button type="submit" disabled={saving} className="w-full text-xs font-bold uppercase tracking-widest px-4 py-3 rounded-full bg-primary text-white disabled:opacity-50">
+              {saving ? t('agenciasDashboard.leads.saving') : t('agenciasDashboard.leads.submit')}
+            </button>
+          </form>
+        </div>
+      )}
+    </section>
   );
 }
 
