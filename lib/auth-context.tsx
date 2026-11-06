@@ -7,7 +7,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 
-export type UserRole = "admin" | "team" | "lister" | "investor" | null;
+export type UserRole = "admin" | "team" | "lister" | "investor" | "demo" | null;
 
 interface AuthCtx {
   user: User | null;

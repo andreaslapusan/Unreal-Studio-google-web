@@ -1405,7 +1405,13 @@
       "reportsLabel": "Rapoarte de construcție",
       "reportsActive": "Active",
       "reportsPaused": "Pauzate",
-      "reportsHint": "Dacă le pui pe pauză, nu mai primește emailul automat de rapoarte și butonul de vizualizare a raportului dispare din portalul său."
+      "reportsHint": "Dacă le pui pe pauză, nu mai primește emailul automat de rapoarte și butonul de vizualizare a raportului dispare din portalul său.",
+      "emailsPaused": "E-mailurile sunt suspendate pentru acest client: nu s-a trimis nimic. Le poți reactiva din fișa clientului oricând.",
+      "autoEmails": "E-mailuri către client",
+      "autoEmailsOn": "E-mailuri ON",
+      "autoEmailsOff": "E-mailuri suspendate",
+      "autoEmailsHint": "Cât timp sunt suspendate, nu se trimite niciun e-mail acestui client (mementouri de plată, rapoarte de șantier, chitanțe, bun venit sau e-mailuri manuale) până le reactivezi.",
+      "autoEmailsConfirmOn": "Reactivezi e-mailurile către acest client? Va primi din nou mementouri, rapoarte și chitanțe automate."
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -1865,7 +1871,8 @@
         "personal_link_slug": "Link personal (slug)",
         "status": "Status"
       }
-    }
+    },
+    "demoBanner": "Cont demo doar pentru citire: poți vedea proiectele și blogul. Datele clienților, plăților și echipei nu sunt disponibile în acest cont."
   },
   "footer": {
     "tagline": "Investiții imobiliare inteligente și arhitectură premium în cele mai profitabile destinații din lume.",

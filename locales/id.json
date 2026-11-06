@@ -1510,7 +1510,13 @@
       "reportsLabel": "Laporan konstruksi",
       "reportsActive": "Aktif",
       "reportsPaused": "Dijeda",
-      "reportsHint": "Jika dijeda, mereka berhenti menerima email laporan otomatis dan tombol lihat laporan disembunyikan di portal mereka."
+      "reportsHint": "Jika dijeda, mereka berhenti menerima email laporan otomatis dan tombol lihat laporan disembunyikan di portal mereka.",
+      "emailsPaused": "Email untuk klien ini dijeda: tidak ada yang dikirim. Aktifkan kembali di kartu klien kapan saja.",
+      "autoEmails": "Email ke klien",
+      "autoEmailsOn": "Email AKTIF",
+      "autoEmailsOff": "Email dijeda",
+      "autoEmailsHint": "Selama dijeda, tidak ada email sama sekali yang dikirim ke klien ini (pengingat pembayaran, laporan konstruksi, kuitansi, sambutan, atau email manual) sampai Anda mengaktifkannya kembali.",
+      "autoEmailsConfirmOn": "Aktifkan kembali email ke klien ini? Klien akan kembali menerima pengingat, laporan, dan kuitansi otomatis."
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -1970,7 +1976,8 @@
         "personal_link_slug": "Tautan pribadi (slug)",
         "status": "Status"
       }
-    }
+    },
+    "demoBanner": "Akun demo hanya-baca: Anda dapat melihat proyek dan blog. Data klien, pembayaran, dan tim tidak tersedia di akun ini."
   },
   "footer": {
     "tagline": "Investasi properti cerdas dan arsitektur premium di destinasi paling menguntungkan di dunia.",

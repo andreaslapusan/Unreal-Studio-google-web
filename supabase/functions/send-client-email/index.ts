@@ -114,6 +114,13 @@ Deno.serve(async (req) => {
     .from("admin_users").select("id").eq("id", p.adminUserId).eq("is_active", true).maybeSingle();
   if (!admin) return json({ success: false, error: "Unauthorized" }, 401);
 
+  // Pausa por cliente (clients.auto_emails_enabled=false): no sale NINGÚN correo a ese cliente, ni por
+  // su clientId ni a cualquiera de sus emails. 200 + success:false para que el panel muestre el aviso.
+  const toList = (Array.isArray(p.to) ? p.to : [p.to]).map((e) => String(e || "").trim().toLowerCase()).filter(Boolean);
+  const { data: paused, error: pausedErr } = await supabase.rpc("client_emails_paused", { p_client_id: p.clientId || null, p_emails: toList });
+  if (pausedErr) return json({ success: false, error: "paused_check_failed" }, 500);
+  if (paused === true) return json({ success: false, error: "client_emails_paused", message: "Emails paused for this client (clients.auto_emails_enabled = false)" });
+
   const host = Deno.env.get("SMTP_HOST");
   const user = Deno.env.get("SMTP_USER");
   const pass = Deno.env.get("SMTP_PASS");

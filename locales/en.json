@@ -1405,7 +1405,13 @@
       "reportsLabel": "Construction reports",
       "reportsActive": "Active",
       "reportsPaused": "Paused",
-      "reportsHint": "If paused, they stop receiving the automatic report email and the view-report button is hidden in their portal."
+      "reportsHint": "If paused, they stop receiving the automatic report email and the view-report button is hidden in their portal.",
+      "emailsPaused": "Emails are paused for this client: nothing was sent. Re-enable them on the client card whenever you want.",
+      "autoEmails": "Client emails",
+      "autoEmailsOn": "Emails ON",
+      "autoEmailsOff": "Emails paused",
+      "autoEmailsHint": "While paused, no email at all is sent to this client (payment reminders, construction updates, receipts, welcome or manual emails) until you re-enable them.",
+      "autoEmailsConfirmOn": "Re-enable emails to this client? They will receive automatic reminders, updates and receipts again."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",
@@ -1865,7 +1871,8 @@
         "personal_link_slug": "Personal link (slug)",
         "status": "Status"
       }
-    }
+    },
+    "demoBanner": "Read-only demo account: you can browse projects and the blog. Client, payment and team data are not available in this account."
   },
   "footer": {
     "tagline": "Smart real-estate investment and premium architecture in the world’s most profitable destinations.",

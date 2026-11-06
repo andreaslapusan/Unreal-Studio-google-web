@@ -106,8 +106,11 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   // Acceso admin SOLO con sesión Supabase Auth y rol admin/team. Se elimina el
   // atajo por token localStorage `_ust_sh_` (era base64 sin firmar y falsificable).
   const { user, role, loading } = useAuth();
+  const { pathname } = useLocation();
   if (loading) return null;
   if (user && (role === 'admin' || role === 'team')) return <>{children}</>;
+  // Cuenta demo (App Review): solo el panel /admin en modo lectura; la BD no le da datos de admin.
+  if (user && role === 'demo') return pathname === '/admin' ? <>{children}</> : <Navigate to="/admin" replace />;
   return <Navigate to="/admin/login" replace />;
 };
 

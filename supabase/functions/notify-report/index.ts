@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
   // Clientes asignados a ese proyecto (cada asignación = una propiedad).
   const { data: cps } = await supabase
     .from("client_projects")
-    .select("unit_number, holder_participants, reports_enabled, clients(name,email,extra_emails,holders,preferred_language,status,is_active)")
+    .select("unit_number, holder_participants, reports_enabled, clients(name,email,extra_emails,holders,preferred_language,status,is_active,auto_emails_enabled)")
     .eq("project_id", projectId);
 
   // Independencia total entre titulares: 1 correo SEPARADO por titular, cada uno
@@ -93,6 +93,7 @@ Deno.serve(async (req) => {
     if (eff !== "active") continue;
     // Reportes pausados para esta propiedad/propietario => no se le avisa.
     if (r.reports_enabled === false) continue;
+    if (cl?.auto_emails_enabled === false) continue; // emails pausados para este cliente
     for (const tt of titularsOf(cl, r.holder_participants)) recipients.push({ name: tt.name, email: tt.email, lang: tt.lang, unit: r.unit_number });
   }
 

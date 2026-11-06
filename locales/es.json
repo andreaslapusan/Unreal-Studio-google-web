@@ -1405,7 +1405,13 @@
       "reportsLabel": "Reportes de obra",
       "reportsActive": "Activos",
       "reportsPaused": "Pausados",
-      "reportsHint": "Si los pausas, deja de recibir el email automático de reportes y se le oculta el botón de ver reporte en su portal."
+      "reportsHint": "Si los pausas, deja de recibir el email automático de reportes y se le oculta el botón de ver reporte en su portal.",
+      "emailsPaused": "Emails pausados para este cliente: no se ha enviado ningún correo. Reactívalos en su ficha cuando quieras.",
+      "autoEmails": "Emails al cliente",
+      "autoEmailsOn": "Emails ON",
+      "autoEmailsOff": "Emails pausados",
+      "autoEmailsHint": "Si los pausas, no sale ningún correo a este cliente (recordatorios de pago, avisos de obra, recibís, bienvenida ni envíos manuales) hasta que los reactives.",
+      "autoEmailsConfirmOn": "¿Reactivar los correos a este cliente? Volverá a recibir recordatorios, avisos y recibís automáticos."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -1865,7 +1871,8 @@
         "personal_link_slug": "Link personal (slug)",
         "status": "Estado"
       }
-    }
+    },
+    "demoBanner": "Cuenta demo de solo lectura: puedes ver proyectos y blog. Los datos de clientes, cobros y equipo no están disponibles en esta cuenta."
   },
   "footer": {
     "tagline": "Inversión inmobiliaria inteligente y arquitectura premium en los destinos más rentables del mundo.",

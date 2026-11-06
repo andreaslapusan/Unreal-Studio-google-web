@@ -51,3 +51,7 @@ export function hasPermission(
   const entry = EMPLOYEE_PERMISSIONS.find((p) => p.key === key);
   return entry?.defaultOn ?? false;
 }
+
+// Cuenta demo de solo lectura (App Review, profiles.role = 'demo'): vistas del panel admin que puede
+// abrir. No es admin en la BD, así que cualquier otro dato (clientes, cobros, equipo…) le sale vacío.
+export const DEMO_ADMIN_VIEWS: readonly string[] = ['projects', 'blogs'];

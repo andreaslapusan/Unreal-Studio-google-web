@@ -97,6 +97,8 @@ export interface Client {
   is_active: boolean;
   created_at?: string;
   last_login?: string;
+  /** false = no sale ningún correo a este cliente hasta reactivarlo (clients.auto_emails_enabled) */
+  auto_emails_enabled?: boolean;
   projects?: ClientProject[];
 }
 

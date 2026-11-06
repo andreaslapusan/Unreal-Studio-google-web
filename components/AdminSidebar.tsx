@@ -17,6 +17,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../lib/auth-context';
+import { DEMO_ADMIN_VIEWS } from '../lib/permissions';
 import BrandLogo from './BrandLogo';
 
 export interface NavItem {
@@ -46,7 +48,9 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const currentView = searchParams.get('view') || 'dashboard';
+  const { role } = useAuth();
+  const isDemo = !items && role === 'demo'; // cuenta demo de solo lectura (App Review)
+  const currentView = searchParams.get('view') || (isDemo ? 'projects' : 'dashboard');
   const onDashboard = location.pathname === basePath;
 
   // Contador de notificaciones sin leer (badge). Refresca cada 60s.
@@ -54,7 +58,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
   // Listings pendientes de revisar (propietarios que subieron su propiedad).
   const [intakesPending, setIntakesPending] = useState(0);
   useEffect(() => {
-    if (items) return; // badges solo en el panel admin
+    if (items || isDemo) return; // badges solo en el panel admin (la demo no tiene acceso)
     let alive = true;
     const fetchUnread = async () => {
       const { data } = await supabase.rpc('admin_unread_count');
@@ -65,7 +69,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
     void fetchUnread();
     const iv = setInterval(fetchUnread, 60000);
     return () => { alive = false; clearInterval(iv); };
-  }, [currentView, items]);
+  }, [currentView, items, isDemo]);
 
   // Orden único pedido por Andreas (móvil + escritorio).
   const nav: NavItem[] = items ?? [
@@ -137,13 +141,13 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-3">
-        {nav.map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
+        {nav.filter((it) => !isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')).map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
       </nav>
 
       {/* Configuración: siempre al fondo del todo, justo encima del logout. */}
-      <div className="border-t border-white/10 pt-2">
+      {!isDemo && <div className="border-t border-white/10 pt-2">
         {renderItem(configItem, isSectionActive(configItem))}
-      </div>
+      </div>}
 
       <div className="border-t border-white/10 p-3">
         <button

@@ -16,7 +16,8 @@ import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
 import { APP_VERSION } from '../lib/version';
 import { translateStatus } from '../lib/statusI18n';
-import { EMPLOYEE_PERMISSIONS, hasPermission } from '../lib/permissions';
+import { EMPLOYEE_PERMISSIONS, hasPermission, DEMO_ADMIN_VIEWS } from '../lib/permissions';
+import { useAuth } from '../lib/auth-context';
 import EmployeeEditModal, { EmployeeRow } from '../components/admin/EmployeeEditModal';
 import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
 import EventsCalendar from '../components/admin/EventsCalendar';
@@ -289,7 +290,10 @@ const AMENITIES_LIST = [
   // en todas las páginas admin) navegue entre secciones de forma consistente.
   const [searchParams, setSearchParams] = useSearchParams();
   const viewParam = searchParams.get('view') as AdminView | null;
-  const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) ? viewParam : 'dashboard';
+  // Cuenta demo (App Review): solo vistas sin datos personales; el resto lo bloquea además la BD.
+  const { role } = useAuth();
+  const isDemo = role === 'demo';
+  const activeView: AdminView = viewParam && ADMIN_VIEWS.includes(viewParam) && (!isDemo || DEMO_ADMIN_VIEWS.includes(viewParam)) ? viewParam : (isDemo ? 'projects' : 'dashboard');
   const setActiveView = (v: AdminView) => setSearchParams({ view: v });
   // Búsqueda pre-rellenada por URL (?q=): p.ej. desde Notificaciones "Ver cobro →"
   // auto-busca al cliente. Aplica el término y limpia el q de la URL.
@@ -1312,6 +1316,17 @@ const bulkClients = async (action: 'delete' | 'status', status?: string) => {
   } finally { setBulkBusy(false); }
 };
 
+// Interruptor de la ficha: pausar/reactivar TODOS los correos a este cliente.
+const toggleAutoEmails = async (client: Client) => {
+  const userId = getAdminUserId();
+  if (!userId) { alert(t('admin.dash.sessionExpired')); return; }
+  const next = client.auto_emails_enabled === false;
+  if (next && !window.confirm(t('admin.dash.autoEmailsConfirmOn'))) return;
+  const { data, error } = await supabase.rpc('admin_set_client_auto_emails', { p_user_id: userId, p_client_id: client.id, p_enabled: next });
+  if (error || !data?.success) { alert(t('admin.dash.saveClientError')); return; }
+  setClients((prev) => prev.map((c) => (c.id === client.id ? { ...c, auto_emails_enabled: next } : c)));
+};
+
 const openEditClient = (client?: Client) => {
   setCurrentClient(client ? { ...client } : {
     id: `client-${Date.now()}`,
@@ -1350,11 +1365,13 @@ const handleSaveClient = async (e: React.FormEvent) => {
       alert(t('admin.dash.clientCreatedTempPw', { pw: data.temp_password }));
     }
     // Auto-bienvenida a los correos nuevos (cada uno con su nombre e idioma).
-    if (addedEmails.length) {
+    if (addedEmails.length && currentClient.auto_emails_enabled === false) {
+      alert(t('admin.dash.emailsPaused'));
+    } else if (addedEmails.length) {
       const lang = ((currentClient as any).preferred_language || 'es') as 'es' | 'en' | 'ro' | 'id';
       const _holders = (currentClient as any).holders;
       const r = await sendWelcomeCore({ name: dedupeAmpNames(currentClient.name), email: addedEmails[0], emails: addedEmails, holders: _holders, lang, tempPassword: data?.temp_password || (currentClient as any).temp_password });
-      alert(r.ok ? t('admin.dash.welcomeSent', { email: addedEmails.join(', ') }) : t('admin.dash.welcomeError', { error: r.error }));
+      alert(r.ok ? t('admin.dash.welcomeSent', { email: addedEmails.join(', ') }) : r.error === 'client_emails_paused' ? t('admin.dash.emailsPaused') : t('admin.dash.welcomeError', { error: r.error }));
     }
     // Al AÑADIR un cotitular a una ficha que YA tiene propiedades asignadas, ofrecer
     // repartir a partes iguales el % de participación en TODAS ellas. Cancelar = el
@@ -1433,9 +1450,10 @@ const sendWelcomeCore = async (args: { name: string; email: string; emails?: str
 // Cliente no activo (inactivo/draft) → no se le manda ningún correo: primero marcarlo como Activo.
 const blockIfNotActive = (client: Client) => {
   const st = (client as any).status || (client.is_active ? 'active' : 'inactive');
-  if (st === 'active') return false;
-  alert(t('admin.dash.inactiveNoEmail'));
-  return true;
+  if (st !== 'active') { alert(t('admin.dash.inactiveNoEmail')); return true; }
+  // Emails pausados (clients.auto_emails_enabled=false): el mailer los rechaza igualmente; avisamos antes.
+  if (client.auto_emails_enabled === false) { alert(t('admin.dash.emailsPaused')); return true; }
+  return false;
 };
 
 const sendWelcome = async (client: Client) => {
@@ -1488,6 +1506,7 @@ const openEmailPreview = (args: { to: string | string[]; subject: string; html: 
   const html0 = args.buildHtml ? args.buildHtml(first) : args.html;
   setEmailPreview({ recipients, selected: [...recipients], previewEmail: first, subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml, buildSubject: args.buildSubject, raw: args.raw, extraBody: args.extraBody, note: args.note });
 };
+const mailError = (sent: any, error: any) => sent?.error === 'client_emails_paused' ? t('admin.dash.emailsPaused') : t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' });
 const sendPreviewedEmail = async () => {
   if (!emailPreview || emailPreview.selected.length === 0) return;
   const ep = emailPreview;
@@ -1498,11 +1517,11 @@ const sendPreviewedEmail = async () => {
       for (const to of ep.selected) {
         const subj = ep.buildSubject ? ep.buildSubject(to) : ep.subject; // asunto en el idioma de CADA titular
         const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to, lang: ep.lang, subject: subj, html: ep.buildHtml(to) });
-        if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
+        if (error || !sent?.success) { alert(mailError(sent, error)); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
       }
     } else {
       const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to: ep.selected, lang: ep.lang, subject: ep.subject, html: ep.html });
-      if (error || !sent?.success) { alert(t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' })); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
+      if (error || !sent?.success) { alert(mailError(sent, error)); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
     }
     alert(ep.sentMsg(ep.selected));
     setEmailPreview(null);
@@ -2058,7 +2077,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
           <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-1 mb-2">
-              {ADMIN_MOBILE_NAV.map((it) => (
+              {ADMIN_MOBILE_NAV.filter((it) => !isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')).map((it) => (
                 <button key={it.key} onClick={() => { if (it.to) navigate(it.to); else setActiveView(it.view as any); setAdminMenuOpen(false); }}
                   className={`text-left px-3 py-2.5 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
                   {t(`admin.nav.${it.key}`)}
@@ -2082,6 +2101,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       )}
 
       <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
+        {isDemo && (
+          <div className="mb-6 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-sm font-bold px-5 py-4 flex items-start gap-2">
+            <span className="material-symbols-outlined text-base">info</span>{t('admin.demoBanner')}
+          </div>
+        )}
         {activeView === 'dashboard' && <DashboardOverview />}
 
         {activeView === 'notifications' && <NotificationsPanel />}
@@ -2110,9 +2134,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
               <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.props.mgmtTitle')}</h1>
-              <button onClick={() => openEditProject()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
+              {!isDemo && <button onClick={() => openEditProject()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">add</span> {t('admin.props.newBtn')}
-              </button>
+              </button>}
             </div>
             <ListControls
               query={projectsList.query} setQuery={projectsList.setQuery}
@@ -2155,11 +2179,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                           </p>
                         ) : null}
                       </div>
-                      <div className="flex gap-2">
+                      {!isDemo && <div className="flex gap-2">
                         <button onClick={() => setReportsProject({ id: proj.id, name: proj.name })} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95" title={t('empleados.reports.title')} aria-label={t('empleados.reports.title')}><span className="material-symbols-outlined text-sm">description</span></button>
                         <button onClick={() => openEditProject(proj)} className="p-2 text-primary bg-almond rounded-xl hover:brightness-95" title={t('fix.apm.edit')}><span className="material-symbols-outlined text-sm">edit</span></button>
                         <button onClick={() => handleDeleteProject(proj.id)} className="p-2 text-red-600 bg-red-50 rounded-xl hover:bg-red-600 hover:text-white" title={t('fix.apm.delete')}><span className="material-symbols-outlined text-sm">delete</span></button>
-                      </div>
+                      </div>}
                     </div>
                   </div>
                 </div>
@@ -2175,9 +2199,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <div className="animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-3">
               <h1 className="text-2xl font-black uppercase tracking-widest text-primary/20">{t('admin.blogTab.title')}</h1>
-              <button onClick={() => openEditBlog()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
+              {!isDemo && <button onClick={() => openEditBlog()} className="bg-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 hover:bg-black transition">
                 <span className="material-symbols-outlined text-base">post_add</span> {t('admin.blogTab.newBtn')}
-              </button>
+              </button>}
             </div>
 
             <div className="flex flex-col md:flex-row gap-3 mb-6">
@@ -2207,10 +2231,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         <h3 className="text-lg font-bold text-primary mt-1">{post.title}</h3>
                         <p className="text-[10px] text-gray-400 font-bold mt-1">{formatDate(post.published_date)}</p>
                       </div>
-                      <div className="flex gap-2">
+                      {!isDemo && <div className="flex gap-2">
                         <button onClick={() => openEditBlog(post)} className="p-2 text-primary bg-almond rounded-xl"><span className="material-symbols-outlined text-sm">edit</span></button>
                         <button onClick={() => handleDeleteBlog(post.id)} className="p-2 text-red-600 bg-red-50 rounded-xl"><span className="material-symbols-outlined text-sm">delete</span></button>
-                      </div>
+                      </div>}
                     </div>
                   </div>
                 </div>
@@ -2316,6 +2340,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   {(() => { const st = (client as any).status || (client.is_active ? 'active' : 'inactive'); return (
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
                   ); })()}
+                  <button type="button" onClick={() => toggleAutoEmails(client)} title={t('admin.dash.autoEmailsHint')} aria-pressed={client.auto_emails_enabled !== false}
+                    className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-flex items-center gap-1 transition ${client.auto_emails_enabled === false ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-white text-primary/50 border border-primary/10 hover:text-primary'}`}>
+                    <span className="material-symbols-outlined text-[11px]">mail</span>{client.auto_emails_enabled === false ? t('admin.dash.autoEmailsOff') : t('admin.dash.autoEmailsOn')}
+                  </button>
                 </div>
                 <p className="text-sm text-gray-500 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}{client.phone && ` · ${client.phone}`}</p>
                 {(client as any).last_login && (
@@ -3643,6 +3671,14 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             <option value="draft">{t('admin.clientsTab.draft', { defaultValue: 'Draft' })}</option>
           </select>
           <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.draftHint', { defaultValue: 'Activo = puede entrar y cuenta en Finanzas. Inactivo = no entra, sí cuenta. Draft = perfil de prueba, no entra ni cuenta.' })}</p>
+        </div>
+        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+          <button type="button" onClick={() => setCurrentClient((prev) => ({ ...prev, auto_emails_enabled: prev.auto_emails_enabled === false }))} aria-pressed={currentClient.auto_emails_enabled !== false}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${currentClient.auto_emails_enabled === false ? 'bg-red-50 border-red-200 text-red-600' : 'bg-green-50 border-green-200 text-green-700'}`}>
+            <span className="text-left">{t('admin.dash.autoEmails')}: {currentClient.auto_emails_enabled === false ? t('admin.dash.autoEmailsOff') : t('admin.dash.autoEmailsOn')}</span>
+            <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${currentClient.auto_emails_enabled === false ? 'bg-gray-300 justify-start' : 'bg-green-500 justify-end'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+          </button>
+          <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.autoEmailsHint')}</p>
         </div>
         {/* Permisos POR CLIENTE: heredan Configuración; lo global-OFF queda bloqueado
             (solo se activa en Configuración); lo global-ON se puede desactivar aquí. */}

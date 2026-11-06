@@ -317,7 +317,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
         await new Promise((res) => setTimeout(res, 800 * (attempt + 1)));
       }
       if (sErr || !sent?.success) {
-        const msg = sent?.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no: rs.no }) : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
+        const msg = sent?.error === 'client_emails_paused' ? t('admin.dash.emailsPaused') : sent?.error === 'transport_not_configured' ? t('admin.pay.errorTransport', { no: rs.no }) : t('admin.pay.errorSend', { error: sent?.error || sErr?.message || 'error' });
         setRecibiSend((p) => p ? { ...p, sending: false } : p); alert(msg); return;
       }
     }
