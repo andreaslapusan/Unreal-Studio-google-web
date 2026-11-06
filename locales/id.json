@@ -528,7 +528,11 @@
     "events": "event",
     "recentTitle": "Aktivitas terbaru",
     "recentEmpty": "Belum ada aktivitas.",
-    "anon": "anon"
+    "anon": "anon",
+    "eventType": {
+      "visit": "Kunjungan",
+      "form_submit": "Formulir dikirim"
+    }
   },
   "inversoresDashboard": {
     "headerTitle": "Portal Investor",
@@ -1908,6 +1912,11 @@
       "notes": "Catatan",
       "cancel": "Batal",
       "save": "Simpan"
+    },
+    "partnerStatus": {
+      "approved": "Disetujui",
+      "pending": "Menunggu",
+      "rejected": "Ditolak"
     },
     "agencyLeads": {
       "title": "Klien yang didaftarkan agensi",

@@ -527,7 +527,11 @@
     "events": "eventos",
     "recentTitle": "Actividad reciente",
     "recentEmpty": "Sin actividad por ahora.",
-    "anon": "anon"
+    "anon": "anon",
+    "eventType": {
+      "visit": "Visita",
+      "form_submit": "Formulario enviado"
+    }
   },
   "inversoresDashboard": {
     "headerTitle": "Portal Inversores",
@@ -1803,6 +1807,11 @@
       "notes": "Notas",
       "cancel": "Cancelar",
       "save": "Guardar"
+    },
+    "partnerStatus": {
+      "approved": "Aprobada",
+      "pending": "Pendiente",
+      "rejected": "Rechazada"
     },
     "agencyLeads": {
       "title": "Clientes registrados por agencias",

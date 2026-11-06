@@ -167,7 +167,7 @@ export default function AdminPortalManager() {
           id: `app-${a.id}`,
           kind: t('fix.apm.activityAgencyRequest'),
           title: a.agency_name,
-          detail: `${a.email} · ${a.country ?? "—"} · ${a.status}`,
+          detail: `${a.email} · ${a.country ?? "—"} · ${t(`admin.partnerStatus.${a.status}`, { defaultValue: a.status })}`,
           ts: a.created_at,
         });
       }
@@ -648,7 +648,7 @@ export function PartnersTab({
         <article key={p.id} className="bg-white/60 rounded-xl p-4 flex items-start justify-between gap-4">
           <div>
             <h3 className="font-serif text-lg text-primary">{p.agency_name}</h3>
-            <p className="text-xs text-primary/60">{p.email} · status: {p.status}</p>
+            <p className="text-xs text-primary/60">{p.email} · {t(`admin.partnerStatus.${p.status}`, { defaultValue: p.status })}</p>
             <p className="text-xs mt-2">
               {t('fix.apm.projectsLabel')} {p.projects_assigned?.length ? p.projects_assigned.map(propertyName).join(", ") : "—"}
             </p>

@@ -527,7 +527,11 @@
     "events": "events",
     "recentTitle": "Recent activity",
     "recentEmpty": "No activity yet.",
-    "anon": "anon"
+    "anon": "anon",
+    "eventType": {
+      "visit": "Visit",
+      "form_submit": "Form submitted"
+    }
   },
   "inversoresDashboard": {
     "headerTitle": "Investor Portal",
@@ -1803,6 +1807,11 @@
       "notes": "Notes",
       "cancel": "Cancel",
       "save": "Save"
+    },
+    "partnerStatus": {
+      "approved": "Approved",
+      "pending": "Pending",
+      "rejected": "Rejected"
     },
     "agencyLeads": {
       "title": "Clients registered by agencies",

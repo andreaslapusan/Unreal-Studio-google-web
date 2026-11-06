@@ -191,7 +191,7 @@ export default function AgenciasStats() {
                 {recent.map((r) => (
                   <li key={r.id} className="flex items-center justify-between border-b border-primary/10 py-2">
                     <span className="text-xs text-primary/60">{new Date(r.created_at).toLocaleString(uiLocale(), { dateStyle: "short", timeStyle: "short" })}</span>
-                    <span className="font-medium">{r.event_type}</span>
+                    <span className="font-medium">{t(`agenciasStats.eventType.${r.event_type}`, { defaultValue: r.event_type })}</span>
                     <span className="text-primary/70 truncate max-w-[40%]">{r.property_slug ?? "—"}</span>
                     <span className="text-xs text-primary/50 truncate">{r.contact_email ?? t('agenciasStats.anon')}</span>
                   </li>

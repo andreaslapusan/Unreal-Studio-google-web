@@ -527,7 +527,11 @@
     "events": "evenimente",
     "recentTitle": "Activitate recentă",
     "recentEmpty": "Nicio activitate momentan.",
-    "anon": "anon"
+    "anon": "anon",
+    "eventType": {
+      "visit": "Vizită",
+      "form_submit": "Formular trimis"
+    }
   },
   "inversoresDashboard": {
     "headerTitle": "Portal Investitori",
@@ -1803,6 +1807,11 @@
       "notes": "Note",
       "cancel": "Anulează",
       "save": "Salvează"
+    },
+    "partnerStatus": {
+      "approved": "Aprobat",
+      "pending": "În așteptare",
+      "rejected": "Respins"
     },
     "agencyLeads": {
       "title": "Clienți înregistrați de agenții",
