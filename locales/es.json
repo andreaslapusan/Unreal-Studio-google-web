@@ -1828,7 +1828,13 @@
         "notes": "Notas",
         "status": "Estado"
       },
-      "open": "Abrir ficha y añadir notas del equipo"
+      "open": "Abrir ficha y añadir notas del equipo",
+      "confirmEvent": "¿Registrar {{type}} de {{name}} en las estadísticas de la agencia?",
+      "eventOk": "Registrado en las estadísticas de la agencia.",
+      "ev": {
+        "reservation": "Reserva",
+        "sale": "Venta"
+      }
     },
     "agencyRequests": {
       "title": "Solicitudes de agencias",
@@ -1840,6 +1846,24 @@
         "client": "Cliente",
         "preferred": "Fecha preferida",
         "notes": "Notas",
+        "status": "Estado"
+      }
+    },
+    "agencyEdit": {
+      "button": "Editar agencia",
+      "title": "Editar {{name}}",
+      "errRequired": "Nombre de la agencia y email son obligatorios.",
+      "slugHint": "Link personal: lo que va en ?utm_partner= (sin espacios). Si lo cambias, los links ya compartidos dejan de atribuir.",
+      "projects": "Proyectos asignados ({{n}})",
+      "f": {
+        "agency_name": "Agencia",
+        "manager_name": "Responsable",
+        "email": "Email (acceso al portal)",
+        "phone": "Teléfono",
+        "whatsapp": "WhatsApp",
+        "website": "Web",
+        "country": "País",
+        "personal_link_slug": "Link personal (slug)",
         "status": "Estado"
       }
     }
@@ -1861,7 +1885,6 @@
     "disclaimer": "*Estimación, no garantizada. Las cifras de rentabilidad y revalorización son orientativas.",
     "privacy": "Privacidad",
     "terms": "Términos",
-    "agencies": "Agencias",
     "days": {
       "mon": "Lun",
       "tue": "Mar",
@@ -2430,7 +2453,8 @@
       "badgeInactive": "inactivo",
       "noEmployeesInRoster": "Sin empleados en el roster.",
       "noUpcomingVacations": "Nadie tiene vacaciones aprobadas próximamente.",
-      "remove": "Eliminar"
+      "remove": "Eliminar",
+      "labelShortPitch": "Frase corta (tarjeta en portal de agencias)"
     },
     "eqp": {
       "saveError": "Error: {{error}}",
@@ -3031,7 +3055,9 @@
         "pending": "Pendiente",
         "rejected": "Rechazada"
       },
-      "editHint": "¿Algún dato incorrecto? Escríbenos desde Ayuda y contacto y lo actualizamos."
+      "editHint": "El email de acceso, el estado y los proyectos los gestiona Unreal: si hay que cambiarlos, escríbenos desde Ayuda y contacto.",
+      "edit": "Editar datos",
+      "whatsapp": "WhatsApp"
     },
     "help": {
       "sub": "Cómo trabajar con Unreal Studio como agencia colaboradora.",

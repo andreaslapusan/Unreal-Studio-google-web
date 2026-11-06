@@ -11,6 +11,7 @@ import { useAuth } from '../../lib/auth-context';
 import { ApplicationsTab, PartnersTab } from '../../pages/AdminPortalManager';
 import { uiLocale } from '../../lib/dateLocale';
 import LeadDrawer from '../agency/LeadDrawer';
+import AgencyPartnerEditor from './AgencyPartnerEditor';
 
 const AgencyApplications: React.FC = () => {
   const { user } = useAuth();
@@ -22,12 +23,13 @@ const AgencyApplications: React.FC = () => {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openLead, setOpenLead] = useState<any | null>(null);
+  const [editing, setEditing] = useState<any | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
     const [app, lp, props, al, ar] = await Promise.all([
       supabase.from('listing_partner_applications').select('id, agency_name, manager_name, email, whatsapp, country, projects_interested, monthly_volume, notes, status, created_at').order('created_at', { ascending: false }),
-      supabase.from('listing_partners').select('id, agency_name, email, status, projects_assigned, user_id').order('agency_name'),
+      supabase.from('listing_partners').select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, user_id, logo_url, personal_link_slug, approved_at').order('agency_name'),
       supabase.from('properties').select('id, slug, name, area, pct_progress, delivery_date, hero_image_url, walkthrough_url, brand_pdf_url').order('name'),
       supabase.from('agency_leads').select('id, agency_id, created_at, client_name, client_email, client_phone, country, property_id, budget, notes, status').order('created_at', { ascending: false }),
       supabase.from('agency_requests').select('id, agency_id, created_at, type, lead_id, preferred_date, notes, status').order('created_at', { ascending: false }),
@@ -49,7 +51,7 @@ const AgencyApplications: React.FC = () => {
       const { error: insErr } = await supabase.from('listing_partners').insert({
         agency_name: app.agency_name, manager_name: app.manager_name, email: app.email,
         phone: app.whatsapp, whatsapp: app.whatsapp, country: app.country,
-        status: 'active', approved_at: new Date().toISOString(), approved_by: who,
+        status: 'approved', approved_at: new Date().toISOString(), approved_by: who,
       });
       if (insErr) throw insErr;
       await supabase.from('listing_partner_applications').update({ status: 'approved', reviewed_by: who, reviewed_at: new Date().toISOString() }).eq('id', app.id);
@@ -72,19 +74,17 @@ const AgencyApplications: React.FC = () => {
     }
   };
 
-  const handleAssign = async (partner: any) => {
-    const current: string[] = partner.projects_assigned ?? [];
-    const list = properties.map((p) => `${current.includes(p.id) ? '[x]' : '[ ]'} ${p.name} (${p.id.slice(0, 8)})`).join('\n');
-    const input = prompt(t('admin.agencyApps.assignPrompt', { name: partner.agency_name, list, defaultValue: 'Proyectos asignados a {{name}}.\nActual:\n{{list}}\n\nPega los IDs (uno por línea, completos):' }), current.join('\n'));
-    if (input === null) return;
-    const newIds = input.split('\n').map((s) => s.trim()).filter(Boolean);
-    try {
-      const { error } = await supabase.from('listing_partners').update({ projects_assigned: newIds }).eq('id', partner.id);
-      if (error) throw error;
-      await reload();
-    } catch (err) {
-      alert(t('admin.agencyApps.actionError', { msg: (err instanceof Error ? err.message : String(err)), defaultValue: 'Error: {{msg}}' }));
-    }
+  const handleAssign = async (partner: any) => { setEditing(partner); };
+
+  // Reservas y ventas no las genera ninguna visita: las registra el equipo desde el lead.
+  const addEvent = async (l: any, event_type: 'reservation' | 'sale') => {
+    if (!confirm(t('admin.agencyLeads.confirmEvent', { type: t(`admin.agencyLeads.ev.${event_type}`), name: l.client_name }))) return;
+    const { error } = await supabase.from('lead_attributions').insert({
+      utm_source: 'lister', partner_id: l.agency_id, event_type,
+      property_slug: properties.find((p) => p.id === l.property_id)?.slug ?? null,
+      contact_email: l.client_email, contact_name: l.client_name, contact_phone: l.client_phone,
+    });
+    alert(error ? t('admin.agencyApps.actionError', { msg: error.message, defaultValue: 'Error: {{msg}}' }) : t('admin.agencyLeads.eventOk'));
   };
 
   const setLeadStatus = async (id: string, status: string) => {
@@ -112,7 +112,7 @@ const AgencyApplications: React.FC = () => {
       </section>
       <section>
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyApps.activePartners', { defaultValue: 'Agencias activas' })}</h3>
-        <PartnersTab data={partners} properties={properties} onAssign={handleAssign} onChange={reload} />
+        <PartnersTab data={partners} properties={properties} onAssign={handleAssign} onChange={reload} actionLabel={t('admin.agencyEdit.button')} />
       </section>
       <section>
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('admin.agencyLeads.title')}</h3>
@@ -139,6 +139,11 @@ const AgencyApplications: React.FC = () => {
                       <select value={l.status} onChange={(e) => void setLeadStatus(l.id, e.target.value)} className="border border-primary/15 rounded-lg px-2 py-1 text-xs bg-white">
                         {['new', 'contacted', 'won', 'lost'].map((s) => <option key={s} value={s}>{t(`agenciasDashboard.leads.status.${s}`)}</option>)}
                       </select>
+                      <div className="flex gap-1 mt-1">
+                        {(['reservation', 'sale'] as const).map((ev) => (
+                          <button key={ev} type="button" onClick={() => void addEvent(l, ev)} className="text-[10px] border border-primary/15 rounded-full px-2 py-0.5 hover:bg-primary hover:text-white transition whitespace-nowrap">+ {t(`admin.agencyLeads.ev.${ev}`)}</button>
+                        ))}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -147,6 +152,7 @@ const AgencyApplications: React.FC = () => {
           </div>
         )}
       </section>
+      {editing && <AgencyPartnerEditor partner={editing} properties={properties} onClose={() => setEditing(null)} onSaved={reload} />}
       {openLead && (
         <LeadDrawer
           lead={openLead}

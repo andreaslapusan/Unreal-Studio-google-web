@@ -1933,7 +1933,13 @@
         "notes": "Catatan",
         "status": "Status"
       },
-      "open": "Buka prospek dan tambahkan catatan tim"
+      "open": "Buka prospek dan tambahkan catatan tim",
+      "confirmEvent": "Catat {{type}} untuk {{name}} di statistik agensi?",
+      "eventOk": "Tercatat di statistik agensi.",
+      "ev": {
+        "reservation": "Reservasi",
+        "sale": "Penjualan"
+      }
     },
     "agencyRequests": {
       "title": "Permintaan agensi",
@@ -1945,6 +1951,24 @@
         "client": "Klien",
         "preferred": "Tanggal pilihan",
         "notes": "Catatan",
+        "status": "Status"
+      }
+    },
+    "agencyEdit": {
+      "button": "Ubah agensi",
+      "title": "Ubah {{name}}",
+      "errRequired": "Nama agensi dan email wajib diisi.",
+      "slugHint": "Tautan pribadi: nilai di ?utm_partner= (tanpa spasi). Jika diubah, tautan yang sudah dibagikan tidak lagi teratribusi.",
+      "projects": "Proyek yang ditugaskan ({{n}})",
+      "f": {
+        "agency_name": "Agensi",
+        "manager_name": "Penanggung jawab",
+        "email": "Email (login portal)",
+        "phone": "Telepon",
+        "whatsapp": "WhatsApp",
+        "website": "Situs web",
+        "country": "Negara",
+        "personal_link_slug": "Tautan pribadi (slug)",
         "status": "Status"
       }
     }
@@ -1961,12 +1985,11 @@
     "clients": "Klien",
     "team": "Tim",
     "admin": "Admin",
-    "agencies": "Agensi",
+    "agencies": "Agen",
     "rights": "© 2026 Unreal Studio Bali. Seluruh hak cipta dilindungi.",
     "disclaimer": "*Proyeksi, bukan jaminan. Angka ROI dan apresiasi nilai bersifat indikatif.",
     "privacy": "Privasi",
     "terms": "Ketentuan",
-    "agencies": "Agen",
     "days": {
       "mon": "Sen",
       "tue": "Sel",
@@ -2429,7 +2452,8 @@
       "badgeInactive": "tidak aktif",
       "noEmployeesInRoster": "Tidak ada karyawan di daftar.",
       "noUpcomingVacations": "Tidak ada liburan yang disetujui segera.",
-      "remove": "Hapus"
+      "remove": "Hapus",
+      "labelShortPitch": "Kalimat singkat (kartu di portal agensi)"
     },
     "eqp": {
       "saveError": "Error: {{error}}",
@@ -3030,7 +3054,9 @@
         "pending": "Menunggu",
         "rejected": "Ditolak"
       },
-      "editHint": "Ada data yang salah? Hubungi kami dari Bantuan & kontak dan kami akan memperbaruinya."
+      "editHint": "Email login, status, dan proyek dikelola oleh Unreal: jika perlu diubah, hubungi kami dari Bantuan & kontak.",
+      "edit": "Ubah data",
+      "whatsapp": "WhatsApp"
     },
     "help": {
       "sub": "Cara bekerja sama dengan Unreal Studio sebagai agensi mitra.",

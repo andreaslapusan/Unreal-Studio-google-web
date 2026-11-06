@@ -1828,7 +1828,13 @@
         "notes": "Notes",
         "status": "Status"
       },
-      "open": "Open lead and add team notes"
+      "open": "Open lead and add team notes",
+      "confirmEvent": "Record a {{type}} for {{name}} in the agency stats?",
+      "eventOk": "Recorded in the agency stats.",
+      "ev": {
+        "reservation": "Reservation",
+        "sale": "Sale"
+      }
     },
     "agencyRequests": {
       "title": "Agency requests",
@@ -1840,6 +1846,24 @@
         "client": "Client",
         "preferred": "Preferred date",
         "notes": "Notes",
+        "status": "Status"
+      }
+    },
+    "agencyEdit": {
+      "button": "Edit agency",
+      "title": "Edit {{name}}",
+      "errRequired": "Agency name and email are required.",
+      "slugHint": "Personal link: the value in ?utm_partner= (no spaces). Changing it stops already-shared links from attributing.",
+      "projects": "Assigned projects ({{n}})",
+      "f": {
+        "agency_name": "Agency",
+        "manager_name": "Manager",
+        "email": "Email (portal login)",
+        "phone": "Phone",
+        "whatsapp": "WhatsApp",
+        "website": "Website",
+        "country": "Country",
+        "personal_link_slug": "Personal link (slug)",
         "status": "Status"
       }
     }
@@ -1861,7 +1885,6 @@
     "disclaimer": "*Estimate, not guaranteed. ROI and appreciation figures are indicative.",
     "privacy": "Privacy",
     "terms": "Terms",
-    "agencies": "Agencies",
     "days": {
       "mon": "Mon",
       "tue": "Tue",
@@ -2428,7 +2451,8 @@
       "badgeInactive": "inactive",
       "noEmployeesInRoster": "No employees in the roster.",
       "noUpcomingVacations": "No one has upcoming approved vacations.",
-      "remove": "Remove"
+      "remove": "Remove",
+      "labelShortPitch": "Short pitch (agency portal card)"
     },
     "eqp": {
       "saveError": "Error: {{error}}",
@@ -3029,7 +3053,9 @@
         "pending": "Pending",
         "rejected": "Rejected"
       },
-      "editHint": "Something wrong? Message us from Help & contact and we will update it."
+      "editHint": "Login email, status and projects are managed by Unreal: if they need changing, write to us from Help & contact.",
+      "edit": "Edit details",
+      "whatsapp": "WhatsApp"
     },
     "help": {
       "sub": "How to work with Unreal Studio as a partner agency.",

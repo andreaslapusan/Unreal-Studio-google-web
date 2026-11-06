@@ -56,6 +56,7 @@ interface Property {
   hero_image_url: string | null;
   walkthrough_url: string | null;
   brand_pdf_url: string | null;
+  short_pitch?: string | null;
 }
 
 interface Unit {
@@ -144,7 +145,7 @@ export default function AdminPortalManager() {
     setLoading(true);
     try {
       const [p, u, lp, app, updates, attribs, faqRes, projRes] = await Promise.all([
-        supabase.from("properties").select("id, slug, name, area, pct_progress, delivery_date, hero_image_url, walkthrough_url, brand_pdf_url").order("name"),
+        supabase.from("properties").select("id, slug, name, area, pct_progress, delivery_date, hero_image_url, walkthrough_url, brand_pdf_url, short_pitch").order("name"),
         supabase.from("property_units").select("id, property_id, unit_name, price_publico, price_inversor, price_agencia, commission_default_pct, bedrooms, bathrooms, available, reserved, sold").order("unit_name"),
         supabase.from("listing_partners").select("id, agency_name, email, status, projects_assigned, user_id").order("agency_name"),
         supabase.from("listing_partner_applications").select("id, agency_name, manager_name, email, whatsapp, country, projects_interested, monthly_volume, notes, status, created_at").order("created_at", { ascending: false }),
@@ -469,6 +470,7 @@ function PropertyEditor({
           <Input label={t('fix.apm.labelSlug')} value={form.slug} onChange={(v) => update("slug", v)} />
           <Input label={t('fix.apm.labelName')} value={form.name} onChange={(v) => update("name", v)} />
           <Input label={t('fix.apm.labelArea')} value={form.area ?? ""} onChange={(v) => update("area", v)} />
+          <Input label={t('fix.apm.labelShortPitch')} value={form.short_pitch ?? ""} onChange={(v) => update("short_pitch", v || null)} />
           <Input label={t('fix.apm.labelPctWork')} type="number" value={String(form.pct_progress ?? "")} onChange={(v) => update("pct_progress", v ? Number(v) : null)} />
           <Input label={t('fix.apm.labelDeliveryDate')} value={form.delivery_date ?? ""} onChange={(v) => update("delivery_date", v)} />
           <Input label={t('fix.apm.labelHeroImageUrl')} value={form.hero_image_url ?? ""} onChange={(v) => update("hero_image_url", v)} />
@@ -632,11 +634,13 @@ export function PartnersTab({
   properties,
   onAssign,
   onChange,
+  actionLabel,
 }: {
   data: Partner[];
   properties: Property[];
   onAssign: (p: Partner) => Promise<void>;
   onChange: () => Promise<void>;
+  actionLabel?: string;
 }) {
   const { t } = useTranslation();
   const propertyName = (id: string) => properties.find((p) => p.id === id)?.name ?? id.slice(0, 8);
@@ -654,7 +658,7 @@ export function PartnersTab({
             </p>
           </div>
           <button onClick={() => void onAssign(p)} className="text-xs bg-primary text-white px-3 py-2 rounded-full">
-            {t('fix.apm.assignProjects')}
+            {actionLabel ?? t('fix.apm.assignProjects')}
           </button>
         </article>
       ))}

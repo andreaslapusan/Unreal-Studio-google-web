@@ -57,12 +57,9 @@ async function resolvePartnerUuid(ref: string | undefined): Promise<string | nul
   }
 
   try {
-    const { data } = await supabase
-      .from("listing_partners")
-      .select("id")
-      .eq("personal_link_slug", ref)
-      .maybeSingle();
-    const uuid = data?.id ?? null;
+    // RPC security definer: el visitante es anon y RLS no le deja leer listing_partners.
+    const { data } = await supabase.rpc("resolve_partner_slug", { p_slug: ref });
+    const uuid = (data as string | null) ?? null;
     if (uuid && typeof window !== "undefined") {
       try {
         window.localStorage.setItem(RESOLVED_PARTNER_KEY, JSON.stringify({ slug: ref, uuid }));

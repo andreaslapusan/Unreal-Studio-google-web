@@ -12,6 +12,7 @@ export interface PartnerRow {
   manager_name: string | null;
   email: string | null;
   phone: string | null;
+  whatsapp: string | null;
   website: string | null;
   country: string | null;
   status: string;
@@ -195,7 +196,7 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
       try {
         const { data: p, error: pErr } = await supabase
           .from('listing_partners')
-          .select('id, agency_name, manager_name, email, phone, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at')
+          .select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at')
           .eq('user_id', userId)
           .maybeSingle();
         if (pErr) throw pErr;

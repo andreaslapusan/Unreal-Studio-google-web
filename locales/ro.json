@@ -1828,7 +1828,13 @@
         "notes": "Note",
         "status": "Stare"
       },
-      "open": "Deschide fișa și adaugă note ale echipei"
+      "open": "Deschide fișa și adaugă note ale echipei",
+      "confirmEvent": "Înregistrezi o {{type}} pentru {{name}} în statisticile agenției?",
+      "eventOk": "Înregistrat în statisticile agenției.",
+      "ev": {
+        "reservation": "Rezervare",
+        "sale": "Vânzare"
+      }
     },
     "agencyRequests": {
       "title": "Solicitări agenții",
@@ -1841,6 +1847,24 @@
         "preferred": "Data preferată",
         "notes": "Note",
         "status": "Stare"
+      }
+    },
+    "agencyEdit": {
+      "button": "Editează agenția",
+      "title": "Editează {{name}}",
+      "errRequired": "Numele agenției și emailul sunt obligatorii.",
+      "slugHint": "Link personal: valoarea din ?utm_partner= (fără spații). Dacă îl schimbi, linkurile deja distribuite nu mai atribuie.",
+      "projects": "Proiecte alocate ({{n}})",
+      "f": {
+        "agency_name": "Agenție",
+        "manager_name": "Responsabil",
+        "email": "Email (acces portal)",
+        "phone": "Telefon",
+        "whatsapp": "WhatsApp",
+        "website": "Site web",
+        "country": "Țară",
+        "personal_link_slug": "Link personal (slug)",
+        "status": "Status"
       }
     }
   },
@@ -1861,7 +1885,6 @@
     "disclaimer": "*Estimare, negarantat. Cifrele de randament și apreciere a valorii sunt orientative.",
     "privacy": "Confidențialitate",
     "terms": "Termeni",
-    "agencies": "Agenții",
     "days": {
       "mon": "Lun",
       "tue": "Mar",
@@ -2428,7 +2451,8 @@
       "badgeInactive": "inactiv",
       "noEmployeesInRoster": "Fără angajați în roster.",
       "noUpcomingVacations": "Nimeni nu are vacanțe aprobate în curând.",
-      "remove": "Șterge"
+      "remove": "Șterge",
+      "labelShortPitch": "Frază scurtă (card în portalul agențiilor)"
     },
     "eqp": {
       "saveError": "Eroare: {{error}}",
@@ -3029,7 +3053,9 @@
         "pending": "În așteptare",
         "rejected": "Respinsă"
       },
-      "editHint": "Ceva greșit? Scrie-ne din Ajutor și contact și actualizăm."
+      "editHint": "Emailul de acces, statusul și proiectele sunt gestionate de Unreal: dacă trebuie schimbate, scrie-ne din Ajutor și contact.",
+      "edit": "Editează datele",
+      "whatsapp": "WhatsApp"
     },
     "help": {
       "sub": "Cum să lucrezi cu Unreal Studio ca agenție parteneră.",

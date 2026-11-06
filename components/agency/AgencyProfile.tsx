@@ -2,9 +2,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
-import { compressImage } from '../../lib/imageCompress';
 import { AgencyData, catalogLink, copyText, fmtDate } from './useAgencyData';
-import { card, btnPrimary, SectionTitle } from './ui';
+import { logoFileError, uploadPartnerLogo } from './partnerLogo';
+import { card, btnPrimary, btnGhost, input, SectionTitle } from './ui';
+
+// Lo que la agencia puede editar ella misma (RLS + trigger impiden tocar estado/proyectos/email).
+const EDITABLE = ['manager_name', 'phone', 'whatsapp', 'website', 'country'] as const;
+type Editable = typeof EDITABLE[number];
 
 export default function AgencyProfile({ data, email }: { data: AgencyData; email: string | undefined }) {
   const { t } = useTranslation();
@@ -12,7 +16,24 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [linkCopied, setLinkCopied] = useState(false);
+  const [form, setForm] = useState<Record<Editable, string> | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   if (!partner) return null;
+
+  const startEdit = () => { setSaveError(''); setForm(Object.fromEntries(EDITABLE.map((k) => [k, partner[k] ?? ''])) as Record<Editable, string>); };
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form) return;
+    setSaving(true);
+    setSaveError('');
+    const patch = Object.fromEntries(EDITABLE.map((k) => [k, form[k].trim() || null])) as Record<Editable, string | null>;
+    const { error } = await supabase.from('listing_partners').update(patch).eq('id', partner.id);
+    setSaving(false);
+    if (error) { setSaveError(error.message); return; }
+    setPartner({ ...partner, ...patch });
+    setForm(null);
+  };
   const link = catalogLink(partner);
 
   const copyLink = async () => {
@@ -22,20 +43,12 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { setUploadError(t('agenciasDashboard.logoErrorSize')); return; }
-    if (!file.type.startsWith('image/')) { setUploadError(t('agenciasDashboard.logoErrorType')); return; }
+    const bad = logoFileError(file);
+    if (bad) { setUploadError(t(bad === 'size' ? 'agenciasDashboard.logoErrorSize' : 'agenciasDashboard.logoErrorType')); return; }
     setUploading(true);
     setUploadError('');
     try {
-      // WebP ≤800px: el logo es pequeño; no tiene sentido servir el original.
-      const compressed = await compressImage(file, { maxDim: 800, quality: 0.85 });
-      const ext = compressed.name.split('.').pop()?.toLowerCase() ?? 'webp';
-      const path = `partner-logos/${partner.id}-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('images').upload(path, compressed, { cacheControl: '3600', upsert: true, contentType: compressed.type });
-      if (upErr) throw upErr;
-      const logoUrl = supabase.storage.from('images').getPublicUrl(path).data.publicUrl;
-      const { error: updErr } = await supabase.from('listing_partners').update({ logo_url: logoUrl }).eq('id', partner.id);
-      if (updErr) throw updErr;
+      const logoUrl = await uploadPartnerLogo(partner.id, file);
       setPartner({ ...partner, logo_url: logoUrl });
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : String(err));
@@ -49,6 +62,7 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
     [t('agencyPortal.profile.manager'), partner.manager_name],
     [t('agencyPortal.profile.email'), partner.email ?? email],
     [t('agencyPortal.profile.phone'), partner.phone],
+    [t('agencyPortal.profile.whatsapp'), partner.whatsapp],
     [t('agencyPortal.profile.website'), partner.website],
     [t('agencyPortal.profile.country'), partner.country],
     [t('agencyPortal.profile.status'), t(`agencyPortal.profile.st.${partner.status}`, { defaultValue: partner.status })],
@@ -92,7 +106,25 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
         </section>
 
         <section className={`${card} lg:col-span-2`}>
-          <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('agencyPortal.profile.data')}</h3>
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <h3 className="text-sm font-black uppercase tracking-widest text-primary/40">{t('agencyPortal.profile.data')}</h3>
+            {!form && <button type="button" onClick={startEdit} className={btnGhost}><span className="material-symbols-outlined text-base">edit</span>{t('agencyPortal.profile.edit')}</button>}
+          </div>
+          {form ? (
+            <form onSubmit={save} className="grid sm:grid-cols-2 gap-4">
+              {EDITABLE.map((k) => (
+                <label key={k} className="block text-xs text-primary/60">
+                  {t(`agencyPortal.profile.${k === 'manager_name' ? 'manager' : k}`)}
+                  <input value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} type={k === 'website' ? 'url' : k === 'phone' || k === 'whatsapp' ? 'tel' : 'text'} className={`${input} mt-1`} />
+                </label>
+              ))}
+              {saveError && <p className="sm:col-span-2 text-[11px] text-red-600">{saveError}</p>}
+              <div className="sm:col-span-2 flex gap-2">
+                <button type="submit" disabled={saving} className={btnPrimary}>{t('common.save')}</button>
+                <button type="button" onClick={() => setForm(null)} className={btnGhost}>{t('common.cancel')}</button>
+              </div>
+            </form>
+          ) : (
           <dl className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
             {fields.map(([k, v]) => (
               <div key={k} className="flex justify-between gap-4 border-b border-gray-50 pb-2 text-sm">
@@ -101,6 +133,7 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
               </div>
             ))}
           </dl>
+          )}
           <p className="text-xs text-primary/40 mt-4">{t('agencyPortal.profile.editHint')}</p>
         </section>
       </div>
