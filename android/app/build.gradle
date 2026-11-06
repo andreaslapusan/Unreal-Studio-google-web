@@ -5,9 +5,9 @@ android {
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         // Flavor por propiedades gradle (-PappId= -PappName=), ver scripts/app-build-android.sh
-        applicationId project.findProperty('appId') ?: "com.unrealstudio.app"
-        resValue "string", "app_name", project.findProperty('appName') ?: "Unreal Studio"
-        resValue "string", "title_activity_main", project.findProperty('appName') ?: "Unreal Studio"
+        applicationId project.findProperty('appId') ?: "com.unrealstudio.clientes"
+        resValue "string", "app_name", project.findProperty('appName') ?: "Unreal Clientes"
+        resValue "string", "title_activity_main", project.findProperty('appName') ?: "Unreal Clientes"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode((project.findProperty('versionCode') ?: "1") as int)

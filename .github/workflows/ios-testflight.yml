@@ -1,6 +1,8 @@
 # iOS → TestFlight (Capacitor). Se lanza al hacer push a una rama apps/** o a mano (Actions → Run workflow).
-# Secrets necesarios (Settings → Secrets and variables → Actions):
-#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (contenido completo del .p8)  — clave App Store Connect con rol Admin
+# Secrets (Settings → Secrets and variables → Actions):
+#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (contenido del .p8) — clave App Store Connect (Admin)
+#   IOS_DIST_P12 (base64 del .p12 Apple Distribution) + IOS_DIST_P12_PASSWORD — origen: ~/.config/ios-dist/ en el VPS
+# Firma MANUAL: perfil App Store creado/obtenido por API (scripts/asc-profile.mjs); no requiere dispositivos.
 # Variable (Settings → Variables): APPLE_TEAM_ID = 8CX5UN59YK
 # Requisito previo: la app (bundle id) debe existir en App Store Connect → Apps (no se puede crear por API).
 name: iOS TestFlight
@@ -8,7 +10,7 @@ name: iOS TestFlight
 on:
   push:
     branches: ['apps/**']
-    paths: ['ios/**', 'capacitor.config.ts', 'app-shell/**', 'package.json', '.github/workflows/ios-testflight.yml']
+    paths: ['ios/**', 'scripts/app-assets.mjs', 'scripts/asc-profile.mjs', 'capacitor.config.ts', 'app-shell/**', 'package.json', '.github/workflows/ios-testflight.yml']
   workflow_dispatch:
     inputs:
       flavor:
@@ -44,24 +46,44 @@ jobs:
           xcodebuild -version
       - run: node scripts/app-assets.mjs "$RUNNER_TEMP/store"   # icono + splash del flavor
       - run: npx cap sync ios
-      - name: Clave App Store Connect
-        env: { ASC_KEY_P8: '${{ secrets.ASC_KEY_P8 }}' }
+      - name: Clave App Store Connect + certificado de distribución
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          P12: ${{ secrets.IOS_DIST_P12 }}
+          P12_PW: ${{ secrets.IOS_DIST_P12_PASSWORD }}
         run: |
-          test -n "$ASC_KEY_P8" || { echo "Falta el secret ASC_KEY_P8"; exit 1; }
+          test -n "$ASC_KEY_P8" && test -n "$P12" || { echo "Faltan secrets ASC_KEY_P8 / IOS_DIST_P12"; exit 1; }
           mkdir -p ~/.appstoreconnect/private_keys
           printf '%s' "$ASC_KEY_P8" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8
-      - name: Archive
+          KC="$RUNNER_TEMP/build.keychain-db"; KCPW=$(uuidgen)
+          security create-keychain -p "$KCPW" "$KC"
+          security set-keychain-settings -lut 21600 "$KC"
+          security unlock-keychain -p "$KCPW" "$KC"
+          echo "$P12" | base64 --decode > "$RUNNER_TEMP/dist.p12"
+          security import "$RUNNER_TEMP/dist.p12" -P "$P12_PW" -A -t cert -f pkcs12 -k "$KC"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KCPW" "$KC" >/dev/null
+          security list-keychains -d user -s "$KC" $(security list-keychains -d user | tr -d '"')
+          rm "$RUNNER_TEMP/dist.p12"
+      - name: Perfil App Store + firma manual
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
           APP_ID=$(node -p "require('./ios/App/App/capacitor.config.json').appId")
           APP_NAME=$(node -p "require('./ios/App/App/capacitor.config.json').appName")
+          PROFILE=$(ASC_KEY_PATH=~/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8 node scripts/asc-profile.mjs "$APP_ID" "$RUNNER_TEMP/app.mobileprovision")
+          UUID=$(security cms -D -i "$RUNNER_TEMP/app.mobileprovision" | plutil -extract UUID raw -)
+          for d in ~/Library/MobileDevice/Provisioning\ Profiles ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles; do mkdir -p "$d"; cp "$RUNNER_TEMP/app.mobileprovision" "$d/$UUID.mobileprovision"; done
+          # Solo el target App (no los paquetes SPM): firma manual con el perfil de este flavor
+          sed -i '' -e "s/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual; DEVELOPMENT_TEAM = $TEAM_ID; CODE_SIGN_IDENTITY = \"Apple Distribution\"; PROVISIONING_PROFILE_SPECIFIER = \"$PROFILE\";/" \
+            -e "s/PRODUCT_BUNDLE_IDENTIFIER = com.unrealstudio.clientes;/PRODUCT_BUNDLE_IDENTIFIER = $APP_ID;/" \
+            -e "s/APP_DISPLAY_NAME = \"Unreal Clientes\";/APP_DISPLAY_NAME = \"$APP_NAME\";/" ios/App/App.xcodeproj/project.pbxproj
+          echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"; echo "PROFILE=$PROFILE" >> "$GITHUB_ENV"
+      - name: Archive
+        run: |
           xcodebuild archive -project ios/App/App.xcodeproj -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
-            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
-            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
-            PRODUCT_BUNDLE_IDENTIFIER="$APP_ID" APP_DISPLAY_NAME="$APP_NAME" \
-            CURRENT_PROJECT_VERSION="${{ github.run_number }}"
+            CURRENT_PROJECT_VERSION="${{ github.run_number }}${{ github.run_attempt }}"
       - name: Export + subir a TestFlight
         run: |
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
@@ -71,14 +93,15 @@ jobs:
             <key>method</key><string>app-store-connect</string>
             <key>destination</key><string>upload</string>
             <key>teamID</key><string>$TEAM_ID</string>
-            <key>signingStyle</key><string>automatic</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key><dict><key>$APP_ID</key><string>$PROFILE</string></dict>
             <key>manageAppVersionAndBuildNumber</key><false/>
           </dict></plist>
           PLIST
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
-            -allowProvisioningUpdates \
             -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
             -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}"
       - if: always()
-        run: rm -rf ~/.appstoreconnect
+        run: rm -rf ~/.appstoreconnect; security delete-keychain "$RUNNER_TEMP/build.keychain-db" || true

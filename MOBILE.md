@@ -25,12 +25,14 @@ Requisitos: JDK 21 + SDK (platform 36, build-tools 36) en `~/android-sdk`; uploa
 Usar **Play App Signing** (Google guarda la clave de la app; la nuestra es solo de subida).
 
 ## iOS (GitHub Actions, macOS) → TestFlight
-Workflow `.github/workflows/ios-testflight.yml`: corre al hacer push a `apps/**` (las 4 apps) o a mano
-(Actions → iOS TestFlight → Run workflow → flavor). Firma automática en la nube con la API key.
+Workflow `.github/workflows/ios-testflight.yml`: corre al hacer push a `apps/**` que toque `ios/`, config o scripts
+(compila las 4 apps en matriz) o a mano cuando esté en `main` (Actions → iOS TestFlight → Run workflow → flavor).
+Firma **manual**: certificado Apple Distribution (secret) + perfil App Store creado por API (`scripts/asc-profile.mjs`),
+así no hace falta ningún iPhone registrado. Solo iPhone (`TARGETED_DEVICE_FAMILY = 1`).
 
-**Configurar en GitHub → repo → Settings → Secrets and variables → Actions:**
-- Secrets: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (texto completo del `.p8`). La key necesita rol **Admin**
-  (firma gestionada en la nube).
+**GitHub → repo → Settings → Secrets and variables → Actions** (ya configurados el 06-nov-2026):
+- Secrets: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (texto del `.p8`), `IOS_DIST_P12` (base64), `IOS_DIST_P12_PASSWORD`.
+  Origen en el VPS: `~/.config/appstore-connect.env`, `~/.config/ios-dist/` (600). El cert caduca el 06-nov-2027.
 - Variable: `APPLE_TEAM_ID` = `8CX5UN59YK`.
 
 **Antes del primer build:** cada app debe existir en App Store Connect → Apps → “+” → Nueva app
