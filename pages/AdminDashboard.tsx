@@ -1316,17 +1316,6 @@ const bulkClients = async (action: 'delete' | 'status', status?: string) => {
   } finally { setBulkBusy(false); }
 };
 
-// Interruptor de la ficha: pausar/reactivar TODOS los correos a este cliente.
-const toggleAutoEmails = async (client: Client) => {
-  const userId = getAdminUserId();
-  if (!userId) { alert(t('admin.dash.sessionExpired')); return; }
-  const next = client.auto_emails_enabled === false;
-  if (next && !window.confirm(t('admin.dash.autoEmailsConfirmOn'))) return;
-  const { data, error } = await supabase.rpc('admin_set_client_auto_emails', { p_user_id: userId, p_client_id: client.id, p_enabled: next });
-  if (error || !data?.success) { alert(t('admin.dash.saveClientError')); return; }
-  setClients((prev) => prev.map((c) => (c.id === client.id ? { ...c, auto_emails_enabled: next } : c)));
-};
-
 const openEditClient = (client?: Client) => {
   setCurrentClient(client ? { ...client } : {
     id: `client-${Date.now()}`,
@@ -2340,10 +2329,11 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                   {(() => { const st = (client as any).status || (client.is_active ? 'active' : 'inactive'); return (
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
                   ); })()}
-                  <button type="button" onClick={() => toggleAutoEmails(client)} title={t('admin.dash.autoEmailsHint')} aria-pressed={client.auto_emails_enabled !== false}
-                    className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-flex items-center gap-1 transition ${client.auto_emails_enabled === false ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-white text-primary/50 border border-primary/10 hover:text-primary'}`}>
-                    <span className="material-symbols-outlined text-[11px]">mail</span>{client.auto_emails_enabled === false ? t('admin.dash.autoEmailsOff') : t('admin.dash.autoEmailsOn')}
-                  </button>
+                  {client.auto_emails_enabled === false && (
+                    <span title={t('admin.dash.autoEmailsHint')} className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-flex items-center gap-1 bg-red-50 text-red-600">
+                      <span className="material-symbols-outlined text-[11px]">mail</span>{t('admin.dash.autoEmailsOff')}
+                    </span>
+                  )}
                 </div>
                 <p className="text-sm text-gray-500 break-words">{(client.holders && client.holders.length ? client.holders.map((h: any) => h.email).filter(Boolean).join(', ') : client.email)}{client.phone && ` · ${client.phone}`}</p>
                 {(client as any).last_login && (
@@ -3673,10 +3663,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.draftHint', { defaultValue: 'Activo = puede entrar y cuenta en Finanzas. Inactivo = no entra, sí cuenta. Draft = perfil de prueba, no entra ni cuenta.' })}</p>
         </div>
         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-          <button type="button" onClick={() => setCurrentClient((prev) => ({ ...prev, auto_emails_enabled: prev.auto_emails_enabled === false }))} aria-pressed={currentClient.auto_emails_enabled !== false}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${currentClient.auto_emails_enabled === false ? 'bg-red-50 border-red-200 text-red-600' : 'bg-green-50 border-green-200 text-green-700'}`}>
-            <span className="text-left">{t('admin.dash.autoEmails')}: {currentClient.auto_emails_enabled === false ? t('admin.dash.autoEmailsOff') : t('admin.dash.autoEmailsOn')}</span>
-            <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${currentClient.auto_emails_enabled === false ? 'bg-gray-300 justify-start' : 'bg-green-500 justify-end'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+          <button type="button" onClick={() => setCurrentClient((prev) => ({ ...prev, auto_emails_enabled: prev.auto_emails_enabled === false }))} aria-pressed={currentClient.auto_emails_enabled === false}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${currentClient.auto_emails_enabled === false ? 'bg-red-50 border-red-200 text-red-600' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
+            <span className="text-left">{t('admin.dash.autoEmails')}</span>
+            <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${currentClient.auto_emails_enabled === false ? 'bg-red-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
           </button>
           <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.autoEmailsHint')}</p>
         </div>

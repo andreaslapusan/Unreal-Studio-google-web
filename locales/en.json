@@ -1407,11 +1407,9 @@
       "reportsPaused": "Paused",
       "reportsHint": "If paused, they stop receiving the automatic report email and the view-report button is hidden in their portal.",
       "emailsPaused": "Automatic emails are paused for this client: nothing was sent. You can send it manually from the client's mail center.",
-      "autoEmails": "Automatic emails",
-      "autoEmailsOn": "Auto emails ON",
-      "autoEmailsOff": "Auto emails paused",
-      "autoEmailsHint": "While paused, no automatic email is sent to this client (payment reminders, construction updates, automatic welcome). Manual sends from the panel still work after a confirmation.",
-      "autoEmailsConfirmOn": "Re-enable automatic emails to this client? They will receive automatic reminders and updates again.",
+      "autoEmails": "Pause automatic emails",
+      "autoEmailsOff": "Emails paused",
+      "autoEmailsHint": "While this is on, no AUTOMATIC email is sent to this client (payment reminders, new construction report notices, welcome…). Emails you send manually from the admin still go out, after confirming.",
       "pausedConfirm": "This client has automatic emails paused. Send this email anyway?"
     },
     "mkt": {

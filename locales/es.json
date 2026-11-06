@@ -1407,11 +1407,9 @@
       "reportsPaused": "Pausados",
       "reportsHint": "Si los pausas, deja de recibir el email automático de reportes y se le oculta el botón de ver reporte en su portal.",
       "emailsPaused": "Correos automáticos en pausa para este cliente: no se ha enviado. Si quieres, mándalo a mano desde su centro de correo.",
-      "autoEmails": "Emails automáticos",
-      "autoEmailsOn": "Emails auto ON",
-      "autoEmailsOff": "Emails auto en pausa",
-      "autoEmailsHint": "En pausa no sale ningún correo automático a este cliente (recordatorios de pago, avisos de obra, bienvenida automática). Los envíos manuales desde el panel siguen funcionando, previa confirmación.",
-      "autoEmailsConfirmOn": "¿Reactivar los correos automáticos a este cliente? Volverá a recibir recordatorios y avisos automáticos.",
+      "autoEmails": "Pausar correos automáticos",
+      "autoEmailsOff": "Emails pausados",
+      "autoEmailsHint": "Mientras esté activado no sale ningún correo AUTOMÁTICO a este cliente (recordatorios de pago, avisos de nuevo reporte de obra, bienvenida…). Los que envíes tú a mano desde el admin sí salen, tras confirmar.",
       "pausedConfirm": "Este cliente tiene los correos automáticos en pausa. ¿Enviar este correo igualmente?"
     },
     "mkt": {

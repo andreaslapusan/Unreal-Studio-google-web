@@ -1407,11 +1407,9 @@
       "reportsPaused": "Pauzate",
       "reportsHint": "Dacă le pui pe pauză, nu mai primește emailul automat de rapoarte și butonul de vizualizare a raportului dispare din portalul său.",
       "emailsPaused": "E-mailurile automate sunt suspendate pentru acest client: nu s-a trimis nimic. Îl poți trimite manual din centrul de e-mail al clientului.",
-      "autoEmails": "E-mailuri automate",
-      "autoEmailsOn": "E-mailuri auto ON",
-      "autoEmailsOff": "E-mailuri auto suspendate",
-      "autoEmailsHint": "Cât timp sunt suspendate, acestui client nu i se trimite niciun e-mail automat (mementouri de plată, rapoarte de șantier, bun venit automat). Trimiterile manuale din panou funcționează în continuare, după confirmare.",
-      "autoEmailsConfirmOn": "Reactivezi e-mailurile automate către acest client? Va primi din nou mementouri și notificări automate.",
+      "autoEmails": "Suspendă e-mailurile automate",
+      "autoEmailsOff": "E-mailuri suspendate",
+      "autoEmailsHint": "Cât timp este activat, acestui client nu i se trimite niciun e-mail AUTOMAT (mementouri de plată, anunțuri de raport nou de șantier, bun venit…). E-mailurile pe care le trimiți manual din admin pleacă, după confirmare.",
       "pausedConfirm": "Acest client are e-mailurile automate suspendate. Trimiți totuși acest e-mail?"
     },
     "mkt": {

@@ -1512,11 +1512,9 @@
       "reportsPaused": "Dijeda",
       "reportsHint": "Jika dijeda, mereka berhenti menerima email laporan otomatis dan tombol lihat laporan disembunyikan di portal mereka.",
       "emailsPaused": "Email otomatis untuk klien ini dijeda: tidak ada yang dikirim. Anda bisa mengirimnya secara manual dari pusat email klien.",
-      "autoEmails": "Email otomatis",
-      "autoEmailsOn": "Email otomatis AKTIF",
-      "autoEmailsOff": "Email otomatis dijeda",
-      "autoEmailsHint": "Selama dijeda, tidak ada email otomatis yang dikirim ke klien ini (pengingat pembayaran, laporan konstruksi, sambutan otomatis). Pengiriman manual dari panel tetap berfungsi setelah konfirmasi.",
-      "autoEmailsConfirmOn": "Aktifkan kembali email otomatis ke klien ini? Klien akan kembali menerima pengingat dan pemberitahuan otomatis.",
+      "autoEmails": "Jeda email otomatis",
+      "autoEmailsOff": "Email dijeda",
+      "autoEmailsHint": "Selama ini aktif, tidak ada email OTOMATIS yang dikirim ke klien ini (pengingat pembayaran, pemberitahuan laporan konstruksi baru, sambutan…). Email yang Anda kirim manual dari admin tetap terkirim, setelah konfirmasi.",
       "pausedConfirm": "Email otomatis untuk klien ini sedang dijeda. Tetap kirim email ini?"
     },
     "mkt": {
