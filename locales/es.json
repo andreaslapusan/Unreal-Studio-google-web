@@ -1828,6 +1828,19 @@
         "notes": "Notas",
         "status": "Estado"
       }
+    },
+    "agencyRequests": {
+      "title": "Solicitudes de agencias",
+      "empty": "Ninguna agencia ha hecho solicitudes todavía.",
+      "col": {
+        "date": "Fecha",
+        "agency": "Agencia",
+        "type": "Tipo",
+        "client": "Cliente",
+        "preferred": "Fecha preferida",
+        "notes": "Notas",
+        "status": "Estado"
+      }
     }
   },
   "footer": {
@@ -2928,7 +2941,14 @@
       "stats": "Estadísticas",
       "commissions": "Comisiones",
       "profile": "Mi agencia",
-      "help": "Ayuda y contacto"
+      "help": "Ayuda y contacto",
+      "news": "Novedades",
+      "availability": "Disponibilidad",
+      "kit": "Material de venta",
+      "requests": "Solicitudes",
+      "training": "Formación",
+      "contract": "Contrato",
+      "groupWork": "Vender"
     },
     "kpi": {
       "registered": "Clientes registrados",
@@ -2947,7 +2967,11 @@
       "projectsCount": "{{n}} proyecto(s) asignado(s)",
       "clientsCount": "{{n}} cliente(s) registrado(s)",
       "commissionsSub": "Estimación por cliente y por inventario",
-      "helpSub": "Cómo funciona el programa y contacto"
+      "helpSub": "Cómo funciona el programa y contacto",
+      "availSub": "{{n}} unidad(es) disponibles hoy",
+      "kitSub": "Brochures, planos y textos con tu link",
+      "requestsSub": "{{n}} solicitud(es) abierta(s)",
+      "trainingSub": "Argumentos, objeciones y proceso de compra"
     },
     "projects": {
       "sub": "Proyectos que tienes asignados, con unidades disponibles, precio agencia y tu comisión. Comparte el link de cada proyecto: las visitas quedan atribuidas a tu agencia.",
@@ -3025,6 +3049,158 @@
       "contactTitle": "Contacto con el equipo Unreal",
       "contactBody": "Dudas sobre un proyecto, un cliente o tu comisión: escríbenos y te respondemos.",
       "waText": "Hola, soy de la agencia {{agency}} (portal de agencias de Unreal Studio)."
+    },
+    "availability": {
+      "sub": "Todo lo que puedes vender hoy: unidades disponibles de tus proyectos con precio agencia y tu comisión. Confirma la unidad con el equipo antes de presentarla.",
+      "allProjects": "Todos los proyectos",
+      "sortCommission": "Mayor comisión",
+      "sortPrice": "Menor precio",
+      "units": "Unidades disponibles",
+      "reservedN": "Reservadas",
+      "empty": "No hay unidades disponibles en tus proyectos ahora mismo.",
+      "ask": "Preguntar por esta unidad",
+      "waUnit": "Hola, soy de {{agency}}. ¿Me confirmáis disponibilidad de {{unit}} ({{project}})?"
+    },
+    "kit": {
+      "sub": "Material oficial de cada proyecto y textos listos para copiar. Todos llevan tu link: lo que llegue de ahí queda atribuido a tu agencia.",
+      "files": "Documentos y archivos",
+      "brochure": "Brochure ({{lang}})",
+      "renders": "Renders",
+      "plans": "Planos 2D",
+      "folder": "Carpeta de material",
+      "video": "Vídeo",
+      "tour": "Recorrido 3D",
+      "construction": "Último informe de obra",
+      "listing": "Ficha pública con tu link",
+      "pack": "Pack agencia completo",
+      "noFiles": "Este proyecto aún no tiene archivos publicados. Pídelos al equipo.",
+      "texts": "Textos listos para copiar",
+      "textLang": "Idioma del texto",
+      "copy": "Copiar",
+      "chWhatsapp": "WhatsApp",
+      "chInstagram": "Instagram",
+      "chEmail": "Email",
+      "pick": "Proyecto",
+      "disclaimer": "Los textos solo usan datos de la ficha del proyecto. No añadas rentabilidades garantizadas ni promesas que no estén en la información de Unreal.",
+      "tpl": {
+        "beds": "{{n}} dormitorio(s)",
+        "finished": "obra terminada",
+        "building": "en construcción ({{pct}} %)",
+        "offPlan": "sobre plano",
+        "from": "desde {{price}}",
+        "years": "{{n}} años",
+        "whatsapp": "Hola, te comparto {{name}}, en {{area}}.\n{{facts}}.\nDiseñado y construido por Unreal Studio, arquitecto y promotor directo en Bali.\nFicha completa: {{link}}",
+        "instagram": "{{name}} · {{area}}\n{{facts}}.\nArquitectura de Unreal Studio, diseñada y construida sin intermediarios.\nMás información: {{link}}\n#Bali #Uluwatu #InversionInmobiliaria #UnrealStudio",
+        "email": "Asunto: {{name}}, {{area}}\n\nHola:\n\nTe envío la ficha de {{name}}, un proyecto de Unreal Studio en {{area}}.\n{{facts}}.\n\nUnreal Studio diseña y construye sus propios proyectos en Bali, sin intermediarios, y se encarga de toda la parte legal de la compra.\n\nFotos, planos y más información: {{link}}\n\nQuedo a tu disposición para cualquier duda.\n{{agency}}"
+      }
+    },
+    "news": {
+      "sub": "Avances de obra y cambios en tus proyectos asignados.",
+      "construction": "Nuevo informe de obra",
+      "updated": "Ficha del proyecto actualizada",
+      "state": "Estado: {{status}} · Avance {{pct}}%",
+      "open": "Ver informe",
+      "empty": "Sin novedades en tus proyectos por ahora.",
+      "progress": "Avance de obra"
+    },
+    "requests": {
+      "sub": "Pide al equipo Unreal una llamada, una visita en Bali, una presentación online o tu contrato. Te confirmamos fecha.",
+      "new": "Nueva solicitud",
+      "type": "Tipo",
+      "t": {
+        "call": "Llamada con el equipo",
+        "visit": "Visita / viaje a Bali",
+        "presentation": "Presentación online",
+        "contract": "Contrato de colaboración"
+      },
+      "client": "Cliente (opcional)",
+      "noClient": "Sin cliente concreto",
+      "date": "Fecha preferida (opcional)",
+      "notes": "Detalles: horario, proyectos de interés, idioma…",
+      "send": "Enviar solicitud",
+      "sending": "Enviando…",
+      "sent": "Solicitud enviada. El equipo te contactará para confirmar.",
+      "empty": "Aún no has hecho ninguna solicitud.",
+      "for": "Para {{name}}",
+      "preferred": "Fecha preferida: {{date}}",
+      "st": {
+        "pending": "Pendiente",
+        "scheduled": "Agendada",
+        "done": "Hecha",
+        "cancelled": "Cancelada"
+      },
+      "open": "Abiertas",
+      "history": "Historial"
+    },
+    "lead": {
+      "timeline": "Seguimiento",
+      "registered": "Cliente registrado por tu agencia",
+      "you": "Tu agencia",
+      "unreal": "Equipo Unreal",
+      "addNote": "Añadir nota",
+      "notePh": "Escribe una nota de seguimiento (visible para el equipo Unreal)…",
+      "save": "Guardar nota",
+      "details": "Datos del cliente",
+      "requestCall": "Pedir llamada para este cliente",
+      "protected": "Protegido hasta {{date}}",
+      "budget": "Presupuesto",
+      "open": "Ver ficha",
+      "project": "Proyecto"
+    },
+    "training": {
+      "sub": "Guía rápida para presentar los proyectos de Unreal a tus clientes.",
+      "pitchTitle": "Por qué Unreal Studio",
+      "pitch1": "Arquitecto y constructor directos, sin intermediarios, con más de 70 proyectos realizados en Bali y oficinas en Bali y Madrid.",
+      "pitch2": "Precio por debajo de mercado: compramos el terreno por debajo de mercado y diseñamos y construimos nosotros mismos.",
+      "pitch3": "Producto llave en mano pensado para alquilar, en zonas de demanda turística probada (Uluwatu, Pandawa, Melasti).",
+      "pitch4": "Unreal lleva siempre la parte legal y la formalización de la venta; tú te centras en el cliente.",
+      "objTitle": "Objeciones típicas y cómo responder",
+      "q1": "«¿Un extranjero puede comprar en Bali?»",
+      "a1": "Sí, mediante leasehold: un derecho de uso y explotación durante los años fijados en contrato. Es la fórmula legal habitual para inversores extranjeros; el freehold está reservado a ciudadanos indonesios.",
+      "q2": "«El leasehold no me convence, no es mío.»",
+      "a2": "Es una fórmula legal consolidada que da derecho a usar, alquilar y revender la propiedad durante todo el plazo. Los años y las opciones de extensión de cada proyecto están en su ficha.",
+      "q3": "«¿Me garantizáis la rentabilidad?»",
+      "a3": "No. Unreal no garantiza rentas, rentabilidad ni recompra. Las cifras son estimaciones basadas en propiedades comparables, algunas propias y alquiladas en la misma calle. La gestión del alquiler es opcional, con gestoras de confianza en cada zona.",
+      "q4": "«Está muy lejos, no podré seguir la obra.»",
+      "a4": "El comprador tiene un portal de clientes con su calendario de pagos e informes de avance de obra. Puede visitar las propiedades en Bali o venir a la oficina de Madrid.",
+      "q5": "«¿Y si hay retrasos en la obra?»",
+      "a5": "Unreal diseña y dirige la obra. Los plazos y condiciones de entrega están en el contrato de compraventa y los pagos van por fases según el avance de obra. Para preguntas concretas de garantías, pide una llamada con el equipo.",
+      "q6": "«¿Qué pasa con los impuestos?»",
+      "a6": "Unreal no es asesor fiscal. La fiscalidad del alquiler y de la reventa la revisa el inversor con un asesor especializado; podemos recomendar uno de confianza.",
+      "processTitle": "Proceso de compra paso a paso",
+      "p1": "Registra al cliente en «Mis clientes» antes de que contacte con Unreal.",
+      "p2": "Presenta el proyecto con el material oficial y tu link; pide una llamada o presentación online con el equipo si hace falta.",
+      "p3": "Confirma la disponibilidad de la unidad y el cliente la reserva.",
+      "p4": "Firma del contrato ante notario (PPAT) en Indonesia; los honorarios notariales del comprador son aproximadamente el 1 % del precio. El cliente puede hacer su due diligence con su abogado.",
+      "p5": "Pagos por fases según el avance de obra; los datos bancarios se facilitan al firmar.",
+      "p6": "Entrega terminada con todo lo fijo (cocina, baño, armarios, piscina). El amueblado para alquilar es un paquete aparte.",
+      "rulesTitle": "Reglas de oro",
+      "r1": "No prometas nada que no esté en la información de Unreal (rentas, plazos, garantías).",
+      "r2": "Publica y presenta siempre al precio facilitado; para otro precio, consulta antes.",
+      "r3": "Confirma la unidad con el equipo antes de presentarla: la disponibilidad cambia cada día.",
+      "r4": "Metros cuadrados, licencias y temas legales concretos: pásalos al equipo en una llamada."
+    },
+    "contract": {
+      "sub": "Resumen de las condiciones de colaboración con Unreal Studio. El contrato firmado es el que manda.",
+      "request": "Solicitar contrato",
+      "requested": "Solicitud de contrato enviada. El equipo comercial te lo enviará con los datos de tu agencia.",
+      "pending": "Ya tienes una solicitud de contrato en curso.",
+      "termsTitle": "Condiciones principales",
+      "c1t": "Comisión",
+      "c1": "5 % sobre el precio de venta si tu agencia hace el trabajo comercial hasta el cierre; 3 % si presentas un inversor cualificado y Unreal hace la venta. La parte legal la lleva siempre Unreal.",
+      "c2t": "Cuándo se gana",
+      "c2": "Cuando el inversor registrado firma un acuerdo vinculante de compraventa. Se paga por transferencia; la comisión es bruta y cada parte paga sus impuestos. El plazo de pago figura en el contrato.",
+      "c3t": "Protección del cliente",
+      "c3": "12 meses desde que registras al cliente. Si compra en ese plazo, la comisión es tuya aunque el contrato haya terminado. Si Unreal le vende sin avisarte, te paga igualmente la comisión íntegra.",
+      "c4t": "Tipo de contrato y duración",
+      "c4": "Representación no exclusiva, bilingüe (español / indonesio). 12 meses renovables automáticamente; cualquiera de las partes puede terminarlo con 30 días de preaviso.",
+      "c5t": "Una comisión por operación",
+      "c5": "Unreal paga una única comisión por operación; si incorporas a terceros, la repartes tú con ellos.",
+      "youTitle": "Tu agencia se compromete a",
+      "you": "Promocionar a su costa, registrar a cada inversor, organizar las visitas (y llevarlas en la modalidad del 5 %) e informar con veracidad, sin prometer nada fuera de la información de Unreal.",
+      "usTitle": "Unreal se compromete a",
+      "us": "Dar información veraz y actualizada de disponibilidad, reservas y precios, facilitar el acceso a las propiedades para las visitas, llevar toda la parte legal de la venta y pagar la comisión acordada.",
+      "history": "Tus solicitudes de contrato"
     }
   }
 }

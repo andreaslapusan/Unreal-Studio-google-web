@@ -80,10 +80,11 @@ export default function AgencyOverview({ data, go }: Props) {
         <section className={`${card} space-y-3`}>
           <h3 className="text-sm font-black uppercase tracking-widest text-primary/40">{t('agencyPortal.overview.shortcuts')}</h3>
           {[
-            { v: 'projects', icon: 'home_work', label: t('agencyPortal.nav.projects'), sub: t('agencyPortal.overview.projectsCount', { n: projects.length }) },
-            { v: 'clients', icon: 'group', label: t('agencyPortal.nav.clients'), sub: t('agencyPortal.overview.clientsCount', { n: leads.length }) },
-            { v: 'commissions', icon: 'payments', label: t('agencyPortal.nav.commissions'), sub: t('agencyPortal.overview.commissionsSub') },
-            { v: 'help', icon: 'help', label: t('agencyPortal.nav.help'), sub: t('agencyPortal.overview.helpSub') },
+            { v: 'availability', icon: 'sell', label: t('agencyPortal.nav.availability'), sub: t('agencyPortal.overview.availSub', { n: units.filter(isUnitAvailable).length }) },
+            { v: 'kit', icon: 'folder_open', label: t('agencyPortal.nav.kit'), sub: t('agencyPortal.overview.kitSub') },
+            { v: 'requests', icon: 'event_available', label: t('agencyPortal.nav.requests'), sub: t('agencyPortal.overview.requestsSub', { n: data.requests.filter((r) => r.status === 'pending' || r.status === 'scheduled').length }) },
+            { v: 'news', icon: 'campaign', label: t('agencyPortal.nav.news'), sub: t('agencyPortal.news.sub') },
+            { v: 'training', icon: 'school', label: t('agencyPortal.nav.training'), sub: t('agencyPortal.overview.trainingSub') },
           ].map((s) => (
             <button key={s.v} onClick={() => go(s.v)} className="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-primary/20 hover:bg-gray-50 transition text-left">
               <span className="material-symbols-outlined text-xl text-primary/50">{s.icon}</span>

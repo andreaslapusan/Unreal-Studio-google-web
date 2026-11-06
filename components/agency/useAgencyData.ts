@@ -32,12 +32,44 @@ export interface PropertyRow {
   hero_image_url: string | null;
   brand_pdf_url: string | null;
   walkthrough_url: string | null;
+  drone_video_url: string | null;
+}
+
+/** Campos de la tabla projects (misma slug que properties) para material y novedades. */
+export interface ProjectInfo {
+  slug: string;
+  status: string | null;
+  location: string | null;
+  completion_percent: number | null;
+  updated_at: string | null;
+  construction_update_url: string | null;
+  construction_update_date: string | null;
+  brochure_url: string | null;
+  brochures: Record<string, string> | null;
+  drive_renders_url: string | null;
+  drive_2d_plans_url: string | null;
+  drive_brochure_folder_url: string | null;
+  video_url: string | null;
+  walkthrough_url: string | null;
+  tenure: string | null;
+  years_contract: number | null;
+}
+
+export interface AgencyRequest {
+  id: string;
+  created_at: string;
+  type: 'call' | 'visit' | 'presentation' | 'contract';
+  lead_id: string | null;
+  preferred_date: string | null;
+  notes: string | null;
+  status: 'pending' | 'scheduled' | 'done' | 'cancelled';
 }
 
 export interface UnitRow {
   id: string;
   property_id: string;
   unit_name: string;
+  price_publico: number | null;
   price_agencia: number | null;
   commission_default_pct: number | null;
   commission_per_partner: Record<string, number> | null;
@@ -106,8 +138,11 @@ export interface AgencyData {
   units: UnitRow[];
   leads: AgencyLead[];
   events: AttributionRow[];
+  requests: AgencyRequest[];
+  projectInfo: Record<string, ProjectInfo>;
   setPartner: (p: PartnerRow) => void;
   reloadLeads: () => Promise<void>;
+  reloadRequests: () => Promise<void>;
 }
 
 export function useAgencyData(userId: string | undefined, notLinkedMsg: string): AgencyData {
@@ -118,6 +153,18 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
   const [units, setUnits] = useState<UnitRow[]>([]);
   const [leads, setLeads] = useState<AgencyLead[]>([]);
   const [events, setEvents] = useState<AttributionRow[]>([]);
+  const [requests, setRequests] = useState<AgencyRequest[]>([]);
+  const [projectInfo, setProjectInfo] = useState<Record<string, ProjectInfo>>({});
+
+  const loadRequests = useCallback(async (agencyId: string) => {
+    const { data, error: e } = await supabase
+      .from('agency_requests')
+      .select('id, created_at, type, lead_id, preferred_date, notes, status')
+      .eq('agency_id', agencyId)
+      .order('created_at', { ascending: false });
+    if (e) throw e;
+    setRequests((data ?? []) as AgencyRequest[]);
+  }, []);
 
   const loadLeads = useCallback(async (agencyId: string) => {
     const { data, error: e } = await supabase
@@ -146,10 +193,10 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
         const ids = p.projects_assigned ?? [];
         const [props, us, ev] = await Promise.all([
           ids.length
-            ? supabase.from('properties').select('id, slug, name, short_pitch, area, pct_progress, delivery_date, hero_image_url, brand_pdf_url, walkthrough_url').in('id', ids)
+            ? supabase.from('properties').select('id, slug, name, short_pitch, area, pct_progress, delivery_date, hero_image_url, brand_pdf_url, walkthrough_url, drone_video_url').in('id', ids)
             : Promise.resolve({ data: [], error: null }),
           ids.length
-            ? supabase.from('property_units').select('id, property_id, unit_name, price_agencia, commission_default_pct, commission_per_partner, bedrooms, available, reserved, sold').in('property_id', ids).order('unit_name')
+            ? supabase.from('property_units').select('id, property_id, unit_name, price_publico, price_agencia, commission_default_pct, commission_per_partner, bedrooms, available, reserved, sold').in('property_id', ids).order('unit_name')
             : Promise.resolve({ data: [], error: null }),
           supabase.from('lead_attributions').select('id, property_slug, event_type, contact_email, created_at').eq('partner_id', p.id).order('created_at', { ascending: false }).limit(500),
         ]);
@@ -158,7 +205,17 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
         setProjects((props.data ?? []) as PropertyRow[]);
         setUnits((us.data ?? []) as UnitRow[]);
         setEvents((ev.data ?? []) as AttributionRow[]);
-        await loadLeads(p.id);
+        const slugs = ((props.data ?? []) as PropertyRow[]).map((x) => x.slug).filter((x): x is string => !!x);
+        const [pj] = await Promise.all([
+          slugs.length
+            ? supabase.from('projects').select('slug, status, location, completion_percent, updated_at, construction_update_url, construction_update_date, brochure_url, brochures, drive_renders_url, drive_2d_plans_url, drive_brochure_folder_url, video_url, walkthrough_url, tenure, years_contract').in('slug', slugs)
+            : Promise.resolve({ data: [], error: null }),
+          loadLeads(p.id),
+          loadRequests(p.id),
+        ]);
+        if (pj.error) throw pj.error;
+        if (cancelled) return;
+        setProjectInfo(Object.fromEntries(((pj.data ?? []) as ProjectInfo[]).map((x) => [x.slug, x])));
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -166,12 +223,13 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
       }
     })();
     return () => { cancelled = true; };
-  }, [userId, notLinkedMsg, loadLeads]);
+  }, [userId, notLinkedMsg, loadLeads, loadRequests]);
 
   return {
-    loading, error, partner, projects, units, leads, events,
+    loading, error, partner, projects, units, leads, events, requests, projectInfo,
     setPartner,
     reloadLeads: async () => { if (partner) await loadLeads(partner.id); },
+    reloadRequests: async () => { if (partner) await loadRequests(partner.id); },
   };
 }
 

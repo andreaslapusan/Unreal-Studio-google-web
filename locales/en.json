@@ -1828,6 +1828,19 @@
         "notes": "Notes",
         "status": "Status"
       }
+    },
+    "agencyRequests": {
+      "title": "Agency requests",
+      "empty": "No agency requests yet.",
+      "col": {
+        "date": "Date",
+        "agency": "Agency",
+        "type": "Type",
+        "client": "Client",
+        "preferred": "Preferred date",
+        "notes": "Notes",
+        "status": "Status"
+      }
     }
   },
   "footer": {
@@ -2926,7 +2939,14 @@
       "stats": "Statistics",
       "commissions": "Commissions",
       "profile": "My agency",
-      "help": "Help & contact"
+      "help": "Help & contact",
+      "news": "News",
+      "availability": "Availability",
+      "kit": "Sales kit",
+      "requests": "Requests",
+      "training": "Training",
+      "contract": "Agreement",
+      "groupWork": "Sell"
     },
     "kpi": {
       "registered": "Registered clients",
@@ -2945,7 +2965,11 @@
       "projectsCount": "{{n}} assigned project(s)",
       "clientsCount": "{{n}} registered client(s)",
       "commissionsSub": "Estimate per client and per inventory",
-      "helpSub": "How the program works and contact"
+      "helpSub": "How the program works and contact",
+      "availSub": "{{n}} unit(s) available today",
+      "kitSub": "Brochures, plans and texts with your link",
+      "requestsSub": "{{n}} open request(s)",
+      "trainingSub": "Pitch, objections and buying process"
     },
     "projects": {
       "sub": "Projects assigned to you, with available units, agency price and your commission. Share each project link: visits are attributed to your agency.",
@@ -3023,6 +3047,158 @@
       "contactTitle": "Contact the Unreal team",
       "contactBody": "Questions about a project, a client or your commission: write to us and we will reply.",
       "waText": "Hi, I am from the agency {{agency}} (Unreal Studio agency portal)."
+    },
+    "availability": {
+      "sub": "Everything you can sell today: available units in your projects with agency price and your commission. Confirm the unit with the team before presenting it.",
+      "allProjects": "All projects",
+      "sortCommission": "Highest commission",
+      "sortPrice": "Lowest price",
+      "units": "Available units",
+      "reservedN": "Reserved",
+      "empty": "No units available in your projects right now.",
+      "ask": "Ask about this unit",
+      "waUnit": "Hi, this is {{agency}}. Could you confirm availability of {{unit}} ({{project}})?"
+    },
+    "kit": {
+      "sub": "Official material for each project and ready-to-copy texts. They all include your link: anything coming from it is attributed to your agency.",
+      "files": "Documents & files",
+      "brochure": "Brochure ({{lang}})",
+      "renders": "Renders",
+      "plans": "2D plans",
+      "folder": "Material folder",
+      "video": "Video",
+      "tour": "3D tour",
+      "construction": "Latest construction report",
+      "listing": "Public listing with your link",
+      "pack": "Full agency pack",
+      "noFiles": "This project has no published files yet. Ask the team.",
+      "texts": "Ready-to-copy texts",
+      "textLang": "Text language",
+      "copy": "Copy",
+      "chWhatsapp": "WhatsApp",
+      "chInstagram": "Instagram",
+      "chEmail": "Email",
+      "pick": "Project",
+      "disclaimer": "Texts only use data from the project listing. Do not add guaranteed returns or promises not included in Unreal's information.",
+      "tpl": {
+        "beds": "{{n}} bedroom(s)",
+        "finished": "construction finished",
+        "building": "under construction ({{pct}}%)",
+        "offPlan": "off-plan",
+        "from": "from {{price}}",
+        "years": "{{n}} years",
+        "whatsapp": "Hi, sharing {{name}} in {{area}} with you.\n{{facts}}.\nDesigned and built by Unreal Studio, a direct architect and developer in Bali.\nFull details: {{link}}",
+        "instagram": "{{name}} · {{area}}\n{{facts}}.\nArchitecture by Unreal Studio, designed and built with no intermediaries.\nMore info: {{link}}\n#Bali #Uluwatu #RealEstateInvestment #UnrealStudio",
+        "email": "Subject: {{name}}, {{area}}\n\nHello,\n\nPlease find the details of {{name}}, an Unreal Studio project in {{area}}.\n{{facts}}.\n\nUnreal Studio designs and builds its own projects in Bali, with no intermediaries, and handles the whole legal side of the purchase.\n\nPhotos, plans and more information: {{link}}\n\nHappy to answer any questions.\n{{agency}}"
+      }
+    },
+    "news": {
+      "sub": "Construction progress and changes in your assigned projects.",
+      "construction": "New construction report",
+      "updated": "Project listing updated",
+      "state": "Status: {{status}} · Progress {{pct}}%",
+      "open": "View report",
+      "empty": "No news on your projects yet.",
+      "progress": "Construction progress"
+    },
+    "requests": {
+      "sub": "Ask the Unreal team for a call, a Bali visit, an online presentation or your agreement. We will confirm the date.",
+      "new": "New request",
+      "type": "Type",
+      "t": {
+        "call": "Call with the team",
+        "visit": "Visit / trip to Bali",
+        "presentation": "Online presentation",
+        "contract": "Collaboration agreement"
+      },
+      "client": "Client (optional)",
+      "noClient": "No specific client",
+      "date": "Preferred date (optional)",
+      "notes": "Details: time, projects of interest, language…",
+      "send": "Send request",
+      "sending": "Sending…",
+      "sent": "Request sent. The team will contact you to confirm.",
+      "empty": "You have not made any requests yet.",
+      "for": "For {{name}}",
+      "preferred": "Preferred date: {{date}}",
+      "st": {
+        "pending": "Pending",
+        "scheduled": "Scheduled",
+        "done": "Done",
+        "cancelled": "Cancelled"
+      },
+      "open": "Open",
+      "history": "History"
+    },
+    "lead": {
+      "timeline": "Timeline",
+      "registered": "Client registered by your agency",
+      "you": "Your agency",
+      "unreal": "Unreal team",
+      "addNote": "Add note",
+      "notePh": "Write a follow-up note (visible to the Unreal team)…",
+      "save": "Save note",
+      "details": "Client details",
+      "requestCall": "Request a call for this client",
+      "protected": "Protected until {{date}}",
+      "budget": "Budget",
+      "open": "View",
+      "project": "Project"
+    },
+    "training": {
+      "sub": "Quick guide to presenting Unreal projects to your clients.",
+      "pitchTitle": "Why Unreal Studio",
+      "pitch1": "Direct architect and builder, no intermediaries, with 70+ projects completed in Bali and offices in Bali and Madrid.",
+      "pitch2": "Below-market price: we buy land below market value and design and build ourselves.",
+      "pitch3": "Turnkey product designed for renting, in areas with proven tourist demand (Uluwatu, Pandawa, Melasti).",
+      "pitch4": "Unreal always handles the legal side and the formalisation of the sale; you focus on the client.",
+      "objTitle": "Typical objections and how to answer",
+      "q1": "\"Can a foreigner buy in Bali?\"",
+      "a1": "Yes, through leasehold: a right of use and exploitation for the years set in the contract. It is the usual legal route for foreign investors; freehold is reserved for Indonesian citizens.",
+      "q2": "\"I am not convinced by leasehold, it is not mine.\"",
+      "a2": "It is an established legal formula granting the right to use, rent out and resell the property for the whole term. The years and extension options of each project are in its listing.",
+      "q3": "\"Do you guarantee the return?\"",
+      "a3": "No. Unreal does not guarantee rents, returns or buy-backs. Figures are estimates based on comparable properties, some of them our own and rented on the same street. Rental management is optional, with trusted managers in each area.",
+      "q4": "\"It is too far away, I will not be able to follow the works.\"",
+      "a4": "Buyers get a client portal with their payment schedule and construction progress reports. They can visit the properties in Bali or come to the Madrid office.",
+      "q5": "\"What if construction is delayed?\"",
+      "a5": "Unreal designs and manages construction. Delivery terms are in the sale contract and payments follow construction stages. For specific warranty questions, request a call with the team.",
+      "q6": "\"What about taxes?\"",
+      "a6": "Unreal is not a tax adviser. Rental and resale taxation must be reviewed by the investor with a specialist; we can recommend a trusted one.",
+      "processTitle": "Step-by-step buying process",
+      "p1": "Register the client in \"My clients\" before they contact Unreal.",
+      "p2": "Present the project with the official material and your link; request a call or online presentation with the team if needed.",
+      "p3": "Confirm the unit's availability and the client reserves it.",
+      "p4": "Contract signed before a notary (PPAT) in Indonesia; the buyer's notary fees are about 1% of the price. The client can do due diligence with their own lawyer.",
+      "p5": "Staged payments according to construction progress; bank details are provided at signing.",
+      "p6": "Delivered finished with all fixtures (kitchen, bathroom, wardrobes, pool). Furnishing for rental is a separate package.",
+      "rulesTitle": "Golden rules",
+      "r1": "Do not promise anything not in Unreal's information (rents, timelines, warranties).",
+      "r2": "Always publish and present at the price provided; for a different price, ask first.",
+      "r3": "Confirm the unit with the team before presenting it: availability changes daily.",
+      "r4": "Square metres, permits and specific legal matters: pass them to the team in a call."
+    },
+    "contract": {
+      "sub": "Summary of the collaboration terms with Unreal Studio. The signed agreement prevails.",
+      "request": "Request agreement",
+      "requested": "Agreement request sent. The sales team will send it with your agency details.",
+      "pending": "You already have an agreement request in progress.",
+      "termsTitle": "Main terms",
+      "c1t": "Commission",
+      "c1": "5% of the sale price if your agency does the sales work through to closing; 3% if you introduce a qualified investor and Unreal makes the sale. Unreal always handles the legal side.",
+      "c2t": "When it is earned",
+      "c2": "When the registered investor signs a binding sale agreement. Paid by bank transfer; the commission is gross and each party pays its own taxes. The payment term is set in the agreement.",
+      "c3t": "Client protection",
+      "c3": "12 months from when you register the client. If they buy within that period, the commission is yours even if the agreement has ended. If Unreal sells to them without notifying you, it still pays you the full commission.",
+      "c4t": "Agreement type and term",
+      "c4": "Non-exclusive representation, bilingual (Spanish / Indonesian). 12 months, automatically renewed; either party may terminate with 30 days' notice.",
+      "c5t": "One commission per deal",
+      "c5": "Unreal pays a single commission per deal; if you bring in third parties, you share it with them.",
+      "youTitle": "Your agency commits to",
+      "you": "Promote at its own cost, register each investor, organise visits (and lead them in the 5% mode) and inform truthfully, without promising anything outside Unreal's information.",
+      "usTitle": "Unreal commits to",
+      "us": "Provide truthful, up-to-date information on availability, reservations and prices, give access to the properties for visits, handle all the legal side of the sale and pay the agreed commission.",
+      "history": "Your agreement requests"
     }
   }
 }

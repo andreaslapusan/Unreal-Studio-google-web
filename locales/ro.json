@@ -1828,6 +1828,19 @@
         "notes": "Note",
         "status": "Stare"
       }
+    },
+    "agencyRequests": {
+      "title": "Solicitări agenții",
+      "empty": "Nicio agenție nu a trimis solicitări încă.",
+      "col": {
+        "date": "Data",
+        "agency": "Agenție",
+        "type": "Tip",
+        "client": "Client",
+        "preferred": "Data preferată",
+        "notes": "Note",
+        "status": "Stare"
+      }
     }
   },
   "footer": {
@@ -2926,7 +2939,14 @@
       "stats": "Statistici",
       "commissions": "Comisioane",
       "profile": "Agenția mea",
-      "help": "Ajutor și contact"
+      "help": "Ajutor și contact",
+      "news": "Noutăți",
+      "availability": "Disponibilitate",
+      "kit": "Materiale de vânzare",
+      "requests": "Solicitări",
+      "training": "Formare",
+      "contract": "Contract",
+      "groupWork": "Vânzare"
     },
     "kpi": {
       "registered": "Clienți înregistrați",
@@ -2945,7 +2965,11 @@
       "projectsCount": "{{n}} proiect(e) alocat(e)",
       "clientsCount": "{{n}} client(i) înregistrat(i)",
       "commissionsSub": "Estimare per client și per inventar",
-      "helpSub": "Cum funcționează programul și contact"
+      "helpSub": "Cum funcționează programul și contact",
+      "availSub": "{{n}} unitate(ți) disponibile azi",
+      "kitSub": "Broșuri, planuri și texte cu linkul tău",
+      "requestsSub": "{{n}} solicitare(ări) deschise",
+      "trainingSub": "Argumente, obiecții și procesul de cumpărare"
     },
     "projects": {
       "sub": "Proiectele alocate ție, cu unități disponibile, preț de agenție și comisionul tău. Distribuie linkul fiecărui proiect: vizitele sunt atribuite agenției tale.",
@@ -3023,6 +3047,158 @@
       "contactTitle": "Contact echipa Unreal",
       "contactBody": "Întrebări despre un proiect, un client sau comision: scrie-ne și îți răspundem.",
       "waText": "Bună, sunt de la agenția {{agency}} (portalul de agenții Unreal Studio)."
+    },
+    "availability": {
+      "sub": "Tot ce poți vinde azi: unitățile disponibile din proiectele tale cu preț de agenție și comisionul tău. Confirmă unitatea cu echipa înainte de a o prezenta.",
+      "allProjects": "Toate proiectele",
+      "sortCommission": "Comision maxim",
+      "sortPrice": "Preț minim",
+      "units": "Unități disponibile",
+      "reservedN": "Rezervate",
+      "empty": "Nu există unități disponibile acum în proiectele tale.",
+      "ask": "Întreabă despre unitate",
+      "waUnit": "Bună, sunt de la {{agency}}. Îmi confirmați disponibilitatea pentru {{unit}} ({{project}})?"
+    },
+    "kit": {
+      "sub": "Materiale oficiale pentru fiecare proiect și texte gata de copiat. Toate includ linkul tău: tot ce vine de acolo este atribuit agenției tale.",
+      "files": "Documente și fișiere",
+      "brochure": "Broșură ({{lang}})",
+      "renders": "Randări",
+      "plans": "Planuri 2D",
+      "folder": "Dosar materiale",
+      "video": "Video",
+      "tour": "Tur 3D",
+      "construction": "Ultimul raport de șantier",
+      "listing": "Pagina publică cu linkul tău",
+      "pack": "Pachet complet agenție",
+      "noFiles": "Acest proiect nu are încă fișiere publicate. Cere-le echipei.",
+      "texts": "Texte gata de copiat",
+      "textLang": "Limba textului",
+      "copy": "Copiază",
+      "chWhatsapp": "WhatsApp",
+      "chInstagram": "Instagram",
+      "chEmail": "Email",
+      "pick": "Proiect",
+      "disclaimer": "Textele folosesc doar datele din fișa proiectului. Nu adăuga randamente garantate sau promisiuni care nu sunt în informațiile Unreal.",
+      "tpl": {
+        "beds": "{{n}} dormitor(oare)",
+        "finished": "construcție finalizată",
+        "building": "în construcție ({{pct}}%)",
+        "offPlan": "în faza de proiect",
+        "from": "de la {{price}}",
+        "years": "{{n}} ani",
+        "whatsapp": "Bună, îți trimit {{name}}, în {{area}}.\n{{facts}}.\nProiectat și construit de Unreal Studio, arhitect și dezvoltator direct în Bali.\nDetalii complete: {{link}}",
+        "instagram": "{{name}} · {{area}}\n{{facts}}.\nArhitectură Unreal Studio, proiectată și construită fără intermediari.\nMai multe informații: {{link}}\n#Bali #Uluwatu #InvestitiiImobiliare #UnrealStudio",
+        "email": "Subiect: {{name}}, {{area}}\n\nBună ziua,\n\nVă trimit fișa {{name}}, un proiect Unreal Studio în {{area}}.\n{{facts}}.\n\nUnreal Studio proiectează și construiește propriile proiecte în Bali, fără intermediari, și se ocupă de toată partea legală a cumpărării.\n\nFotografii, planuri și mai multe informații: {{link}}\n\nRămân la dispoziție pentru orice întrebare.\n{{agency}}"
+      }
+    },
+    "news": {
+      "sub": "Progresul lucrărilor și schimbări în proiectele tale.",
+      "construction": "Raport nou de șantier",
+      "updated": "Fișa proiectului actualizată",
+      "state": "Stare: {{status}} · Progres {{pct}}%",
+      "open": "Vezi raportul",
+      "empty": "Încă nu există noutăți în proiectele tale.",
+      "progress": "Progres lucrări"
+    },
+    "requests": {
+      "sub": "Cere echipei Unreal un apel, o vizită în Bali, o prezentare online sau contractul. Îți confirmăm data.",
+      "new": "Solicitare nouă",
+      "type": "Tip",
+      "t": {
+        "call": "Apel cu echipa",
+        "visit": "Vizită / călătorie în Bali",
+        "presentation": "Prezentare online",
+        "contract": "Contract de colaborare"
+      },
+      "client": "Client (opțional)",
+      "noClient": "Fără client anume",
+      "date": "Data preferată (opțional)",
+      "notes": "Detalii: oră, proiecte de interes, limbă…",
+      "send": "Trimite solicitarea",
+      "sending": "Se trimite…",
+      "sent": "Solicitare trimisă. Echipa te va contacta pentru confirmare.",
+      "empty": "Încă nu ai făcut nicio solicitare.",
+      "for": "Pentru {{name}}",
+      "preferred": "Data preferată: {{date}}",
+      "st": {
+        "pending": "În așteptare",
+        "scheduled": "Programată",
+        "done": "Finalizată",
+        "cancelled": "Anulată"
+      },
+      "open": "Deschise",
+      "history": "Istoric"
+    },
+    "lead": {
+      "timeline": "Cronologie",
+      "registered": "Client înregistrat de agenția ta",
+      "you": "Agenția ta",
+      "unreal": "Echipa Unreal",
+      "addNote": "Adaugă notă",
+      "notePh": "Scrie o notă de urmărire (vizibilă pentru echipa Unreal)…",
+      "save": "Salvează nota",
+      "details": "Datele clientului",
+      "requestCall": "Cere un apel pentru acest client",
+      "protected": "Protejat până la {{date}}",
+      "budget": "Buget",
+      "open": "Vezi fișa",
+      "project": "Proiect"
+    },
+    "training": {
+      "sub": "Ghid rapid pentru a prezenta proiectele Unreal clienților tăi.",
+      "pitchTitle": "De ce Unreal Studio",
+      "pitch1": "Arhitect și constructor direct, fără intermediari, cu peste 70 de proiecte realizate în Bali și birouri în Bali și Madrid.",
+      "pitch2": "Preț sub piață: cumpărăm terenul sub valoarea pieței și proiectăm și construim noi înșine.",
+      "pitch3": "Produs la cheie gândit pentru închiriere, în zone cu cerere turistică dovedită (Uluwatu, Pandawa, Melasti).",
+      "pitch4": "Unreal se ocupă mereu de partea legală și de formalizarea vânzării; tu te concentrezi pe client.",
+      "objTitle": "Obiecții tipice și cum să răspunzi",
+      "q1": "„Un străin poate cumpăra în Bali?”",
+      "a1": "Da, prin leasehold: un drept de folosință și exploatare pe anii stabiliți în contract. Este formula legală obișnuită pentru investitorii străini; freehold-ul este rezervat cetățenilor indonezieni.",
+      "q2": "„Leasehold-ul nu mă convinge, nu e al meu.”",
+      "a2": "Este o formulă legală consolidată care dă dreptul de a folosi, închiria și revinde proprietatea pe toată durata. Anii și opțiunile de prelungire ale fiecărui proiect sunt în fișa lui.",
+      "q3": "„Îmi garantați randamentul?”",
+      "a3": "Nu. Unreal nu garantează chirii, randamente sau răscumpărare. Cifrele sunt estimări bazate pe proprietăți comparabile, unele proprii și închiriate pe aceeași stradă. Administrarea închirierii este opțională, cu administratori de încredere în fiecare zonă.",
+      "q4": "„E prea departe, nu voi putea urmări lucrările.”",
+      "a4": "Cumpărătorul are un portal de clienți cu calendarul plăților și rapoarte de progres. Poate vizita proprietățile în Bali sau poate veni la biroul din Madrid.",
+      "q5": "„Și dacă lucrările întârzie?”",
+      "a5": "Unreal proiectează și conduce lucrările. Termenele și condițiile de predare sunt în contractul de vânzare, iar plățile se fac pe etape, după progresul lucrărilor. Pentru întrebări concrete despre garanții, cere un apel cu echipa.",
+      "q6": "„Cum rămâne cu taxele?”",
+      "a6": "Unreal nu este consultant fiscal. Impozitarea chiriei și a revânzării o verifică investitorul cu un specialist; putem recomanda unul de încredere.",
+      "processTitle": "Procesul de cumpărare pas cu pas",
+      "p1": "Înregistrează clientul în „Clienții mei” înainte să contacteze Unreal.",
+      "p2": "Prezintă proiectul cu materialele oficiale și linkul tău; cere un apel sau o prezentare online cu echipa dacă e nevoie.",
+      "p3": "Confirmă disponibilitatea unității, iar clientul o rezervă.",
+      "p4": "Semnarea contractului la notar (PPAT) în Indonezia; onorariile notariale ale cumpărătorului sunt de aproximativ 1% din preț. Clientul poate face due diligence cu propriul avocat.",
+      "p5": "Plăți pe etape, după progresul lucrărilor; datele bancare se oferă la semnare.",
+      "p6": "Predare finalizată cu toate elementele fixe (bucătărie, baie, dulapuri, piscină). Mobilarea pentru închiriere este un pachet separat.",
+      "rulesTitle": "Reguli de aur",
+      "r1": "Nu promite nimic ce nu se află în informațiile Unreal (chirii, termene, garanții).",
+      "r2": "Publică și prezintă mereu la prețul oferit; pentru alt preț, întreabă înainte.",
+      "r3": "Confirmă unitatea cu echipa înainte de a o prezenta: disponibilitatea se schimbă zilnic.",
+      "r4": "Metri pătrați, autorizații și chestiuni juridice concrete: transmite-le echipei într-un apel."
+    },
+    "contract": {
+      "sub": "Rezumatul condițiilor de colaborare cu Unreal Studio. Contractul semnat prevalează.",
+      "request": "Solicită contractul",
+      "requested": "Solicitarea contractului a fost trimisă. Echipa comercială ți-l va trimite cu datele agenției.",
+      "pending": "Ai deja o solicitare de contract în curs.",
+      "termsTitle": "Condiții principale",
+      "c1t": "Comision",
+      "c1": "5% din prețul de vânzare dacă agenția ta face munca comercială până la închidere; 3% dacă prezinți un investitor calificat și Unreal face vânzarea. Partea legală o face mereu Unreal.",
+      "c2t": "Când se câștigă",
+      "c2": "Când investitorul înregistrat semnează un acord de vânzare obligatoriu. Se plătește prin transfer; comisionul este brut și fiecare parte își plătește taxele. Termenul de plată este stabilit în contract.",
+      "c3t": "Protecția clientului",
+      "c3": "12 luni de la înregistrarea clientului. Dacă cumpără în acest termen, comisionul este al tău chiar dacă contractul s-a încheiat. Dacă Unreal îi vinde fără să te anunțe, îți plătește oricum comisionul întreg.",
+      "c4t": "Tip de contract și durată",
+      "c4": "Reprezentare neexclusivă, bilingvă (spaniolă / indoneziană). 12 luni, reînnoit automat; oricare parte îl poate rezilia cu 30 de zile de preaviz.",
+      "c5t": "Un comision per tranzacție",
+      "c5": "Unreal plătește un singur comision per tranzacție; dacă implici terți, îl împarți tu cu ei.",
+      "youTitle": "Agenția ta se angajează să",
+      "you": "Să promoveze pe cheltuiala proprie, să înregistreze fiecare investitor, să organizeze vizitele (și să le conducă în modalitatea de 5%) și să informeze corect, fără promisiuni în afara informațiilor Unreal.",
+      "usTitle": "Unreal se angajează să",
+      "us": "Să ofere informații corecte și actualizate despre disponibilitate, rezervări și prețuri, să faciliteze accesul la proprietăți pentru vizite, să se ocupe de toată partea legală și să plătească comisionul convenit.",
+      "history": "Solicitările tale de contract"
     }
   }
 }

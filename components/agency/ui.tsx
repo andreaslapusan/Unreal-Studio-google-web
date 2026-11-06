@@ -39,19 +39,24 @@ const STATUS_STYLE: Record<string, string> = {
   contacted: 'bg-amber-50 text-amber-700',
   won: 'bg-green-50 text-green-700',
   lost: 'bg-gray-100 text-gray-500',
+  pending: 'bg-amber-50 text-amber-700',
+  scheduled: 'bg-blue-50 text-blue-700',
+  done: 'bg-green-50 text-green-700',
+  cancelled: 'bg-gray-100 text-gray-500',
 };
 export const StatusPill: React.FC<{ status: string; label: string }> = ({ status, label }) => (
   <span className={`inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full whitespace-nowrap ${STATUS_STYLE[status] ?? 'bg-gray-100 text-gray-600'}`}>{label}</span>
 );
 
 /** Fila de lista con estructura fija: título + 1-2 líneas tenues a la izquierda, metadatos alineados a la derecha. */
-export const ListRow: React.FC<{ title: React.ReactNode; sub?: React.ReactNode; extra?: React.ReactNode; right: React.ReactNode; icon?: string }> = ({ title, sub, extra, right, icon }) => (
-  <li className="px-5 py-3.5 flex items-center gap-3">
+export const ListRow: React.FC<{ title: React.ReactNode; sub?: React.ReactNode; extra?: React.ReactNode; right: React.ReactNode; icon?: string; onClick?: () => void; wrap?: boolean }> = ({ title, sub, extra, right, icon, onClick, wrap }) => (
+  <li className={`px-5 py-3.5 flex items-center gap-3 ${onClick ? 'cursor-pointer hover:bg-gray-50 transition focus:outline-none focus-visible:bg-gray-50' : ''}`}
+    {...(onClick ? { onClick, role: 'button', tabIndex: 0, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } } : {})}>
     {icon && <span className="material-symbols-outlined text-xl text-primary/30 shrink-0">{icon}</span>}
     <div className="min-w-0 flex-1">
       <p className="font-bold text-sm text-primary truncate">{title}</p>
       {sub && <p className="text-sm text-primary/60 truncate">{sub}</p>}
-      {extra && <p className="text-xs text-primary/40 truncate mt-0.5">{extra}</p>}
+      {extra && <p className={`text-xs text-primary/40 mt-0.5 ${wrap ? 'line-clamp-2 break-words' : 'truncate'}`}>{extra}</p>}
     </div>
     <div className="shrink-0 flex flex-col items-end gap-1.5 text-right">{right}</div>
   </li>

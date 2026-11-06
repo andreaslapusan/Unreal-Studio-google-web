@@ -1933,6 +1933,19 @@
         "notes": "Catatan",
         "status": "Status"
       }
+    },
+    "agencyRequests": {
+      "title": "Permintaan agensi",
+      "empty": "Belum ada permintaan dari agensi.",
+      "col": {
+        "date": "Tanggal",
+        "agency": "Agensi",
+        "type": "Jenis",
+        "client": "Klien",
+        "preferred": "Tanggal pilihan",
+        "notes": "Catatan",
+        "status": "Status"
+      }
     }
   },
   "footer": {
@@ -2927,7 +2940,14 @@
       "stats": "Statistik",
       "commissions": "Komisi",
       "profile": "Agensi saya",
-      "help": "Bantuan & kontak"
+      "help": "Bantuan & kontak",
+      "news": "Kabar terbaru",
+      "availability": "Ketersediaan",
+      "kit": "Materi penjualan",
+      "requests": "Permintaan",
+      "training": "Pelatihan",
+      "contract": "Kontrak",
+      "groupWork": "Jual"
     },
     "kpi": {
       "registered": "Klien terdaftar",
@@ -2946,7 +2966,11 @@
       "projectsCount": "{{n}} proyek ditugaskan",
       "clientsCount": "{{n}} klien terdaftar",
       "commissionsSub": "Estimasi per klien dan per inventaris",
-      "helpSub": "Cara kerja program dan kontak"
+      "helpSub": "Cara kerja program dan kontak",
+      "availSub": "{{n}} unit tersedia hari ini",
+      "kitSub": "Brosur, denah, dan teks dengan tautan Anda",
+      "requestsSub": "{{n}} permintaan terbuka",
+      "trainingSub": "Argumen, keberatan, dan proses pembelian"
     },
     "projects": {
       "sub": "Proyek yang ditugaskan kepada Anda, dengan unit tersedia, harga agensi, dan komisi Anda. Bagikan tautan setiap proyek: kunjungan tercatat atas nama agensi Anda.",
@@ -3024,6 +3048,158 @@
       "contactTitle": "Hubungi tim Unreal",
       "contactBody": "Pertanyaan tentang proyek, klien, atau komisi Anda: hubungi kami dan kami akan membalas.",
       "waText": "Halo, saya dari agensi {{agency}} (portal agensi Unreal Studio)."
+    },
+    "availability": {
+      "sub": "Semua yang bisa Anda jual hari ini: unit tersedia di proyek Anda dengan harga agensi dan komisi Anda. Konfirmasikan unit dengan tim sebelum mempresentasikannya.",
+      "allProjects": "Semua proyek",
+      "sortCommission": "Komisi tertinggi",
+      "sortPrice": "Harga terendah",
+      "units": "Unit tersedia",
+      "reservedN": "Dipesan",
+      "empty": "Saat ini tidak ada unit tersedia di proyek Anda.",
+      "ask": "Tanya unit ini",
+      "waUnit": "Halo, saya dari {{agency}}. Bisa konfirmasi ketersediaan {{unit}} ({{project}})?"
+    },
+    "kit": {
+      "sub": "Materi resmi tiap proyek dan teks siap salin. Semuanya berisi tautan Anda: semua yang datang dari sana tercatat atas nama agensi Anda.",
+      "files": "Dokumen & file",
+      "brochure": "Brosur ({{lang}})",
+      "renders": "Render",
+      "plans": "Denah 2D",
+      "folder": "Folder materi",
+      "video": "Video",
+      "tour": "Tur 3D",
+      "construction": "Laporan konstruksi terbaru",
+      "listing": "Halaman publik dengan tautan Anda",
+      "pack": "Paket agensi lengkap",
+      "noFiles": "Proyek ini belum memiliki file. Mintalah ke tim.",
+      "texts": "Teks siap salin",
+      "textLang": "Bahasa teks",
+      "copy": "Salin",
+      "chWhatsapp": "WhatsApp",
+      "chInstagram": "Instagram",
+      "chEmail": "Email",
+      "pick": "Proyek",
+      "disclaimer": "Teks hanya memakai data dari halaman proyek. Jangan menambahkan imbal hasil yang dijamin atau janji di luar informasi Unreal.",
+      "tpl": {
+        "beds": "{{n}} kamar tidur",
+        "finished": "pembangunan selesai",
+        "building": "dalam pembangunan ({{pct}}%)",
+        "offPlan": "tahap rencana",
+        "from": "mulai {{price}}",
+        "years": "{{n}} tahun",
+        "whatsapp": "Halo, saya bagikan {{name}} di {{area}}.\n{{facts}}.\nDidesain dan dibangun oleh Unreal Studio, arsitek dan pengembang langsung di Bali.\nDetail lengkap: {{link}}",
+        "instagram": "{{name}} · {{area}}\n{{facts}}.\nArsitektur Unreal Studio, didesain dan dibangun tanpa perantara.\nInfo lengkap: {{link}}\n#Bali #Uluwatu #InvestasiProperti #UnrealStudio",
+        "email": "Subjek: {{name}}, {{area}}\n\nHalo,\n\nBerikut informasi {{name}}, proyek Unreal Studio di {{area}}.\n{{facts}}.\n\nUnreal Studio mendesain dan membangun proyeknya sendiri di Bali tanpa perantara, serta menangani seluruh sisi hukum pembelian.\n\nFoto, denah, dan info lengkap: {{link}}\n\nSilakan hubungi saya jika ada pertanyaan.\n{{agency}}"
+      }
+    },
+    "news": {
+      "sub": "Progres konstruksi dan perubahan pada proyek Anda.",
+      "construction": "Laporan konstruksi baru",
+      "updated": "Data proyek diperbarui",
+      "state": "Status: {{status}} · Progres {{pct}}%",
+      "open": "Lihat laporan",
+      "empty": "Belum ada kabar terbaru untuk proyek Anda.",
+      "progress": "Progres konstruksi"
+    },
+    "requests": {
+      "sub": "Minta tim Unreal untuk panggilan, kunjungan ke Bali, presentasi online, atau kontrak Anda. Kami akan mengonfirmasi tanggalnya.",
+      "new": "Permintaan baru",
+      "type": "Jenis",
+      "t": {
+        "call": "Panggilan dengan tim",
+        "visit": "Kunjungan / perjalanan ke Bali",
+        "presentation": "Presentasi online",
+        "contract": "Kontrak kerja sama"
+      },
+      "client": "Klien (opsional)",
+      "noClient": "Tanpa klien tertentu",
+      "date": "Tanggal pilihan (opsional)",
+      "notes": "Detail: waktu, proyek yang diminati, bahasa…",
+      "send": "Kirim permintaan",
+      "sending": "Mengirim…",
+      "sent": "Permintaan terkirim. Tim akan menghubungi Anda untuk konfirmasi.",
+      "empty": "Anda belum membuat permintaan.",
+      "for": "Untuk {{name}}",
+      "preferred": "Tanggal pilihan: {{date}}",
+      "st": {
+        "pending": "Menunggu",
+        "scheduled": "Terjadwal",
+        "done": "Selesai",
+        "cancelled": "Dibatalkan"
+      },
+      "open": "Terbuka",
+      "history": "Riwayat"
+    },
+    "lead": {
+      "timeline": "Linimasa",
+      "registered": "Klien didaftarkan oleh agensi Anda",
+      "you": "Agensi Anda",
+      "unreal": "Tim Unreal",
+      "addNote": "Tambah catatan",
+      "notePh": "Tulis catatan tindak lanjut (terlihat oleh tim Unreal)…",
+      "save": "Simpan catatan",
+      "details": "Data klien",
+      "requestCall": "Minta panggilan untuk klien ini",
+      "protected": "Dilindungi hingga {{date}}",
+      "budget": "Anggaran",
+      "open": "Lihat",
+      "project": "Proyek"
+    },
+    "training": {
+      "sub": "Panduan singkat untuk mempresentasikan proyek Unreal kepada klien Anda.",
+      "pitchTitle": "Mengapa Unreal Studio",
+      "pitch1": "Arsitek dan kontraktor langsung tanpa perantara, dengan 70+ proyek di Bali serta kantor di Bali dan Madrid.",
+      "pitch2": "Harga di bawah pasar: kami membeli tanah di bawah harga pasar serta mendesain dan membangun sendiri.",
+      "pitch3": "Produk siap pakai untuk disewakan, di area dengan permintaan wisata yang terbukti (Uluwatu, Pandawa, Melasti).",
+      "pitch4": "Unreal selalu menangani sisi hukum dan formalisasi penjualan; Anda fokus pada klien.",
+      "objTitle": "Keberatan umum dan cara menjawabnya",
+      "q1": "\"Apakah orang asing bisa membeli di Bali?\"",
+      "a1": "Ya, melalui leasehold: hak guna dan pengelolaan selama tahun yang ditetapkan dalam kontrak. Ini jalur hukum yang umum bagi investor asing; freehold hanya untuk warga Indonesia.",
+      "q2": "\"Saya ragu dengan leasehold, itu bukan milik saya.\"",
+      "a2": "Ini formula hukum yang mapan yang memberi hak untuk menggunakan, menyewakan, dan menjual kembali properti selama seluruh masa kontrak. Jumlah tahun dan opsi perpanjangan tiap proyek ada di halamannya.",
+      "q3": "\"Apakah imbal hasilnya dijamin?\"",
+      "a3": "Tidak. Unreal tidak menjamin sewa, imbal hasil, atau pembelian kembali. Angka adalah estimasi berdasarkan properti sebanding, sebagian milik kami sendiri dan disewakan di jalan yang sama. Pengelolaan sewa bersifat opsional, dengan pengelola tepercaya di tiap area.",
+      "q4": "\"Terlalu jauh, saya tidak bisa memantau pembangunan.\"",
+      "a4": "Pembeli mendapat portal klien berisi jadwal pembayaran dan laporan progres konstruksi. Mereka bisa mengunjungi properti di Bali atau datang ke kantor Madrid.",
+      "q5": "\"Bagaimana jika pembangunan terlambat?\"",
+      "a5": "Unreal mendesain dan mengelola pembangunan. Jadwal dan syarat serah terima ada di kontrak jual beli dan pembayaran mengikuti tahap konstruksi. Untuk pertanyaan jaminan yang spesifik, minta panggilan dengan tim.",
+      "q6": "\"Bagaimana dengan pajak?\"",
+      "a6": "Unreal bukan konsultan pajak. Perpajakan sewa dan penjualan kembali ditinjau investor dengan konsultan khusus; kami bisa merekomendasikan yang tepercaya.",
+      "processTitle": "Proses pembelian langkah demi langkah",
+      "p1": "Daftarkan klien di \"Klien saya\" sebelum ia menghubungi Unreal.",
+      "p2": "Presentasikan proyek dengan materi resmi dan tautan Anda; minta panggilan atau presentasi online dengan tim bila perlu.",
+      "p3": "Konfirmasi ketersediaan unit dan klien memesannya.",
+      "p4": "Penandatanganan kontrak di hadapan notaris (PPAT) di Indonesia; biaya notaris pembeli sekitar 1% dari harga. Klien bisa melakukan due diligence dengan pengacaranya.",
+      "p5": "Pembayaran bertahap sesuai progres konstruksi; data bank diberikan saat penandatanganan.",
+      "p6": "Diserahkan selesai dengan semua perlengkapan tetap (dapur, kamar mandi, lemari, kolam). Perabot untuk disewakan adalah paket terpisah.",
+      "rulesTitle": "Aturan emas",
+      "r1": "Jangan menjanjikan apa pun di luar informasi Unreal (sewa, jadwal, jaminan).",
+      "r2": "Selalu publikasikan dan presentasikan dengan harga yang diberikan; untuk harga lain, tanyakan dulu.",
+      "r3": "Konfirmasikan unit dengan tim sebelum mempresentasikannya: ketersediaan berubah setiap hari.",
+      "r4": "Luas meter persegi, izin, dan masalah hukum tertentu: serahkan ke tim melalui panggilan."
+    },
+    "contract": {
+      "sub": "Ringkasan ketentuan kerja sama dengan Unreal Studio. Kontrak yang ditandatangani yang berlaku.",
+      "request": "Minta kontrak",
+      "requested": "Permintaan kontrak terkirim. Tim penjualan akan mengirimkannya dengan data agensi Anda.",
+      "pending": "Anda sudah memiliki permintaan kontrak yang sedang diproses.",
+      "termsTitle": "Ketentuan utama",
+      "c1t": "Komisi",
+      "c1": "5% dari harga jual jika agensi Anda melakukan pekerjaan penjualan hingga closing; 3% jika Anda memperkenalkan investor yang memenuhi syarat dan Unreal yang menjual. Sisi hukum selalu ditangani Unreal.",
+      "c2t": "Kapan diperoleh",
+      "c2": "Saat investor terdaftar menandatangani perjanjian jual beli yang mengikat. Dibayar via transfer; komisi bersifat bruto dan masing-masing pihak membayar pajaknya. Jangka waktu pembayaran tercantum di kontrak.",
+      "c3t": "Perlindungan klien",
+      "c3": "12 bulan sejak Anda mendaftarkan klien. Jika ia membeli dalam periode itu, komisi tetap milik Anda meski kontrak sudah berakhir. Jika Unreal menjual tanpa memberi tahu Anda, Unreal tetap membayar komisi penuh.",
+      "c4t": "Jenis dan masa kontrak",
+      "c4": "Perwakilan non-eksklusif, dwibahasa (Spanyol / Indonesia). 12 bulan, diperpanjang otomatis; salah satu pihak dapat mengakhirinya dengan pemberitahuan 30 hari.",
+      "c5t": "Satu komisi per transaksi",
+      "c5": "Unreal membayar satu komisi per transaksi; jika Anda melibatkan pihak ketiga, Anda yang membaginya.",
+      "youTitle": "Agensi Anda berkomitmen untuk",
+      "you": "Mempromosikan dengan biaya sendiri, mendaftarkan setiap investor, mengatur kunjungan (dan memandunya dalam model 5%), serta memberi informasi yang benar tanpa menjanjikan hal di luar informasi Unreal.",
+      "usTitle": "Unreal berkomitmen untuk",
+      "us": "Memberikan informasi yang benar dan terbaru tentang ketersediaan, pemesanan, dan harga, memfasilitasi akses properti untuk kunjungan, menangani seluruh sisi hukum penjualan, dan membayar komisi yang disepakati.",
+      "history": "Permintaan kontrak Anda"
     }
   }
 }

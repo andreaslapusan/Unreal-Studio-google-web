@@ -4,12 +4,13 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { AgencyData, fmtDate, shortProjectName } from './useAgencyData';
+import LeadDrawer from './LeadDrawer';
 import { card, btnPrimary, input, Empty, ListRow, SectionTitle, StatusPill } from './ui';
 
 const EMPTY_LEAD = { client_name: '', client_email: '', client_phone: '', country: '', property_id: '', budget: '', notes: '' };
 const STATUSES = ['new', 'contacted', 'won', 'lost'] as const;
 
-export default function AgencyClients({ data }: { data: AgencyData }) {
+export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: string, extra?: Record<string, string>) => void }) {
   const { t } = useTranslation();
   const { partner, projects, leads, reloadLeads } = data;
   const [sp, setSp] = useSearchParams();
@@ -19,6 +20,7 @@ export default function AgencyClients({ data }: { data: AgencyData }) {
   const [err, setErr] = useState('');
   const [q, setQ] = useState('');
   const status = sp.get('status') ?? 'all';
+  const [detail, setDetail] = useState<string | null>(null);
 
   // ?new=1 (acceso rápido desde Inicio) abre el modal una vez y se limpia de la URL.
   useEffect(() => {
@@ -93,7 +95,7 @@ export default function AgencyClients({ data }: { data: AgencyData }) {
             <div className={`${card} !p-0 overflow-hidden`}>
               <ul className="divide-y divide-gray-100">
                 {shown.map((l) => (
-                  <ListRow key={l.id}
+                  <ListRow key={l.id} onClick={() => setDetail(l.id)}
                     title={l.client_name}
                     sub={<>{projectName(l.property_id)}{l.budget ? <span className="text-primary/40"> · {l.budget}</span> : null}</>}
                     extra={[l.client_email, l.client_phone, l.country].filter(Boolean).join(' · ') || undefined}
@@ -106,6 +108,12 @@ export default function AgencyClients({ data }: { data: AgencyData }) {
           <p className="text-xs text-primary/40 mt-3">{t('agencyPortal.clients.statusHint')}</p>
         </>
       )}
+
+      {detail && leads.find((l) => l.id === detail) && (() => {
+        const l = leads.find((x) => x.id === detail)!;
+        return <LeadDrawer lead={l} agencyId={partner.id} projectName={projectName(l.property_id)} onClose={() => setDetail(null)}
+          onRequestCall={() => go('requests', { type: 'call', lead: l.id })} />;
+      })()}
 
       {open && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setOpen(false)}>

@@ -19,14 +19,23 @@ import AgencyStats from '../components/agency/AgencyStats';
 import AgencyCommissions from '../components/agency/AgencyCommissions';
 import AgencyProfile from '../components/agency/AgencyProfile';
 import AgencyHelp from '../components/agency/AgencyHelp';
+import AgencyAvailability from '../components/agency/AgencyAvailability';
+import AgencyKit from '../components/agency/AgencyKit';
+import AgencyNews from '../components/agency/AgencyNews';
+import AgencyRequests from '../components/agency/AgencyRequests';
+import AgencyTraining from '../components/agency/AgencyTraining';
+import AgencyContract from '../components/agency/AgencyContract';
 
 const BASE = '/agencias/dashboard';
-const VIEWS = ['dashboard', 'projects', 'clients', 'stats', 'commissions', 'profile', 'help'] as const;
+// Orden del menú: trabajo diario → vender → seguimiento → recursos → cuenta.
+const VIEWS = ['dashboard', 'news', 'availability', 'projects', 'kit', 'clients', 'requests', 'commissions', 'stats', 'training', 'contract', 'profile', 'help'] as const;
 type View = typeof VIEWS[number];
 // Formato `icon: '…'` para que scripts/gen-icons.mjs los incluya en el subset de la fuente.
 const ICON_LIST: { view: View; icon: string }[] = [
-  { view: 'dashboard', icon: 'dashboard' }, { view: 'projects', icon: 'home_work' }, { view: 'clients', icon: 'groups' },
-  { view: 'stats', icon: 'analytics' }, { view: 'commissions', icon: 'payments' }, { view: 'profile', icon: 'storefront' },
+  { view: 'dashboard', icon: 'dashboard' }, { view: 'news', icon: 'campaign' }, { view: 'availability', icon: 'sell' },
+  { view: 'projects', icon: 'home_work' }, { view: 'kit', icon: 'folder_open' }, { view: 'clients', icon: 'groups' },
+  { view: 'requests', icon: 'event_available' }, { view: 'commissions', icon: 'payments' }, { view: 'stats', icon: 'analytics' },
+  { view: 'training', icon: 'school' }, { view: 'contract', icon: 'gavel' }, { view: 'profile', icon: 'storefront' },
   { view: 'help', icon: 'help' },
 ];
 const ICONS = Object.fromEntries(ICON_LIST.map((x) => [x.view, x.icon])) as Record<View, string>;
@@ -107,7 +116,13 @@ export default function AgenciasDashboard() {
             <>
               {view === 'dashboard' && <AgencyOverview data={data} go={go} />}
               {view === 'projects' && <AgencyProjects data={data} />}
-              {view === 'clients' && <AgencyClients data={data} />}
+              {view === 'clients' && <AgencyClients data={data} go={go} />}
+              {view === 'news' && <AgencyNews data={data} />}
+              {view === 'availability' && <AgencyAvailability data={data} />}
+              {view === 'kit' && <AgencyKit data={data} />}
+              {view === 'requests' && <AgencyRequests data={data} />}
+              {view === 'training' && <AgencyTraining />}
+              {view === 'contract' && <AgencyContract data={data} />}
               {view === 'stats' && <AgencyStats data={data} />}
               {view === 'commissions' && <AgencyCommissions data={data} go={go} />}
               {view === 'profile' && <AgencyProfile data={data} email={user.email} />}
