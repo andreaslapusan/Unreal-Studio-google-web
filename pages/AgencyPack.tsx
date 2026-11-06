@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { localizeMonthYear, propertyTypeLabel } from '../lib/projectTerms';
-import { uiLocale } from '../lib/dateLocale';
 import { translateStatus } from '../lib/statusI18n';
 import BrandLogo from '../components/BrandLogo';
 import { useCurrency } from '../App';
@@ -176,8 +175,8 @@ const AgencyPack: React.FC = () => {
       </div>
     );
 
-  const money = (v: number | null | undefined, cur?: string | null) =>
-    v == null ? null : new Intl.NumberFormat(uiLocale(), { style: 'currency', currency: cur || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(v);
+  // Importes guardados en USD (pack amueblado, extensión): se convierten a la divisa elegida en el portal (Andreas 6-nov).
+  const usd = (v: number) => webFormat(Number(v), 'USD');
   // Precio = el de la web: mismo campo (investor_price) y mismo formato que la ficha pública.
   const formatPrice = (v: number | null) => (v == null ? null : webFormat(Number(v), (project.price_currency || 'EUR') as any));
   const soldOut = project.visibility_status === 'sold_out'; // como la web: agotado → sin precio de venta
@@ -242,7 +241,7 @@ const AgencyPack: React.FC = () => {
           <Card title={t('agencyPack.sectionPricing')}>
             <Field label={t('agencyPack.fieldNetSalePrice')}>{soldOut ? null : formatPrice(project.investor_price)}</Field>
             <Field label={t('agencyPack.fieldFurnishing')}>{furnishingLabel || null}</Field>
-            <Field label={t('agencyPack.fieldPackFurnished')}>{project.furnishing_pack_cost_usd != null ? `+ ${money(project.furnishing_pack_cost_usd, 'USD')}` : null}</Field>
+            <Field label={t('agencyPack.fieldPackFurnished')}>{project.furnishing_pack_cost_usd != null ? `+ ${usd(project.furnishing_pack_cost_usd)}` : null}</Field>
             <Field label={t('agencyPack.fieldEstimatedDelivery')}>{localizeMonthYear(tr(project, 'completion_date') || '', i18n.language) || null}</Field>
             {planSteps.length > 0 && (
               <div className="pt-4">
@@ -278,7 +277,7 @@ const AgencyPack: React.FC = () => {
             <Field label={t('agencyPack.fieldYearsContract')}>{project.years_contract}</Field>
             <Field label={t('agencyPack.fieldYearsExtension')}>{project.years_extension}</Field>
             <Field label={t('agencyPack.fieldExtensionCost')}>
-              {project.extension_cost_usd != null ? (project.extension_cost_usd === 0 ? t('agencyPack.atMarketPrice') : money(project.extension_cost_usd, 'USD')) : null}
+              {project.extension_cost_usd != null ? (project.extension_cost_usd === 0 ? t('agencyPack.atMarketPrice') : usd(project.extension_cost_usd)) : null}
             </Field>
             <Field label={t('agencyPack.fieldLeasePaid')}>{project.lease_years_paid == null ? null : project.lease_years_paid ? t('agencyPack.yesFull') : t('agencyPack.no')}</Field>
             <Field label={t('agencyPack.fieldZoning')}>{tr(project, 'zoning_type')}</Field>
