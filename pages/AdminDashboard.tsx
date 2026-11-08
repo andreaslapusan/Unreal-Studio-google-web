@@ -1944,18 +1944,31 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
   }, []);
 
   // Sube la firma de un admin (en su perfil de Administradores) → currentUser.signature_url.
+  // La firma NO se sube a Storage (bucket público = cualquiera la descargaría por URL):
+  // se guarda como data: URI PNG (≤320 px) en admin_users y queda incrustada en cada recibí.
+  const signatureDataUrl = (file: File) => new Promise<string>((ok, no) => {
+    const src = URL.createObjectURL(file); const im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, 320 / Math.max(im.naturalWidth, im.naturalHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(im.naturalWidth * s)); c.height = Math.max(1, Math.round(im.naturalHeight * s));
+      c.getContext('2d')!.drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(src); ok(c.toDataURL('image/png'));
+    };
+    im.onerror = () => { URL.revokeObjectURL(src); no(new Error('bad image')); };
+    im.src = src;
+  });
+
   const handleUserSignatureUpload = async (file: File) => {
-    const path = await uploadImage(file, 'signatures');
-    if (!path) { alert(t('admin.dash.signatureUploadError')); return; }
-    setCurrentUser({ ...currentUser, signature_url: getImageUrl(path) } as any);
+    const url = await signatureDataUrl(file).catch(() => '');
+    if (!url) { alert(t('admin.dash.signatureUploadError')); return; }
+    setCurrentUser({ ...currentUser, signature_url: url } as any);
   };
 
   const handleMySignatureUpload = async (file: File) => {
     const userId = getAdminUserId();
     if (!userId) { alert(t('admin.dash.sessionExpired')); return; }
-    const path = await uploadImage(file, 'signatures');
-    if (!path) { alert(t('admin.dash.signatureUploadError')); return; }
-    const url = getImageUrl(path);
+    const url = await signatureDataUrl(file).catch(() => '');
+    if (!url) { alert(t('admin.dash.signatureUploadError')); return; }
     const { data } = await supabase.rpc('admin_set_my_signature', { p_user_id: userId, p_url: url });
     if (data?.success) { setMySignature(url); } else { alert(t('admin.dash.signatureSaveError')); }
   };
