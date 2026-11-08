@@ -6,7 +6,7 @@
  * del empleado (no es una página aparte).
  *
  * Los proyectos salen de la tabla `projects` (la viva; `properties` está vacía).
- * El PDF se sube a storage (bucket público `images`) y luego una RPC
+ * El PDF se sube a storage (bucket PRIVADO `reports`) y luego una RPC
  * SECURITY DEFINER (`employee_post_construction_report`) deja el reporte en el
  * historial Y lo fija en el proyecto (construction_update_url/date), de modo que
  * el cliente lo ve al instante en su portal. Así evitamos fricción de RLS.
@@ -18,6 +18,7 @@ import { baliToday } from '../lib/timezone';
 import { supabase } from '../lib/supabase';
 import { useEscapeKey } from '../lib/useEscapeKey';
 import { compressPdf } from '../lib/compressPdf';
+import { REPORTS_BUCKET, reportHref } from '../lib/reportFiles';
 
 interface ProjectOpt { id: string; name: string; }
 
@@ -67,13 +68,12 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
       // o ya es ligero, sube el original — nunca bloquea.
       const toUpload = await compressPdf(file);
       const path = `property-updates/${projectId}/${Date.now()}.pdf`;
-      const up = await supabase.storage.from('images').upload(path, toUpload, { contentType: 'application/pdf', upsert: false });
+      const up = await supabase.storage.from(REPORTS_BUCKET).upload(path, toUpload, { contentType: 'application/pdf', upsert: false });
       if (up.error) throw up.error;
-      const { data: pub } = supabase.storage.from('images').getPublicUrl(path);
       const { data: res, error: rpcErr } = await supabase.rpc('employee_post_construction_report', {
         p_project_id: projectId,
         p_report_date: reportDate,
-        p_pdf_url: pub.publicUrl,
+        p_pdf_url: path, // bucket privado: el portal lo abre con enlace firmado de 10 min
         p_path: path,
         p_file_name: file.name,
         p_file_size: toUpload.size,
@@ -123,7 +123,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-primary flex items-center gap-1"><span className="material-symbols-outlined text-green-600 text-base leading-none">check_circle</span>{(() => { try { return last.date ? new Date(last.date + 'T00:00:00').toLocaleDateString(uiLocale(), { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; } catch { return last.date || '—'; } })()}</p>
                 </div>
-                <a href={last.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-black bg-primary text-white px-3 py-2 rounded-xl">
+                <a href={reportHref(last.url)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-black bg-primary text-white px-3 py-2 rounded-xl">
                   <span className="material-symbols-outlined text-base leading-none">picture_as_pdf</span> {t('empleados.reportModal.viewPdf', { defaultValue: 'Ver PDF' })}
                 </a>
               </div>

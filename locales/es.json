@@ -3211,5 +3211,12 @@
       "us": "Dar información veraz y actualizada de disponibilidad, reservas y precios, facilitar el acceso a las propiedades para las visitas, llevar toda la parte legal de la venta y pagar la comisión acordada.",
       "history": "Tus solicitudes de contrato"
     }
+  },
+  "reportOpen": {
+    "opening": "Abriendo el reporte…",
+    "login": "Este reporte es privado. Inicia sesión en tu portal para verlo.",
+    "denied": "No tienes acceso a este reporte.",
+    "goPortal": "Ir a mi portal",
+    "adminSaveFirst": "Guarda primero el proyecto y vuelve a subir el reporte."
   }
 }

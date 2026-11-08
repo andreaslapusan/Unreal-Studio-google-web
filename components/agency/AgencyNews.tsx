@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { translateStatus } from '../../lib/statusI18n';
 import { AgencyData, fmtDate, shortProjectName } from './useAgencyData';
 import { card, Empty, ListRow, SectionTitle } from './ui';
+import { reportHref } from '../../lib/reportFiles';
 
 const validDate = (s: string | null | undefined) => !!s && !Number.isNaN(Date.parse(s));
 
@@ -17,7 +18,7 @@ export default function AgencyNews({ data }: { data: AgencyData }) {
     const pct = info?.completion_percent ?? p.pct_progress ?? 0;
     const out: { id: string; at: string; icon: string; title: string; sub: string; extra?: string; url?: string | null }[] = [];
     if (info && validDate(info.construction_update_date)) {
-      out.push({ id: `c-${p.id}`, at: info.construction_update_date as string, icon: 'construction', title: t('agencyPortal.news.construction'), sub: name, url: info.construction_update_url });
+      out.push({ id: `c-${p.id}`, at: info.construction_update_date as string, icon: 'construction', title: t('agencyPortal.news.construction'), sub: name, url: reportHref(info.construction_update_url) });
     }
     if (info?.updated_at) {
       out.push({ id: `u-${p.id}`, at: info.updated_at, icon: 'update', title: t('agencyPortal.news.updated'), sub: name, extra: t('agencyPortal.news.state', { status: translateStatus(info.status ?? '', t), pct }) });

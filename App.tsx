@@ -56,6 +56,7 @@ const AgenciasPartnership = lazyWithReload(() => import('./pages/AgenciasPartner
 const AgenciasRegistrar = lazyWithReload(() => import('./pages/AgenciasRegistrar'));
 const AgenciasDashboard = lazyWithReload(() => import('./pages/AgenciasDashboard'));
 const AuthFinish = lazyWithReload(() => import('./pages/AuthFinish'));
+const ReportOpen = lazyWithReload(() => import('./pages/ReportOpen'));
 const ResetPassword = lazyWithReload(() => import('./pages/ResetPassword'));
 const EquipoUpload = lazyWithReload(() => import('./pages/EquipoUpload'));
 const EquipoProperties = lazyWithReload(() => import('./pages/EquipoProperties'));
@@ -354,6 +355,7 @@ const App: React.FC = () => {
             <Route path="/equipo/dashboard" element={<Navigate to="/empleados/dashboard" replace />} />
             <Route path="/equipo/upload" element={<EquipoUpload />} />
             <Route path="/auth/finish" element={<AuthFinish />} />
+            <Route path="/report/*" element={<ReportOpen />} />
             <Route path="/auth/reset" element={<ResetPassword />} />
             <Route path="/admin/login" element={<Navigate to={portalPath('admin', undefined, 'login')} replace />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

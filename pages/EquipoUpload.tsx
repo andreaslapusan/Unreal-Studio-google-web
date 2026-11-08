@@ -11,6 +11,7 @@ import { compressImage } from "../lib/imageCompress";
 import { hasPermission } from "../lib/permissions";
 import { realEmailOf } from "../lib/portalAuth";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import { REPORTS_BUCKET, reportHref, reportPath } from '../lib/reportFiles';
 
 interface PropertySummary {
   id: string;
@@ -187,14 +188,13 @@ export default function EquipoUpload() {
           const ext = toUpload.name.split(".").pop() ?? "bin";
           const path = `property-updates/${propertyId}/${updateId}/${i}-${Date.now()}.${ext}`;
           const { error: upErr } = await supabase.storage
-            .from("images")
+            .from(REPORTS_BUCKET)
             .upload(path, toUpload, {
               cacheControl: "3600",
               upsert: false,
               contentType: toUpload.type,
             });
           if (upErr) throw upErr;
-          const { data: pub } = supabase.storage.from("images").getPublicUrl(path);
 
           const assetType = isImage
             ? "image"
@@ -208,7 +208,7 @@ export default function EquipoUpload() {
             update_id: updateId,
             asset_type: assetType,
             storage_path: path,
-            external_url: pub.publicUrl,
+            external_url: path, // bucket privado: se abre firmado vía /report/<ruta>
             file_name: qf.file.name,
             file_size: toUpload.size,
             mime_type: toUpload.type,
@@ -437,12 +437,12 @@ export default function EquipoUpload() {
                       {u._assets && u._assets.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-3">
                           {u._assets.map((a: any, i: number) => (
-                            a.asset_type === "image" ? (
-                              <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer" className="block w-16 h-16 rounded-lg overflow-hidden border border-primary/10">
+                            a.asset_type === "image" && !reportPath(a.external_url) ? (
+                              <a key={i} href={reportHref(a.external_url)} target="_blank" rel="noopener noreferrer" className="block w-16 h-16 rounded-lg overflow-hidden border border-primary/10">
                                 <img src={a.external_url} alt={a.file_name || ""} className="w-full h-full object-cover" loading="lazy" />
                               </a>
                             ) : (
-                              <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold bg-primary/5 hover:bg-primary/15 text-primary px-3 py-2 rounded-lg">
+                              <a key={i} href={reportHref(a.external_url)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold bg-primary/5 hover:bg-primary/15 text-primary px-3 py-2 rounded-lg">
                                 <span className="material-symbols-outlined text-base leading-none">{a.asset_type === "pdf" ? "picture_as_pdf" : a.asset_type === "video" ? "movie" : "description"}</span>
                                 <span className="truncate max-w-[160px]">{a.file_name || a.asset_type}</span>
                               </a>

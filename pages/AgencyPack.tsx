@@ -7,6 +7,7 @@ import { translateStatus } from '../lib/statusI18n';
 import BrandLogo from '../components/BrandLogo';
 import { useCurrency } from '../App';
 import { fmtDate, shortProjectName } from '../components/agency/useAgencyData';
+import { reportHref } from '../lib/reportFiles';
 
 interface ProjectAgencyRow {
   id: string;
@@ -307,7 +308,7 @@ const AgencyPack: React.FC = () => {
               <DocRow href={project.drive_permits_url} icon="verified">{t('agencyPack.docPermits')}</DocRow>
               <DocRow href={project.drive_legal_url} icon="gavel">{t('agencyPack.docLegal')}</DocRow>
               <DocRow href={project.video_url} icon="play_circle">{t('agencyPack.docVideo')}</DocRow>
-              <DocRow href={project.construction_update_url} icon="construction">{t('agencyPack.docConstruction')}</DocRow>
+              <DocRow href={reportHref(project.construction_update_url)} icon="construction">{t('agencyPack.docConstruction')}</DocRow>
               <DocRow href={project.drive_brochure_folder_url} icon="folder_open">{t('agencyPack.docDriveFolder')}</DocRow>
             </div>
           </section>

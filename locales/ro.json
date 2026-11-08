@@ -3229,5 +3229,12 @@
       "us": "Să ofere informații corecte și actualizate despre disponibilitate, rezervări și prețuri, să faciliteze accesul la proprietăți pentru vizite, să se ocupe de toată partea legală și să plătească comisionul convenit.",
       "history": "Solicitările tale de contract"
     }
+  },
+  "reportOpen": {
+    "opening": "Se deschide raportul…",
+    "login": "Acest raport este privat. Autentifică-te în portalul tău pentru a-l vedea.",
+    "denied": "Nu ai acces la acest raport.",
+    "goPortal": "Mergi la portalul meu",
+    "adminSaveFirst": "Salvează mai întâi proiectul, apoi încarcă din nou raportul."
   }
 }

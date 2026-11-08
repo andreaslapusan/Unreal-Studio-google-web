@@ -12,6 +12,7 @@ import { projectSeoSlug } from '../../lib/projectUrl';
 import { useCurrency } from '../../App';
 import { AgencyData, PropertyRow, availableUnits, copyText, partnerParam, shortProjectName } from './useAgencyData';
 import { card, btnGhost, Empty, SectionTitle } from './ui';
+import { reportHref } from '../../lib/reportFiles';
 
 const LANGS = ['es', 'en', 'ro', 'id'] as const;
 const CHANNELS = ['whatsapp', 'instagram', 'email'] as const;
@@ -42,7 +43,7 @@ export default function AgencyKit({ data }: { data: AgencyData }) {
     { key: 'folder', icon: 'folder_open', label: t('agencyPortal.kit.folder'), url: info?.drive_brochure_folder_url },
     { key: 'video', icon: 'play_circle', label: t('agencyPortal.kit.video'), url: info?.video_url || p.drone_video_url },
     { key: 'tour', icon: 'videocam', label: t('agencyPortal.kit.tour'), url: info?.walkthrough_url || p.walkthrough_url },
-    { key: 'construction', icon: 'construction', label: t('agencyPortal.kit.construction'), url: info?.construction_update_url },
+    { key: 'construction', icon: 'construction', label: t('agencyPortal.kit.construction'), url: reportHref(info?.construction_update_url) },
   ].filter((f) => !!f.url);
 
   // Datos para los textos (todos de la ficha).

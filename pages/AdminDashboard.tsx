@@ -11,6 +11,7 @@ import { DEFAULT_CONFIG, CURRENCIES } from '../constants';
 import { Project, AppConfig, BlogPost, User, Client, ClientProject } from '../types';
 import { useCurrency } from '../App';
 import { supabase, uploadImage, getImageUrl, parseJsonField } from '../lib/supabase';
+import { REPORTS_BUCKET } from '../lib/reportFiles';
 import { runDriveImport, extractDriveFolder } from '../lib/driveImport';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import AdminSidebar from '../components/AdminSidebar';
@@ -897,6 +898,17 @@ const AMENITIES_LIST = [
       if (type.startsWith('blog')) folder = 'blogs';
 
       try {
+          // Reporte de obra → bucket PRIVADO (enlace firmado de 10 min en el portal). El anterior
+          // NO se borra: sigue en el historial de reportes (update_assets).
+          if (type === 'project_construction_update') {
+              if (!currentProject.id) { alert(t('reportOpen.adminSaveFirst')); return; }
+              const ext = (file.name.split('.').pop() || 'pdf').toLowerCase();
+              const rpath = `property-updates/${currentProject.id}/${Date.now()}.${ext}`;
+              const { error: upErr } = await supabase.storage.from(REPORTS_BUCKET).upload(rpath, file, { upsert: false, contentType: file.type || undefined });
+              if (upErr) throw upErr;
+              setCurrentProject(prev => ({ ...prev, construction_update_url: rpath }));
+              return;
+          }
           const path = await uploadImage(file, folder);
           if (!path) throw new Error('Upload failed');
 
@@ -927,20 +939,6 @@ const AMENITIES_LIST = [
                   } catch (err) { console.warn('No se pudo borrar archivo anterior:', err); }
               }
               setCurrentProject(prev => ({ ...prev, brochure_url: getImageUrl(path) }));
-          } else if (type === 'project_construction_update') {
-              const oldUrl = currentProject.construction_update_url;
-              if (oldUrl && oldUrl.includes('/storage/v1/object/public/')) {
-                  try {
-                      const oldPath = oldUrl.split('/storage/v1/object/public/')[1];
-                      if (oldPath) {
-                          const bucketAndPath = oldPath.split('/');
-                          const bucket = bucketAndPath[0];
-                          const filePath = bucketAndPath.slice(1).join('/');
-                          await supabase.storage.from(bucket).remove([filePath]);
-                      }
-                  } catch (err) { console.warn('No se pudo borrar archivo anterior:', err); }
-              }
-              setCurrentProject(prev => ({ ...prev, construction_update_url: getImageUrl(path) }));
           }
       } catch (error) {
           console.error(error);
@@ -3335,7 +3333,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
              <input type="text" value={currentProject.construction_update_url || ''} onChange={(e) => setCurrentProject({...currentProject, construction_update_url: e.target.value})} placeholder="https://..." className="flex-grow px-4 py-3 bg-white rounded-2xl font-medium" />
              <label className={`cursor-pointer bg-primary text-white px-4 py-3 rounded-2xl hover:bg-black transition flex items-center justify-center ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                  {uploading ? <span className="material-symbols-outlined animate-spin">refresh</span> : <span className="material-symbols-outlined">upload_file</span>}
-                 <input type="file" className="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" onChange={(e) => handleFileUpload(e, 'project_construction_update')} disabled={uploading} />
+                 <input type="file" className="hidden" accept=".pdf,image/*" onChange={(e) => handleFileUpload(e, 'project_construction_update')} disabled={uploading} />
              </label>
          </div>
       </div>

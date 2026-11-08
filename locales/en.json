@@ -3209,5 +3209,12 @@
       "us": "Provide truthful, up-to-date information on availability, reservations and prices, give access to the properties for visits, handle all the legal side of the sale and pay the agreed commission.",
       "history": "Your agreement requests"
     }
+  },
+  "reportOpen": {
+    "opening": "Opening the report…",
+    "login": "This report is private. Log in to your portal to view it.",
+    "denied": "You don't have access to this report.",
+    "goPortal": "Go to my portal",
+    "adminSaveFirst": "Save the project first, then upload the report again."
   }
 }

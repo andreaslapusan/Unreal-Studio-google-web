@@ -12,6 +12,7 @@ import { CURRENCIES } from '../constants';
 import PortalHeader from '../components/PortalHeader';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 import ClientPaymentsSection from '../components/ClientPaymentsSection';
+import { reportHref, reportPath } from '../lib/reportFiles';
 
 // Keys for the client onboarding guide. Titles/texts live in i18n
 // (admin.clientDash.guideNTitle / guideNText) so they translate per language.
@@ -403,6 +404,7 @@ const ClientDashboard: React.FC = () => {
   const proxied = (raw?: string | null): string => {
     const v = raw || '';
     if (!v) return '';
+    if (reportPath(v)) return reportHref(v); // reporte de obra privado → enlace firmado tras login
     if (v.includes('/storage/v1/object/public/images/')) return '/r/' + v.split('/storage/v1/object/public/images/')[1];
     if (/^https?:\/\//i.test(v)) return v; // URL externa (p.ej. Drive) → tal cual
     return '/r/' + v.replace(/^\/+/, ''); // ruta relativa del bucket

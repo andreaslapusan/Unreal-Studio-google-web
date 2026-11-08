@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { uiLocale } from '../../lib/dateLocale';
 import { useEscapeKey } from '../../lib/useEscapeKey';
+import { reportHref, reportPath } from '../../lib/reportFiles';
 
 interface Asset { update_id: string; asset_type: string; external_url: string; file_name: string; position: number; }
 interface Report {
@@ -110,10 +111,10 @@ const PropertyReportsModal: React.FC<{ propertyId: string; propertyName: string;
                     {r._assets.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-1.5">
                         {r._assets.map((a, i) => (
-                          <a key={i} href={a.external_url} target="_blank" rel="noopener noreferrer"
+                          <a key={i} href={reportHref(a.external_url)} target="_blank" rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 max-w-full bg-gray-50 border border-gray-200 rounded-lg pl-1.5 pr-2 py-1 hover:ring-2 hover:ring-primary/40 transition group/asset"
                             title={a.file_name}>
-                            {a.asset_type === 'image' ? (
+                            {a.asset_type === 'image' && !reportPath(a.external_url) ? (
                               <img src={a.external_url} className="w-6 h-6 rounded object-cover shrink-0" loading="lazy" />
                             ) : (
                               <span className="material-symbols-outlined text-[18px] text-primary/60 shrink-0">{icon(a.asset_type)}</span>

@@ -3210,5 +3210,12 @@
       "us": "Memberikan informasi yang benar dan terbaru tentang ketersediaan, pemesanan, dan harga, memfasilitasi akses properti untuk kunjungan, menangani seluruh sisi hukum penjualan, dan membayar komisi yang disepakati.",
       "history": "Permintaan kontrak Anda"
     }
+  },
+  "reportOpen": {
+    "opening": "Membuka laporan…",
+    "login": "Laporan ini bersifat pribadi. Masuk ke portal Anda untuk melihatnya.",
+    "denied": "Anda tidak memiliki akses ke laporan ini.",
+    "goPortal": "Ke portal saya",
+    "adminSaveFirst": "Simpan proyek terlebih dahulu, lalu unggah ulang laporannya."
   }
 }
