@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
+import androidx.activity.EdgeToEdge;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,20 +30,53 @@ public class MainActivity extends BridgeActivity {
         "if(!d||!d.set||p.__unrealDl)return;p.__unrealDl=1;Object.defineProperty(p,'download',{configurable:true," +
         "enumerable:d.enumerable,get:d.get,set:function(v){window.__unrealDlName=v;d.set.call(this,v)}})})()";
 
+    // Últimas barras medidas, en px CSS: se re-inyectan en cada página nueva (recarga, otro portal).
+    private String safeAreaJs = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Pantalla completa también en Android < 15 (en 15+ ya lo impone targetSdk 36): sin franjas crema.
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
-        // La web no usa env(safe-area-inset-*): la WebView va entre barra de estado, barra de navegación y
-        // teclado (como en iOS); detrás, el crema del tema. Sustituye a SystemBars (insetsHandling 'disable').
+        // La WebView va DEBAJO de la barra de estado y de la de navegación; la web se aparta con --safe-area-inset-*
+        // (solo html.native-app, index.css). Las WebView < 140 no dan env(safe-area-inset-*), por eso se inyectan.
+        // Solo el teclado encoge la WebView. Sustituye a SystemBars (insetsHandling 'disable').
         ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
             int bars = WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout();
             Insets b = insets.getInsets(bars);
-            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
-            v.setPadding(b.left, b.top, b.right, Math.max(b.bottom, ime.bottom));
-            // A cero en vez de CONSUMED (bug de Chromium; mismo criterio que SystemBars de Capacitor).
+            boolean keyboard = insets.isVisible(WindowInsetsCompat.Type.ime());
+            v.setPadding(0, 0, 0, keyboard ? insets.getInsets(WindowInsetsCompat.Type.ime()).bottom : 0);
+            float d = getResources().getDisplayMetrics().density;
+            safeAreaJs = String.format(
+                Locale.US,
+                "(function(s){s.setProperty('--safe-area-inset-top','%dpx');s.setProperty('--safe-area-inset-right','%dpx');" +
+                "s.setProperty('--safe-area-inset-bottom','%dpx');s.setProperty('--safe-area-inset-left','%dpx')})(document.documentElement.style)",
+                Math.round(b.top / d), Math.round(b.right / d), keyboard ? 0 : Math.round(b.bottom / d), Math.round(b.left / d)
+            );
+            injectSafeArea();
+            // A cero en vez de CONSUMED (bug de Chromium; mismo criterio que SystemBars de Capacitor): env() = 0, manda la variable.
             return new WindowInsetsCompat.Builder(insets).setInsets(bars | WindowInsetsCompat.Type.ime(), Insets.NONE).build();
         });
+        getBridge().addWebViewListener(
+            new WebViewListener() {
+                @Override
+                public void onPageCommitVisible(WebView view, String url) {
+                    injectSafeArea();
+                }
+
+                @Override
+                public void onPageLoaded(WebView webView) {
+                    injectSafeArea();
+                }
+            }
+        );
         setUpDocuments(getBridge().getWebView());
+    }
+
+    private void injectSafeArea() {
+        String js = safeAreaJs;
+        if (js == null || getBridge() == null || getBridge().getWebView() == null) return;
+        getBridge().getWebView().post(() -> getBridge().getWebView().evaluateJavascript(js, null));
     }
 
     /**

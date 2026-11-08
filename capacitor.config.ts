@@ -38,7 +38,8 @@ const config: CapacitorConfig = {
     // Dominios que se abren DENTRO de la app (login Supabase, storage, mapas).
     allowNavigation: ['unrealstudiobali.com', '*.unrealstudiobali.com', '*.supabase.co'],
   },
-  ios: { contentInset: 'automatic', backgroundColor: BRAND_CREAM, allowsLinkPreview: false },
+  // 'never' + overlaysWebView: la WebView a pantalla completa (sin franjas crema); la web se aparta con env(safe-area-inset-*).
+  ios: { contentInset: 'never', backgroundColor: BRAND_CREAM, allowsLinkPreview: false },
   android: { backgroundColor: BRAND_CREAM },
   plugins: {
     SplashScreen: {
@@ -48,8 +49,9 @@ const config: CapacitorConfig = {
       showSpinner: false,
       androidScaleType: 'CENTER_CROP',
     },
-    StatusBar: { style: 'LIGHT', backgroundColor: BRAND_CREAM, overlaysWebView: false },
-    // Android: la web no usa safe-area → MainActivity pone la WebView entre las barras; iconos oscuros sobre crema.
+    StatusBar: { style: 'LIGHT', overlaysWebView: true },
+    // Android: pantalla completa; MainActivity pasa las barras a la web (--safe-area-inset-*). Iconos: los decide la web
+    // (lib/nativeApp.ts → SystemBars.setStyle según el color de la cabecera).
     SystemBars: { insetsHandling: 'disable', style: 'LIGHT' },
     PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] },
   },
