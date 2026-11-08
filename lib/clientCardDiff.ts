@@ -34,7 +34,7 @@ export const cardHolders = (cc: Row): Row[] => (Array.isArray(cc.holders) && cc.
 
 /** La ficha tras editar sus titulares: nombre/email del cliente salen de ellos; su teléfono/idioma = los del 1er titular
  *  SOLO cuando el admin cambia ese dato del 1er titular (`edited`) o el cliente aún no tiene. Copiarlos en cada edición
- *  pisaba el idioma que el cliente eligió en el portal (client_set_my_language solo toca preferred_language). */
+ *  pisaba el idioma que el cliente eligió en el portal (client_set_my_language toca el holders[].lang de quien entra y, si es el email principal, preferred_language). */
 export const withHolders = (prev: Row, next: Row[], edited?: 'phone' | 'lang'): Row => ({
   ...prev, holders: next,
   name: next.map((h) => String(h.name || '').trim()).filter(Boolean).join(' & ') || prev.name,

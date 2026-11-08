@@ -10,7 +10,7 @@ import { supabase } from "../lib/supabase";
 import { compressImage } from "../lib/imageCompress";
 import { hasPermission } from "../lib/permissions";
 import { realEmailOf } from "../lib/portalAuth";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import LanguageSwitcher, { useLanguagePicked } from "../components/LanguageSwitcher";
 import { REPORTS_BUCKET, reportHref, reportPath } from '../lib/reportFiles';
 
 interface PropertySummary {
@@ -28,6 +28,8 @@ interface QueuedFile {
 export default function EquipoUpload() {
   const { t, i18n } = useTranslation();
   const { user, role, loading: authLoading, signOut } = useAuth();
+  // Clic en el selector = idioma elegido → a su perfil de empleado (no-op si no es empleado).
+  useLanguagePicked((lang) => { if (user) void supabase.rpc("employee_set_language", { p_lang: lang }).then(({ error }) => { if (error) console.warn("employee_set_language", error.message); }); });
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 

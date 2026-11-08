@@ -10,6 +10,7 @@ import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
 import PortalHeader from '../components/PortalHeader';
+import { useLanguagePicked } from '../components/LanguageSwitcher';
 import ClientUnitsSection from '../components/ClientUnitsSection';
 import ClientPaymentsSection from '../components/ClientPaymentsSection';
 import { reportHref, reportPath } from '../lib/reportFiles';
@@ -444,8 +445,8 @@ const ClientDashboard: React.FC = () => {
         return;
       }
       setClientData(data);
-      // Idioma del portal = el preferido del cliente (el mismo de sus emails).
-      const lang = data?.client?.preferred_language;
+      // Idioma del portal = el de quien ha entrado (su titular; si no, el del cliente) = el de sus emails.
+      const lang = data?.client?.my_language || data?.client?.preferred_language;
       if (lang && ['es', 'en', 'ro', 'id'].includes(lang)) {
         try { localStorage.setItem('_unreal_lang', lang); } catch { /* ignore */ }
         if (i18n.language !== lang) void i18n.changeLanguage(lang);
@@ -532,17 +533,12 @@ const ClientDashboard: React.FC = () => {
     }
   };
 
-  // El selector de idioma vive SOLO en la cabecera (pastillas ES/EN/RO/ID). Aquí
-  // persistimos el idioma elegido en la preferencia del cliente (sus emails/kwitansi
-  // van en ese idioma), que es lo que hacía el selector duplicado ya retirado del cuerpo.
-  useEffect(() => {
-    if (!clientData) return;
-    const pref = clientData?.client?.preferred_language;
-    const lang = i18n.language;
-    if (['es', 'en', 'ro', 'id'].includes(lang) && lang !== pref) {
-      void supabase.rpc('client_set_my_language', { p_lang: lang });
-    }
-  }, [i18n.language, clientData]);
+  // Solo un clic en el selector de la cabecera guarda el idioma en el titular que ha entrado
+  // (sus emails/kwitansi van en ese idioma); el auto-detectado nunca se guarda.
+  useLanguagePicked((lang) => {
+    // .then(): sin él supabase-js no lanza la petición (era el bug: nunca se guardaba)
+    if (clientData) void supabase.rpc('client_set_my_language', { p_lang: lang }).then(({ error }) => { if (error) console.warn('client_set_my_language', error.message); });
+  });
 
   const handleLogout = async () => {
     // Cliente usa token propio (_ust_client_); cerramos también sesión Supabase

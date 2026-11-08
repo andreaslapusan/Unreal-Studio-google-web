@@ -21,6 +21,7 @@ import { realEmailOf } from '../lib/portalAuth';
 import { baliTime, baliToday, baliDayStartISO } from '../lib/timezone';
 import VacationCalendar from '../components/VacationCalendar';
 import PortalHeader from '../components/PortalHeader';
+import { useLanguagePicked } from '../components/LanguageSwitcher';
 import ConstructionReportModal from '../components/ConstructionReportModal';
 
 type FichajeType = 'check_in' | 'break_start' | 'break_end' | 'check_out';
@@ -182,12 +183,11 @@ const EmpleadosDashboard: React.FC = () => {
     })();
   }, [user]);
 
-  // Si el empleado cambia el idioma (selector del portal), se guarda en su perfil
-  // para que la próxima vez (y sus emails) salgan en ese idioma.
-  useEffect(() => {
-    if (!employee?.id) return;
-    void supabase.rpc('employee_set_language', { p_lang: i18n.language });
-  }, [i18n.language, employee?.id]);
+  // Solo si el empleado ELIGE idioma en el selector del portal se guarda en su perfil
+  // (próximas visitas y sus emails); el auto-detectado nunca se guarda.
+  useLanguagePicked((lang) => {
+    if (employee?.id) void supabase.rpc('employee_set_language', { p_lang: lang }).then(({ error }) => { if (error) console.warn('employee_set_language', error.message); });
+  });
 
   // Frase divertida en pantalla mientras hacen la foto. Se elige una NUEVA (sin repetir
   // las últimas) cada vez que se abre la cámara, en startCapture().

@@ -1,4 +1,4 @@
--- Self-check de 20261106213000_admin_save_client_stale_card.sql (+ 20261106220500, paso e). Reproduce el bug del 6-nov (una ficha
+-- Self-check de 20261106213000_admin_save_client_stale_card.sql (+ 20261106220500, paso e; + 20261108200000, pasos g/h). Reproduce el bug del 6-nov (una ficha
 -- de cliente abierta ANTES de otros cambios los revertía al guardar) sobre el cliente DEMO (App Review),
 -- dentro de una transacción que SIEMPRE se deshace (rollback): no cambia datos reales ni manda correos
 -- (admin_save_client no envía nada y aquí no cambia ningún email → ni siquiera llama a ensure_auth_user).
@@ -81,6 +81,40 @@ begin
          'base', json_build_object('holders', v_card->'holders'), 'holders', h_typed))::jsonb;
   assert r->>'error' = 'conflict' and r->'fields' = '["holders"]'::jsonb, 'titular cambiado por otro no rechazado: ' || r::text;
   assert (select holders->0->>'phone' from clients where id = v_id) = '+00 other', 'el conflicto escribió los titulares';
+
+  -- g) (20261108200000) Con la ficha abierta, cada titular elige idioma en SU portal con la RPC REAL
+  --    client_set_my_language: el principal → su holders[].lang + preferred_language; el 2º (entra por
+  --    extra_emails) → solo SU holders[].lang. La ficha vieja renombra al titular 1 → sin conflicto y sin pisar idiomas.
+  h_old := jsonb_build_array(jsonb_build_object('name', 'DEMO', 'email', 'demo.cliente@unrealstudiobali.com', 'lang', 'es'),
+                             jsonb_build_object('name', 'DEMO 2', 'email', 'demo.second+check@unrealstudiobali.com', 'lang', 'es'));
+  update clients set holders = h_old, extra_emails = '{demo.second+check@unrealstudiobali.com}', preferred_language = 'es' where id = v_id;
+  select x into v_card from jsonb_array_elements((admin_list_clients('')->'clients')::jsonb) x where x->>'id' = v_id::text;
+  perform set_config('request.jwt.claims', '{"role":"authenticated","email":"demo.cliente@unrealstudiobali.com"}', true);
+  r := client_set_my_language('id')::jsonb;
+  assert (r->>'success')::boolean, 'titular principal no pudo guardar su idioma: ' || r::text;
+  perform set_config('request.jwt.claims', '{"role":"authenticated","email":"demo.second+check@unrealstudiobali.com"}', true);
+  r := client_set_my_language('ro')::jsonb;
+  assert (r->>'success')::boolean, '2º titular no pudo guardar su idioma: ' || r::text;
+  assert (client_get_dashboard('')->'client'->>'my_language') = 'ro', 'my_language del 2º titular no es el suyo';
+  r := client_set_my_language('xx')::jsonb;
+  assert r->>'error' = 'lang', 'idioma inválido aceptado: ' || r::text;
+  perform set_config('request.jwt.claims', json_build_object('role', 'authenticated',
+    'email', (select lower(trim(username)) from admin_users where is_active order by username limit 1))::text, true);
+  select * into c from clients where id = v_id;
+  assert c.holders->0->>'lang' = 'id' and c.holders->1->>'lang' = 'ro' and c.preferred_language = 'id',
+    'idiomas del portal mal guardados: ' || c.holders::text || ' ' || c.preferred_language;
+  r := admin_save_client('', json_build_object('id', v_id, 'expected_updated_at', v_card->'updated_at',
+         'base', json_build_object('holders', v_card->'holders'), 'holders', jsonb_set(h_old, '{0,name}', '"DEMO renamed"')))::jsonb;
+  assert (r->>'success')::boolean, 'idioma elegido en el portal = conflicto: ' || r::text;
+  select * into c from clients where id = v_id;
+  assert c.holders->0->>'name' = 'DEMO renamed' and c.holders->0->>'lang' = 'id' and c.holders->1->>'lang' = 'ro'
+     and c.preferred_language = 'id', 'la ficha pisó el idioma elegido en el portal: ' || c.holders::text;
+
+  -- h) Si el admin SÍ cambia el idioma de un titular en la ficha, se guarda.
+  select x into v_card from jsonb_array_elements((admin_list_clients('')->'clients')::jsonb) x where x->>'id' = v_id::text;
+  r := admin_save_client('', json_build_object('id', v_id, 'expected_updated_at', v_card->'updated_at',
+         'base', json_build_object('holders', v_card->'holders'), 'holders', jsonb_set((v_card->'holders')::jsonb, '{1,lang}', '"en"')))::jsonb;
+  assert (r->>'success')::boolean and (select holders->1->>'lang' from clients where id = v_id) = 'en', 'cambio de idioma del admin no guardado: ' || r::text;
 end $$;
 
 select 'OK' as result;

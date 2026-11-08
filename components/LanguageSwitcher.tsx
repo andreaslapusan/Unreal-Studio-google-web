@@ -6,12 +6,27 @@
  * idioma quedan siempre sincronizados. En portales (sin prefijo) solo cambia el
  * idioma. La preferencia se persiste vía nuestro geoLanguageDetector.
  */
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SUPPORTED_LANGS } from "./LocaleRoute";
 import { matchPortalPath, portalPath } from "../lib/portalUrls";
 import { landingAltPaths } from "../lib/landings";
+
+/** Evento que SOLO dispara un clic en este selector: los portales lo escuchan para guardar el idioma
+ *  en la ficha del usuario. El idioma auto-detectado (país/dispositivo/navegador/app) nunca lo emite. */
+const LANG_PICKED = "unreal:lang-picked";
+
+/** Llama a `onPick(code)` cuando el usuario elige idioma en el selector (nunca por auto-detección). */
+export function useLanguagePicked(onPick: (code: string) => void) {
+  const ref = useRef(onPick);
+  ref.current = onPick;
+  useEffect(() => {
+    const h = (e: Event) => ref.current((e as CustomEvent<string>).detail);
+    window.addEventListener(LANG_PICKED, h);
+    return () => window.removeEventListener(LANG_PICKED, h);
+  }, []);
+}
 
 const LANGS: { code: "es" | "en" | "ro" | "id"; label: string }[] = [
   { code: "es", label: "ES" },
@@ -27,6 +42,7 @@ export default function LanguageSwitcher({ inverted = false }: { inverted?: bool
 
   const change = (code: string) => {
     void i18n.changeLanguage(code);
+    window.dispatchEvent(new CustomEvent(LANG_PICKED, { detail: code }));
     document.documentElement.lang = code;
     try {
       localStorage.setItem("_unreal_lang", code);
