@@ -147,7 +147,8 @@ export async function downloadRecibiPdf(d: RecibiPdfData): Promise<void> {
     const dims = loaded.map((im) => { const r = Math.min(28 / im.w, maxH / im.h); return { im, w: im.w * r, h: im.h * r }; });
     const totalW = dims.reduce((s, x) => s + x.w, 0) + gap * Math.max(0, dims.length - 1);
     let sx = SCX - totalW / 2; const sy = (d.dueDate ? dy : 132) + 8;
-    for (const x of dims) { doc.addImage(x.im.data, x.im.fmt, sx, sy, x.w, x.h); sx += x.w + gap; }
+    // 'FAST' = deflate: sin compresión un PNG grande (sello 3000 px) iba crudo → PDF de 35 MB
+    for (const x of dims) { doc.addImage(x.im.data, x.im.fmt, sx, sy, x.w, x.h, undefined, 'FAST'); sx += x.w + gap; }
   } catch { /* sin firma si falla */ }
 
   doc.setDrawColor(...MUTE); doc.setLineWidth(0.3); doc.line(SCX - 35, 172, SCX + 35, 172);
