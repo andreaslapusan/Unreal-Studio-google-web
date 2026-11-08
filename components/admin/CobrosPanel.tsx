@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { baliToday } from '../../lib/timezone';
 import { uiLocale } from '../../lib/dateLocale';
+import { creditedOf } from './ClientPaymentsPanel';
 
 // Fecha de vencimiento formateada según el idioma de la UI (evita ISO en crudo).
 const fmtDue = (s: string | null): string => {
@@ -25,7 +26,7 @@ const fmtDue = (s: string | null): string => {
 
 interface Pay {
   id: string; label: string; amount: number; currency: string; due_date: string | null;
-  received: boolean; received_amount: number | null; paid_at: string | null; position: number;
+  received: boolean; received_amount: number | null; bank_fee?: number | null; paid_at: string | null; position: number;
   client_id: string; client_name: string; client_email: string; client_lang: string;
   client_project_id: string; unit_number: string | null; project_name: string | null;
   market_price?: number | null; market_currency?: string | null;
@@ -37,7 +38,8 @@ const fmt = (n: number, c: string) => {
   try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); }
   catch { return `${c} ${Math.round(n)}`; }
 };
-const recvOf = (p: Pay) => (p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0));
+// Acreditado al cliente = neto que llegó + comisión bancaria que asume Unreal (ver ClientPaymentsPanel.creditedOf).
+const recvOf = (p: Pay) => (p.received ? creditedOf(p) : Number(p.received_amount || 0));
 // Estados: SOLO recibido / pendiente / vencido (en todo el sistema).
 const STATE_RANK: Record<string, number> = { vencido: 0, pendiente: 1, recibido: 2 };
 const DEFAULT_RATES: Record<string, number> = { EUR: 1, USD: 1.15, GBP: 0.86, AUD: 1.64, IDR: 20700 };
@@ -169,7 +171,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
 
   // KPIs por moneda: lo NO recibido (due/overdue/next7/next30) + lo COBRADO.
   const kpis = useMemo(() => {
-    const byCur: Record<string, { due: number; overdue: number; next7: number; next30: number; collected: number; total: number }> = {};
+    const byCur: Record<string, { due: number; overdue: number; next7: number; next30: number; collected: number; total: number; fees?: number }> = {};
     const global = { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0, total: 0 };
     let overdueCount = 0;
     const ensure = (cc: string) => (byCur[cc] = byCur[cc] || { due: 0, overdue: 0, next7: 0, next30: 0, collected: 0, total: 0 });
@@ -180,6 +182,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
       byCur[c].total += planned; global.total += conv(planned, c); // total ventas (valor del plan)
       if (r.received) {
         const rc = recvOf(r); byCur[c].collected += rc;
+        if (Number(r.bank_fee || 0)) byCur[c].fees = (byCur[c].fees || 0) + Number(r.bank_fee);
         // Global de lo cobrado: tasa del MOMENTO del cobro (paid_at) si la tenemos.
         const dt = r.paid_at ? String(r.paid_at).slice(0, 10) : null;
         const dr = dt ? histRates[dt] : null;
@@ -273,6 +276,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiTotalSales', { defaultValue: 'Total ventas' })}</span><span className="font-black text-primary">{fmt(k.total, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiMarket', { defaultValue: 'Valor mercado' })}</span><span className="font-bold text-primary/80">{fmt(market.byCur[c] || 0, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiCollected', { defaultValue: 'Cobrado' })}</span><span className="font-black text-green-700">{fmt(k.collected, c)}</span></div>
+              {!!k.fees && <div className="flex justify-between"><span className="text-gray-400">{t('fin.fee.kpiFees')}</span><span className="font-bold text-amber-700">{fmt(k.fees, c)} · {t('fin.fee.kpiNet', { amount: fmt(k.collected - k.fees, c) })}</span></div>}
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiDue')}</span><span className="font-black text-primary">{fmt(k.due, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiOverdue')}</span><span className="font-black text-red-600">{fmt(k.overdue, c)}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">{t('cobros.kpiNext7')}</span><span className="font-bold text-amber-700">{fmt(k.next7, c)}</span></div>

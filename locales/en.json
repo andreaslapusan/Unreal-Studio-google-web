@@ -625,7 +625,8 @@
       "agencyPacks": "Agency Packs",
       "arquitectura": "Architecture",
       "agenda": "Calendar",
-      "intakes": "Listing links"
+      "intakes": "Listing links",
+      "gastos": "Expenses"
     },
     "clientLogin": {
       "title": "Investor Portal",
@@ -2739,6 +2740,14 @@
       "total": "Total",
       "cta": "View in my portal",
       "colReceivedDate": "Received on"
+    },
+    "shortfall": {
+      "subject": "Summary of outstanding payments",
+      "intro": "While reviewing your payment schedule we noticed that a payment reached us for less than the scheduled amount. Below are the details: the scheduled amount, the amount received and the remaining difference.",
+      "toCover": "Amount outstanding from the difference",
+      "balance": "Total outstanding balance (includes future payments)",
+      "feesCovered": "Bank fees covered by Unreal Studio (already credited in your favour)",
+      "outro": "Whenever convenient, you can settle the difference with your next transfer or separately. If you think something is wrong, just reply to this email and we will look into it."
     }
   },
   "cobros": {
@@ -3216,5 +3225,73 @@
     "denied": "You don't have access to this report.",
     "goPortal": "Go to my portal",
     "adminSaveFirst": "Save the project first, then upload the report again."
+  },
+  "fin": {
+    "fee": {
+      "button": "Bank fee",
+      "short": "fee {{amount}}",
+      "credited": "credited to client: {{amount}}",
+      "feesTotal": "Fees {{amount}}",
+      "netLabel": "Arrived at the bank (net)",
+      "feeLabel": "Bank fee",
+      "hint": "Unreal absorbs the fee: the client is credited with what arrived + the fee. The client does not see it. If you leave it empty, the difference stays as the client's shortfall.",
+      "kpiFees": "Bank fees",
+      "kpiNet": "net {{amount}}"
+    },
+    "ctl": {
+      "tab": "Control",
+      "tabHistory": "History",
+      "title": "Collections control",
+      "overdue": "Overdue",
+      "shortfalls": "Shortfalls",
+      "upcoming": "Upcoming",
+      "colPending": "Pending",
+      "colShort": "Missing",
+      "received": "received {{amount}}",
+      "emptyOverdue": "No overdue payments.",
+      "emptyShort": "No shortfalls.",
+      "emptyUpcoming": "No upcoming payments."
+    },
+    "short": {
+      "mailTitle": "Payment shortfall",
+      "mailDesc": "Email with the payments, the amounts received, what is left to cover and the balance",
+      "none": "This client has no shortfalls."
+    },
+    "exp": {
+      "title": "Expenses",
+      "subtitle": "Payments to builders and for land",
+      "add": "New expense",
+      "edit": "Edit expense",
+      "delete": "Delete",
+      "confirmDelete": "Delete this expense?",
+      "kind": "Type",
+      "kind_constructor": "Builder",
+      "kind_terreno": "Land",
+      "kind_otro": "Other",
+      "allKinds": "All types",
+      "project": "Project",
+      "contact": "Supplier (Contacts)",
+      "payee": "Supplier",
+      "payeeFree": "Supplier (free text)",
+      "concept": "Description",
+      "amount": "Amount",
+      "currency": "Currency",
+      "dueDate": "Due date",
+      "paidDate": "Payment date",
+      "paidOn": "paid on {{date}}",
+      "st_pendiente": "Pending",
+      "st_pagado": "Paid",
+      "st_vencido": "Overdue",
+      "notes": "Notes",
+      "attachment": "Attachment",
+      "totPending": "Pending",
+      "totOverdue": "Overdue",
+      "totPaid": "Paid",
+      "searchPh": "Search description, supplier, project…",
+      "empty": "No expenses yet.",
+      "fillRequired": "Fill in description, amount and currency.",
+      "errorSave": "Could not save: {{error}}",
+      "errorLoad": "Could not load expenses: {{error}}"
+    }
   }
 }

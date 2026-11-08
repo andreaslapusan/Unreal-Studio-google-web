@@ -33,6 +33,7 @@ interface Payment {
   paid_at: string | null;
   received: boolean;
   received_amount?: number | null;
+  bank_fee?: number | null; // comisión del banco (la asume Unreal): acreditado = neto + comisión
   payment_method: string | null;
   reference: string | null;
   notes: string | null;
@@ -67,6 +68,10 @@ const emptyPayment = (cur: string): Partial<Payment> => ({
   label: '', amount: 0, currency: cur || 'IDR', due_date: null, paid_at: null,
   received: false, payment_method: '', reference: '', notes: '', position: 0,
 });
+// Importe ACREDITADO al cliente: lo que llegó (neto, o el importe si no se anotó) + la comisión
+// bancaria que asume Unreal. Es lo que cuenta para su saldo (regla en la migración 20261108210000).
+export const creditedOf = (p: { received: boolean; amount: number; received_amount?: number | null; bank_fee?: number | null }) =>
+  p.received ? Number(p.received_amount ?? p.amount) + Number(p.bank_fee || 0) : 0;
 const todayISO = () => baliToday(); // hora de Bali, no UTC (evitaba registrar el dia anterior por las mananas)
 
 // Prefijo del nº de kwitansi a partir del nombre de proyecto: iniciales de las
@@ -345,7 +350,8 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
 
           {units.filter((u) => filterName === undefined || ((u.project_name || '').trim().toLowerCase() === (filterName || '').trim().toLowerCase() && (filterUnit === undefined || String(u.unit_number ?? '').trim().toLowerCase() === String(filterUnit ?? '').trim().toLowerCase()))).map((u) => {
             const total = u.payments.reduce((s, p) => s + Number(p.amount), 0);
-            const recv = u.payments.filter((p) => p.received).reduce((s, p) => s + ((p as any).received_amount != null ? Number((p as any).received_amount) : Number(p.amount)), 0);
+            const recv = u.payments.reduce((s, p) => s + creditedOf(p), 0);
+            const fees = u.payments.reduce((s, p) => s + (p.received ? Number(p.bank_fee || 0) : 0), 0);
             const pending = Math.max(0, total - recv);
             const overpaid = Math.max(0, recv - total); // sobrepago (recibido de mas)
             return (
@@ -353,7 +359,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                 <div className="bg-gray-50 px-5 py-3 flex justify-between items-center">
                   <div>
                     <p className="font-bold text-primary">{u.project_name}{u.unit_number && <span className="text-gray-400 font-normal"> · {u.unit_number}</span>}</p>
-                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedPendingTotal', { recv: fmt(recv, u.currency), pending: fmt(pending, u.currency), total: fmt(total, u.currency), defaultValue: 'Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}' })}{overpaid > 0 && <span className="text-green-600 font-bold"> · {t('admin.pay.overpaidLabel', { defaultValue: 'Excedente' })} {fmt(overpaid, u.currency)}</span>}</p>
+                    <p className="text-[11px] text-gray-400">{t('admin.pay.receivedPendingTotal', { recv: fmt(recv, u.currency), pending: fmt(pending, u.currency), total: fmt(total, u.currency), defaultValue: 'Recibido {{recv}} · Pendiente {{pending}} · Total {{total}}' })}{overpaid > 0 && <span className="text-green-600 font-bold"> · {t('admin.pay.overpaidLabel', { defaultValue: 'Excedente' })} {fmt(overpaid, u.currency)}</span>}{fees > 0 && <span className="text-amber-700"> · {t('fin.fee.feesTotal', { amount: fmt(fees, u.currency) })}</span>}</p>
                   </div>
                   <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...emptyPayment(u.currency), position: u.payments.length } })}
                     className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-lg flex items-center gap-1 hover:bg-black">
@@ -379,12 +385,14 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                         <div className="text-right shrink-0">
                           <span className="font-bold text-sm">{fmt(Number(p.amount), p.currency)}</span>
                           {(() => {
-                            const recvAmt = p.received ? ((p as any).received_amount != null ? Number((p as any).received_amount) : Number(p.amount)) : 0;
+                            const recvAmt = creditedOf(p); // neto + comisión bancaria
                             const balance = Number(p.amount) - recvAmt; // lo que queda por recibir de ESTE pago (0 = completo)
-                            const showRecv = p.received && (p as any).received_amount != null && recvAmt !== Number(p.amount);
+                            const fee = p.received ? Number(p.bank_fee || 0) : 0;
+                            const showRecv = p.received && (fee > 0 || ((p as any).received_amount != null && recvAmt !== Number(p.amount)));
                             return (
                               <>
-                                {showRecv && <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(recvAmt, p.currency)}</span>}
+                                {showRecv && <span className="block text-[10px] font-bold text-green-700 whitespace-nowrap">{t('admin.pay.receivedAmtLabel', { defaultValue: 'recibido' })}: {fmt(Number(p.received_amount ?? p.amount), p.currency)}</span>}
+                                {fee > 0 && <span className="block text-[10px] font-bold text-amber-700 whitespace-nowrap">{t('fin.fee.short', { amount: fmt(fee, p.currency) })} · {t('fin.fee.credited', { amount: fmt(recvAmt, p.currency) })}</span>}
                                 <span className={`block text-[10px] font-bold whitespace-nowrap ${balance > 0 ? 'text-red-500' : 'text-green-600'}`}>{t('admin.pay.balanceLabel', { defaultValue: 'Balance' })}: {fmt(balance, p.currency)}</span>
                               </>
                             );
@@ -398,6 +406,10 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                           {p.received ? t('fix.cpp.statusReceived') : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
                         </span>
                         <div className="flex gap-1">
+                          {p.received && (
+                            <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p, received_amount: p.received_amount ?? p.amount } })} title={t('fin.fee.button')}
+                              className={`p-1.5 rounded-lg ${Number(p.bank_fee || 0) > 0 ? 'text-amber-700 bg-amber-50 hover:bg-amber-100' : 'text-primary bg-gray-50 hover:bg-gray-100'}`}><span className="material-symbols-outlined text-sm">account_balance</span></button>
+                          )}
                           <button onClick={() => openKwitansi(u, p)} title={t('admin.pay.generateSendKwitansi')}
                             className="p-1.5 text-primary bg-almond rounded-lg hover:brightness-95"><span className="material-symbols-outlined text-sm">receipt_long</span></button>
                           <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p } })}
@@ -450,7 +462,22 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
             <input className="w-full px-3 py-2 bg-gray-50 border rounded-lg text-sm" placeholder={t('admin.pay.notesPlaceholder')}
               value={editing.pay.notes || ''} onChange={(e) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, notes: e.target.value } }))} />
             {/* El importe REAL recibido y la fecha de cobro se capturan al GENERAR EL RECIBÍ
-                (al marcar recibido), no aquí — para no duplicarlo en el calendario. */}
+                (al marcar recibido). Aquí, solo en pagos ya recibidos, se corrige lo que llegó
+                (neto) y se apunta la COMISIÓN bancaria: acreditado al cliente = neto + comisión. */}
+            {editing.pay.received && (
+              <div className="rounded-xl bg-amber-50/60 border border-amber-100 p-3 space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="text-[10px] font-black uppercase text-gray-400">{t('fin.fee.netLabel')}
+                    <NumberInput decimal className="mt-1 w-full px-3 py-2 bg-white border rounded-lg text-sm normal-case font-normal text-primary"
+                      value={editing.pay.received_amount ?? ''} onChangeValue={(v) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, received_amount: v } }))} /></label>
+                  <label className="text-[10px] font-black uppercase text-gray-400">{t('fin.fee.feeLabel')}
+                    <NumberInput decimal className="mt-1 w-full px-3 py-2 bg-white border rounded-lg text-sm normal-case font-normal text-primary"
+                      value={editing.pay.bank_fee ?? ''} onChangeValue={(v) => setEditing((pv: any) => ({ ...pv, pay: { ...pv.pay, bank_fee: v } }))} /></label>
+                </div>
+                <p className="text-[11px] text-primary/70">{t('fin.fee.credited', { amount: fmt(creditedOf({ received: true, amount: Number(editing.pay.amount || 0), received_amount: editing.pay.received_amount === ('' as any) ? null : Number(editing.pay.received_amount ?? editing.pay.amount ?? 0), bank_fee: Number(editing.pay.bank_fee || 0) }), units.find((x) => x.client_project_id === editing.cp)?.currency || 'EUR') })}</p>
+                <p className="text-[10px] text-gray-400 leading-snug">{t('fin.fee.hint')}</p>
+              </div>
+            )}
             <div className="flex gap-2 pt-2">
               <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border text-sm font-bold text-gray-500">{t('admin.common.cancel')}</button>
               <button disabled={saving} onClick={savePayment} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-50">{saving ? t('admin.common.saving') : t('admin.common.save')}</button>

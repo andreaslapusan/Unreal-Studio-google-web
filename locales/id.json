@@ -732,7 +732,8 @@
       "agencyPacks": "Paket Agensi",
       "arquitectura": "Arsitektur",
       "agenda": "Kalender",
-      "intakes": "Tautan listing"
+      "intakes": "Tautan listing",
+      "gastos": "Pengeluaran"
     },
     "common": {
       "save": "Simpan",
@@ -2740,6 +2741,14 @@
       "total": "Total",
       "cta": "Lihat di Portal Saya",
       "colReceivedDate": "Diterima pada"
+    },
+    "shortfall": {
+      "subject": "Ringkasan pembayaran tertunda",
+      "intro": "Saat meninjau jadwal pembayaran Anda, kami melihat ada pembayaran yang kami terima dengan jumlah lebih kecil dari yang dijadwalkan. Berikut rinciannya: jumlah terjadwal, jumlah diterima, dan sisa selisihnya.",
+      "toCover": "Jumlah tertunda dari selisih",
+      "balance": "Total saldo tertunda (termasuk pembayaran mendatang)",
+      "feesCovered": "Biaya bank yang ditanggung Unreal Studio (sudah dikreditkan untuk Anda)",
+      "outro": "Kapan pun Anda sempat, selisihnya dapat dilunasi bersama transfer berikutnya atau secara terpisah. Jika menurut Anda ada kesalahan, cukup balas email ini dan kami akan memeriksanya."
     }
   },
   "cobros": {
@@ -3217,5 +3226,73 @@
     "denied": "Anda tidak memiliki akses ke laporan ini.",
     "goPortal": "Ke portal saya",
     "adminSaveFirst": "Simpan proyek terlebih dahulu, lalu unggah ulang laporannya."
+  },
+  "fin": {
+    "fee": {
+      "button": "Biaya bank",
+      "short": "biaya {{amount}}",
+      "credited": "dikreditkan ke klien: {{amount}}",
+      "feesTotal": "Biaya {{amount}}",
+      "netLabel": "Masuk ke bank (bersih)",
+      "feeLabel": "Biaya bank",
+      "hint": "Biaya ditanggung Unreal: klien dikreditkan sebesar yang masuk + biaya. Klien tidak melihatnya. Jika dikosongkan, selisihnya tetap menjadi kekurangan klien.",
+      "kpiFees": "Biaya bank",
+      "kpiNet": "bersih {{amount}}"
+    },
+    "ctl": {
+      "tab": "Kontrol",
+      "tabHistory": "Riwayat",
+      "title": "Kontrol penagihan",
+      "overdue": "Terlambat",
+      "shortfalls": "Kekurangan",
+      "upcoming": "Mendatang",
+      "colPending": "Tertunda",
+      "colShort": "Kurang",
+      "received": "diterima {{amount}}",
+      "emptyOverdue": "Tidak ada pembayaran terlambat.",
+      "emptyShort": "Tidak ada kekurangan.",
+      "emptyUpcoming": "Tidak ada pembayaran mendatang."
+    },
+    "short": {
+      "mailTitle": "Kekurangan pembayaran",
+      "mailDesc": "Email berisi pembayaran, jumlah yang diterima, sisa yang harus ditutup, dan saldo",
+      "none": "Klien ini tidak memiliki kekurangan."
+    },
+    "exp": {
+      "title": "Pengeluaran",
+      "subtitle": "Pembayaran ke kontraktor dan untuk tanah",
+      "add": "Pengeluaran baru",
+      "edit": "Edit pengeluaran",
+      "delete": "Hapus",
+      "confirmDelete": "Hapus pengeluaran ini?",
+      "kind": "Jenis",
+      "kind_constructor": "Kontraktor",
+      "kind_terreno": "Tanah",
+      "kind_otro": "Lainnya",
+      "allKinds": "Semua jenis",
+      "project": "Proyek",
+      "contact": "Pemasok (Kontak)",
+      "payee": "Pemasok",
+      "payeeFree": "Pemasok (teks bebas)",
+      "concept": "Keterangan",
+      "amount": "Jumlah",
+      "currency": "Mata uang",
+      "dueDate": "Jatuh tempo",
+      "paidDate": "Tanggal bayar",
+      "paidOn": "dibayar {{date}}",
+      "st_pendiente": "Belum dibayar",
+      "st_pagado": "Lunas",
+      "st_vencido": "Jatuh tempo lewat",
+      "notes": "Catatan",
+      "attachment": "Lampiran",
+      "totPending": "Belum dibayar",
+      "totOverdue": "Lewat jatuh tempo",
+      "totPaid": "Lunas",
+      "searchPh": "Cari keterangan, pemasok, proyek…",
+      "empty": "Belum ada pengeluaran.",
+      "fillRequired": "Isi keterangan, jumlah, dan mata uang.",
+      "errorSave": "Gagal menyimpan: {{error}}",
+      "errorLoad": "Gagal memuat pengeluaran: {{error}}"
+    }
   }
 }

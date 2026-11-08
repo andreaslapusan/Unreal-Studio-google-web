@@ -76,6 +76,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
     { key: 'dashboard', icon: 'dashboard', label: t('admin.nav.dashboard', 'Dashboard'), to: '/admin?view=dashboard', view: 'dashboard' },
     { key: 'notifications', icon: 'notifications', label: t('admin.nav.notifications', 'Notificaciones'), to: '/admin?view=notifications', view: 'notifications' },
     { key: 'cobros', icon: 'payments', label: t('admin.nav.cobros'), to: '/admin?view=cobros', view: 'cobros' },
+    { key: 'gastos', icon: 'receipt_long', label: t('admin.nav.gastos'), to: '/admin?view=gastos', view: 'gastos' },
     { key: 'projects', icon: 'home_work', label: t('admin.nav.projects'), to: '/admin?view=projects', view: 'projects' },
     { key: 'intakes', icon: 'add_home_work', label: t('admin.nav.intakes', 'Enlaces de listing'), to: '/admin?view=intakes', view: 'intakes' },
     { key: 'agenda', icon: 'calendar_month', label: t('admin.nav.agenda', 'Calendario'), to: '/admin?view=agenda', view: 'agenda' },

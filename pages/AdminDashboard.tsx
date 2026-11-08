@@ -20,11 +20,13 @@ import { translateStatus } from '../lib/statusI18n';
 import { EMPLOYEE_PERMISSIONS, hasPermission, DEMO_ADMIN_VIEWS } from '../lib/permissions';
 import { useAuth } from '../lib/auth-context';
 import EmployeeEditModal, { EmployeeRow } from '../components/admin/EmployeeEditModal';
-import ClientPaymentsPanel from '../components/admin/ClientPaymentsPanel';
+import ClientPaymentsPanel, { creditedOf } from '../components/admin/ClientPaymentsPanel';
 import EventsCalendar from '../components/admin/EventsCalendar';
 import PiDashboard from '../components/admin/PiDashboard';
 import AsyncButton from '../components/AsyncButton';
 import CobrosPanel from '../components/admin/CobrosPanel';
+import FinanceControlPanel from '../components/admin/FinanceControlPanel';
+import ExpensesPanel from '../components/admin/ExpensesPanel';
 import NotificationsPanel from '../components/admin/NotificationsPanel';
 import VacationManager from '../components/admin/VacationManager';
 import AttendancePanel from '../components/admin/AttendancePanel';
@@ -45,8 +47,8 @@ import i18n, { preloadAllLocales } from '../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines' | 'pi';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura', 'pi'];
+type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'gastos' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines' | 'pi';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'gastos', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura', 'pi'];
 
 // Titulares que PARTICIPAN en una propiedad concreta (+ % opcional). Si la
 // propiedad no tiene participantes definidos (null/[]), participan TODOS los
@@ -242,6 +244,7 @@ const AMENITIES_LIST = [
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0, participants: [] });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [mailClient, setMailClient] = useState<Client | null>(null);
+  const [finTab, setFinTab] = useState<'control' | 'history'>('control');
   const [mailEmployee, setMailEmployee] = useState<any | null>(null);
   const [mailBusy, setMailBusy] = useState(false);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
@@ -410,6 +413,7 @@ const AMENITIES_LIST = [
     { key: 'dashboard', view: 'dashboard' },
     { key: 'notifications', view: 'notifications' },
     { key: 'cobros', view: 'cobros' },
+    { key: 'gastos', view: 'gastos' },
     { key: 'projects', view: 'projects' },
     { key: 'intakes', view: 'intakes' },
     { key: 'agenda', view: 'agenda' },
@@ -1685,21 +1689,28 @@ const sendReportEmail = async (client: Client) => {
 
 // Envía al cliente un email con su CALENDARIO DE PAGOS completo (tabla por unidad:
 // concepto, fecha límite, importe, recibido, balance + totales), en su idioma.
-const sendCalendarEmail = async (client: Client) => {
+// mode 'shortfall' = plantilla MANUAL de DESCUADRE: solo las unidades con pagos marcados como
+// recibidos por menos de lo previsto (acreditado = neto + comisión bancaria), con el importe a
+// cubrir y el saldo. Mismo flujo de vista previa + confirmación + envío manual.
+const sendCalendarEmail = async (client: Client, mode: 'calendar' | 'shortfall' = 'calendar') => {
   if (blockIfNotActive(client)) return;
   const email = (client.email || '').trim();
   if (!email) { alert(t('admin.dash.welcomeNoEmail')); return; }
   const userId = getAdminUserId();
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const { data } = await supabase.rpc('admin_list_client_payments', { p_user_id: userId, p_client_id: client.id });
-  const units: any[] = data?.success ? (data.units || []) : [];
-  if (!units.length) { alert(t('admin.dash.reportNoProjects')); return; }
+  const allUnits: any[] = data?.success ? (data.units || []) : [];
+  if (!allUnits.length) { alert(t('admin.dash.reportNoProjects')); return; }
+  const shortOf = (u: any) => (u.payments || []).filter((p: any) => p.received).reduce((s: number, p: any) => s + Number(p.amount) - creditedOf(p), 0);
+  const units = mode === 'shortfall' ? allUnits.filter((u) => shortOf(u) > 0.009) : allUnits;
+  if (!units.length) { alert(t('fin.short.none')); return; }
+  const K = mode === 'shortfall' ? 'emails.shortfall' : 'emails.calendar'; // textos propios; columnas compartidas
   const lang = clientLangOf(client);
   const et = i18n.getFixedT(lang);
   const BROWN = '#3F2305';
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${Math.round(n)}`; } };
   const fmtd = (s: string | null) => s ? new Date(s + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
-  const recv = (p: any) => p.received_amount != null ? p.received_amount : (p.received ? p.amount : 0);
+  const recv = (p: any) => creditedOf(p); // acreditado al cliente (neto + comisión que asume Unreal)
   const th = `style="text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:rgba(63,35,5,.5);padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.15);white-space:nowrap"`;
   const td = `style="font-size:12px;color:${BROWN};padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap"`;
   const h1 = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${et('emails.calendar.subject')}</h1>`;
@@ -1725,6 +1736,12 @@ const sendCalendarEmail = async (client: Client) => {
         tables += `<tr><td ${td}>${p.label || ''}</td><td ${td}>${fmtd(p.due_date)}</td><td ${td}>${money(p.amount, u.currency)}</td><td ${td}>${money(r, u.currency)}</td><td ${td}>${p.received ? fmtPaid(p.paid_at) : '—'}</td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:700;color:${balCol}">${money(bal, u.currency)}</td></tr>`; }
       const tBalCol = (tA - tR) > 0 ? '#c0392b' : '#15803d';
       tables += `<tr><td ${td}><b>${tt('emails.calendar.total')}</b></td><td ${td}></td><td ${td}><b>${money(tA, u.currency)}</b></td><td ${td}><b>${money(tR, u.currency)}</b></td><td ${td}></td><td style="font-size:12px;padding:4px 8px;border-bottom:1px solid rgba(63,35,5,.08);white-space:nowrap;font-weight:800;color:${tBalCol}"><b>${money(tA - tR, u.currency)}</b></td></tr></table></div>`;
+      if (mode === 'shortfall') {
+        const fees = (u.payments || []).reduce((s: number, p: any) => s + (p.received ? Number(p.bank_fee || 0) : 0), 0);
+        const row = (k: string, v: string, col = BROWN) => `<p style="font-size:13px;line-height:1.6;margin:2px 0;color:${col}">${tt(k)}: <b>${v}</b></p>`;
+        tables += row('emails.shortfall.toCover', money(shortOf(u), u.currency), '#c0392b') + row('emails.shortfall.balance', money(tA - tR, u.currency))
+          + (fees > 0 ? row('emails.shortfall.feesCovered', money(fees, u.currency), 'rgba(63,35,5,.6)') : '');
+      }
     }
     return tables;
   };
@@ -1732,10 +1749,11 @@ const sendCalendarEmail = async (client: Client) => {
   // numérica; sus cabeceras quedan en el idioma de la ficha).
   const buildHtml = (em: string) => {
     const lg = holderLangByEmail(client, em); const e2 = i18n.getFixedT(lg);
-    const h1b = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${e2('emails.calendar.subject')}</h1>`;
-    const introb = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${e2('emails.calendar.intro')}</p>`;
+    const h1b = `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:700;margin:0 0 12px;color:${BROWN}">${e2(K + '.subject')}</h1>`;
+    const introb = `<p style="font-size:14px;line-height:1.6;margin:0 0 14px;color:rgba(63,35,5,.8)">${e2(K + '.intro')}</p>`;
     const ctab = `<p style="text-align:center;margin:20px 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.calendar.cta')}</a></p>`;
-    return h1b + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + introb + tablesFor(em, e2) + ctab;
+    const outro = mode === 'shortfall' ? `<p style="font-size:14px;line-height:1.6;margin:14px 0 0;color:rgba(63,35,5,.8)">${e2('emails.shortfall.outro')}</p>` : '';
+    return h1b + `<p style="font-size:15px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.calendar.hi', { name: holderNameByEmail(client, em) })}</p>` + introb + tablesFor(em, e2) + outro + ctab;
   };
   // Destinatarios = unión de participantes de todas las unidades (cada uno recibe
   // SOLO sus unidades). Un titular que no participa en ninguna no recibe nada.
@@ -1746,7 +1764,7 @@ const sendCalendarEmail = async (client: Client) => {
   })();
   // Preview antes de enviar (el envío real es el botón "Enviar" del pop-up). Cada
   // titular recibe un correo SEPARADO con su nombre.
-  openEmailPreview({ to: calRecipients, subject: et('emails.calendar.subject'), html: buildHtml(calRecipients[0] || email), sentMsg: (ems) => t('admin.dash.calendarSent', { email: ems.join(', ') }), userId, lang, buildHtml, buildSubject: (em) => i18n.getFixedT(holderLangByEmail(client, em))('emails.calendar.subject') });
+  openEmailPreview({ to: calRecipients, subject: et(K + '.subject'), html: buildHtml(calRecipients[0] || email), sentMsg: (ems) => t('admin.dash.calendarSent', { email: ems.join(', ') }), userId, lang, buildHtml, buildSubject: (em) => i18n.getFixedT(holderLangByEmail(client, em))(K + '.subject') });
 };
 
 // Plantillas Deseo/proyecto (amueblado + extensión, aviso notarización): MISMO flujo que el resto de
@@ -2125,13 +2143,30 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
 
         {activeView === 'notifications' && <NotificationsPanel />}
         {activeView === 'cobros' && (
-          <CobrosPanel
-            adminUserId={getAdminUserId()}
-            displayCurrency={currency}
-            rates={(config as any).exchangeRates}
-            onOpenPayments={(r) => { setPaymentsFilter({ name: r.project_name || '', unit: r.unit_number ?? null }); setPaymentsClient({ id: r.client_id, name: r.client_name, email: r.client_email } as any); }}
-          />
+          <>
+            {/* Finanzas: Control (retrasos/descuadres/próximos) + el historial de siempre (CobrosPanel, sin cambios). */}
+            <div className="flex gap-2 mb-5">
+              {(['control', 'history'] as const).map((k) => (
+                <button key={k} onClick={() => setFinTab(k)} className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition ${finTab === k ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-primary/60 hover:text-primary'}`}>{t(k === 'control' ? 'fin.ctl.tab' : 'fin.ctl.tabHistory')}</button>
+              ))}
+            </div>
+            {finTab === 'control' ? (
+              <FinanceControlPanel
+                adminUserId={getAdminUserId()}
+                onOpenPayments={(r) => { setPaymentsFilter({ name: r.project_name || '', unit: r.unit_number ?? null }); setPaymentsClient({ id: r.client_id, name: r.client_name, email: r.client_email } as any); }}
+                onShortfallEmail={(clientId) => { const c = clients.find((x) => x.id === clientId); if (c) void sendCalendarEmail(c, 'shortfall'); }}
+              />
+            ) : (
+              <CobrosPanel
+                adminUserId={getAdminUserId()}
+                displayCurrency={currency}
+                rates={(config as any).exchangeRates}
+                onOpenPayments={(r) => { setPaymentsFilter({ name: r.project_name || '', unit: r.unit_number ?? null }); setPaymentsClient({ id: r.client_id, name: r.client_name, email: r.client_email } as any); }}
+              />
+            )}
+          </>
         )}
+        {activeView === 'gastos' && <ExpensesPanel />}
 
         {activeView === 'faqs' && (
           <div className="animate-in fade-in duration-500">
@@ -4002,6 +4037,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           { icon: 'event', titleKey: 'admin.dash.mailReminder', descKey: 'admin.dash.mailReminderDesc', run: () => sendReminderEmail(mailClient) },
           { icon: 'description', titleKey: 'admin.dash.mailReport', descKey: 'admin.dash.mailReportDesc', run: () => sendReportEmail(mailClient) },
           { icon: 'event_note', titleKey: 'admin.dash.mailCalendar', descKey: 'admin.dash.mailCalendarDesc', run: () => sendCalendarEmail(mailClient) },
+          { icon: 'rule', titleKey: 'fin.short.mailTitle', descKey: 'fin.short.mailDesc', run: () => sendCalendarEmail(mailClient, 'shortfall') },
         ].map((m, idx) => (
           <button key={idx} disabled={mailBusy} onClick={() => { void (async () => { setMailBusy(true); try { await m.run(); } finally { setMailBusy(false); } })(); }} className="w-full text-left bg-gray-50 hover:bg-almond rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition border border-gray-100 hover:border-primary/20 flex items-center gap-3 sm:gap-4 disabled:opacity-60">
             <span className="material-symbols-outlined text-primary shrink-0">{m.icon}</span>

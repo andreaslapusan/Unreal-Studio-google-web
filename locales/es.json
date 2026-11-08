@@ -625,7 +625,8 @@
       "agencyPacks": "Packs Agencia",
       "arquitectura": "Arquitectura",
       "agenda": "Calendario",
-      "intakes": "Enlaces de listing"
+      "intakes": "Enlaces de listing",
+      "gastos": "Gastos"
     },
     "clientLogin": {
       "title": "Portal Inversor",
@@ -2741,6 +2742,14 @@
       "total": "Total",
       "cta": "Ver en mi portal",
       "colReceivedDate": "Recibido el"
+    },
+    "shortfall": {
+      "subject": "Resumen de pagos pendientes",
+      "intro": "Revisando su calendario de pagos hemos visto que algún pago nos llegó por un importe menor del previsto. Abajo tiene el detalle: lo previsto, lo recibido y la diferencia pendiente.",
+      "toCover": "Importe pendiente por la diferencia",
+      "balance": "Saldo pendiente total (incluye pagos futuros)",
+      "feesCovered": "Comisiones bancarias asumidas por Unreal Studio (ya abonadas a su favor)",
+      "outro": "Cuando le venga bien, puede completar la diferencia con su próxima transferencia o por separado. Si cree que hay algún error, responda a este correo y lo revisamos."
     }
   },
   "cobros": {
@@ -3218,5 +3227,73 @@
     "denied": "No tienes acceso a este reporte.",
     "goPortal": "Ir a mi portal",
     "adminSaveFirst": "Guarda primero el proyecto y vuelve a subir el reporte."
+  },
+  "fin": {
+    "fee": {
+      "button": "Comisión bancaria",
+      "short": "comisión {{amount}}",
+      "credited": "acreditado al cliente: {{amount}}",
+      "feesTotal": "Comisiones {{amount}}",
+      "netLabel": "Llegó al banco (neto)",
+      "feeLabel": "Comisión bancaria",
+      "hint": "La comisión la asume Unreal: el cliente queda acreditado por lo que llegó + la comisión. El cliente no la ve. Si no la apuntas, la diferencia queda como descuadre del cliente.",
+      "kpiFees": "Comisiones bancarias",
+      "kpiNet": "neto {{amount}}"
+    },
+    "ctl": {
+      "tab": "Control",
+      "tabHistory": "Historial",
+      "title": "Control de cobros",
+      "overdue": "Retrasados",
+      "shortfalls": "Descuadres",
+      "upcoming": "Próximos",
+      "colPending": "Pendiente",
+      "colShort": "Falta",
+      "received": "recibido {{amount}}",
+      "emptyOverdue": "No hay pagos retrasados.",
+      "emptyShort": "No hay descuadres.",
+      "emptyUpcoming": "No hay pagos futuros."
+    },
+    "short": {
+      "mailTitle": "Descuadre de pagos",
+      "mailDesc": "Correo con los pagos, lo recibido, lo que falta por cubrir y el saldo",
+      "none": "Este cliente no tiene descuadres."
+    },
+    "exp": {
+      "title": "Gastos",
+      "subtitle": "Pagos a constructores y por terrenos",
+      "add": "Nuevo gasto",
+      "edit": "Editar gasto",
+      "delete": "Borrar",
+      "confirmDelete": "¿Borrar este gasto?",
+      "kind": "Tipo",
+      "kind_constructor": "Constructor",
+      "kind_terreno": "Terreno",
+      "kind_otro": "Otro",
+      "allKinds": "Todos los tipos",
+      "project": "Proyecto",
+      "contact": "Proveedor (Contactos)",
+      "payee": "Proveedor",
+      "payeeFree": "Proveedor (texto libre)",
+      "concept": "Concepto",
+      "amount": "Importe",
+      "currency": "Divisa",
+      "dueDate": "Fecha límite",
+      "paidDate": "Fecha de pago",
+      "paidOn": "pagado el {{date}}",
+      "st_pendiente": "Pendiente",
+      "st_pagado": "Pagado",
+      "st_vencido": "Vencido",
+      "notes": "Notas",
+      "attachment": "Adjunto",
+      "totPending": "Pendiente",
+      "totOverdue": "Vencido",
+      "totPaid": "Pagado",
+      "searchPh": "Buscar concepto, proveedor, proyecto…",
+      "empty": "Aún no hay gastos.",
+      "fillRequired": "Rellena concepto, importe y divisa.",
+      "errorSave": "No se pudo guardar: {{error}}",
+      "errorLoad": "No se pudieron cargar los gastos: {{error}}"
+    }
   }
 }

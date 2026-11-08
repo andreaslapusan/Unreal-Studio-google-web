@@ -625,7 +625,8 @@
       "agencyPacks": "Pachete Agenție",
       "arquitectura": "Arhitectură",
       "agenda": "Calendar",
-      "intakes": "Linkuri de listare"
+      "intakes": "Linkuri de listare",
+      "gastos": "Cheltuieli"
     },
     "clientLogin": {
       "title": "Portal Investitor",
@@ -2750,6 +2751,14 @@
       "total": "Total",
       "cta": "Vizualizează în portalul meu",
       "colReceivedDate": "Primit la"
+    },
+    "shortfall": {
+      "subject": "Rezumatul plăților restante",
+      "intro": "Revizuind calendarul dumneavoastră de plăți am observat că o plată ne-a parvenit cu o sumă mai mică decât cea prevăzută. Mai jos găsiți detaliile: suma prevăzută, suma primită și diferența rămasă.",
+      "toCover": "Sumă restantă din diferență",
+      "balance": "Sold total restant (include plățile viitoare)",
+      "feesCovered": "Comisioane bancare suportate de Unreal Studio (deja creditate în favoarea dumneavoastră)",
+      "outro": "Când vă este convenabil, puteți achita diferența odată cu următorul transfer sau separat. Dacă credeți că există o eroare, răspundeți la acest e-mail și o verificăm."
     }
   },
   "cobros": {
@@ -3236,5 +3245,73 @@
     "denied": "Nu ai acces la acest raport.",
     "goPortal": "Mergi la portalul meu",
     "adminSaveFirst": "Salvează mai întâi proiectul, apoi încarcă din nou raportul."
+  },
+  "fin": {
+    "fee": {
+      "button": "Comision bancar",
+      "short": "comision {{amount}}",
+      "credited": "creditat clientului: {{amount}}",
+      "feesTotal": "Comisioane {{amount}}",
+      "netLabel": "Sosit în bancă (net)",
+      "feeLabel": "Comision bancar",
+      "hint": "Comisionul este suportat de Unreal: clientul este creditat cu suma sosită + comisionul. Clientul nu îl vede. Dacă nu îl completezi, diferența rămâne ca lipsă a clientului.",
+      "kpiFees": "Comisioane bancare",
+      "kpiNet": "net {{amount}}"
+    },
+    "ctl": {
+      "tab": "Control",
+      "tabHistory": "Istoric",
+      "title": "Controlul încasărilor",
+      "overdue": "Întârziate",
+      "shortfalls": "Diferențe",
+      "upcoming": "Următoare",
+      "colPending": "De încasat",
+      "colShort": "Lipsă",
+      "received": "primit {{amount}}",
+      "emptyOverdue": "Nu există plăți întârziate.",
+      "emptyShort": "Nu există diferențe.",
+      "emptyUpcoming": "Nu există plăți viitoare."
+    },
+    "short": {
+      "mailTitle": "Diferență la plăți",
+      "mailDesc": "E-mail cu plățile, sumele primite, ce rămâne de acoperit și soldul",
+      "none": "Acest client nu are diferențe."
+    },
+    "exp": {
+      "title": "Cheltuieli",
+      "subtitle": "Plăți către constructori și pentru terenuri",
+      "add": "Cheltuială nouă",
+      "edit": "Editează cheltuiala",
+      "delete": "Șterge",
+      "confirmDelete": "Ștergi această cheltuială?",
+      "kind": "Tip",
+      "kind_constructor": "Constructor",
+      "kind_terreno": "Teren",
+      "kind_otro": "Altele",
+      "allKinds": "Toate tipurile",
+      "project": "Proiect",
+      "contact": "Furnizor (Contacte)",
+      "payee": "Furnizor",
+      "payeeFree": "Furnizor (text liber)",
+      "concept": "Descriere",
+      "amount": "Sumă",
+      "currency": "Monedă",
+      "dueDate": "Termen limită",
+      "paidDate": "Data plății",
+      "paidOn": "plătit pe {{date}}",
+      "st_pendiente": "De plătit",
+      "st_pagado": "Plătit",
+      "st_vencido": "Restant",
+      "notes": "Note",
+      "attachment": "Atașament",
+      "totPending": "De plătit",
+      "totOverdue": "Restant",
+      "totPaid": "Plătit",
+      "searchPh": "Caută descriere, furnizor, proiect…",
+      "empty": "Încă nu există cheltuieli.",
+      "fillRequired": "Completează descrierea, suma și moneda.",
+      "errorSave": "Nu s-a putut salva: {{error}}",
+      "errorLoad": "Nu s-au putut încărca cheltuielile: {{error}}"
+    }
   }
 }
