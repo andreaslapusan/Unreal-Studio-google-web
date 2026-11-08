@@ -5,7 +5,7 @@
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { isNativeApp, initNativeApp, nativeOverlayOpen } from '../lib/nativeApp.ts';
+import { isNativeApp, initNativeApp, nativeOverlayOpen, isDarkColor } from '../lib/nativeApp.ts';
 import { geoLanguageDetector } from '../lib/geoLanguageDetector.ts';
 
 const g = globalThis as any;
@@ -55,6 +55,10 @@ assert.deepStrictEqual(calls.splice(0), ['x', 'backdrop', 'back', 'min']);
 const submit = { target: { closest: () => ({}) } };
 on.click(submit); on.click(submit); on.click({ target: { closest: () => null } });
 assert.deepStrictEqual(calls, ['hap']);
+
+// Barra de estado: iconos claros (DARK) sobre cabeceras oscuras (marrón del admin), oscuros sobre blanco/crema.
+assert.ok(isDarkColor('rgb(63, 35, 5)') && isDarkColor('rgba(0, 0, 0, 0.5)'));
+assert.ok(!isDarkColor('rgb(255, 255, 255)') && !isDarkColor('rgb(243, 229, 216)') && !isDarkColor('rgb(249, 250, 251)'));
 
 // Idioma: ?lang → prefijo de ruta → elección guardada → (solo app) idioma del móvil → país por IP.
 const lang = async ({ Capacitor, languages = ['ro-RO'], path = '/cliente', search = '', stored = null as string | null }: Record<string, any>) => {

@@ -137,3 +137,34 @@ select {
    pulsación larga en controles/enlaces (como una app); texto de lectura y campos siguen seleccionables. */
 html.native-app :is(button, [role="button"], a, nav, header, label) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 html.native-app :is(input, textarea, [contenteditable="true"]) { -webkit-user-select: text; user-select: text; }
+
+/* App nativa, pantalla completa (sin franjas crema, 08-nov-2026): la WebView ocupa toda la pantalla y la web se aparta
+   de la barra de estado y del indicador de inicio. iOS da env(safe-area-inset-*); Android las inyecta MainActivity en
+   --safe-area-inset-* (las WebView viejas no dan env()). La franja de la barra de estado se pinta con el color de la
+   cabecera (--native-bar, lo pone lib/nativeApp.ts). Solo html.native-app: navegador y PWA no cambian. */
+html.native-app {
+  --sat: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --sab: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --sal: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --sar: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+}
+html.native-app body { padding: var(--sat) var(--sar) var(--sab) var(--sal); background-color: var(--native-page, #f3e5d8); }
+html.native-app body::before {
+  content: ''; position: fixed; z-index: 50; top: 0; left: 0; right: 0; height: var(--sat);
+  background: var(--native-bar, #f3e5d8); pointer-events: none;
+}
+/* Cabeceras sticky que de verdad se pegan a la pantalla (las marca lib/nativeApp.ts): justo debajo de la barra de estado. */
+html.native-app .native-pin { top: var(--sat); }
+html.native-app .fixed[class*="top-"]:not(.inset-0) { margin-top: var(--sat); }
+html.native-app .fixed[class*="bottom-"]:not(.inset-0) { margin-bottom: var(--sab); }
+/* Pop-ups/menús a pantalla completa: el fondo oscuro llega al borde (el borde transparente lo deja ver) y el contenido
+   queda entre las barras, sin tocar el padding de cada pop-up. */
+html.native-app .fixed.inset-0 { border-top: var(--sat) solid transparent; border-bottom: var(--sab) solid transparent; }
+@media (max-width: 639px) {
+  html.native-app .fixed.inset-0:is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.modal-keep) > div {
+    height: calc(100dvh - var(--sat) - var(--sab));
+    max-height: calc(100dvh - var(--sat) - var(--sab)) !important;
+  }
+}
+/* Ya se aparta el body: el padding env() en línea (pensado para la PWA) sobraría dentro de la app. */
+html.native-app [style*="safe-area-inset-top"] { padding-top: 0 !important; }
