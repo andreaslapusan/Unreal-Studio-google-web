@@ -244,7 +244,7 @@ const AMENITIES_LIST = [
   const [assignForm, setAssignForm] = useState({ project_id: '', unit_number: '', investment_amount: 0, currency: 'EUR', purchase_date: '', status: 'Reserva', investment_type: 'compra', pool_total: 0, participants: [] });
   const [whatsappClient, setWhatsappClient] = useState<Client | null>(null);
   const [mailClient, setMailClient] = useState<Client | null>(null);
-  const [finTab, setFinTab] = useState<'control' | 'history'>('control');
+  const [finTab, setFinTab] = useState<'control' | 'history'>('history'); // Andreas 9-nov: el resumen (divisas, total, valor de mercado, por cobrar) es lo primero que ve
   const [mailEmployee, setMailEmployee] = useState<any | null>(null);
   const [mailBusy, setMailBusy] = useState(false);
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
@@ -2166,7 +2166,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <>
             {/* Finanzas: Control (retrasos/descuadres/próximos) + el historial de siempre (CobrosPanel, sin cambios). */}
             <div className="flex gap-2 mb-5">
-              {(['control', 'history'] as const).map((k) => (
+              {(['history', 'control'] as const).map((k) => (
                 <button key={k} onClick={() => setFinTab(k)} className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition ${finTab === k ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-primary/60 hover:text-primary'}`}>{t(k === 'control' ? 'fin.ctl.tab' : 'fin.ctl.tabHistory')}</button>
               ))}
             </div>
