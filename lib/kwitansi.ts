@@ -197,7 +197,7 @@ function fmtDate(iso: string | undefined, lang: string): string {
   catch { return iso; }
 }
 
-const esc = (s: string) =>
+export const esc = (s: string) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 
 const LABELS: Record<string, { title: string; no: string; from: string; amount: string; concept: string; due: string }> = {

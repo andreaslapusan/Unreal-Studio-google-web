@@ -11,6 +11,7 @@ import { uiLocale } from '../../lib/dateLocale';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { baliDate, baliTime, baliToday } from '../../lib/timezone';
+import { esc } from '../../lib/kwitansi'; // employee_name comes from the employee's own attendance insert
 
 interface Row { id: string; employee_email: string; employee_name: string; type: string; ts: string; latitude: number | null; longitude: number | null; photo_path: string | null; }
 interface Emp { email: string; name: string; work_start_time: string | null; work_end_time: string | null; }
@@ -124,7 +125,7 @@ const AttendancePanel: React.FC = () => {
       const head = `<tr style="background:#3F2305;color:#fff"><th>${t('fix.att.employee')}</th><th>${t('fix.att.date')}</th>${COLS.map((k) => `<th>${t(`fix.att.col_${k}`)}</th>`).join('')}<th>${t('fix.att.total')}</th><th>${t('fix.att.diff')}</th></tr>`;
       const body = dayRows.map((d) => {
         const w = worked(d); const asg = schedule[d.email]; const diff = (w != null && asg != null) ? w - asg : null;
-        return `<tr><td><b>${d.name}</b><br><span style="font-size:10px;color:#888">${d.email}</span></td><td>${fmtDay(d.day)}</td>` +
+        return `<tr><td><b>${esc(d.name)}</b><br><span style="font-size:10px;color:#888">${esc(d.email)}</span></td><td>${fmtDay(d.day)}</td>` +
           COLS.map((k) => `<td style="text-align:center">${cellHtml(d[k] as Ev | undefined)}</td>`).join('') +
           `<td style="text-align:center"><b>${w != null ? hm(w) : '—'}</b></td><td style="text-align:center;color:${diff != null && diff < 0 ? '#c00' : '#070'}">${diff != null ? hm(diff) : '—'}</td></tr>`;
       }).join('');

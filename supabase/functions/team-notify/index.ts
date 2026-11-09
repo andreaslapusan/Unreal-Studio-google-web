@@ -30,6 +30,10 @@ interface TimeOffEvent {
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+  // Shared secret like notify-report (fail closed). NOT deployed since 23-oct; if redeployed, set
+  // TEAM_NOTIFY_SECRET and make notify_time_off_request() send it (Vault) in x-notify-secret.
+  const SECRET = Deno.env.get("TEAM_NOTIFY_SECRET") ?? "";
+  if (!SECRET || req.headers.get("x-notify-secret") !== SECRET) return new Response("Unauthorized", { status: 401 });
 
   let payload: TimeOffEvent;
   try {
