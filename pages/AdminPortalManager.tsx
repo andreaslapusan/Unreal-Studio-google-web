@@ -1141,6 +1141,14 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
 
   const totalPct = phases.reduce((sum, p) => sum + (Number(p.payment_pct) || 0), 0);
 
+  // projects no tiene política RLS de UPDATE: un .update() directo devolvía 0 filas sin error.
+  // Se guarda por la RPC admin (sesión validada en el servidor); p_user_id lo ignora.
+  const saveTimeline = async (tl: unknown[]) => {
+    const { data, error } = await supabase.rpc("admin_save_project_extra", { p_user_id: "", p_project: { id: project.id, timeline: tl } });
+    if (error) throw error;
+    if (!data?.success) throw new Error(data?.error || t('admin.dash.saveProjectError'));
+  };
+
   const save = async () => {
     setSaving(true);
     setErr("");
@@ -1154,11 +1162,7 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
           description: p.description?.trim() || undefined,
           status: p.status,
         }));
-      const { error } = await supabase
-        .from("projects")
-        .update({ timeline: cleaned.length > 0 ? cleaned : null })
-        .eq("id", project.id);
-      if (error) throw error;
+      await saveTimeline(cleaned);
       await onSaved();
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
@@ -1170,9 +1174,12 @@ function TimelineEditor({ project, onClose, onSaved }: { project: ProjectRow; on
   const clearAll = async () => {
     if (!confirm(t('fix.apm.confirmClearTimeline', { name: project.name }))) return;
     setSaving(true);
+    setErr("");
     try {
-      await supabase.from("projects").update({ timeline: null }).eq("id", project.id);
+      await saveTimeline([]);
       await onSaved();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
     } finally {
       setSaving(false);
     }

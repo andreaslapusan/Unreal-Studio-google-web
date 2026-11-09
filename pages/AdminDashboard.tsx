@@ -1076,14 +1076,16 @@ const AMENITIES_LIST = [
         // Campos extra (agencia / legal / drive / vídeo) que admin_save_project no
         // cubre, vía RPC additiva. (Se quita el viejo raw update de is_hidden: la RLS
         // lo denegaba y admin_save_project ya persiste is_hidden.)
-        await supabase.rpc('admin_save_project_extra', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
+        // También persiste timeline si viene como array (si no, lo deja igual). Se quitó el
+        // .update() directo a projects: sin política RLS de UPDATE era un no-op silencioso.
+        const { data: extra, error: extraErr } = await supabase.rpc('admin_save_project_extra', {
+          p_user_id: userId,
+          p_project: { ...projectData, id: savedId }
+        });
+        if (extraErr) throw extraErr;
+        if (!extra?.success) throw new Error(extra?.error || 'admin_save_project_extra failed');
         // Traducciones EN/ID de los campos de ficha (para packs de agencia multilingües).
         await supabase.rpc('admin_save_project_i18n', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
-        // Hitos/timeline del proyecto (gestión interna, oculto en web).
-        if (savedId) {
-          const tl = (projectData as any).timeline;
-          await supabase.from('projects').update({ timeline: Array.isArray(tl) && tl.length ? tl : null }).eq('id', savedId);
-        }
         // Coste del proyecto (tabla privada admin-only; nunca toca la web pública).
         if (savedId) {
           const costNum = editCost === '' ? null : Number(editCost);
