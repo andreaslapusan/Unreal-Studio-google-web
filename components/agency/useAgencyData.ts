@@ -58,7 +58,7 @@ interface WebProject extends ProjectInfo {
   is_hidden: boolean | null;
   visibility_status: string | null;
 }
-const WEB_COLS = 'id, slug, name, image, investor_price, price_currency, bedrooms, completion_date, is_hidden, visibility_status, status, location, completion_percent, updated_at, construction_update_url, construction_update_date, brochure_url, brochures, drive_renders_url, drive_2d_plans_url, drive_brochure_folder_url, video_url, walkthrough_url, tenure, years_contract';
+const WEB_COLS = 'id, slug, name, image, investor_price, price_currency, bedrooms, completion_date, is_hidden, visibility_status, status, location, completion_percent, updated_at, construction_update_url, construction_update_date, brochure_url, brochures, drive_renders_url, drive_2d_plans_url, drive_brochure_folder_url, video_url, walkthrough_url, tenure, years_contract, sort_order'; // sort_order: PostgREST 42703 if an rpc orders by a column not selected
 
 /** Misma regla que el catálogo público (pages/Projects.tsx): ni ocultas ni sold out. */
 export const isOnSaleOnWeb = (p: { is_hidden: boolean | null; visibility_status: string | null }) =>

@@ -455,7 +455,7 @@ const AMENITIES_LIST = [
   }, []);
   const [timelineProjects, setTimelineProjects] = useState<any[]>([]);
   const loadTimelineProjects = useCallback(async () => {
-    const { data } = await supabase.rpc('staff_projects_list').select('id, slug, name, status, completion_percent, timeline').order('sort_order');
+    const { data } = await supabase.rpc('staff_projects_list').select('id, slug, name, status, completion_percent, timeline, sort_order').order('sort_order');
     setTimelineProjects(data ?? []);
   }, []);
   useEffect(() => {
