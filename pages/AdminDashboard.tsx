@@ -1085,7 +1085,12 @@ const AMENITIES_LIST = [
         if (extraErr) throw extraErr;
         if (!extra?.success) throw new Error(extra?.error || 'admin_save_project_extra failed');
         // Traducciones EN/ID de los campos de ficha (para packs de agencia multilingües).
-        await supabase.rpc('admin_save_project_i18n', { p_user_id: userId, p_project: { ...projectData, id: savedId } });
+        const { data: i18n, error: i18nErr } = await supabase.rpc('admin_save_project_i18n', {
+          p_user_id: userId,
+          p_project: { ...projectData, id: savedId }
+        });
+        if (i18nErr) throw i18nErr;
+        if (!i18n?.success) throw new Error(i18n?.error || 'admin_save_project_i18n failed');
         // Coste del proyecto (tabla privada admin-only; nunca toca la web pública).
         if (savedId) {
           const costNum = editCost === '' ? null : Number(editCost);

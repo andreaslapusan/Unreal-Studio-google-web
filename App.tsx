@@ -364,7 +364,7 @@ const App: React.FC = () => {
             <Route path="/admin/agencias" element={<ProtectedRoute><AdminShell><AdminAgencias /></AdminShell></ProtectedRoute>} />
             <Route path="/agencias/:slug" element={<AgencyPack />} />
             <Route path="/listing/:token" element={<ListingIntake />} />
-            <Route path="/demo" element={<Navigate to="/es" replace />} />
+            <Route path="/demo/*" element={<Navigate to="/es" replace />} />
             <Route path="/cliente" element={<Navigate to={portalPath('cliente')} replace />} />
             <Route path="/cliente/dashboard" element={<ClientDashboard />} />
 
