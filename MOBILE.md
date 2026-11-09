@@ -76,3 +76,11 @@ así no hace falta ningún iPhone registrado. Solo iPhone (`TARGETED_DEVICE_FAMI
   nada enviado).
 - Falta en dispositivo real: recibo "Descargar PDF" (Clientes) → vista previa / visor; folleto → Safari interno (iOS) /
   visor (Android); textos de permisos en el idioma del teléfono; "Grabar vídeo" en Equipo pide micrófono sin cerrarse.
+
+## 09-nov-2026 — Pantalla completa (sin franjas crema)
+- iOS: `contentInset: 'never'` + `StatusBar.overlaysWebView: true` → la WebView ocupa toda la pantalla.
+- Android: `EdgeToEdge.enable` (también < 15); `MainActivity` ya no aparta la WebView de las barras (solo del teclado) e
+  inyecta `--safe-area-inset-*` (px CSS) en cada página: las WebView < 140 no dan `env(safe-area-inset-*)`.
+- Web (v3.871, `34b229e`, solo `html.native-app`): la página se aparta de las barras, la franja de la barra de estado
+  toma el color de la cabecera y los iconos de estado se ponen claros/oscuros según ese color (`lib/nativeApp.ts`).
+- Builds: Android versionCode 4 ×4; iOS build 51 (Actions run 5) → TestFlight interno. Prueba: `~/jobs/apps/bin/edge-shots.mjs`.
