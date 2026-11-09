@@ -82,7 +82,7 @@
     "v1Body": "Biaya yang dikontrol melalui manajemen langsung",
     "v2Title": "Pemasaran yang efisien",
     "v2Body": "Harga yang disesuaikan dengan pasar",
-    "v3Title": "Plusvalía Langsung",
+    "v3Title": "Apresiasi Langsung",
     "v3Body": "Membeli dengan harga promotor. Anda mendapatkan perbedaan di pasar.",
     "metaDescription": "Pengembang properti di Bali dengan kantor di Madrid dan Bali. Vila dan apartemen di Uluwatu dan Canggu mulai {{price}}. Proyeksi ROI 15-28% per tahun. Beli dari jauh.",
     "profit": {
@@ -613,7 +613,7 @@
         "break_end": "Istirahat selesai, lanjutkan 💪",
         "check_out": "Keluar tercatat! Sampai jumpa lagi 👋",
         "check_in": "Pendaftaran masuk telah tercatat! Kerja bagus ",
-        "break_start": "Istirahat dimulai  Selamat menikmati!"
+        "break_start": "Istirahat dimulai 🍽️ Selamat menikmati!"
       },
       "label": {
         "check_in": "Masuk",
@@ -1078,7 +1078,7 @@
       "calcChipExt": "Ext: +{{years}} tahun",
       "calcChipExtra": "Tambahan: +{{years}} tahun",
       "calcExtraLeaseYears": "Tahun tambahan lease (opsional)",
-      "calcMaxLandAppreciation": "Apreciasi tanah maks.",
+      "calcMaxLandAppreciation": "Apresiasi tanah maks.",
       "calcOccupancy": "Okupansi",
       "calcRentalInflation": "Inflasi sewa",
       "calcOpex": "OPEX (% sewa)",
@@ -1100,7 +1100,7 @@
       "calcLandYear": "Tanah tahun {{year}} (apresiasi {{appr}}% x lease {{lease}}%)",
       "calcBuildingYear": "Gedung tahun {{year}} (konstan)",
       "calcDefaultsNote": "Nilai default: okupasi 80%, inflasi sewa 3%, OPEX 15%, apresiasi maksimum tanah 150%. Ubah ke mode Lanjutan untuk menyesuaikannya.",
-      "calcDisclaimer": "* Estimasi orientatif berdasarkan proyeksi. Sewa neto termasuk pengurangan untuk perawatan (2,5%) dan biaya operasional (OPEX {{opex}}%). Gedung mempertahankan nilainya tetapi mungkin memerlukan renovasi periodik yang tidak termasuk. Apreasiasi tanah mengikuti kurva logaritmik orientatif. Perbaruan/ekstensi lease dapat melibatkan biaya tambahan. Unreal Studio tidak bertanggung jawab atas fluktuasi suku bunga (FX) atau perubahan kondisi pasar. Rentabilitas masa lalu tidak menjamin hasil masa depan. Konsultasikan dengan penasihat Anda.",
+      "calcDisclaimer": "* Estimasi orientatif berdasarkan proyeksi. Sewa neto termasuk pengurangan untuk perawatan (2,5%) dan biaya operasional (OPEX {{opex}}%). Gedung mempertahankan nilainya tetapi mungkin memerlukan renovasi periodik yang tidak termasuk. Apresiasi tanah mengikuti kurva logaritmik orientatif. Perbaruan/ekstensi lease dapat melibatkan biaya tambahan. Unreal Studio tidak bertanggung jawab atas fluktuasi suku bunga (FX) atau perubahan kondisi pasar. Rentabilitas masa lalu tidak menjamin hasil masa depan. Konsultasikan dengan penasihat Anda.",
       "paybackMonths_one": "{{count}} bulan",
       "paybackMonths_other": "{{count}} bulan",
       "paybackOneYear": "1 tahun",
@@ -1555,7 +1555,7 @@
       "loadingSnapshot": "Memuat snapshot awal…"
     },
     "agc": {
-      "labelOwner": "Pemilik / titular",
+      "labelOwner": "Pemilik / pemegang hak",
       "labelLocation": "Lokasi",
       "labelGooglePin": "Google Pin",
       "labelStatus": "Status",
@@ -1615,7 +1615,7 @@
       "generateSendKwitansi": "Buat dan kirim Kwitansi",
       "editPayment": "Edit Pembayaran",
       "newPayment": "Pembayaran Baru",
-      "labelPlaceholder": "Label (mis. 2º plazo / Reserva)",
+      "labelPlaceholder": "Label (mis. Angsuran ke-2 / Reservasi)",
       "amountPlaceholder": "Jumlah",
       "dueDateLabel": "Tanggal Jatuh Tempo (terima)",
       "notesPlaceholder": "Catatan (opsional)",
@@ -2120,7 +2120,7 @@
   "booking": {
     "title": "Jadwalkan Panggilan Investasi Bali | Unreal Studio Bali",
     "heroTitle": "Reservasi panggilan dengan konsultan",
-    "heroSubtitle": "30 menit per videopanggilan dengan tim kami. Kami mengirimkan dossiers terbaru dari proyek yang paling sesuai dengan profil Anda.",
+    "heroSubtitle": "30 menit per panggilan video dengan tim kami. Kami mengirimkan dossiers terbaru dari proyek yang paling sesuai dengan profil Anda.",
     "altCta": "Jika Anda lebih suka, Anda juga bisa",
     "altCtaLink": "menulis kepada kami",
     "heroSubtitleWa": "Bicaralah langsung dengan tim kami melalui WhatsApp. Kami akan mengirimkan dosir terbaru dari proyek yang paling sesuai dengan profil Anda.",
@@ -2353,7 +2353,7 @@
       "activityWorkUpdate": "🏗️ Update pekerjaan",
       "activityListerAttribution": "🔗 Atribusi lister",
       "anonymous": "anonim",
-      "confirmApprove": "Konfirmasi aproval untuk {{name}}? Membuat baris di listing_partners dan mengirimkan magic link.",
+      "confirmApprove": "Konfirmasi persetujuan untuk {{name}}? Membuat baris di listing_partners dan mengirimkan magic link.",
       "approvedMagicLinkSent": "Disetujui + magic link dikirim",
       "errorPrefix": "Kesalahan: ",
       "confirmReject": "Tolak {{name}}?",
@@ -2516,7 +2516,7 @@
       "empty": "Belum ada proyek yang ditugaskan."
     },
     "pd": {
-      "wrongCredentials": "Kredential salah.",
+      "wrongCredentials": "Kredensial salah.",
       "connectionError": "Kesalahan koneksi.",
       "downloadBrochure": "Unduh Brosur",
       "investorAccess": "Akses Investor",
