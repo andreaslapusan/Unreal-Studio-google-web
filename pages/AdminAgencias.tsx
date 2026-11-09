@@ -143,8 +143,7 @@ const AdminAgencias: React.FC = () => {
     document.title = 'Admin · Pack Agencias';
     (async () => {
       const { data, error } = await supabase
-        .from('projects')
-        .select('*')
+        .rpc('staff_projects_list')
         .order('name');
       if (error) {
         setError(error.message);

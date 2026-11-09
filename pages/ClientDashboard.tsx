@@ -8,7 +8,7 @@ import { uiLocale } from '../lib/dateLocale';
 import { dateOnly, baliToday } from '../lib/timezone';
 import { brochureFor } from '../lib/brochure';
 import { useCurrency } from '../App';
-import { CURRENCIES } from '../constants';
+import { CURRENCIES, PUBLIC_PROJECT_COLS } from '../constants';
 import PortalHeader from '../components/PortalHeader';
 import { useLanguagePicked } from '../components/LanguageSwitcher';
 import ClientUnitsSection from '../components/ClientUnitsSection';
@@ -453,7 +453,7 @@ const ClientDashboard: React.FC = () => {
       }
 
       // Fetch all projects to ensure we have all fields (like URLs)
-      const { data: projectsData } = await supabase.from('projects').select('*');
+      const { data: projectsData } = await supabase.from('projects').select(PUBLIC_PROJECT_COLS);
       if (projectsData) {
           const projMap: Record<string, any> = {};
           projectsData.forEach((p: any) => projMap[p.id] = p);

@@ -48,7 +48,7 @@ const EquipoProperties: React.FC = () => {
   }, [user, authLoading, isStaff]);
 
   const loadProjects = async () => {
-    const { data } = await supabase.from('projects').select('*').order('sort_order', { ascending: true });
+    const { data } = await supabase.rpc('staff_projects_list').order('sort_order', { ascending: true });
     setProjects(data ?? []);
   };
   useEffect(() => { if (allowed) void loadProjects(); }, [allowed]);

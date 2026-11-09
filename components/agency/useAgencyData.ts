@@ -247,7 +247,7 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
         setPartner(p as PartnerRow);
         // Catálogo = proyectos de la web (misma tabla y regla que /proyectos) + su fila de properties por slug.
         const [pj, props, ev] = await Promise.all([
-          supabase.from('projects').select(WEB_COLS).order('sort_order', { ascending: true }),
+          supabase.rpc('agency_projects_list').select(WEB_COLS).order('sort_order', { ascending: true }),
           supabase.from('properties').select('id, slug, name, short_pitch, area, pct_progress, delivery_date, hero_image_url, brand_pdf_url, walkthrough_url, drone_video_url'),
           supabase.from('lead_attributions').select('id, property_slug, event_type, contact_email, created_at').eq('partner_id', p.id).order('created_at', { ascending: false }).limit(500),
           loadLeads(p.id),

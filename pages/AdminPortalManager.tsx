@@ -153,7 +153,7 @@ export default function AdminPortalManager() {
         supabase.from("property_updates").select("id, property_id, title, posted_by, posted_at, visibility").order("posted_at", { ascending: false }).limit(15),
         supabase.from("lead_attributions").select("id, partner_id, property_slug, event_type, contact_email, created_at").order("created_at", { ascending: false }).limit(15),
         supabase.from("faqs").select("id, question, answer, category, tags, project_filter, language, is_published, sort_order, source, updated_at").order("sort_order"),
-        supabase.from("projects").select("id, slug, name, status, completion_percent, timeline").order("sort_order"),
+        supabase.rpc("staff_projects_list").select("id, slug, name, status, completion_percent, timeline").order("sort_order"),
       ]);
       setProperties((p.data ?? []) as Property[]);
       setUnits((u.data ?? []) as Unit[]);

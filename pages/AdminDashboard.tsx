@@ -455,7 +455,7 @@ const AMENITIES_LIST = [
   }, []);
   const [timelineProjects, setTimelineProjects] = useState<any[]>([]);
   const loadTimelineProjects = useCallback(async () => {
-    const { data } = await supabase.from('projects').select('id, slug, name, status, completion_percent, timeline').order('sort_order');
+    const { data } = await supabase.rpc('staff_projects_list').select('id, slug, name, status, completion_percent, timeline').order('sort_order');
     setTimelineProjects(data ?? []);
   }, []);
   useEffect(() => {
@@ -736,7 +736,7 @@ const AMENITIES_LIST = [
         else if (blogsRes.error) console.error('Error loading blogs:', blogsRes.error);
       });
       const [projectsRes, usersRes, clientsRes, configRes] = await Promise.all([
-          supabase.from('projects').select('*').order('sort_order', { ascending: true }),
+          supabase.rpc('staff_projects_list').order('sort_order', { ascending: true }),
           userId ? supabase.rpc('admin_list_users', { p_user_id: userId }) : Promise.resolve({ data: null, error: null }),
           userId ? supabase.rpc('admin_list_clients', { p_user_id: userId }) : Promise.resolve({ data: null, error: null }),
           supabase.from('app_config').select('*'),

@@ -37,7 +37,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
 
   useEffect(() => {
     void (async () => {
-      const { data } = await supabase.from('projects').select('id, name').order('name');
+      const { data } = await supabase.rpc('staff_projects_list').select('id, name').order('name');
       const rows = (data as ProjectOpt[]) ?? [];
       setProjects(rows);
       // Sin preselección: el empleado DEBE elegir un proyecto (regla de Andreas).
@@ -48,7 +48,7 @@ const ConstructionReportModal: React.FC<{ postedBy: string; onClose: () => void 
   const loadLast = async (pid: string) => {
     if (!pid) { setLast(null); return; }
     setLoadingLast(true);
-    const { data } = await supabase.from('projects').select('construction_update_url, construction_update_date').eq('id', pid).maybeSingle();
+    const { data } = await supabase.rpc('staff_projects_list').select('construction_update_url, construction_update_date').eq('id', pid).maybeSingle();
     setLast({ url: (data as any)?.construction_update_url ?? null, date: (data as any)?.construction_update_date ?? null });
     setLoadingLast(false);
   };
