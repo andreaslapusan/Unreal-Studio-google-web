@@ -282,6 +282,7 @@
     "extensionLineNoTotal": "Extensión {{years}} años",
     "extYears": "+{{years}} años",
     "extTotal": "Total {{total}} años",
+    "leaseUntil": "hasta {{date}}",
     "roiDisclaimer": "Rentabilidades estimadas y aproximadas; no constituyen una garantía de rendimiento.",
     "reportBtn": "Último reporte de obra",
     "reportModalTitle": "Reporte de obra",

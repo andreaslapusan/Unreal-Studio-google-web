@@ -282,6 +282,7 @@
     "extensionLineNoTotal": "Extensie {{years}} ani",
     "extYears": "+{{years}} ani",
     "extTotal": "Total {{total}} ani",
+    "leaseUntil": "până în {{date}}",
     "roiDisclaimer": "Randamente estimate și aproximative; nu constituie o garanție de performanță.",
     "reportBtn": "Ultimul raport de șantier",
     "reportModalTitle": "Raport de șantier",

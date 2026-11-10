@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { uiLocale } from '../lib/dateLocale';
 import { dateOnly } from '../lib/timezone';
-import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, propertyTypeLabel, m2Text } from '../lib/projectTerms';
+import { translateProjectTerm, amenityLabel, amenityIcon, normalizeAmenities, localizedField, localizedCompletion, localizeMonthYear, propertyTypeLabel, m2Text } from '../lib/projectTerms';
 import { brochureFor } from '../lib/brochure';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { langPath } from '../components/LocaleRoute';
@@ -453,7 +453,14 @@ const ProjectDetail: React.FC = () => {
               // Regla del dueño: un campo sin valor NO se muestra (ni card ni label).
               const specs = [
                 project.distance_beach && { icon: 'beach_access', label: t('projectDetail.labelDistanceBeach'), value: localizedField(project, 'distance_beach', i18n.language) },
-                project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: `${project.years_contract} ${t('projectDetail.yearsWord')}` },
+                project.tenure !== 'Freehold' && project.years_contract && { icon: 'history', label: t('projectDetail.labelYearsContract'), value: (<>
+                  {`${project.years_contract} ${t('projectDetail.yearsWord')}`}
+                  {/* Excepción Andreas 10-nov: solo Golf Bay Lofts muestra el fin del leasehold (mismo gris que "Total N años"). */}
+                  {project.slug === 'golf-bay-lofts-1bd' && (project as any).lease_end_date && (() => {
+                    const d = localizeMonthYear(localizedField(project, 'lease_end_date', i18n.language), i18n.language);
+                    return <span className="ml-2 font-normal text-primary/60">{t('projectDetail.leaseUntil', { date: /^(es|ro)/.test(i18n.language || 'es') ? d.toLowerCase() : d })}</span>;
+                  })()}
+                </>) },
                 project.tenure !== 'Freehold' && extensionRows().length > 0 && { icon: 'update', label: t('projectDetail.labelExtensions'), value: (
                   <table className="w-full mt-1 text-sm"><tbody>
                     {extensionRows().map((r, i) => (

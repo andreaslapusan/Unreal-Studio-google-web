@@ -282,6 +282,7 @@
     "extensionLineNoTotal": "{{years}}-year extension",
     "extYears": "+{{years}} years",
     "extTotal": "{{total}} years total",
+    "leaseUntil": "until {{date}}",
     "roiDisclaimer": "Estimated, approximate returns; not a guarantee of performance.",
     "reportBtn": "Latest construction report",
     "reportModalTitle": "Construction report",
