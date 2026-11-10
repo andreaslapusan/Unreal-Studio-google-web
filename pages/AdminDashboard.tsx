@@ -250,7 +250,7 @@ const AMENITIES_LIST = [
   const [paymentsClient, setPaymentsClient] = useState<Client | null>(null);
   const [paymentsFilter, setPaymentsFilter] = useState<{ name: string; unit: string | null } | null>(null);
   // Preview de email antes de enviar (todos los correos pasan por aquí).
-  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string) => string; buildSubject?: (email: string) => string; raw?: boolean; extraBody?: Record<string, unknown>; note?: string }>(null);
+  const [emailPreview, setEmailPreview] = useState<null | { recipients: string[]; selected: string[]; previewEmail: string; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; sending: boolean; buildHtml?: (email: string, opts?: string[]) => string; buildSubject?: (email: string, opts?: string[]) => string; raw?: boolean; extraBody?: Record<string, unknown>; note?: string; options?: { id: string; label: string }[]; optSel?: string[]; optTitle?: string }>(null);
   const [reportPicker, setReportPicker] = useState<null | { client: any; projs: any[]; selected: string[]; excluded: string[] }>(null); // elegir proyecto(s) y destinatarios del aviso de obra
   // Hasta que la sesión está verificada y los datos cargados, mostramos un spinner
   // de marca (evita la pantalla negra/vacía mientras carga, sobre todo en móvil/conexión lenta).
@@ -1517,32 +1517,33 @@ const sendResetEmail = async (client: Client) => {
   else alert(t('admin.dash.resetError', { error: failed.join(', ') }));
 };
 
-// Recordatorio de pago manual: coge el pago pendiente más relevante del cliente
-// (próximo a vencer o, si hay vencidos, el más antiguo) y manda el aviso con los
-// días que faltan / vencidos a día de hoy (zona horaria de Bali).
+// Recordatorio de pago manual: por cada propiedad del cliente coge su pago pendiente
+// más relevante (el vencido más antiguo o, si no, el próximo) con importe y días que
+// faltan / vencidos (hora de Bali). En la preview el admin marca qué propiedades incluir.
 // Preview de email: en vez de enviar directo, abrimos un pop-up con la vista
 // previa; el envío real ocurre al pulsar "Enviar" en sendPreviewedEmail.
 // buildHtml: si se pasa, el correo se PERSONALIZA por destinatario (cada titular ve
 // SU propio email de acceso). Si no, se envía el mismo html a todos los seleccionados.
 // raw: html es un documento completo (sin plantilla de marca, se previsualiza en iframe); extraBody: campos
 // extra para send-client-email (adjunto, remitente, log); note: línea informativa en la cabecera.
-const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; buildHtml?: (email: string) => string; buildSubject?: (email: string) => string; raw?: boolean; extraBody?: Record<string, unknown>; note?: string }) => {
+const openEmailPreview = (args: { to: string | string[]; subject: string; html: string; sentMsg: (emails: string[]) => string; userId: string; lang: string; buildHtml?: (email: string, opts?: string[]) => string; buildSubject?: (email: string, opts?: string[]) => string; raw?: boolean; extraBody?: Record<string, unknown>; note?: string; options?: { id: string; label: string }[]; optTitle?: string }) => {
   const recipients = (Array.isArray(args.to) ? args.to : [args.to]).map((e) => (e || '').trim()).filter(Boolean);
   const first = recipients[0] || '';
-  const html0 = args.buildHtml ? args.buildHtml(first) : args.html;
-  setEmailPreview({ recipients, selected: [...recipients], previewEmail: first, subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml, buildSubject: args.buildSubject, raw: args.raw, extraBody: args.extraBody, note: args.note });
+  const optSel = args.options?.map((o) => o.id); // opciones (p.ej. proyectos del recordatorio): todas marcadas por defecto
+  const html0 = args.buildHtml ? args.buildHtml(first, optSel) : args.html;
+  setEmailPreview({ recipients, selected: [...recipients], previewEmail: first, subject: args.subject, html: html0, sentMsg: args.sentMsg, userId: args.userId, lang: args.lang, sending: false, buildHtml: args.buildHtml, buildSubject: args.buildSubject, raw: args.raw, extraBody: args.extraBody, note: args.note, options: args.options, optSel, optTitle: args.optTitle });
 };
 const mailError = (sent: any, error: any) => sent?.error === 'client_emails_paused' ? t('admin.dash.emailsPaused') : t('admin.dash.reportError', { error: sent?.error || error?.message || 'error' });
 const sendPreviewedEmail = async () => {
-  if (!emailPreview || emailPreview.selected.length === 0) return;
+  if (!emailPreview || emailPreview.selected.length === 0 || (emailPreview.options && !emailPreview.optSel?.length)) return;
   const ep = emailPreview;
   setEmailPreview((p) => p ? { ...p, sending: true } : p);
   try {
     if (ep.buildHtml) {
       // Un correo PERSONALIZADO por cada destinatario (su propio email de acceso).
       for (const to of ep.selected) {
-        const subj = ep.buildSubject ? ep.buildSubject(to) : ep.subject; // asunto en el idioma de CADA titular
-        const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to, lang: ep.lang, subject: subj, html: ep.buildHtml(to), manual: true });
+        const subj = ep.buildSubject ? ep.buildSubject(to, ep.optSel) : ep.subject; // asunto en el idioma de CADA titular
+        const { data: sent, error } = await invokeSendEmail({ ...(ep.extraBody || {}), ...(ep.raw ? { raw: true } : {}), adminUserId: ep.userId, to, lang: ep.lang, subject: subj, html: ep.buildHtml(to, ep.optSel), manual: true });
         if (error || !sent?.success) { alert(mailError(sent, error)); setEmailPreview((p) => p ? { ...p, sending: false } : p); return; }
       }
     } else {
@@ -1564,42 +1565,46 @@ const sendReminderEmail = async (client: Client) => {
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const { data } = await supabase.rpc('admin_list_client_payments', { p_user_id: userId, p_client_id: client.id });
   const units: any[] = data?.success ? (data.units || []) : [];
-  const pend = units.flatMap((u) => (u.payments || []).filter((p: any) => !p.received && p.due_date).map((p: any) => ({ ...p, project_name: u.project_name })));
-  if (!pend.length) { alert(t('admin.dash.reminderNoPayments')); return; }
   const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Makassar' }));
   today.setHours(0, 0, 0, 0);
   const daysUntil = (due: string) => Math.round((new Date(due + 'T00:00:00').getTime() - today.getTime()) / 86400000);
-  // Orden: vencidos primero (más antiguo), luego próximos (el más cercano).
-  pend.sort((a, b) => daysUntil(a.due_date) - daysUntil(b.due_date));
-  const overdue = pend.filter((p) => daysUntil(p.due_date) < 0);
-  const target = overdue.length ? overdue[0] : pend[pend.length === overdue.length ? 0 : overdue.length];
-  const d = daysUntil(target.due_date);
+  // Un bloque por propiedad: su pago pendiente más urgente (el vencido más antiguo; si no, el próximo).
+  const items = units.flatMap((u) => {
+    const ps = (u.payments || []).filter((p: any) => !p.received && p.due_date).sort((a: any, b: any) => daysUntil(a.due_date) - daysUntil(b.due_date));
+    return ps.length ? [{ id: String(u.client_project_id), project: `${u.project_name || ''}${u.unit_number ? ` · ${u.unit_number}` : ''}`, pay: ps[0], d: daysUntil(ps[0].due_date) }] : [];
+  }).sort((a, b) => a.d - b.d);
+  if (!items.length) { alert(t('admin.dash.reminderNoPayments')); return; }
+  // Mismo formato de importe que el recordatorio automático (edge fn payment-reminders).
+  const money = (n: number, c: string) => { try { return new Intl.NumberFormat(c === 'IDR' ? 'id-ID' : 'es-ES', { style: 'currency', currency: c || 'IDR', maximumFractionDigits: 0, useGrouping: 'always' } as any).format(n); } catch { return `${c} ${n}`; } };
+  const pick = (opts?: string[]) => items.filter((x) => !opts || opts.includes(x.id));
+  const stageOf = (d: number) => d > 1 ? 'b7' : d === 0 ? 'due' : d < 0 ? (d <= -7 ? 'aN' : 'a3') : 'b7';
   const lang = clientLangOf(client);
-  const et = i18n.getFixedT(lang);
-  const stage = d > 1 ? 'b7' : d === 0 ? 'due' : d < 0 ? (d <= -7 ? 'aN' : 'a3') : 'b7';
-  const n = Math.abs(d);
-  const subject = et(`emails.reminder.${stage}_subject`, { n });
-  const lead = et(`emails.reminder.${stage}_lead`, { n });
-  const daysLine = d > 0 ? et('emails.reminder.daysLeft', { n }) : d === 0 ? et('emails.reminder.dueToday') : et('emails.reminder.daysOverdue', { n });
-  const dueStr = new Date(target.due_date + 'T00:00:00').toLocaleDateString(lang, { day: '2-digit', month: 'long', year: 'numeric' });
   const BROWN = '#3F2305';
-  const buildHtml = (em: string) => {
+  // Asunto/entrada según el pago más urgente de los seleccionados.
+  const subjectFor = (lg: string, opts?: string[]) => { const d = (pick(opts)[0] || items[0]).d; return i18n.getFixedT(lg)(`emails.reminder.${stageOf(d)}_subject`, { n: Math.abs(d) }); };
+  const buildHtml = (em: string, opts?: string[]) => {
     const lg = holderLangByEmail(client, em); const e2 = i18n.getFixedT(lg);
-    const subj = e2(`emails.reminder.${stage}_subject`, { n });
-    const lead2 = e2(`emails.reminder.${stage}_lead`, { n });
-    const daysLine2 = d > 0 ? e2('emails.reminder.daysLeft', { n }) : d === 0 ? e2('emails.reminder.dueToday') : e2('emails.reminder.daysOverdue', { n });
-    const dueStr2 = new Date(target.due_date + 'T00:00:00').toLocaleDateString(lg, { day: '2-digit', month: 'long', year: 'numeric' });
+    const sel = pick(opts); const d0 = (sel[0] || items[0]).d; const n0 = Math.abs(d0);
+    const blocks = sel.map(({ project, pay, d }) => {
+      const n = Math.abs(d);
+      const daysLine = d > 0 ? e2('emails.reminder.daysLeft', { n }) : d === 0 ? e2('emails.reminder.dueToday') : e2('emails.reminder.daysOverdue', { n });
+      const dueStr = new Date(pay.due_date + 'T00:00:00').toLocaleDateString(lg, { day: '2-digit', month: 'long', year: 'numeric' });
+      return `<div style="background:#F3E5D8;border-radius:12px;padding:14px 16px;margin:0 0 12px">
+      <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.reminder.paymentFor', { project: `<b>${project}</b>`, label: pay.label || '' })}</p>
+      <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:${BROWN}">${e2('emails.reminder.amountLabel')} <b style="font-size:18px">${money(Number(pay.amount), pay.currency || 'IDR')}</b></p>
+      <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${e2('emails.reminder.deadlineLabel')} <b>${dueStr}</b></p>
+      <p style="font-size:14px;font-weight:700;line-height:1.6;margin:0;color:${d <= 0 ? '#c0392b' : BROWN}">${daysLine}</p></div>`;
+    }).join('');
     return `
-    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:${BROWN}">${subj}</h1>
+    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;margin:0 0 14px;color:${BROWN}">${subjectFor(lg, opts)}</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${e2('emails.reminder.hi', { name: holderNameByEmail(client, em) })}</p>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${lead2}</p>
-    <p style="font-size:14px;line-height:1.6;margin:0 0 6px;color:${BROWN}">${e2('emails.reminder.paymentFor', { project: target.project_name, label: target.label || '' })}</p>
-    <p style="font-size:14px;line-height:1.6;margin:0 0 4px;color:rgba(63,35,5,.7)">${e2('emails.reminder.deadlineLabel')} <b>${dueStr2}</b></p>
-    <p style="font-size:15px;font-weight:700;line-height:1.6;margin:0 0 14px;color:${BROWN}">${daysLine2}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;color:${BROWN}">${e2(`emails.reminder.${stageOf(d0)}_lead`, { n: n0 })}</p>
+    ${blocks}
     <p style="font-size:13px;line-height:1.6;margin:0 0 16px;color:rgba(63,35,5,.7)">${e2('emails.reminder.recommendation')}</p>
     <p style="text-align:center;margin:0 0 4px"><a href="${clientPortalUrl(lg)}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:12px 28px;border-radius:10px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:13px">${e2('emails.reminder.cta')}</a></p>`;
   };
-  openEmailPreview({ to: emailsOf(client), subject, html: buildHtml(emailsOf(client)[0] || email), sentMsg: (ems) => t('admin.dash.reminderSent', { email: ems.join(', ') }), userId, lang, buildHtml, buildSubject: (em) => i18n.getFixedT(holderLangByEmail(client, em))(`emails.reminder.${stage}_subject`, { n }) });
+  const options = items.map(({ id, project, pay }) => ({ id, label: `${project} — ${pay.label || ''} · ${money(Number(pay.amount), pay.currency || 'IDR')} · ${new Date(pay.due_date + 'T00:00:00').toLocaleDateString(i18n.language, { day: '2-digit', month: 'short', year: 'numeric' })}` }));
+  openEmailPreview({ to: emailsOf(client), subject: subjectFor(lang), html: '', sentMsg: (ems) => t('admin.dash.reminderSent', { email: ems.join(', ') }), userId, lang, buildHtml, buildSubject: (em, opts) => subjectFor(holderLangByEmail(client, em), opts), options, optTitle: t('admin.dash.reminderProjects') });
 };
 
 // Aviso MANUAL de reporte de obra disponible (uno por propiedad asignada), en el
@@ -3643,7 +3648,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
         <div className="min-w-0">
           <h3 className="font-black text-primary text-sm uppercase tracking-widest">{t('admin.dash.emailPreviewTitle', { defaultValue: 'Previsualización del email' })}</h3>
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{emailPreview.buildSubject && emailPreview.previewEmail ? emailPreview.buildSubject(emailPreview.previewEmail) : emailPreview.subject}</p>
+          <p className="text-xs text-gray-400 mt-0.5 truncate">{emailPreview.buildSubject && emailPreview.previewEmail ? emailPreview.buildSubject(emailPreview.previewEmail, emailPreview.optSel) : emailPreview.subject}</p>
           {emailPreview.note && <p className="text-[11px] text-gray-500 mt-0.5">{emailPreview.note}</p>}
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewTo', { defaultValue: 'Para' })}:</span>
@@ -3654,11 +3659,25 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               </label>
             ))}
           </div>
+          {emailPreview.options && emailPreview.options.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mt-2" data-testid="email-preview-options">
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{emailPreview.optTitle}:</span>
+              {emailPreview.options.map((o) => {
+                const on = !!emailPreview.optSel?.includes(o.id);
+                return (
+                  <label key={o.id} className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border cursor-pointer ${on ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                    <input type="checkbox" checked={on} onChange={() => setEmailPreview((p) => { if (!p) return p; const cur = p.optSel || []; const optSel = cur.includes(o.id) ? cur.filter((x) => x !== o.id) : [...cur, o.id]; return { ...p, optSel, html: optSel.length && p.buildHtml ? p.buildHtml(p.previewEmail, optSel) : p.html }; })} className="rounded" />
+                    {o.label}
+                  </label>
+                );
+              })}
+            </div>
+          )}
           {emailPreview.buildHtml && emailPreview.recipients.length > 1 && (
             <div className="flex flex-wrap items-center gap-2 mt-2">
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{t('admin.dash.emailPreviewViewAs', { defaultValue: 'Ver como' })}:</span>
               {emailPreview.recipients.map((em) => (
-                <button key={em} type="button" onClick={() => setEmailPreview((p) => p && p.buildHtml ? { ...p, previewEmail: em, html: p.buildHtml(em) } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${emailPreview.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-primary/40'}`}>
+                <button key={em} type="button" onClick={() => setEmailPreview((p) => p && p.buildHtml ? { ...p, previewEmail: em, html: p.buildHtml(em, p.optSel) } : p)} className={`text-xs px-2 py-1 rounded-lg border transition ${emailPreview.previewEmail === em ? 'bg-primary text-white border-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-primary/40'}`}>
                   {em}
                 </button>
               ))}
@@ -3677,7 +3696,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
       </div>
       <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
         <button onClick={() => setEmailPreview(null)} disabled={emailPreview.sending} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs uppercase tracking-widest disabled:opacity-50">{t('admin.common.cancel')}</button>
-        <button onClick={() => void sendPreviewedEmail()} disabled={emailPreview.sending || emailPreview.selected.length === 0} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{emailPreview.sending ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> {t('admin.adminDash.savingEllipsis')}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })} ({emailPreview.selected.length})</>}</button>
+        <button onClick={() => void sendPreviewedEmail()} disabled={emailPreview.sending || emailPreview.selected.length === 0 || (!!emailPreview.options && !emailPreview.optSel?.length)} className="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-widest hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2">{emailPreview.sending ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> {t('admin.adminDash.savingEllipsis')}</> : <><span className="material-symbols-outlined text-sm">send</span> {t('admin.dash.sendEmailBtn', { defaultValue: 'Enviar' })} ({emailPreview.selected.length})</>}</button>
       </div>
     </div>
   </div>
