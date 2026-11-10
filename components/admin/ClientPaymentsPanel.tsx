@@ -372,11 +372,13 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                   {u.payments.map((p) => {
                     const overdue = !p.received && p.due_date && p.due_date.slice(0, 10) < baliToday();
                     return (
-                      <div key={p.id} className="px-5 py-3 flex items-center gap-3 flex-wrap">
+                      // Misma estructura en todas las filas: [check · concepto | importe/balance/estado] y debajo las acciones.
+                      <div key={p.id} className="px-5 py-3 flex flex-col gap-2">
+                        <div className="flex items-start gap-3">
                         <AsyncButton onClick={() => toggleReceived(p)} title={t('admin.pay.markReceived')}
                           className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-xs font-bold transition ${p.received ? 'bg-green-600 text-white' : overdue ? 'bg-red-100 text-red-500 hover:bg-green-600 hover:text-white' : 'border-2 border-gray-300 text-gray-300 hover:border-green-600 hover:text-green-600'}`}>✓</AsyncButton>
-                        <div className="flex-1 min-w-[140px]">
-                          <p className="font-semibold text-sm text-primary">{p.label || t('admin.pay.noLabel')}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm text-primary break-words">{p.label || t('admin.pay.noLabel')}</p>
                           <p className="text-[11px] text-gray-400">
                             {p.due_date ? t('admin.pay.deadline', { date: new Date(dateOnly(p.due_date)).toLocaleDateString(uiLocale()) }) : t('admin.pay.noDate')}
                             {p.received && p.paid_at && ` · ${t('admin.pay.paidOn', { date: new Date(dateOnly(p.paid_at)).toLocaleDateString(uiLocale()) })}`}
@@ -397,15 +399,16 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
                               </>
                             );
                           })()}
-                        </div>
                         {/* Estado del pago: SOLO recibido / vencido / pendiente (convencion
                             unica del sistema, igual que CobrosPanel). Un pago RECIBIDO = el
                             dinero ya esta en el banco → verde "Recibido". El estado del kwitansi
                             (firmado/enviado) se ve en los botones de accion, no en este badge. */}
-                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
+                        <span className={`inline-block mt-1 text-[9px] font-black uppercase px-2 py-0.5 rounded-full whitespace-nowrap ${p.received ? 'bg-green-50 text-green-600' : overdue ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
                           {p.received ? t('fix.cpp.statusReceived') : overdue ? t('admin.pay.statusOverdue') : t('admin.pay.statusPending')}
                         </span>
-                        <div className="flex gap-1">
+                        </div>
+                        </div>
+                        <div className="flex gap-1 pl-9">
                           {p.received && (
                             <button onClick={() => setEditing({ cp: u.client_project_id, cur: u.currency, pay: { ...p, received_amount: p.received_amount ?? p.amount } })} title={t('fin.fee.button')}
                               className={`p-1.5 rounded-lg ${Number(p.bank_fee || 0) > 0 ? 'text-amber-700 bg-amber-50 hover:bg-amber-100' : 'text-primary bg-gray-50 hover:bg-gray-100'}`}><span className="material-symbols-outlined text-sm">account_balance</span></button>
