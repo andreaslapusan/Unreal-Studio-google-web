@@ -419,6 +419,7 @@ const AMENITIES_LIST = [
     { key: 'agenda', view: 'agenda' },
     { key: 'calendar', view: 'calendar' },
     { key: 'clients', view: 'clients' },
+    { key: 'contacts', view: 'contacts' },
     { key: 'arquitectura', view: 'arquitectura' },
     { key: 'employees', view: 'employees' },
     { key: 'users', view: 'users' },
@@ -2135,7 +2136,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
           <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-1 mb-2">
-              {ADMIN_MOBILE_NAV.filter((it) => !isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')).map((it) => (
+              {ADMIN_MOBILE_NAV.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (it.view !== 'contacts' || role === 'admin')).map((it) => (
                 <button key={it.key} onClick={() => { if (it.to) navigate(it.to); else setActiveView(it.view as any); setAdminMenuOpen(false); }}
                   className={`text-left px-3 py-2.5 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
                   {t(`admin.nav.${it.key}`)}
@@ -2203,7 +2204,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'agencias' && <AgencyApplications />}
 
         {activeView === 'intakes' && <IntakeLinksPanel />}
-        {activeView === 'contacts' && <ServiceContactsPanel />}
+        {activeView === 'contacts' && role === 'admin' && <ServiceContactsPanel />}
 
         {activeView === 'projects' && (
           <div className="animate-in fade-in duration-500">

@@ -142,7 +142,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-3">
-        {nav.filter((it) => !isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')).map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
+        {nav.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (it.view !== 'contacts' || role === 'admin')).map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
       </nav>
 
       {/* Configuración: siempre al fondo del todo, justo encima del logout. */}
