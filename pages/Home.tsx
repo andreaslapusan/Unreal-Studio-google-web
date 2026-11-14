@@ -15,7 +15,10 @@ import { translateStatus } from '../lib/statusI18n';
 import { localizeFields, blogTagLabel, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
 import LandingLinks from '../components/LandingLinks';
-import FeaturedStrip from '../components/FeaturedStrip';
+import FeaturedStrip, { type FeaturedVariant } from '../components/FeaturedStrip';
+
+// Dónde va la franja "Aparecemos en": 'A' encima del buscador / bajo la tarjeta destacada (móvil) · 'B' banda al final del hero · 'C' tras la rejilla de proyectos
+const FEATURED_AT = 'A' as FeaturedVariant;
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -398,10 +401,13 @@ const Home: React.FC = () => {
              </div>
           )}
         </div>
+        {FEATURED_AT === 'B' && <FeaturedStrip variant="B" />}
       </header>
 
+      {FEATURED_AT === 'A' && <FeaturedStrip variant="A" />}
+
       {/* Filter Bar — solo tablet/escritorio; en el móvil ocupaba media pantalla y el filtro ya está en /proyectos (Andreas 30-oct) */}
-      <div className="hidden md:block px-4 md:px-12 relative z-30 -mt-12 md:-mt-16 mb-12 md:mb-16 max-w-7xl mx-auto">
+      <div className={`hidden md:block px-4 md:px-12 relative z-30 ${FEATURED_AT === 'A' ? '' : '-mt-12 md:-mt-16'} mb-12 md:mb-16 max-w-7xl mx-auto`}>
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
             
@@ -493,8 +499,6 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <FeaturedStrip />
-
       {/* Listings Section */}
       <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
         <h2 className="md:hidden text-3xl text-primary leading-tight mt-2 mb-6 text-center">{t('home.opportunitiesTitle')}</h2>
@@ -559,6 +563,8 @@ const Home: React.FC = () => {
           </button>
         </div>
       </section>
+
+      {FEATURED_AT === 'C' && <FeaturedStrip variant="C" />}
 
       {/* Sección 1: Por qué salir de Europa */}
       <section className="py-12 md:py-24 bg-white px-6 md:px-12">
