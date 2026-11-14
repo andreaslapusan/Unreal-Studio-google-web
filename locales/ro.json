@@ -41,6 +41,7 @@
     "scheduleShort": "Programează"
   },
   "home": {
+    "featuredIn": "Apărem în",
     "title": "Unreal Studio Bali | Dezvoltator imobiliar în Bali",
     "heroTitle": "Investește în <i>Bali</i> de la {{price}} cu <i>Unreal Studio</i>",
     "heroBody": "ROI <b>estimat</b> de până la 28% brut pe an*, investind la cost direct de dezvoltator, cu studio de arhitectură propriu în Bali.",

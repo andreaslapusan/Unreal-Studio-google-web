@@ -41,6 +41,7 @@
     "scheduleShort": "Schedule"
   },
   "home": {
+    "featuredIn": "As featured in",
     "title": "Unreal Studio Bali | Bali Villa & Apartment Developer",
     "heroTitle": "Invest in <i>Bali</i> from {{price}} with <i>Unreal Studio</i>",
     "heroBody": "Projected gross ROI of up to <b>28% per year</b>*, buying at developer cost from a Bali developer with its own architecture studio.",

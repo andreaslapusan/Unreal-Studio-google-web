@@ -15,6 +15,7 @@ import { translateStatus } from '../lib/statusI18n';
 import { localizeFields, blogTagLabel, propertyTypeKey, propertyTypeLabel, propertyTypeOptions } from '../lib/projectTerms';
 import { usePageMeta } from '../components/PageMeta';
 import LandingLinks from '../components/LandingLinks';
+import FeaturedStrip from '../components/FeaturedStrip';
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';
@@ -491,6 +492,8 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <FeaturedStrip />
 
       {/* Listings Section */}
       <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
