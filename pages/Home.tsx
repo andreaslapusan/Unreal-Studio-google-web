@@ -18,7 +18,7 @@ import LandingLinks from '../components/LandingLinks';
 import FeaturedStrip, { type FeaturedVariant } from '../components/FeaturedStrip';
 
 // Dónde va la franja "Aparecemos en": 'A' encima del buscador / bajo la tarjeta destacada (móvil) · 'B' banda al final del hero · 'C' tras la rejilla de proyectos
-const FEATURED_AT = 'A' as FeaturedVariant;
+const FEATURED_AT = 'C' as FeaturedVariant;
 
 const ANY_ZONE = 'Cualquier zona';
 const ANY_TYPE = 'Cualquier tipo';

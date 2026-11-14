@@ -1,8 +1,10 @@
 [
-  { "outlet": "Archello", "url": "https://archello.com/brand/unreal-studio-bali", "logo": "/featured/logos/archello.svg" },
-  { "outlet": "Issuu", "url": "https://issuu.com/unrealstudiobali/docs/venaso_villas_by_unreal_studio_bali_-_press_kit_e", "logo": "/featured/logos/issuu.svg" },
-  { "outlet": "Clutch", "url": "https://clutch.co/profile/unreal-studio-bali", "logo": "/featured/logos/clutch.svg" },
-  { "outlet": "Trustpilot", "url": "https://www.trustpilot.com/review/unrealstudiobali.com", "logo": "/featured/logos/trustpilot.svg" },
-  { "outlet": "Qwoted", "url": "https://app.qwoted.com/press_releases/unreal-studio-bali-completes-venaso-villas-in-tabanan", "logo": "/featured/logos/qwoted.svg" },
-  { "outlet": "Arsitag", "url": "https://www.arsitag.com/profile/unreal-studio-bali", "logo": "/featured/logos/arsitag.svg" }
+  {"outlet": "Archello", "url": "https://archello.com/brand/unreal-studio-bali", "logo": "/featured/logos/archello.svg"},
+  {"outlet": "Issuu", "url": "https://issuu.com/unrealstudiobali/docs/venaso_villas_by_unreal_studio_bali_-_press_kit_e", "logo": "/featured/logos/issuu.svg"},
+  {"outlet": "Clutch", "url": "https://clutch.co/profile/unreal-studio-bali", "logo": "/featured/logos/clutch.svg"},
+  {"outlet": "Qwoted", "url": "https://app.qwoted.com/press_releases/unreal-studio-bali-completes-venaso-villas-in-tabanan", "logo": "/featured/logos/qwoted.svg"},
+  {"outlet": "Arsitag", "url": "https://www.arsitag.com/profile/unreal-studio-bali", "logo": "/featured/logos/arsitag.svg"},
+  {"outlet": "Behance", "url": "https://www.behance.net/unrealpresso", "logo": "/featured/logos/behance.svg"},
+  {"outlet": "Pinterest", "url": "https://www.pinterest.com/unrealstudiobali/", "logo": "/featured/logos/pinterest.svg"},
+  {"outlet": "Archinect", "url": "https://archinect.com/firms/cover/150574583/unreal-studio-bali", "logo": "/featured/logos/archinect.png"}
 ]
