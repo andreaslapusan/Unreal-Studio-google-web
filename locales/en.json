@@ -1923,7 +1923,9 @@
         "directorios": "Directories & profiles",
         "blogs": "External blogs",
         "notas": "Press releases"
-      }
+      },
+      "viewOriginal": "View original",
+      "noBody": "No text (or not downloaded yet)."
     }
   },
   "footer": {

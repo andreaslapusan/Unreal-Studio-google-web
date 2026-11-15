@@ -2028,7 +2028,9 @@
         "directorios": "Direktori & profil",
         "blogs": "Blog eksternal",
         "notas": "Siaran pers"
-      }
+      },
+      "viewOriginal": "Lihat asli",
+      "noBody": "Tidak ada teks (atau belum diunduh)."
     }
   },
   "footer": {

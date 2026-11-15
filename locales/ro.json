@@ -1931,7 +1931,9 @@
         "directorios": "Directoare și profiluri",
         "blogs": "Bloguri externe",
         "notas": "Comunicate de presă"
-      }
+      },
+      "viewOriginal": "Vezi originalul",
+      "noBody": "Fără text (sau încă nedescărcat)."
     }
   },
   "footer": {

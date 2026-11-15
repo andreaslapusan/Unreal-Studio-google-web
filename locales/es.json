@@ -1923,7 +1923,9 @@
         "directorios": "Directorios y perfiles",
         "blogs": "Blogs externos",
         "notas": "Notas de prensa"
-      }
+      },
+      "viewOriginal": "Ver original",
+      "noBody": "Sin texto (o aún no descargado)."
     }
   },
   "footer": {

@@ -30,6 +30,7 @@ const PressPresenceDashboard: React.FC = () => {
   const [d, setD] = useState<P | null>(null);
   const [err, setErr] = useState('');
   const [ago, setAgo] = useState(0);
+  const [open, setOpen] = useState<any>(null); // respuesta abierta en el modal
 
   useEffect(() => {
     let alive = true;
@@ -42,6 +43,12 @@ const PressPresenceDashboard: React.FC = () => {
     const poll = setInterval(() => void load(), 1500);
     return () => { alive = false; clearInterval(poll); };
   }, []);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
   useEffect(() => {
     const tick = setInterval(() => { if (d?.generated_at) setAgo(Math.round((Date.now() - new Date(d.generated_at).getTime()) / 1000)); }, 1000);
     return () => clearInterval(tick);
@@ -120,11 +127,11 @@ const PressPresenceDashboard: React.FC = () => {
           <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
             <div className="text-[11px] font-black uppercase tracking-widest text-primary/40 mb-3">{t('admin.presence.latestReplies', 'Últimas respuestas')}</div>
             {(pr.latest_replies || []).length === 0 && <div className="text-sm text-primary/40">—</div>}
-            {(pr.latest_replies || []).map((r: any, i: number) => (
-              <div key={i} className="py-1.5 border-b border-gray-50 last:border-0 min-w-0">
+            {(pr.latest_replies || []).slice(0, 8).map((r: any, i: number) => (
+              <button type="button" key={i} onClick={() => setOpen(r)} className="block w-full text-left py-1.5 border-b border-gray-50 last:border-0 min-w-0 rounded-lg hover:bg-almond/40 focus-visible:bg-almond/40 outline-none transition-colors">
                 <div className="text-sm font-bold text-primary truncate">{r.from} <span className="font-normal text-primary/40">· {r.domain}</span></div>
-                <div className="text-xs text-primary/50 truncate">{r.subject}</div>
-              </div>
+                <div className="text-xs text-primary/50 truncate">{fmtDate(r.date)} · {r.subject}</div>
+              </button>
             ))}
             {(pr.accepted_list || []).map((a: any, i: number) => (
               <div key={'a' + i} className="mt-2 text-xs rounded-xl bg-emerald-50 text-emerald-800 px-3 py-2">✓ {a.outlet}: {a.note}</div>
@@ -142,6 +149,27 @@ const PressPresenceDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {open && (
+        <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4" onClick={(e) => { if (e.target === e.currentTarget) setOpen(null); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="reply-subj" className="relative bg-white w-full sm:max-w-2xl max-h-[90vh] flex flex-col rounded-t-3xl sm:rounded-3xl shadow-2xl">
+            <button type="button" onClick={() => setOpen(null)} aria-label={t('admin.common.close', 'Cerrar')} className="absolute top-3 right-3 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+            <div className="p-5 pr-14 border-b border-gray-100">
+              <div id="reply-subj" className="font-serif text-xl text-primary break-words">{open.subject}</div>
+              <div className="text-sm text-primary/60 mt-1 break-words">{open.from}{open.email && <> · {open.email}</>}</div>
+              <div className="text-xs text-primary/40 mt-0.5">{open.ts ? new Date(open.ts).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' }) : fmtDate(open.date)}</div>
+            </div>
+            <div className="p-5 overflow-y-auto whitespace-pre-wrap break-words text-sm text-primary/90 leading-relaxed">{open.body || t('admin.presence.noBody', 'Sin texto (o aún no descargado).')}</div>
+            {open.email && (
+              <div className="p-4 border-t border-gray-100 flex justify-end">
+                <a href={`mailto:${open.email}?subject=${encodeURIComponent(/^re:/i.test(open.subject || '') ? open.subject : 'Re: ' + (open.subject || ''))}`} className="inline-flex items-center gap-1.5 text-sm font-bold text-primary px-4 py-2 rounded-full bg-almond hover:bg-almond/70 transition">
+                  <span className="material-symbols-outlined text-base">mail</span>{t('admin.presence.viewOriginal', 'Ver original')}
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
