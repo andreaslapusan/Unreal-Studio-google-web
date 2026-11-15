@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { whatsappUrl } from '../../constants';
 import { card, btnPrimary, btnGhost, SectionTitle } from './ui';
 
-export default function AgencyHelp({ agencyName }: { agencyName: string }) {
+export default function AgencyHelp({ agencyName, close, referral }: { agencyName: string; close: number; referral: number }) {
   const { t } = useTranslation();
   const steps = [1, 2, 3, 4].map((i) => ({ title: t(`agencyPortal.help.step${i}Title`), body: t(`agencyPortal.help.step${i}Body`) }));
 
@@ -31,17 +31,17 @@ export default function AgencyHelp({ agencyName }: { agencyName: string }) {
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('agencyPortal.help.commTitle')}</h3>
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="rounded-xl border border-gray-100 p-4">
-            <p className="text-3xl font-black text-primary">5%</p>
+            <p className="text-3xl font-black text-primary">{close}%</p>
             <p className="text-sm font-bold text-primary mt-1">{t('agencyPortal.help.modeATitle')}</p>
             <p className="text-sm text-primary/60 mt-1">{t('agencyPortal.help.modeABody')}</p>
           </div>
           <div className="rounded-xl border border-gray-100 p-4">
-            <p className="text-3xl font-black text-primary">3%</p>
+            <p className="text-3xl font-black text-primary">{referral}%</p>
             <p className="text-sm font-bold text-primary mt-1">{t('agencyPortal.help.modeBTitle')}</p>
             <p className="text-sm text-primary/60 mt-1">{t('agencyPortal.help.modeBBody')}</p>
           </div>
         </div>
-        <p className="text-xs text-primary/50 mt-4 leading-relaxed">{t('agencyPortal.help.commNote')}</p>
+        <p className="text-xs text-primary/50 mt-4 leading-relaxed">{t('agencyPortal.help.commNote', { close })}</p>
       </section>
 
       <section className={card}>

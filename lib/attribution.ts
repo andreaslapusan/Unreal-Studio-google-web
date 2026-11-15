@@ -89,19 +89,17 @@ export async function trackPageVisit(): Promise<ResolvedAttribution | null> {
   if (!captured.source) return captured;
 
   const partner_uuid = await resolvePartnerUuid(captured.partner_id);
-
-  // Best-effort: insert a visit event. RLS allows anon insert (event_type='visit').
+  // Best-effort: record a visit. The RPC resolves the partner server-side (a forged partner_id is impossible).
   try {
-    await supabase.from("lead_attributions").insert({
+    await supabase.rpc("record_attribution", { p: {
       utm_source: captured.source,
-      partner_id: partner_uuid,
+      partner: captured.partner_id ?? null,
       property_slug: captured.property_slug ?? null,
       utm_campaign: captured.campaign ?? null,
       utm_medium: captured.medium ?? null,
       event_type: "visit",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
       referrer: typeof document !== "undefined" ? document.referrer || null : null,
-    });
+    } });
   } catch (err) {
     console.warn("[attribution] visit insert failed:", err);
   }
@@ -131,22 +129,20 @@ export async function recordFormSubmit(contact: {
   defaultSource?: string;
 }): Promise<void> {
   const stored = readStoredAttribution();
-  const partner_uuid = stored?.partner_id ? await resolvePartnerUuid(stored.partner_id) : null;
 
   try {
-    await supabase.from("lead_attributions").insert({
-      contact_email: contact.email ?? null,
-      contact_phone: contact.phone ?? null,
-      contact_name: contact.name ?? null,
+    await supabase.rpc("record_attribution", { p: {
+      email: contact.email ?? null,
+      phone: contact.phone ?? null,
+      name: contact.name ?? null,
       utm_source: stored?.source ?? contact.defaultSource ?? "web_form",
-      partner_id: partner_uuid,
+      partner: stored?.partner_id ?? null,
       property_slug: stored?.property_slug ?? null,
       utm_campaign: stored?.campaign ?? null,
       utm_medium: stored?.medium ?? null,
       event_type: "form_submit",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
       referrer: typeof document !== "undefined" ? document.referrer || null : null,
-    });
+    } });
   } catch (err) {
     console.warn("[attribution] form_submit insert failed:", err);
   }

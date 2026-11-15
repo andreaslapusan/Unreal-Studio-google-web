@@ -101,7 +101,7 @@ const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef
               <ListRow key={u.id}
                 title={<>{[shortProjectName(p.name), u.bedrooms ? t('agencyPortal.projects.bedrooms', { count: u.bedrooms }) : null].filter(Boolean).join(' · ')}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
                 sub={t('agencyPortal.projects.availableN', { count: n })}
-                right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{price ? formatPrice((price * unitPct(u, partnerId)) / 100, cur) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{unitPct(u, partnerId)}%</span></>}
+                right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{price ? formatPrice((price * unitPct(u)) / 100, cur) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{unitPct(u)}%</span></>}
               />
             ))}
           </ul>

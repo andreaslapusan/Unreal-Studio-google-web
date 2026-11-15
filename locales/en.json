@@ -1831,7 +1831,9 @@
     "partnerStatus": {
       "approved": "Approved",
       "pending": "Pending",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "suspended": "Suspended",
+      "deleted": "Deleted"
     },
     "agencyLeads": {
       "title": "Clients registered by agencies",
@@ -3101,7 +3103,7 @@
       "modeABody": "Your agency guides the client through to signing.",
       "modeBTitle": "You refer the client",
       "modeBBody": "You register the client and our team handles the closing.",
-      "commNote": "Each unit's percentage (5% of the website price by default) is shown in Projects; special agreements are arranged with the team.",
+      "commNote": "Each unit's percentage ({{close}}% of the website price by default) is shown in Projects; special agreements are arranged with the team.",
       "contactTitle": "Contact the Unreal team",
       "contactBody": "Questions about a project, a client or your commission: write to us and we will reply.",
       "waText": "Hi, I am from the agency {{agency}} (Unreal Studio agency portal)."
@@ -3169,7 +3171,8 @@
         "call": "Call with the team",
         "visit": "Visit / trip to Bali",
         "presentation": "Online presentation",
-        "contract": "Collaboration agreement"
+        "contract": "Collaboration agreement",
+        "reserve": "Reserve a unit"
       },
       "client": "Client (optional)",
       "noClient": "No specific client",
@@ -3245,7 +3248,7 @@
       "pending": "You already have an agreement request in progress.",
       "termsTitle": "Main terms",
       "c1t": "Commission",
-      "c1": "5% of the sale price if your agency does the sales work through to closing; 3% if you introduce a qualified investor and Unreal makes the sale. Unreal always handles the legal side.",
+      "c1": "{{close}}% of the sale price if your agency does the sales work through to closing; {{referral}}% if you introduce a qualified investor and Unreal makes the sale. Unreal always handles the legal side.",
       "c2t": "When it is earned",
       "c2": "When the registered investor signs a binding sale agreement. Paid by bank transfer; the commission is gross and each party pays its own taxes. The payment term is set in the agreement.",
       "c3t": "Client protection",
@@ -3255,7 +3258,7 @@
       "c5t": "One commission per deal",
       "c5": "Unreal pays a single commission per deal; if you bring in third parties, you share it with them.",
       "youTitle": "Your agency commits to",
-      "you": "Promote at its own cost, register each investor, organise visits (and lead them in the 5% mode) and inform truthfully, without promising anything outside Unreal's information.",
+      "you": "Promote at its own cost, register each investor, organise visits (and lead them in the {{close}}% mode) and inform truthfully, without promising anything outside Unreal's information.",
       "usTitle": "Unreal commits to",
       "us": "Provide truthful, up-to-date information on availability, reservations and prices, give access to the properties for visits, handle all the legal side of the sale and pay the agreed commission.",
       "history": "Your agreement requests"
@@ -3334,6 +3337,193 @@
       "fillRequired": "Fill in description, amount and currency.",
       "errorSave": "Could not save: {{error}}",
       "errorLoad": "Could not load expenses: {{error}}"
+    }
+  },
+  "agencyFunnel": {
+    "signup": {
+      "terms_required": "Accept the terms to send the application.",
+      "acceptPre": "I accept the",
+      "terms": "terms",
+      "privacy": "privacy policy",
+      "and": "and the",
+      "agreement": "agency collaboration agreement (commission by market; you will receive it by email).",
+      "other": "Others",
+      "successAuto": "Check your inbox in a few minutes: if everything is in order, your portal access will arrive. If not, the team reviews it within 24 h.",
+      "already_partner": "This email is already a partner agency. Log in from the agency login (below).",
+      "already_pending": "We already have your application and are reviewing it. We will write to you soon.",
+      "too_fast": "Check your details and send the form again.",
+      "invalid_email": "The email is not valid.",
+      "name_required": "The agency name is missing.",
+      "rate_limited": "Too many submissions from this connection. Try again in an hour.",
+      "invalid": "A field is too long or not valid. Please check it."
+    },
+    "err": {
+      "generic": "Something went wrong. Please try again in a moment.",
+      "withDetail": "Could not complete: {{msg}}",
+      "email_in_use": "That email is already used by another agency.",
+      "invalid_email": "The email is not valid.",
+      "staff_account": "That login belongs to a team account; it cannot be moved.",
+      "partner_not_active": "The agency is not active.",
+      "not_found": "Record not found.",
+      "duplicate": "That event is already recorded for this client.",
+      "demo_partner": "This is a demo or internal agency: it earns no commission.",
+      "unit_sold": "That unit is already sold.",
+      "unit_not_found": "Unit not found.",
+      "invalid": "Invalid data.",
+      "transport_not_configured": "Email sending is not configured.",
+      "forbidden": "You do not have permission for this.",
+      "unauthorized": "Your session has expired. Log in again.",
+      "not_allowed": "You do not have permission for this.",
+      "has_history": "Cannot delete: it has history (commissions or requests).",
+      "pct": "Commission must be a number between 0 and 50."
+    },
+    "lead": {
+      "consent": "The client has agreed to share their details with Unreal Studio.",
+      "consentRequired": "Confirm the client has agreed to share their details.",
+      "ok": "Client registered on {{date}}. We emailed you the confirmation: it is your proof of registration.",
+      "already_registered": "This client was already registered. If you think this is a mistake, write to us.",
+      "consent_required": "Confirm the client has agreed to share their details.",
+      "contact_required": "Add the client's email or phone.",
+      "name_required": "The client's name is missing.",
+      "invalid_email": "The client's email is not valid.",
+      "not_active": "Your agency account is not active."
+    },
+    "reserve": {
+      "unit": "Unit to reserve",
+      "required": "To reserve, pick the client and the unit."
+    },
+    "comm": {
+      "reserved": "Commission on reservations",
+      "due": "Commission due",
+      "paid": "Commission paid",
+      "ledgerTitle": "Recorded reservations and sales",
+      "ledgerEmpty": "No reservations or sales recorded yet.",
+      "kind": {
+        "reservation": "Reservation",
+        "sale": "Sale"
+      },
+      "st": {
+        "reserved": "Reserved",
+        "due": "Due",
+        "paid": "Paid",
+        "cancelled": "Cancelled"
+      }
+    },
+    "contract": {
+      "download": "Download agreement (PDF)"
+    },
+    "blocked": {
+      "pending": {
+        "title": "Your account is under review",
+        "body": "As soon as we approve it you will get an email and can see projects and prices."
+      },
+      "suspended": {
+        "title": "Account suspended",
+        "body": "Your agency's access is suspended. Write to us if you want it reactivated."
+      },
+      "rejected": {
+        "title": "Application not approved",
+        "body": "For now we cannot activate your account. If you think this is a mistake, write to us."
+      },
+      "deleted": {
+        "title": "Account closed",
+        "body": "This agency account is no longer active. To work with us again, apply again."
+      }
+    },
+    "event": {
+      "title": {
+        "reservation": "+ Reservation · {{name}}",
+        "sale": "+ Sale · {{name}}"
+      },
+      "unit": "Unit",
+      "noUnit": "No specific unit",
+      "reserved": "reserved",
+      "price": "Sale price",
+      "currency": "Currency",
+      "mode": "Who closes",
+      "modeClose": "The agency closes the sale",
+      "modeReferral": "Unreal closes (referred client)",
+      "priceRequired": "Enter the sale price.",
+      "ok": "Recorded: commission {{pct}}% = {{amount}}. The agency has been notified."
+    },
+    "admin": {
+      "allStatuses": "All statuses",
+      "approveAnyway": "Approve anyway",
+      "approveTitle": "Approve {{name}}",
+      "approveBody": "The agency and its login are created, and the welcome email with the agreement goes to {{email}}.",
+      "approveOk": "Approved. Welcome sent to {{email}}.",
+      "approveNoEmail": "Approved, but the welcome email failed ({{msg}}). Use \"Resend welcome\".",
+      "approvedOn": "Approved: {{date}}",
+      "autoReasons": "Not auto-approved because",
+      "closePct": "% if the agency closes",
+      "referralPct": "% if Unreal closes",
+      "counts": "{{leads}} clients · {{res}} reservations · {{sales}} sales",
+      "delete": "Delete",
+      "deleteTitle": "Delete {{name}}",
+      "deleteBody": "The agency loses access immediately and leaves the lists. Its clients and history are kept.",
+      "typeName": "Type \"{{name}}\" to confirm",
+      "suspend": "Suspend",
+      "suspendTitle": "Suspend {{name}}",
+      "suspendBody": "The agency cannot log in until you reactivate it. Its session is closed.",
+      "reactivate": "Reactivate",
+      "resendWelcome": "Resend welcome",
+      "sendReset": "Send password reset",
+      "welcomeSent": "Welcome sent to {{email}}.",
+      "resetSent": "Password reset sent to {{email}}.",
+      "statusOk": {
+        "approved": "{{name}} reactivated.",
+        "suspended": "{{name}} suspended.",
+        "deleted": "{{name}} deleted.",
+        "rejected": "{{name}} rejected.",
+        "pending": "{{name}} pending."
+      },
+      "reason": "Reason",
+      "reasonOptional": "Reason (optional, included in the email)",
+      "rejectTitle": "Reject {{name}}",
+      "rejectBody": "They get an email in their language and the bot stops following up.",
+      "rejectOk": "Application rejected; email sent.",
+      "deleteAppTitle": "Delete {{name}}'s application",
+      "deleteAppBody": "Use it for spam or tests. No email is sent.",
+      "deletedApp": "Application deleted.",
+      "deleteLeadTitle": "Delete client {{name}}",
+      "deleteLeadBody": "Only for test or duplicate clients. If it has reservations or sales it cannot be deleted.",
+      "leadDeleted": "Client deleted.",
+      "demo": "Demo",
+      "emailWarning": "On save, the agency's login moves to this email (its password does not change).",
+      "lang": "Email language",
+      "market": "Market",
+      "marketOpt": {
+        "es": "Spain",
+        "world": "International"
+      },
+      "lastLogin": "Last login: {{date}}",
+      "never": "never",
+      "next": "Next",
+      "prev": "Previous",
+      "pageOf": "Page {{page}} of {{pages}} · {{count}}",
+      "reviewedBy": "reviewed by {{who}} on {{when}}",
+      "saved": "Changes saved.",
+      "search": "Search (name, email, country)",
+      "statusLabel": "Status",
+      "working": "Working…",
+      "appSt": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "contacted": "Contacted",
+        "all": "All"
+      }
+    },
+    "reason": {
+      "blacklisted": "blacklisted",
+      "already_partner": "already a partner",
+      "terms_not_accepted": "terms not accepted",
+      "invalid_or_expired_token": "invite link expired or invalid",
+      "free_email_domain": "free email (gmail, hotmail…)",
+      "disposable_email": "disposable email",
+      "no_mx": "domain has no mail server",
+      "no_website": "no website",
+      "website_not_resolving": "website does not resolve"
     }
   }
 }

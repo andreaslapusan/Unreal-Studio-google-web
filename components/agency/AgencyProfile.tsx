@@ -7,7 +7,8 @@ import { logoFileError, uploadPartnerLogo } from './partnerLogo';
 import { card, btnPrimary, btnGhost, input, SectionTitle } from './ui';
 
 // Lo que la agencia puede editar ella misma (RLS + trigger impiden tocar estado/proyectos/email).
-const EDITABLE = ['manager_name', 'phone', 'whatsapp', 'website', 'country'] as const;
+// Lo único que la agencia puede cambiar (la BD aplica la misma lista: trigger protect_partner_privileged_cols).
+const EDITABLE = ['manager_name', 'phone', 'whatsapp'] as const;
 type Editable = typeof EDITABLE[number];
 
 export default function AgencyProfile({ data, email }: { data: AgencyData; email: string | undefined }) {
@@ -115,7 +116,7 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
               {EDITABLE.map((k) => (
                 <label key={k} className="block text-xs text-primary/60">
                   {t(`agencyPortal.profile.${k === 'manager_name' ? 'manager' : k}`)}
-                  <input value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} type={k === 'website' ? 'url' : k === 'phone' || k === 'whatsapp' ? 'tel' : 'text'} className={`${input} mt-1`} />
+                  <input value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} type={k === 'phone' || k === 'whatsapp' ? 'tel' : 'text'} className={`${input} mt-1`} />
                 </label>
               ))}
               {saveError && <p className="sm:col-span-2 text-[11px] text-red-600">{saveError}</p>}

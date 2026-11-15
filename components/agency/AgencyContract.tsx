@@ -1,6 +1,7 @@
 /** Contrato: resumen de las condiciones de colaboración + solicitar contrato (agency_requests type='contract'). */
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '../../lib/supabase';
 import { AgencyData } from './useAgencyData';
 import { createRequest, RequestRow } from './AgencyRequests';
 import { card, btnPrimary, SectionTitle } from './ui';
@@ -12,8 +13,18 @@ export default function AgencyContract({ data }: { data: AgencyData }) {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   if (!partner) return null;
 
+  const pctVars = { close: Number(partner.commission_close_pct ?? 0), referral: Number(partner.commission_referral_pct ?? partner.commission_close_pct ?? 0) };
   const mine = requests.filter((r) => r.type === 'contract');
   const inProgress = mine.some((r) => r.status === 'pending' || r.status === 'scheduled');
+
+  const download = async () => {
+    setMsg(null);
+    const { data: blob, error } = await supabase.functions.invoke('agency-hub', { body: { action: 'agreement' } });
+    if (error || !(blob instanceof Blob)) { setMsg({ ok: false, text: t('agencyFunnel.err.generic') }); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'Unreal-Studio-agreement.pdf'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  };
 
   const request = async () => {
     setSaving(true); setMsg(null);
@@ -28,7 +39,7 @@ export default function AgencyContract({ data }: { data: AgencyData }) {
   return (
     <div className="animate-in fade-in duration-500 space-y-6">
       <SectionTitle title={t('agencyPortal.nav.contract')} sub={t('agencyPortal.contract.sub')}
-        action={<button onClick={request} disabled={saving || inProgress} className={btnPrimary}><span className="material-symbols-outlined text-base">gavel</span>{t('agencyPortal.contract.request')}</button>} />
+        action={<div className="flex flex-wrap gap-2"><button onClick={() => void download()} className={btnPrimary}><span className="material-symbols-outlined text-base">download</span>{t('agencyFunnel.contract.download')}</button><button onClick={request} disabled={saving || inProgress} className={btnPrimary}><span className="material-symbols-outlined text-base">gavel</span>{t('agencyPortal.contract.request')}</button></div>} />
       {(msg || inProgress) && (
         <p className={`text-sm rounded-xl px-4 py-3 ${msg && !msg.ok ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-800'}`}>{msg?.text ?? t('agencyPortal.contract.pending')}</p>
       )}
@@ -39,7 +50,7 @@ export default function AgencyContract({ data }: { data: AgencyData }) {
           {terms.map((i) => (
             <div key={i} className="px-5 py-4 md:grid md:grid-cols-[220px_1fr] md:gap-6">
               <dt className="text-sm font-bold text-primary">{t(`agencyPortal.contract.c${i}t`)}</dt>
-              <dd className="text-sm text-primary/70 leading-relaxed mt-1 md:mt-0">{t(`agencyPortal.contract.c${i}`)}</dd>
+              <dd className="text-sm text-primary/70 leading-relaxed mt-1 md:mt-0">{t(`agencyPortal.contract.c${i}`, pctVars)}</dd>
             </div>
           ))}
         </dl>
@@ -48,7 +59,7 @@ export default function AgencyContract({ data }: { data: AgencyData }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 [&>*]:min-w-0">
         <section className={card}>
           <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-2">{t('agencyPortal.contract.youTitle')}</h3>
-          <p className="text-sm text-primary/70 leading-relaxed">{t('agencyPortal.contract.you')}</p>
+          <p className="text-sm text-primary/70 leading-relaxed">{t('agencyPortal.contract.you', pctVars)}</p>
         </section>
         <section className={card}>
           <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-2">{t('agencyPortal.contract.usTitle')}</h3>

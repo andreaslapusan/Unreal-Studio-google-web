@@ -1936,7 +1936,9 @@
     "partnerStatus": {
       "approved": "Disetujui",
       "pending": "Menunggu",
-      "rejected": "Ditolak"
+      "rejected": "Ditolak",
+      "suspended": "Ditangguhkan",
+      "deleted": "Dihapus"
     },
     "agencyLeads": {
       "title": "Klien yang didaftarkan agensi",
@@ -3102,7 +3104,7 @@
       "modeABody": "Agensi Anda mendampingi klien hingga penandatanganan.",
       "modeBTitle": "Anda merujuk klien",
       "modeBBody": "Anda mendaftarkan klien dan tim kami yang melakukan closing.",
-      "commNote": "Persentase tiap unit (default 5% dari harga di website) tercantum di Proyek; perjanjian khusus diatur bersama tim.",
+      "commNote": "Persentase tiap unit (default {{close}}% dari harga di website) tercantum di Proyek; perjanjian khusus diatur bersama tim.",
       "contactTitle": "Hubungi tim Unreal",
       "contactBody": "Pertanyaan tentang proyek, klien, atau komisi Anda: hubungi kami dan kami akan membalas.",
       "waText": "Halo, saya dari agensi {{agency}} (portal agensi Unreal Studio)."
@@ -3170,7 +3172,8 @@
         "call": "Panggilan dengan tim",
         "visit": "Kunjungan / perjalanan ke Bali",
         "presentation": "Presentasi online",
-        "contract": "Kontrak kerja sama"
+        "contract": "Kontrak kerja sama",
+        "reserve": "Reservasi unit"
       },
       "client": "Klien (opsional)",
       "noClient": "Tanpa klien tertentu",
@@ -3246,7 +3249,7 @@
       "pending": "Anda sudah memiliki permintaan kontrak yang sedang diproses.",
       "termsTitle": "Ketentuan utama",
       "c1t": "Komisi",
-      "c1": "5% dari harga jual jika agensi Anda melakukan pekerjaan penjualan hingga closing; 3% jika Anda memperkenalkan investor yang memenuhi syarat dan Unreal yang menjual. Sisi hukum selalu ditangani Unreal.",
+      "c1": "{{close}}% dari harga jual jika agensi Anda melakukan pekerjaan penjualan hingga closing; {{referral}}% jika Anda memperkenalkan investor yang memenuhi syarat dan Unreal yang menjual. Sisi hukum selalu ditangani Unreal.",
       "c2t": "Kapan diperoleh",
       "c2": "Saat investor terdaftar menandatangani perjanjian jual beli yang mengikat. Dibayar via transfer; komisi bersifat bruto dan masing-masing pihak membayar pajaknya. Jangka waktu pembayaran tercantum di kontrak.",
       "c3t": "Perlindungan klien",
@@ -3256,7 +3259,7 @@
       "c5t": "Satu komisi per transaksi",
       "c5": "Unreal membayar satu komisi per transaksi; jika Anda melibatkan pihak ketiga, Anda yang membaginya.",
       "youTitle": "Agensi Anda berkomitmen untuk",
-      "you": "Mempromosikan dengan biaya sendiri, mendaftarkan setiap investor, mengatur kunjungan (dan memandunya dalam model 5%), serta memberi informasi yang benar tanpa menjanjikan hal di luar informasi Unreal.",
+      "you": "Mempromosikan dengan biaya sendiri, mendaftarkan setiap investor, mengatur kunjungan (dan memandunya dalam model {{close}}%), serta memberi informasi yang benar tanpa menjanjikan hal di luar informasi Unreal.",
       "usTitle": "Unreal berkomitmen untuk",
       "us": "Memberikan informasi yang benar dan terbaru tentang ketersediaan, pemesanan, dan harga, memfasilitasi akses properti untuk kunjungan, menangani seluruh sisi hukum penjualan, dan membayar komisi yang disepakati.",
       "history": "Permintaan kontrak Anda"
@@ -3335,6 +3338,193 @@
       "fillRequired": "Isi keterangan, jumlah, dan mata uang.",
       "errorSave": "Gagal menyimpan: {{error}}",
       "errorLoad": "Gagal memuat pengeluaran: {{error}}"
+    }
+  },
+  "agencyFunnel": {
+    "signup": {
+      "terms_required": "Setujui ketentuan untuk mengirim pengajuan.",
+      "acceptPre": "Saya menyetujui",
+      "terms": "ketentuan",
+      "privacy": "kebijakan privasi",
+      "and": "dan",
+      "agreement": "perjanjian kerja sama agensi (komisi sesuai pasar; akan Anda terima melalui surel).",
+      "other": "Lainnya",
+      "successAuto": "Periksa surel Anda dalam beberapa menit: jika semuanya sesuai, akses portal akan dikirim. Jika tidak, tim meninjaunya dalam 24 jam.",
+      "already_partner": "Surel ini sudah terdaftar sebagai agensi mitra. Masuk melalui halaman masuk agensi (di bawah).",
+      "already_pending": "Pengajuan Anda sudah kami terima dan sedang ditinjau. Kami akan segera menghubungi Anda.",
+      "too_fast": "Periksa data Anda dan kirim ulang formulir.",
+      "invalid_email": "Surel tidak valid.",
+      "name_required": "Nama agensi belum diisi.",
+      "rate_limited": "Terlalu banyak pengiriman dari koneksi ini. Coba lagi dalam satu jam.",
+      "invalid": "Ada kolom yang terlalu panjang atau tidak valid. Mohon periksa."
+    },
+    "err": {
+      "generic": "Terjadi kesalahan. Silakan coba lagi sebentar lagi.",
+      "withDetail": "Tidak dapat diselesaikan: {{msg}}",
+      "email_in_use": "Surel tersebut sudah dipakai agensi lain.",
+      "invalid_email": "Surel tidak valid.",
+      "staff_account": "Akses tersebut milik akun tim; tidak dapat dipindahkan.",
+      "partner_not_active": "Agensi tidak aktif.",
+      "not_found": "Data tidak ditemukan.",
+      "duplicate": "Kejadian itu sudah tercatat untuk klien ini.",
+      "demo_partner": "Ini agensi demo atau internal: tidak menghasilkan komisi.",
+      "unit_sold": "Unit itu sudah terjual.",
+      "unit_not_found": "Unit tidak ditemukan.",
+      "invalid": "Data tidak valid.",
+      "transport_not_configured": "Pengiriman surel belum dikonfigurasi.",
+      "forbidden": "Anda tidak memiliki izin untuk ini.",
+      "unauthorized": "Sesi Anda telah berakhir. Silakan masuk lagi.",
+      "not_allowed": "Anda tidak memiliki izin untuk ini.",
+      "has_history": "Tidak dapat dihapus: memiliki riwayat (komisi atau permintaan).",
+      "pct": "Komisi harus berupa angka antara 0 dan 50."
+    },
+    "lead": {
+      "consent": "Klien telah setuju datanya dibagikan kepada Unreal Studio.",
+      "consentRequired": "Konfirmasikan bahwa klien setuju datanya dibagikan.",
+      "ok": "Klien terdaftar pada {{date}}. Konfirmasi telah kami kirim melalui surel: itu bukti pendaftaran Anda.",
+      "already_registered": "Klien ini sudah terdaftar. Jika menurut Anda ini keliru, hubungi kami.",
+      "consent_required": "Konfirmasikan bahwa klien setuju datanya dibagikan.",
+      "contact_required": "Isi surel atau telepon klien.",
+      "name_required": "Nama klien belum diisi.",
+      "invalid_email": "Surel klien tidak valid.",
+      "not_active": "Akun agensi Anda tidak aktif."
+    },
+    "reserve": {
+      "unit": "Unit yang akan direservasi",
+      "required": "Untuk reservasi, pilih klien dan unitnya."
+    },
+    "comm": {
+      "reserved": "Komisi dari reservasi",
+      "due": "Komisi terutang",
+      "paid": "Komisi dibayar",
+      "ledgerTitle": "Reservasi dan penjualan tercatat",
+      "ledgerEmpty": "Belum ada reservasi atau penjualan yang tercatat.",
+      "kind": {
+        "reservation": "Reservasi",
+        "sale": "Penjualan"
+      },
+      "st": {
+        "reserved": "Direservasi",
+        "due": "Terutang",
+        "paid": "Dibayar",
+        "cancelled": "Dibatalkan"
+      }
+    },
+    "contract": {
+      "download": "Unduh perjanjian (PDF)"
+    },
+    "blocked": {
+      "pending": {
+        "title": "Akun Anda sedang ditinjau",
+        "body": "Begitu kami setujui, Anda akan menerima surel dan dapat melihat proyek serta harga."
+      },
+      "suspended": {
+        "title": "Akun ditangguhkan",
+        "body": "Akses agensi Anda ditangguhkan. Hubungi kami jika ingin diaktifkan kembali."
+      },
+      "rejected": {
+        "title": "Pengajuan tidak disetujui",
+        "body": "Untuk saat ini kami belum dapat mengaktifkan akun Anda. Jika menurut Anda ini keliru, hubungi kami."
+      },
+      "deleted": {
+        "title": "Akun ditutup",
+        "body": "Akun agensi ini tidak lagi aktif. Untuk bekerja sama lagi, ajukan pendaftaran ulang."
+      }
+    },
+    "event": {
+      "title": {
+        "reservation": "+ Reservasi · {{name}}",
+        "sale": "+ Penjualan · {{name}}"
+      },
+      "unit": "Unit",
+      "noUnit": "Tanpa unit tertentu",
+      "reserved": "direservasi",
+      "price": "Harga jual",
+      "currency": "Mata uang",
+      "mode": "Siapa yang menutup",
+      "modeClose": "Agensi menutup penjualan",
+      "modeReferral": "Unreal menutup (klien rujukan)",
+      "priceRequired": "Isi harga jual.",
+      "ok": "Tercatat: komisi {{pct}}% = {{amount}}. Agensi telah diberi tahu."
+    },
+    "admin": {
+      "allStatuses": "Semua status",
+      "approveAnyway": "Tetap setujui",
+      "approveTitle": "Setujui {{name}}",
+      "approveBody": "Agensi dan aksesnya dibuat, lalu surel sambutan beserta perjanjian dikirim ke {{email}}.",
+      "approveOk": "Disetujui. Surel sambutan dikirim ke {{email}}.",
+      "approveNoEmail": "Disetujui, tetapi surel sambutan gagal ({{msg}}). Gunakan \"Kirim ulang sambutan\".",
+      "approvedOn": "Disetujui: {{date}}",
+      "autoReasons": "Tidak disetujui otomatis karena",
+      "closePct": "% jika agensi menutup",
+      "referralPct": "% jika Unreal menutup",
+      "counts": "{{leads}} klien · {{res}} reservasi · {{sales}} penjualan",
+      "delete": "Hapus",
+      "deleteTitle": "Hapus {{name}}",
+      "deleteBody": "Agensi langsung kehilangan akses dan hilang dari daftar. Klien dan riwayatnya tetap disimpan.",
+      "typeName": "Ketik \"{{name}}\" untuk konfirmasi",
+      "suspend": "Tangguhkan",
+      "suspendTitle": "Tangguhkan {{name}}",
+      "suspendBody": "Agensi tidak dapat masuk sampai Anda mengaktifkannya kembali. Sesinya ditutup.",
+      "reactivate": "Aktifkan kembali",
+      "resendWelcome": "Kirim ulang sambutan",
+      "sendReset": "Kirim reset kata sandi",
+      "welcomeSent": "Surel sambutan dikirim ke {{email}}.",
+      "resetSent": "Reset kata sandi dikirim ke {{email}}.",
+      "statusOk": {
+        "approved": "{{name}} diaktifkan kembali.",
+        "suspended": "{{name}} ditangguhkan.",
+        "deleted": "{{name}} dihapus.",
+        "rejected": "{{name}} ditolak.",
+        "pending": "{{name}} menunggu."
+      },
+      "reason": "Alasan",
+      "reasonOptional": "Alasan (opsional, disertakan dalam surel)",
+      "rejectTitle": "Tolak {{name}}",
+      "rejectBody": "Mereka menerima surel dalam bahasanya dan bot berhenti menindaklanjuti.",
+      "rejectOk": "Pengajuan ditolak; surel terkirim.",
+      "deleteAppTitle": "Hapus pengajuan {{name}}",
+      "deleteAppBody": "Gunakan untuk spam atau uji coba. Tidak ada surel yang dikirim.",
+      "deletedApp": "Pengajuan dihapus.",
+      "deleteLeadTitle": "Hapus klien {{name}}",
+      "deleteLeadBody": "Hanya untuk klien uji coba atau duplikat. Jika memiliki reservasi atau penjualan, tidak dapat dihapus.",
+      "leadDeleted": "Klien dihapus.",
+      "demo": "Demo",
+      "emailWarning": "Saat disimpan, akses agensi pindah ke surel ini (kata sandinya tidak berubah).",
+      "lang": "Bahasa surel",
+      "market": "Pasar",
+      "marketOpt": {
+        "es": "Spanyol",
+        "world": "Internasional"
+      },
+      "lastLogin": "Terakhir masuk: {{date}}",
+      "never": "belum pernah",
+      "next": "Berikutnya",
+      "prev": "Sebelumnya",
+      "pageOf": "Halaman {{page}} dari {{pages}} · {{count}}",
+      "reviewedBy": "ditinjau oleh {{who}} pada {{when}}",
+      "saved": "Perubahan disimpan.",
+      "search": "Cari (nama, surel, negara)",
+      "statusLabel": "Status",
+      "working": "Memproses…",
+      "appSt": {
+        "pending": "Menunggu",
+        "approved": "Disetujui",
+        "rejected": "Ditolak",
+        "contacted": "Dihubungi",
+        "all": "Semua"
+      }
+    },
+    "reason": {
+      "blacklisted": "masuk daftar hitam",
+      "already_partner": "sudah menjadi mitra",
+      "terms_not_accepted": "ketentuan tidak disetujui",
+      "invalid_or_expired_token": "tautan undangan kedaluwarsa atau tidak valid",
+      "free_email_domain": "surel gratis (gmail, hotmail…)",
+      "disposable_email": "surel sementara",
+      "no_mx": "domain tidak menerima surel",
+      "no_website": "tanpa situs web",
+      "website_not_resolving": "situs web tidak ditemukan"
     }
   }
 }

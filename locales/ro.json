@@ -1839,7 +1839,9 @@
     "partnerStatus": {
       "approved": "Aprobat",
       "pending": "În așteptare",
-      "rejected": "Respins"
+      "rejected": "Respins",
+      "suspended": "Suspendată",
+      "deleted": "Ștearsă"
     },
     "agencyLeads": {
       "title": "Clienți înregistrați de agenții",
@@ -3120,7 +3122,7 @@
       "modeABody": "Agenția ta însoțește clientul până la semnare.",
       "modeBTitle": "Ne recomanzi clientul",
       "modeBBody": "Înregistrezi clientul și echipa noastră face închiderea.",
-      "commNote": "Procentul fiecărei unități (implicit 5% din prețul de pe site) apare în Proiecte; acordurile speciale se stabilesc cu echipa.",
+      "commNote": "Procentul fiecărei unități (implicit {{close}}% din prețul de pe site) apare în Proiecte; acordurile speciale se stabilesc cu echipa.",
       "contactTitle": "Contact echipa Unreal",
       "contactBody": "Întrebări despre un proiect, un client sau comision: scrie-ne și îți răspundem.",
       "waText": "Bună, sunt de la agenția {{agency}} (portalul de agenții Unreal Studio)."
@@ -3189,7 +3191,8 @@
         "call": "Apel cu echipa",
         "visit": "Vizită / călătorie în Bali",
         "presentation": "Prezentare online",
-        "contract": "Contract de colaborare"
+        "contract": "Contract de colaborare",
+        "reserve": "Rezervă unitate"
       },
       "client": "Client (opțional)",
       "noClient": "Fără client anume",
@@ -3265,7 +3268,7 @@
       "pending": "Ai deja o solicitare de contract în curs.",
       "termsTitle": "Condiții principale",
       "c1t": "Comision",
-      "c1": "5% din prețul de vânzare dacă agenția ta face munca comercială până la închidere; 3% dacă prezinți un investitor calificat și Unreal face vânzarea. Partea legală o face mereu Unreal.",
+      "c1": "{{close}} % din prețul de vânzare dacă agenția ta face munca comercială până la închidere; {{referral}} % dacă prezinți un investitor calificat și Unreal face vânzarea. Partea legală o face mereu Unreal.",
       "c2t": "Când se câștigă",
       "c2": "Când investitorul înregistrat semnează un acord de vânzare obligatoriu. Se plătește prin transfer; comisionul este brut și fiecare parte își plătește taxele. Termenul de plată este stabilit în contract.",
       "c3t": "Protecția clientului",
@@ -3275,7 +3278,7 @@
       "c5t": "Un comision per tranzacție",
       "c5": "Unreal plătește un singur comision per tranzacție; dacă implici terți, îl împarți tu cu ei.",
       "youTitle": "Agenția ta se angajează să",
-      "you": "Să promoveze pe cheltuiala proprie, să înregistreze fiecare investitor, să organizeze vizitele (și să le conducă în modalitatea de 5%) și să informeze corect, fără promisiuni în afara informațiilor Unreal.",
+      "you": "Să promoveze pe cheltuiala proprie, să înregistreze fiecare investitor, să organizeze vizitele (și să le conducă în modalitatea de {{close}} %) și să informeze corect, fără promisiuni în afara informațiilor Unreal.",
       "usTitle": "Unreal se angajează să",
       "us": "Să ofere informații corecte și actualizate despre disponibilitate, rezervări și prețuri, să faciliteze accesul la proprietăți pentru vizite, să se ocupe de toată partea legală și să plătească comisionul convenit.",
       "history": "Solicitările tale de contract"
@@ -3354,6 +3357,193 @@
       "fillRequired": "Completează descrierea, suma și moneda.",
       "errorSave": "Nu s-a putut salva: {{error}}",
       "errorLoad": "Nu s-au putut încărca cheltuielile: {{error}}"
+    }
+  },
+  "agencyFunnel": {
+    "signup": {
+      "terms_required": "Acceptă condițiile pentru a trimite cererea.",
+      "acceptPre": "Accept",
+      "terms": "termenii",
+      "privacy": "politica de confidențialitate",
+      "and": "și",
+      "agreement": "acordul de colaborare cu agențiile (comision în funcție de piață; îl veți primi pe e-mail).",
+      "other": "Altele",
+      "successAuto": "Verificați e-mailul în câteva minute: dacă totul este în regulă, veți primi accesul la portal. Altfel, echipa îl verifică în 24 h.",
+      "already_partner": "Acest e-mail este deja o agenție parteneră. Intrați din autentificarea agențiilor (mai jos).",
+      "already_pending": "Avem deja cererea voastră și o analizăm. Vă scriem în curând.",
+      "too_fast": "Verificați datele și trimiteți din nou formularul.",
+      "invalid_email": "E-mailul nu este valid.",
+      "name_required": "Lipsește numele agenției.",
+      "rate_limited": "Prea multe trimiteri de la această conexiune. Încercați din nou peste o oră.",
+      "invalid": "Un câmp este prea lung sau invalid. Verificați-l."
+    },
+    "err": {
+      "generic": "Ceva n-a mers. Încearcă din nou peste puțin timp.",
+      "withDetail": "Nu s-a putut finaliza: {{msg}}",
+      "email_in_use": "Acest e-mail este folosit deja de altă agenție.",
+      "invalid_email": "E-mailul nu este valid.",
+      "staff_account": "Acest cont aparține echipei; nu poate fi mutat.",
+      "partner_not_active": "Agenția nu este activă.",
+      "not_found": "Înregistrarea nu a fost găsită.",
+      "duplicate": "Acest eveniment este deja înregistrat pentru client.",
+      "demo_partner": "Este o agenție demo sau internă: nu generează comisioane.",
+      "unit_sold": "Unitatea este deja vândută.",
+      "unit_not_found": "Unitatea nu a fost găsită.",
+      "invalid": "Date invalide.",
+      "transport_not_configured": "Trimiterea e-mailurilor nu este configurată.",
+      "forbidden": "Nu ai permisiune pentru asta.",
+      "unauthorized": "Sesiunea a expirat. Autentifică-te din nou.",
+      "not_allowed": "Nu ai permisiune pentru asta.",
+      "has_history": "Nu se poate șterge: are istoric (comisioane sau solicitări).",
+      "pct": "Comisionul trebuie să fie un număr între 0 și 50."
+    },
+    "lead": {
+      "consent": "Clientul a fost de acord să-și împărtășească datele cu Unreal Studio.",
+      "consentRequired": "Confirmă că clientul a fost de acord să-și împărtășească datele.",
+      "ok": "Client înregistrat la {{date}}. V-am trimis confirmarea pe e-mail: este dovada voastră de înregistrare.",
+      "already_registered": "Acest client era deja înregistrat. Dacă crezi că e o greșeală, scrie-ne.",
+      "consent_required": "Confirmă că clientul a fost de acord să-și împărtășească datele.",
+      "contact_required": "Adaugă e-mailul sau telefonul clientului.",
+      "name_required": "Lipsește numele clientului.",
+      "invalid_email": "E-mailul clientului nu este valid.",
+      "not_active": "Contul vostru de agenție nu este activ."
+    },
+    "reserve": {
+      "unit": "Unitatea de rezervat",
+      "required": "Pentru rezervare alege clientul și unitatea."
+    },
+    "comm": {
+      "reserved": "Comision din rezervări",
+      "due": "Comision de plătit",
+      "paid": "Comision plătit",
+      "ledgerTitle": "Rezervări și vânzări înregistrate",
+      "ledgerEmpty": "Încă nu există rezervări sau vânzări înregistrate.",
+      "kind": {
+        "reservation": "Rezervare",
+        "sale": "Vânzare"
+      },
+      "st": {
+        "reserved": "Rezervată",
+        "due": "De plătit",
+        "paid": "Plătită",
+        "cancelled": "Anulată"
+      }
+    },
+    "contract": {
+      "download": "Descarcă acordul (PDF)"
+    },
+    "blocked": {
+      "pending": {
+        "title": "Contul vostru este în analiză",
+        "body": "Imediat ce o aprobăm veți primi un e-mail și veți putea vedea proiectele și prețurile."
+      },
+      "suspended": {
+        "title": "Cont suspendat",
+        "body": "Accesul agenției voastre este suspendat. Scrieți-ne dacă doriți reactivarea."
+      },
+      "rejected": {
+        "title": "Cerere neaprobată",
+        "body": "Deocamdată nu putem activa contul vostru. Dacă credeți că e o greșeală, scrieți-ne."
+      },
+      "deleted": {
+        "title": "Cont închis",
+        "body": "Acest cont de agenție nu mai este activ. Pentru a colabora din nou, înscrieți-vă din nou."
+      }
+    },
+    "event": {
+      "title": {
+        "reservation": "+ Rezervare · {{name}}",
+        "sale": "+ Vânzare · {{name}}"
+      },
+      "unit": "Unitate",
+      "noUnit": "Fără unitate anume",
+      "reserved": "rezervată",
+      "price": "Preț de vânzare",
+      "currency": "Monedă",
+      "mode": "Cine închide",
+      "modeClose": "Agenția închide vânzarea",
+      "modeReferral": "Unreal închide (client recomandat)",
+      "priceRequired": "Introdu prețul de vânzare.",
+      "ok": "Înregistrat: comision {{pct}} % = {{amount}}. Agenția a fost anunțată."
+    },
+    "admin": {
+      "allStatuses": "Toate stările",
+      "approveAnyway": "Aprobă oricum",
+      "approveTitle": "Aprobă {{name}}",
+      "approveBody": "Se creează agenția și accesul, iar e-mailul de bun venit cu acordul pleacă la {{email}}.",
+      "approveOk": "Aprobată. Bun venit trimis la {{email}}.",
+      "approveNoEmail": "Aprobată, dar e-mailul de bun venit a eșuat ({{msg}}). Folosește „Retrimite bun venit”.",
+      "approvedOn": "Aprobată: {{date}}",
+      "autoReasons": "Nu s-a aprobat automat pentru că",
+      "closePct": "% dacă închide agenția",
+      "referralPct": "% dacă închide Unreal",
+      "counts": "{{leads}} clienți · {{res}} rezervări · {{sales}} vânzări",
+      "delete": "Șterge",
+      "deleteTitle": "Șterge {{name}}",
+      "deleteBody": "Agenția pierde accesul imediat și dispare din liste. Clienții și istoricul se păstrează.",
+      "typeName": "Scrie „{{name}}” pentru a confirma",
+      "suspend": "Suspendă",
+      "suspendTitle": "Suspendă {{name}}",
+      "suspendBody": "Agenția nu se poate autentifica până o reactivezi. Sesiunea se închide.",
+      "reactivate": "Reactivează",
+      "resendWelcome": "Retrimite bun venit",
+      "sendReset": "Trimite resetare parolă",
+      "welcomeSent": "Bun venit trimis la {{email}}.",
+      "resetSent": "Resetare parolă trimisă la {{email}}.",
+      "statusOk": {
+        "approved": "{{name}} reactivată.",
+        "suspended": "{{name}} suspendată.",
+        "deleted": "{{name}} ștearsă.",
+        "rejected": "{{name}} respinsă.",
+        "pending": "{{name}} în așteptare."
+      },
+      "reason": "Motiv",
+      "reasonOptional": "Motiv (opțional, inclus în e-mail)",
+      "rejectTitle": "Respinge {{name}}",
+      "rejectBody": "Primește un e-mail în limba sa, iar botul nu mai face follow-up.",
+      "rejectOk": "Cerere respinsă; e-mail trimis.",
+      "deleteAppTitle": "Șterge cererea {{name}}",
+      "deleteAppBody": "Folosește pentru spam sau teste. Nu se trimite niciun e-mail.",
+      "deletedApp": "Cerere ștearsă.",
+      "deleteLeadTitle": "Șterge clientul {{name}}",
+      "deleteLeadBody": "Doar pentru clienți de test sau duplicați. Dacă are rezervări sau vânzări nu se poate șterge.",
+      "leadDeleted": "Client șters.",
+      "demo": "Demo",
+      "emailWarning": "La salvare, accesul agenției trece pe acest e-mail (parola nu se schimbă).",
+      "lang": "Limba e-mailurilor",
+      "market": "Piață",
+      "marketOpt": {
+        "es": "Spania",
+        "world": "Internațional"
+      },
+      "lastLogin": "Ultima autentificare: {{date}}",
+      "never": "niciodată",
+      "next": "Următoarea",
+      "prev": "Anterioara",
+      "pageOf": "Pagina {{page}} din {{pages}} · {{count}}",
+      "reviewedBy": "analizată de {{who}} la {{when}}",
+      "saved": "Modificări salvate.",
+      "search": "Caută (nume, e-mail, țară)",
+      "statusLabel": "Stare",
+      "working": "Se procesează…",
+      "appSt": {
+        "pending": "În așteptare",
+        "approved": "Aprobată",
+        "rejected": "Respinsă",
+        "contacted": "Contactată",
+        "all": "Toate"
+      }
+    },
+    "reason": {
+      "blacklisted": "pe lista neagră",
+      "already_partner": "deja partener",
+      "terms_not_accepted": "condiții neacceptate",
+      "invalid_or_expired_token": "link de invitație expirat sau invalid",
+      "free_email_domain": "e-mail gratuit (gmail, hotmail…)",
+      "disposable_email": "e-mail temporar",
+      "no_mx": "domeniul nu primește e-mail",
+      "no_website": "fără site",
+      "website_not_resolving": "site-ul nu există"
     }
   }
 }

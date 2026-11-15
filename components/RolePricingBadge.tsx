@@ -18,7 +18,6 @@ interface UnitPricing {
   price_inversor: number | null;
   price_agencia: number | null;
   commission_default_pct: number | null;
-  commission_per_partner: Record<string, number> | null;
 }
 
 interface Props {
@@ -38,31 +37,28 @@ export default function RolePricingBadge({ unitId, webPrice, webCurrency }: Prop
   const { formatPrice } = useCurrency();
   const { user, role } = useAuth();
   const [pricing, setPricing] = useState<UnitPricing | null>(null);
-  const [partnerId, setPartnerId] = useState<string | null>(null);
+  const [myPct, setMyPct] = useState<number | null>(null);
 
   useEffect(() => {
     if (!unitId) return;
     void (async () => {
       const { data } = await supabase
         .from("property_units")
-        .select("price_publico, price_inversor, price_agencia, commission_default_pct, commission_per_partner")
+        .select("price_publico, price_inversor, price_agencia, commission_default_pct")
         .eq("id", unitId)
         .maybeSingle();
       if (data) setPricing(data as UnitPricing);
     })();
   }, [unitId]);
 
+  // La agencia solo ve SU % (resuelto en el servidor); las tasas de otras agencias ya no se leen.
   useEffect(() => {
-    if (!user || role !== "lister") return;
+    if (!user || role !== "lister" || !unitId) return;
     void (async () => {
-      const { data } = await supabase
-        .from("listing_partners")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      if (data) setPartnerId(data.id);
+      const { data } = await supabase.rpc("my_unit_commission", { p_unit: unitId });
+      if (data != null) setMyPct(Number(data));
     })();
-  }, [user, role]);
+  }, [user, role, unitId]);
 
   if (!pricing || !user || !role) return null;
 
@@ -76,10 +72,8 @@ export default function RolePricingBadge({ unitId, webPrice, webCurrency }: Prop
   }
 
   if (role === "lister") {
-    const pct =
-      (partnerId && pricing.commission_per_partner?.[partnerId]) ??
-      pricing.commission_default_pct ??
-      5;
+    const pct = myPct;
+    if (pct == null) return null;
     // Sin "precio agencia" aparte: la agencia vende al precio de la web (el que ya enseña esta ficha).
     const price = Number(webPrice) || 0;
     if (!price) return null;
