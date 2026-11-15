@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
-import { AgencyData, fmtDate } from './useAgencyData';
+import { AgencyData, fmtDate, fmtDateTime, shortProjectName } from './useAgencyData';
 import LeadDrawer from './LeadDrawer';
 import { card, btnPrimary, input, Empty, ListRow, SectionTitle, StatusPill } from './ui';
 
@@ -18,6 +18,8 @@ export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: 
   const [form, setForm] = useState(EMPTY_LEAD);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
+  const [consent, setConsent] = useState(false);
+  const [okMsg, setOkMsg] = useState('');
   const [q, setQ] = useState('');
   const status = sp.get('status') ?? 'all';
   const [detail, setDetail] = useState<string | null>(null);
@@ -47,11 +49,17 @@ export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: 
     // agency_leads.property_id apunta a properties: un proyecto de la web aún sin ficha de agencia va en la nota.
     const sel = projects.find((p) => p.id === form.property_id);
     if (sel && !sel.in_catalog) { row.property_id = null; row.notes = [sel.name, row.notes].filter(Boolean).join(' · '); }
-    const { error } = await supabase.from('agency_leads').insert({ ...row, agency_id: partner.id });
+    if (!consent) { setSaving(false); setErr(t('agencyFunnel.lead.consentRequired')); return; }
+    // RPC: el primero que registra al cliente se lo queda (nunca dice qué agencia lo tiene).
+    const { data: res, error } = await supabase.rpc('agency_register_lead', { p: { ...row, consent: true } });
     setSaving(false);
-    if (error) { setErr(error.message); return; }
+    if (error) { setErr(t('agencyFunnel.err.generic')); return; }
+    const st = (res as { status: string; created_at?: string })?.status;
+    if (st !== 'ok') { setErr(t(`agencyFunnel.lead.${st}`, { defaultValue: t('agencyFunnel.err.generic') })); return; }
     setForm(EMPTY_LEAD);
+    setConsent(false);
     setOpen(false);
+    setOkMsg(t('agencyFunnel.lead.ok', { date: fmtDateTime((res as { created_at: string }).created_at) }));
     await reloadLeads();
   };
 
@@ -63,7 +71,7 @@ export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: 
   const count = (s: string) => leads.filter((l) => (s === 'open' ? l.status === 'new' || l.status === 'contacted' : l.status === s)).length;
 
   const registerBtn = (
-    <button onClick={() => { setErr(''); setOpen(true); }} className={btnPrimary}>
+    <button onClick={() => { setErr(''); setOkMsg(''); setOpen(true); }} className={btnPrimary}>
       <span className="material-symbols-outlined text-base">person_add</span>{t('agenciasDashboard.leads.register')}
     </button>
   );
@@ -71,6 +79,7 @@ export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: 
   return (
     <div className="animate-in fade-in duration-500">
       <SectionTitle title={t('agencyPortal.nav.clients')} sub={t('agenciasDashboard.leads.body')} action={registerBtn} />
+      {okMsg && <p role="status" className="text-sm rounded-xl px-4 py-3 mb-4 bg-green-50 text-green-800">{okMsg}</p>}
 
       {leads.length === 0 ? (
         <Empty icon="group" text={t('agenciasDashboard.leads.empty')} action={registerBtn} />
@@ -132,10 +141,14 @@ export default function AgencyClients({ data, go }: { data: AgencyData; go: (v: 
             <input className={input} placeholder={t('agenciasDashboard.leads.country')} value={form.country} onChange={set('country')} maxLength={100} />
             <select className={input} value={form.property_id} onChange={set('property_id')}>
               <option value="">{t('agenciasDashboard.leads.project')}</option>
-              {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              {projects.map((p) => <option key={p.id} value={p.id}>{shortProjectName(p.name)}</option>)}
             </select>
             <input className={input} placeholder={t('agenciasDashboard.leads.budget')} value={form.budget} onChange={set('budget')} maxLength={100} />
             <textarea className={input} rows={3} placeholder={t('agenciasDashboard.leads.notes')} value={form.notes} onChange={set('notes')} maxLength={2000} />
+            <label className="flex items-start gap-2 text-xs text-primary/70">
+              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} required className="mt-0.5" />
+              <span>{t('agencyFunnel.lead.consent')}</span>
+            </label>
             {err && <p className="text-xs text-red-600">{err}</p>}
             <button type="submit" disabled={saving} className={`${btnPrimary} w-full !py-3`}>
               {saving ? t('agenciasDashboard.leads.saving') : t('agenciasDashboard.leads.submit')}

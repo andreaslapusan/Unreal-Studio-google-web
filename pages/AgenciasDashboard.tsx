@@ -14,6 +14,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useCurrency } from '../App';
 import { CURRENCIES } from '../constants';
 import { useAgencyData } from '../components/agency/useAgencyData';
+import { portalPath } from '../lib/portalUrls';
 import AgencyOverview from '../components/agency/AgencyOverview';
 import AgencyProjects from '../components/agency/AgencyProjects';
 import AgencyClients from '../components/agency/AgencyClients';
@@ -59,12 +60,15 @@ export default function AgenciasDashboard() {
   const logout = async () => { try { await signOut(); } catch { /* ignore */ } window.location.href = '/agencias/login'; };
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">{t('agenciasDashboard.loadingAuth')}</div>;
-  if (!user) return <Navigate to="/agencias" replace />;
+  if (!user) return <Navigate to={portalPath('agencias')} replace />;
 
   const label = (v: View) => t(`agencyPortal.nav.${v}`);
   const items: NavItem[] = VIEWS.filter((v) => v !== 'help').map((v) => ({ key: v, icon: ICONS[v], label: label(v), to: `${BASE}?view=${v}`, view: v }));
   const helpItem: NavItem = { key: 'help', icon: ICONS.help, label: label('help'), to: `${BASE}?view=help`, view: 'help' };
   const { partner, loading, error } = data;
+  // Solo 'approved' y sin borrar entra al portal; el resto ve su estado (la RLS tampoco le da datos).
+  const active = !!partner && partner.status === 'approved' && !partner.deleted_at;
+  const blockedKey = partner && !active ? (partner.deleted_at || partner.status === 'deleted' ? 'deleted' : partner.status === 'suspended' ? 'suspended' : partner.status === 'rejected' ? 'rejected' : 'pending') : null;
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans text-left relative">
@@ -114,7 +118,7 @@ export default function AgenciasDashboard() {
           </div>
         )}
 
-        <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
+        <div role="region" className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-grow">
           {loading && <p className="text-sm text-primary/60">{t('agenciasDashboard.loadingProjects')}</p>}
           {!loading && (error || !partner) && (
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-primary/5 text-center max-w-lg mx-auto">
@@ -123,7 +127,15 @@ export default function AgenciasDashboard() {
               <p className="text-sm text-primary/60 mt-2">{error || t('agenciasDashboard.accessDeniedBody')}</p>
             </div>
           )}
-          {!loading && partner && (
+          {!loading && blockedKey && (
+            <div role="region" aria-live="polite" className="bg-white rounded-2xl p-8 shadow-sm border border-primary/5 text-center max-w-lg mx-auto">
+              <span className="material-symbols-outlined text-4xl text-primary/20">{blockedKey === 'pending' ? 'hourglass_top' : 'block'}</span>
+              <h1 className="text-2xl font-serif text-primary mt-2">{t(`agencyFunnel.blocked.${blockedKey}.title`)}</h1>
+              <p className="text-sm text-primary/60 mt-2">{t(`agencyFunnel.blocked.${blockedKey}.body`)}</p>
+              <a href="mailto:hello@unrealstudiobali.com" className="inline-block mt-4 text-sm font-bold text-primary underline">hello@unrealstudiobali.com</a>
+            </div>
+          )}
+          {!loading && partner && active && (
             <>
               {view === 'dashboard' && <AgencyOverview data={data} go={go} />}
               {view === 'projects' && <AgencyProjects data={data} />}
@@ -137,10 +149,10 @@ export default function AgenciasDashboard() {
               {view === 'stats' && <AgencyStats data={data} />}
               {view === 'commissions' && <AgencyCommissions data={data} go={go} />}
               {view === 'profile' && <AgencyProfile data={data} email={user.email} />}
-              {view === 'help' && <AgencyHelp agencyName={partner.agency_name} />}
+              {view === 'help' && <AgencyHelp agencyName={partner.agency_name} close={Number(partner.commission_close_pct ?? 0)} referral={Number(partner.commission_referral_pct ?? partner.commission_close_pct ?? 0)} />}
             </>
           )}
-        </main>
+        </div>
       </div>
     </div>
   );

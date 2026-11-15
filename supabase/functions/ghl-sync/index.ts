@@ -148,11 +148,14 @@ interface PartnerRow {
   agency_name: string;
   email: string | null;
   status: string;
+  market?: string | null;
   ghl_contact_id?: string | null;
 }
 
 async function handlePartnerStatusActive(row: PartnerRow) {
-  if (row.status !== "active") return { ok: true, skipped: "not active" };
+  // 'approved' is the real status (the old code waited for 'active', which never existed → stage never moved)
+  if (row.status !== "approved" && row.status !== "active") return { ok: true, skipped: "not approved" };
+  const agencyTags = ["agency", `agency-${row.market ?? "es"}`]; // keeps agencies out of client nurture sequences
   if (!row.email) return { ok: false, error: "no email" };
 
   // Find/create GHL contact
@@ -169,13 +172,15 @@ async function handlePartnerStatusActive(row: PartnerRow) {
         locationId: GHL_LOC,
         firstName: row.agency_name,
         email: row.email,
-        tags: ["agencia_listing", "active_partner"],
+        tags: ["agencia_listing", "active_partner", ...agencyTags],
       }),
     });
     const cd = await created.json();
     contactId = cd?.contact?.id ?? cd?.id;
   }
   if (!contactId) return { ok: false };
+  await ghl(`/contacts/${contactId}/tags`, { method: "POST", body: JSON.stringify({ tags: ["agencia_listing", "active_partner", ...agencyTags] }) });
+  if (!row.ghl_contact_id) await supa.from("listing_partners").update({ ghl_contact_id: contactId }).eq("id", row.id);
 
   // Move opp to "Contactadas y Listadas"
   const oppSearch = await ghl(
@@ -394,7 +399,7 @@ Deno.serve(async (req) => {
   try {
     if (wh.type === "INSERT" && wh.table === "listing_partner_applications") {
       result = await handleApplicationInsert(wh.record as Application);
-    } else if (wh.type === "UPDATE" && wh.table === "listing_partners") {
+    } else if ((wh.type === "UPDATE" || wh.type === "INSERT") && wh.table === "listing_partners") {
       result = await handlePartnerStatusActive(wh.record as PartnerRow);
     } else if (wh.type === "INSERT" && wh.table === "investors") {
       result = await handleInvestorInsert(wh.record as InvestorRow);

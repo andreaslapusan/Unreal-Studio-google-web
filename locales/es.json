@@ -1831,7 +1831,9 @@
     "partnerStatus": {
       "approved": "Aprobada",
       "pending": "Pendiente",
-      "rejected": "Rechazada"
+      "rejected": "Rechazada",
+      "suspended": "Suspendida",
+      "deleted": "Borrada"
     },
     "agencyLeads": {
       "title": "Clientes registrados por agencias",
@@ -3101,7 +3103,7 @@
       "modeABody": "Tu agencia acompaña al cliente hasta la firma.",
       "modeBTitle": "Nos pasas el cliente",
       "modeBBody": "Registras el cliente y el cierre lo hace nuestro equipo.",
-      "commNote": "El porcentaje de cada unidad (por defecto 5% sobre el precio de la web) aparece en Proyectos; los acuerdos especiales se pactan con el equipo.",
+      "commNote": "El porcentaje de cada unidad (por defecto {{close}}% sobre el precio de la web) aparece en Proyectos; los acuerdos especiales se pactan con el equipo.",
       "contactTitle": "Contacto con el equipo Unreal",
       "contactBody": "Dudas sobre un proyecto, un cliente o tu comisión: escríbenos y te respondemos.",
       "waText": "Hola, soy de la agencia {{agency}} (portal de agencias de Unreal Studio)."
@@ -3169,7 +3171,8 @@
         "call": "Llamada con el equipo",
         "visit": "Visita / viaje a Bali",
         "presentation": "Presentación online",
-        "contract": "Contrato de colaboración"
+        "contract": "Contrato de colaboración",
+        "reserve": "Reservar unidad"
       },
       "client": "Cliente (opcional)",
       "noClient": "Sin cliente concreto",
@@ -3245,7 +3248,7 @@
       "pending": "Ya tienes una solicitud de contrato en curso.",
       "termsTitle": "Condiciones principales",
       "c1t": "Comisión",
-      "c1": "5 % sobre el precio de venta si tu agencia hace el trabajo comercial hasta el cierre; 3 % si presentas un inversor cualificado y Unreal hace la venta. La parte legal la lleva siempre Unreal.",
+      "c1": "{{close}} % sobre el precio de venta si tu agencia hace el trabajo comercial hasta el cierre; {{referral}} % si presentas un inversor cualificado y Unreal hace la venta. La parte legal la lleva siempre Unreal.",
       "c2t": "Cuándo se gana",
       "c2": "Cuando el inversor registrado firma un acuerdo vinculante de compraventa. Se paga por transferencia; la comisión es bruta y cada parte paga sus impuestos. El plazo de pago figura en el contrato.",
       "c3t": "Protección del cliente",
@@ -3255,7 +3258,7 @@
       "c5t": "Una comisión por operación",
       "c5": "Unreal paga una única comisión por operación; si incorporas a terceros, la repartes tú con ellos.",
       "youTitle": "Tu agencia se compromete a",
-      "you": "Promocionar a su costa, registrar a cada inversor, organizar las visitas (y llevarlas en la modalidad del 5 %) e informar con veracidad, sin prometer nada fuera de la información de Unreal.",
+      "you": "Promocionar a su costa, registrar a cada inversor, organizar las visitas (y llevarlas en la modalidad del {{close}} %) e informar con veracidad, sin prometer nada fuera de la información de Unreal.",
       "usTitle": "Unreal se compromete a",
       "us": "Dar información veraz y actualizada de disponibilidad, reservas y precios, facilitar el acceso a las propiedades para las visitas, llevar toda la parte legal de la venta y pagar la comisión acordada.",
       "history": "Tus solicitudes de contrato"
@@ -3334,6 +3337,193 @@
       "fillRequired": "Rellena concepto, importe y divisa.",
       "errorSave": "No se pudo guardar: {{error}}",
       "errorLoad": "No se pudieron cargar los gastos: {{error}}"
+    }
+  },
+  "agencyFunnel": {
+    "signup": {
+      "terms_required": "Acepta las condiciones para enviar la solicitud.",
+      "acceptPre": "Acepto los",
+      "terms": "términos",
+      "privacy": "la política de privacidad",
+      "and": "y el",
+      "agreement": "acuerdo de colaboración con agencias (comisión según mercado; lo recibiréis por email).",
+      "other": "Otros",
+      "successAuto": "Revisad vuestro correo en unos minutos: si todo está en orden, os llegará el acceso al portal. Si no, el equipo lo revisa en 24 h.",
+      "already_partner": "Este email ya es una agencia colaboradora. Entrad desde el acceso de agencias (abajo).",
+      "already_pending": "Ya tenemos vuestra solicitud y la estamos revisando. Os escribiremos pronto.",
+      "too_fast": "Revisad los datos y volved a enviar el formulario.",
+      "invalid_email": "El email no es válido.",
+      "name_required": "Falta el nombre de la agencia.",
+      "rate_limited": "Demasiados envíos desde esta conexión. Probad de nuevo en una hora.",
+      "invalid": "Algún campo es demasiado largo o no es válido. Revisadlo."
+    },
+    "err": {
+      "generic": "Algo ha fallado. Inténtalo de nuevo en un momento.",
+      "withDetail": "No se pudo completar: {{msg}}",
+      "email_in_use": "Ese email ya lo usa otra agencia.",
+      "invalid_email": "El email no es válido.",
+      "staff_account": "Ese acceso pertenece a una cuenta del equipo; no se puede mover.",
+      "partner_not_active": "La agencia no está activa.",
+      "not_found": "No se ha encontrado el registro.",
+      "duplicate": "Ese evento ya está registrado para este cliente.",
+      "demo_partner": "Es una agencia demo o interna: no genera comisiones.",
+      "unit_sold": "Esa unidad ya está vendida.",
+      "unit_not_found": "No se ha encontrado la unidad.",
+      "invalid": "Datos no válidos.",
+      "transport_not_configured": "El envío de emails no está configurado.",
+      "forbidden": "No tienes permiso para esto.",
+      "unauthorized": "Tu sesión ha caducado. Vuelve a entrar.",
+      "not_allowed": "No tienes permiso para esto.",
+      "has_history": "No se puede borrar: tiene historial (comisiones o solicitudes).",
+      "pct": "La comisión debe ser un número entre 0 y 50."
+    },
+    "lead": {
+      "consent": "El cliente ha aceptado que compartamos sus datos con Unreal Studio.",
+      "consentRequired": "Confirma que el cliente ha aceptado compartir sus datos.",
+      "ok": "Cliente registrado el {{date}}. Os hemos enviado la confirmación por email: es vuestra prueba de registro.",
+      "already_registered": "Este cliente ya estaba registrado. Si crees que es un error, escríbenos.",
+      "consent_required": "Confirma que el cliente ha aceptado compartir sus datos.",
+      "contact_required": "Pon el email o el teléfono del cliente.",
+      "name_required": "Falta el nombre del cliente.",
+      "invalid_email": "El email del cliente no es válido.",
+      "not_active": "Tu cuenta de agencia no está activa."
+    },
+    "reserve": {
+      "unit": "Unidad a reservar",
+      "required": "Para reservar elige el cliente y la unidad."
+    },
+    "comm": {
+      "reserved": "Comisión en reservas",
+      "due": "Comisión pendiente de pago",
+      "paid": "Comisión pagada",
+      "ledgerTitle": "Reservas y ventas registradas",
+      "ledgerEmpty": "Aún no hay reservas ni ventas registradas.",
+      "kind": {
+        "reservation": "Reserva",
+        "sale": "Venta"
+      },
+      "st": {
+        "reserved": "Reservada",
+        "due": "Pendiente de pago",
+        "paid": "Pagada",
+        "cancelled": "Anulada"
+      }
+    },
+    "contract": {
+      "download": "Descargar acuerdo (PDF)"
+    },
+    "blocked": {
+      "pending": {
+        "title": "Vuestra cuenta está en revisión",
+        "body": "En cuanto la aprobemos os llegará un email y podréis ver proyectos y precios."
+      },
+      "suspended": {
+        "title": "Cuenta suspendida",
+        "body": "El acceso de vuestra agencia está suspendido. Escribidnos si queréis reactivarlo."
+      },
+      "rejected": {
+        "title": "Solicitud no aprobada",
+        "body": "Por ahora no podemos activar vuestra cuenta. Si creéis que es un error, escribidnos."
+      },
+      "deleted": {
+        "title": "Cuenta dada de baja",
+        "body": "Esta cuenta de agencia ya no está activa. Para volver a colaborar, solicitad el alta de nuevo."
+      }
+    },
+    "event": {
+      "title": {
+        "reservation": "+ Reserva · {{name}}",
+        "sale": "+ Venta · {{name}}"
+      },
+      "unit": "Unidad",
+      "noUnit": "Sin unidad concreta",
+      "reserved": "reservada",
+      "price": "Precio de venta",
+      "currency": "Moneda",
+      "mode": "Quién cierra",
+      "modeClose": "La agencia cierra la venta",
+      "modeReferral": "Unreal cierra (cliente referido)",
+      "priceRequired": "Pon el precio de venta.",
+      "ok": "Registrado: comisión {{pct}} % = {{amount}}. Avisada la agencia."
+    },
+    "admin": {
+      "allStatuses": "Todos los estados",
+      "approveAnyway": "Aprobar igualmente",
+      "approveTitle": "Aprobar a {{name}}",
+      "approveBody": "Se crea la agencia y su acceso, y se manda a {{email}} el email de bienvenida con el acuerdo.",
+      "approveOk": "Aprobada. Bienvenida enviada a {{email}}.",
+      "approveNoEmail": "Aprobada, pero el email de bienvenida falló ({{msg}}). Usa «Reenviar bienvenida».",
+      "approvedOn": "Alta: {{date}}",
+      "autoReasons": "No se aprobó sola por",
+      "closePct": "% si cierra la agencia",
+      "referralPct": "% si cierra Unreal",
+      "counts": "{{leads}} clientes · {{res}} reservas · {{sales}} ventas",
+      "delete": "Borrar",
+      "deleteTitle": "Borrar {{name}}",
+      "deleteBody": "La agencia pierde el acceso al momento y desaparece de las listas. Sus clientes y su historial se conservan.",
+      "typeName": "Escribe «{{name}}» para confirmar",
+      "suspend": "Suspender",
+      "suspendTitle": "Suspender {{name}}",
+      "suspendBody": "La agencia no podrá entrar al portal hasta que la reactives. Se cierra su sesión.",
+      "reactivate": "Reactivar",
+      "resendWelcome": "Reenviar bienvenida",
+      "sendReset": "Enviar reset de contraseña",
+      "welcomeSent": "Bienvenida enviada a {{email}}.",
+      "resetSent": "Reset de contraseña enviado a {{email}}.",
+      "statusOk": {
+        "approved": "{{name}} reactivada.",
+        "suspended": "{{name}} suspendida.",
+        "deleted": "{{name}} borrada.",
+        "rejected": "{{name}} rechazada.",
+        "pending": "{{name}} pendiente."
+      },
+      "reason": "Motivo",
+      "reasonOptional": "Motivo (opcional, se incluye en el email)",
+      "rejectTitle": "Rechazar a {{name}}",
+      "rejectBody": "Se le manda un email en su idioma y el bot deja de hacerle seguimiento.",
+      "rejectOk": "Solicitud rechazada; email enviado.",
+      "deleteAppTitle": "Borrar la solicitud de {{name}}",
+      "deleteAppBody": "Úsalo para spam o pruebas. No se envía ningún email.",
+      "deletedApp": "Solicitud borrada.",
+      "deleteLeadTitle": "Borrar el cliente {{name}}",
+      "deleteLeadBody": "Solo para clientes de prueba o duplicados. Si tiene reservas o ventas no se puede borrar.",
+      "leadDeleted": "Cliente borrado.",
+      "demo": "Demo",
+      "emailWarning": "Al guardar, el acceso de la agencia pasa a este email (su contraseña no cambia).",
+      "lang": "Idioma de los emails",
+      "market": "Mercado",
+      "marketOpt": {
+        "es": "España",
+        "world": "Internacional"
+      },
+      "lastLogin": "Último acceso: {{date}}",
+      "never": "nunca",
+      "next": "Siguiente",
+      "prev": "Anterior",
+      "pageOf": "Página {{page}} de {{pages}} · {{count}}",
+      "reviewedBy": "revisada por {{who}} el {{when}}",
+      "saved": "Cambios guardados.",
+      "search": "Buscar (nombre, email, país)",
+      "statusLabel": "Estado",
+      "working": "Procesando…",
+      "appSt": {
+        "pending": "Pendiente",
+        "approved": "Aprobada",
+        "rejected": "Rechazada",
+        "contacted": "Contactada",
+        "all": "Todas"
+      }
+    },
+    "reason": {
+      "blacklisted": "en la lista negra",
+      "already_partner": "ya es agencia",
+      "terms_not_accepted": "no aceptó las condiciones",
+      "invalid_or_expired_token": "enlace de invitación caducado o no válido",
+      "free_email_domain": "email gratuito (gmail, hotmail…)",
+      "disposable_email": "email temporal",
+      "no_mx": "el dominio no recibe email",
+      "no_website": "sin web",
+      "website_not_resolving": "la web no existe"
     }
   }
 }

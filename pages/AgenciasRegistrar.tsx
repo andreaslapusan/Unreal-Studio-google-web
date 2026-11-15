@@ -1,13 +1,16 @@
 /**
  * /agencias/registrar — Public application form for new listing partners.
- * Anyone (no auth required) can submit. Creates a row in `listing_partner_applications`
- * which the admin reviews to approve into `listing_partners`.
+ * Goes through the RPC agency_apply (honeypot, time-to-submit, terms, friendly duplicates, per-IP limit).
+ * The outreach link (?ref=<token>&lang=&utm_*) prefills the email and is stored on the application;
+ * agency-hub verifies the token server-side and auto-approves (plan items 2, 8, 9, 15, 16, 19).
+ * No lead_attributions/GHL push here: agencies reach GHL only once approved (item 25).
  */
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase";
-import { recordFormSubmit } from "../lib/attribution";
+import { portalPath } from "../lib/portalUrls";
+import { isOnSaleOnWeb, shortProjectName } from "../components/agency/useAgencyData";
 import { trackLead } from "../lib/fbPixel";
 import { gtmGenerateLead } from "../lib/gtm";
 
@@ -26,23 +29,39 @@ interface FormState {
   notes: string;
 }
 
-const PROJECTS = [
-  "Lofts Balangan",
-  "Villa 3hab Balangan",
-  "Apartments Balangan",
-  "The Nook (Pererenan)",
-  "Deseo Studio (Melasti)",
-  "Mambo Villa (Melasti)",
-  "Villa Crunchy (Tabanan)",
-  "Otros",
-];
+const OTHER = "__other__";
+
+/** Email inside the outreach token, for prefill only (the signature is checked on the server). */
+function emailFromRef(ref: string | null): string {
+  if (!ref || !ref.includes(".")) return "";
+  try {
+    const b = ref.split(".")[0].replace(/-/g, "+").replace(/_/g, "/");
+    const p = JSON.parse(atob(b + "===".slice((b.length + 3) % 4)));
+    return typeof p.email === "string" ? p.email : "";
+  } catch { return ""; }
+}
 
 export default function AgenciasRegistrar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [sp] = useSearchParams();
+  const ref = sp.get("ref");
+  const lang = (["es", "en", "ro", "id"].includes(sp.get("lang") ?? "") ? sp.get("lang") : (i18n.language || "es").slice(0, 2)) as string;
+  const started = useRef(Date.now());
+  const [honey, setHoney] = useState("");
+  const [terms, setTerms] = useState(false);
+  const [auto, setAuto] = useState(false);
+  const [projects, setProjects] = useState<string[]>([]);
+  useEffect(() => { if (sp.get("lang") && sp.get("lang") !== i18n.language) void i18n.changeLanguage(sp.get("lang") as string); }, [sp, i18n]);
+  useEffect(() => {
+    // Live list = what is for sale on the website (same rule as /proyectos).
+    void supabase.from("projects").select("name, is_hidden, visibility_status, sort_order").order("sort_order", { ascending: true })
+      .then(({ data }) => setProjects([...new Set((data ?? []).filter(isOnSaleOnWeb).map((p) => shortProjectName(p.name)))]));
+  }, []);
+  const prefillEmail = useMemo(() => emailFromRef(ref), [ref]);
   const [form, setForm] = useState<FormState>({
     agency_name: "",
     manager_name: "",
-    email: "",
+    email: prefillEmail,
     phone: "",
     whatsapp: "",
     website: "",
@@ -76,43 +95,30 @@ export default function AgenciasRegistrar() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.agency_name || !form.email) return;
+    if (!terms) { setError(t("agencyFunnel.signup.terms_required")); return; }
     setSubmitting(true);
     setError("");
     try {
-      const { error: insertErr } = await supabase
-        .from("listing_partner_applications")
-        .insert({
-          agency_name: form.agency_name.trim(),
-          manager_name: form.manager_name.trim() || null,
-          email: form.email.trim().toLowerCase(),
-          phone: form.phone.trim() || null,
-          whatsapp: form.whatsapp.trim() || null,
-          website: form.website.trim() || null,
-          country: form.country.trim() || null,
-          projects_interested: form.projects_interested,
-          experience: form.experience.trim() || null,
-          monthly_volume: form.monthly_volume.trim() || null,
-          source: form.source.trim() || null,
-          notes: form.notes.trim() || null,
-          status: "pending",
-        });
-      if (insertErr) throw insertErr;
-
-      // Record attribution alongside the application so the partner who
-      // referred this agency (if any) gets credit in their stats panel.
-      void recordFormSubmit({
+      const { data, error: rpcErr } = await supabase.rpc("agency_apply", { p: {
+        ...form,
+        projects_interested: form.projects_interested.map((x) => (x === OTHER ? t("agencyFunnel.signup.other") : x)),
         email: form.email.trim().toLowerCase(),
-        phone: form.phone.trim() || form.whatsapp.trim() || null,
-        name: form.manager_name.trim() || form.agency_name.trim(),
-      });
+        lang, ref, campaign: sp.get("utm_campaign"),
+        utm_source: sp.get("utm_source"), utm_medium: sp.get("utm_medium"), utm_campaign: sp.get("utm_campaign"),
+        accept_terms: terms, company_url: honey, elapsed_ms: Date.now() - started.current,
+      } });
+      if (rpcErr) throw rpcErr;
+      const status = (data as { status: string; auto?: boolean })?.status;
+      if (status !== "ok") { setError(t(`agencyFunnel.signup.${status}`, { defaultValue: t("agencyFunnel.err.generic") })); return; }
+      setAuto(!!(data as { auto?: boolean }).auto);
 
       // Meta Pixel — Lead event for the listing partner application.
       trackLead({ content_name: 'Listing Partner application', content_category: 'agencias_registrar' });
       gtmGenerateLead({ form_id: 'agencias_registrar', form_destination: 'supabase' });
 
       setSubmitted(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    } catch {
+      setError(t("agencyFunnel.err.generic"));
     } finally {
       setSubmitting(false);
     }
@@ -124,7 +130,7 @@ export default function AgenciasRegistrar() {
         <div className="max-w-md text-center glass-card rounded-2xl p-10 shadow-xl">
           <span className="material-symbols-outlined text-5xl text-green-600 mb-3">check_circle</span>
           <h1 className="text-3xl font-serif text-primary mb-3">{t('agenciasRegistrar.successTitle')}</h1>
-          <p className="text-primary/70 mb-6">{t('agenciasRegistrar.successBody')}</p>
+          <p className="text-primary/70 mb-6">{auto ? t('agencyFunnel.signup.successAuto') : t('agenciasRegistrar.successBody')}</p>
           <button
             onClick={() => navigate("/")}
             className="bg-primary text-white px-6 py-3 rounded-full font-bold"
@@ -205,7 +211,7 @@ export default function AgenciasRegistrar() {
           <div>
             <span className="text-sm font-medium text-primary block mb-2">{t('agenciasRegistrar.projectsInterest')}</span>
             <div className="flex flex-wrap gap-2">
-              {PROJECTS.map((p) => {
+              {[...projects, OTHER].map((p) => {
                 const checked = form.projects_interested.includes(p);
                 return (
                   <button
@@ -218,7 +224,7 @@ export default function AgenciasRegistrar() {
                         : "bg-white border-primary/20 text-primary hover:bg-primary/5"
                     }`}
                   >
-                    {p}
+                    {p === OTHER ? t('agencyFunnel.signup.other') : p}
                   </button>
                 );
               })}
@@ -272,17 +278,27 @@ export default function AgenciasRegistrar() {
             />
           </label>
 
+          {/* Honeypot: invisible for people, bots fill it. */}
+          <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+            <label>Company URL<input tabIndex={-1} autoComplete="off" value={honey} onChange={(e) => setHoney(e.target.value)} /></label>
+          </div>
+
+          <label className="flex items-start gap-2 text-sm text-primary/80">
+            <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} required className="mt-1" />
+            <span>{t('agencyFunnel.signup.acceptPre')} <a href="/terminos" target="_blank" rel="noopener noreferrer" className="underline">{t('agencyFunnel.signup.terms')}</a>, <a href="/privacidad" target="_blank" rel="noopener noreferrer" className="underline">{t('agencyFunnel.signup.privacy')}</a> {t('agencyFunnel.signup.and')} {t('agencyFunnel.signup.agreement')}</span>
+          </label>
+
           <button
             type="submit"
-            disabled={submitting || !form.agency_name || !form.email}
+            disabled={submitting || !form.agency_name || !form.email || !terms}
             className="w-full bg-primary text-white border border-primary py-3 rounded-lg font-bold hover:bg-almond hover:text-primary transition disabled:opacity-50 disabled:hover:bg-primary disabled:hover:text-white"
           >
             {submitting ? t('agenciasRegistrar.submitting') : t('agenciasRegistrar.submit')}
           </button>
 
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <p role="alert" className="text-red-600 text-sm">{error}</p>}
 
-          <p className="text-xs text-primary/50 text-center">{t('agenciasRegistrar.alreadyPartner')} <a href="/agencias/login" className="underline">{t('agenciasRegistrar.loginHere')}</a>.</p>
+          <p className="text-xs text-primary/50 text-center">{t('agenciasRegistrar.alreadyPartner')} <a href={portalPath('agencias')} className="underline">{t('agenciasRegistrar.loginHere')}</a>.</p>
         </form>
       </div>
     </div>

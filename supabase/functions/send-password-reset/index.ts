@@ -18,17 +18,20 @@ Deno.serve(async (req) => {
   const redirectTo = typeof p.redirectTo === "string" && p.redirectTo.startsWith("https://unrealstudiobali.com/") ? p.redirectTo : "https://unrealstudiobali.com/auth/reset";
   const supabase = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
   const portal = String(p.portal||"").toLowerCase();
+  let linkEmail = email;
   const member = await (async () => { try {
     if (portal==="cliente"){ const {data}=await supabase.rpc("client_login_email_exists",{p_email:email}); if (data===true) return true; const {data:d0}=await supabase.from("clients").select("id").ilike("email",email).limit(1); return !!(d0&&d0.length); }
     if (["empleados","equipo","manager"].includes(portal)){ const {data}=await supabase.from("employees").select("id").ilike("email",email).eq("active",true).limit(1); return !!(data&&data.length); }
     if (portal==="admin"){ const {data}=await supabase.from("admin_users").select("id").ilike("username",email).eq("is_active",true).limit(1); return !!(data&&data.length); }
-    if (portal==="agencias"){ const {data}=await supabase.from("listing_partners").select("id").ilike("email",email).limit(1); return !!(data&&data.length); }
+    // Solo agencias aprobadas y no borradas; el login va con la cuenta vinculada (email sintético +ust-agencias).
+    if (portal==="agencias"){ const {data}=await supabase.from("listing_partners").select("id, user_id").eq("email",email).eq("status","approved").is("deleted_at",null).limit(1); if (!(data&&data.length)) return false; if (data[0].user_id){ const {data:u}=await supabase.auth.admin.getUserById(data[0].user_id); if (u?.user?.email) linkEmail=u.user.email; } return true; }
     return false; } catch { return false; } })();
   if (!member) return json({ success:false, error:"no_account" });
   let link="";
-  try { const { data, error } = await supabase.auth.admin.generateLink({ type:"recovery", email, options:{ redirectTo } });
-    if (error || !data?.properties?.action_link) return json({ success:true });
-    link = data.properties.action_link; } catch { return json({ success:true }); }
+  try { const { data, error } = await supabase.auth.admin.generateLink({ type:"recovery", email: linkEmail, options:{ redirectTo } });
+    // Antes devolvía success:true aunque fallase (el usuario esperaba un email que nunca llegaba).
+    if (error || !data?.properties?.action_link) return json({ success:false, error:"link_failed" }, 502);
+    link = data.properties.action_link; } catch (e) { return json({ success:false, error:"link_failed" }, 502); }
   const host=Deno.env.get("SMTP_HOST"), user=Deno.env.get("SMTP_USER"), pass=Deno.env.get("SMTP_PASS");
   if (!host||!user||!pass) return json({ success:false, error:"transport_not_configured" }, 503);
   const port=Number(Deno.env.get("SMTP_PORT")??"465"); const from=Deno.env.get("MAIL_FROM")??"Unreal Studio <no.reply@unrealstudiobali.com>";

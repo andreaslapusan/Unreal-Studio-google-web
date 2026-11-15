@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../../App';
-import { AgencyData, catalogLink, copyText, fmtDate, isUnitAvailable, potentialEUR } from './useAgencyData';
+import { AgencyData, catalogLink, copyText, fmtDate, isUnitAvailable, partnerPct, potentialEUR } from './useAgencyData';
 import { card, btnPrimary, btnGhost, ListRow, Stat, StatusPill } from './ui';
 
 interface Props { data: AgencyData; go: (view: string, extra?: Record<string, string>) => void }
@@ -17,7 +17,7 @@ export default function AgencyOverview({ data, go }: Props) {
   const following = leads.filter((l) => l.status === 'new' || l.status === 'contacted').length;
   const won = leads.filter((l) => l.status === 'won').length;
   const visits = events.filter((e) => e.event_type === 'visit').length;
-  const potential = potentialEUR(data, partner.id, convert);
+  const potential = potentialEUR(data, partnerPct(partner), convert);
   const projectName = (id: string | null) => data.nameOf(id);
   const slugName = (slug: string) => data.nameOf(slug) ?? slug;
   // Actividad: clientes registrados + eventos de su link, lo más reciente primero.

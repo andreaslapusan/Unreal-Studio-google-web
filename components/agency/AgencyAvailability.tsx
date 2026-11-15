@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { whatsappUrl } from '../../constants';
 import { useCurrency } from '../../App';
-import { AgencyData, availableUnits, groupUnits, projectPct, shortProjectName, unitPct } from './useAgencyData';
+import { AgencyData, availableUnits, groupUnits, partnerPct, projectPct, shortProjectName, unitPct } from './useAgencyData';
 import { card, Empty, ListRow, SectionTitle, Stat } from './ui';
 
 export default function AgencyAvailability({ data }: { data: AgencyData }) {
@@ -24,8 +24,8 @@ export default function AgencyAvailability({ data }: { data: AgencyData }) {
     };
     const groups = groupUnits(availableUnits(p, units));
     return groups.length
-      ? groups.map(({ u, n }) => row(u.id, n, !!u.reserved, unitPct(u, partner.id)))
-      : [row(p.id, 0, false, projectPct(p, units, partner.id))];
+      ? groups.map(({ u, n }) => row(u.id, n, !!u.reserved, unitPct(u)))
+      : [row(p.id, 0, false, projectPct(p, units, partnerPct(partner)))];
   });
   const shown = rows.filter((r) => project === 'all' || r.p.id === project)
     .sort((a, b) => (sort === 'commission' ? b.comEUR - a.comEUR : a.priceEUR - b.priceEUR));

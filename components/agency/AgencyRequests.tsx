@@ -6,15 +6,16 @@ import { supabase } from '../../lib/supabase';
 import { AgencyData, AgencyRequest, fmtDate } from './useAgencyData';
 import { card, btnPrimary, input, Empty, ListRow, SectionTitle, StatusPill } from './ui';
 
-export const REQUEST_TYPES = ['call', 'visit', 'presentation', 'contract'] as const;
+export const REQUEST_TYPES = ['call', 'visit', 'presentation', 'contract', 'reserve'] as const;
 const TYPE_ICON: { type: typeof REQUEST_TYPES[number]; icon: string }[] = [
   { type: 'call', icon: 'call' }, { type: 'visit', icon: 'flight' }, { type: 'presentation', icon: 'videocam' }, { type: 'contract', icon: 'gavel' },
+  { type: 'reserve', icon: 'bookmark_added' },
 ];
 export const requestIcon = (type: string) => TYPE_ICON.find((x) => x.type === type)?.icon ?? 'event';
 
 /** Inserta una solicitud de la agencia. Devuelve el mensaje de error o null. */
-export async function createRequest(agencyId: string, row: { type: string; lead_id?: string | null; preferred_date?: string | null; notes?: string | null }): Promise<string | null> {
-  const { error } = await supabase.from('agency_requests').insert({ agency_id: agencyId, type: row.type, lead_id: row.lead_id || null, preferred_date: row.preferred_date || null, notes: row.notes?.trim() || null });
+export async function createRequest(agencyId: string, row: { type: string; lead_id?: string | null; unit_id?: string | null; preferred_date?: string | null; notes?: string | null }): Promise<string | null> {
+  const { error } = await supabase.from('agency_requests').insert({ agency_id: agencyId, type: row.type, lead_id: row.lead_id || null, unit_id: row.type === 'reserve' ? row.unit_id || null : null, preferred_date: row.preferred_date || null, notes: row.notes?.trim() || null });
   return error ? error.message : null;
 }
 
@@ -37,9 +38,9 @@ export const RequestRow: React.FC<{ r: AgencyRequest; leadName?: string }> = ({ 
 
 export default function AgencyRequests({ data }: { data: AgencyData }) {
   const { t } = useTranslation();
-  const { partner, leads, requests, reloadRequests } = data;
+  const { partner, leads, requests, reloadRequests, units } = data;
   const [sp, setSp] = useSearchParams();
-  const [form, setForm] = useState({ type: 'call', lead_id: '', preferred_date: '', notes: '' });
+  const [form, setForm] = useState({ type: 'call', lead_id: '', unit_id: '', preferred_date: '', notes: '' });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
@@ -58,11 +59,12 @@ export default function AgencyRequests({ data }: { data: AgencyData }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.type === 'reserve' && (!form.lead_id || !form.unit_id)) { setMsg({ ok: false, text: t('agencyFunnel.reserve.required') }); return; }
     setSaving(true); setMsg(null);
     const err = await createRequest(partner.id, form);
     setSaving(false);
     if (err) { setMsg({ ok: false, text: err }); return; }
-    setForm({ type: 'call', lead_id: '', preferred_date: '', notes: '' });
+    setForm({ type: 'call', lead_id: '', unit_id: '', preferred_date: '', notes: '' });
     setMsg({ ok: true, text: t('agencyPortal.requests.sent') });
     await reloadRequests();
   };
@@ -87,6 +89,12 @@ export default function AgencyRequests({ data }: { data: AgencyData }) {
             <select className={input} value={form.lead_id} onChange={(e) => setForm((f) => ({ ...f, lead_id: e.target.value }))} aria-label={t('agencyPortal.requests.client')}>
               <option value="">{t('agencyPortal.requests.noClient')}</option>
               {leads.filter((l) => l.status !== 'lost').map((l) => <option key={l.id} value={l.id}>{l.client_name}</option>)}
+            </select>
+          )}
+          {form.type === 'reserve' && (
+            <select className={input} value={form.unit_id} onChange={(e) => setForm((f) => ({ ...f, unit_id: e.target.value }))} aria-label={t('agencyFunnel.reserve.unit')} required>
+              <option value="">{t('agencyFunnel.reserve.unit')}</option>
+              {units.filter((u) => u.available && !u.sold && !u.reserved).map((u) => <option key={u.id} value={u.id}>{[data.nameOf(u.property_id), u.unit_name].filter(Boolean).join(' · ')}</option>)}
             </select>
           )}
           <label className="block">

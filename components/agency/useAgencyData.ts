@@ -23,6 +23,11 @@ export interface PartnerRow {
   logo_url: string | null;
   personal_link_slug: string | null;
   created_at: string | null;
+  market: 'es' | 'world';
+  commission_close_pct: number | null;
+  commission_referral_pct: number | null;
+  lang: string | null;
+  deleted_at: string | null;
 }
 
 export interface PropertyRow {
@@ -87,8 +92,9 @@ export interface ProjectInfo {
 export interface AgencyRequest {
   id: string;
   created_at: string;
-  type: 'call' | 'visit' | 'presentation' | 'contract';
+  type: 'call' | 'visit' | 'presentation' | 'contract' | 'reserve';
   lead_id: string | null;
+  unit_id: string | null;
   preferred_date: string | null;
   notes: string | null;
   status: 'pending' | 'scheduled' | 'done' | 'cancelled';
@@ -98,8 +104,8 @@ export interface UnitRow {
   id: string;
   property_id: string;
   unit_name: string;
-  commission_default_pct: number | null;
-  commission_per_partner: Record<string, number> | null;
+  /** MY commission for this unit, resolved server-side (agency_units_list): unit override → my rate → unit default → market default. */
+  pct: number;
   bedrooms: number | null;
   available: boolean | null;
   reserved: boolean | null;
@@ -119,6 +125,23 @@ export interface AgencyLead {
   status: 'new' | 'contacted' | 'won' | 'lost';
 }
 
+/** Fila del libro de comisiones (agency_commissions): la escribe solo el equipo Unreal. */
+export interface CommissionRow {
+  id: string;
+  created_at: string;
+  lead_id: string;
+  unit_id: string | null;
+  property_id: string | null;
+  kind: 'reservation' | 'sale';
+  mode: 'close' | 'referral';
+  sale_price: number;
+  currency: string;
+  pct: number;
+  amount: number;
+  status: 'reserved' | 'due' | 'paid' | 'cancelled';
+  paid_at: string | null;
+}
+
 export interface AttributionRow {
   id: string;
   property_slug: string | null;
@@ -127,34 +150,36 @@ export interface AttributionRow {
   created_at: string;
 }
 
-/** % de comisión de la unidad para esta agencia: override por agencia → default → 5 (igual que RolePricingBadge). */
-export const unitPct = (u: UnitRow, partnerId: string): number =>
-  u.commission_per_partner?.[partnerId] ?? u.commission_default_pct ?? 5;
+/** % de comisión de la unidad para esta agencia (ya resuelto en el servidor; nunca se ven las tasas de otras agencias). */
+export const unitPct = (u: UnitRow): number => Number(u.pct);
+
+/** % de la agencia cuando no hay unidad concreta: su tasa de cierre pactada al aprobarla. */
+export const partnerPct = (p: Pick<PartnerRow, 'commission_close_pct'>): number => Number(p.commission_close_pct ?? 0);
 
 export const isUnitAvailable = (u: UnitRow) => !!u.available && !u.sold;
 
-/** % de la agencia en el proyecto (el de sus unidades; 5 si no hay unidades visibles). */
-export const projectPct = (p: PropertyRow, units: UnitRow[], partnerId: string): number => {
+/** % de la agencia en el proyecto (el de sus unidades; su tasa si no hay unidades visibles). */
+export const projectPct = (p: PropertyRow, units: UnitRow[], fallbackPct: number): number => {
   const u = units.find((x) => x.property_id === p.id);
-  return u ? unitPct(u, partnerId) : 5;
+  return u ? unitPct(u) : fallbackPct;
 };
 
 /** Comisión estimada por unidad = precio de la WEB × % de la agencia (en la divisa del proyecto). */
-export const projectCommission = (p: PropertyRow, units: UnitRow[], partnerId: string): number =>
-  ((Number(p.investor_price) || 0) * projectPct(p, units, partnerId)) / 100;
+export const projectCommission = (p: PropertyRow, units: UnitRow[], fallbackPct: number): number =>
+  ((Number(p.investor_price) || 0) * projectPct(p, units, fallbackPct)) / 100;
 
 /** Unidades disponibles visibles del proyecto (la RLS solo las enseña a agencias con rol lister). */
 export const availableUnits = (p: PropertyRow, units: UnitRow[]) => units.filter((u) => u.property_id === p.id && isUnitAvailable(u));
 
 /** Comisión potencial del inventario en EUR: Σ unidades disponibles × comisión al precio de la web. */
-export const potentialEUR = (d: Pick<AgencyData, 'projects' | 'units'>, partnerId: string, convert: (n: number, from: any, to: any) => number): number =>
-  d.projects.reduce((s, p) => s + convert(availableUnits(p, d.units).length * projectCommission(p, d.units, partnerId), p.price_currency || 'EUR', 'EUR'), 0);
+export const potentialEUR = (d: Pick<AgencyData, 'projects' | 'units'>, fallbackPct: number, convert: (n: number, from: any, to: any) => number): number =>
+  d.projects.reduce((s, p) => s + convert(availableUnits(p, d.units).length * projectCommission(p, d.units, fallbackPct), p.price_currency || 'EUR', 'EUR'), 0);
 
 /** Une las unidades equivalentes (mismo proyecto, habitaciones, comisión y estado) en una fila con su número. */
 export const groupUnits = (units: UnitRow[]) => {
   const groups = new Map<string, { u: UnitRow; n: number }>();
   for (const u of units) {
-    const k = [u.property_id, u.bedrooms, u.commission_default_pct, JSON.stringify(u.commission_per_partner ?? {}), !!u.reserved].join('|');
+    const k = [u.property_id, u.bedrooms, u.pct, !!u.reserved].join('|');
     const g = groups.get(k);
     groups.set(k, { u: g?.u ?? u, n: (g?.n ?? 0) + 1 });
   }
@@ -191,6 +216,7 @@ export interface AgencyData {
   leads: AgencyLead[];
   events: AttributionRow[];
   requests: AgencyRequest[];
+  commissions: CommissionRow[];
   projectInfo: Record<string, ProjectInfo>;
   /** Nombre corto de un proyecto por id (properties/projects) o slug, aunque ya no esté a la venta. */
   nameOf: (idOrSlug: string | null | undefined) => string | undefined;
@@ -208,13 +234,14 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
   const [leads, setLeads] = useState<AgencyLead[]>([]);
   const [events, setEvents] = useState<AttributionRow[]>([]);
   const [requests, setRequests] = useState<AgencyRequest[]>([]);
+  const [commissions, setCommissions] = useState<CommissionRow[]>([]);
   const [projectInfo, setProjectInfo] = useState<Record<string, ProjectInfo>>({});
   const [names, setNames] = useState<Record<string, string>>({});
 
   const loadRequests = useCallback(async (agencyId: string) => {
     const { data, error: e } = await supabase
       .from('agency_requests')
-      .select('id, created_at, type, lead_id, preferred_date, notes, status')
+      .select('id, created_at, type, lead_id, unit_id, preferred_date, notes, status')
       .eq('agency_id', agencyId)
       .order('created_at', { ascending: false });
     if (e) throw e;
@@ -238,22 +265,25 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
       try {
         const { data: p, error: pErr } = await supabase
           .from('listing_partners')
-          .select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at')
+          .select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at, market, commission_close_pct, commission_referral_pct, lang, deleted_at')
           .eq('user_id', userId)
           .maybeSingle();
         if (pErr) throw pErr;
         if (cancelled) return;
         if (!p) { setError(notLinkedMsg); return; }
         setPartner(p as PartnerRow);
+        // Pendiente / suspendida / borrada: el portal enseña su pantalla de estado y no carga nada más (la RLS tampoco lo daría).
+        if (p.status !== 'approved' || p.deleted_at) return;
         // Catálogo = proyectos de la web (misma tabla y regla que /proyectos) + su fila de properties por slug.
-        const [pj, props, ev] = await Promise.all([
+        const [pj, props, ev, cm] = await Promise.all([
           supabase.rpc('agency_projects_list').select(WEB_COLS).order('sort_order', { ascending: true }),
           supabase.from('properties').select('id, slug, name, short_pitch, area, pct_progress, delivery_date, hero_image_url, brand_pdf_url, walkthrough_url, drone_video_url'),
           supabase.from('lead_attributions').select('id, property_slug, event_type, contact_email, created_at').eq('partner_id', p.id).order('created_at', { ascending: false }).limit(500),
+          supabase.from('agency_commissions').select('id, created_at, lead_id, unit_id, property_id, kind, mode, sale_price, currency, pct, amount, status, paid_at').eq('partner_id', p.id).order('created_at', { ascending: false }),
           loadLeads(p.id),
           loadRequests(p.id),
         ]);
-        for (const r of [pj, props, ev]) if (r.error) throw r.error;
+        for (const r of [pj, props, ev, cm]) if (r.error) throw r.error;
         if (cancelled) return;
         const web = (pj.data ?? []) as unknown as WebProject[];
         const propRows = (props.data ?? []) as Omit<PropertyRow, 'investor_price' | 'price_currency' | 'bedrooms' | 'in_catalog'>[];
@@ -274,15 +304,14 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
             in_catalog: !!pr,
           };
         });
-        const ids = catalog.filter((c) => c.in_catalog).map((c) => c.id);
-        const us = ids.length
-          ? await supabase.from('property_units').select('id, property_id, unit_name, commission_default_pct, commission_per_partner, bedrooms, available, reserved, sold').in('property_id', ids).order('unit_name')
-          : { data: [], error: null };
+        const ids = new Set(catalog.filter((c) => c.in_catalog).map((c) => c.id));
+        const us = ids.size ? await supabase.rpc('agency_units_list') : { data: [], error: null };
         if (us.error) throw us.error;
         if (cancelled) return;
         setProjects(catalog);
-        setUnits((us.data ?? []) as UnitRow[]);
+        setUnits(((us.data ?? []) as UnitRow[]).filter((u) => ids.has(u.property_id)));
         setEvents((ev.data ?? []) as AttributionRow[]);
+        setCommissions((cm.data ?? []) as CommissionRow[]);
         setProjectInfo(Object.fromEntries(web.map((x) => [x.slug, x])));
         const nm: Record<string, string> = {};
         for (const r of [...web, ...propRows]) { nm[r.id] = r.name; if (r.slug) nm[r.slug] = r.name; }
@@ -297,7 +326,7 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
   }, [userId, notLinkedMsg, loadLeads, loadRequests]);
 
   return {
-    loading, error, partner, projects, units, leads, events, requests, projectInfo,
+    loading, error, partner, projects, units, leads, events, requests, commissions, projectInfo,
     nameOf: (k) => (k && names[k] ? shortProjectName(names[k]) : undefined),
     setPartner,
     reloadLeads: async () => { if (partner) await loadLeads(partner.id); },

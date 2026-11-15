@@ -221,41 +221,19 @@ export default function AdminPortalManager() {
     );
   }
 
+  // Un único paso en servidor (agency-hub): crea/reactiva la agencia, su acceso y manda la bienvenida real.
   const handleApproveApplication = async (app: Application) => {
     if (!confirm(t('fix.apm.confirmApprove', { name: app.agency_name }))) return;
-    try {
-      const { error: insErr } = await supabase.from("listing_partners").insert({
-        agency_name: app.agency_name,
-        manager_name: app.manager_name,
-        email: app.email,
-        phone: app.whatsapp,
-        whatsapp: app.whatsapp,
-        country: app.country,
-        status: "active",
-        approved_at: new Date().toISOString(),
-        approved_by: user?.email ?? user?.id ?? "andreas-legacy",
-      });
-      if (insErr) throw insErr;
-      await supabase
-        .from("listing_partner_applications")
-        .update({ status: "approved", reviewed_by: user?.email ?? user?.id ?? "andreas-legacy", reviewed_at: new Date().toISOString() })
-        .eq("id", app.id);
-      // Email de acceso branded + traducido (no el nativo de Supabase, sin marca ni idioma).
-      const redirect = `${window.location.origin}/auth/finish`;
-      await supabase.functions.invoke('send-magic-link', { body: { email: app.email, portal: 'agencias', lang: (typeof localStorage !== 'undefined' && localStorage.getItem('_unreal_lang')) || 'es', redirectTo: redirect } });
-      await reloadAll();
-      alert(t('fix.apm.approvedMagicLinkSent'));
-    } catch (err) {
-      alert(t('fix.apm.errorPrefix') + (err instanceof Error ? err.message : String(err)));
-    }
+    const { data, error } = await supabase.functions.invoke('agency-hub', { body: { action: 'approve', application_id: app.id } });
+    await reloadAll();
+    const r = data as { ok?: boolean; partner_id?: string; error?: string } | null;
+    if (error || !r?.ok) { alert(t('fix.apm.errorPrefix') + (r?.error ?? (error instanceof Error ? error.message : String(error)))); return; }
+    alert(t('fix.apm.approvedMagicLinkSent'));
   };
 
   const handleRejectApplication = async (app: Application) => {
     if (!confirm(t('fix.apm.confirmReject', { name: app.agency_name }))) return;
-    await supabase
-      .from("listing_partner_applications")
-      .update({ status: "rejected", reviewed_by: user?.email ?? user?.id ?? "andreas-legacy", reviewed_at: new Date().toISOString() })
-      .eq("id", app.id);
+    await supabase.rpc('reject_partner_application', { p_app: app.id, p_reason: null });
     await reloadAll();
   };
 
