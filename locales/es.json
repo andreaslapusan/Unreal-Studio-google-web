@@ -628,7 +628,8 @@
       "arquitectura": "Arquitectura",
       "agenda": "Calendario",
       "intakes": "Enlaces de listing",
-      "gastos": "Gastos"
+      "gastos": "Gastos",
+      "prensa": "Prensa y presencia"
     },
     "clientLogin": {
       "title": "Portal Inversor",
@@ -1888,7 +1889,42 @@
       },
       "projectsAll": "Proyectos: esta agencia ve todo lo que está a la venta en la web, al mismo precio que la web."
     },
-    "demoBanner": "Cuenta demo de solo lectura: puedes ver proyectos y blog. Los datos de clientes, cobros y equipo no están disponibles en esta cuenta."
+    "demoBanner": "Cuenta demo de solo lectura: puedes ver proyectos y blog. Los datos de clientes, cobros y equipo no están disponibles en esta cuenta.",
+    "presence": {
+      "title": "Prensa y presencia",
+      "subtitle": "Dónde aparece Unreal Studio Bali fuera de nuestra web",
+      "loading": "Cargando presencia…",
+      "live": "En vivo",
+      "changed": "cambio hace",
+      "pages": "Páginas publicadas",
+      "pagesSub": "URLs públicas únicas · +7 días",
+      "emails": "Emails de prensa",
+      "outlets": "medios distintos",
+      "replies": "Respuestas de medios",
+      "auto": "automáticas",
+      "bounces": "rebotes",
+      "accepted": "Aceptadas",
+      "inReview": "en revisión",
+      "backlinks": "Backlinks dofollow",
+      "thirdParty": "de terceros",
+      "own": "propios",
+      "ownBlog": "Blog en nuestra web",
+      "ownBlogSub": "artículos publicados",
+      "byCat": "Por categoría",
+      "latest": "Últimas publicaciones",
+      "latestReplies": "Últimas respuestas",
+      "paid": "Prensa de pago",
+      "paidBought": "contratadas",
+      "paidOptions": "opciones estudiadas",
+      "cat": {
+        "prensa": "Noticias en prensa",
+        "revistas": "Revistas y plataformas de arquitectura",
+        "portales": "Portales y anuncios",
+        "directorios": "Directorios y perfiles",
+        "blogs": "Blogs externos",
+        "notas": "Notas de prensa"
+      }
+    }
   },
   "footer": {
     "tagline": "Inversión inmobiliaria inteligente y arquitectura premium en los destinos más rentables del mundo.",

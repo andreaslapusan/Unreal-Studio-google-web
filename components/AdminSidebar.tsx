@@ -89,6 +89,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
     { key: 'blogs', icon: 'post_add', label: t('admin.nav.blogs'), to: '/admin?view=blogs', view: 'blogs' },
     { key: 'faqs', icon: 'help', label: t('admin.nav.faqs', 'FAQs'), to: '/admin?view=faqs', view: 'faqs' },
     { key: 'pi', icon: 'developer_board', label: t('admin.nav.pi', 'Raspberry Pi'), to: '/admin?view=pi', view: 'pi' },
+    { key: 'prensa', icon: 'newspaper', label: t('admin.nav.prensa', 'Prensa y presencia'), to: '/admin?view=prensa', view: 'prensa' },
     { key: 'marketing', icon: 'campaign', label: t('admin.nav.marketing'), to: '/admin/marketing', path: '/admin/marketing' },
     { key: 'agencias', icon: 'public', label: t('admin.nav.agenciesMgmt', 'Agencias'), to: '/admin?view=agencias', view: 'agencias' },
     { key: 'agencyPacks', icon: 'handshake', label: t('admin.nav.agencyPacks', 'Packs Agencia'), to: '/admin/agencias', path: '/admin/agencias' },
@@ -142,7 +143,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-3">
-        {nav.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (it.view !== 'contacts' || role === 'admin')).map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
+        {nav.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (!['contacts', 'prensa'].includes(it.view || '') || role === 'admin')).map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
       </nav>
 
       {/* Configuración: siempre al fondo del todo, justo encima del logout. */}

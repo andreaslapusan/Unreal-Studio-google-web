@@ -628,7 +628,8 @@
       "arquitectura": "Arhitectură",
       "agenda": "Calendar",
       "intakes": "Linkuri de listare",
-      "gastos": "Cheltuieli"
+      "gastos": "Cheltuieli",
+      "prensa": "Presă și prezență"
     },
     "clientLogin": {
       "title": "Portal Investitor",
@@ -1896,7 +1897,42 @@
       },
       "projectsAll": "Proiecte: această agenție vede tot ce este de vânzare pe site, la același preț ca pe site."
     },
-    "demoBanner": "Cont demo doar pentru citire: poți vedea proiectele și blogul. Datele clienților, plăților și echipei nu sunt disponibile în acest cont."
+    "demoBanner": "Cont demo doar pentru citire: poți vedea proiectele și blogul. Datele clienților, plăților și echipei nu sunt disponibile în acest cont.",
+    "presence": {
+      "title": "Presă și prezență",
+      "subtitle": "Unde apare Unreal Studio Bali în afara site-ului nostru",
+      "loading": "Se încarcă prezența…",
+      "live": "Live",
+      "changed": "schimbat acum",
+      "pages": "Pagini publicate",
+      "pagesSub": "URL-uri publice unice · +7 zile",
+      "emails": "Emailuri de presă",
+      "outlets": "publicații diferite",
+      "replies": "Răspunsuri din presă",
+      "auto": "automate",
+      "bounces": "respinse",
+      "accepted": "Acceptate",
+      "inReview": "în evaluare",
+      "backlinks": "Backlinkuri dofollow",
+      "thirdParty": "de la terți",
+      "own": "proprii",
+      "ownBlog": "Blogul de pe site",
+      "ownBlogSub": "articole publicate",
+      "byCat": "Pe categorii",
+      "latest": "Ultimele publicări",
+      "latestReplies": "Ultimele răspunsuri",
+      "paid": "Presă plătită",
+      "paidBought": "contractate",
+      "paidOptions": "opțiuni analizate",
+      "cat": {
+        "prensa": "Știri în presă",
+        "revistas": "Reviste și platforme de arhitectură",
+        "portales": "Portaluri și anunțuri",
+        "directorios": "Directoare și profiluri",
+        "blogs": "Bloguri externe",
+        "notas": "Comunicate de presă"
+      }
+    }
   },
   "footer": {
     "tagline": "Investiții imobiliare inteligente și arhitectură premium în cele mai profitabile destinații din lume.",

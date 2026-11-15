@@ -628,7 +628,8 @@
       "arquitectura": "Architecture",
       "agenda": "Calendar",
       "intakes": "Listing links",
-      "gastos": "Expenses"
+      "gastos": "Expenses",
+      "prensa": "Press & presence"
     },
     "clientLogin": {
       "title": "Investor Portal",
@@ -1888,7 +1889,42 @@
       },
       "projectsAll": "Projects: this agency sees everything for sale on the website, at the same price as the website."
     },
-    "demoBanner": "Read-only demo account: you can browse projects and the blog. Client, payment and team data are not available in this account."
+    "demoBanner": "Read-only demo account: you can browse projects and the blog. Client, payment and team data are not available in this account.",
+    "presence": {
+      "title": "Press & presence",
+      "subtitle": "Where Unreal Studio Bali appears outside our website",
+      "loading": "Loading presence…",
+      "live": "Live",
+      "changed": "changed",
+      "pages": "Published pages",
+      "pagesSub": "Unique public URLs · +7 days",
+      "emails": "Press emails",
+      "outlets": "different outlets",
+      "replies": "Media replies",
+      "auto": "automatic",
+      "bounces": "bounces",
+      "accepted": "Accepted",
+      "inReview": "under review",
+      "backlinks": "Dofollow backlinks",
+      "thirdParty": "third-party",
+      "own": "own",
+      "ownBlog": "Blog on our website",
+      "ownBlogSub": "published articles",
+      "byCat": "By category",
+      "latest": "Latest publications",
+      "latestReplies": "Latest replies",
+      "paid": "Paid press",
+      "paidBought": "purchased",
+      "paidOptions": "options researched",
+      "cat": {
+        "prensa": "News coverage",
+        "revistas": "Magazines & architecture platforms",
+        "portales": "Portals & listings",
+        "directorios": "Directories & profiles",
+        "blogs": "External blogs",
+        "notas": "Press releases"
+      }
+    }
   },
   "footer": {
     "tagline": "Smart real-estate investment and premium architecture in the world’s most profitable destinations.",

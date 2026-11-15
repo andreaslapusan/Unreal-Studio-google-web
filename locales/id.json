@@ -735,7 +735,8 @@
       "arquitectura": "Arsitektur",
       "agenda": "Kalender",
       "intakes": "Tautan listing",
-      "gastos": "Pengeluaran"
+      "gastos": "Pengeluaran",
+      "prensa": "Pers & kehadiran"
     },
     "common": {
       "save": "Simpan",
@@ -1993,7 +1994,42 @@
       },
       "projectsAll": "Proyek: agensi ini melihat semua yang dijual di website, dengan harga yang sama seperti di website."
     },
-    "demoBanner": "Akun demo hanya-baca: Anda dapat melihat proyek dan blog. Data klien, pembayaran, dan tim tidak tersedia di akun ini."
+    "demoBanner": "Akun demo hanya-baca: Anda dapat melihat proyek dan blog. Data klien, pembayaran, dan tim tidak tersedia di akun ini.",
+    "presence": {
+      "title": "Pers & kehadiran",
+      "subtitle": "Tempat Unreal Studio Bali muncul di luar situs kami",
+      "loading": "Memuat kehadiran…",
+      "live": "Langsung",
+      "changed": "berubah",
+      "pages": "Halaman terbit",
+      "pagesSub": "URL publik unik · +7 hari",
+      "emails": "Email pers",
+      "outlets": "media berbeda",
+      "replies": "Balasan media",
+      "auto": "otomatis",
+      "bounces": "pentalan",
+      "accepted": "Diterima",
+      "inReview": "sedang ditinjau",
+      "backlinks": "Backlink dofollow",
+      "thirdParty": "pihak ketiga",
+      "own": "milik sendiri",
+      "ownBlog": "Blog di situs kami",
+      "ownBlogSub": "artikel terbit",
+      "byCat": "Per kategori",
+      "latest": "Publikasi terbaru",
+      "latestReplies": "Balasan terbaru",
+      "paid": "Pers berbayar",
+      "paidBought": "dibeli",
+      "paidOptions": "opsi diteliti",
+      "cat": {
+        "prensa": "Berita di media",
+        "revistas": "Majalah & platform arsitektur",
+        "portales": "Portal & iklan",
+        "directorios": "Direktori & profil",
+        "blogs": "Blog eksternal",
+        "notas": "Siaran pers"
+      }
+    }
   },
   "footer": {
     "tagline": "Investasi properti cerdas dan arsitektur premium di destinasi paling menguntungkan di dunia.",
