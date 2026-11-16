@@ -165,13 +165,16 @@ export default function Faq() {
 
   return (
     <div className="bg-almond min-h-screen pb-24">
-      <header className="px-6 md:px-12 pt-4 md:pt-20 pb-16 max-w-5xl mx-auto text-center">
-        <h1 className="text-5xl md:text-7xl text-primary font-serif mb-6">
+      <header className="bg-white px-5 sm:px-8 pt-14 sm:pt-24 pb-16 mb-12">
+        <div className="rise max-w-6xl mx-auto">
+        <p className="eyebrow">{t('nav.faq')}</p>
+        <h1 className="headline mt-3 text-[44px] sm:text-[72px] max-w-4xl">
           {t("faq.heroTitle")}
         </h1>
-        <p className="text-lg text-primary/70 max-w-2xl mx-auto leading-relaxed">
+        <p className="subhead mt-6 text-[19px] sm:text-[22px] max-w-2xl">
           {t("faq.heroSubtitle")}
         </p>
+        </div>
       </header>
 
       <div className="max-w-4xl mx-auto px-6 md:px-12">

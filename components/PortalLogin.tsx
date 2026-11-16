@@ -293,7 +293,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   if (loading || checking) {
     return (
       <PortalShell dark={dark}>
-        <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl border border-primary/5 flex flex-col items-center gap-4">
+        <div className="bg-white w-full max-w-md rounded-[28px] p-10 shadow-xl flex flex-col items-center gap-4">
           <span className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           <p className="text-sm text-primary/50">{t('auth.loadingSession', { defaultValue: 'Iniciando sesión…' })}</p>
         </div>
@@ -305,15 +305,15 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   if (chooser) {
     return (
       <PortalShell dark={dark}>
-        <div className="bg-white w-full max-w-md rounded-3xl p-8 md:p-10 shadow-2xl border border-primary/5 text-center">
-          <h1 className="text-2xl font-serif text-primary mb-2">{t('auth.choosePortalTitle')}</h1>
+        <div className="bg-white w-full max-w-md rounded-[28px] p-8 md:p-10 shadow-xl text-center">
+          <h1 className="text-[28px] font-bold tracking-[-0.03em] text-ink mb-2">{t('auth.choosePortalTitle')}</h1>
           <p className="text-sm text-primary/50 mb-6">{t('auth.choosePortalSub')}</p>
           <div className="space-y-3">
             {chooser.map((p) => (
               <button
                 key={p}
                 onClick={() => navigate(PORTAL_DASH[p])}
-                className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition"
+                className="w-full bg-brand text-white h-12 rounded-full font-semibold text-[15px] hover:bg-[#2c1803] transition"
               >
                 {t(`auth.portal_${p}`)}
               </button>
@@ -326,10 +326,10 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
 
   return (
     <PortalShell dark={dark}>
-      <div className="bg-white w-full max-w-md rounded-3xl p-8 md:p-10 shadow-2xl border border-primary/5">
+      <div className="bg-white w-full max-w-[440px] rounded-[28px] p-8 sm:p-10 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_60px_-24px_rgba(0,0,0,0.18)]">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif text-primary mb-1">{t(`auth.portal_${portal}`)}</h1>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">{t('auth.subtitle')}</p>
+          <h1 className="text-[34px] font-bold tracking-[-0.035em] text-ink mb-1">{t(`auth.portal_${portal}`)}</h1>
+          <p className="text-[15px] text-mute">{t('auth.subtitle')}</p>
         </div>
 
         <form onSubmit={handlePassword} className="space-y-5">
@@ -337,7 +337,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
           {info && <div className="bg-green-50 text-green-700 text-sm font-bold p-4 rounded-xl text-center">{info}</div>}
 
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
+            <label className="block text-[13px] font-medium text-mute mb-1.5">
               {t('auth.email')}
             </label>
             <input
@@ -350,12 +350,12 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('fix.contact.emailPlaceholder')}
-              className="w-full px-4 sm:px-5 py-4 bg-gray-50 rounded-2xl font-bold text-sm sm:text-base border border-gray-200 focus:border-primary focus:outline-none"
+              className="w-full px-4 h-12 bg-[#f5f5f7] rounded-xl font-medium text-[17px] border border-transparent focus:bg-white focus:border-brand focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">
+            <label className="block text-[13px] font-medium text-mute mb-1.5">
               {t('auth.password')}
             </label>
             <div className="relative">
@@ -367,7 +367,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-4 pr-14 bg-gray-50 rounded-2xl font-bold border border-gray-200 focus:border-primary focus:outline-none"
+                className="w-full px-4 h-12 pr-14 bg-[#f5f5f7] rounded-xl font-medium text-[17px] border border-transparent focus:bg-white focus:border-brand focus:outline-none"
               />
               <button
                 type="button"
@@ -393,7 +393,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
           <button
             type="submit"
             disabled={busy}
-            className="w-full bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-brand text-white h-12 rounded-full font-semibold text-[17px] hover:bg-[#2c1803] transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {busy ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : null}
             {t('auth.signin')}
@@ -409,7 +409,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
             type="button"
             onClick={handleMagicLink}
             disabled={busy}
-            className="w-full bg-white border border-primary/20 text-primary py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/5 transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-[#f5f5f7] text-ink h-12 rounded-full font-semibold text-[15px] hover:bg-[#ebebef] transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined text-sm">mail</span>
             {t('auth.magicLink')}

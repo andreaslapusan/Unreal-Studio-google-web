@@ -76,7 +76,7 @@ export default function AgenciasDashboard() {
       <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         <header className="bg-white/75 backdrop-blur-xl backdrop-saturate-150 border-b border-black/[0.06] px-3 md:px-6 py-3 md:py-3.5 sticky top-0 z-30 flex justify-between items-center gap-2">
           <div className="flex items-center gap-3 min-w-0">
-            <Link to="/" className="shrink-0"><BrandLogo imgClassName="h-8 md:h-10 w-auto object-contain" textClassName="font-serif text-primary text-lg md:text-2xl tracking-tight" /></Link>
+            <Link to="/" className="shrink-0"><BrandLogo imgClassName="h-8 md:h-10 w-auto object-contain" textClassName="brand-wordmark font-serif text-primary text-lg md:text-2xl tracking-tight" /></Link>
             <span className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-primary/40 truncate">{t('agencyPortal.panel')}</span>
           </div>
           <div className="flex items-center gap-2 md:gap-3">

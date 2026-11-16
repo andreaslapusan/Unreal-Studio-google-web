@@ -141,7 +141,7 @@ const NativeTransition = () => {
 
 // Páginas públicas: secciones y tarjetas de rejilla aparecen al entrar en pantalla (estilo apple.com).
 // Observa también lo que se pinta después (datos async). Los portales no lo usan.
-const REVEAL_SEL = 'main > section, main > div > section, main section .grid > *';
+const REVEAL_SEL = 'main .reveal, main > section, main > div > section, main section .grid > *';
 const ScrollReveal: React.FC<{ enabled: boolean }> = ({ enabled }) => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -152,10 +152,13 @@ const ScrollReveal: React.FC<{ enabled: boolean }> = ({ enabled }) => {
     }), { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
     const scan = () => main.querySelectorAll<HTMLElement>(REVEAL_SEL).forEach((el) => {
       if (el.dataset.rv || /\banimate-/.test(el.getAttribute('class') || '')) return;
+      // una sección que ya trae bloques .reveal propios no se anima entera (evita doble fundido)
+      if (el.tagName === 'SECTION' && el.querySelector('.reveal')) { el.dataset.rv = '1'; return; }
       el.dataset.rv = '1';
       // lo que ya está a la vista al cargar no se oculta (evita parpadeo del primer pliegue)
       const idx = el.parentElement?.classList.contains('grid') ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
       if (el.getBoundingClientRect().top < window.innerHeight * 0.9) {
+        if (el.classList.contains('reveal')) { el.classList.add('in'); return; }
         el.style.animationDelay = `${(idx % 4) * 70}ms`;
         el.classList.add('rise');
         return;

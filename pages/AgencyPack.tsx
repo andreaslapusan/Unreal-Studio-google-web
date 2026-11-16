@@ -197,7 +197,7 @@ const AgencyPack: React.FC = () => {
     <div className="bg-almond min-h-screen text-primary">
       <div className="bg-white/70 backdrop-blur border-b border-primary/5 sticky top-0 z-30 print:hidden">
         <div className="max-w-6xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-3">
-          <Link to="/" className="shrink-0"><BrandLogo imgClassName="h-7 w-auto object-contain" textClassName="font-serif text-primary text-xl tracking-tight" /></Link>
+          <Link to="/" className="shrink-0"><BrandLogo imgClassName="h-7 w-auto object-contain" textClassName="brand-wordmark font-serif text-primary text-xl tracking-tight" /></Link>
           <Link to="/agencias/dashboard?view=projects" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition">
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>{t('agencyPack.backToPortal')}
           </Link>

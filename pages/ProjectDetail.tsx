@@ -332,7 +332,7 @@ const ProjectDetail: React.FC = () => {
 
   const soldOut = project.visibility_status === 'sold_out';
   return (
-    <div className="bg-almond transition-colors duration-300 overflow-x-clip text-left relative">
+    <div className="bg-white overflow-x-clip text-left relative">
       {/* Lightbox Modal */}
       {lightbox.open && (
         <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
@@ -352,41 +352,38 @@ const ProjectDetail: React.FC = () => {
         </div>
       )}
 
-      <section className="relative h-[75vh] w-full overflow-hidden">
-        <img
-          alt={project.name}
-          className="absolute inset-0 w-full h-full object-cover"
-          src={imgSrc(getImageUrl(project.image), 1600)}
-          srcSet={imgSrcSet(getImageUrl(project.image), [600, 1000, 1400, 1800])}
-          sizes="100vw"
-          loading="eager"
-          fetchPriority="high"
-          onError={imgFallback(getImageUrl(project.image))}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-        <div className="absolute bottom-12 left-6 right-6 md:left-12 md:right-auto max-w-md md:w-full">
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-xl shadow-2xl border-l-4 border-primary">
-            {project.property_type && (
-              <span className="bg-primary text-white text-[10px] uppercase font-bold px-3 py-2 rounded tracking-wide mb-4 inline-block">
-                {propertyTypeLabel(project.property_type, i18n.language)}
-              </span>
-            )}
-            <h1 className="text-3xl md:text-5xl text-primary mb-2 leading-tight">{project.name}{seo?.h1sub && <span className="block text-base md:text-lg font-sans font-normal text-primary/60 mt-2">{seo.h1sub}</span>}</h1>
+      {/* Cabecera estilo Apple: eyebrow (ubicación) + titular enorme + chips; foto en tarjeta grande redondeada */}
+      <header className="bg-white px-5 sm:px-8 pt-12 sm:pt-20 pb-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="rise">
+            {project.location && <p className="eyebrow">{project.location}</p>}
+            <h1 className="headline mt-3 text-[40px] sm:text-[64px] lg:text-[80px]">{project.name}{seo?.h1sub && <span className="block subhead text-[19px] sm:text-[22px] font-normal tracking-[-0.01em] mt-4">{seo.h1sub}</span>}</h1>
+            <div className="mt-6 flex flex-wrap items-center gap-2">
+              {project.property_type && (
+                <span className="h-7 px-3 rounded-full bg-brand text-white text-[12px] font-semibold inline-flex items-center">{propertyTypeLabel(project.property_type, i18n.language)}</span>
+              )}
             {project.tenure && (
-              <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
+              <span className={`inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full  ${(project.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-sm">key</span>{t(`projects.card.tenure.${(project.tenure||'').toLowerCase()}`, project.tenure)}</span>
             )}
             {(project as any).already_rented && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 ml-2 bg-amber-50 text-amber-700"><span className="material-symbols-outlined text-sm">night_shelter</span>{t('projectDetail.alreadyRented')}</span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase px-3 py-1 rounded-full  ml-2 bg-amber-50 text-amber-700"><span className="material-symbols-outlined text-sm">night_shelter</span>{t('projectDetail.alreadyRented')}</span>
             )}
-            {project.location && (
-              <div className="flex items-center text-gray-500 text-sm font-medium text-left">
-                <span className="material-symbols-outlined text-base mr-1">location_on</span>
-                {project.location}
-              </div>
-            )}
+            </div>
+          </div>
+          <div className="rise mt-10 sm:mt-14 relative rounded-[28px] overflow-hidden bg-black ring-1 ring-black/5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)]" style={{ animationDelay: '120ms' }}>
+            <img
+              alt={project.name}
+              className="w-full h-[360px] sm:h-[520px] lg:h-[620px] object-cover"
+              src={imgSrc(getImageUrl(project.image), 1600)}
+              srcSet={imgSrcSet(getImageUrl(project.image), [600, 1000, 1400, 1800])}
+              sizes="(max-width: 1200px) 100vw, 1152px"
+              loading="eager"
+              fetchPriority="high"
+              onError={imgFallback(getImageUrl(project.image))}
+            />
           </div>
         </div>
-      </section>
+      </header>
 
       {/* Role-aware pricing pill: only renders when user is logged in
           and has a role (lister/investor/admin). Sits above the public

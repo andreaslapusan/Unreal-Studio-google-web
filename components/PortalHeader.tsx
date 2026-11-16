@@ -34,7 +34,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
   const logoutBtn = onLogout && (
     <button
       onClick={onLogout}
-      className="flex items-center gap-1.5 bg-white/70 border border-primary/10 text-primary/80 px-4 py-2 rounded-full text-[13px] font-semibold hover:bg-primary hover:text-white transition"
+      className="flex items-center gap-1.5 bg-[#f5f5f7] text-ink h-8 px-4 rounded-full text-[13px] font-semibold hover:bg-[#ebebef] transition"
     >
       <span className="material-symbols-outlined text-sm">logout</span>
       <span>{t('admin.common.logout')}</span>
@@ -42,11 +42,11 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
   );
 
   return (
-    <header className="sticky top-0 z-40 glass-nav border-b border-primary/[0.08] px-4 md:px-8 py-2.5 md:py-3">
+    <header className="sticky top-0 z-40 glass-nav border-b border-black/[0.08] px-4 sm:px-8 py-2.5">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
         {/* IZQUIERDA: logo de marca como link a "/" */}
         <Link to="/" className="flex flex-col shrink-0 leading-tight min-w-0">
-          <BrandLogo imgClassName="h-9 w-auto object-contain" textClassName="font-serif text-2xl font-bold text-primary tracking-tighter" />
+          <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="brand-wordmark text-[22px] text-ink" />
           {subtitle && (
             <span className="text-[11px] font-semibold text-primary/45 break-all leading-tight">
               {subtitle}
@@ -75,7 +75,7 @@ export default function PortalHeader({ onLogout, subtitle, extra }: PortalHeader
             <>
               <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
               <div
-                className="pop-in absolute right-0 top-12 z-50 bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-primary/10 p-3 min-w-[220px] flex flex-col gap-2.5"
+                className="pop-in absolute right-0 top-12 z-50 bg-white rounded-2xl shadow-xl border border-primary/10 p-3 min-w-[220px] flex flex-col gap-2.5"
                 onClick={() => setOpen(false)}
               >
                 {extra && <div className="flex flex-col gap-2.5">{extra}</div>}

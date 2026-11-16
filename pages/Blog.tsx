@@ -87,11 +87,12 @@ const Blog: React.FC = () => {
   }
 
   return (
-    <div className="bg-almond min-h-screen pt-4 md:pt-20 pb-24 px-6 md:px-12 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="text-5xl md:text-7xl text-primary font-serif mb-6">{t('blog.heroTitle')}</h1>
-          <p className="text-xl text-primary/70 font-light max-w-2xl mx-auto">
+    <div className="bg-white min-h-screen pt-14 sm:pt-24 pb-24 px-5 sm:px-8">
+      <div className="max-w-6xl mx-auto">
+        <header className="rise mb-14">
+          <p className="eyebrow">{t('nav.blog')}</p>
+          <h1 className="headline mt-3 text-[44px] sm:text-[72px] max-w-4xl">{t('blog.heroTitle')}</h1>
+          <p className="subhead mt-6 text-[19px] sm:text-[22px] max-w-2xl">
             {t('blog.heroSubtitle')}
           </p>
         </header>

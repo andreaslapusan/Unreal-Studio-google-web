@@ -257,7 +257,7 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="bg-almond transition-colors duration-300 overflow-x-hidden text-left relative">
+    <div className="bg-white overflow-x-hidden text-left relative">
       {/* Video Modal Overlay */}
       {isVideoOpen && (
         <div 
@@ -297,505 +297,304 @@ const Home: React.FC = () => {
         </div>
       )}
 
-      {/* Hero Section */}
-      <header className="px-6 md:px-12 pb-24 md:pb-32 pt-4 md:pt-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
-        <div className="space-y-8 md:space-y-10 z-10 rise">
-          <div className="max-w-xl">
-            <h1 className="text-[44px] md:text-7xl lg:text-[80px] leading-[1.03] tracking-[-0.025em] text-primary mb-8">
+      {/* Hero estilo Apple/Movelta: eyebrow + titular enorme + subtítulo gris + píldora + enlace con chevron */}
+      <header className="px-5 sm:px-8 pt-14 sm:pt-24 pb-10 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="rise max-w-4xl">
+            <p className="eyebrow">{t('home.heroEyebrow')}</p>
+            <h1 className="headline mt-3 text-[44px] sm:text-[72px] lg:text-[96px]">
               <Trans
                 i18nKey="home.heroTitle"
                 values={{ price: minPriceDisplay }}
-                components={{ i: <span className="italic font-extralight" /> }}
+                components={{ i: <span className="text-brand" /> }}
               />
             </h1>
-            <p className="text-lg md:text-[22px] text-primary/65 mb-10 leading-[1.45] font-normal">
-              <Trans i18nKey="home.heroBody" components={{ b: <span className="font-bold" /> }} />
+            <p className="subhead mt-6 text-[19px] sm:text-[22px] max-w-2xl">
+              <Trans i18nKey="home.heroBody" components={{ b: <span className="text-ink font-semibold" /> }} />
             </p>
-            <div className="flex flex-col sm:flex-row gap-5">
-              <a 
-                href={WHATSAPP_URL} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="bg-primary text-white border border-primary px-9 py-4 rounded-full font-semibold text-[17px] shadow-xl hover:bg-[#2c1803] transition flex items-center justify-center gap-2 group"
-              >
-                {t('home.ctaMeeting')} <span className="material-symbols-outlined transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="h-12 px-7 rounded-full bg-brand text-white text-[17px] font-semibold inline-flex items-center hover:bg-[#2c1803] transition">
+                {t('home.ctaMeeting')}
               </a>
+              <Link to={langPath('/proyectos')} className="link-chevron text-[17px]">
+                {t('home.viewAllProperties')} <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+              </Link>
               {(config as any).brand?.intro_video_url && (
-                <button
-                  onClick={() => setIsVideoOpen(true)}
-                  className="flex items-center justify-center gap-3 px-8 py-4 rounded-full border border-primary/20 font-semibold text-primary hover:bg-white transition text-[17px] cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-primary">play_circle</span> {t('home.ctaVideo')}
+                <button onClick={() => setIsVideoOpen(true)} className="link-chevron text-[17px] cursor-pointer">
+                  {t('home.ctaVideo')} <span className="material-symbols-outlined text-[20px]">play_circle</span>
                 </button>
               )}
             </div>
+            <div className="mt-8 flex items-center gap-3">
+              <div className="flex -space-x-2">
+                <img loading="lazy" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" className="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Investor 1" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150&h=150" className="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Investor 2" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150" className="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Investor 3" />
+              </div>
+              <p className="text-[14px] text-mute">{t('home.investorsCount')}</p>
+            </div>
           </div>
-          
-          <div className="flex items-center gap-4 pl-1">
-             <div className="flex -space-x-3">
-               <img loading="lazy" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 1" />
-               <img loading="lazy" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 2" />
-               <img loading="lazy" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150" className="w-10 h-10 rounded-full border-2 border-almond object-cover shadow-sm" alt="Investor 3" />
-             </div>
-             <p className="text-[11px] font-black uppercase tracking-widest text-primary/40">{t('home.investorsCount')}</p>
-          </div>
-        </div>
-        
-        {/* Featured Project Card */}
-        <div className="w-full rise" style={{ animationDelay: '120ms' }}>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4 text-left">{t('home.featuredTag')}</p>
-          {featuredProject ? (
-              <Link to={projectPath(featuredProject)} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-700 flex flex-row md:flex-col group h-full md:h-auto items-stretch">
-                <div className="w-[40%] md:w-full relative md:h-[500px] shrink-0 overflow-hidden">
-                  <img
-                    src={imgSrc(getImageUrl(featuredProject.image), 1000)}
-                    srcSet={imgSrcSet(getImageUrl(featuredProject.image), [480, 800, 1000, 1400])}
-                    sizes="(max-width: 768px) 40vw, 50vw"
-                    className="absolute inset-0 md:relative w-full h-full object-cover group-hover:scale-105 transition duration-1000"
-                    alt={featuredProject.name}
-                    onError={imgFallback(getImageUrl(featuredProject.image))}
-                    loading="eager"
-                    fetchPriority="high"
-                  />
-                  <div className="absolute top-3 left-3 md:top-8 md:left-8">
-                    <span className="bg-primary text-white text-[8px] md:text-[10px] font-black px-3 py-1.5 md:px-6 md:py-3 uppercase rounded-lg md:rounded-2xl shadow-2xl">
-                      {translateStatus(featuredProject.status, t)}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="p-4 md:p-8 lg:p-12 w-[60%] md:w-full flex flex-col justify-center text-left">
-                  <p className="text-[9px] md:text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 md:mb-4 truncate">{featuredProject.location}</p>
-                  <h3 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-primary leading-tight line-clamp-2">{featuredProject.name}</h3>
-                  {featuredProject.tenure && (
-                    <span className={`inline-flex w-fit items-center gap-1 text-[9px] md:text-[11px] font-black uppercase px-2.5 py-1 rounded-full mb-3 md:mb-8 ${(featuredProject.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[13px] md:text-base">key</span>{t(`projects.card.tenure.${(featuredProject.tenure||'').toLowerCase()}`, featuredProject.tenure)}</span>
-                  )}
-                  
-                  <div className="mt-auto pt-3 md:pt-10 border-t border-gray-100 flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-4">
-                    <div>
-                      <p className="text-[8px] md:text-[10px] uppercase text-gray-400 font-black mb-1 md:mb-2 tracking-widest">{t('home.investmentFrom')}</p>
-                      <div className="flex items-baseline gap-2">
-                        <p className="font-bold text-lg md:text-3xl text-primary leading-none">{formatPrice(featuredProject.investor_price, featuredProject.price_currency)}</p>
-                        {Number(featuredProject.market_price) > Number(featuredProject.investor_price) && (
-                          <p className="text-xs md:text-sm text-gray-400 line-through font-bold">{formatPrice(Number(featuredProject.market_price), featuredProject.price_currency)}</p>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="hidden md:flex items-center justify-center gap-3 bg-primary text-white border border-primary px-6 py-4 rounded-2xl group-hover:bg-almond group-hover:text-primary transition-all duration-500 self-start sm:self-auto w-full sm:w-auto">
-                      <span className="font-bold text-xs uppercase tracking-widest">{t('home.viewProject')}</span>
-                      <span className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                    </div>
 
-                    <div className="md:hidden flex items-center gap-1 text-primary mt-1">
-                      <span className="text-[9px] font-bold uppercase tracking-widest">{t('home.viewShort')}</span>
-                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                    </div>
+          {/* Tarjeta multimedia grande: proyecto destacado a todo el ancho */}
+          <div className="rise mt-14 sm:mt-20" style={{ animationDelay: '140ms' }}>
+            {featuredProject ? (
+              <Link to={projectPath(featuredProject)} className="group relative block rounded-[28px] overflow-hidden bg-black shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] ring-1 ring-black/5">
+                <img
+                  src={imgSrc(getImageUrl(featuredProject.image), 1400)}
+                  srcSet={imgSrcSet(getImageUrl(featuredProject.image), [800, 1000, 1400, 2000])}
+                  sizes="(max-width: 1200px) 100vw, 1152px"
+                  className="w-full h-[440px] sm:h-[560px] lg:h-[640px] object-cover transition duration-[1400ms] ease-out group-hover:scale-[1.03]"
+                  alt={featuredProject.name}
+                  onError={imgFallback(getImageUrl(featuredProject.image))}
+                  loading="eager"
+                  fetchPriority="high"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <div className="absolute top-5 left-5 sm:top-7 sm:left-7 flex gap-2">
+                  <span className="h-7 px-3 rounded-full bg-white/90 backdrop-blur text-ink text-[12px] font-semibold inline-flex items-center">{t('home.featuredTag')}</span>
+                  <span className="h-7 px-3 rounded-full bg-black/40 backdrop-blur text-white text-[12px] font-semibold inline-flex items-center">{translateStatus(featuredProject.status, t)}</span>
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 text-white">
+                  <div className="min-w-0">
+                    <p className="text-[14px] sm:text-[15px] text-white/70">{featuredProject.location}{featuredProject.tenure ? ` · ${t(`projects.card.tenure.${(featuredProject.tenure||'').toLowerCase()}`, featuredProject.tenure)}` : ''}</p>
+                    <h2 className="mt-1 text-[32px] sm:text-[52px] font-bold tracking-[-0.035em] leading-[1.02] text-white">{featuredProject.name}</h2>
+                    <p className="mt-3 text-[15px] text-white/75">
+                      {t('home.investmentFrom')} <span className="text-white font-semibold text-[20px] sm:text-[24px] tracking-[-0.02em]">{formatPrice(featuredProject.investor_price, featuredProject.price_currency)}</span>
+                      {Number(featuredProject.market_price) > Number(featuredProject.investor_price) && (
+                        <span className="ml-2 line-through text-white/50">{formatPrice(Number(featuredProject.market_price), featuredProject.price_currency)}</span>
+                      )}
+                    </p>
                   </div>
+                  <span className="h-11 px-6 rounded-full bg-white text-ink text-[15px] font-semibold inline-flex items-center gap-1 self-start sm:self-auto group-hover:gap-2 transition-all">
+                    {t('home.viewProject')} <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                  </span>
                 </div>
               </Link>
-          ) : (
-             <div className="bg-white rounded-3xl p-12 text-center shadow-lg h-full flex flex-col items-center justify-center">
-                 <span className="material-symbols-outlined text-4xl text-gray-300 mb-2">home_work</span>
-                 <p className="text-primary/40 font-bold uppercase tracking-widest text-xs">{t('home.comingSoon')}</p>
-             </div>
-          )}
+            ) : (
+              <div className="tile p-16 text-center">
+                <span className="material-symbols-outlined text-4xl text-mute mb-2">home_work</span>
+                <p className="text-mute text-[15px]">{t('home.comingSoon')}</p>
+              </div>
+            )}
+          </div>
         </div>
         {FEATURED_AT === 'B' && <FeaturedStrip variant="B" />}
       </header>
 
       {FEATURED_AT === 'A' && <FeaturedStrip variant="A" />}
 
-      {/* Filter Bar — solo tablet/escritorio; en el móvil ocupaba media pantalla y el filtro ya está en /proyectos (Andreas 30-oct) */}
-      <div className={`hidden md:block px-4 md:px-12 relative z-30 ${FEATURED_AT === 'A' ? '' : '-mt-12 md:-mt-16'} mb-12 md:mb-16 max-w-7xl mx-auto`}>
-        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
-            
-            {/* Sort Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b lg:border-b-0 lg:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">sort</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.sortBy')}</label>
-                <div className="relative">
-                  <select
-                    aria-label={t('projects.filters.sortBy')}
-                    value={filters.sort}
-                    onChange={(e) => setFilters({...filters, sort: e.target.value})}
-                    className="w-full bg-transparent bg-none border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate"
-                  >
-                    <option value="featured">{t('projects.sort.featured')}</option>
-                    <option value="roi">{t('projects.sort.roi')}</option>
-                    <option value="asc">{t('projects.sort.asc')}</option>
-                    <option value="desc">{t('projects.sort.desc')}</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
-                </div>
+      {/* Oportunidades: sección gris con eyebrow + titular + filtros en píldora + rejilla de tarjetas limpias */}
+      <section className="px-5 sm:px-8 py-20 sm:py-28 bg-almond">
+        <div className="max-w-6xl mx-auto">
+          <div className="reveal max-w-3xl">
+            <p className="eyebrow">{t('nav.projects')}</p>
+            <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.opportunitiesTitle')}</h2>
+          </div>
+
+          {/* Filtros (solo tablet/escritorio; en móvil el filtro está en /proyectos — Andreas 30-oct) */}
+          <div className="hidden md:flex mt-10 bg-white rounded-full p-2 items-stretch gap-1 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_rgba(0,0,0,0.08)]">
+            <label className="flex-1 flex flex-col justify-center px-6 py-2 rounded-full hover:bg-[#f5f5f7] transition cursor-pointer">
+              <span className="text-[12px] text-mute">{t('projects.filters.sortBy')}</span>
+              <select aria-label={t('projects.filters.sortBy')} value={filters.sort} onChange={(e) => setFilters({...filters, sort: e.target.value})} className="w-full bg-transparent bg-none border-none p-0 text-ink focus:ring-0 font-semibold text-[15px] cursor-pointer outline-none appearance-none truncate">
+                <option value="featured">{t('projects.sort.featured')}</option>
+                <option value="roi">{t('projects.sort.roi')}</option>
+                <option value="asc">{t('projects.sort.asc')}</option>
+                <option value="desc">{t('projects.sort.desc')}</option>
+              </select>
+            </label>
+            <div className="flex-1 flex flex-col justify-center px-6 py-2 rounded-full hover:bg-[#f5f5f7] transition">
+              <span className="text-[12px] text-mute">{t('projects.filters.budget')}</span>
+              <div className="flex items-center gap-2">
+                <input type="text" placeholder={t('projects.filters.min')} value={filters.minPrice} onChange={(e) => handlePriceChange('minPrice', e.target.value)} className="w-full bg-transparent border-none p-0 text-ink focus:ring-0 font-semibold text-[15px] placeholder:text-black/25 !shadow-none" />
+                <span className="text-black/20">–</span>
+                <input type="text" placeholder={t('projects.filters.max')} value={filters.maxPrice} onChange={(e) => handlePriceChange('maxPrice', e.target.value)} className="w-full bg-transparent border-none p-0 text-ink focus:ring-0 font-semibold text-[15px] placeholder:text-black/25 !shadow-none" />
               </div>
             </div>
-
-            {/* Price Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b lg:border-b-0 lg:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">payments</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.budget')}</label>
-                <div className="flex items-center gap-2 bg-primary/5 rounded-full px-4 py-2.5 border border-primary/10 hover:border-primary/30 focus-within:border-primary/40 transition-all">
-                  <input
-                    type="text"
-                    placeholder={t('projects.filters.min')}
-                    value={filters.minPrice}
-                    onChange={(e) => handlePriceChange('minPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
-                  />
-                  <span className="text-gray-300 text-[10px]">•</span>
-                  <input
-                    type="text"
-                    placeholder={t('projects.filters.max')}
-                    value={filters.maxPrice}
-                    onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
-                    className="w-full bg-transparent border-none p-0 text-primary focus:ring-0 font-bold text-[13px] placeholder:text-gray-300 text-center"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Zone Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 border-b lg:border-b-0 lg:border-r border-gray-100 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">location_on</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.zone')}</label>
-                <div className="relative">
-                  <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({...filters, zone: e.target.value})} className="w-full bg-transparent bg-none border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
-                    {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Type Filter */}
-            <div className="flex-1 flex items-center gap-4 px-6 py-4 group">
-              <span className="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors">home_work</span>
-              <div className="flex-1 text-left">
-                <label className="block text-[9px] uppercase text-gray-400 font-black tracking-widest mb-1">{t('projects.filters.type')}</label>
-                <div className="relative">
-                  <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent bg-none border-none p-0 text-primary focus:ring-0 font-bold text-sm cursor-pointer outline-none appearance-none pr-8 truncate">
-                    <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
-                    {propertyTypeOptions(['Villa', 'Loft', ...config.customTypes]).map(ty => <option key={ty} value={ty}>{propertyTypeLabel(ty, i18n.language)}</option>)}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/20 text-xs">expand_more</span>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={handleSearch}
-              className="bg-primary text-white m-2 px-8 py-4 rounded-2xl md:rounded-[2rem] font-black text-[10px] uppercase tracking-widest border border-primary hover:bg-almond hover:text-primary transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
-            >
-              <span>{t('home.searchBtn')}</span>
-              <span className="material-symbols-outlined text-sm">search</span>
+            <label className="flex-1 flex flex-col justify-center px-6 py-2 rounded-full hover:bg-[#f5f5f7] transition cursor-pointer">
+              <span className="text-[12px] text-mute">{t('projects.filters.zone')}</span>
+              <select aria-label={t('projects.filters.zone')} value={filters.zone} onChange={(e) => setFilters({...filters, zone: e.target.value})} className="w-full bg-transparent bg-none border-none p-0 text-ink focus:ring-0 font-semibold text-[15px] cursor-pointer outline-none appearance-none truncate">
+                <option value={ANY_ZONE}>{t('projects.filters.anyZone')}</option>
+                {config.customZones.map(z => <option key={z} value={z}>{z}</option>)}
+              </select>
+            </label>
+            <label className="flex-1 flex flex-col justify-center px-6 py-2 rounded-full hover:bg-[#f5f5f7] transition cursor-pointer">
+              <span className="text-[12px] text-mute">{t('projects.filters.type')}</span>
+              <select aria-label={t('projects.filters.type')} value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})} className="w-full bg-transparent bg-none border-none p-0 text-ink focus:ring-0 font-semibold text-[15px] cursor-pointer outline-none appearance-none truncate">
+                <option value={ANY_TYPE}>{t('projects.filters.anyType')}</option>
+                {propertyTypeOptions(['Villa', 'Loft', ...config.customTypes]).map(ty => <option key={ty} value={ty}>{propertyTypeLabel(ty, i18n.language)}</option>)}
+              </select>
+            </label>
+            <button onClick={handleSearch} className="h-14 px-7 rounded-full bg-brand text-white text-[15px] font-semibold inline-flex items-center gap-2 hover:bg-[#2c1803] transition">
+              <span className="material-symbols-outlined text-[20px]">search</span>{t('home.searchBtn')}
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* Listings Section */}
-      <section className="px-6 md:px-12 pb-12 max-w-7xl mx-auto">
-        <h2 className="md:hidden text-3xl text-primary leading-tight mt-2 mb-6 text-center">{t('home.opportunitiesTitle')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-          {filteredGridProjects.slice(0, 3).map((proj) => (
-            <Link key={proj.id} to={projectPath(proj)} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group border border-primary/5">
-              <div className="h-32 md:h-64 relative overflow-hidden">
-                <img
-                  loading="lazy"
-                  src={imgSrc(getImageUrl(proj.image), 600)}
-                  srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                  onError={imgFallback(getImageUrl(proj.image))}
-                  alt={proj.name}
-                />
-                <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-primary text-white text-[8px] md:text-[9px] font-black px-2 py-1 md:px-4 md:py-2 uppercase rounded-md md:rounded-lg shadow-xl">{translateStatus(proj.status, t)}</span>
-              </div>
-              <div className="p-4 md:p-8 flex-grow flex flex-col text-left">
-                <p className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 md:mb-2 truncate">{proj.location}</p>
-                <h3 className="text-sm md:text-2xl font-bold mb-2 md:mb-3 text-primary line-clamp-2 md:line-clamp-none leading-tight">{proj.name}</h3>
-                {proj.tenure && (
-                  <span className={`inline-flex w-fit items-center gap-1 text-[8px] md:text-[10px] font-black uppercase px-2 py-0.5 rounded-full mb-2 ${(proj.tenure||'').toLowerCase()==='freehold' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}><span className="material-symbols-outlined text-[12px] md:text-sm">key</span>{t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}</span>
-                )}
-                {proj.completion_percent > 0 && (
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[9px] font-black uppercase text-primary/30">{t('projects.card.work')}</span>
-                    <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                      <div className="bg-primary h-full rounded-full" style={{ width: `${proj.completion_percent}%` }}></div>
-                    </div>
-                    <span className="text-[10px] font-bold text-primary">{proj.completion_percent}%</span>
-                  </div>
-                )}
-                <div className="mt-auto pt-3 md:pt-6 border-t border-gray-100 flex justify-between items-center">
-                  <div>
-                    <p className="text-[8px] md:text-[10px] uppercase text-gray-400 font-black mb-0.5 md:mb-1">{t('home.investFrom')}</p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="font-bold text-sm md:text-xl text-primary">{formatPrice(proj.investor_price, proj.price_currency)}</p>
-                      {Number(proj.market_price) > Number(proj.investor_price) && (
-                        <p className="text-[10px] md:text-xs text-gray-400 line-through font-bold">{formatPrice(Number(proj.market_price), proj.price_currency)}</p>
-                      )}
-                    </div>
-                  </div>
-                  <span className="text-primary font-bold text-[8px] md:text-[10px] uppercase tracking-widest flex items-center gap-1 group-hover:gap-3 transition-all">
-                     <span className="hidden md:inline">{t('home.viewShort')}</span>
-                     <span className="material-symbols-outlined text-sm md:text-base">add</span>
-                  </span>
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {filteredGridProjects.slice(0, 3).map((proj) => (
+              <Link key={proj.id} to={projectPath(proj)} className="group bg-white rounded-[22px] overflow-hidden flex flex-col shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_24px_48px_-20px_rgba(0,0,0,0.18)] transition-shadow duration-500">
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <img loading="lazy" src={imgSrc(getImageUrl(proj.image), 600)} srcSet={imgSrcSet(getImageUrl(proj.image), [320, 600, 900, 1200])} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="w-full h-full object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.04]" onError={imgFallback(getImageUrl(proj.image))} alt={proj.name} />
+                  <span className="absolute top-4 left-4 h-7 px-3 rounded-full bg-white/90 backdrop-blur text-ink text-[12px] font-semibold inline-flex items-center">{translateStatus(proj.status, t)}</span>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        
-        <div className="md:hidden mt-8">
-          <Link to={`/${(i18n.language || 'es').slice(0, 2)}/proyectos`} className="bg-primary text-white border border-primary px-8 py-4 rounded-full font-bold shadow-xl hover:bg-almond hover:text-primary transition flex items-center justify-center gap-2 w-full">
-            {t('home.viewAllProperties')} <span className="material-symbols-outlined text-base">arrow_forward</span>
-          </Link>
-        </div>
-        <div className="hidden md:block mt-12 md:mt-16 text-center">
-          <button onClick={handleSearch} className="inline-flex items-center gap-2 border-b-2 border-primary text-primary font-bold pb-1 uppercase tracking-widest text-xs hover:text-primary/70 hover:border-primary/70 transition">
-            {t('home.viewMoreProperties')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          </button>
+                <div className="p-6 flex-grow flex flex-col">
+                  <p className="text-[13px] text-mute truncate">{proj.location}{proj.tenure ? ` · ${t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}` : ''}</p>
+                  <h3 className="mt-1 text-[22px] font-semibold tracking-[-0.02em] text-ink leading-tight">{proj.name}</h3>
+                  {proj.completion_percent > 0 && (
+                    <div className="flex items-center gap-3 mt-4">
+                      <span className="text-[12px] text-mute">{t('projects.card.work')}</span>
+                      <div className="flex-1 bg-[#f5f5f7] rounded-full h-1 overflow-hidden"><div className="bg-brand h-full rounded-full" style={{ width: `${proj.completion_percent}%` }} /></div>
+                      <span className="text-[12px] font-semibold text-ink tabular-nums">{proj.completion_percent}%</span>
+                    </div>
+                  )}
+                  <div className="mt-auto pt-6 flex justify-between items-end">
+                    <div>
+                      <p className="text-[12px] text-mute">{t('home.investFrom')}</p>
+                      <p className="text-[22px] font-semibold tracking-[-0.02em] text-ink tabular-nums">{formatPrice(proj.investor_price, proj.price_currency)}
+                        {Number(proj.market_price) > Number(proj.investor_price) && <span className="ml-2 text-[13px] font-normal text-mute line-through">{formatPrice(Number(proj.market_price), proj.price_currency)}</span>}
+                      </p>
+                    </div>
+                    <span className="link-chevron text-[15px]">{t('home.viewShort')}<span className="material-symbols-outlined text-[18px]">chevron_right</span></span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <button onClick={handleSearch} className="link-chevron text-[17px]">{t('home.viewAllProperties')} <span className="material-symbols-outlined text-[20px]">chevron_right</span></button>
+          </div>
         </div>
       </section>
 
       {FEATURED_AT === 'C' && <FeaturedStrip variant="C" />}
 
-      {/* Sección 1: Por qué salir de Europa */}
-      <section className="py-12 md:py-24 bg-white px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-20 items-center">
-          <div className="lg:w-1/2 space-y-5 md:space-y-8 text-left">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section1Tag')}</p>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl text-primary leading-tight">{t('home.section1Title')}</h2>
-            <p className="text-base md:text-lg text-primary/60 font-light leading-relaxed max-w-xl">
-              {t('home.section1Body')}
-            </p>
-            <div className="space-y-5 md:space-y-8">
-              <div className="flex gap-4 items-start">
-                <div className="shrink-0">
-                  <span className="material-symbols-outlined text-primary text-3xl">trending_down</span>
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">{t('home.b1Title')}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b1Body')}</p>
-                </div>
-              </div>
-              <div className="flex gap-4 items-start">
-                <div className="shrink-0">
-                  <span className="material-symbols-outlined text-primary text-3xl">security</span>
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">{t('home.b2Title')}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b2Body')}</p>
-                </div>
-              </div>
-              <div className="flex gap-4 items-start">
-                <div className="shrink-0">
-                  <span className="material-symbols-outlined text-primary text-3xl">public</span>
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">{t('home.b3Title')}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed">{t('home.b3Body')}</p>
-                </div>
-              </div>
-            </div>
+      {/* Por qué fuera de Europa: blanco, titular + rejilla de tiles + imagen con dato grande */}
+      <section className="px-5 sm:px-8 py-20 sm:py-28 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="reveal max-w-3xl">
+            <p className="eyebrow">{t('home.section1Tag')}</p>
+            <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.section1Title')}</h2>
+            <p className="subhead mt-5 text-[17px] sm:text-[21px]">{t('home.section1Body')}</p>
           </div>
-          <div className="lg:w-1/2 relative">
-            <div className="relative w-full">
-              <div className="rounded-3xl overflow-hidden shadow-2xl h-56 sm:h-72 md:h-auto md:aspect-square relative group">
-                <img
-                  loading="lazy"
-                  src={imgSrc("/img/The%20Nook/1-04.webp", 800)}
-                  srcSet={imgSrcSet("/img/The%20Nook/1-04.webp", [400, 800, 1200])}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="w-full h-full object-cover"
-                  alt="Interior Architecture"
-                />
-                <div className="absolute inset-0 bg-black/10"></div>
-              </div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:bottom-10 md:translate-y-0 bg-primary p-6 md:p-8 rounded-3xl shadow-2xl text-left min-w-[200px] md:min-w-[280px] z-10 border border-white/10 backdrop-blur-md bg-primary/95">
-                <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-almond/40 mb-1 md:mb-2">{t('home.roiAvgTag')}</p>
-                <p className="text-4xl md:text-6xl text-almond font-serif mb-1 md:mb-2 leading-none">28%</p>
-                <p className="text-[8px] md:text-[10px] font-bold text-almond/60 uppercase tracking-wider">{t('home.roiAvgFooter')}</p>
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-5 gap-5">
+            <div className="lg:col-span-2 grid grid-cols-1 gap-5">
+              {[['trending_down', 'b1'], ['security', 'b2'], ['public', 'b3']].map(([icon, k]) => (
+                <div key={k} className="tile p-7">
+                  <span className="material-symbols-outlined text-brand text-[26px]">{icon}</span>
+                  <h3 className="mt-3 text-[20px] font-semibold tracking-[-0.015em] text-ink">{t(`home.${k}Title`)}</h3>
+                  <p className="mt-1.5 text-[15px] text-mute leading-relaxed">{t(`home.${k}Body`)}</p>
+                </div>
+              ))}
+            </div>
+            <div className="lg:col-span-3 relative rounded-[28px] overflow-hidden min-h-[420px]">
+              <img loading="lazy" src={imgSrc("/img/The%20Nook/1-04.webp", 1200)} srcSet={imgSrcSet("/img/The%20Nook/1-04.webp", [600, 900, 1200])} sizes="(max-width: 1024px) 100vw, 60vw" className="absolute inset-0 w-full h-full object-cover" alt="Interior Architecture" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent" />
+              <div className="absolute left-0 bottom-0 p-8 sm:p-10 text-white">
+                <p className="text-[15px] text-white/70">{t('home.roiAvgTag')}</p>
+                <p className="text-[72px] sm:text-[96px] font-bold tracking-[-0.05em] leading-none tabular-nums">28%</p>
+                <p className="text-[15px] text-white/70 mt-1">{t('home.roiAvgFooter')}</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Sección 2: Cómo creamos valor */}
-      <section className="py-12 md:py-24 bg-[#F3E5D8] px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
-          <div className="lg:w-1/2 text-left space-y-5 md:space-y-8">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{t('home.section2Tag')}</p>
-            <h2 className="text-3xl md:text-5xl text-primary leading-tight">{t('home.section2Title')}</h2>
-            <p className="text-base md:text-lg text-primary/70 font-light leading-relaxed max-w-lg">
-              {t('home.section2Body')}
-            </p>
-            <div className="space-y-3 md:space-y-4">
-              <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">construction</span>
-                <div>
-                  <h5 className="font-bold text-primary">{t('home.v1Title')}</h5>
-                  <p className="text-xs text-primary/60">{t('home.v1Body')}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">sell</span>
-                <div>
-                  <h5 className="font-bold text-primary">{t('home.v2Title')}</h5>
-                  <p className="text-xs text-primary/60">{t('home.v2Body')}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-5 p-5 bg-white/40 rounded-2xl border border-primary/5">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-3 rounded-xl">payments</span>
-                <div>
-                  <h5 className="font-bold text-primary">{t('home.v3Title')}</h5>
-                  <p className="text-xs text-primary/60">{t('home.v3Body')}</p>
-                </div>
-              </div>
-            </div>
+      {/* Cómo creamos valor: gris, pasos numerados + desglose de rentabilidad */}
+      <section className="px-5 sm:px-8 py-20 sm:py-28 bg-almond">
+        <div className="max-w-6xl mx-auto">
+          <div className="reveal max-w-3xl">
+            <p className="eyebrow">{t('home.section2Tag')}</p>
+            <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.section2Title')}</h2>
+            <p className="subhead mt-5 text-[17px] sm:text-[21px]">{t('home.section2Body')}</p>
           </div>
-          <div className="lg:w-1/2 w-full">
-            <div className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-primary/5 text-center space-y-6 md:space-y-10">
-              <h3 className="text-2xl text-primary font-serif">{t('home.profitTitle')}</h3>
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {['v1', 'v2', 'v3'].map((k, i) => (
+              <div key={k} className={`pt-5 border-t-2 ${i === 0 ? 'border-brand' : 'border-black/10'}`}>
+                <p className="text-[13px] font-semibold text-mute tabular-nums">0{i + 1}</p>
+                <h3 className="mt-2 text-[20px] font-semibold tracking-[-0.015em] text-ink">{t(`home.${k}Title`)}</h3>
+                <p className="mt-1.5 text-[15px] text-mute leading-relaxed">{t(`home.${k}Body`)}</p>
+              </div>
+            ))}
+          </div>
 
+          <div className="mt-14 bg-white rounded-[28px] p-7 sm:p-12 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+              <div className="lg:w-2/5">
+                <h3 className="text-[28px] sm:text-[36px] font-bold tracking-[-0.03em] text-ink leading-tight">{t('home.profitTitle')}</h3>
+                <p className="mt-3 text-[15px] text-mute">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
+                {featuredProject && (
+                  <Link to={projectPath(featuredProject)} className="mt-6 h-11 px-6 rounded-full bg-brand text-white text-[15px] font-semibold inline-flex items-center hover:bg-[#2c1803] transition">
+                    {t('home.profit.seeFeatured', { defaultValue: 'Ver propiedad destacada' })}
+                  </Link>
+                )}
+              </div>
               {profitabilityData ? (
-                <div className="space-y-6 md:space-y-10 text-left">
-                  <div className="space-y-5">
-                    <div className="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-wider">
-                      <span>{t('home.marketValue')}</span>
-                      <span className="text-primary font-black">
-                        {formatPrice(profitabilityData.marketPrice, profitabilityData.currency)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                      <div className="bg-gray-400 h-full w-full opacity-30"></div>
-                    </div>
+                <div className="lg:w-3/5 space-y-7">
+                  <div>
+                    <div className="flex justify-between text-[15px] text-mute mb-2"><span>{t('home.marketValue')}</span><span className="text-ink font-semibold tabular-nums">{formatPrice(profitabilityData.marketPrice, profitabilityData.currency)}</span></div>
+                    <div className="w-full bg-[#f5f5f7] h-2 rounded-full overflow-hidden"><div className="bg-black/20 h-full w-full" /></div>
                   </div>
-                  <div className="space-y-5">
-                    <div className="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-wider">
-                      <span>{t('home.profitabilityUnrealPrice')}</span>
-                      <span className="text-primary font-black">
-                        {formatPrice(profitabilityData.investorPrice, profitabilityData.currency)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-primary h-full transition-all duration-1000" 
-                        style={{ width: `${profitabilityData.barWidth}%` }}
-                      ></div>
-                    </div>
+                  <div>
+                    <div className="flex justify-between text-[15px] text-mute mb-2"><span>{t('home.profitabilityUnrealPrice')}</span><span className="text-ink font-semibold tabular-nums">{formatPrice(profitabilityData.investorPrice, profitabilityData.currency)}</span></div>
+                    <div className="w-full bg-[#f5f5f7] h-2 rounded-full overflow-hidden"><div className="bg-brand h-full rounded-full transition-all duration-1000" style={{ width: `${profitabilityData.barWidth}%` }} /></div>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-50">
-                    <div className="text-left">
-                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">{t('home.profit.immediateGain', { defaultValue: 'Plusvalía Inmediata' })}</p>
-                      <p className="text-4xl font-serif text-green-600 font-bold">+{profitabilityData.gainPercent}%</p>
+                  <div className="grid grid-cols-2 gap-6 pt-6 border-t border-black/[0.06]">
+                    <div>
+                      <p className="text-[13px] text-mute">{t('home.profit.immediateGain', { defaultValue: 'Plusvalía Inmediata' })}</p>
+                      <p className="text-[40px] sm:text-[56px] font-bold tracking-[-0.04em] text-emerald-600 leading-none mt-1 tabular-nums">+{profitabilityData.gainPercent}%</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">{t('home.profit.estimatedGain', { defaultValue: 'Ganancia Estimada' })}</p>
-                      <p className="text-4xl font-serif text-primary font-bold">
-                        {formatPrice(profitabilityData.capitalGain, profitabilityData.currency)}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4 pt-2">
-                    <p className="text-[10px] text-gray-400 font-medium italic">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
-                    <div className="space-y-4 text-center">
-                      <p className="text-primary font-bold text-sm">{t('home.profit.ctaQuestion', { defaultValue: '¿Quieres invertir en una unidad con esta rentabilidad?' })}</p>
-                      {featuredProject && (
-                        <Link
-                          to={projectPath(featuredProject)}
-                          className="bg-primary text-white border border-primary px-10 py-4 rounded-full font-bold shadow-xl hover:bg-almond hover:text-primary transition flex items-center justify-center gap-2 mx-auto w-fit"
-                        >
-                          {t('home.profit.seeFeatured', { defaultValue: 'Ver propiedad destacada' })} <span className="material-symbols-outlined">arrow_forward</span>
-                        </Link>
-                      )}
+                    <div>
+                      <p className="text-[13px] text-mute">{t('home.profit.estimatedGain', { defaultValue: 'Ganancia Estimada' })}</p>
+                      <p className="text-[28px] sm:text-[40px] font-bold tracking-[-0.04em] text-ink leading-none mt-1 tabular-nums">{formatPrice(profitabilityData.capitalGain, profitabilityData.currency)}</p>
                     </div>
                   </div>
                 </div>
               ) : (
-                <p className="text-primary/40 font-bold uppercase tracking-widest text-xs py-10">{t('home.noProjectData')}</p>
+                <p className="text-mute text-[15px] py-10">{t('home.noProjectData')}</p>
               )}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Sección 3: No pierdas tiempo */}
-      <section className="py-24 md:py-32 bg-primary px-6 relative overflow-hidden text-center">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] border border-white rounded-full -translate-y-1/2 translate-x-1/2"></div>
-           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] border border-white rounded-full translate-y-1/2 -translate-x-1/2"></div>
-        </div>
-        <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-          <h2 className="text-6xl md:text-8xl text-almond font-serif leading-none">{t('home.ctaSectionTitle')}</h2>
-          <p className="text-lg md:text-xl text-almond/70 font-light max-w-2xl mx-auto leading-relaxed px-4">
-            {t('home.ctaSectionBody')}
-          </p>
-          
-          <div className="flex flex-col items-center justify-center gap-6 mt-16 px-4">
-            <a 
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full max-w-sm bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 md:px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.12em] md:tracking-[0.2em] whitespace-nowrap transition-all duration-300 shadow-2xl flex items-center justify-center gap-3"
-            >
-              {t('home.ctaWhatsapp')} <span className="material-symbols-outlined text-base">chat</span>
+      {/* Sección oscura a sangre (marrón de marca) */}
+      <section className="px-5 sm:px-8 py-24 sm:py-36 bg-brand text-white text-center">
+        <div className="reveal max-w-3xl mx-auto">
+          <h2 className="text-[48px] sm:text-[80px] font-bold tracking-[-0.045em] leading-[1.02] text-white">{t('home.ctaSectionTitle')}</h2>
+          <p className="mt-6 text-[17px] sm:text-[21px] text-white/65 leading-relaxed">{t('home.ctaSectionBody')}</p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="h-12 px-7 rounded-full bg-white text-ink text-[17px] font-semibold inline-flex items-center gap-2 hover:bg-white/90 transition">
+              {t('home.ctaWhatsapp')} <span className="material-symbols-outlined text-[20px]">chat</span>
             </a>
           </div>
         </div>
       </section>
 
-      {/* Sección 4: Últimas Novedades - Most Recent Blogs */}
-      <section className="py-12 md:py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-8 md:mb-12 border-b border-primary/5 pb-5 md:pb-8">
-          <div className="text-left">
-            <h2 className="text-4xl md:text-5xl text-primary font-serif">{t('home.blogTitle')}</h2>
+      {/* Blog */}
+      <section className="px-5 sm:px-8 py-20 sm:py-28 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="eyebrow">{t('nav.blog')}</p>
+              <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.blogTitle')}</h2>
+            </div>
+            <Link to={langPath("/blog")} className="link-chevron text-[17px] shrink-0">{t('home.blogCta')} <span className="material-symbols-outlined text-[20px]">chevron_right</span></Link>
           </div>
-          <Link to={langPath("/blog")} className="text-[11px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition flex items-center gap-2 mb-2 group whitespace-nowrap shrink-0">
-            {t('home.blogCta')} <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </Link>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16">
-          {blogs.map((b) => localizeFields(b, ['title', 'description', 'content'], i18n.language)).map((post) => (
-            <Link key={post.id} to={langPath(`/blog/${post.slug}`)} className="group cursor-pointer text-left flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-500">
-              {/* Imagen */}
-              <div className="order-1 md:order-2">
-                 <div className="aspect-[16/10] rounded-[2rem] overflow-hidden relative shadow-lg">
-                    <img
-                      loading="lazy"
-                      src={imgSrc(getImageUrl(post.image), 600)}
-                      srcSet={imgSrcSet(getImageUrl(post.image), [320, 600, 900])}
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-105"
-                      onError={imgFallback(getImageUrl(post.image))}
-                      alt={post.title}
-                    />
-                 </div>
-              </div>
-
-              {/* Texto */}
-              <div className="order-2 md:order-1 mt-4 md:mt-0 mb-4 md:mb-8 flex flex-col flex-grow">
-                  <div className="flex justify-between items-center mb-3">
-                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em]">{blogTagLabel(post.tag, t)}</p>
-                    <p className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">{formatDate(post.published_date)}</p>
-                  </div>
-                  <h4 className="text-2xl font-bold text-primary mb-4 leading-snug group-hover:text-primary/70 transition line-clamp-3">{post.title}</h4>
-                  <p className="text-sm text-primary/60 font-medium leading-relaxed line-clamp-3 flex-grow">{post.description}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {blogs.map((b) => localizeFields(b, ['title', 'description', 'content'], i18n.language)).map((post) => (
+              <Link key={post.id} to={langPath(`/blog/${post.slug}`)} className="group tile overflow-hidden flex flex-col">
+                <div className="aspect-[16/10] overflow-hidden">
+                  <img loading="lazy" src={imgSrc(getImageUrl(post.image), 600)} srcSet={imgSrcSet(getImageUrl(post.image), [320, 600, 900])} sizes="(max-width: 768px) 100vw, 33vw" className="w-full h-full object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.04]" onError={imgFallback(getImageUrl(post.image))} alt={post.title} />
+                </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <p className="text-[13px] text-mute">{blogTagLabel(post.tag, t)} · {formatDate(post.published_date)}</p>
+                  <h3 className="mt-2 text-[20px] font-semibold tracking-[-0.015em] text-ink leading-snug line-clamp-3">{post.title}</h3>
+                  <p className="mt-2 text-[15px] text-mute leading-relaxed line-clamp-3 flex-grow">{post.description}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         <LandingLinks className="mt-12 text-center" />
+        </div>
       </section>
     </div>
   );

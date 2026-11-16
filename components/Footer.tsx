@@ -38,26 +38,26 @@ const Footer: React.FC<{ compact?: boolean }> = ({ compact }) => {
   const hoursEntries = Object.entries(hours).filter(([, v]) => v);
 
   const bottomBar = (
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary/30 border-t border-primary/5 pt-4">
-        <p>{t('footer.rights')} <span className="text-primary/40 normal-case">· v{APP_VERSION}</span></p>
-        <div className="flex flex-wrap justify-center md:justify-end gap-x-5 gap-y-2 mt-3 md:mt-0">
-          <Link className="hover:text-primary transition" to={lp("/privacidad")}>{t('footer.privacy')}</Link>
-          <Link className="hover:text-primary transition" to={lp("/terminos")}>{t('footer.terms')}</Link>
-          <Link className="hover:text-primary transition" to={lp("/aviso-legal")}>{t('footer.legalNotice')}</Link>
-          <button type="button" className="hover:text-primary transition uppercase tracking-widest font-bold" onClick={reopenConsent}>{t('footer.cookies')}</button>
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between md:items-center gap-3 text-[12px] text-mute border-t border-black/10 pt-4">
+        <p>{t('footer.rights')} <span className="text-black/35">· v{APP_VERSION}</span></p>
+        <div className="flex flex-wrap md:justify-end gap-x-5 gap-y-2">
+          <Link className="hover:text-ink transition" to={lp("/privacidad")}>{t('footer.privacy')}</Link>
+          <Link className="hover:text-ink transition" to={lp("/terminos")}>{t('footer.terms')}</Link>
+          <Link className="hover:text-ink transition" to={lp("/aviso-legal")}>{t('footer.legalNotice')}</Link>
+          <button type="button" className="hover:text-ink transition" onClick={reopenConsent}>{t('footer.cookies')}</button>
           {/* Enlaces de portal: <a> con carga COMPLETA (no react-router Link) a propósito,
               para que al entrar quede fijado el manifest del portal y se pueda instalar
               cada uno como su propia app desde aquí. Ver index.html (script de manifest). */}
-          <a className="hover:text-primary transition flex items-center gap-1" href="/cliente">
+          <a className="hover:text-ink transition flex items-center gap-1" href="/cliente">
             <span className="material-symbols-outlined text-xs">person</span> {t('footer.clients')}
           </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/agencias/login">
+          <a className="hover:text-ink transition flex items-center gap-1" href="/agencias/login">
             <span className="material-symbols-outlined text-xs">handshake</span> {t('footer.agencies')}
           </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/empleados">
+          <a className="hover:text-ink transition flex items-center gap-1" href="/empleados">
             <span className="material-symbols-outlined text-xs">badge</span> {t('footer.team')}
           </a>
-          <a className="hover:text-primary transition flex items-center gap-1" href="/admin/login">
+          <a className="hover:text-ink transition flex items-center gap-1" href="/admin/login">
             <span className="material-symbols-outlined text-xs">settings</span> {t('footer.admin')}
           </a>
         </div>
@@ -67,45 +67,45 @@ const Footer: React.FC<{ compact?: boolean }> = ({ compact }) => {
   // Portales: solo una línea mínima (Andreas 6-nov: "muchísimo más pequeño" en portales; la web pública intacta).
   if (compact) {
     return (
-      <footer className="bg-white border-t border-gray-100 py-3 px-4 md:px-12 text-[9px]">
+      <footer className="bg-[#f5f5f7] py-3 px-4 sm:px-8">
         {bottomBar}
       </footer>
     );
   }
 
   return (
-    <footer className={`bg-white border-t border-gray-100 pt-8 md:pt-12 ${compact ? 'pb-6 md:pb-6' : 'pb-20 md:pb-8'} px-6 md:px-12 text-sm`}>
-      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-6 md:gap-12 mb-6 md:mb-8 text-left">
+    <footer className={`bg-[#f5f5f7] pt-12 md:pt-16 ${compact ? 'pb-6 md:pb-6' : 'pb-24 md:pb-10'} px-5 sm:px-8 text-[12px]`}>
+      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 md:gap-12 mb-10 text-left">
         {/* Brand Column */}
         <div className="col-span-2 md:col-span-1">
           <Link to={lp("/")} className="block mb-3 md:mb-4">
-            <BrandLogo tagline imgClassName="h-7 w-auto object-contain" textClassName="font-serif text-xl font-bold text-primary tracking-tight" taglineClassName="brand-lema text-primary/50 text-xs tracking-wide mt-1" />
+            <BrandLogo tagline imgClassName="h-7 w-auto object-contain" textClassName="brand-wordmark text-[22px] text-ink" taglineClassName="brand-lema text-mute text-[12px] mt-1" />
           </Link>
-          <p className="text-primary/60 text-xs leading-relaxed max-w-xs font-medium">
+          <p className="text-mute text-[12px] leading-relaxed max-w-xs">
             {t('footer.tagline')}
           </p>
         </div>
 
         {/* Menu Column */}
         <div>
-          <h5 className="font-black text-[11px] uppercase tracking-widest text-primary mb-2">{t('footer.menu')}</h5>
-          <ul className="space-y-1.5 text-primary/50 text-[11px] font-bold uppercase tracking-wider">
-            <li><Link className="hover:text-primary transition" to={lp("/")}>{t('footer.home')}</Link></li>
-            <li><Link className="hover:text-primary transition" to={lp("/proyectos")}>{t('footer.projects')}</Link></li>
-            <li><Link className="hover:text-primary transition" to={lp("/blog")}>{t('footer.blog')}</Link></li>
-            <li><Link className="hover:text-primary transition" to={lp("/faq")}>{t('nav.faq')}</Link></li>
-            {guides.map((g) => <li key={g.href}><Link className="hover:text-primary transition" to={g.href}>{g.label}</Link></li>)}
-            <li><Link className="hover:text-primary transition" to={lp("/contacto")}>{t('footer.contact')}</Link></li>
+          <h5 className="font-semibold text-[12px] text-ink mb-3 tracking-normal">{t('footer.menu')}</h5>
+          <ul className="space-y-2 text-mute text-[12px]">
+            <li><Link className="hover:text-ink transition" to={lp("/")}>{t('footer.home')}</Link></li>
+            <li><Link className="hover:text-ink transition" to={lp("/proyectos")}>{t('footer.projects')}</Link></li>
+            <li><Link className="hover:text-ink transition" to={lp("/blog")}>{t('footer.blog')}</Link></li>
+            <li><Link className="hover:text-ink transition" to={lp("/faq")}>{t('nav.faq')}</Link></li>
+            {guides.map((g) => <li key={g.href}><Link className="hover:text-ink transition" to={g.href}>{g.label}</Link></li>)}
+            <li><Link className="hover:text-ink transition" to={lp("/contacto")}>{t('footer.contact')}</Link></li>
           </ul>
         </div>
 
         {/* Offices, hours & social (desde Configuración → Datos de empresa) */}
         <div>
-          <h5 className="font-black text-[11px] uppercase tracking-widest text-primary mb-2">{t('footer.offices')}</h5>
-          <ul className="space-y-2 text-primary/50 text-[11px] font-bold tracking-wider mb-4">
+          <h5 className="font-semibold text-[12px] text-ink mb-3 tracking-normal">{t('footer.offices')}</h5>
+          <ul className="space-y-2 text-mute text-[12px] mb-4">
             {/* Direcciones completas solo en /contacto (regla de negocio + SEO). */}
             <li>
-              <Link to={lp("/contacto")} className="flex items-start gap-2 hover:text-primary transition">
+              <Link to={lp("/contacto")} className="flex items-start gap-2 hover:text-ink transition">
                 <span className="material-symbols-outlined text-base">location_on</span> Madrid · Bali
               </Link>
             </li>
@@ -135,7 +135,7 @@ const Footer: React.FC<{ compact?: boolean }> = ({ compact }) => {
           </div>
         </div>
       </div>
-      <p className="max-w-7xl mx-auto text-[10px] italic text-primary/40 leading-snug mb-3">{t('footer.disclaimer')}</p>
+      <p className="max-w-6xl mx-auto text-[11px] text-black/40 leading-snug mb-4">{t('footer.disclaimer')}</p>
       {bottomBar}
     </footer>
   );

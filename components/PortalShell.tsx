@@ -14,16 +14,15 @@ interface PortalShellProps {
   dark?: boolean;
 }
 
-const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => {
+// Rediseño Apple: todos los portales en claro (gris #f5f5f7 + tarjeta blanca); `dark` se ignora a propósito.
+const PortalShell: React.FC<PortalShellProps> = ({ children }) => {
   return (
-    <div className={`min-h-screen flex flex-col ${dark ? 'bg-primary' : 'bg-almond'}`}>
+    <div className="min-h-screen flex flex-col bg-[#f5f5f7]">
       <header
-        className={`sticky top-0 z-40 flex items-center justify-between px-5 md:px-10 h-14 md:h-16 border-b ${
-          dark ? 'glass-dark-nav border-white/10' : 'glass-nav border-primary/[0.06]'
-        }`}
+        className="sticky top-0 z-40 flex items-center justify-between px-5 sm:px-8 h-14 border-b glass-nav border-black/[0.08]"
       >
         <Link to="/">
-          <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName={`font-serif text-xl font-bold tracking-tight ${dark ? 'text-white' : 'text-primary'}`} />
+          <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="brand-wordmark text-[22px] text-ink" />
         </Link>
         <LanguageSwitcher />
       </header>

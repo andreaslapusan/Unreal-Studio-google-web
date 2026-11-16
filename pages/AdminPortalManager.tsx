@@ -259,7 +259,7 @@ export default function AdminPortalManager() {
       <div className="bg-white border-b border-primary/10" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-2">
-            <BrandLogo imgClassName="h-7 md:h-8 w-auto object-contain" textClassName="font-serif text-primary text-base md:text-xl tracking-wide" />
+            <BrandLogo imgClassName="h-7 md:h-8 w-auto object-contain" textClassName="brand-wordmark font-serif text-primary text-base md:text-xl tracking-wide" />
           </Link>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />

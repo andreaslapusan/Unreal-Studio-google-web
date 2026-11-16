@@ -67,13 +67,14 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div className="bg-almond transition-colors duration-300 min-h-screen">
-      <main className="px-6 md:px-12 pt-4 md:pt-16 pb-24">
-        <div className="max-w-4xl mx-auto text-center mb-20">
-          <h1 className="text-5xl md:text-7xl leading-tight text-primary mb-8">
+    <div className="bg-white min-h-screen">
+      <main className="px-5 sm:px-8 pt-14 sm:pt-24 pb-24">
+        <div className="rise max-w-6xl mx-auto mb-16">
+          <p className="eyebrow">{t('nav.contact')}</p>
+          <h1 className="headline mt-3 text-[44px] sm:text-[72px] max-w-4xl">
             {t('contact.heroTitle1')} <br className="hidden md:block" />{t('contact.heroTitle2')}
           </h1>
-          <p className="text-lg md:text-xl text-primary/70 font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="subhead mt-6 text-[19px] sm:text-[22px] max-w-2xl">
             {t('contact.heroSubtitle')}
           </p>
         </div>

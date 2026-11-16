@@ -293,12 +293,13 @@ const Projects: React.FC = () => {
 
   return (
     <div className="bg-almond transition-colors duration-300">
-      <header className="px-6 md:px-12 pt-4 md:pt-20 pb-28 text-center relative overflow-hidden bg-almond">
-        <div className="relative z-10 max-w-5xl mx-auto space-y-8">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl leading-[1.1] text-primary tracking-tight">
+      <header className="px-5 sm:px-8 pt-14 sm:pt-24 pb-28 relative overflow-hidden bg-white">
+        <div className="rise relative z-10 max-w-6xl mx-auto">
+          <p className="eyebrow">{t('nav.projects')}</p>
+          <h1 className="headline mt-3 text-[44px] sm:text-[72px] lg:text-[88px] max-w-4xl">
             {t('projects.heroTitle')}
           </h1>
-          <p className="text-lg md:text-2xl text-primary/70 max-w-3xl mx-auto leading-relaxed font-light">
+          <p className="subhead mt-6 text-[19px] sm:text-[22px] max-w-2xl">
             {t('projects.heroSubtitle')}
           </p>
         </div>
@@ -306,7 +307,7 @@ const Projects: React.FC = () => {
 
       {/* Redesigned Filter Bar for Consistency and Modern Look */}
       <div className="px-4 md:px-12 relative z-30 -mt-12 mb-16 max-w-7xl mx-auto">
-        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(63,35,5,0.15)] border border-primary/5 p-2 md:p-4">
+        <div className="bg-white rounded-[28px] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_60px_-28px_rgba(0,0,0,0.2)] ring-1 ring-black/[0.05] p-2 md:p-3">
           <div className="grid grid-cols-2 grid-flow-row-dense xl:flex xl:flex-row items-stretch xl:items-center">
 
             {/* Sort Filter */}

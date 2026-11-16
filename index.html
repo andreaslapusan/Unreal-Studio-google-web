@@ -37,12 +37,12 @@
       })();
     </script>
     <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
-    <meta name="theme-color" content="#F3E5D8"/>
+    <meta name="theme-color" content="#ffffff"/>
     <meta name="color-scheme" content="light"/>
     <!-- Fondo crema + spinner de arranque desde el primer pintado. color-scheme:light
          evita que el navegador/WebView en modo oscuro pinte NEGRO mientras el HTML
          aún carga (conexión lenta): se ve crema con la ruedecita desde el inicio. -->
-    <style>html{color-scheme:light}html,body{background:#F3E5D8;margin:0}@keyframes appspin{to{transform:rotate(360deg)}}#app-boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#F3E5D8;z-index:2147483647;transition:opacity .25s ease}#app-boot>div{width:42px;height:42px;border:4px solid rgba(63,35,5,.15);border-top-color:#3F2305;border-radius:50%;animation:appspin .8s linear infinite}</style>
+    <style>html{color-scheme:light}html,body{background:#ffffff;margin:0}@keyframes appspin{to{transform:rotate(360deg)}}#app-boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#ffffff;z-index:2147483647;transition:opacity .25s ease}#app-boot>div{width:42px;height:42px;border:4px solid rgba(63,35,5,.15);border-top-color:#3F2305;border-radius:50%;animation:appspin .8s linear infinite}</style>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
     <meta name="apple-mobile-web-app-title" content="Unreal Bali"/>
@@ -156,9 +156,9 @@
     <!-- Tailwind is now compiled at build time (see tailwind.config.js + index.css). -->
 
     <!-- Fonts: media print swap-on-load trick keeps it non-render-blocking -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@200;300;400;500;600;700;800;900&family=Montserrat:wght@200;900&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@200;300;400;500;600;700;800;900&family=Montserrat:wght@200;900&display=swap" media="print" onload="this.media='all'">
     <noscript>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@200;300;400;500;600;700;800;900&family=Montserrat:wght@200;900&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,300&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@200;300;400;500;600;700;800;900&family=Montserrat:wght@200;900&display=swap">
     </noscript>
     <!-- Material Symbols Outlined — SUBSET solo con los iconos usados en la app
          (~28 KB en vez de los varios MB de la fuente completa) → carga rápida

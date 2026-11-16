@@ -111,10 +111,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
   };
 
   const itemClass = (active: boolean) =>
-    `relative flex items-center gap-3 mx-2 px-3 py-2 rounded-xl text-[13.5px] font-medium transition ${
+    `relative flex items-center gap-3 mx-3 px-3 py-[7px] rounded-[10px] text-[14px] transition ${
       active
-        ? 'bg-white/[0.14] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]'
-        : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
+        ? 'bg-brand text-white font-semibold'
+        : 'text-ink/80 hover:bg-black/[0.05]'
     }`;
 
   const renderItem = (it: NavItem, active: boolean) => (
@@ -137,34 +137,36 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
   );
 
   return (
-    <aside className="hidden lg:flex flex-col w-60 shrink-0 bg-primary text-white h-screen sticky top-0 self-start overflow-y-auto">
-      <Link to={`${basePath}?view=dashboard`} className="px-5 py-6 border-b border-white/10 block">
-        <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="font-serif text-xl tracking-tight text-white" />
-        <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{panelLabel ?? t('admin.nav.panel', 'Panel de administración')}</span>
+    <aside className="hidden lg:block w-64 shrink-0 bg-white/80 backdrop-blur-xl border-r border-black/[0.08] text-ink self-stretch">
+      <div className="sticky top-0 h-screen flex flex-col overflow-y-auto">
+      <Link to={`${basePath}?view=dashboard`} className="px-6 pt-6 pb-5 block">
+        <BrandLogo imgClassName="h-8 w-auto object-contain" textClassName="brand-wordmark text-[22px] text-ink" />
+        <span className="block text-[12px] text-mute mt-1">{panelLabel ?? t('admin.nav.panel', 'Panel de administración')}</span>
       </Link>
 
-      <nav className="flex-1 overflow-y-auto py-3 flex flex-col gap-0.5">
+      <nav className="flex-1 overflow-y-auto py-2 flex flex-col gap-0.5">
         {nav.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (!['contacts', 'prensa', 'emails'].includes(it.view || '') || role === 'admin')).map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
       </nav>
 
       {/* Configuración: siempre al fondo del todo, justo encima del logout. */}
-      {!isDemo && <div className="border-t border-white/10 pt-2">
+      {!isDemo && <div className="border-t border-black/[0.06] pt-2 pb-1">
         {renderItem(configItem, isSectionActive(configItem))}
       </div>}
 
-      <div className="border-t border-white/10 p-3">
+      <div className="border-t border-black/[0.06] p-3">
         <button
           onClick={() => navigate('/')}
-          className="block w-full text-left px-2 py-2 text-xs text-white/50 hover:text-white transition"
+          className="block w-full text-left px-3 py-2 text-[13px] text-mute hover:text-ink rounded-[10px] hover:bg-black/[0.04] transition"
         >
           {t('admin.nav.viewSite', 'Ver web pública')}
         </button>
         <button
           onClick={handleLogout}
-          className="block w-full text-left px-2 py-2 mt-1 text-xs font-bold text-red-300 hover:text-white hover:bg-red-600/40 rounded transition"
+          className="block w-full text-left px-3 py-2 mt-0.5 text-[13px] font-medium text-red-600 hover:bg-red-50 rounded-[10px] transition"
         >
           {t('admin.common.logout')}
         </button>
+      </div>
       </div>
     </aside>
   );
