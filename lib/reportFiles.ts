@@ -27,3 +27,53 @@ export async function signReport(path: string): Promise<{ url?: string; status: 
   const ours = /(^|\.)unrealstudiobali\.com$/.test(window.location.hostname);
   return { status: 200, url: ours ? url.replace(/^https:\/\/[^/]+\/storage\/v1\/object\/sign\/reports\//, '/rs/') : url };
 }
+
+/** iOS (PWA instalada, app, navegadores in-app) abre target=_blank en OTRO almacenamiento SIN la
+ * sesión → /report/ mostraba "inicia sesión". Por eso, con sesión, firmamos aquí cada enlace
+ * /report/ visible y lo cambiamos por el enlace firmado: el clic abre el PDF directo en cualquier
+ * pestaña. Sin sesión no se firma nada → el enlace reenviado sigue bloqueado. */
+const signed = new Map<string, { at: number; p: Promise<string | undefined> }>();
+const FRESH_MS = 8 * 60 * 1000; // la firma dura 10 min: se renueva antes
+const getSigned = (path: string) => {
+  const hit = signed.get(path);
+  if (hit && Date.now() - hit.at < FRESH_MS) return hit.p;
+  const p = signReport(path).then((r) => { if (!r.url) signed.delete(path); return r.url; }); // fallo → reintentar luego
+  signed.set(path, { at: Date.now(), p });
+  return p;
+};
+const pathOf = (a: HTMLAnchorElement) => {
+  const h = a.getAttribute('href') || '';
+  return h.startsWith('/report/') ? decodeURIComponent(h.slice(8)) : a.dataset.report || ''; // href nuevo de React manda
+};
+const setHref = (a: HTMLAnchorElement, h: string) => { if (a.getAttribute('href') !== h) a.setAttribute('href', h); };
+
+async function presignAll() {
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('a[href^="/report/"], a[data-report]')];
+  if (!links.length || !(await supabase.auth.getSession()).data.session) return;
+  for (const a of links) {
+    const path = pathOf(a);
+    if (!path) continue;
+    a.dataset.report = path;
+    void getSigned(path).then((url) => setHref(a, url || '/report/' + path));
+  }
+}
+
+export function initReportLinks() {
+  let t: number | undefined;
+  const run = () => { clearTimeout(t); t = window.setTimeout(() => void presignAll(), 150); };
+  new MutationObserver(run).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['href'] });
+  window.setInterval(run, 60 * 1000); // renueva las firmas antes de que caduquen
+  supabase.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') signed.clear(); run(); }); // sin sesión no se reutilizan firmas
+  // Clic antes de que acabe la firma: esperarla y abrir el PDF firmado (no la página /report/).
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element | null)?.closest?.('a') as HTMLAnchorElement | null;
+    if (!a || e.defaultPrevented || !a.getAttribute('href')?.startsWith('/report/')) return;
+    e.preventDefault();
+    const path = pathOf(a);
+    void getSigned(path).then((url) => {
+      const dest = url || '/report/' + path;
+      const w = a.target === '_blank' ? window.open(dest, '_blank') : null;
+      if (w) w.opener = null; else window.location.assign(dest); // popup bloqueado → misma pestaña
+    });
+  }, true);
+}

@@ -6,6 +6,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { initWebVitals } from './lib/webVitals';
 import { initVersionGuard } from './lib/versionGuard';
 import { initNativeApp, isNativeApp } from './lib/nativeApp';
+import { initReportLinks } from './lib/reportFiles';
 import './index.css';
 import { i18nReady } from './lib/i18n';
 
@@ -16,6 +17,9 @@ if (!rootElement) {
 
 // App nativa (Capacitor): atrás/vibración/clase native-app. En el navegador no hace nada.
 initNativeApp();
+
+// Reportes privados: enlaces /report/ → firmados con la sesión de ESTA pestaña (ver reportFiles).
+initReportLinks();
 
 // Montar cuando el JSON del idioma de la URL ya está (en/ro/id se cargan aparte).
 void i18nReady.then(() => {
