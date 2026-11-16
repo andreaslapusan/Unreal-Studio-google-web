@@ -28,7 +28,7 @@ const PortalShell: React.FC<PortalShellProps> = ({ children }) => {
       </header>
 
       {/* el pie queda bajo el pliegue: sin franja blanca bajo la tarjeta de login en móvil */}
-      <main className="rise flex-grow flex items-center justify-center px-5 py-12 min-h-[calc(100dvh-4rem)]">{children}</main>
+      <main className="flex-grow flex items-center justify-center px-5 py-12 min-h-[calc(100dvh-4rem)]">{children}</main>
 
     </div>
   );

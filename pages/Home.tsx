@@ -300,7 +300,7 @@ const Home: React.FC = () => {
       {/* Hero estilo Apple/Movelta: eyebrow + titular enorme + subtítulo gris + píldora + enlace con chevron */}
       <header className="px-5 sm:px-8 pt-14 sm:pt-24 pb-10 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="rise max-w-4xl">
+          <div className="max-w-4xl">
             <p className="eyebrow">{t('home.heroEyebrow')}</p>
             <h1 className="headline mt-3 text-[44px] sm:text-[72px] lg:text-[96px]">
               <Trans
@@ -336,7 +336,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* Tarjeta multimedia grande: proyecto destacado a todo el ancho */}
-          <div className="rise mt-14 sm:mt-20" style={{ animationDelay: '140ms' }}>
+          <div className="mt-14 sm:mt-20">
             {featuredProject ? (
               <Link to={projectPath(featuredProject)} className="group relative block rounded-[28px] overflow-hidden bg-black shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] ring-1 ring-black/5">
                 <img
@@ -386,7 +386,7 @@ const Home: React.FC = () => {
       {/* Oportunidades: sección gris con eyebrow + titular + filtros en píldora + rejilla de tarjetas limpias */}
       <section className="px-5 sm:px-8 py-20 sm:py-28 bg-almond">
         <div className="max-w-6xl mx-auto">
-          <div className="reveal max-w-3xl">
+          <div className="max-w-3xl">
             <p className="eyebrow">{t('nav.projects')}</p>
             <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.opportunitiesTitle')}</h2>
           </div>
@@ -470,7 +470,7 @@ const Home: React.FC = () => {
       {/* Por qué fuera de Europa: blanco, titular + rejilla de tiles + imagen con dato grande */}
       <section className="px-5 sm:px-8 py-20 sm:py-28 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="reveal max-w-3xl">
+          <div className="max-w-3xl">
             <p className="eyebrow">{t('home.section1Tag')}</p>
             <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.section1Title')}</h2>
             <p className="subhead mt-5 text-[17px] sm:text-[21px]">{t('home.section1Body')}</p>
@@ -501,7 +501,7 @@ const Home: React.FC = () => {
       {/* Cómo creamos valor: gris, pasos numerados + desglose de rentabilidad */}
       <section className="px-5 sm:px-8 py-20 sm:py-28 bg-almond">
         <div className="max-w-6xl mx-auto">
-          <div className="reveal max-w-3xl">
+          <div className="max-w-3xl">
             <p className="eyebrow">{t('home.section2Tag')}</p>
             <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.section2Title')}</h2>
             <p className="subhead mt-5 text-[17px] sm:text-[21px]">{t('home.section2Body')}</p>
@@ -558,7 +558,7 @@ const Home: React.FC = () => {
 
       {/* Sección oscura a sangre (marrón de marca) */}
       <section className="px-5 sm:px-8 py-24 sm:py-36 bg-brand text-white text-center">
-        <div className="reveal max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <h2 className="text-[48px] sm:text-[80px] font-bold tracking-[-0.045em] leading-[1.02] text-white">{t('home.ctaSectionTitle')}</h2>
           <p className="mt-6 text-[17px] sm:text-[21px] text-white/65 leading-relaxed">{t('home.ctaSectionBody')}</p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
@@ -572,7 +572,7 @@ const Home: React.FC = () => {
       {/* Blog */}
       <section className="px-5 sm:px-8 py-20 sm:py-28 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
               <p className="eyebrow">{t('nav.blog')}</p>
               <h2 className="headline text-[36px] sm:text-[56px] mt-2">{t('home.blogTitle')}</h2>

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { langPath } from '../components/LocaleRoute';
 import { useTranslation } from 'react-i18next';
 import { BlogPost } from '../types';
+import { readSWR, writeSWR } from '../lib/swrCache';
 import { supabase, getImageUrl } from '../lib/supabase';
 import { imgSrc, imgSrcSet, imgFallback } from '../lib/imageOptimize';
 import { localizeFields, blogTagLabel } from '../lib/projectTerms';
@@ -16,8 +17,8 @@ const Blog: React.FC = () => {
   const { t, i18n } = useTranslation();
   const catLabel = (tag) => blogTagLabel(tag, t);
   usePageMeta({ title: t('blog.title'), description: t('blog.metaDescription') });
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState<BlogPost[]>(() => readSWR<BlogPost[]>('blog_list') ?? []);
+  const [loading, setLoading] = useState(() => !(readSWR<BlogPost[]>('blog_list') ?? []).length);
   const [selectedTag, setSelectedTag] = useState(ALL_TAG);
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,14 +35,13 @@ const Blog: React.FC = () => {
 
   useEffect(() => {
     const fetchBlogs = async () => {
-      setLoading(true);
       try {
         const { data } = await supabase
             .from('blogs')
             .select('*')
             .eq('is_published', true)
             .order('published_date', { ascending: false });
-        if (data) setBlogs(data as unknown as BlogPost[]);
+        if (data) { setBlogs(data as unknown as BlogPost[]); writeSWR('blog_list', data); }
       } catch (error) {
         console.error('Error fetching blogs:', error);
       } finally {
@@ -77,19 +77,10 @@ const Blog: React.FC = () => {
     return result;
   }, [blogs, selectedTag, sortOrder, searchQuery, i18n.language]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-almond flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-        <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">{t('blog.loading')}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white min-h-screen pt-14 sm:pt-24 pb-24 px-5 sm:px-8">
       <div className="max-w-6xl mx-auto">
-        <header className="rise mb-14">
+        <header className="mb-14">
           <p className="eyebrow">{t('nav.blog')}</p>
           <h1 className="headline mt-3 text-[44px] sm:text-[72px] max-w-4xl">{t('blog.heroTitle')}</h1>
           <p className="subhead mt-6 text-[19px] sm:text-[22px] max-w-2xl">
@@ -143,8 +134,18 @@ const Blog: React.FC = () => {
           </div>
         </div>
 
-        {/* Resultados */}
-        {filteredBlogs.length === 0 ? (
+        {/* Resultados (mientras carga: tarjetas esqueleto del mismo tamaño → sin saltos) */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10" role="status" aria-label={t('blog.loading')}>
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i}>
+                <div className="aspect-[16/10] rounded-[28px] bg-[#f5f5f7] animate-pulse mb-6" />
+                <div className="h-4 w-1/3 rounded bg-[#f5f5f7] mb-3" />
+                <div className="h-6 w-4/5 rounded bg-[#f5f5f7]" />
+              </div>
+            ))}
+          </div>
+        ) : filteredBlogs.length === 0 ? (
           <div className="text-center py-20">
             <span className="material-symbols-outlined text-4xl text-primary/20 mb-4">search</span>
             <p className="text-primary/40 font-bold uppercase tracking-widest text-xs">{t('blog.noResults')}</p>

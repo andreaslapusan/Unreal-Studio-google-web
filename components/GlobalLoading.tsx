@@ -10,7 +10,7 @@ export default function GlobalLoading() {
   useEffect(() => subscribeLoading(setN), []);
   if (n <= 0) return null;
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
+    <div className="no-anim fixed inset-0 z-[9999] flex items-center justify-center bg-black/10" style={{ animation: 'ust-fade .2s ease-out 300ms backwards' }}>
       <div className="bg-white rounded-2xl shadow-xl p-5">
         <div className="w-10 h-10 border-4 border-primary/15 border-t-primary rounded-full animate-spin" />
       </div>

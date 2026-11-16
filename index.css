@@ -265,8 +265,8 @@ input, textarea, select { transition: box-shadow .25s var(--ease-apple), border-
 @media (prefers-reduced-transparency: reduce) { .glass-nav { background: #fff; backdrop-filter: none; } .glass-dark-nav { background: #3f2305; backdrop-filter: none; } }
 
 /* Aparición al hacer scroll (la activa App.tsx/useReveal en páginas públicas). */
-.reveal { opacity: 0; translate: 0 28px; filter: blur(6px); transition: opacity .9s var(--ease-apple), translate .9s var(--ease-apple), filter .9s var(--ease-apple); transition-delay: var(--reveal-delay, 0ms); }
-.reveal.in { opacity: 1; translate: none; filter: none; }
+.reveal { opacity: 0; translate: 0 16px; transition: opacity .7s var(--ease-apple), translate .7s var(--ease-apple); transition-delay: var(--reveal-delay, 0ms); }
+.reveal.in { opacity: 1; translate: none; }
 
 /* Entradas cortas reutilizables. */
 @keyframes ust-rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: none; } }
@@ -277,12 +277,12 @@ input, textarea, select { transition: box-shadow .25s var(--ease-apple), border-
 .pop-in { animation: ust-pop .32s var(--ease-apple) backwards; transform-origin: top right; }
 
 /* Pop-ups: fondo con desenfoque + panel que aparece (escala en escritorio, hoja desde abajo en móvil). */
-.fixed.inset-0[class*="bg-black/"] {
+.fixed.inset-0[class*="bg-black/"]:not(.no-anim) {
   -webkit-backdrop-filter: blur(10px) saturate(140%);
   backdrop-filter: blur(10px) saturate(140%);
   animation: ust-fade .25s ease-out backwards;
 }
-.fixed.inset-0[class*="bg-black/"] > div:first-child { animation: ust-pop .38s var(--ease-apple) backwards; }
+.fixed.inset-0[class*="bg-black/"]:not(.no-anim) > div:first-child { animation: ust-pop .38s var(--ease-apple) backwards; }
 @media (max-width: 639px) {
   .fixed.inset-0:is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.modal-keep) > div { animation: ust-sheet .45s var(--ease-apple) backwards; }
 }

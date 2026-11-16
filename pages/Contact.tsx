@@ -69,7 +69,7 @@ const Contact: React.FC = () => {
   return (
     <div className="bg-white min-h-screen">
       <main className="px-5 sm:px-8 pt-14 sm:pt-24 pb-24">
-        <div className="rise max-w-6xl mx-auto mb-16">
+        <div className="max-w-6xl mx-auto mb-16">
           <p className="eyebrow">{t('nav.contact')}</p>
           <h1 className="headline mt-3 text-[44px] sm:text-[72px] max-w-4xl">
             {t('contact.heroTitle1')} <br className="hidden md:block" />{t('contact.heroTitle2')}

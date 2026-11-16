@@ -23,6 +23,15 @@ import { translateStatus } from '../lib/statusI18n';
 import { useAuth } from '../lib/auth-context';
 import { usePageMeta } from '../components/PageMeta';
 import seoMap from '../content/seo/projects.json';
+import { readSWR } from '../lib/swrCache';
+
+// Proyecto ya cargado en el listado/home (mismas columnas): se pinta al instante y se refresca debajo.
+const cachedProject = (slug?: string): Project | null => {
+  if (!slug) return null;
+  const all = [...(readSWR<Project[]>('projects_list') ?? []), ...(readSWR<Project[]>('home_projects') ?? [])];
+  const p = all.find((x) => x.slug === slug || slug.startsWith(`${x.slug}-`));
+  return p ? ({ ...p, gallery: parseJsonField(p.gallery, []), investor_tiers: parseJsonField(p.investor_tiers, []), amenities: parseJsonField((p as any).amenities, []) } as Project) : null;
+};
 
 // Nombre visible de un plano: el del fichero si es legible; si es un id autogenerado
 // (subidas "1791014938804-jtm08y.pdf") o un enlace Drive (".../preview") → "Plano N".
@@ -89,7 +98,7 @@ const ProjectDetail: React.FC = () => {
   };
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<Project | null>(() => cachedProject(slug));
   // Para el botón flotante de WhatsApp: mensaje con el nombre de este proyecto.
   useEffect(() => {
     if (!project?.name) return;
@@ -101,7 +110,7 @@ const ProjectDetail: React.FC = () => {
   const [matchedUnitId, setMatchedUnitId] = useState<string | null>(null);
   const { formatPrice } = useCurrency();
   const { role } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !cachedProject(slug));
   const [lightbox, setLightbox] = useState<{ open: boolean, index: number }>({ open: false, index: 0 });
   // Title/meta/subtítulo del H1: mismo JSON que el prerender (content/seo/projects.json).
   const lang2 = (i18n.language || 'es').slice(0, 2);
@@ -135,7 +144,8 @@ const ProjectDetail: React.FC = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
+      const cached = cachedProject(slug);
+      if (cached) setProject(cached); else setLoading(true);
       try {
         // Carga de Configuración
         const { data: configRows } = await supabase.from('app_config').select('*');
@@ -355,7 +365,7 @@ const ProjectDetail: React.FC = () => {
       {/* Cabecera estilo Apple: eyebrow (ubicación) + titular enorme + chips; foto en tarjeta grande redondeada */}
       <header className="bg-white px-5 sm:px-8 pt-12 sm:pt-20 pb-10">
         <div className="max-w-6xl mx-auto">
-          <div className="rise">
+          <div className="">
             {project.location && <p className="eyebrow">{project.location}</p>}
             <h1 className="headline mt-3 text-[40px] sm:text-[64px] lg:text-[80px]">{project.name}{seo?.h1sub && <span className="block subhead text-[19px] sm:text-[22px] font-normal tracking-[-0.01em] mt-4">{seo.h1sub}</span>}</h1>
             <div className="mt-6 flex flex-wrap items-center gap-2">
@@ -370,7 +380,7 @@ const ProjectDetail: React.FC = () => {
             )}
             </div>
           </div>
-          <div className="rise mt-10 sm:mt-14 relative rounded-[28px] overflow-hidden bg-black ring-1 ring-black/5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)]" style={{ animationDelay: '120ms' }}>
+          <div className="mt-10 sm:mt-14 relative rounded-[28px] overflow-hidden bg-black ring-1 ring-black/5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)]">
             <img
               alt={project.name}
               className="w-full h-[360px] sm:h-[520px] lg:h-[620px] object-cover"

@@ -34,10 +34,10 @@ const Projects: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   // SWR — repeat visitors see the catalogue instantly from localStorage; we
   // refresh in the background. Same pattern as Home.tsx.
-  const [projects, setProjects] = useState<Project[]>(() => readSWR<Project[]>('projects_list') ?? []);
+  const [projects, setProjects] = useState<Project[]>(() => readSWR<Project[]>('projects_list') ?? readSWR<Project[]>('home_projects') ?? []);
   const [config, setConfig] = useState<AppConfig>(() => readSWR<AppConfig>('home_config') ?? DEFAULT_CONFIG);
   const { formatPrice, currency, rates: liveRates } = useCurrency();
-  const [loading, setLoading] = useState<boolean>(() => (readSWR<Project[]>('projects_list') ?? []).length === 0);
+  const [loading, setLoading] = useState<boolean>(() => (readSWR<Project[]>('projects_list') ?? readSWR<Project[]>('home_projects') ?? []).length === 0);
   
   // Inicializar estado con formato de miles si existe en URL
   const formatInitialPrice = (val: string | null) => {
@@ -294,7 +294,7 @@ const Projects: React.FC = () => {
   return (
     <div className="bg-almond transition-colors duration-300">
       <header className="px-5 sm:px-8 pt-14 sm:pt-24 pb-28 relative overflow-hidden bg-white">
-        <div className="rise relative z-10 max-w-6xl mx-auto">
+        <div className="relative z-10 max-w-6xl mx-auto">
           <p className="eyebrow">{t('nav.projects')}</p>
           <h1 className="headline mt-3 text-[44px] sm:text-[72px] lg:text-[88px] max-w-4xl">
             {t('projects.heroTitle')}

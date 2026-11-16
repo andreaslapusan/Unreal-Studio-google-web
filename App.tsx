@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, useNavigationType, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ManifestSwitcher from './components/ManifestSwitcher';
@@ -117,31 +117,17 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  // antes del pintado: sin salto visible de scroll al cambiar de página
+  useLayoutEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 };
 
-// App nativa: fundido corto del contenido al ir a otra ruta o sección (?view=). Solo opacidad (no re-ancla
-// pop-ups fixed), sin remontar; no en "atrás" ni con "reducir movimiento". En el navegador no hace nada.
-const NativeTransition = () => {
-  const { pathname, search } = useLocation();
-  const navType = useNavigationType();
-  const key = `${pathname}|${new URLSearchParams(search).get('view') ?? ''}`;
-  const prev = useRef(key);
-  useLayoutEffect(() => {
-    if (prev.current === key) return;
-    prev.current = key;
-    if (navType === 'POP' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    // Web y app: fundido + leve subida (sin fill: al acabar no queda transform que re-ancle pop-ups fixed).
-    (document.querySelector('main main') ?? document.querySelector('main'))
-      ?.animate({ opacity: [0, 1], translate: ['0 10px', '0 0'] }, { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
-  }, [key, navType]);
-  return null;
-};
+// (Sin fundido de página: hacía parpadear todo el contenido —sidebar incluido— en cada cambio de vista. Andreas 16-nov.)
 
 // Páginas públicas: secciones y tarjetas de rejilla aparecen al entrar en pantalla (estilo apple.com).
 // Observa también lo que se pinta después (datos async). Los portales no lo usan.
-const REVEAL_SEL = 'main .reveal, main > section, main > div > section, main section .grid > *';
+// Solo bloques de contenido (no secciones enteras: evita doble animación sección+tarjeta).
+const REVEAL_SEL = 'main section .grid > *, main section > div > div:not(.grid)';
 const ScrollReveal: React.FC<{ enabled: boolean }> = ({ enabled }) => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -152,17 +138,11 @@ const ScrollReveal: React.FC<{ enabled: boolean }> = ({ enabled }) => {
     }), { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
     const scan = () => main.querySelectorAll<HTMLElement>(REVEAL_SEL).forEach((el) => {
       if (el.dataset.rv || /\banimate-/.test(el.getAttribute('class') || '')) return;
-      // una sección que ya trae bloques .reveal propios no se anima entera (evita doble fundido)
-      if (el.tagName === 'SECTION' && el.querySelector('.reveal')) { el.dataset.rv = '1'; return; }
       el.dataset.rv = '1';
       // lo que ya está a la vista al cargar no se oculta (evita parpadeo del primer pliegue)
       const idx = el.parentElement?.classList.contains('grid') ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
-      if (el.getBoundingClientRect().top < window.innerHeight * 0.9) {
-        if (el.classList.contains('reveal')) { el.classList.add('in'); return; }
-        el.style.animationDelay = `${(idx % 4) * 70}ms`;
-        el.classList.add('rise');
-        return;
-      }
+      // lo que ya está a la vista se queda quieto (nada "salta" al cargar o al navegar)
+      if (el.getBoundingClientRect().top < window.innerHeight) { el.classList.add('in'); return; }
       el.style.setProperty('--reveal-delay', `${(idx % 4) * 90}ms`);
       el.classList.add('reveal');
       io.observe(el);
@@ -344,7 +324,6 @@ const App: React.FC = () => {
       <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <NativeTransition />
         <ManifestSwitcher />
         <PullToRefresh />
         <GlobalLoading />
@@ -353,8 +332,8 @@ const App: React.FC = () => {
         <Layout>
           <Suspense
             fallback={
-              <div className="min-h-screen flex items-center justify-center bg-almond">
-                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="w-8 h-8 border-[3px] border-black/10 border-t-black/50 rounded-full animate-spin" style={{ animation: 'spin 1s linear infinite, ust-fade .2s ease-out 400ms backwards' }} />
               </div>
             }
           >

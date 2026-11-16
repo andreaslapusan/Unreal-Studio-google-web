@@ -166,7 +166,7 @@ export default function Faq() {
   return (
     <div className="bg-almond min-h-screen pb-24">
       <header className="bg-white px-5 sm:px-8 pt-14 sm:pt-24 pb-16 mb-12">
-        <div className="rise max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto">
         <p className="eyebrow">{t('nav.faq')}</p>
         <h1 className="headline mt-3 text-[44px] sm:text-[72px] max-w-4xl">
           {t("faq.heroTitle")}
