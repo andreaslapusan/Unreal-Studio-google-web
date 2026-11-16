@@ -28,6 +28,11 @@ const PORTAL_DASH: Record<PortalKey, string> = {
   admin: '/admin',
 };
 
+const hasStoredSession = (): boolean => {
+  try { return Object.keys(localStorage).some((k) => /^sb-.*-auth-token$/.test(k) && !!JSON.parse(localStorage.getItem(k) || '{}')?.refresh_token); }
+  catch { return false; }
+};
+
 const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, dark }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -44,7 +49,18 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
   const [chooser, setChooser] = useState<PortalKey[] | null>(null);
   // Mientras verificamos una sesión ya existente (recordarme) → spinner, para no
   // mostrar el formulario de login unos segundos y que parezca que no recuerda.
-  const [checking, setChecking] = useState(false);
+  // Arranca en "verificando" si hay sesión guardada: en la app (arranque en frío, token caducado) auth
+  // podía resolver un instante sin usuario → salía el formulario y Andreas volvía a pulsar "Entrar".
+  const [checking, setChecking] = useState(hasStoredSession);
+
+  // Hay sesión guardada pero auth aún no dio usuario (refresco en curso) → seguimos con el spinner
+  // hasta que llegue (routeIfMember redirige) o, como mucho, 8 s; luego el formulario.
+  useEffect(() => {
+    if (loading || user) return;
+    if (!hasStoredSession()) { setChecking(false); return; }
+    const id = setTimeout(() => setChecking(false), 8000);
+    return () => clearTimeout(id);
+  }, [loading, user]);
 
   useEffect(() => {
     document.title = `${portalLabel} | Unreal Studio`;
