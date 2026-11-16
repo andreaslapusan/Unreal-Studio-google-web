@@ -24,6 +24,7 @@ import ClientPaymentsPanel, { creditedOf } from '../components/admin/ClientPayme
 import EventsCalendar from '../components/admin/EventsCalendar';
 import PiDashboard from '../components/admin/PiDashboard';
 import PressPresenceDashboard from '../components/admin/PressPresenceDashboard';
+import OutreachDashboard from '../components/admin/OutreachDashboard';
 import AsyncButton from '../components/AsyncButton';
 import CobrosPanel from '../components/admin/CobrosPanel';
 import FinanceControlPanel from '../components/admin/FinanceControlPanel';
@@ -48,8 +49,8 @@ import i18n, { preloadAllLocales } from '../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import BrandLogo from '../components/BrandLogo';
 
-type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'gastos' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines' | 'pi' | 'prensa';
-const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'gastos', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura', 'pi', 'prensa'];
+type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'gastos' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines' | 'pi' | 'prensa' | 'emails';
+const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'gastos', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura', 'pi', 'prensa', 'emails'];
 
 // Titulares que PARTICIPAN en una propiedad concreta (+ % opcional). Si la
 // propiedad no tiene participantes definidos (null/[]), participan TODOS los
@@ -430,6 +431,7 @@ const AMENITIES_LIST = [
     { key: 'agencias', view: 'agencias' },
     { key: 'pi', view: 'pi' },
     { key: 'prensa', view: 'prensa' },
+    { key: 'emails', view: 'emails' },
     { key: 'config', view: 'config' },
   ];
   // Solicitudes de vacaciones pendientes (se aprueban aquí, en Empleados).
@@ -2138,7 +2140,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setAdminMenuOpen(false)}>
           <div className="absolute right-3 top-16 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-[230px] max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-1 mb-2">
-              {ADMIN_MOBILE_NAV.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (!['contacts', 'prensa'].includes(it.view || '') || role === 'admin')).map((it) => (
+              {ADMIN_MOBILE_NAV.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (!['contacts', 'prensa', 'emails'].includes(it.view || '') || role === 'admin')).map((it) => (
                 <button key={it.key} onClick={() => { if (it.to) navigate(it.to); else setActiveView(it.view as any); setAdminMenuOpen(false); }}
                   className={`text-left px-3 py-2.5 rounded-xl text-sm font-bold capitalize transition ${!it.to && activeView === it.view ? 'bg-primary text-white' : 'text-primary/70 hover:bg-gray-100'}`}>
                   {t(`admin.nav.${it.key}`)}
@@ -2939,6 +2941,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         {activeView === 'calendar' && <VacationManager />}
         {activeView === 'pi' && <PiDashboard />}
         {activeView === 'prensa' && role === 'admin' && <PressPresenceDashboard />}
+        {activeView === 'emails' && role === 'admin' && <OutreachDashboard />}
       </main>
       <footer className="py-4 text-center text-[11px] text-primary/30 shrink-0">v{APP_VERSION}</footer>
 
