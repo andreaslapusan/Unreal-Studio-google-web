@@ -34,8 +34,9 @@ export default {
       borderColor: { primary: "#1d1d1f" },
       ringColor: { primary: "#1d1d1f" },
       fontFamily: {
-        serif: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Display"', '"Inter"', '"Helvetica Neue"', "Arial", "sans-serif"],
-        sans: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Text"', '"Inter"', '"Helvetica Neue"', "Arial", "sans-serif"],
+        // Tipografía de producción (Andreas 16-nov: el rediseño mantiene las fuentes originales)
+        serif: ['"DM Serif Display"', "serif"],
+        sans: ['"Manrope"', "sans-serif"],
         montserrat: ['"Montserrat"', "sans-serif"],
       },
     },

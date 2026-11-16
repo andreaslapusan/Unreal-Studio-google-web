@@ -306,7 +306,7 @@ const Home: React.FC = () => {
               <Trans
                 i18nKey="home.heroTitle"
                 values={{ price: minPriceDisplay }}
-                components={{ i: <span className="text-brand" /> }}
+                components={{ i: <span className="italic text-brand" /> }}
               />
             </h1>
             <p className="subhead mt-6 text-[19px] sm:text-[22px] max-w-2xl">
@@ -357,7 +357,7 @@ const Home: React.FC = () => {
                 <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 text-white">
                   <div className="min-w-0">
                     <p className="text-[14px] sm:text-[15px] text-white/70">{featuredProject.location}{featuredProject.tenure ? ` · ${t(`projects.card.tenure.${(featuredProject.tenure||'').toLowerCase()}`, featuredProject.tenure)}` : ''}</p>
-                    <h2 className="mt-1 text-[32px] sm:text-[52px] font-bold tracking-[-0.035em] leading-[1.02] text-white">{featuredProject.name}</h2>
+                    <h2 className="mt-1 text-[32px] sm:text-[52px] leading-[1.02] text-white">{featuredProject.name}</h2>
                     <p className="mt-3 text-[15px] text-white/75">
                       {t('home.investmentFrom')} <span className="text-white font-semibold text-[20px] sm:text-[24px] tracking-[-0.02em]">{formatPrice(featuredProject.investor_price, featuredProject.price_currency)}</span>
                       {Number(featuredProject.market_price) > Number(featuredProject.investor_price) && (
@@ -438,7 +438,7 @@ const Home: React.FC = () => {
                 </div>
                 <div className="p-6 flex-grow flex flex-col">
                   <p className="text-[13px] text-mute truncate">{proj.location}{proj.tenure ? ` · ${t(`projects.card.tenure.${(proj.tenure||'').toLowerCase()}`, proj.tenure)}` : ''}</p>
-                  <h3 className="mt-1 text-[22px] font-semibold tracking-[-0.02em] text-ink leading-tight">{proj.name}</h3>
+                  <h3 className="mt-1 text-[22px] text-ink leading-tight">{proj.name}</h3>
                   {proj.completion_percent > 0 && (
                     <div className="flex items-center gap-3 mt-4">
                       <span className="text-[12px] text-mute">{t('projects.card.work')}</span>
@@ -480,7 +480,7 @@ const Home: React.FC = () => {
               {[['trending_down', 'b1'], ['security', 'b2'], ['public', 'b3']].map(([icon, k]) => (
                 <div key={k} className="tile p-7">
                   <span className="material-symbols-outlined text-brand text-[26px]">{icon}</span>
-                  <h3 className="mt-3 text-[20px] font-semibold tracking-[-0.015em] text-ink">{t(`home.${k}Title`)}</h3>
+                  <h3 className="mt-3 text-[20px] text-ink">{t(`home.${k}Title`)}</h3>
                   <p className="mt-1.5 text-[15px] text-mute leading-relaxed">{t(`home.${k}Body`)}</p>
                 </div>
               ))}
@@ -510,7 +510,7 @@ const Home: React.FC = () => {
             {['v1', 'v2', 'v3'].map((k, i) => (
               <div key={k} className={`pt-5 border-t-2 ${i === 0 ? 'border-brand' : 'border-black/10'}`}>
                 <p className="text-[13px] font-semibold text-mute tabular-nums">0{i + 1}</p>
-                <h3 className="mt-2 text-[20px] font-semibold tracking-[-0.015em] text-ink">{t(`home.${k}Title`)}</h3>
+                <h3 className="mt-2 text-[20px] text-ink">{t(`home.${k}Title`)}</h3>
                 <p className="mt-1.5 text-[15px] text-mute leading-relaxed">{t(`home.${k}Body`)}</p>
               </div>
             ))}
@@ -519,7 +519,7 @@ const Home: React.FC = () => {
           <div className="mt-14 bg-white rounded-[28px] p-7 sm:p-12 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
               <div className="lg:w-2/5">
-                <h3 className="text-[28px] sm:text-[36px] font-bold tracking-[-0.03em] text-ink leading-tight">{t('home.profitTitle')}</h3>
+                <h3 className="text-[28px] sm:text-[36px] text-ink leading-tight">{t('home.profitTitle')}</h3>
                 <p className="mt-3 text-[15px] text-mute">{t('home.profit.calcNote', { defaultValue: 'Calculado sobre modelo de venta sobre plano en zona de alta demanda.' })}</p>
                 {featuredProject && (
                   <Link to={projectPath(featuredProject)} className="mt-6 h-11 px-6 rounded-full bg-brand text-white text-[15px] font-semibold inline-flex items-center hover:bg-[#2c1803] transition">
@@ -559,7 +559,7 @@ const Home: React.FC = () => {
       {/* Sección oscura a sangre (marrón de marca) */}
       <section className="px-5 sm:px-8 py-24 sm:py-36 bg-brand text-white text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-[48px] sm:text-[80px] font-bold tracking-[-0.045em] leading-[1.02] text-white">{t('home.ctaSectionTitle')}</h2>
+          <h2 className="text-[48px] sm:text-[80px] leading-[1.02] text-white">{t('home.ctaSectionTitle')}</h2>
           <p className="mt-6 text-[17px] sm:text-[21px] text-white/65 leading-relaxed">{t('home.ctaSectionBody')}</p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="h-12 px-7 rounded-full bg-white text-ink text-[17px] font-semibold inline-flex items-center gap-2 hover:bg-white/90 transition">
@@ -587,7 +587,7 @@ const Home: React.FC = () => {
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <p className="text-[13px] text-mute">{blogTagLabel(post.tag, t)} · {formatDate(post.published_date)}</p>
-                  <h3 className="mt-2 text-[20px] font-semibold tracking-[-0.015em] text-ink leading-snug line-clamp-3">{post.title}</h3>
+                  <h3 className="mt-2 text-[20px] text-ink leading-snug line-clamp-3">{post.title}</h3>
                   <p className="mt-2 text-[15px] text-mute leading-relaxed line-clamp-3 flex-grow">{post.description}</p>
                 </div>
               </Link>

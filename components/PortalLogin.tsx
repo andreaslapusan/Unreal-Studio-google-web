@@ -306,7 +306,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     return (
       <PortalShell dark={dark}>
         <div className="bg-white w-full max-w-md rounded-[28px] p-8 md:p-10 shadow-xl text-center">
-          <h1 className="text-[28px] font-bold tracking-[-0.03em] text-ink mb-2">{t('auth.choosePortalTitle')}</h1>
+          <h1 className="text-[28px] text-ink mb-2">{t('auth.choosePortalTitle')}</h1>
           <p className="text-sm text-primary/50 mb-6">{t('auth.choosePortalSub')}</p>
           <div className="space-y-3">
             {chooser.map((p) => (
@@ -328,7 +328,7 @@ const PortalLogin: React.FC<{ portal: PortalKey; dark?: boolean }> = ({ portal, 
     <PortalShell dark={dark}>
       <div className="bg-white w-full max-w-[440px] rounded-[28px] p-8 sm:p-10 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_60px_-24px_rgba(0,0,0,0.18)]">
         <div className="text-center mb-8">
-          <h1 className="text-[34px] font-bold tracking-[-0.035em] text-ink mb-1">{t(`auth.portal_${portal}`)}</h1>
+          <h1 className="text-[34px] text-ink mb-1">{t(`auth.portal_${portal}`)}</h1>
           <p className="text-[15px] text-mute">{t('auth.subtitle')}</p>
         </div>
 
