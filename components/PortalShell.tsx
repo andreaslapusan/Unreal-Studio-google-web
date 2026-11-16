@@ -18,8 +18,8 @@ const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => 
   return (
     <div className={`min-h-screen flex flex-col ${dark ? 'bg-primary' : 'bg-almond'}`}>
       <header
-        className={`flex items-center justify-between px-6 md:px-12 py-5 border-b ${
-          dark ? 'border-white/10' : 'border-primary/5'
+        className={`sticky top-0 z-40 flex items-center justify-between px-5 md:px-10 h-14 md:h-16 border-b ${
+          dark ? 'glass-dark-nav border-white/10' : 'glass-nav border-primary/[0.06]'
         }`}
       >
         <Link to="/">
@@ -29,7 +29,7 @@ const PortalShell: React.FC<PortalShellProps> = ({ children, dark = false }) => 
       </header>
 
       {/* el pie queda bajo el pliegue: sin franja blanca bajo la tarjeta de login en móvil */}
-      <main className="flex-grow flex items-center justify-center px-6 py-12 min-h-[calc(100dvh-4rem)]">{children}</main>
+      <main className="rise flex-grow flex items-center justify-center px-5 py-12 min-h-[calc(100dvh-4rem)]">{children}</main>
 
     </div>
   );

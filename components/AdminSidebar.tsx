@@ -111,10 +111,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
   };
 
   const itemClass = (active: boolean) =>
-    `relative flex items-center gap-3 px-5 py-2.5 text-sm font-medium transition-colors ${
+    `relative flex items-center gap-3 mx-2 px-3 py-2 rounded-xl text-[13.5px] font-medium transition ${
       active
-        ? 'bg-white/10 text-white before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-amber-400'
-        : 'text-white/55 hover:text-white hover:bg-white/5'
+        ? 'bg-white/[0.14] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]'
+        : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
     }`;
 
   const renderItem = (it: NavItem, active: boolean) => (
@@ -143,7 +143,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ items, footerItem, basePath
         <span className="block text-[10px] uppercase tracking-widest text-white/40 mt-1">{panelLabel ?? t('admin.nav.panel', 'Panel de administración')}</span>
       </Link>
 
-      <nav className="flex-1 overflow-y-auto py-3">
+      <nav className="flex-1 overflow-y-auto py-3 flex flex-col gap-0.5">
         {nav.filter((it) => (!isDemo || DEMO_ADMIN_VIEWS.includes(it.view || '')) && (!['contacts', 'prensa', 'emails'].includes(it.view || '') || role === 'admin')).map((it) => renderItem(it, it.view ? isSectionActive(it) : !!isPageActive(it)))}
       </nav>
 

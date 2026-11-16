@@ -76,7 +76,6 @@ import { supabase } from './lib/supabase';
 import { trackPageVisit } from './lib/attribution';
 import { trackPageView } from './lib/fbPixel';
 import { gtmPageView } from './lib/gtm';
-import { isNativeApp } from './lib/nativeApp';
 
 interface CurrencyContextType {
   currency: CurrencyCode;
@@ -132,10 +131,45 @@ const NativeTransition = () => {
   useLayoutEffect(() => {
     if (prev.current === key) return;
     prev.current = key;
-    if (navType === 'POP' || !isNativeApp() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (navType === 'POP' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Web y app: fundido + leve subida (sin fill: al acabar no queda transform que re-ancle pop-ups fixed).
     (document.querySelector('main main') ?? document.querySelector('main'))
-      ?.animate({ opacity: [0, 1] }, { duration: 220, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+      ?.animate({ opacity: [0, 1], translate: ['0 10px', '0 0'] }, { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
   }, [key, navType]);
+  return null;
+};
+
+// Páginas públicas: secciones y tarjetas de rejilla aparecen al entrar en pantalla (estilo apple.com).
+// Observa también lo que se pinta después (datos async). Los portales no lo usan.
+const REVEAL_SEL = 'main > section, main > div > section, main section .grid > *';
+const ScrollReveal: React.FC<{ enabled: boolean }> = ({ enabled }) => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const main = document.querySelector('main');
+    if (!enabled || !main || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+    const scan = () => main.querySelectorAll<HTMLElement>(REVEAL_SEL).forEach((el) => {
+      if (el.dataset.rv || /\banimate-/.test(el.getAttribute('class') || '')) return;
+      el.dataset.rv = '1';
+      // lo que ya está a la vista al cargar no se oculta (evita parpadeo del primer pliegue)
+      const idx = el.parentElement?.classList.contains('grid') ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.9) {
+        el.style.animationDelay = `${(idx % 4) * 70}ms`;
+        el.classList.add('rise');
+        return;
+      }
+      el.style.setProperty('--reveal-delay', `${(idx % 4) * 90}ms`);
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+    scan();
+    let raf = 0;
+    const mo = new MutationObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(scan); });
+    mo.observe(main, { childList: true, subtree: true });
+    return () => { io.disconnect(); mo.disconnect(); cancelAnimationFrame(raf); };
+  }, [enabled, pathname]);
   return null;
 };
 
@@ -178,6 +212,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen">
       {!isHiddenPath && <Navbar />}
+      <ScrollReveal enabled={!isHiddenPath} />
       <main className="flex-grow">{children}</main>
       {showFooter && <Footer compact={isHiddenPath} />}
       {/* FloatingWhatsApp: activado por Andreas (2026-08-09). Bottom-right, no colisiona

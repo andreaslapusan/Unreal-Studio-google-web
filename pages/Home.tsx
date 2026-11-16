@@ -299,16 +299,16 @@ const Home: React.FC = () => {
 
       {/* Hero Section */}
       <header className="px-6 md:px-12 pb-24 md:pb-32 pt-4 md:pt-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
-        <div className="space-y-8 md:space-y-10 z-10">
+        <div className="space-y-8 md:space-y-10 z-10 rise">
           <div className="max-w-xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl leading-[1.1] text-primary mb-8">
+            <h1 className="text-[44px] md:text-7xl lg:text-[80px] leading-[1.03] tracking-[-0.025em] text-primary mb-8">
               <Trans
                 i18nKey="home.heroTitle"
                 values={{ price: minPriceDisplay }}
                 components={{ i: <span className="italic font-extralight" /> }}
               />
             </h1>
-            <p className="text-lg md:text-xl text-primary/70 mb-10 leading-relaxed font-medium">
+            <p className="text-lg md:text-[22px] text-primary/65 mb-10 leading-[1.45] font-normal">
               <Trans i18nKey="home.heroBody" components={{ b: <span className="font-bold" /> }} />
             </p>
             <div className="flex flex-col sm:flex-row gap-5">
@@ -316,14 +316,14 @@ const Home: React.FC = () => {
                 href={WHATSAPP_URL} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="bg-primary text-white border border-primary px-10 py-5 rounded-full font-bold shadow-xl hover:bg-almond hover:text-primary transition flex items-center justify-center gap-2"
+                className="bg-primary text-white border border-primary px-9 py-4 rounded-full font-semibold text-[17px] shadow-xl hover:bg-[#2c1803] transition flex items-center justify-center gap-2 group"
               >
-                {t('home.ctaMeeting')} <span className="material-symbols-outlined">arrow_forward</span>
+                {t('home.ctaMeeting')} <span className="material-symbols-outlined transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
               </a>
               {(config as any).brand?.intro_video_url && (
                 <button
                   onClick={() => setIsVideoOpen(true)}
-                  className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border border-primary/20 font-bold text-primary hover:bg-white transition text-sm cursor-pointer"
+                  className="flex items-center justify-center gap-3 px-8 py-4 rounded-full border border-primary/20 font-semibold text-primary hover:bg-white transition text-[17px] cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-primary">play_circle</span> {t('home.ctaVideo')}
                 </button>
@@ -342,7 +342,7 @@ const Home: React.FC = () => {
         </div>
         
         {/* Featured Project Card */}
-        <div className="w-full">
+        <div className="w-full rise" style={{ animationDelay: '120ms' }}>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4 text-left">{t('home.featuredTag')}</p>
           {featuredProject ? (
               <Link to={projectPath(featuredProject)} className="bg-white rounded-3xl md:rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-700 flex flex-row md:flex-col group h-full md:h-auto items-stretch">

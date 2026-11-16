@@ -26,7 +26,7 @@ export default {
       },
       fontFamily: {
         serif: ['"DM Serif Display"', "serif"],
-        sans: ['"Manrope"', "sans-serif"],
+        sans: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Text"', '"Manrope"', '"Helvetica Neue"', "sans-serif"],
         montserrat: ['"Montserrat"', "sans-serif"],
       },
     },

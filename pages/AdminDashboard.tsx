@@ -2116,7 +2116,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
         </div>
       )}
 
-      <header className="bg-white border-b border-gray-200 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-30 shadow-sm flex justify-between items-center gap-2">
+      <header className="bg-white/75 backdrop-blur-xl backdrop-saturate-150 border-b border-black/[0.06] px-3 md:px-6 py-3 md:py-3.5 sticky top-0 z-30 flex justify-between items-center gap-2">
         <div className="flex items-center flex-shrink-0">
           <Link to="/"><BrandLogo imgClassName="h-8 md:h-10 w-auto object-contain" textClassName="font-serif text-primary text-lg md:text-2xl tracking-tight" /></Link>
         </div>
