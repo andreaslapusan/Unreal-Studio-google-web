@@ -231,16 +231,18 @@ export default function AgenciasRegistrar() {
                     key={name}
                     onClick={() => toggleProject(name)}
                     aria-pressed={checked}
-                    className={`w-full flex items-center gap-3 text-left text-sm px-4 py-3 rounded-xl border transition ${
+                    className={`w-full grid grid-cols-[1.25rem_minmax(0,1fr)_auto] items-center gap-x-3 text-left text-sm px-4 py-3 rounded-xl border transition ${
                       checked
                         ? "bg-primary text-white border-primary"
                         : "bg-white border-primary/20 text-primary hover:bg-primary/5"
                     }`}
                   >
                     <span className={`material-symbols-outlined text-base ${checked ? "" : "opacity-40"}`}>{checked ? "check_circle" : "radio_button_unchecked"}</span>
-                    <span className="flex-1 font-medium">{name === OTHER ? t('agencyFunnel.signup.other') : name}</span>
-                    {p?.bd ? <span className={`text-xs whitespace-nowrap ${checked ? "text-white/80" : "text-primary/60"}`}>{t('agenciasRegistrar.bedrooms', { count: p.bd })}</span> : null}
-                    {price ? <span className="text-xs font-semibold whitespace-nowrap">{t('agenciasRegistrar.priceFrom', { price })}</span> : null}
+                    <span className="min-w-0 leading-tight">
+                      <span className="block font-medium">{name === OTHER ? t('agencyFunnel.signup.other') : name}</span>
+                      {p?.bd ? <span className={`block text-xs mt-0.5 ${checked ? "text-white/80" : "text-primary/60"}`}>{t('agenciasRegistrar.bedrooms', { count: p.bd })}</span> : null}
+                    </span>
+                    <span className="text-sm font-semibold whitespace-nowrap text-right tabular-nums">{price ? t('agenciasRegistrar.priceFrom', { price }) : ""}</span>
                   </button>
                 );
               })}
