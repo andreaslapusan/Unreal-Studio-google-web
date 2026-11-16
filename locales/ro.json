@@ -434,6 +434,8 @@
     "email": "Email *",
     "country": "Țară",
     "projectsInterest": "Ce proiecte te interesează să listezi?",
+    "bedrooms": "{{count}} dorm.",
+    "priceFrom": "de la {{price}}",
     "volumeSelect": "— Selectează —",
     "vol1": "1-2 unități / lună",
     "vol2": "3-5 unități / lună",

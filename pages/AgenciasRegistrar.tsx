@@ -41,6 +41,8 @@ function emailFromRef(ref: string | null): string {
   } catch { return ""; }
 }
 
+const PRIORITY = ["amante", "deseo", "golf bay lofts"];
+
 export default function AgenciasRegistrar() {
   const { t, i18n } = useTranslation();
   const [sp] = useSearchParams();
@@ -50,12 +52,20 @@ export default function AgenciasRegistrar() {
   const [honey, setHoney] = useState("");
   const [terms, setTerms] = useState(false);
   const [auto, setAuto] = useState(false);
-  const [projects, setProjects] = useState<string[]>([]);
+  const [projects, setProjects] = useState<{ name: string; bd: number | null; price: number | null; cur: string }[]>([]);
   useEffect(() => { if (sp.get("lang") && sp.get("lang") !== i18n.language) void i18n.changeLanguage(sp.get("lang") as string); }, [sp, i18n]);
   useEffect(() => {
     // Live list = what is for sale on the website (same rule as /proyectos).
-    void supabase.from("projects").select("name, is_hidden, visibility_status, sort_order").order("sort_order", { ascending: true })
-      .then(({ data }) => setProjects([...new Set((data ?? []).filter(isOnSaleOnWeb).map((p) => shortProjectName(p.name)))]));
+    // Order = sales priority (Andreas 16-nov): Amante, Deseo, Golf Bay Lofts, then the rest by price.
+    void supabase.from("projects").select("name, bedrooms, investor_price, price_currency, is_hidden, visibility_status, sort_order").order("sort_order", { ascending: true })
+      .then(({ data }) => {
+        const rank = (n: string) => { const i = PRIORITY.findIndex((k) => n.toLowerCase().includes(k)); return i < 0 ? PRIORITY.length : i; };
+        const seen = new Set<string>();
+        setProjects((data ?? []).filter(isOnSaleOnWeb)
+          .map((p) => ({ name: shortProjectName(p.name), bd: p.bedrooms ?? null, price: p.investor_price != null ? Number(p.investor_price) : null, cur: p.price_currency || "EUR" }))
+          .filter((p) => !seen.has(p.name) && !!seen.add(p.name))
+          .sort((a, b) => rank(a.name) - rank(b.name) || (a.price ?? 0) - (b.price ?? 0)));
+      });
   }, []);
   const prefillEmail = useMemo(() => emailFromRef(ref), [ref]);
   const [form, setForm] = useState<FormState>({
@@ -210,21 +220,27 @@ export default function AgenciasRegistrar() {
 
           <div>
             <span className="text-sm font-medium text-primary block mb-2">{t('agenciasRegistrar.projectsInterest')}</span>
-            <div className="flex flex-wrap gap-2">
-              {[...projects, OTHER].map((p) => {
-                const checked = form.projects_interested.includes(p);
+            <div className="flex flex-col gap-2">
+              {[...projects.map((p) => p.name), OTHER].map((name) => {
+                const p = projects.find((x) => x.name === name);
+                const checked = form.projects_interested.includes(name);
+                const price = p?.price ? new Intl.NumberFormat(i18n.language || "es", { style: "currency", currency: p.cur, maximumFractionDigits: 0 }).format(p.price) : "";
                 return (
                   <button
                     type="button"
-                    key={p}
-                    onClick={() => toggleProject(p)}
-                    className={`text-xs px-3 py-2 rounded-full border transition ${
+                    key={name}
+                    onClick={() => toggleProject(name)}
+                    aria-pressed={checked}
+                    className={`w-full flex items-center gap-3 text-left text-sm px-4 py-3 rounded-xl border transition ${
                       checked
                         ? "bg-primary text-white border-primary"
                         : "bg-white border-primary/20 text-primary hover:bg-primary/5"
                     }`}
                   >
-                    {p === OTHER ? t('agencyFunnel.signup.other') : p}
+                    <span className={`material-symbols-outlined text-base ${checked ? "" : "opacity-40"}`}>{checked ? "check_circle" : "radio_button_unchecked"}</span>
+                    <span className="flex-1 font-medium">{name === OTHER ? t('agencyFunnel.signup.other') : name}</span>
+                    {p?.bd ? <span className={`text-xs whitespace-nowrap ${checked ? "text-white/80" : "text-primary/60"}`}>{t('agenciasRegistrar.bedrooms', { count: p.bd })}</span> : null}
+                    {price ? <span className="text-xs font-semibold whitespace-nowrap">{t('agenciasRegistrar.priceFrom', { price })}</span> : null}
                   </button>
                 );
               })}

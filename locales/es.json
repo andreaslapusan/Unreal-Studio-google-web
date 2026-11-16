@@ -434,6 +434,8 @@
     "email": "Email *",
     "country": "País",
     "projectsInterest": "¿Qué proyectos te interesan listar?",
+    "bedrooms": "{{count}} hab.",
+    "priceFrom": "desde {{price}}",
     "volumeSelect": "— Selecciona —",
     "vol1": "1-2 unidades / mes",
     "vol2": "3-5 unidades / mes",

@@ -435,6 +435,8 @@
     "email": "Email *",
     "country": "Negara",
     "projectsInterest": "Proyek apa yang ingin Anda daftarkan?",
+    "bedrooms": "{{count}} KT",
+    "priceFrom": "mulai {{price}}",
     "volumeSelect": "— Pilih —",
     "vol1": "1-2 unit / bulan",
     "vol2": "3-5 unit / bulan",
