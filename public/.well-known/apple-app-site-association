@@ -1,0 +1,52 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "8CX5UN59YK.com.unrealstudio.clientes.beta"
+        ],
+        "components": [
+          {
+            "/": "/cliente*"
+          },
+          {
+            "/": "/es/cliente*"
+          }
+        ]
+      },
+      {
+        "appIDs": [
+          "8CX5UN59YK.com.unrealstudio.agencias.beta"
+        ],
+        "components": [
+          {
+            "/": "/agencias*"
+          },
+          {
+            "/": "/a/*"
+          }
+        ]
+      },
+      {
+        "appIDs": [
+          "8CX5UN59YK.com.unrealstudio.equipo.beta"
+        ],
+        "components": [
+          {
+            "/": "/empleados*"
+          }
+        ]
+      },
+      {
+        "appIDs": [
+          "8CX5UN59YK.com.unrealstudio.admin.beta"
+        ],
+        "components": [
+          {
+            "/": "/admin*"
+          }
+        ]
+      }
+    ]
+  }
+}
