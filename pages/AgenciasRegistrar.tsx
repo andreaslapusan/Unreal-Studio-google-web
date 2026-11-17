@@ -296,9 +296,9 @@ export default function AgenciasRegistrar() {
             />
           </label>
 
-          {/* Honeypot: invisible for people, bots fill it. */}
+          {/* Honeypot: invisible for people, bots fill it. Non-URL label/name so browser autofill skips it (17-nov: autofill hid a real signup); the RPC now flags instead of dropping. */}
           <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
-            <label>Company URL<input tabIndex={-1} autoComplete="off" value={honey} onChange={(e) => setHoney(e.target.value)} /></label>
+            <label>Leave this empty<input tabIndex={-1} name="hp_x7" type="text" autoComplete="new-password" data-1p-ignore data-lpignore="true" value={honey} onChange={(e) => setHoney(e.target.value)} /></label>
           </div>
 
           <label className="flex items-start gap-2 text-sm text-primary/80">
