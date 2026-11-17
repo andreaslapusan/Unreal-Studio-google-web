@@ -70,7 +70,7 @@ const ProjectCard: React.FC<CardProps> = ({ p, info, units: all, partnerId, part
           </div>
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mt-4">
             {publicUrl && (
-              <button onClick={share} className={`col-span-2 ${copied ? `${btnGhost} !bg-green-600 !text-white !border-green-600` : btnGhost}`}>
+              <button onClick={share} className={`col-span-2 !whitespace-normal text-center ${copied ? `${btnGhost} !bg-green-600 !text-white !border-green-600` : btnGhost}`}>
                 <span className="material-symbols-outlined text-base">{copied ? 'check' : 'share'}</span>{copied ? t('agencyPortal.copiedShort') : t('agencyPortal.projects.copyLink')}
               </button>
             )}
@@ -109,7 +109,7 @@ const ProjectCard: React.FC<CardProps> = ({ p, info, units: all, partnerId, part
               <ListRow key={u.id}
                 title={<>{[shortProjectName(p.name), u.bedrooms ? t('agencyPortal.projects.bedrooms', { count: u.bedrooms }) : null].filter(Boolean).join(' · ')}{u.reserved && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-amber-600">{t('agencyPortal.projects.reserved')}</span>}</>}
                 sub={t('agencyPortal.projects.availableN', { count: n })}
-                right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{price ? formatPrice((price * unitPct(u)) / 100, cur) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{unitPct(u)}%</span></>}
+                right={<><span className="text-[10px] font-black uppercase tracking-widest text-primary/40 whitespace-nowrap">{t('agencyPortal.projects.yourCommission')}</span><span className="text-sm font-bold text-green-700 whitespace-nowrap">{price ? formatPrice((price * unitPct(u)) / 100, cur) : '—'} <span className="text-xs font-medium text-primary/40">({unitPct(u)}%)</span></span></>}
               />
             ))}
           </ul>

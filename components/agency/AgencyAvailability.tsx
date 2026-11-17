@@ -1,13 +1,14 @@
 /** Disponibilidad: todo lo que está a la venta en la web, al precio de la web, con la comisión estimada de la agencia. */
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { whatsappUrl } from '../../constants';
+import { useNavigate } from 'react-router-dom';
 import { useCurrency } from '../../App';
 import { AgencyData, availableUnits, groupUnits, partnerPct, projectPct, shortProjectName, unitPct } from './useAgencyData';
 import { card, Empty, ListRow, SectionTitle, Stat } from './ui';
 
 export default function AgencyAvailability({ data }: { data: AgencyData }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { formatPrice, convert } = useCurrency();
   const { partner, projects, units } = data;
   const [project, setProject] = useState('all');
@@ -29,18 +30,18 @@ export default function AgencyAvailability({ data }: { data: AgencyData }) {
   });
   const shown = rows.filter((r) => project === 'all' || r.p.id === project)
     .sort((a, b) => (sort === 'commission' ? b.comEUR - a.comEUR : a.priceEUR - b.priceEUR));
-  const best = Math.max(0, ...rows.map((r) => r.comEUR));
   const nUnits = rows.reduce((s, r) => s + r.n, 0);
 
   return (
     <div className="animate-in fade-in duration-500">
       <SectionTitle title={t('agencyPortal.nav.availability')} sub={t('agencyPortal.availability.sub')} />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <Stat icon="home_work" label={t('agencyPortal.availability.units')} value={nUnits || '—'} />
         <Stat icon="apartment" label={t('agencyPortal.nav.projects')} value={projects.length} />
-        <Stat icon="bookmark" label={t('agencyPortal.availability.reservedN')} value={rows.filter((r) => r.reserved).reduce((s, r) => s + r.n, 0)} />
-        <Stat icon="payments" label={t('agencyPortal.availability.sortCommission')} value={formatPrice(best, 'EUR')} accent={best > 0} />
+        <div className="col-span-2 lg:col-span-1">
+          <Stat icon="bookmark" label={t('agencyPortal.availability.reservedN')} value={rows.filter((r) => r.reserved).reduce((s, r) => s + r.n, 0)} />
+        </div>
       </div>
 
       {rows.length === 0 ? <Empty icon="home_work" text={t('agencyPortal.availability.empty')} /> : (
@@ -71,10 +72,10 @@ export default function AgencyAvailability({ data }: { data: AgencyData }) {
                     sub={n ? t('agencyPortal.projects.availableN', { count: n }) : t('agencyPortal.projects.onSale')}
                     extra={<>
                       {/* Mismo precio y formato que la tarjeta de la web ("Desde 90.000 €") */}
-                      {price ? `${t('projects.card.from')} ${formatPrice(price, cur)} · ` : ''}
-                      <a href={whatsappUrl(t('agencyPortal.availability.waUnit', { agency: partner.agency_name, unit: uName, project: pName }))} target="_blank" rel="noopener noreferrer" className="font-bold text-primary/70 underline underline-offset-2">{t('agencyPortal.availability.ask')}</a>
+                      {price ? `${t('projects.card.from')} ${formatPrice(price, cur)}` : ''}
                     </>}
-                    right={<><span className="text-sm font-bold text-green-700 whitespace-nowrap">{com ? formatPrice(com, cur) : '—'}</span><span className="text-xs text-primary/40 whitespace-nowrap">{pct}%</span></>}
+                    onClick={p.slug ? () => navigate(`/agencias/${p.slug}`) : undefined}
+                    right={<><span className="text-[10px] font-black uppercase tracking-widest text-primary/40 whitespace-nowrap">{t('agencyPortal.projects.yourCommission')}</span><span className="text-sm font-bold text-green-700 whitespace-nowrap">{com ? formatPrice(com, cur) : '—'} <span className="text-xs font-medium text-primary/40">({pct}%)</span></span></>}
                   />
                 );
               })}

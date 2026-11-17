@@ -15,11 +15,15 @@ export default function AgencyStats({ data }: { data: AgencyData }) {
   const formSubmits = n('form_submit');
   const conversionRate = visits > 0 ? Math.round((formSubmits / visits) * 100) : 0;
 
+  // Visitas a su enlace (lead_attributions event_type='visit'): total, últimos 30 días y por proyecto (sin proyecto = catálogo)
+  const visitRows = rows.filter((r) => r.event_type === 'visit');
+  const since30 = Date.now() - 30 * 24 * 3600 * 1000;
+  const visits30 = visitRows.filter((r) => Date.parse(r.created_at) >= since30).length;
   const counts = new Map<string, number>();
-  rows.forEach((r) => { if (r.property_slug) counts.set(r.property_slug, (counts.get(r.property_slug) ?? 0) + 1); });
-  const top = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  visitRows.forEach((r) => { const k = r.property_slug || ''; counts.set(k, (counts.get(k) ?? 0) + 1); });
+  const top = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
   const max = top[0]?.[1] ?? 1;
-  const nameOf = (slug: string) => data.nameOf(slug) ?? slug;
+  const nameOf = (slug: string) => (slug ? data.nameOf(slug) ?? slug : t('agencyPortal.stats.catalog'));
 
   return (
     <div className="animate-in fade-in duration-500 space-y-6">
@@ -35,14 +39,15 @@ export default function AgencyStats({ data }: { data: AgencyData }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 [&>*]:min-w-0">
         <section className={card}>
-          <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-4">{t('agenciasStats.topTitle')}</h3>
+          <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-1">{t('agencyPortal.stats.visitsTitle')}</h3>
+          <p className="text-sm text-primary/70 mb-4" data-link-visits>{t('agencyPortal.stats.visitsLine', { total: visits, d30: visits30 })}</p>
           {top.length === 0 && <p className="text-primary/50 text-sm">{t('agenciasStats.topEmpty')}</p>}
           <ul className="space-y-3">
             {top.map(([slug, count]) => (
-              <li key={slug}>
+              <li key={slug || 'catalog'}>
                 <div className="flex items-center justify-between text-sm gap-3">
-                  <Link to={langPath(`/proyecto/${slug}`)} target="_blank" className="font-medium text-primary hover:underline truncate">{nameOf(slug)}</Link>
-                  <span className="text-primary/50 text-xs whitespace-nowrap">{count} {t('agenciasStats.events')}</span>
+                  {slug ? <Link to={langPath(`/proyecto/${slug}`)} target="_blank" className="font-medium text-primary hover:underline truncate">{nameOf(slug)}</Link> : <span className="font-medium text-primary truncate">{nameOf(slug)}</span>}
+                  <span className="text-primary/50 text-xs whitespace-nowrap">{t('agencyPortal.stats.visitsN', { count })}</span>
                 </div>
                 <div className="h-1.5 bg-gray-100 rounded-full mt-1.5 overflow-hidden">
                   <div className="h-full bg-primary/70 rounded-full" style={{ width: `${(count / max) * 100}%` }} />

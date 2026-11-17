@@ -28,6 +28,10 @@ export interface PartnerRow {
   commission_referral_pct: number | null;
   lang: string | null;
   deleted_at: string | null;
+  signed_contract_path?: string | null;
+  signed_contract_uploaded_at?: string | null;
+  agency_signed_path?: string | null;
+  agency_signed_uploaded_at?: string | null;
 }
 
 export interface PropertyRow {
@@ -54,6 +58,7 @@ export interface PropertyRow {
 /** Fila de projects que usa el portal (la tabla de la web pública). */
 interface WebProject extends ProjectInfo {
   id: string;
+  [k: `description${string}` | `completion_date${string}`]: any;
   name: string;
   image: string | null;
   investor_price: number | null;
@@ -63,7 +68,11 @@ interface WebProject extends ProjectInfo {
   is_hidden: boolean | null;
   visibility_status: string | null;
 }
-const WEB_COLS = 'id, slug, name, image, investor_price, price_currency, bedrooms, completion_date, is_hidden, visibility_status, status, location, completion_percent, updated_at, construction_update_url, construction_update_date, brochure_url, brochures, drive_renders_url, drive_renders_links, drive_2d_plans_url, drive_brochure_folder_url, video_url, walkthrough_url, tenure, years_contract, sort_order'; // sort_order: PostgREST 42703 if an rpc orders by a column not selected
+/** Folleto en el idioma de la agencia (listing_partners.lang): brochures[lang] → en → es → genérico. */
+export const pickBrochure = (b: Record<string, string> | null | undefined, fallback: string | null | undefined, lang: string | null | undefined): string | null =>
+  (lang && b?.[lang]) || b?.en || b?.es || fallback || null;
+
+const WEB_COLS = 'id, slug, name, image, investor_price, price_currency, bedrooms, completion_date, is_hidden, visibility_status, status, location, completion_percent, updated_at, construction_update_url, construction_update_date, brochure_url, brochures, drive_renders_url, drive_renders_links, drive_2d_plans_url, drive_brochure_folder_url, video_url, walkthrough_url, tenure, years_contract, sort_order, description, description_en, description_ro, description_id, completion_date, completion_date_en, completion_date_id'; // sort_order: PostgREST 42703 if an rpc orders by a column not selected
 
 /** Misma regla que el catálogo público (pages/Projects.tsx): ni ocultas ni sold out. */
 export const isOnSaleOnWeb = (p: { is_hidden: boolean | null; visibility_status: string | null }) =>
@@ -281,7 +290,7 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
       try {
         const { data: p, error: pErr } = await supabase
           .from('listing_partners')
-          .select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at, market, commission_close_pct, commission_referral_pct, lang, deleted_at')
+          .select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at, market, commission_close_pct, commission_referral_pct, lang, deleted_at, signed_contract_path, signed_contract_uploaded_at, agency_signed_path, agency_signed_uploaded_at')
           .eq('user_id', userId)
           .maybeSingle();
         if (pErr) throw pErr;
@@ -304,16 +313,20 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
         const web = (pj.data ?? []) as unknown as WebProject[];
         const propRows = (props.data ?? []) as Omit<PropertyRow, 'investor_price' | 'price_currency' | 'bedrooms' | 'in_catalog'>[];
         const bySlug = new Map(propRows.map((r) => [r.slug, r]));
+        // textos en el idioma de la agencia (listing_partners.lang): campo_<lang> → _en (si no es ES) → base ES
+        const L = (p.lang || 'es').slice(0, 2);
+        const loc = (w: WebProject, base: 'description' | 'completion_date'): string | null =>
+          (L !== 'es' && (w[`${base}_${L}`] || w[`${base}_en`])) || w[base] || null;
         const catalog: PropertyRow[] = web.filter(isOnSaleOnWeb).map((w) => {
           const pr = bySlug.get(w.slug);
           return {
             id: pr?.id ?? w.id, slug: w.slug, name: w.name,
-            short_pitch: pr?.short_pitch ?? null,
+            short_pitch: L === 'es' ? (pr?.short_pitch ?? loc(w, 'description')) : (loc(w, 'description') ?? pr?.short_pitch ?? null),
             area: pr?.area ?? w.location,
             pct_progress: w.completion_percent ?? pr?.pct_progress ?? null,
-            delivery_date: w.completion_date || pr?.delivery_date || null,
+            delivery_date: loc(w, 'completion_date') || pr?.delivery_date || null,
             hero_image_url: pr?.hero_image_url ?? (w.image ? getImageUrl(w.image) : null),
-            brand_pdf_url: pr?.brand_pdf_url ?? (w.brochure_url || null),
+            brand_pdf_url: pickBrochure(w.brochures, pr?.brand_pdf_url ?? w.brochure_url, p.lang),
             walkthrough_url: pr?.walkthrough_url ?? w.walkthrough_url,
             drone_video_url: pr?.drone_video_url ?? w.video_url,
             investor_price: w.investor_price, price_currency: w.price_currency, bedrooms: w.bedrooms,

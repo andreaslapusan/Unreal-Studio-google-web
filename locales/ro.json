@@ -1624,7 +1624,22 @@
       "b_clientPwChange": "Și-a schimbat parola",
       "endOfList": "— Nu mai sunt —",
       "loadingMore": "Se încarcă mai mult…",
-      "typeListingIntake": "Listare nouă"
+      "typeListingIntake": "Listare nouă",
+      "typeAgencyApp": "Cerere de agenție",
+      "typeAgencyPwChange": "Parolă agenție",
+      "f_agency_application": "Cereri de agenții",
+      "f_agency_password_change": "Parole agenții",
+      "b_agencyApp": "Cerere nouă de parteneriat{{country}}",
+      "grpAgencias": "Agenții",
+      "actReview": "Verifică",
+      "sumAgencyApps": "{{n}} agenții de verificat",
+      "t_agencyApp": "Cerere de parteneriat în așteptare",
+      "typeAgencyLogin": "Acces agenție",
+      "f_agency_login": "Accese agenții",
+      "typeAgencyContract": "Contract încărcat (agenție)",
+      "f_agency_contract_upload": "Contracte agenții",
+      "grpContracts": "Contracte de contrasemnat",
+      "t_contract": "A încărcat contractul semnat"
     },
     "perms": {
       "check_in": "Pontaj intrare/ieșire",
@@ -1909,7 +1924,7 @@
         "personal_link_slug": "Link personal (slug)",
         "status": "Status"
       },
-      "projectsAll": "Proiecte: această agenție vede tot ce este de vânzare pe site, la același preț ca pe site."
+      "projectsAll": "Proiectele pe care le vede această agenție se activează sau dezactivează în fișa ei (Proiecte atribuite)."
     },
     "demoBanner": "Cont demo doar pentru citire: poți vedea proiectele și blogul. Datele clienților, plăților și echipei nu sunt disponibile în acest cont.",
     "presence": {
@@ -2007,6 +2022,48 @@
         "low_confidence": "Nesigur",
         "pending": "Neclasificat"
       }
+    },
+    "agencyCard": {
+      "templates": "Trimite șabloane de email",
+      "settings": "Setări",
+      "commission": "Comision",
+      "noPassword": "Fără parolă vizibilă: agenția a creat-o cu linkul. Va apărea aici când o schimbă.",
+      "save": "Salvează modificările",
+      "discard": "Renunță",
+      "projectsSaved": "Proiectele agenției au fost salvate",
+      "projectsHint": "Verde = agenția îl vede în portal · Roșu = ascuns. Nimic nu se salvează până la „Salvează modificările”.",
+      "welcomeDesc": "Acces la portal + parolă temporară + acord PDF",
+      "resetDesc": "Link ca agenția să creeze o parolă nouă",
+      "reminderTitle": "Memento de acces",
+      "reminderDesc": "Îi amintește agenției cum intră în portal",
+      "reminderSent": "Memento trimis la {{email}}",
+      "notActive": "Agenția nu este activă: reactiveaz-o din Setări pentru a-i trimite emailuri.",
+      "editSubtitle": "Datele agenției, piața, comisionul și starea",
+      "statusHint": "Aprobată = intră în portal. Suspendată = nu poate intra (sesiunea se închide); clienții și istoricul se păstrează.",
+      "deactivate": "Dezactivează",
+      "agencyLabel": "Agenție",
+      "assignmentHint": "Inactiv: agenția nu vede acest proiect și materialele lui în portal. Nu se șterge nimic.",
+      "bulkDone": "Gata: {{n}} din {{total}}",
+      "defaultsHint": "Implicit: Spania {{es}} % · Restul lumii {{world}} % (dacă închide agenția / dacă închide Unreal).",
+      "byDefault": "implicit",
+      "editApp": "Editează cererea",
+      "interested": "Proiecte de interes",
+      "contract": "Contract semnat",
+      "contractView": "Vezi PDF",
+      "contractNone": "neîncărcat",
+      "contractUpload": "Încarcă PDF",
+      "contractReplace": "Înlocuiește",
+      "contractUploaded": "Contractul semnat a fost salvat. Agenția îl poate descărca din portal.",
+      "contractBadFile": "Încarcă un PDF de maximum 20 MB.",
+      "cStatusPending": "În așteptarea agenției",
+      "cStatusUploaded": "Încărcat de agenție · de contrasemnat",
+      "cStatusDone": "Contrasemnat",
+      "agencyCopy": "Copia agenției",
+      "countersigned": "Contrasemnat",
+      "uploadFinal": "Încarcă contrasemnat",
+      "ref": "Ref WhatsApp",
+      "refHint": "Cod adăugat la finalul mesajelor WhatsApp ale clienților veniți prin linkul ei. Caută-l mai sus ca să găsești agenția.",
+      "refCopied": "Cod copiat"
     }
   },
   "footer": {
@@ -3076,7 +3133,7 @@
       "kit": "Materiale de vânzare",
       "requests": "Solicitări",
       "training": "Formare",
-      "contract": "Contract",
+      "contract": "Acorduri legale",
       "groupWork": "Vânzare"
     },
     "kpi": {
@@ -3113,7 +3170,7 @@
       "availableN": "Disponibile: {{count}}",
       "soldOut": "Epuizat",
       "soldN": "Vândute: {{count}}",
-      "copyLink": "Copiază link pentru client",
+      "copyLink": "Copiază linkul de recomandare pentru clienți",
       "pack": "Pachet agenție",
       "dossier": "Broșură",
       "tour": "Tur 3D",
@@ -3135,7 +3192,8 @@
       "onSale": "De vânzare",
       "photos": "Fotografii (Drive)",
       "photosType": "Fotografii {{label}}",
-      "plans": "Planuri (Drive)"
+      "plans": "Planuri (Drive)",
+      "yourCommission": "Comisionul tău"
     },
     "clients": {
       "search": "Caută client, email, proiect…",
@@ -3146,7 +3204,12 @@
     },
     "stats": {
       "sub": "Ce generează linkul tău personal și linkurile de proiect pe care le distribui.",
-      "catalog": "Catalog general"
+      "catalog": "Catalog general",
+      "visitsTitle": "Vizite pe linkul tău",
+      "visitsLine": "Total: {{total}} · Ultimele 30 de zile: {{d30}}",
+      "visitsN_one": "{{count}} vizită",
+      "visitsN_other": "{{count}} vizite",
+      "visitsN_few": "{{count}} vizite"
     },
     "commissions": {
       "sub": "Estimarea comisionului tău pe baza prețului de pe site al fiecărui proiect și a procentului tău.",
@@ -3326,7 +3389,7 @@
       "p1": "Înregistrează clientul în „Clienții mei” înainte să contacteze Unreal.",
       "p2": "Prezintă proiectul cu materialele oficiale și linkul tău; cere un apel sau o prezentare online cu echipa dacă e nevoie.",
       "p3": "Confirmă disponibilitatea unității, iar clientul o rezervă.",
-      "p4": "Semnarea contractului la notar (PPAT) în Indonezia; onorariile notariale ale cumpărătorului sunt de aproximativ 1% din preț. Clientul poate face due diligence cu propriul avocat.",
+      "p4": "Semnarea contractului la notar (PPAT) în Indonezia; onorariile notariale ale cumpărătorului sunt de aproximativ 1% din preț. Unreal Studio se ocupă de tot procesul juridic, de la început până la sfârșit.",
       "p5": "Plăți pe etape, după progresul lucrărilor; datele bancare se oferă la semnare.",
       "p6": "Predare finalizată cu toate elementele fixe (bucătărie, baie, dulapuri, piscină). Mobilarea pentru închiriere este un pachet separat.",
       "rulesTitle": "Reguli de aur",
@@ -3355,7 +3418,23 @@
       "you": "Să promoveze pe cheltuiala proprie, să înregistreze fiecare investitor, să organizeze vizitele (și să le conducă în modalitatea de {{close}} %) și să informeze corect, fără promisiuni în afara informațiilor Unreal.",
       "usTitle": "Unreal se angajează să",
       "us": "Să ofere informații corecte și actualizate despre disponibilitate, rezervări și prețuri, să faciliteze accesul la proprietăți pentru vizite, să se ocupe de toată partea legală și să plătească comisionul convenit.",
-      "history": "Solicitările tale de contract"
+      "history": "Solicitările tale de contract",
+      "signedDownload": "Descarcă acordul semnat",
+      "stepsTitle": "Acord de colaborare",
+      "step1": "1 · Descarcă contractul",
+      "step1Sub": "Citește-l, completează-l și semnează-l (de mână sau cu semnătură digitală).",
+      "step1Btn": "Descarcă modelul acordului",
+      "step2": "2 · Încarcă copia semnată",
+      "step2Sub": "PDF sau fotografie (JPG/PNG) a contractului semnat, max. 20 MB. Doar Unreal Studio o vede.",
+      "step2Btn": "Încarcă acordul semnat",
+      "step2Again": "Încarcă din nou",
+      "step2Done": "Primit pe {{date}}. Îl contrasemnăm și ți-l returnăm aici.",
+      "uploading": "Se încarcă…",
+      "step3": "3 · Contract semnat de ambele părți",
+      "step3Sub": "În așteptarea semnăturii noastre. Va apărea aici pentru descărcare.",
+      "step3Done": "Semnat de ambele părți · {{date}}",
+      "uploadedOk": "Primit! Te anunțăm când este semnat de ambele părți.",
+      "badFile": "Încarcă un PDF, JPG sau PNG de maximum 20 MB."
     }
   },
   "reportOpen": {

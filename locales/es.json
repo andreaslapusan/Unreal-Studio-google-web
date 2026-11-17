@@ -1616,7 +1616,22 @@
       "b_clientPwChange": "Ha cambiado su contraseña",
       "endOfList": "— No hay más —",
       "loadingMore": "Cargando más…",
-      "typeListingIntake": "Nuevo listing"
+      "typeListingIntake": "Nuevo listing",
+      "typeAgencyApp": "Solicitud de agencia",
+      "typeAgencyPwChange": "Contraseña de agencia",
+      "f_agency_application": "Solicitudes de agencias",
+      "f_agency_password_change": "Contraseñas de agencias",
+      "b_agencyApp": "Nueva solicitud de alta{{country}}",
+      "grpAgencias": "Agencias",
+      "actReview": "Revisar",
+      "sumAgencyApps": "{{n}} agencias por revisar",
+      "t_agencyApp": "Solicitud de alta pendiente",
+      "typeAgencyLogin": "Acceso de agencia",
+      "f_agency_login": "Accesos de agencias",
+      "typeAgencyContract": "Contrato subido (agencia)",
+      "f_agency_contract_upload": "Contratos de agencias",
+      "grpContracts": "Contratos por contrafirmar",
+      "t_contract": "Ha subido su contrato firmado"
     },
     "perms": {
       "check_in": "Fichar entrada/salida",
@@ -1901,7 +1916,7 @@
         "personal_link_slug": "Link personal (slug)",
         "status": "Estado"
       },
-      "projectsAll": "Proyectos: esta agencia ve todo lo que está a la venta en la web, al mismo precio que la web."
+      "projectsAll": "Los proyectos que ve esta agencia se activan o inactivan en su ficha (Proyectos asignados)."
     },
     "demoBanner": "Cuenta demo de solo lectura: puedes ver proyectos y blog. Los datos de clientes, cobros y equipo no están disponibles en esta cuenta.",
     "presence": {
@@ -1999,6 +2014,48 @@
         "low_confidence": "Dudoso",
         "pending": "Sin clasificar"
       }
+    },
+    "agencyCard": {
+      "templates": "Enviar plantillas de email",
+      "settings": "Ajustes",
+      "commission": "Comisión",
+      "noPassword": "Sin contraseña visible: la agencia la creó con el enlace. Aparecerá aquí cuando la cambie.",
+      "save": "Guardar cambios",
+      "discard": "Descartar",
+      "projectsSaved": "Proyectos de la agencia guardados",
+      "projectsHint": "Verde = la agencia lo ve en su portal · Rojo = oculto. Nada se guarda hasta «Guardar cambios».",
+      "welcomeDesc": "Acceso al portal + contraseña temporal + acuerdo en PDF",
+      "resetDesc": "Enlace para que la agencia cree una nueva contraseña",
+      "reminderTitle": "Recordatorio de acceso",
+      "reminderDesc": "Recuerda a la agencia cómo entrar en su portal",
+      "reminderSent": "Recordatorio enviado a {{email}}",
+      "notActive": "La agencia no está activa: reactívala en Ajustes para enviarle correos.",
+      "editSubtitle": "Datos de la agencia, mercado, comisión y estado",
+      "statusHint": "Aprobada = entra en su portal. Suspendida = no puede entrar (se cierra su sesión); sus clientes e historial se conservan.",
+      "deactivate": "Desactivar",
+      "agencyLabel": "Agencia",
+      "assignmentHint": "Inactiva: la agencia no ve este proyecto en su portal ni su material. No se borra nada.",
+      "bulkDone": "Hecho: {{n}} de {{total}}",
+      "defaultsHint": "Por defecto: España {{es}} % · Resto del mundo {{world}} % (si cierra la agencia / si cierra Unreal).",
+      "byDefault": "por defecto",
+      "editApp": "Editar solicitud",
+      "interested": "Proyectos de interés",
+      "contract": "Contrato firmado",
+      "contractView": "Ver PDF",
+      "contractNone": "sin subir",
+      "contractUpload": "Subir PDF",
+      "contractReplace": "Sustituir",
+      "contractUploaded": "Contrato firmado guardado. La agencia ya puede descargarlo en su portal.",
+      "contractBadFile": "Sube un PDF de 20 MB como máximo.",
+      "cStatusPending": "Pendiente de la agencia",
+      "cStatusUploaded": "Subido por la agencia · falta contrafirmar",
+      "cStatusDone": "Contrafirmado",
+      "agencyCopy": "Copia de la agencia",
+      "countersigned": "Contrafirmado",
+      "uploadFinal": "Subir contrafirmado",
+      "ref": "Ref WhatsApp",
+      "refHint": "Código que llega al final de los WhatsApp de clientes que vienen de su enlace. Búscalo arriba para saber de qué agencia es.",
+      "refCopied": "Código copiado"
     }
   },
   "footer": {
@@ -3064,7 +3121,7 @@
       "kit": "Material de venta",
       "requests": "Solicitudes",
       "training": "Formación",
-      "contract": "Contrato",
+      "contract": "Acuerdos legales",
       "groupWork": "Vender"
     },
     "kpi": {
@@ -3099,7 +3156,7 @@
       "availableN": "Disponibles: {{count}}",
       "soldOut": "Agotado",
       "soldN": "Vendidas: {{count}}",
-      "copyLink": "Copiar link para cliente",
+      "copyLink": "Copiar enlace de referido para clientes",
       "pack": "Pack agencia",
       "dossier": "Dossier",
       "tour": "Recorrido 3D",
@@ -3118,7 +3175,8 @@
       "onSale": "A la venta",
       "photos": "Fotos (Drive)",
       "photosType": "Fotos {{label}}",
-      "plans": "Planos (Drive)"
+      "plans": "Planos (Drive)",
+      "yourCommission": "Tu comisión"
     },
     "clients": {
       "search": "Buscar cliente, email, proyecto…",
@@ -3129,7 +3187,11 @@
     },
     "stats": {
       "sub": "Lo que generan tu link personal y los links de proyecto que compartes.",
-      "catalog": "Catálogo general"
+      "catalog": "Catálogo general",
+      "visitsTitle": "Visitas a tu enlace",
+      "visitsLine": "Total: {{total}} · Últimos 30 días: {{d30}}",
+      "visitsN_one": "{{count}} visita",
+      "visitsN_other": "{{count}} visitas"
     },
     "commissions": {
       "sub": "Estimación de tu comisión según el precio de la web de cada proyecto y tu porcentaje.",
@@ -3308,7 +3370,7 @@
       "p1": "Registra al cliente en «Mis clientes» antes de que contacte con Unreal.",
       "p2": "Presenta el proyecto con el material oficial y tu link; pide una llamada o presentación online con el equipo si hace falta.",
       "p3": "Confirma la disponibilidad de la unidad y el cliente la reserva.",
-      "p4": "Firma del contrato ante notario (PPAT) en Indonesia; los honorarios notariales del comprador son aproximadamente el 1 % del precio. El cliente puede hacer su due diligence con su abogado.",
+      "p4": "Firma del contrato ante notario (PPAT) en Indonesia; los honorarios notariales del comprador son aproximadamente el 1 % del precio. Unreal Studio se encarga de todo el proceso legal de principio a fin.",
       "p5": "Pagos por fases según el avance de obra; los datos bancarios se facilitan al firmar.",
       "p6": "Entrega terminada con todo lo fijo (cocina, baño, armarios, piscina). El amueblado para alquilar es un paquete aparte.",
       "rulesTitle": "Reglas de oro",
@@ -3337,7 +3399,23 @@
       "you": "Promocionar a su costa, registrar a cada inversor, organizar las visitas (y llevarlas en la modalidad del {{close}} %) e informar con veracidad, sin prometer nada fuera de la información de Unreal.",
       "usTitle": "Unreal se compromete a",
       "us": "Dar información veraz y actualizada de disponibilidad, reservas y precios, facilitar el acceso a las propiedades para las visitas, llevar toda la parte legal de la venta y pagar la comisión acordada.",
-      "history": "Tus solicitudes de contrato"
+      "history": "Tus solicitudes de contrato",
+      "signedDownload": "Descargar acuerdo firmado",
+      "stepsTitle": "Acuerdo de colaboración",
+      "step1": "1 · Descarga el contrato",
+      "step1Sub": "Léelo, rellénalo y fírmalo (a mano o con firma digital).",
+      "step1Btn": "Descargar plantilla del acuerdo",
+      "step2": "2 · Sube tu copia firmada",
+      "step2Sub": "PDF o foto (JPG/PNG) del contrato firmado, máx. 20 MB. Solo lo ve Unreal Studio.",
+      "step2Btn": "Subir acuerdo firmado",
+      "step2Again": "Volver a subir",
+      "step2Done": "Recibido el {{date}}. Lo firmamos y te lo devolvemos aquí.",
+      "uploading": "Subiendo…",
+      "step3": "3 · Contrato firmado por ambas partes",
+      "step3Sub": "Pendiente de nuestra firma. Aparecerá aquí para descargar.",
+      "step3Done": "Firmado por ambas partes · {{date}}",
+      "uploadedOk": "¡Recibido! Te avisaremos cuando esté firmado por ambas partes.",
+      "badFile": "Sube un PDF, JPG o PNG de 20 MB como máximo."
     }
   },
   "reportOpen": {

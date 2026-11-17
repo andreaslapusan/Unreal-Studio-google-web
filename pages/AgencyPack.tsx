@@ -6,7 +6,7 @@ import { localizeMonthYear, propertyTypeLabel } from '../lib/projectTerms';
 import { translateStatus } from '../lib/statusI18n';
 import BrandLogo from '../components/BrandLogo';
 import { useCurrency } from '../App';
-import { fmtDate, shortProjectName, renderLinks, type RenderLink } from '../components/agency/useAgencyData';
+import { fmtDate, pickBrochure, shortProjectName, renderLinks, type RenderLink } from '../components/agency/useAgencyData';
 import { reportHref } from '../lib/reportFiles';
 
 interface ProjectAgencyRow {
@@ -76,6 +76,7 @@ interface ProjectAgencyRow {
   distance_beach_id: string | null;
   google_maps_url: string | null;
   brochure_url: string | null;
+  brochures?: Record<string, string> | null;
   drive_brochure_folder_url: string | null;
   drive_renders_url: string | null;
   drive_renders_links: RenderLink[] | null;
@@ -134,6 +135,7 @@ const AgencyPack: React.FC = () => {
   const [project, setProject] = useState<ProjectAgencyRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [agencyLang, setAgencyLang] = useState<string | null>(null);
 
   // Resolve translatable field by current language. Falls back to ES (base).
   const tr = (p: ProjectAgencyRow | null, base: keyof ProjectAgencyRow): string | null => {
@@ -151,6 +153,8 @@ const AgencyPack: React.FC = () => {
     (async () => {
       // Datos internos del pack: solo staff o agencia con sesión (RPC agency_pack_get)
       const { data: rows, error } = await supabase.rpc('agency_pack_get', { p_slug: slug });
+      // idioma de la agencia logueada (RLS: solo su fila; staff ve muchas → se ignora y se usa el idioma de la web)
+      void supabase.from('listing_partners').select('lang').limit(2).then(({ data: me }) => { if (me?.length === 1) setAgencyLang(me[0].lang ?? null); }, () => {});
       const data = Array.isArray(rows) ? rows[0] ?? null : null;
       if (error) {
         setError(t('agencyPack.loginRequired'));
@@ -299,11 +303,11 @@ const AgencyPack: React.FC = () => {
           </Card>
         </div>
 
-        {[project.brochure_url, project.drive_renders_url, project.drive_2d_plans_url, project.drive_permits_url, project.drive_legal_url, project.video_url, project.construction_update_url, project.drive_brochure_folder_url].some(Boolean) && (
+        {[pickBrochure(project.brochures, project.brochure_url, null), project.drive_renders_url, project.drive_2d_plans_url, project.drive_permits_url, project.drive_legal_url, project.video_url, project.construction_update_url, project.drive_brochure_folder_url].some(Boolean) && (
           <section>
             <Kicker>{t('agencyPack.sectionDocs')}</Kicker>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-              <DocRow href={project.brochure_url} icon="picture_as_pdf">{t('agencyPack.docBrochure')}</DocRow>
+              <DocRow href={pickBrochure(project.brochures, project.brochure_url, agencyLang || (i18n.language || 'es').slice(0, 2))} icon="picture_as_pdf">{t('agencyPack.docBrochure')}</DocRow>
               {renderLinks(project)?.map((l) => <DocRow key={l.url} href={l.url} icon="photo_library">{t('agencyPortal.projects.photosType', { label: l.label })}</DocRow>)
                 ?? <DocRow href={project.drive_renders_url} icon="photo_library">{t('agencyPack.docRenders')}</DocRow>}
               <DocRow href={project.drive_2d_plans_url} icon="architecture">{t('agencyPack.doc2dPlans')}</DocRow>

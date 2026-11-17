@@ -2,14 +2,13 @@
 /**
  * agency-hub — every server step of the agency funnel in one function (plan items 4, 5, 6, 13, 17, 18, 22, 24).
  * Plan names → action: agency-approve = "approve", send-agency-welcome = "welcome",
- * notify-agency-event = "event", login nudges = "reminders", agreement PDF = "agreement", email change = "update_email".
+ * notify-agency-event = "event", login nudges = "reminders", email change = "update_email".
  * Auth: DB triggers send x-agency-hook (Vault agency_hook_secret = env AGENCY_HOOK_SECRET); the cron sends
  * x-cron-secret; admin/agency calls send their Supabase JWT. verify_jwt=false like the other functions.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.107.0";
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 import { T, L, fill } from "./texts.ts";
-import { agreementPdf } from "./agreement.ts";
 
 const SITE = "https://unrealstudiobali.com";
 const SEG = { es: "portal-agencias", en: "agencies", ro: "agentii", id: "agensi" };
@@ -32,15 +31,16 @@ const P = (s) => `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;color
 const H1 = (s) => `<h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;font-weight:700;margin:0 0 14px;color:${BROWN};">${s}</h1>`;
 const BTN = (href, label) => `<p style="text-align:center;margin:24px 0;"><a href="${href}" style="background:${BROWN};color:#fff;text-decoration:none;font-weight:700;padding:14px 30px;border-radius:12px;display:inline-block;font-family:Manrope,Arial,sans-serif;font-size:14px;">${esc(label)}</a></p>`;
 const LINK = (label, href) => P(`<strong>${esc(label)}:</strong><br><a href="${href}" style="color:${BROWN};word-break:break-all;">${esc(href)}</a>`);
-const wrap = (subject, inner) => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(subject)}</title></head><body style="margin:0;padding:0;background:${ALMOND};"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${ALMOND};padding:28px 16px;"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;"><tr><td align="center" style="padding:8px 0 20px;"><span style="font-family:'DM Serif Display',Georgia,serif;font-size:26px;font-weight:700;color:${BROWN};">Unreal Studio Bali</span></td></tr><tr><td style="background:#fff;border-radius:18px;padding:34px 32px;font-family:Manrope,Arial,sans-serif;color:${BROWN};">${inner}</td></tr><tr><td align="center" style="padding:20px 24px 6px;font-family:Manrope,Arial,sans-serif;font-size:12px;color:rgba(63,35,5,.55);">Bali · Madrid &nbsp;·&nbsp; <a href="mailto:hello@unrealstudiobali.com" style="color:${BROWN};">hello@unrealstudiobali.com</a> &nbsp;·&nbsp; <a href="${SITE}/privacidad" style="color:${BROWN};">Privacy</a></td></tr></table></td></tr></table></body></html>`;
+const contactEmail = (market) => (market === "es" ? "hello@unrealstudiobali.com" : "chloe@unrealstudiobali.com");
+const wrap = (subject, inner, mail = "hello@unrealstudiobali.com") => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(subject)}</title></head><body style="margin:0;padding:0;background:${ALMOND};"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${ALMOND};padding:28px 16px;"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;"><tr><td align="center" style="padding:8px 0 20px;"><span style="font-family:'DM Serif Display',Georgia,serif;font-size:26px;font-weight:700;color:${BROWN};">Unreal Studio Bali</span></td></tr><tr><td style="background:#fff;border-radius:18px;padding:34px 32px;font-family:Manrope,Arial,sans-serif;color:${BROWN};">${inner}</td></tr><tr><td align="center" style="padding:20px 24px 6px;font-family:Manrope,Arial,sans-serif;font-size:12px;color:rgba(63,35,5,.55);">Bali · Madrid &nbsp;·&nbsp; <a href="mailto:${mail}" style="color:${BROWN};">${mail}</a> &nbsp;·&nbsp; <a href="${SITE}/privacidad" style="color:${BROWN};">Privacy</a></td></tr></table></td></tr></table></body></html>`;
 
-async function sendMail(to, subject, inner, attachments = []) {
+async function sendMail(to, subject, inner, attachments = [], market = "es") {
   const host = env("SMTP_HOST"), user = env("SMTP_USER"), pass = env("SMTP_PASS");
   if (!host || !user || !pass) return { ok: false, error: "transport_not_configured" };
   const port = Number(env("SMTP_PORT") || "465");
   const client = new SMTPClient({ connection: { hostname: host, port, tls: port === 465, auth: { username: user, password: pass } } });
   try {
-    await client.send({ from: env("MAIL_FROM") || "Unreal Studio <no.reply@unrealstudiobali.com>", to, replyTo: "hello@unrealstudiobali.com", subject, html: wrap(subject, inner), attachments });
+    await client.send({ from: env("MAIL_FROM") || "Unreal Studio <no.reply@unrealstudiobali.com>", to, replyTo: contactEmail(market), subject, html: wrap(subject, inner, contactEmail(market)), attachments });
     return { ok: true };
   } catch (e) { return { ok: false, error: String(e?.message ?? e) }; }
   finally { try { await client.close(); } catch { /* closed */ } }
@@ -137,6 +137,23 @@ async function recoveryLink(uid) {
   return data.properties.action_link;
 }
 
+// Temporary portal password, same model as clients (admin sees it on the agency card).
+// Generated only once, on the FIRST welcome; never resets a password the agency already has.
+const PW_CHARS = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const genPw = () => Array.from(crypto.getRandomValues(new Uint32Array(10)), (n) => PW_CHARS[n % PW_CHARS.length]).join("");
+async function tempPassword(p, uid, create) {
+  const { data: row, error } = await db.from("listing_partner_passwords").select("temp_password").eq("partner_id", p.id).maybeSingle();
+  if (error) throw new Error(`password_row: ${error.message}`);
+  if (row?.temp_password) return row.temp_password;
+  if (row || p.welcomed_at || !create) return null;
+  const pw = genPw();
+  const { error: ue } = await db.auth.admin.updateUserById(uid, { password: pw });
+  if (ue) throw new Error(`set_password: ${ue.message}`);
+  const { error: ie } = await db.from("listing_partner_passwords").upsert({ partner_id: p.id, password_plain: pw, temp_password: pw, must_change_password: true, updated_at: new Date().toISOString() });
+  if (ie) throw new Error(`password_store: ${ie.message}`);
+  return pw;
+}
+
 async function loadPartner(id) {
   const { data, error } = await db.from("listing_partners").select("*").eq("id", id).single();
   if (error) throw new Error(`partner: ${error.message}`);
@@ -147,12 +164,7 @@ const commissionLine = (t, p) => (Number(p.commission_close_pct) === Number(p.co
   ? fill(t.commissionOne, { close: p.commission_close_pct })
   : fill(t.commissionTwo, { close: p.commission_close_pct, referral: p.commission_referral_pct }));
 
-async function partnerPdf(p) {
-  const { data: app } = p.application_id ? await db.from("listing_partner_applications").select("accepted_terms_at, terms_version").eq("id", p.application_id).maybeSingle() : { data: null };
-  return agreementPdf({ lang: p.lang, agency: p.agency_name, email: p.email, country: p.country, close: Number(p.commission_close_pct ?? 5), referral: Number(p.commission_referral_pct ?? p.commission_close_pct ?? 3), acceptedAt: app?.accepted_terms_at, version: app?.terms_version });
-}
 
-const toB64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode(...u8.subarray(i, i + 0x8000)); return btoa(s); };
 
 async function welcome(partnerId, kind = "welcome") {
   const p = await loadPartner(partnerId);
@@ -160,20 +172,22 @@ async function welcome(partnerId, kind = "welcome") {
   const uid = await ensureUser(p);
   const link = await recoveryLink(uid);
   const lang = L(p.lang), t = T[lang];
+  const pw = await tempPassword(p, uid, kind === "welcome");
   const personal = `${SITE}/proyectos?utm_source=lister&utm_partner=${encodeURIComponent(p.personal_link_slug ?? p.id)}`;
   const kit = `${SITE}/agencias/dashboard?view=kit`;
   const reminder = kind === "reminder";
   const subject = reminder ? t.reminderSubject : t.welcomeSubject;
   const inner = (reminder ? H1(esc(t.reminderHeading)) + P(esc(fill(t.reminderP1, { agency: p.agency_name }))) : H1(esc(fill(t.welcomeHeading, { agency: p.agency_name }))) + P(esc(t.welcomeP1)))
     + P(esc(t.welcomeStep)) + BTN(link, t.welcomeButton)
+    + (pw ? `<div style="background:#f7f1ea;border:1px solid #e4d8c9;border-radius:12px;padding:14px 16px;margin:18px 0;color:#3f2305;font-size:15px;line-height:1.7;">`
+        + `<strong>${esc(t.tempTitle)}</strong><br>${esc(t.tempEmail)}: <strong>${esc(p.email)}</strong><br>${esc(t.tempPwLabel)}: <strong style="font-family:Menlo,Consolas,monospace;font-size:17px;letter-spacing:.5px;">${esc(pw)}</strong>`
+        + `<br><span style="font-size:13px;opacity:.75;">${esc(fill(t.tempPw, { email: p.email, pw }))}</span></div>` : "")
     + LINK(t.portal, portalUrl(lang)) + P(`<strong>${esc(commissionLine(t, p))}</strong>`)
     + LINK(t.personalLink, personal) + LINK(t.kit, kit)
     + (p.market === "es" ? LINK(t.booking, BOOKING) : "")
-    + (reminder ? "" : P(esc(t.agreementNote)))
     + `<p style="font-size:12px;line-height:1.6;color:rgba(63,35,5,.55);margin:18px 0 0;">${esc(t.footer)}</p>`;
-  // denomailer mangles raw Uint8Array content (3-byte attachment): send it base64-encoded
-  const attachments = reminder ? [] : [{ filename: `Unreal-Studio-${(p.personal_link_slug ?? "agency")}.pdf`, content: toB64(await partnerPdf(p)), encoding: "base64", contentType: "application/pdf" }];
-  const r = await sendMail(p.email, subject, inner, attachments);
+  // owner 17-nov: never attach an agreement to the welcome; the contract flow lives in the portal ("Contrato")
+  const r = await sendMail(p.email, subject, inner, [], p.market);
   if (r.ok && !reminder) await db.from("listing_partners").update({ welcomed_at: new Date().toISOString() }).eq("id", p.id);
   return r;
 }
@@ -215,7 +229,7 @@ async function event(table, ev, id) {
     const { data: a } = await db.from("listing_partner_applications").select("*").eq("id", id).single();
     const t = T[L(a.lang)];
     const inner = H1(esc(t.rejectSubject.split(" · ")[0])) + P(esc(fill(t.rejectP1, { agency: a.agency_name }))) + (a.reject_reason ? P(esc(fill(t.rejectReason, { reason: a.reject_reason }))) : "") + P(esc(t.rejectP2));
-    return sendMail(a.email, t.rejectSubject, inner);
+    return sendMail(a.email, t.rejectSubject, inner, [], a.market);
   }
   if (table === "agency_lead_collisions") {
     const { data: c } = await db.from("agency_lead_collisions").select("*, listing_partners(agency_name)").eq("id", id).single();
@@ -232,11 +246,11 @@ async function event(table, ev, id) {
       const ok = await tg(`🤝 ${p.agency_name} registra cliente\n\n${l.client_name} · ${[l.client_email, l.client_phone].filter(Boolean).join(" · ")}\nProyecto: ${l.properties?.name ?? "—"} · ${l.budget ?? ""}\n\nAdmin → Agencias → Clientes registrados.`, p.agency_name);
       if (ok) await mark("agency_leads");
       if (p.is_demo) return { ok };
-      return sendMail(p.email, fill(t.leadSubject, { client: l.client_name }), H1(esc(t.leadHeading)) + P(esc(fill(t.leadP1, { client: l.client_name, agency: p.agency_name, date: fmtDate(l.created_at, p.lang) }))));
+      return sendMail(p.email, fill(t.leadSubject, { client: l.client_name }), H1(esc(t.leadHeading)) + P(esc(fill(t.leadP1, { client: l.client_name, agency: p.agency_name, date: fmtDate(l.created_at, p.lang) }))), [], p.market);
     }
     if (p.is_demo) return { ok: true, skipped: "demo" };
     const won = ev === "won";
-    return sendMail(p.email, fill(won ? t.leadWonSubject : t.leadLostSubject, { client: l.client_name }), P(esc(fill(won ? t.leadWonP1 : t.leadLostP1, { client: l.client_name }))));
+    return sendMail(p.email, fill(won ? t.leadWonSubject : t.leadLostSubject, { client: l.client_name }), P(esc(fill(won ? t.leadWonP1 : t.leadLostP1, { client: l.client_name }))), [], p.market);
   }
   if (table === "agency_requests") {
     const { data: r } = await db.from("agency_requests").select("*, agency_leads(client_name), property_units(unit_name)").eq("id", id).single();
@@ -250,7 +264,7 @@ async function event(table, ev, id) {
     if (p.is_demo) return { ok: true, skipped: "demo" };
     const type = t.types[r.type] ?? r.type;
     const body = ev === "scheduled" ? fill(t.requestScheduledP1, { type, date: r.preferred_date ? fill(t.on, { date: r.preferred_date }) : "" }) : fill(t.requestDoneP1, { type });
-    return sendMail(p.email, fill(t.requestSubject, { type }), P(esc(body)));
+    return sendMail(p.email, fill(t.requestSubject, { type }), P(esc(body)), [], p.market);
   }
   if (table === "agency_commissions") {
     const { data: c } = await db.from("agency_commissions").select("*, agency_leads(client_name), property_units(unit_name)").eq("id", id).single();
@@ -259,7 +273,7 @@ async function event(table, ev, id) {
     const t = T[L(p.lang)];
     const kind = t.kinds[c.kind];
     const body = fill(t.commissionP1, { kind, client: c.agency_leads?.client_name ?? "", unit: c.property_units?.unit_name ? fill(t.unitWord, { unit: c.property_units.unit_name }) : "", price: money(c.sale_price, c.currency, p.lang), pct: c.pct, amount: money(c.amount, c.currency, p.lang), status: t.statuses[c.status] ?? c.status });
-    return sendMail(p.email, fill(t.commissionSubject, { kind, client: c.agency_leads?.client_name ?? "" }), P(esc(body)));
+    return sendMail(p.email, fill(t.commissionSubject, { kind, client: c.agency_leads?.client_name ?? "" }), P(esc(body)), [], p.market);
   }
   return { ok: false, error: "unknown_event" };
 }
@@ -329,15 +343,10 @@ Deno.serve(async (req) => {
     if (!who) return json({ ok: false, error: "unauthorized" }, 401);
     const isAdmin = who.role === "admin";
     const by = String(who.user.app_metadata?.real_email ?? who.user.email ?? "admin");
-    if (b.action === "agreement") {
-      const q = db.from("listing_partners").select("*").is("deleted_at", null);
-      const { data: p } = isAdmin && b.partner_id ? await q.eq("id", b.partner_id).maybeSingle() : await q.eq("user_id", who.user.id).eq("status", "approved").maybeSingle();
-      if (!p) return json({ ok: false, error: "not_found" }, 404);
-      return new Response(await partnerPdf(p), { headers: { ...cors, "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="Unreal-Studio-agreement.pdf"` } });
-    }
     if (!isAdmin) return json({ ok: false, error: "forbidden" }, 403);
     if (b.action === "approve") return json(await approve(b.application_id, "admin", b.opts ?? {}, by));
     if (b.action === "welcome") return json(await welcome(b.partner_id));
+    if (b.action === "reminder") return json(await welcome(b.partner_id, "reminder"));
     if (b.action === "update_email") return json(await updateEmail(b.partner_id, b.email));
     return json({ ok: false, error: "unknown_action" }, 400);
   } catch (e) {

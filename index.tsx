@@ -7,6 +7,7 @@ import { initWebVitals } from './lib/webVitals';
 import { initVersionGuard } from './lib/versionGuard';
 import { initNativeApp, isNativeApp } from './lib/nativeApp';
 import { initReportLinks } from './lib/reportFiles';
+import { initWhatsappRef } from './lib/utm-tracking';
 import { initModalScrollLock } from './lib/modalScrollLock';
 import './index.css';
 import { i18nReady } from './lib/i18n';
@@ -21,6 +22,7 @@ initNativeApp();
 
 // Reportes privados: enlaces /report/ → firmados con la sesión de ESTA pestaña (ver reportFiles).
 initReportLinks();
+initWhatsappRef();
 
 // Pop-ups: el fondo no se desplaza (también en iOS/WKWebView).
 initModalScrollLock();

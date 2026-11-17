@@ -1,4 +1,5 @@
 import { AppConfig } from './types';
+import { withWhatsappRef } from './lib/utm-tracking';
 
 // Número de WhatsApp del asesor (Globalitae, 2026-10-13). Todos los CTAs de la web
 // apuntan aquí. Formato internacional sin + ni espacios para wa.me.
@@ -10,11 +11,17 @@ export const WHATSAPP_WELCOME_TEXT =
 
 // Construye un enlace de WhatsApp con texto pre-rellenado.
 export const whatsappUrl = (text: string = WHATSAPP_WELCOME_TEXT): string =>
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(withWhatsappRef(text))}`;
 
 // Enlace de WhatsApp con copy específico de un proyecto.
 export const whatsappProjectUrl = (projectName: string): string =>
   whatsappUrl(`Hola, me interesa saber más sobre el proyecto de ${projectName} que tenéis en vuestra web`);
+
+// Contacto para AGENCIAS (17-nov): mercado 'es' → Emma (WhatsApp de la web) + hello@; resto del mundo → Chloe (+62).
+export const agencyContact = (market?: string | null): { wa: string; email: string } =>
+  market === 'es' ? { wa: WHATSAPP_NUMBER, email: 'hello@unrealstudiobali.com' } : { wa: '6285128128767', email: 'chloe@unrealstudiobali.com' };
+export const agencyWhatsappUrl = (market: string | null | undefined, text: string): string =>
+  `https://wa.me/${agencyContact(market).wa}?text=${encodeURIComponent(text)}`;
 
 // CTA genérico (bienvenida). Se mantiene el nombre WHATSAPP_URL por compatibilidad.
 export const WHATSAPP_URL = whatsappUrl();

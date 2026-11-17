@@ -1,10 +1,10 @@
 /** Ayuda: cómo funciona el programa de agencias + contacto con el equipo Unreal. */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { whatsappUrl } from '../../constants';
+import { agencyContact, agencyWhatsappUrl } from '../../constants';
 import { card, btnPrimary, btnGhost, SectionTitle } from './ui';
 
-export default function AgencyHelp({ agencyName, close, referral }: { agencyName: string; close: number; referral: number }) {
+export default function AgencyHelp({ agencyName, close, referral, market }: { agencyName: string; close: number; referral: number; market?: string | null }) {
   const { t } = useTranslation();
   const steps = [1, 2, 3, 4].map((i) => ({ title: t(`agencyPortal.help.step${i}Title`), body: t(`agencyPortal.help.step${i}Body`) }));
 
@@ -48,11 +48,11 @@ export default function AgencyHelp({ agencyName, close, referral }: { agencyName
         <h3 className="text-sm font-black uppercase tracking-widest text-primary/40 mb-1">{t('agencyPortal.help.contactTitle')}</h3>
         <p className="text-sm text-primary/60 mb-4">{t('agencyPortal.help.contactBody')}</p>
         <div className="flex flex-wrap gap-2">
-          <a href={whatsappUrl(t('agencyPortal.help.waText', { agency: agencyName }))} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
+          <a href={agencyWhatsappUrl(market, t('agencyPortal.help.waText', { agency: agencyName }))} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
             <span className="material-symbols-outlined text-base">chat</span>WhatsApp
           </a>
-          <a href="mailto:hello@unrealstudiobali.com" className={btnGhost}>
-            <span className="material-symbols-outlined text-base">mail</span>hello@unrealstudiobali.com
+          <a href={`mailto:${agencyContact(market).email}`} className={btnGhost}>
+            <span className="material-symbols-outlined text-base">mail</span>{agencyContact(market).email}
           </a>
         </div>
       </section>

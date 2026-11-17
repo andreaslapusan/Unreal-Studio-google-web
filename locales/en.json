@@ -1616,7 +1616,22 @@
       "b_clientPwChange": "Changed their password",
       "endOfList": "— No more —",
       "loadingMore": "Loading more…",
-      "typeListingIntake": "New listing"
+      "typeListingIntake": "New listing",
+      "typeAgencyApp": "Agency application",
+      "typeAgencyPwChange": "Agency password",
+      "f_agency_application": "Agency applications",
+      "f_agency_password_change": "Agency passwords",
+      "b_agencyApp": "New partner application{{country}}",
+      "grpAgencias": "Agencies",
+      "actReview": "Review",
+      "sumAgencyApps": "{{n}} agencies to review",
+      "t_agencyApp": "Pending partner application",
+      "typeAgencyLogin": "Agency login",
+      "f_agency_login": "Agency logins",
+      "typeAgencyContract": "Contract uploaded (agency)",
+      "f_agency_contract_upload": "Agency contracts",
+      "grpContracts": "Contracts to countersign",
+      "t_contract": "Uploaded its signed contract"
     },
     "perms": {
       "check_in": "Clock in/out",
@@ -1901,7 +1916,7 @@
         "personal_link_slug": "Personal link (slug)",
         "status": "Status"
       },
-      "projectsAll": "Projects: this agency sees everything for sale on the website, at the same price as the website."
+      "projectsAll": "The projects this agency sees are switched on or off in its card (Assigned projects)."
     },
     "demoBanner": "Read-only demo account: you can browse projects and the blog. Client, payment and team data are not available in this account.",
     "presence": {
@@ -1999,6 +2014,48 @@
         "low_confidence": "Unsure",
         "pending": "Unclassified"
       }
+    },
+    "agencyCard": {
+      "templates": "Send email templates",
+      "settings": "Settings",
+      "commission": "Commission",
+      "noPassword": "No visible password: the agency created it with the link. It will show here once they change it.",
+      "save": "Save changes",
+      "discard": "Discard",
+      "projectsSaved": "Agency projects saved",
+      "projectsHint": "Green = the agency sees it in its portal · Red = hidden. Nothing is saved until “Save changes”.",
+      "welcomeDesc": "Portal access + temporary password + PDF agreement",
+      "resetDesc": "Link for the agency to create a new password",
+      "reminderTitle": "Access reminder",
+      "reminderDesc": "Reminds the agency how to log in to its portal",
+      "reminderSent": "Reminder sent to {{email}}",
+      "notActive": "The agency is not active: reactivate it in Settings to email it.",
+      "editSubtitle": "Agency data, market, commission and status",
+      "statusHint": "Approved = can log in to its portal. Suspended = cannot log in (session closed); its clients and history are kept.",
+      "deactivate": "Deactivate",
+      "agencyLabel": "Agency",
+      "assignmentHint": "Inactive: the agency does not see this project or its material in the portal. Nothing is deleted.",
+      "bulkDone": "Done: {{n}} of {{total}}",
+      "defaultsHint": "Defaults: Spain {{es}} % · Rest of the world {{world}} % (if the agency closes / if Unreal closes).",
+      "byDefault": "default",
+      "editApp": "Edit application",
+      "interested": "Projects of interest",
+      "contract": "Signed contract",
+      "contractView": "View PDF",
+      "contractNone": "not uploaded",
+      "contractUpload": "Upload PDF",
+      "contractReplace": "Replace",
+      "contractUploaded": "Signed contract saved. The agency can now download it in its portal.",
+      "contractBadFile": "Upload a PDF of 20 MB max.",
+      "cStatusPending": "Waiting for the agency",
+      "cStatusUploaded": "Uploaded by the agency · to countersign",
+      "cStatusDone": "Countersigned",
+      "agencyCopy": "Agency copy",
+      "countersigned": "Countersigned",
+      "uploadFinal": "Upload countersigned",
+      "ref": "WhatsApp ref",
+      "refHint": "Code added at the end of WhatsApp messages from clients who came through its link. Search it above to find the agency.",
+      "refCopied": "Code copied"
     }
   },
   "footer": {
@@ -3062,7 +3119,7 @@
       "kit": "Sales kit",
       "requests": "Requests",
       "training": "Training",
-      "contract": "Agreement",
+      "contract": "Legal agreements",
       "groupWork": "Sell"
     },
     "kpi": {
@@ -3097,7 +3154,7 @@
       "availableN": "Available: {{count}}",
       "soldOut": "Sold out",
       "soldN": "Sold: {{count}}",
-      "copyLink": "Copy client link",
+      "copyLink": "Copy referral link for clients",
       "pack": "Agency pack",
       "dossier": "Brochure",
       "tour": "3D tour",
@@ -3116,7 +3173,8 @@
       "onSale": "For sale",
       "photos": "Photos (Drive)",
       "photosType": "Photos {{label}}",
-      "plans": "Plans (Drive)"
+      "plans": "Plans (Drive)",
+      "yourCommission": "Your commission"
     },
     "clients": {
       "search": "Search client, email, project…",
@@ -3127,7 +3185,11 @@
     },
     "stats": {
       "sub": "What your personal link and the project links you share generate.",
-      "catalog": "General catalogue"
+      "catalog": "General catalogue",
+      "visitsTitle": "Visits to your link",
+      "visitsLine": "Total: {{total}} · Last 30 days: {{d30}}",
+      "visitsN_one": "{{count}} visit",
+      "visitsN_other": "{{count}} visits"
     },
     "commissions": {
       "sub": "Estimate of your commission based on each project's website price and your percentage.",
@@ -3306,7 +3368,7 @@
       "p1": "Register the client in \"My clients\" before they contact Unreal.",
       "p2": "Present the project with the official material and your link; request a call or online presentation with the team if needed.",
       "p3": "Confirm the unit's availability and the client reserves it.",
-      "p4": "Contract signed before a notary (PPAT) in Indonesia; the buyer's notary fees are about 1% of the price. The client can do due diligence with their own lawyer.",
+      "p4": "Contract signed before a notary (PPAT) in Indonesia; the buyer's notary fees are about 1% of the price. Unreal Studio handles the whole legal process from start to finish.",
       "p5": "Staged payments according to construction progress; bank details are provided at signing.",
       "p6": "Delivered finished with all fixtures (kitchen, bathroom, wardrobes, pool). Furnishing for rental is a separate package.",
       "rulesTitle": "Golden rules",
@@ -3335,7 +3397,23 @@
       "you": "Promote at its own cost, register each investor, organise visits (and lead them in the {{close}}% mode) and inform truthfully, without promising anything outside Unreal's information.",
       "usTitle": "Unreal commits to",
       "us": "Provide truthful, up-to-date information on availability, reservations and prices, give access to the properties for visits, handle all the legal side of the sale and pay the agreed commission.",
-      "history": "Your agreement requests"
+      "history": "Your agreement requests",
+      "signedDownload": "Download signed agreement",
+      "stepsTitle": "Collaboration agreement",
+      "step1": "1 · Download the agreement",
+      "step1Sub": "Read it, fill it in and sign it (by hand or with a digital signature).",
+      "step1Btn": "Download agreement template",
+      "step2": "2 · Upload your signed copy",
+      "step2Sub": "PDF or photo (JPG/PNG) of the signed agreement, max 20 MB. Only Unreal Studio sees it.",
+      "step2Btn": "Upload signed agreement",
+      "step2Again": "Upload again",
+      "step2Done": "Received on {{date}}. We will countersign it and return it here.",
+      "uploading": "Uploading…",
+      "step3": "3 · Agreement signed by both parties",
+      "step3Sub": "Waiting for our signature. It will appear here to download.",
+      "step3Done": "Signed by both parties · {{date}}",
+      "uploadedOk": "Received! We'll let you know when it is signed by both parties.",
+      "badFile": "Upload a PDF, JPG or PNG of 20 MB max."
     }
   },
   "reportOpen": {

@@ -3,6 +3,7 @@
  * a paged Supabase list hook (.range + exact count) and the error → i18n mapping.
  */
 import React, { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 export const inputCls = 'mt-1 block w-full rounded-lg border border-primary/20 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40 bg-white';
@@ -19,14 +20,14 @@ export function Modal({ title, onClose, children, guard }: ModalProps) {
     window.addEventListener('keydown', k);
     return () => window.removeEventListener('keydown', k);
   }, [onClose, guard]);
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => { if (!guard) onClose(); }}>
       <div role="dialog" aria-modal="true" aria-label={title} className="ust-modal relative bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <button type="button" onClick={onClose} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
         <h2 className="pr-10 font-serif text-2xl mb-4 text-primary break-words">{title}</h2>
         {children}
       </div>
-    </div>
+    </div>, document.body,
   );
 }
 
@@ -38,10 +39,11 @@ export function useToast(): [React.ReactNode, Toast] {
     setMsg({ text, ok });
     window.setTimeout(() => setMsg((m) => (m?.text === text ? null : m)), ok ? 4000 : 9000);
   }, []);
-  const node = msg ? (
-    <div role="status" aria-live="polite" className={`fixed bottom-4 left-4 right-4 sm:left-auto sm:max-w-md z-[300] rounded-xl px-4 py-3 text-sm shadow-xl break-words ${msg.ok ? 'bg-green-700 text-white' : 'bg-red-600 text-white'}`}>
-      {msg.text}
-    </div>
+  // portal to <body>: inside the admin's animated/scrolling containers a fixed toast was off-screen on iOS (owner saw no confirmation)
+  const node = msg ? createPortal(
+    <div role="status" aria-live="polite" className={`fixed bottom-4 left-4 right-4 sm:left-auto sm:max-w-md z-[300] rounded-xl px-4 py-3 text-sm shadow-xl break-words flex items-start gap-2 ${msg.ok ? 'bg-green-700 text-white' : 'bg-red-600 text-white'}`} style={{ marginBottom: 'env(safe-area-inset-bottom)' }}>
+      <span className="material-symbols-outlined text-base shrink-0">{msg.ok ? 'check_circle' : 'error'}</span><span className="min-w-0">{msg.text}</span>
+    </div>, document.body,
   ) : null;
   return [node, show];
 }
@@ -110,3 +112,36 @@ export function ListFilters({ q, setQ, status, setStatus, statuses, label }: { q
 
 /** Escapes % and , for PostgREST .or(ilike) filters. */
 export const ilikeTerm = (q: string) => `%${q.trim().replace(/[%,()]/g, ' ')}%`;
+
+/** Same shell/fields as the CLIENT modals in AdminDashboard (bottom sheet on mobile, rounded-3xl, X top-right). */
+export const fieldCls = 'w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none';
+export const labelCls = 'block text-[10px] font-black uppercase text-gray-400 mb-2';
+export const saveBtnCls = 'flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50';
+export const closeBtnCls = 'flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition';
+export function SheetModal({ title, subtitle, onClose, children, guard }: { title: string; subtitle?: React.ReactNode; onClose: () => void; children: React.ReactNode; guard?: boolean }) {
+  const { t } = useTranslation();
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape' && !guard) onClose(); };
+    window.addEventListener('keydown', k);
+    return () => window.removeEventListener('keydown', k);
+  }, [onClose, guard]);
+  return createPortal(
+    <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4" onMouseDown={(e) => { if (e.target === e.currentTarget && !guard) onClose(); }}>
+      <div role="dialog" aria-modal="true" aria-label={title} className="ust-modal relative bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-10 shadow-2xl max-h-[92vh] overflow-y-auto overscroll-contain">
+        <button type="button" onClick={onClose} aria-label={t('admin.common.close')} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-primary transition"><span className="material-symbols-outlined">close</span></button>
+        <h2 className="text-2xl font-serif text-primary mb-2 pr-10 break-words">{title}</h2>
+        {subtitle && <p className="text-sm text-gray-400 mb-8 break-words">{subtitle}</p>}
+        {children}
+      </div>
+    </div>, document.body,
+  );
+}
+
+/** Green/red switch used across the admin (verde = activo, rojo = inactivo). */
+export function StateSwitch({ on, onChange, label }: { on: boolean; onChange: () => void; label: string }) {
+  return (
+    <button type="button" role="switch" aria-checked={on} aria-label={label} onClick={onChange} className={`relative shrink-0 w-14 h-8 rounded-full transition ${on ? 'bg-emerald-500' : 'bg-red-500'}`}>
+      <span className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${on ? 'translate-x-6' : ''}`} />
+    </button>
+  );
+}

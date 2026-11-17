@@ -30,14 +30,19 @@ interface OverduePayment { id: string; label: string; amount: number; currency: 
 interface ConstructionAlert { project_id: string; project_name: string; completion_percent: number | null; construction_update_date: string | null; has_report: boolean; days_since: number | null; }
 interface ClientLite { id: string; name: string; email: string | null; }
 
+interface PendingAgencyApp { id: string; agency_name: string; email: string; country: string | null; created_at: string; }
 interface PendingVacation { id: string; employee_name: string | null; start_date: string; end_date: string; type: string | null; note: string | null; }
 
 // Tipos que van al feed de ACTIVIDAD (info). vacation_request es solo log: la TAREA
 // de aprobar se calcula de employee_vacations (pendientes), no de la notificación.
-const INFO_TYPES = new Set(['client_login', 'client_password_change', 'late_checkin', 'generic', 'vacation_request', 'listing_intake']);
+const INFO_TYPES = new Set(['client_login', 'client_password_change', 'agency_application', 'agency_password_change', 'agency_login', 'agency_contract_upload', 'late_checkin', 'generic', 'vacation_request', 'listing_intake']);
 const INFO_META: Record<string, { icon: string; labelKey: string; def: string; color: string }> = {
   client_login: { icon: 'login', labelKey: 'admin.notif.typeClientLogin', def: 'Acceso de cliente', color: 'text-primary bg-almond' },
   client_password_change: { icon: 'key', labelKey: 'admin.notif.typeClientPwChange', def: 'Cambio de contraseña', color: 'text-amber-700 bg-amber-50' },
+  agency_application: { icon: 'storefront', labelKey: 'admin.notif.typeAgencyApp', def: 'Solicitud de agencia', color: 'text-emerald-700 bg-emerald-50' },
+  agency_contract_upload: { icon: 'description', labelKey: 'admin.notif.typeAgencyContract', def: 'Contrato subido (agencia)', color: 'text-emerald-700 bg-emerald-50' },
+  agency_login: { icon: 'login', labelKey: 'admin.notif.typeAgencyLogin', def: 'Acceso de agencia', color: 'text-primary bg-almond' },
+  agency_password_change: { icon: 'key', labelKey: 'admin.notif.typeAgencyPwChange', def: 'Cambio de contraseña (agencia)', color: 'text-amber-700 bg-amber-50' },
   late_checkin: { icon: 'schedule', labelKey: 'admin.notif.typeLateCheckin', def: 'Fichaje tarde', color: 'text-orange-600 bg-orange-50' },
   vacation_request: { icon: 'beach_access', labelKey: 'admin.notif.typeVacation', def: 'Solicitud de vacaciones', color: 'text-amber-600 bg-amber-50' },
   listing_intake: { icon: 'add_home_work', labelKey: 'admin.notif.typeListingIntake', def: 'Nuevo listing', color: 'text-emerald-700 bg-emerald-50' },
@@ -48,6 +53,10 @@ const ACT_FILTERS: { value: string; def: string }[] = [
   { value: 'listing_intake', def: 'Nuevos listings' },
   { value: 'client_login', def: 'Accesos de clientes' },
   { value: 'client_password_change', def: 'Cambios de contraseña' },
+  { value: 'agency_application', def: 'Solicitudes de agencias' },
+  { value: 'agency_password_change', def: 'Contraseñas de agencias' },
+  { value: 'agency_login', def: 'Accesos de agencias' },
+  { value: 'agency_contract_upload', def: 'Contratos de agencias' },
   { value: 'late_checkin', def: 'Fichajes tarde' },
   { value: 'vacation_request', def: 'Solicitudes de vacaciones' },
   { value: 'generic', def: 'Avisos' },
@@ -64,6 +73,14 @@ function locBody(n: any, t: any): string {
     case 'client_login':
       return t('admin.notif.b_clientLogin', { defaultValue: 'Ha entrado en su portal' });
     case 'client_password_change':
+      return t('admin.notif.b_clientPwChange', { defaultValue: 'Ha cambiado su contraseña' });
+    case 'agency_application':
+      return t('admin.notif.b_agencyApp', { defaultValue: 'Nueva solicitud de alta{{country}}', country: m.country ? ` · ${m.country}` : '' });
+    case 'agency_contract_upload':
+      return t('admin.notif.t_contract', { defaultValue: 'Ha subido su contrato firmado' });
+    case 'agency_login':
+      return t('admin.notif.b_clientLogin', { defaultValue: 'Ha entrado en su portal' });
+    case 'agency_password_change':
       return t('admin.notif.b_clientPwChange', { defaultValue: 'Ha cambiado su contraseña' });
     case 'late_checkin':
       return m.checkin ? t('admin.notif.b_lateCheckin', { defaultValue: 'Entrada a las {{checkin}} (horario {{start}} +{{margin}} min de margen)', checkin: m.checkin, start: m.start, margin: m.margin }) : (n.body || '');
@@ -102,6 +119,8 @@ const NotificationsPanel: React.FC = () => {
   const [staleProps, setStaleProps] = useState<ConstructionAlert[]>([]);
   const [pendingVacs, setPendingVacs] = useState<PendingVacation[]>([]);
   const [noProp, setNoProp] = useState<ClientLite[]>([]);
+  const [agencyApps, setAgencyApps] = useState<PendingAgencyApp[]>([]);
+  const [toSign, setToSign] = useState<{ id: string; agency_name: string; email: string; uploaded_at: string }[]>([]);
   // Filtros/orden del feed de Actividad.
   const [actType, setActType] = useState<string>('all');
   const [actSearch, setActSearch] = useState('');
@@ -116,6 +135,8 @@ const NotificationsPanel: React.FC = () => {
       supabase.rpc('admin_notifications_list', { p_type: null, p_only_unread: false, p_limit: 300 }),
       supabase.rpc('admin_attention_panel'),
     ]);
+    const { data: ts } = await supabase.rpc('admin_agency_contracts_to_sign');
+    setToSign((ts as any[]) ?? []);
     setItems((notifs as Notif[]) ?? []);
     const p = (panel as any) ?? {};
     setOverdue((p.overdue_payments as OverduePayment[]) ?? []);
@@ -123,6 +144,7 @@ const NotificationsPanel: React.FC = () => {
     setMissingReports((p.missing_reports as ConstructionAlert[]) ?? []);
     setPendingVacs((p.pending_vacations as PendingVacation[]) ?? []);
     setNoProp((p.clients_no_property as ClientLite[]) ?? []);
+    setAgencyApps((p.pending_agency_apps as PendingAgencyApp[]) ?? []);
     setLoading(false);
   }, []);
 
@@ -165,13 +187,14 @@ const NotificationsPanel: React.FC = () => {
   const obraCount = missingReports.length + staleProps.length;
   const cobrosCount = overdue.length + claims.length;
   const equipoCount = pendingVacs.length; // clients_no_property es baja prioridad, no cuenta
-  const taskCount = cobrosCount + obraCount + equipoCount;
+  const taskCount = cobrosCount + obraCount + equipoCount + agencyApps.length + toSign.length;
 
   // Resumen "empieza tu día"
   const summaryParts: string[] = [];
   if (overdue.length) summaryParts.push(t('admin.notif.sumOverdue', { defaultValue: '{{n}} por cobrar', n: overdue.length }));
   if (claims.length) summaryParts.push(t('admin.notif.sumClaims', { defaultValue: '{{n}} por verificar', n: claims.length }));
   if (pendingVacs.length) summaryParts.push(t('admin.notif.sumVacs', { defaultValue: '{{n}} vacaciones', n: pendingVacs.length }));
+  if (agencyApps.length) summaryParts.push(t('admin.notif.sumAgencyApps', { defaultValue: '{{n}} agencias por revisar', n: agencyApps.length }));
   if (obraCount) summaryParts.push(t('admin.notif.sumObra', { defaultValue: '{{n}} obra sin actualizar', n: obraCount }));
 
   const Chip: React.FC<{ n: number }> = ({ n }) => n > 0 ? <span className="text-[10px] font-black bg-primary/10 text-primary rounded-full px-2 py-0.5">{n}</span> : null;
@@ -247,6 +270,38 @@ const NotificationsPanel: React.FC = () => {
                       <p className="font-bold text-primary text-sm">{t('admin.notif.t_paymentClaim', { defaultValue: '{{name}} dice que ya pagó', name: n.actor_name || '' })}</p>
                       {locBody(n, t) && <p className="text-sm text-primary/70 mt-0.5">{locBody(n, t)}</p>}
                       <p className="text-[11px] text-primary/40 mt-1">{fmtWhen(n.created_at)}</p>
+                    </Row>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* AGENCIAS — solicitudes pendientes (calculadas; se limpian solas al aprobar/rechazar) */}
+            {agencyApps.length > 0 && (
+              <div>
+                {groupTitle('storefront', t('admin.notif.grpAgencias', { defaultValue: 'Agencias' }), agencyApps.length)}
+                <ul className="space-y-2">
+                  {agencyApps.map((a) => (
+                    <Row key={`ag-${a.id}`} icon="storefront" color="text-emerald-700 bg-emerald-50"
+                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=agencias')} label={t('admin.notif.actReview', { defaultValue: 'Revisar' })} />}>
+                      <p className="font-bold text-primary text-sm break-words">{a.agency_name}</p>
+                      <p className="text-sm text-primary/70 break-all">{[a.email, a.country].filter(Boolean).join(' · ')}</p>
+                      <p className="text-[11px] text-primary/40 mt-0.5">{t('admin.notif.t_agencyApp', { defaultValue: 'Solicitud de alta pendiente' })} · {fmtWhen(a.created_at)}</p>
+                    </Row>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {toSign.length > 0 && (
+              <div>
+                {groupTitle('description', t('admin.notif.grpContracts', { defaultValue: 'Contratos por contrafirmar' }), toSign.length)}
+                <ul className="space-y-2">
+                  {toSign.map((a) => (
+                    <Row key={`cs-${a.id}`} icon="description" color="text-emerald-700 bg-emerald-50"
+                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=agencias')} label={t('admin.notif.actReview', { defaultValue: 'Revisar' })} />}>
+                      <p className="font-bold text-primary text-sm break-words">{a.agency_name}</p>
+                      <p className="text-[11px] text-primary/40 mt-0.5">{t('admin.notif.t_contract', { defaultValue: 'Ha subido su contrato firmado' })} · {fmtWhen(a.uploaded_at)}</p>
                     </Row>
                   ))}
                 </ul>

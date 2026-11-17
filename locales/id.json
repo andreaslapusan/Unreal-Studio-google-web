@@ -1721,7 +1721,22 @@
       "b_clientPwChange": "Mengubah kata sandinya",
       "endOfList": "— Tidak ada lagi —",
       "loadingMore": "Memuat lebih banyak…",
-      "typeListingIntake": "Listing baru"
+      "typeListingIntake": "Listing baru",
+      "typeAgencyApp": "Pengajuan agensi",
+      "typeAgencyPwChange": "Kata sandi agensi",
+      "f_agency_application": "Pengajuan agensi",
+      "f_agency_password_change": "Kata sandi agensi",
+      "b_agencyApp": "Pengajuan kemitraan baru{{country}}",
+      "grpAgencias": "Agensi",
+      "actReview": "Tinjau",
+      "sumAgencyApps": "{{n}} agensi perlu ditinjau",
+      "t_agencyApp": "Pengajuan kemitraan tertunda",
+      "typeAgencyLogin": "Login agensi",
+      "f_agency_login": "Login agensi",
+      "typeAgencyContract": "Kontrak diunggah (agensi)",
+      "f_agency_contract_upload": "Kontrak agensi",
+      "grpContracts": "Kontrak perlu ditandatangani",
+      "t_contract": "Telah mengunggah kontrak bertanda tangan"
     },
     "perms": {
       "check_in": "Absen masuk/keluar",
@@ -2006,7 +2021,7 @@
         "personal_link_slug": "Tautan pribadi (slug)",
         "status": "Status"
       },
-      "projectsAll": "Proyek: agensi ini melihat semua yang dijual di website, dengan harga yang sama seperti di website."
+      "projectsAll": "Proyek yang dilihat agensi ini diaktifkan atau dinonaktifkan di kartunya (Proyek yang ditetapkan)."
     },
     "demoBanner": "Akun demo hanya-baca: Anda dapat melihat proyek dan blog. Data klien, pembayaran, dan tim tidak tersedia di akun ini.",
     "presence": {
@@ -2104,6 +2119,48 @@
         "low_confidence": "Ragu",
         "pending": "Belum diklasifikasi"
       }
+    },
+    "agencyCard": {
+      "templates": "Kirim template email",
+      "settings": "Pengaturan",
+      "commission": "Komisi",
+      "noPassword": "Tidak ada kata sandi terlihat: agensi membuatnya lewat tautan. Akan muncul di sini setelah mereka mengubahnya.",
+      "save": "Simpan perubahan",
+      "discard": "Batalkan",
+      "projectsSaved": "Proyek agensi disimpan",
+      "projectsHint": "Hijau = agensi melihatnya di portal · Merah = disembunyikan. Tidak ada yang disimpan sampai “Simpan perubahan”.",
+      "welcomeDesc": "Akses portal + kata sandi sementara + perjanjian PDF",
+      "resetDesc": "Tautan agar agensi membuat kata sandi baru",
+      "reminderTitle": "Pengingat akses",
+      "reminderDesc": "Mengingatkan agensi cara masuk ke portalnya",
+      "reminderSent": "Pengingat dikirim ke {{email}}",
+      "notActive": "Agensi tidak aktif: aktifkan kembali di Pengaturan untuk mengirim email.",
+      "editSubtitle": "Data agensi, pasar, komisi dan status",
+      "statusHint": "Disetujui = bisa masuk ke portal. Ditangguhkan = tidak bisa masuk (sesi ditutup); klien dan riwayatnya tetap disimpan.",
+      "deactivate": "Nonaktifkan",
+      "agencyLabel": "Agensi",
+      "assignmentHint": "Nonaktif: agensi tidak melihat proyek ini maupun materinya di portal. Tidak ada yang dihapus.",
+      "bulkDone": "Selesai: {{n}} dari {{total}}",
+      "defaultsHint": "Default: Spanyol {{es}} % · Seluruh dunia {{world}} % (jika agensi menutup / jika Unreal menutup).",
+      "byDefault": "default",
+      "editApp": "Edit pengajuan",
+      "interested": "Proyek yang diminati",
+      "contract": "Kontrak bertanda tangan",
+      "contractView": "Lihat PDF",
+      "contractNone": "belum diunggah",
+      "contractUpload": "Unggah PDF",
+      "contractReplace": "Ganti",
+      "contractUploaded": "Kontrak bertanda tangan disimpan. Agensi kini dapat mengunduhnya di portal.",
+      "contractBadFile": "Unggah PDF maksimal 20 MB.",
+      "cStatusPending": "Menunggu agensi",
+      "cStatusUploaded": "Diunggah agensi · perlu ditandatangani balik",
+      "cStatusDone": "Sudah ditandatangani balik",
+      "agencyCopy": "Salinan agensi",
+      "countersigned": "Ditandatangani balik",
+      "uploadFinal": "Unggah versi final",
+      "ref": "Ref WhatsApp",
+      "refHint": "Kode di akhir pesan WhatsApp dari klien yang datang lewat tautannya. Cari di atas untuk menemukan agensinya.",
+      "refCopied": "Kode disalin"
     }
   },
   "footer": {
@@ -3063,7 +3120,7 @@
       "kit": "Materi penjualan",
       "requests": "Permintaan",
       "training": "Pelatihan",
-      "contract": "Kontrak",
+      "contract": "Perjanjian hukum",
       "groupWork": "Jual"
     },
     "kpi": {
@@ -3098,7 +3155,7 @@
       "availableN": "Tersedia: {{count}}",
       "soldOut": "Habis terjual",
       "soldN": "Terjual: {{count}}",
-      "copyLink": "Salin tautan untuk klien",
+      "copyLink": "Salin tautan referal untuk klien",
       "pack": "Paket agensi",
       "dossier": "Brosur",
       "tour": "Tur 3D",
@@ -3117,7 +3174,8 @@
       "onSale": "Dijual",
       "photos": "Foto (Drive)",
       "photosType": "Foto {{label}}",
-      "plans": "Denah (Drive)"
+      "plans": "Denah (Drive)",
+      "yourCommission": "Komisi Anda"
     },
     "clients": {
       "search": "Cari klien, email, proyek…",
@@ -3128,7 +3186,11 @@
     },
     "stats": {
       "sub": "Hasil dari tautan pribadi Anda dan tautan proyek yang Anda bagikan.",
-      "catalog": "Katalog umum"
+      "catalog": "Katalog umum",
+      "visitsTitle": "Kunjungan ke tautan Anda",
+      "visitsLine": "Total: {{total}} · 30 hari terakhir: {{d30}}",
+      "visitsN_one": "{{count}} kunjungan",
+      "visitsN_other": "{{count}} kunjungan"
     },
     "commissions": {
       "sub": "Estimasi komisi Anda berdasarkan harga di website untuk setiap proyek dan persentase Anda.",
@@ -3307,7 +3369,7 @@
       "p1": "Daftarkan klien di \"Klien saya\" sebelum ia menghubungi Unreal.",
       "p2": "Presentasikan proyek dengan materi resmi dan tautan Anda; minta panggilan atau presentasi online dengan tim bila perlu.",
       "p3": "Konfirmasi ketersediaan unit dan klien memesannya.",
-      "p4": "Penandatanganan kontrak di hadapan notaris (PPAT) di Indonesia; biaya notaris pembeli sekitar 1% dari harga. Klien bisa melakukan due diligence dengan pengacaranya.",
+      "p4": "Penandatanganan kontrak di hadapan notaris (PPAT) di Indonesia; biaya notaris pembeli sekitar 1% dari harga. Unreal Studio menangani seluruh proses hukum dari awal hingga akhir.",
       "p5": "Pembayaran bertahap sesuai progres konstruksi; data bank diberikan saat penandatanganan.",
       "p6": "Diserahkan selesai dengan semua perlengkapan tetap (dapur, kamar mandi, lemari, kolam). Perabot untuk disewakan adalah paket terpisah.",
       "rulesTitle": "Aturan emas",
@@ -3336,7 +3398,23 @@
       "you": "Mempromosikan dengan biaya sendiri, mendaftarkan setiap investor, mengatur kunjungan (dan memandunya dalam model {{close}}%), serta memberi informasi yang benar tanpa menjanjikan hal di luar informasi Unreal.",
       "usTitle": "Unreal berkomitmen untuk",
       "us": "Memberikan informasi yang benar dan terbaru tentang ketersediaan, pemesanan, dan harga, memfasilitasi akses properti untuk kunjungan, menangani seluruh sisi hukum penjualan, dan membayar komisi yang disepakati.",
-      "history": "Permintaan kontrak Anda"
+      "history": "Permintaan kontrak Anda",
+      "signedDownload": "Unduh perjanjian bertanda tangan",
+      "stepsTitle": "Perjanjian kerja sama",
+      "step1": "1 · Unduh perjanjian",
+      "step1Sub": "Baca, isi, dan tanda tangani (manual atau tanda tangan digital).",
+      "step1Btn": "Unduh templat perjanjian",
+      "step2": "2 · Unggah salinan yang sudah ditandatangani",
+      "step2Sub": "PDF atau foto (JPG/PNG) perjanjian yang ditandatangani, maks. 20 MB. Hanya Unreal Studio yang melihatnya.",
+      "step2Btn": "Unggah perjanjian bertanda tangan",
+      "step2Again": "Unggah ulang",
+      "step2Done": "Diterima pada {{date}}. Kami akan menandatanganinya dan mengembalikannya di sini.",
+      "uploading": "Mengunggah…",
+      "step3": "3 · Perjanjian ditandatangani kedua pihak",
+      "step3Sub": "Menunggu tanda tangan kami. Akan muncul di sini untuk diunduh.",
+      "step3Done": "Ditandatangani kedua pihak · {{date}}",
+      "uploadedOk": "Diterima! Kami akan memberi tahu Anda setelah ditandatangani kedua pihak.",
+      "badFile": "Unggah PDF, JPG atau PNG maksimal 20 MB."
     }
   },
   "reportOpen": {

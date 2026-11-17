@@ -8,11 +8,12 @@ import React from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth-context';
+import { supabase } from '../lib/supabase';
 import AdminSidebar, { NavItem } from '../components/AdminSidebar';
 import BrandLogo from '../components/BrandLogo';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useCurrency } from '../App';
-import { CURRENCIES } from '../constants';
+import { CURRENCIES, agencyContact } from '../constants';
 import { useAgencyData } from '../components/agency/useAgencyData';
 import { portalPath } from '../lib/portalUrls';
 import AgencyOverview from '../components/agency/AgencyOverview';
@@ -50,6 +51,9 @@ export default function AgenciasDashboard() {
   const data = useAgencyData(user?.id, t('agenciasDashboard.accountNotLinked'));
   const [sp, setSp] = useSearchParams();
   const [menuOpen, setMenuOpen] = React.useState(false);
+  // acceso al portal → ficha de la agencia en el admin (último acceso + accesos 7/30 días), como client_mark_login
+  const pid = data.partner?.status === 'approved' ? data.partner.id : null;
+  React.useEffect(() => { if (pid) void supabase.rpc('agency_mark_login').then(() => {}, () => {}); }, [pid]);
   const view: View = (VIEWS as readonly string[]).includes(sp.get('view') ?? '') ? (sp.get('view') as View) : 'dashboard';
 
   const go = (v: string, extra: Record<string, string> = {}) => {
@@ -132,7 +136,7 @@ export default function AgenciasDashboard() {
               <span className="material-symbols-outlined text-4xl text-primary/20">{blockedKey === 'pending' ? 'hourglass_top' : 'block'}</span>
               <h1 className="text-2xl font-serif text-primary mt-2">{t(`agencyFunnel.blocked.${blockedKey}.title`)}</h1>
               <p className="text-sm text-primary/60 mt-2">{t(`agencyFunnel.blocked.${blockedKey}.body`)}</p>
-              <a href="mailto:hello@unrealstudiobali.com" className="inline-block mt-4 text-sm font-bold text-primary underline">hello@unrealstudiobali.com</a>
+              <a href={`mailto:${agencyContact(partner?.market).email}`} className="inline-block mt-4 text-sm font-bold text-primary underline">{agencyContact(partner?.market).email}</a>
             </div>
           )}
           {!loading && partner && active && (
@@ -149,7 +153,7 @@ export default function AgenciasDashboard() {
               {view === 'stats' && <AgencyStats data={data} />}
               {view === 'commissions' && <AgencyCommissions data={data} go={go} />}
               {view === 'profile' && <AgencyProfile data={data} email={user.email} />}
-              {view === 'help' && <AgencyHelp agencyName={partner.agency_name} close={Number(partner.commission_close_pct ?? 0)} referral={Number(partner.commission_referral_pct ?? partner.commission_close_pct ?? 0)} />}
+              {view === 'help' && <AgencyHelp market={partner.market} agencyName={partner.agency_name} close={Number(partner.commission_close_pct ?? 0)} referral={Number(partner.commission_referral_pct ?? partner.commission_close_pct ?? 0)} />}
             </>
           )}
         </div>
