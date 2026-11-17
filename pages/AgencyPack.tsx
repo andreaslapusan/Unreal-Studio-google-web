@@ -6,7 +6,7 @@ import { localizeMonthYear, propertyTypeLabel } from '../lib/projectTerms';
 import { translateStatus } from '../lib/statusI18n';
 import BrandLogo from '../components/BrandLogo';
 import { useCurrency } from '../App';
-import { fmtDate, shortProjectName } from '../components/agency/useAgencyData';
+import { fmtDate, shortProjectName, renderLinks, type RenderLink } from '../components/agency/useAgencyData';
 import { reportHref } from '../lib/reportFiles';
 
 interface ProjectAgencyRow {
@@ -78,6 +78,7 @@ interface ProjectAgencyRow {
   brochure_url: string | null;
   drive_brochure_folder_url: string | null;
   drive_renders_url: string | null;
+  drive_renders_links: RenderLink[] | null;
   drive_2d_plans_url: string | null;
   drive_permits_url: string | null;
   drive_legal_url: string | null;
@@ -303,7 +304,8 @@ const AgencyPack: React.FC = () => {
             <Kicker>{t('agencyPack.sectionDocs')}</Kicker>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
               <DocRow href={project.brochure_url} icon="picture_as_pdf">{t('agencyPack.docBrochure')}</DocRow>
-              <DocRow href={project.drive_renders_url} icon="photo_library">{t('agencyPack.docRenders')}</DocRow>
+              {renderLinks(project)?.map((l) => <DocRow key={l.url} href={l.url} icon="photo_library">{t('agencyPortal.projects.photosType', { label: l.label })}</DocRow>)
+                ?? <DocRow href={project.drive_renders_url} icon="photo_library">{t('agencyPack.docRenders')}</DocRow>}
               <DocRow href={project.drive_2d_plans_url} icon="architecture">{t('agencyPack.doc2dPlans')}</DocRow>
               <DocRow href={project.drive_permits_url} icon="verified">{t('agencyPack.docPermits')}</DocRow>
               <DocRow href={project.drive_legal_url} icon="gavel">{t('agencyPack.docLegal')}</DocRow>

@@ -3115,6 +3115,7 @@
       "soldN_other": "{{count}} sold",
       "onSale": "For sale",
       "photos": "Photos (Drive)",
+      "photosType": "Photos {{label}}",
       "plans": "Plans (Drive)"
     },
     "clients": {

@@ -63,7 +63,7 @@ interface WebProject extends ProjectInfo {
   is_hidden: boolean | null;
   visibility_status: string | null;
 }
-const WEB_COLS = 'id, slug, name, image, investor_price, price_currency, bedrooms, completion_date, is_hidden, visibility_status, status, location, completion_percent, updated_at, construction_update_url, construction_update_date, brochure_url, brochures, drive_renders_url, drive_2d_plans_url, drive_brochure_folder_url, video_url, walkthrough_url, tenure, years_contract, sort_order'; // sort_order: PostgREST 42703 if an rpc orders by a column not selected
+const WEB_COLS = 'id, slug, name, image, investor_price, price_currency, bedrooms, completion_date, is_hidden, visibility_status, status, location, completion_percent, updated_at, construction_update_url, construction_update_date, brochure_url, brochures, drive_renders_url, drive_renders_links, drive_2d_plans_url, drive_brochure_folder_url, video_url, walkthrough_url, tenure, years_contract, sort_order'; // sort_order: PostgREST 42703 if an rpc orders by a column not selected
 
 /** Misma regla que el catálogo público (pages/Projects.tsx): ni ocultas ni sold out. */
 export const isOnSaleOnWeb = (p: { is_hidden: boolean | null; visibility_status: string | null }) =>
@@ -74,6 +74,14 @@ export const fetchAgencyProjectFilter = async () => {
   const { data } = await supabase.rpc('agency_allowed_projects');
   const pats = Array.isArray(data) ? data.map((x) => String(x).toLowerCase()) : null;
   return (name: string) => !pats || pats.some((k) => name.toLowerCase().includes(k));
+};
+
+/** Una carpeta de fotos de Drive por tipo de unidad (p.ej. Deseo Type A/B/C). */
+export interface RenderLink { label: string; url: string }
+/** Carpetas por tipo si hay; si no, null (se usa drive_renders_url). */
+export const renderLinks = (p?: { drive_renders_links?: RenderLink[] | null } | null) => {
+  const l = (p?.drive_renders_links ?? []).filter((x) => x?.url);
+  return l.length ? l : null;
 };
 
 /** Campos de la tabla projects (misma slug que properties) para material y novedades. */
@@ -88,6 +96,7 @@ export interface ProjectInfo {
   brochure_url: string | null;
   brochures: Record<string, string> | null;
   drive_renders_url: string | null;
+  drive_renders_links: RenderLink[] | null;
   drive_2d_plans_url: string | null;
   drive_brochure_folder_url: string | null;
   video_url: string | null;

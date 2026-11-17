@@ -10,7 +10,7 @@ import i18n, { preloadAllLocales } from '../../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import { projectSeoSlug } from '../../lib/projectUrl';
 import { useCurrency } from '../../App';
-import { AgencyData, PropertyRow, availableUnits, copyText, partnerParam, shortProjectName } from './useAgencyData';
+import { AgencyData, PropertyRow, availableUnits, copyText, partnerParam, shortProjectName, renderLinks } from './useAgencyData';
 import { card, btnGhost, Empty, SectionTitle } from './ui';
 import { reportHref } from '../../lib/reportFiles';
 
@@ -38,7 +38,8 @@ export default function AgencyKit({ data }: { data: AgencyData }) {
   if (!brochures.length && (info?.brochure_url || p.brand_pdf_url)) brochures.push(['', (info?.brochure_url || p.brand_pdf_url) as string]);
   const files: { key: string; icon: string; label: string; url: string | null | undefined }[] = [
     ...brochures.map(([l, u]) => ({ key: `b-${l}`, icon: 'picture_as_pdf', label: l ? t('agencyPortal.kit.brochure', { lang: l.toUpperCase() }) : t('agencyPortal.projects.dossier'), url: u })),
-    { key: 'renders', icon: 'image', label: t('agencyPortal.kit.renders'), url: info?.drive_renders_url },
+    ...(renderLinks(info)?.map((l) => ({ key: `renders-${l.label}`, icon: 'image', label: t('agencyPortal.projects.photosType', { label: l.label }), url: l.url }))
+      ?? [{ key: 'renders', icon: 'image', label: t('agencyPortal.kit.renders'), url: info?.drive_renders_url }]),
     { key: 'plans', icon: 'architecture', label: t('agencyPortal.kit.plans'), url: info?.drive_2d_plans_url },
     { key: 'folder', icon: 'folder_open', label: t('agencyPortal.kit.folder'), url: info?.drive_brochure_folder_url },
     { key: 'video', icon: 'play_circle', label: t('agencyPortal.kit.video'), url: info?.video_url || p.drone_video_url },

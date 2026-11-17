@@ -3116,6 +3116,7 @@
       "soldN_other": "{{count}} terjual",
       "onSale": "Dijual",
       "photos": "Foto (Drive)",
+      "photosType": "Foto {{label}}",
       "plans": "Denah (Drive)"
     },
     "clients": {

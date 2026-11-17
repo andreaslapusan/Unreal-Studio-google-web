@@ -1,16 +1,102 @@
 [
-  {"outlet": "Archello", "url": "https://archello.com/brand/unreal-studio-bali", "logo": "/featured/logos/archello.svg"},
-  {"outlet": "Issuu", "url": "https://issuu.com/unrealstudiobali/docs/venaso_villas_by_unreal_studio_bali_-_press_kit_e", "logo": "/featured/logos/issuu.svg"},
-  {"outlet": "Qwoted", "url": "https://app.qwoted.com/press_releases/unreal-studio-bali-completes-venaso-villas-in-tabanan", "logo": "/featured/logos/qwoted.svg"},
-  {"outlet": "Arsitag", "url": "https://www.arsitag.com/profile/unreal-studio-bali", "logo": "/featured/logos/arsitag.svg"},
-  {"outlet": "Behance", "url": "https://www.behance.net/unrealpresso", "logo": "/featured/logos/behance.svg"},
-  {"outlet": "Pinterest", "url": "https://www.pinterest.com/unrealstudiobali/", "logo": "/featured/logos/pinterest.svg"},
-  {"outlet": "Archinect", "url": "https://archinect.com/firms/cover/150574583/unreal-studio-bali", "logo": "/featured/logos/archinect.png"},
-  {"outlet": "firmenpresse", "url": "https://www.firmenpresse.de/pressinfo2286337.html", "logo": "/featured/logos/firmenpresse.png"},
-  {"outlet": "Pressbox", "url": "https://pressbox.com/press-releases/unreal-studio-bali-completes-venaso-villas-in-tabanan", "logo": "/featured/logos/pressbox.png"},
-  {"outlet": "Habitissimo", "url": "https://www.habitissimo.es/pro/unreal-studio-madrid", "logo": "/featured/logos/habitissimo.png"},
-  {"outlet": "Cronoshare", "url": "https://www.cronoshare.com/croner-5656117-unreal-studio-madrid", "logo": "/featured/logos/cronoshare.png"},
-  {"outlet": "Owler", "url": "https://www.owler.com/company/unrealstudiobali", "logo": "/featured/logos/owler.png"},
-  {"outlet": "Homify", "url": "https://www.homify.com/professionals/10055104/unreal-studio-bali", "logo": "/featured/logos/homify.svg"},
-  {"outlet": "Contemporist", "url": "https://www.contemporist.com/these-villas-were-designed-to-put-the-pool-at-eye-level-from-the-sofa/", "logo": "/featured/logos/contemporist.svg"}
+  {
+    "outlet": "Archello",
+    "url": "https://archello.com/brand/unreal-studio-bali",
+    "logo": "/featured/logos/archello.svg"
+  },
+  {
+    "outlet": "Issuu",
+    "url": "https://issuu.com/unrealstudiobali/docs/venaso_villas_by_unreal_studio_bali_-_press_kit_e",
+    "logo": "/featured/logos/issuu.svg"
+  },
+  {
+    "outlet": "Qwoted",
+    "url": "https://app.qwoted.com/press_releases/unreal-studio-bali-completes-venaso-villas-in-tabanan",
+    "logo": "/featured/logos/qwoted.svg"
+  },
+  {
+    "outlet": "Arsitag",
+    "url": "https://www.arsitag.com/profile/unreal-studio-bali",
+    "logo": "/featured/logos/arsitag.svg"
+  },
+  {
+    "outlet": "Behance",
+    "url": "https://www.behance.net/unrealpresso",
+    "logo": "/featured/logos/behance.svg"
+  },
+  {
+    "outlet": "Pinterest",
+    "url": "https://www.pinterest.com/unrealstudiobali/",
+    "logo": "/featured/logos/pinterest.svg"
+  },
+  {
+    "outlet": "Archinect",
+    "url": "https://archinect.com/firms/cover/150574583/unreal-studio-bali",
+    "logo": "/featured/logos/archinect.png"
+  },
+  {
+    "outlet": "firmenpresse",
+    "url": "https://www.firmenpresse.de/pressinfo2286337.html",
+    "logo": "/featured/logos/firmenpresse.png"
+  },
+  {
+    "outlet": "Pressbox",
+    "url": "https://pressbox.com/press-releases/unreal-studio-bali-completes-venaso-villas-in-tabanan",
+    "logo": "/featured/logos/pressbox.png"
+  },
+  {
+    "outlet": "Habitissimo",
+    "url": "https://www.habitissimo.es/pro/unreal-studio-madrid",
+    "logo": "/featured/logos/habitissimo.png"
+  },
+  {
+    "outlet": "Cronoshare",
+    "url": "https://www.cronoshare.com/croner-5656117-unreal-studio-madrid",
+    "logo": "/featured/logos/cronoshare.png"
+  },
+  {
+    "outlet": "Owler",
+    "url": "https://www.owler.com/company/unrealstudiobali",
+    "logo": "/featured/logos/owler.png"
+  },
+  {
+    "outlet": "Homify",
+    "url": "https://www.homify.com/professionals/10055104/unreal-studio-bali",
+    "logo": "/featured/logos/homify.svg"
+  },
+  {
+    "outlet": "Contemporist",
+    "url": "https://www.contemporist.com/these-villas-were-designed-to-put-the-pool-at-eye-level-from-the-sofa/",
+    "logo": "/featured/logos/contemporist.svg"
+  },
+  {
+    "outlet": "99.co Indonesia",
+    "url": "https://www.99.co/id/properti/vila-dijual-3miliar-kuta-selatan-1015544834",
+    "logo": "/featured/logos/99-co-indonesia.png"
+  },
+  {
+    "outlet": "PIXNET",
+    "url": "https://unrealstudiobali.pixnet.net/blog",
+    "logo": "/featured/logos/pixnet.svg"
+  },
+  {
+    "outlet": "StarOfService",
+    "url": "https://www.starofservice.es/p/f6545a43-ec38-09cd-7040-68a26bf40504",
+    "logo": "/featured/logos/starofservice.png"
+  },
+  {
+    "outlet": "Rankia",
+    "url": "https://www.rankia.com/usuarios/unrealstudiobali",
+    "logo": "/featured/logos/rankia.svg"
+  },
+  {
+    "outlet": "vc.ru",
+    "url": "https://vc.ru/id6183517",
+    "logo": "/featured/logos/vc-ru.png"
+  },
+  {
+    "outlet": "Cestovatel.cz",
+    "url": "https://cestovatel.cz/clanky/vista-mar-villas-unreal-studio-bali/",
+    "logo": "/featured/logos/cestovatel-cz.png"
+  }
 ]

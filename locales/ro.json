@@ -3134,6 +3134,7 @@
       "soldN_few": "{{count}} vândute",
       "onSale": "De vânzare",
       "photos": "Fotografii (Drive)",
+      "photosType": "Fotografii {{label}}",
       "plans": "Planuri (Drive)"
     },
     "clients": {
