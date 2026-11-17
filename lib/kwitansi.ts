@@ -226,6 +226,8 @@ export function renderKwitansiHtml(d: KwitansiData): string {
 
   return `
 <style>
+/* La firma nunca se sale de la tarjeta (sello a la izquierda ocupa 86px) */
+.kwrcpt .kwsig{max-width:calc(100% - 86px) !important;object-fit:contain;object-position:left bottom}
 @media (max-width:520px){
   .kwrcpt{padding:16px !important}
   .kwrcpt .kwcard{padding:20px 18px !important}
@@ -270,9 +272,9 @@ export function renderKwitansiHtml(d: KwitansiData): string {
         ${dueStr ? `<div style="font-size:11px;color:rgba(63,35,5,.5);margin-bottom:6px">${esc(L.due)}: ${esc(dueStr)}</div>` : ''}
         <!-- Sello a la IZQUIERDA + firma GRANDE a la derecha, pisándolo un poco
              por su parte izquierda. Todo POR ENCIMA de la línea (no se corta). -->
-        <div style="position:relative;height:118px;margin-bottom:6px;text-align:left">
+        <div class="kwsigbox" style="position:relative;height:118px;margin-bottom:6px;text-align:left;overflow:hidden">
           ${d.stampUrl ? `<img src="${esc(d.stampUrl)}" alt="" style="position:absolute;left:4px;top:10px;max-height:98px;max-width:118px;opacity:.88" />` : ''}
-          ${d.signatureUrl ? `<img src="${esc(d.signatureUrl)}" alt="" style="position:absolute;left:86px;top:16px;max-height:96px;max-width:190px" />` : ''}
+          ${d.signatureUrl ? `<img src="${esc(d.signatureUrl)}" alt="" class="kwsig" style="position:absolute;left:86px;top:16px;max-height:96px;max-width:190px" />` : ''}
         </div>
         <div style="border-top:1px solid rgba(63,35,5,.4);padding-top:8px;font-size:12px;font-weight:700">Unreal Studio</div>
       </td>

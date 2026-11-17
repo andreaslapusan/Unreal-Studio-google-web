@@ -1433,10 +1433,10 @@
       "assignmentInactive": "Inactive",
       "assignmentInactiveBadge": "Inactive",
       "assignmentActiveHint": "Inactive: all data and payments are kept, but the client does not see this project in their portal and no automatic notices are sent.",
-      "assignmentInactivateBtn": "Deactivate",
-      "assignmentActivateBtn": "Activate",
-      "assignmentInactivateConfirm": "Deactivate this assignment? Data and payments are kept, but the client will no longer see it in their portal and will not receive automatic notices.",
-      "assignmentActivateConfirm": "Activate this assignment? The client will see it again in their portal and automatic notices will resume."
+      "autoEmailsState": "Automatic emails",
+      "autoEmailsStateOn": "On",
+      "autoEmailsStateOff": "Paused",
+      "autoEmailsStateHint": "Paused (red): no AUTOMATIC email is sent to this client (payment reminders, new construction report notices, welcome…). Emails you send manually from the admin still go out after confirming."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

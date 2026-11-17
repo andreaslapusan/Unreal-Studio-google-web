@@ -513,7 +513,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
               <input type="date" min="2000-01-01" max="2099-12-31" className="px-3 py-2 bg-gray-50 border rounded-lg" value={kw.date} onChange={(e) => setKw((pv: any) => ({ ...pv, date: e.target.value }))} />
             </div>
             <div className="text-[11px] text-gray-400">{t('admin.pay.amountInFigures')}: <b>{formatFigure(Number(kw.amount) || 0, kw.currency)}</b></div>
-            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(kwitansiHtml(kw.displayNo, !!kw.signed) || '') }} />
+            <div className="border rounded-xl p-3 bg-gray-50 max-h-[40vh] overflow-y-auto overflow-x-hidden" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(kwitansiHtml(kw.displayNo, !!kw.signed) || '', { FORCE_BODY: true }) }} />
             {(() => {
               const kwReceived = !!units.flatMap((u) => u.payments).find((p) => p.id === kw.payId)?.received;
               return (

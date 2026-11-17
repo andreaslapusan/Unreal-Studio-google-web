@@ -1433,10 +1433,10 @@
       "assignmentInactive": "Inactiva",
       "assignmentInactiveBadge": "Inactiva",
       "assignmentActiveHint": "Inactiva: se conservan todos los datos y pagos, pero el cliente no ve este proyecto en su portal y no se envía ningún aviso automático.",
-      "assignmentInactivateBtn": "Inactivar",
-      "assignmentActivateBtn": "Activar",
-      "assignmentInactivateConfirm": "¿Inactivar esta asignación? Se conservan los datos y pagos, pero el cliente dejará de verla en su portal y no recibirá avisos automáticos.",
-      "assignmentActivateConfirm": "¿Activar esta asignación? El cliente volverá a verla en su portal y se reanudarán los avisos automáticos."
+      "autoEmailsState": "Correos automáticos",
+      "autoEmailsStateOn": "Activos",
+      "autoEmailsStateOff": "En pausa",
+      "autoEmailsStateHint": "En pausa (rojo): no sale ningún correo AUTOMÁTICO a este cliente (recordatorios de pago, avisos de nuevo reporte de obra, bienvenida…). Los que envíes tú a mano desde el admin sí salen, tras confirmar."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",

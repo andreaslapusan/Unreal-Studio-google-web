@@ -569,14 +569,6 @@ const AMENITIES_LIST = [
     const html = `<p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#3F2305">${greeting}</p><div style="font-size:15px;line-height:1.7;color:#3F2305;white-space:pre-wrap;word-break:break-word">${body}</div>`;
     openEmailPreview({ to: email, subject: TEAM_TPLS.checkin.subject[lg] || TEAM_TPLS.checkin.subject.es, html, sentMsg: (ems) => t('admin.dash.welcomeSent', { email: ems.join(', ') }), userId, lang: lg });
   };
-  const toggleEmployeeActive = async (id: string, value: boolean) => {
-    await supabase.from('employees').update({ active: value }).eq('id', id);
-    if (value) {
-      const { data: emp } = await supabase.from('employees').select('id, email, full_name, password, active, preferred_language, welcomed_at').eq('id', id).maybeSingle();
-      await maybeSendEmployeeWelcome(emp as any);
-    }
-    await loadEmployees();
-  };
   // Borrar empleado desde la tarjeta (mismo estándar que clientes: confirmar).
   const deleteEmployee = async (emp: { id: string; full_name: string | null; email: string }) => {
     if (!window.confirm(t('fix.emp.confirmDelete', { name: emp.full_name || emp.email, defaultValue: `¿Borrar a ${emp.full_name || emp.email}? No se puede deshacer.` }))) return;
@@ -1883,26 +1875,6 @@ const handleUnassignProject = async (clientId: string, assignmentId: string) => 
 const UNIT_TYPES = ['A', 'B', 'C', 'D'] as const;
 const isDeseoAssignment = (a: any) => /deseo/i.test(a?.project_name || '') || !!a?.unit_type;
 
-// Inactivar/activar asignación: conserva TODO (datos y pagos); inactiva = fuera del portal del cliente y sin envíos automáticos.
-const handleToggleAssignmentActive = async () => {
-    if (!editingAssignment) return;
-    const next = (editingAssignment.assignment as any).is_active === false;
-    if (!window.confirm(t(next ? 'admin.dash.assignmentActivateConfirm' : 'admin.dash.assignmentInactivateConfirm'))) return;
-    try {
-        setUploading(true);
-        const { data, error } = await supabase.rpc('admin_set_assignment_active', { p_assignment_id: editingAssignment.assignment.id, p_active: next });
-        if (error) throw error;
-        if (data && !data.success) throw new Error(data.error);
-        setEditingAssignment({ ...editingAssignment, assignment: { ...editingAssignment.assignment, is_active: next } as any });
-        await loadData();
-    } catch (error) {
-        console.error('Error toggling assignment:', error);
-        alert(t('admin.dash.updateAssignmentError'));
-    } finally {
-        setUploading(false);
-    }
-};
-
 const handleEditAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAssignment) return;
@@ -1927,6 +1899,13 @@ const handleEditAssignment = async (e: React.FormEvent) => {
         });
         if (error) throw error;
         if (data && !data.success) throw new Error(data.error);
+        // Activa/inactiva: estado local del interruptor, se guarda SOLO aquí (inactiva = conserva datos y pagos,
+        // fuera del portal del cliente y sin envíos automáticos).
+        {
+            const r = await supabase.rpc('admin_set_assignment_active', { p_assignment_id: editingAssignment.assignment.id, p_active: (editingAssignment.assignment as any).is_active !== false });
+            if (r.error) throw r.error;
+            if (r.data && !r.data.success) throw new Error(r.data.error);
+        }
         if (isDeseoAssignment(editingAssignment.assignment)) {
             const r = await supabase.rpc('admin_set_unit_type', { p_assignment_id: editingAssignment.assignment.id, p_type: editingAssignment.assignment.unit_type || '' });
             if (r.error) throw r.error;
@@ -2439,7 +2418,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h3 className="text-base sm:text-lg font-bold text-primary break-words">{client.name}</h3>
                   {(() => { const st = (client as any).status || (client.is_active ? 'active' : 'inactive'); return (
-                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${st === 'draft' ? 'bg-amber-50 text-amber-600' : st === 'active' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>{st === 'draft' ? t('admin.clientsTab.draft', { defaultValue: 'Draft' }) : st === 'active' ? t('admin.clientsTab.active') : t('admin.clientsTab.inactive')}</span>
                   ); })()}
                   {client.auto_emails_enabled === false && (
                     <span title={t('admin.dash.autoEmailsHint')} className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-flex items-center gap-1 bg-red-50 text-red-600">
@@ -2515,17 +2494,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             {client.projects && client.projects.length > 0 ? (
               <div className="space-y-2">
                 {client.projects.map((cp: any, cpIdx: number) => (
-                  <div key={cp.id || cpIdx} className={`flex justify-between items-center rounded-xl px-4 py-3 border ${cp.is_active === false ? 'bg-gray-100 border-gray-200' : 'bg-white border-gray-100'}`}>
-                    <div className={`flex items-center gap-4 flex-wrap ${cp.is_active === false ? 'opacity-50 grayscale' : ''}`}>
+                  <div key={cp.id || cpIdx} className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 rounded-xl px-4 py-3 border ${cp.is_active === false ? 'bg-gray-100 border-gray-200' : 'bg-white border-gray-100'}`}>
+                    <div className={`flex items-center gap-x-4 gap-y-2 flex-wrap ${cp.is_active === false ? 'opacity-70' : ''}`}>
                       <span className="font-bold text-primary text-sm">{cp.project_name || cp.project_id}</span>
-                      {cp.is_active === false && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-gray-300 text-gray-700">{t('admin.dash.assignmentInactiveBadge')}</span>}
+                      {cp.is_active === false && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-100 text-red-700">{t('admin.dash.assignmentInactiveBadge')}</span>}
                       {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                       {cp.unit_type && <span title={t(`admin.unitType.${cp.unit_type}`)} className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{t('admin.unitType.badge', { type: cp.unit_type })}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
                       {cp.purchase_date && <span className="text-[10px] text-gray-400 font-bold">{formatDate(cp.purchase_date)}</span>}
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${cp.status === 'Completado' ? 'bg-green-100 text-green-700' : cp.status === 'Pagado' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'}`}>{translateStatus(cp.status, t)}</span>
                     </div>
-                    <div className="flex gap-1.5 shrink-0 items-center">
+                    <div className="flex gap-1.5 shrink-0 items-center self-end sm:self-auto">
                         {cp.drive_folder_url && <a href={cp.drive_folder_url} target="_blank" rel="noopener noreferrer" className="text-amber-700 bg-amber-50 hover:bg-amber-100 transition p-2 rounded-lg" title={t('admin.dash.driveFolder', { defaultValue: 'Carpeta de documentación (Drive)' })}><span className="material-symbols-outlined text-xl leading-none">folder</span></a>}
                         <button onClick={() => { setPaymentsFilter({ name: cp.project_name, unit: cp.unit_number ?? null }); setPaymentsClient(client); }} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('fix.adm.paymentsCalendar')}><span className="material-symbols-outlined text-xl leading-none">event</span></button>
                         <button onClick={() => setEditingAssignment({ clientId: client.id, clientName: client.name, assignment: { ...cp } })} className="text-primary bg-primary/5 hover:bg-primary/15 transition p-2 rounded-lg" title={t('admin.dash.editAssignmentTitle')}><span className="material-symbols-outlined text-xl leading-none">edit</span></button>
@@ -2720,9 +2699,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                    const on = feats[k] !== false;
                    return (
                      <button key={k} type="button" onClick={() => setBrandKey('client_features', { ...feats, [k]: !on })}
-                       className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition ${on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                       className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition ${on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-600'}`}>
                        {label}
-                       <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+                       <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition ${on ? 'bg-green-500 justify-end' : 'bg-red-500 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
                      </button>
                    );
                  })}
@@ -2883,10 +2862,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="text-base sm:text-lg font-bold text-primary break-words">{e.full_name || e.email}</h3>
-                        <button onClick={() => toggleEmployeeActive(e.id, !e.active)}
-                          className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full transition ${e.active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                        {/* Solo indicador: se cambia en el editor del empleado y se guarda con "Guardar" */}
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${e.active ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
                           {e.active ? t('admin.dash.activeStatus') : t('admin.dash.inactiveStatus')}
-                        </button>
+                        </span>
                       </div>
                       <p className="text-sm text-gray-500 break-words">{e.email}</p>
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -3818,12 +3797,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.draftHint', { defaultValue: 'Activo = puede entrar y cuenta en Finanzas. Inactivo = no entra, sí cuenta. Draft = perfil de prueba, no entra ni cuenta.' })}</p>
         </div>
         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-          <button type="button" onClick={() => setCurrentClient((prev) => ({ ...prev, auto_emails_enabled: prev.auto_emails_enabled === false }))} aria-pressed={currentClient.auto_emails_enabled === false}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${currentClient.auto_emails_enabled === false ? 'bg-red-50 border-red-200 text-red-600' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
-            <span className="text-left">{t('admin.dash.autoEmails')}</span>
-            <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${currentClient.auto_emails_enabled === false ? 'bg-red-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+          <button type="button" role="switch" onClick={() => setCurrentClient((prev) => ({ ...prev, auto_emails_enabled: prev.auto_emails_enabled === false }))} aria-checked={currentClient.auto_emails_enabled !== false}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${currentClient.auto_emails_enabled === false ? 'bg-red-50 border-red-200 text-red-600' : 'bg-green-50 border-green-200 text-green-700'}`}>
+            <span className="text-left">{t('admin.dash.autoEmailsState')}: {currentClient.auto_emails_enabled === false ? t('admin.dash.autoEmailsStateOff') : t('admin.dash.autoEmailsStateOn')}</span>
+            <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${currentClient.auto_emails_enabled === false ? 'bg-red-500 justify-start' : 'bg-green-500 justify-end'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
           </button>
-          <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.autoEmailsHint')}</p>
+          <p className="text-[10px] text-gray-400 mt-2">{t('admin.dash.autoEmailsStateHint')}</p>
         </div>
         {/* Permisos POR CLIENTE: heredan Configuración; lo global-OFF queda bloqueado
             (solo se activa en Configuración); lo global-ON se puede desactivar aquí. */}
@@ -3839,9 +3818,9 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
               return (
                 <button key={k} type="button" disabled={!globalOn}
                   onClick={() => setCurrentClient({ ...currentClient, feature_overrides: { ...ov, [k]: !clientOn } } as any)}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${!globalOn ? 'bg-gray-100 border-gray-200 text-gray-300 cursor-not-allowed' : on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl border text-xs font-bold transition ${!globalOn ? 'bg-gray-100 border-gray-200 text-gray-300 cursor-not-allowed' : on ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-600'}`}>
                   <span className="text-left">{label}{!globalOn && <span className="block text-[9px] font-normal text-gray-400 normal-case">{t('admin.dash.clientPermsLocked')}</span>}</span>
-                  <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${on ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
+                  <span className={`w-9 h-5 rounded-full flex items-center px-0.5 transition shrink-0 ${on ? 'bg-green-500 justify-end' : 'bg-red-500 justify-start'}`}><span className="w-4 h-4 bg-white rounded-full" /></span>
                 </button>
               );
             })}
@@ -3932,23 +3911,22 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <ParticipantsPicker holders={(clients.find((c) => c.id === editingAssignment.clientId)?.holders) || []} value={(editingAssignment.assignment as any).holder_participants} onChange={(v) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, holder_participants: v} as any})} t={t} />
                 <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4">
                     <div className="pr-4">
-                        <p className="text-sm font-bold text-primary">{t('admin.dash.reportsLabel', { defaultValue: 'Reportes de obra' })}: <span className={(editingAssignment.assignment as any).reports_enabled !== false ? 'text-emerald-600' : 'text-gray-400'}>{(editingAssignment.assignment as any).reports_enabled !== false ? t('admin.dash.reportsActive', { defaultValue: 'Activos' }) : t('admin.dash.reportsPaused', { defaultValue: 'Pausados' })}</span></p>
+                        <p className="text-sm font-bold text-primary">{t('admin.dash.reportsLabel', { defaultValue: 'Reportes de obra' })}: <span className={(editingAssignment.assignment as any).reports_enabled !== false ? 'text-emerald-600' : 'text-red-600'}>{(editingAssignment.assignment as any).reports_enabled !== false ? t('admin.dash.reportsActive', { defaultValue: 'Activos' }) : t('admin.dash.reportsPaused', { defaultValue: 'Pausados' })}</span></p>
                         <p className="text-[11px] text-gray-400 mt-0.5">{t('admin.dash.reportsHint', { defaultValue: 'Si los pausas, deja de recibir el email automático de reportes y se le oculta el botón de ver reporte en su portal.' })}</p>
                     </div>
                     <button type="button" aria-label="toggle reportes" onClick={() => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, reports_enabled: (editingAssignment.assignment as any).reports_enabled === false} as any})}
-                        className={`relative shrink-0 w-14 h-8 rounded-full transition ${(editingAssignment.assignment as any).reports_enabled !== false ? 'bg-emerald-500' : 'bg-gray-300'}`}>
+                        className={`relative shrink-0 w-14 h-8 rounded-full transition ${(editingAssignment.assignment as any).reports_enabled !== false ? 'bg-emerald-500' : 'bg-red-500'}`}>
                         <span className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${(editingAssignment.assignment as any).reports_enabled !== false ? 'translate-x-6' : ''}`} />
                     </button>
                 </div>
-                <div className={`flex items-center justify-between gap-4 rounded-2xl px-5 py-4 border ${(editingAssignment.assignment as any).is_active === false ? 'bg-gray-100 border-gray-300' : 'bg-gray-50 border-gray-200'}`}>
+                <div className={`flex items-center justify-between gap-4 rounded-2xl px-5 py-4 border ${(editingAssignment.assignment as any).is_active === false ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
                     <div className="min-w-0">
-                        <p className="text-sm font-bold text-primary">{t('admin.dash.assignmentStateLabel')}: <span className={(editingAssignment.assignment as any).is_active === false ? 'text-gray-500' : 'text-emerald-600'}>{(editingAssignment.assignment as any).is_active === false ? t('admin.dash.assignmentInactive') : t('admin.dash.assignmentActive')}</span></p>
+                        <p className="text-sm font-bold text-primary">{t('admin.dash.assignmentStateLabel')}: <span className={(editingAssignment.assignment as any).is_active === false ? 'text-red-600' : 'text-emerald-600'}>{(editingAssignment.assignment as any).is_active === false ? t('admin.dash.assignmentInactive') : t('admin.dash.assignmentActive')}</span></p>
                         <p className="text-[11px] text-gray-400 mt-0.5">{t('admin.dash.assignmentActiveHint')}</p>
                     </div>
-                    <button type="button" disabled={uploading} onClick={handleToggleAssignmentActive}
-                        className={`shrink-0 px-4 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition disabled:opacity-50 flex items-center gap-1.5 ${(editingAssignment.assignment as any).is_active === false ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-gray-700 text-white hover:bg-black'}`}>
-                        <span className="material-symbols-outlined text-sm">{(editingAssignment.assignment as any).is_active === false ? 'toggle_on' : 'toggle_off'}</span>
-                        {(editingAssignment.assignment as any).is_active === false ? t('admin.dash.assignmentActivateBtn') : t('admin.dash.assignmentInactivateBtn')}
+                    <button type="button" role="switch" aria-checked={(editingAssignment.assignment as any).is_active !== false} aria-label={t('admin.dash.assignmentStateLabel')} onClick={() => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, is_active: (editingAssignment.assignment as any).is_active === false} as any})}
+                        className={`relative shrink-0 w-14 h-8 rounded-full transition ${(editingAssignment.assignment as any).is_active !== false ? 'bg-emerald-500' : 'bg-red-500'}`}>
+                        <span className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${(editingAssignment.assignment as any).is_active !== false ? 'translate-x-6' : ''}`} />
                     </button>
                 </div>
                 <div className="flex gap-4 pt-4">

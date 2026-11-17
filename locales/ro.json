@@ -1435,10 +1435,10 @@
       "assignmentInactive": "Inactivă",
       "assignmentInactiveBadge": "Inactivă",
       "assignmentActiveHint": "Inactivă: toate datele și plățile se păstrează, dar clientul nu vede acest proiect în portal și nu se trimite nicio notificare automată.",
-      "assignmentInactivateBtn": "Dezactivează",
-      "assignmentActivateBtn": "Activează",
-      "assignmentInactivateConfirm": "Dezactivezi această alocare? Datele și plățile se păstrează, dar clientul nu o va mai vedea în portal și nu va primi notificări automate.",
-      "assignmentActivateConfirm": "Activezi această alocare? Clientul o va vedea din nou în portal și notificările automate vor fi reluate."
+      "autoEmailsState": "E-mailuri automate",
+      "autoEmailsStateOn": "Active",
+      "autoEmailsStateOff": "În pauză",
+      "autoEmailsStateHint": "În pauză (roșu): nu se trimite niciun e-mail AUTOMAT acestui client (mementouri de plată, notificări de raport nou de șantier, bun venit…). Cele trimise manual din admin pleacă după confirmare."
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",

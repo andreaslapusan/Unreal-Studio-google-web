@@ -170,7 +170,7 @@ const OutreachDashboard: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {(d.mailboxes || []).map((m: any) => (
             <div key={m.addr} className="flex items-center gap-2 rounded-xl bg-almond/40 px-3 py-2 min-w-0">
-              <span className={`w-2 h-2 rounded-full shrink-0 ${m.paused ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+              <span className={`w-2 h-2 rounded-full shrink-0 ${m.paused ? 'bg-red-500' : 'bg-emerald-500'}`} />
               <div className="min-w-0 flex-1">
                 <div className="text-sm font-bold text-primary truncate" title={m.addr}>{m.addr}</div>
                 <div className="text-[11px] text-primary/50 truncate">{m.via} · {t('admin.outreach.cap', 'límite')} {num(m.daily_cap)}/{t('admin.outreach.day', 'día')}{m.sent_today != null && <> · {num(m.sent_today)} {t('admin.outreach.today', 'hoy')}</>} · {t('admin.outreach.warmupDay', 'calent. día')} {num(m.warmup_day)}</div>

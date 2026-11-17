@@ -11,7 +11,7 @@ import AgencyPartnerActions from './AgencyPartnerActions';
 import AgencyPartnerEditor from './AgencyPartnerEditor';
 
 const COLS = 'id, agency_name, manager_name, email, phone, whatsapp, website, country, status, user_id, logo_url, personal_link_slug, approved_at, market, lang, commission_close_pct, commission_referral_pct, is_demo, welcomed_at, deleted_at';
-const STATUS_STYLE: Record<string, string> = { approved: 'bg-green-100 text-green-800', suspended: 'bg-amber-100 text-amber-800', pending: 'bg-gray-100 text-gray-700', rejected: 'bg-red-100 text-red-700' };
+const STATUS_STYLE: Record<string, string> = { approved: 'bg-green-100 text-green-800', suspended: 'bg-red-100 text-red-800', pending: 'bg-gray-100 text-gray-700', rejected: 'bg-red-100 text-red-700' };
 
 export default function AgencyPartnersList({ toast, refreshKey }: { toast: Toast; refreshKey: number }) {
   const { t } = useTranslation();

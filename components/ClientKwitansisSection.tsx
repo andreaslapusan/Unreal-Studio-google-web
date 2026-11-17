@@ -43,7 +43,7 @@ const ClientKwitansisSection: React.FC<{ clientId: string; embedded?: boolean }>
     const w = window.open('', '_blank');
     if (!w) return;
     const title = t('fix.kwit.receiptTitle', { no: k.no_seq, defaultValue: 'Recibo Nº {{no}}' });
-    w.document.write(`<html><head><title>${title}</title></head><body style="margin:0;padding:24px;background:#fff">${DOMPurify.sanitize(k.html)}</body></html>`);
+    w.document.write(`<html><head><title>${title}</title></head><body style="margin:0;padding:24px;background:#fff">${DOMPurify.sanitize(k.html, { FORCE_BODY: true })}</body></html>`);
     w.document.close();
   };
 
