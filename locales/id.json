@@ -3114,7 +3114,9 @@
       "availableN_other": "{{count}} tersedia",
       "soldN_one": "1 terjual",
       "soldN_other": "{{count}} terjual",
-      "onSale": "Dijual"
+      "onSale": "Dijual",
+      "photos": "Foto (Drive)",
+      "plans": "Denah (Drive)"
     },
     "clients": {
       "search": "Cari klien, email, proyek…",

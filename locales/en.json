@@ -3113,7 +3113,9 @@
       "availableN_other": "{{count}} available",
       "soldN_one": "1 sold",
       "soldN_other": "{{count}} sold",
-      "onSale": "For sale"
+      "onSale": "For sale",
+      "photos": "Photos (Drive)",
+      "plans": "Plans (Drive)"
     },
     "clients": {
       "search": "Search client, email, project…",

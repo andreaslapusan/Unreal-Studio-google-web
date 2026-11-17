@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { projectSeoSlug } from '../../lib/projectUrl';
 import { useCurrency } from '../../App';
-import { AgencyData, PropertyRow, UnitRow, shortProjectName, groupUnits, copyText, isUnitAvailable, partnerParam, unitPct } from './useAgencyData';
+import { AgencyData, ProjectInfo, PropertyRow, UnitRow, shortProjectName, groupUnits, copyText, isUnitAvailable, partnerParam, unitPct } from './useAgencyData';
 import { card, btnGhost, Empty, ListRow, SectionTitle } from './ui';
 
 export default function AgencyProjects({ data }: { data: AgencyData }) {
   const { t } = useTranslation();
-  const { partner, projects, units } = data;
+  const { partner, projects, units, projectInfo } = data;
   if (!partner) return null;
 
   const byProject = (id: string) => units.filter((u) => u.property_id === id);
@@ -21,15 +21,15 @@ export default function AgencyProjects({ data }: { data: AgencyData }) {
       <SectionTitle title={t('agencyPortal.nav.projects')} sub={t('agencyPortal.projects.sub')} />
       {projects.length === 0 && <Empty icon="home_work" text={t('agenciasDashboard.noProjectsYet')} />}
       <div className="space-y-6">
-        {sorted.map((p) => <ProjectCard key={p.id} p={p} units={byProject(p.id)} partnerId={partner.id} partnerRef={partnerParam(partner)} />)}
+        {sorted.map((p) => <ProjectCard key={p.id} p={p} info={p.slug ? projectInfo[p.slug] : undefined} units={byProject(p.id)} partnerId={partner.id} partnerRef={partnerParam(partner)} />)}
       </div>
     </div>
   );
 }
 
-interface CardProps { p: PropertyRow; units: UnitRow[]; partnerId: string; partnerRef: string }
+interface CardProps { p: PropertyRow; info?: ProjectInfo; units: UnitRow[]; partnerId: string; partnerRef: string }
 
-const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef }) => {
+const ProjectCard: React.FC<CardProps> = ({ p, info, units: all, partnerId, partnerRef }) => {
   const { t } = useTranslation();
   const { formatPrice } = useCurrency();
   const [copied, setCopied] = useState(false);
@@ -84,6 +84,12 @@ const ProjectCard: React.FC<CardProps> = ({ p, units: all, partnerId, partnerRef
                 <span className="material-symbols-outlined text-base">picture_as_pdf</span>{t('agencyPortal.projects.dossier')}
               </a>
             )}
+            {/* Fotos y planos: carpetas públicas de Drive del proyecto (la agencia descarga todo de ahí). */}
+            {([['photos', 'photo_library', info?.drive_renders_url], ['plans', 'architecture', info?.drive_2d_plans_url]] as const).map(([k, icon, url]) => url && (
+              <a key={k} href={url} target="_blank" rel="noopener noreferrer" className={btnGhost}>
+                <span className="material-symbols-outlined text-base">{icon}</span>{t(`agencyPortal.projects.${k}`)}
+              </a>
+            ))}
             {p.walkthrough_url && (
               <a href={p.walkthrough_url} target="_blank" rel="noopener noreferrer" className={btnGhost}>
                 <span className="material-symbols-outlined text-base">videocam</span>{t('agencyPortal.projects.tour')}

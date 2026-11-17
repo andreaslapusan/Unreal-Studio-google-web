@@ -3132,7 +3132,9 @@
       "soldN_one": "1 vândută",
       "soldN_other": "{{count}} vândute",
       "soldN_few": "{{count}} vândute",
-      "onSale": "De vânzare"
+      "onSale": "De vânzare",
+      "photos": "Fotografii (Drive)",
+      "plans": "Planuri (Drive)"
     },
     "clients": {
       "search": "Caută client, email, proiect…",

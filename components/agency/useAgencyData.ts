@@ -69,6 +69,13 @@ const WEB_COLS = 'id, slug, name, image, investor_price, price_currency, bedroom
 export const isOnSaleOnWeb = (p: { is_hidden: boolean | null; visibility_status: string | null }) =>
   !(p.is_hidden || p.visibility_status === 'sold_out');
 
+/** Lista blanca de proyectos para agencias (agency_config.agency_projects, subcadena del nombre); sin clave = todos. */
+export const fetchAgencyProjectFilter = async () => {
+  const { data } = await supabase.rpc('agency_allowed_projects');
+  const pats = Array.isArray(data) ? data.map((x) => String(x).toLowerCase()) : null;
+  return (name: string) => !pats || pats.some((k) => name.toLowerCase().includes(k));
+};
+
 /** Campos de la tabla projects (misma slug que properties) para material y novedades. */
 export interface ProjectInfo {
   slug: string;

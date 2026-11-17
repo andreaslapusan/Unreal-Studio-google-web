@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase";
 import { portalPath } from "../lib/portalUrls";
-import { isOnSaleOnWeb, shortProjectName } from "../components/agency/useAgencyData";
+import { fetchAgencyProjectFilter, isOnSaleOnWeb, shortProjectName } from "../components/agency/useAgencyData";
 import { trackLead } from "../lib/fbPixel";
 import { gtmGenerateLead } from "../lib/gtm";
 
@@ -57,11 +57,11 @@ export default function AgenciasRegistrar() {
   useEffect(() => {
     // Live list = what is for sale on the website (same rule as /proyectos).
     // Order = sales priority (Andreas 16-nov): Amante, Deseo, Golf Bay Lofts, then the rest by price.
-    void supabase.from("projects").select("name, bedrooms, investor_price, price_currency, is_hidden, visibility_status, sort_order").order("sort_order", { ascending: true })
-      .then(({ data }) => {
+    void Promise.all([supabase.from("projects").select("name, bedrooms, investor_price, price_currency, is_hidden, visibility_status, sort_order").order("sort_order", { ascending: true }), fetchAgencyProjectFilter()])
+      .then(([{ data }, allowed]) => {
         const rank = (n: string) => { const i = PRIORITY.findIndex((k) => n.toLowerCase().includes(k)); return i < 0 ? PRIORITY.length : i; };
         const seen = new Set<string>();
-        setProjects((data ?? []).filter(isOnSaleOnWeb)
+        setProjects((data ?? []).filter((p) => isOnSaleOnWeb(p) && allowed(p.name))
           .map((p) => ({ name: shortProjectName(p.name), bd: p.bedrooms ?? null, price: p.investor_price != null ? Number(p.investor_price) : null, cur: p.price_currency || "EUR" }))
           .filter((p) => !seen.has(p.name) && !!seen.add(p.name))
           .sort((a, b) => rank(a.name) - rank(b.name) || (a.price ?? 0) - (b.price ?? 0)));

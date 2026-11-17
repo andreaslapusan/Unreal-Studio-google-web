@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase, getImageUrl } from "../lib/supabase";
+import { fetchAgencyProjectFilter } from "../components/agency/useAgencyData";
 import { imgSrc, imgFallback } from "../lib/imageOptimize";
 import { translateStatus } from "../lib/statusI18n";
 import { usePageMeta } from "../components/PageMeta";
@@ -39,12 +40,13 @@ export default function AgenciasPartnership() {
 
   useEffect(() => {
     void (async () => {
+      const allowed = await fetchAgencyProjectFilter();
       const { data } = await supabase
         .from("projects")
         .select("name, image, slug, zone, location, status, is_hidden, sort_order")
         .order("sort_order", { ascending: true });
       const list = (data ?? [])
-        .filter((p: any) => !p.is_hidden)
+        .filter((p: any) => !p.is_hidden && allowed(p.name))
         // `zone` está a medio rellenar; `location` (lo que edita admin) está completo.
         .map((p: any) => ({ name: p.name, image: p.image, slug: p.slug, zone: p.zone || p.location, status: p.status }));
       setProjects(list);

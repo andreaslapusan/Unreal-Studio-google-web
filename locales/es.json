@@ -3115,7 +3115,9 @@
       "availableN_other": "{{count}} disponibles",
       "soldN_one": "1 vendida",
       "soldN_other": "{{count}} vendidas",
-      "onSale": "A la venta"
+      "onSale": "A la venta",
+      "photos": "Fotos (Drive)",
+      "plans": "Planos (Drive)"
     },
     "clients": {
       "search": "Buscar cliente, email, proyecto…",
