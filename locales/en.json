@@ -303,7 +303,8 @@
       "payDoneA": "According to the payment schedule in the purchase contract.",
       "remoteQ": "Do I need to travel to Bali?",
       "remoteA": "No. You can sign remotely with a power of attorney and receive construction reports with photos."
-    }
+    },
+    "rendersType": "Renders · {{label}}"
   },
   "faq": {
     "title": "Bali Property FAQ: Buying as a Foreigner | Unreal Studio",
@@ -1430,13 +1431,15 @@
       "clientConflictReload": "Reload",
       "assignmentStateLabel": "Assignment",
       "assignmentActive": "Active",
-      "assignmentInactive": "Inactive",
-      "assignmentInactiveBadge": "Inactive",
+      "assignmentInactive": "Inactive / Frozen",
+      "assignmentInactiveBadge": "Inactive / Frozen",
       "assignmentActiveHint": "Inactive: all data and payments are kept, but the client does not see this project in their portal and no automatic notices are sent.",
       "autoEmailsState": "Automatic emails",
       "autoEmailsStateOn": "On",
       "autoEmailsStateOff": "Paused",
-      "autoEmailsStateHint": "Paused (red): no AUTOMATIC email is sent to this client (payment reminders, new construction report notices, welcome…). Emails you send manually from the admin still go out after confirming."
+      "autoEmailsStateHint": "Paused (red): no AUTOMATIC email is sent to this client (payment reminders, new construction report notices, welcome…). Emails you send manually from the admin still go out after confirming.",
+      "inactiveReason": "Reason (optional)",
+      "inactiveReasonPh": "e.g. Paid the reservation but did not go ahead"
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",
@@ -1631,7 +1634,14 @@
       "typeAgencyContract": "Contract uploaded (agency)",
       "f_agency_contract_upload": "Agency contracts",
       "grpContracts": "Contracts to countersign",
-      "t_contract": "Uploaded its signed contract"
+      "t_contract": "Uploaded its signed contract",
+      "typeAgencyProjReq": "Project agreement requested",
+      "typeAgencyClientSigned": "Client-signed (agency)",
+      "f_agency_project_contract_request": "Project agreements",
+      "f_agency_client_signed_upload": "Client-signed documents",
+      "grpProjReqs": "Project agreements to prepare",
+      "typeAgencyAssistant": "Assistant → team",
+      "f_agency_assistant_handoff": "Assistant questions"
     },
     "perms": {
       "check_in": "Clock in/out",
@@ -2055,7 +2065,21 @@
       "uploadFinal": "Upload countersigned",
       "ref": "WhatsApp ref",
       "refHint": "Code added at the end of WhatsApp messages from clients who came through its link. Search it above to find the agency.",
-      "refCopied": "Code copied"
+      "refCopied": "Code copied",
+      "internalNotes": "Internal notes",
+      "templateUploaded": "Template uploaded. The agency can now download it under “Legal agreements”.",
+      "reqPending": "Agreement requested",
+      "reqTemplateSent": "Template sent",
+      "reqClientSigned": "Signed by the client",
+      "reqTemplate": "Template",
+      "reqClientCopy": "Client-signed copy",
+      "reqUploadTemplate": "Upload template PDF",
+      "leads": "Leads (registered clients)",
+      "reqs": "Requests",
+      "leadsTitle": "Leads of {{name}}",
+      "reqsTitle": "Requests from {{name}}",
+      "projActive": "Active",
+      "projInactive": "Inactive"
     }
   },
   "footer": {
@@ -3219,9 +3243,23 @@
         "pending": "Pending",
         "rejected": "Rejected"
       },
-      "editHint": "Login email, status and projects are managed by Unreal: if they need changing, write to us from Help & contact.",
+      "editHint": "Status, commission and projects are managed by Unreal Studio.",
       "edit": "Edit details",
-      "whatsapp": "WhatsApp"
+      "whatsapp": "WhatsApp",
+      "nameRequired": "The agency name is required.",
+      "emailHint": "If you change it, we send a confirmation link to the new email; your login does not change until you confirm it.",
+      "emailSent": "We sent a confirmation link to {{email}}. Your login email changes once you confirm it.",
+      "emailPending": "Email change waiting for confirmation: {{email}}",
+      "emailConfirming": "Confirming your new email…",
+      "emailConfirmed": "Done! You now log in to the portal with {{email}}.",
+      "emailConfirmError": "The link is invalid or has expired. Request the change again from “My agency”.",
+      "emailErr": {
+        "invalid_email": "That email is not valid.",
+        "email_in_use": "Another agency already uses that email.",
+        "same": "That is the email you already use.",
+        "rate": "We just sent you a link; please wait a few minutes.",
+        "generic": "Could not save. Please try again."
+      }
     },
     "help": {
       "sub": "How to work with Unreal Studio as a partner agency.",
@@ -3308,7 +3346,8 @@
         "visit": "Visit / trip to Bali",
         "presentation": "Online presentation",
         "contract": "Collaboration agreement",
-        "reserve": "Reserve a unit"
+        "reserve": "Reserve a unit",
+        "project_contract": "Project agreement"
       },
       "client": "Client (optional)",
       "noClient": "No specific client",
@@ -3378,7 +3417,7 @@
       "r4": "Square metres, permits and specific legal matters: pass them to the team in a call."
     },
     "contract": {
-      "sub": "Summary of the collaboration terms with Unreal Studio. The signed agreement prevails.",
+      "sub": "Your collaboration agreement with Unreal Studio and the project agreements for your clients, always as PDF.",
       "request": "Request agreement",
       "requested": "Agreement request sent. The sales team will send it with your agency details.",
       "pending": "You already have an agreement request in progress.",
@@ -3400,20 +3439,43 @@
       "history": "Your agreement requests",
       "signedDownload": "Download signed agreement",
       "stepsTitle": "Collaboration agreement",
-      "step1": "1 · Download the agreement",
+      "step1": "Download the agreement",
       "step1Sub": "Read it, fill it in and sign it (by hand or with a digital signature).",
       "step1Btn": "Download agreement template",
-      "step2": "2 · Upload your signed copy",
+      "step2": "Upload your signed copy",
       "step2Sub": "PDF or photo (JPG/PNG) of the signed agreement, max 20 MB. Only Unreal Studio sees it.",
       "step2Btn": "Upload signed agreement",
       "step2Again": "Upload again",
       "step2Done": "Received on {{date}}. We will countersign it and return it here.",
       "uploading": "Uploading…",
-      "step3": "3 · Agreement signed by both parties",
+      "step3": "Agreement signed by both parties",
       "step3Sub": "Waiting for our signature. It will appear here to download.",
       "step3Done": "Signed by both parties · {{date}}",
       "uploadedOk": "Received! We'll let you know when it is signed by both parties.",
-      "badFile": "Upload a PDF, JPG or PNG of 20 MB max."
+      "badFile": "Upload a PDF, JPG or PNG of 20 MB max.",
+      "projTitle": "Project agreements",
+      "projSub": "Request a project agreement for your client. We prepare it here as a PDF; then upload the copy signed by the client.",
+      "projProject": "Project",
+      "projChoose": "Choose a project…",
+      "projClient": "Client (optional)",
+      "projRequest": "Request project agreement",
+      "projRequested": "Request sent. We will let you know here when the agreement is ready.",
+      "projStRequested": "Requested on {{date}} · we are preparing it",
+      "projStReady": "Agreement ready since {{date}} · download it and upload the copy signed by the client",
+      "projStClient": "Signed by the client · uploaded on {{date}}",
+      "projDownload": "Download agreement (PDF)",
+      "projUpload": "Upload client-signed copy",
+      "projUploadedOk": "Received! We will review it and let you know."
+    },
+    "assistant": {
+      "title": "Assistant",
+      "sub": "Instant answers about projects, process and the portal",
+      "open": "Open the assistant",
+      "hello": "Hi! Ask me anything about the projects, commissions, the sales process or the portal.",
+      "typing": "Typing…",
+      "placeholder": "Type your question…",
+      "send": "Send",
+      "error": "I can't answer right now. I'll pass it to the team."
     }
   },
   "reportOpen": {

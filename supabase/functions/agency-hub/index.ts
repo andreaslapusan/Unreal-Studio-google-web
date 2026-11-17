@@ -318,6 +318,34 @@ async function updateEmail(partnerId, email) {
   return { ok: true };
 }
 
+// ───────── self-service email change (agency) with confirmation link to the NEW address ─────────
+const sha256 = async (t) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t))), (b) => b.toString(16).padStart(2, "0")).join("");
+async function requestEmailChange(userId, email) {
+  const e = String(email ?? "").trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return { ok: false, error: "invalid_email" };
+  const { data: p } = await db.from("listing_partners").select("*").eq("user_id", userId).eq("status", "approved").is("deleted_at", null).maybeSingle();
+  if (!p) return { ok: false, error: "not_found" };
+  if (p.email === e) return { ok: false, error: "same" };
+  if (p.pending_email_expires_at && new Date(p.pending_email_expires_at).getTime() - Date.now() > 24 * 3600e3 - 5 * 60e3) return { ok: false, error: "rate" };
+  const { data: other } = await db.from("listing_partners").select("id").eq("email", e).neq("id", p.id).maybeSingle();
+  if (other) return { ok: false, error: "email_in_use" };
+  const token = Array.from(crypto.getRandomValues(new Uint8Array(24)), (b) => b.toString(16).padStart(2, "0")).join("");
+  const { error } = await db.from("listing_partners").update({ pending_email: e, pending_email_token_hash: await sha256(token), pending_email_expires_at: new Date(Date.now() + 24 * 3600e3).toISOString() }).eq("id", p.id);
+  if (error) return { ok: false, error: error.message };
+  const t = T[L(p.lang)];
+  const link = `${SITE}/agencias/confirmar-email?t=${token}`;
+  return sendMail(e, t.emailChangeSubject, P(esc(fill(t.emailChangeP1, { agency: p.agency_name }))) + BTN(link, t.emailChangeButton) + P(esc(t.emailChangeP2)), [], p.market);
+}
+async function confirmEmailChange(token) {
+  if (!/^[0-9a-f]{48}$/.test(String(token ?? ""))) return { ok: false, error: "invalid_token" };
+  const { data: p } = await db.from("listing_partners").select("id, pending_email, pending_email_expires_at").eq("pending_email_token_hash", await sha256(token)).maybeSingle();
+  if (!p?.pending_email || new Date(p.pending_email_expires_at).getTime() < Date.now()) return { ok: false, error: "expired" };
+  const r = await updateEmail(p.id, p.pending_email);
+  if (!r.ok) return r;
+  await db.from("listing_partners").update({ pending_email: null, pending_email_token_hash: null, pending_email_expires_at: null }).eq("id", p.id);
+  return { ok: true, email: p.pending_email };
+}
+
 // ───────── router ─────────
 async function caller(req) {
   const jwt = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
@@ -339,8 +367,10 @@ Deno.serve(async (req) => {
     if (b.action === "event") return hook ? json(await event(b.table, b.event, b.id)) : json({ ok: false, error: "unauthorized" }, 401);
     if (b.action === "reminders") return cron || hook ? json(await reminders()) : json({ ok: false, error: "unauthorized" }, 401);
     if (b.action === "approve" && hook && b.mode === "auto") return json(await approve(b.application_id, "auto", {}, "auto"));
+    if (b.action === "confirm_email_change") return json(await confirmEmailChange(b.token));
     const who = await caller(req);
     if (!who) return json({ ok: false, error: "unauthorized" }, 401);
+    if (b.action === "request_email_change") return json(await requestEmailChange(who.user.id, b.email));
     const isAdmin = who.role === "admin";
     const by = String(who.user.app_metadata?.real_email ?? who.user.email ?? "admin");
     if (!isAdmin) return json({ ok: false, error: "forbidden" }, 403);

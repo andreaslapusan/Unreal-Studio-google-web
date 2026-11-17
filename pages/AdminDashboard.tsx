@@ -1272,7 +1272,7 @@ const AMENITIES_LIST = [
 // a EUR con tasas aproximadas (solo para ordenar; los importes se MUESTRAN sin convertir).
 const EUR_RATE: Record<string, number> = { EUR: 1, USD: 1.08, GBP: 0.83, AUD: 1.65, IDR: 17200 };
 const toEur = (amount: number, currency?: string) => (Number(amount) || 0) / (EUR_RATE[currency || 'EUR'] || 1);
-const clientTotalEur = (c: any) => (c.projects || []).reduce((s: number, cp: any) => s + toEur(cp.investment_amount, cp.currency), 0);
+const clientTotalEur = (c: any) => (c.projects || []).filter((cp: any) => cp.is_active !== false).reduce((s: number, cp: any) => s + toEur(cp.investment_amount, cp.currency), 0);
 
 // Opciones para los desplegables (proyectos y divisas presentes en los contratos).
 const clientProjectOptions = Array.from(new Set(clients.flatMap((c: any) => (c.projects || []).map((cp: any) => cp.project_name || cp.project_id)).filter(Boolean))).sort();
@@ -1906,6 +1906,11 @@ const handleEditAssignment = async (e: React.FormEvent) => {
             if (r.error) throw r.error;
             if (r.data && !r.data.success) throw new Error(r.data.error);
         }
+        {
+            const r = await supabase.rpc('admin_set_assignment_reason', { p_assignment_id: editingAssignment.assignment.id, p_reason: (editingAssignment.assignment as any).inactive_reason || '' });
+            if (r.error) throw r.error;
+            if (r.data && !r.data.success) throw new Error(r.data.error);
+        }
         if (isDeseoAssignment(editingAssignment.assignment)) {
             const r = await supabase.rpc('admin_set_unit_type', { p_assignment_id: editingAssignment.assignment.id, p_type: editingAssignment.assignment.unit_type || '' });
             if (r.error) throw r.error;
@@ -2478,7 +2483,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                 <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{t('admin.clientsTab.assignedProjects')} ({(client.projects || []).length})</p>
                 {(() => {
                   const byCur: Record<string, number> = {};
-                  (client.projects || []).forEach((cp: any) => { const cur = cp.currency || 'EUR'; byCur[cur] = (byCur[cur] || 0) + (Number(cp.investment_amount) || 0); });
+                  (client.projects || []).filter((cp: any) => cp.is_active !== false).forEach((cp: any) => { const cur = cp.currency || 'EUR'; byCur[cur] = (byCur[cur] || 0) + (Number(cp.investment_amount) || 0); }); // inactive/frozen assignments don't count
                   const parts = Object.entries(byCur).filter(([, v]) => v > 0);
                   return parts.length ? (
                     <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">
@@ -2498,6 +2503,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                     <div className={`flex items-center gap-x-4 gap-y-2 flex-wrap ${cp.is_active === false ? 'opacity-70' : ''}`}>
                       <span className="font-bold text-primary text-sm">{cp.project_name || cp.project_id}</span>
                       {cp.is_active === false && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-100 text-red-700">{t('admin.dash.assignmentInactiveBadge')}</span>}
+                      {cp.is_active === false && cp.inactive_reason && <span className="text-[11px] italic text-red-700/80 basis-full break-words">{cp.inactive_reason}</span>}
                       {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                       {cp.unit_type && <span title={t(`admin.unitType.${cp.unit_type}`)} className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{t('admin.unitType.badge', { type: cp.unit_type })}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
@@ -3929,6 +3935,12 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         <span className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${(editingAssignment.assignment as any).is_active !== false ? 'translate-x-6' : ''}`} />
                     </button>
                 </div>
+                {(editingAssignment.assignment as any).is_active === false && (
+                    <div>
+                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-2">{t('admin.dash.inactiveReason')}</label>
+                        <textarea value={(editingAssignment.assignment as any).inactive_reason || ''} maxLength={500} onChange={(e) => setEditingAssignment({...editingAssignment, assignment: {...editingAssignment.assignment, inactive_reason: e.target.value} as any})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl font-medium border border-transparent focus:border-primary/20 focus:outline-none resize-none h-20" placeholder={t('admin.dash.inactiveReasonPh')} />
+                    </div>
+                )}
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
                     <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.dash.close')}</button>

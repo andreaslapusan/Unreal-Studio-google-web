@@ -303,7 +303,8 @@
       "payDoneA": "Conform calendarului de plăți din contractul de vânzare-cumpărare.",
       "remoteQ": "Trebuie să călătoresc în Bali?",
       "remoteA": "Nu. Poți semna de la distanță prin procură notarială și primești rapoarte de șantier cu fotografii."
-    }
+    },
+    "rendersType": "Randări · {{label}}"
   },
   "faq": {
     "title": "Întrebări despre investiții în Bali | Unreal Studio Bali",
@@ -1432,13 +1433,15 @@
       "clientConflictReload": "Reîncarcă",
       "assignmentStateLabel": "Alocare",
       "assignmentActive": "Activă",
-      "assignmentInactive": "Inactivă",
-      "assignmentInactiveBadge": "Inactivă",
+      "assignmentInactive": "Inactivă / Înghețată",
+      "assignmentInactiveBadge": "Inactivă / Înghețată",
       "assignmentActiveHint": "Inactivă: toate datele și plățile se păstrează, dar clientul nu vede acest proiect în portal și nu se trimite nicio notificare automată.",
       "autoEmailsState": "E-mailuri automate",
       "autoEmailsStateOn": "Active",
       "autoEmailsStateOff": "În pauză",
-      "autoEmailsStateHint": "În pauză (roșu): nu se trimite niciun e-mail AUTOMAT acestui client (mementouri de plată, notificări de raport nou de șantier, bun venit…). Cele trimise manual din admin pleacă după confirmare."
+      "autoEmailsStateHint": "În pauză (roșu): nu se trimite niciun e-mail AUTOMAT acestui client (mementouri de plată, notificări de raport nou de șantier, bun venit…). Cele trimise manual din admin pleacă după confirmare.",
+      "inactiveReason": "Motiv (opțional)",
+      "inactiveReasonPh": "ex. A plătit rezervarea, dar nu a continuat"
     },
     "mkt": {
       "sessionExpired": "Sesiune expirată. Conectați-vă din nou.",
@@ -1639,7 +1642,14 @@
       "typeAgencyContract": "Contract încărcat (agenție)",
       "f_agency_contract_upload": "Contracte agenții",
       "grpContracts": "Contracte de contrasemnat",
-      "t_contract": "A încărcat contractul semnat"
+      "t_contract": "A încărcat contractul semnat",
+      "typeAgencyProjReq": "Acord de proiect solicitat",
+      "typeAgencyClientSigned": "Semnat de client (agenție)",
+      "f_agency_project_contract_request": "Acorduri de proiect",
+      "f_agency_client_signed_upload": "Semnate de clienți",
+      "grpProjReqs": "Acorduri de proiect de pregătit",
+      "typeAgencyAssistant": "Asistent → echipă",
+      "f_agency_assistant_handoff": "Întrebări asistent"
     },
     "perms": {
       "check_in": "Pontaj intrare/ieșire",
@@ -2063,7 +2073,21 @@
       "uploadFinal": "Încarcă contrasemnat",
       "ref": "Ref WhatsApp",
       "refHint": "Cod adăugat la finalul mesajelor WhatsApp ale clienților veniți prin linkul ei. Caută-l mai sus ca să găsești agenția.",
-      "refCopied": "Cod copiat"
+      "refCopied": "Cod copiat",
+      "internalNotes": "Note interne",
+      "templateUploaded": "Model încărcat. Agenția îl poate descărca în „Acorduri legale”.",
+      "reqPending": "Cere contract",
+      "reqTemplateSent": "Model trimis",
+      "reqClientSigned": "Semnat de client",
+      "reqTemplate": "Model",
+      "reqClientCopy": "Copia semnată de client",
+      "reqUploadTemplate": "Încarcă model PDF",
+      "leads": "Lead-uri (clienți înregistrați)",
+      "reqs": "Solicitări",
+      "leadsTitle": "Lead-urile {{name}}",
+      "reqsTitle": "Solicitările {{name}}",
+      "projActive": "Activ",
+      "projInactive": "Inactiv"
     }
   },
   "footer": {
@@ -3239,9 +3263,23 @@
         "pending": "În așteptare",
         "rejected": "Respinsă"
       },
-      "editHint": "Emailul de acces, statusul și proiectele sunt gestionate de Unreal: dacă trebuie schimbate, scrie-ne din Ajutor și contact.",
+      "editHint": "Starea, comisionul și proiectele sunt gestionate de Unreal Studio.",
       "edit": "Editează datele",
-      "whatsapp": "WhatsApp"
+      "whatsapp": "WhatsApp",
+      "nameRequired": "Numele agenției este obligatoriu.",
+      "emailHint": "Dacă îl schimbi, îți trimitem un link de confirmare pe noul email; accesul nu se schimbă până nu confirmi.",
+      "emailSent": "Ți-am trimis un link de confirmare la {{email}}. Emailul de acces se schimbă după ce confirmi.",
+      "emailPending": "Schimbare de email în așteptarea confirmării: {{email}}",
+      "emailConfirming": "Confirmăm noul tău email…",
+      "emailConfirmed": "Gata! Acum intri în portal cu {{email}}.",
+      "emailConfirmError": "Linkul nu este valid sau a expirat. Cere din nou schimbarea din „Agenția mea”.",
+      "emailErr": {
+        "invalid_email": "Emailul nu este valid.",
+        "email_in_use": "Emailul este folosit deja de altă agenție.",
+        "same": "Este emailul pe care îl folosești deja.",
+        "rate": "Tocmai ți-am trimis un link; așteaptă câteva minute.",
+        "generic": "Nu s-a putut salva. Încearcă din nou."
+      }
     },
     "help": {
       "sub": "Cum să lucrezi cu Unreal Studio ca agenție parteneră.",
@@ -3329,7 +3367,8 @@
         "visit": "Vizită / călătorie în Bali",
         "presentation": "Prezentare online",
         "contract": "Contract de colaborare",
-        "reserve": "Rezervă unitate"
+        "reserve": "Rezervă unitate",
+        "project_contract": "Acord de proiect"
       },
       "client": "Client (opțional)",
       "noClient": "Fără client anume",
@@ -3399,7 +3438,7 @@
       "r4": "Metri pătrați, autorizații și chestiuni juridice concrete: transmite-le echipei într-un apel."
     },
     "contract": {
-      "sub": "Rezumatul condițiilor de colaborare cu Unreal Studio. Contractul semnat prevalează.",
+      "sub": "Acordul tău de colaborare cu Unreal Studio și acordurile de proiect pentru clienții tăi, mereu în PDF.",
       "request": "Solicită contractul",
       "requested": "Solicitarea contractului a fost trimisă. Echipa comercială ți-l va trimite cu datele agenției.",
       "pending": "Ai deja o solicitare de contract în curs.",
@@ -3421,20 +3460,43 @@
       "history": "Solicitările tale de contract",
       "signedDownload": "Descarcă acordul semnat",
       "stepsTitle": "Acord de colaborare",
-      "step1": "1 · Descarcă contractul",
+      "step1": "Descarcă contractul",
       "step1Sub": "Citește-l, completează-l și semnează-l (de mână sau cu semnătură digitală).",
       "step1Btn": "Descarcă modelul acordului",
-      "step2": "2 · Încarcă copia semnată",
+      "step2": "Încarcă copia semnată",
       "step2Sub": "PDF sau fotografie (JPG/PNG) a contractului semnat, max. 20 MB. Doar Unreal Studio o vede.",
       "step2Btn": "Încarcă acordul semnat",
       "step2Again": "Încarcă din nou",
       "step2Done": "Primit pe {{date}}. Îl contrasemnăm și ți-l returnăm aici.",
       "uploading": "Se încarcă…",
-      "step3": "3 · Contract semnat de ambele părți",
+      "step3": "Contract semnat de ambele părți",
       "step3Sub": "În așteptarea semnăturii noastre. Va apărea aici pentru descărcare.",
       "step3Done": "Semnat de ambele părți · {{date}}",
       "uploadedOk": "Primit! Te anunțăm când este semnat de ambele părți.",
-      "badFile": "Încarcă un PDF, JPG sau PNG de maximum 20 MB."
+      "badFile": "Încarcă un PDF, JPG sau PNG de maximum 20 MB.",
+      "projTitle": "Acorduri de proiect",
+      "projSub": "Cere contractul unui proiect pentru clientul tău. Îl pregătim aici în PDF; apoi încarci copia semnată de client.",
+      "projProject": "Proiect",
+      "projChoose": "Alege un proiect…",
+      "projClient": "Client (opțional)",
+      "projRequest": "Solicită acordul de proiect",
+      "projRequested": "Cerere trimisă. Te anunțăm aici când contractul este gata.",
+      "projStRequested": "Solicitat pe {{date}} · îl pregătim",
+      "projStReady": "Contract gata din {{date}} · descarcă-l și încarcă copia semnată de client",
+      "projStClient": "Semnat de client · încărcat pe {{date}}",
+      "projDownload": "Descarcă contractul (PDF)",
+      "projUpload": "Încarcă copia semnată de client",
+      "projUploadedOk": "Primit! Îl verificăm și te anunțăm."
+    },
+    "assistant": {
+      "title": "Asistent",
+      "sub": "Răspunsuri rapide despre proiecte, proces și portal",
+      "open": "Deschide asistentul",
+      "hello": "Bună! Întreabă-mă orice despre proiecte, comisioane, procesul de vânzare sau portal.",
+      "typing": "Scrie…",
+      "placeholder": "Scrie întrebarea ta…",
+      "send": "Trimite",
+      "error": "Nu pot răspunde acum. Transmit echipei."
     }
   },
   "reportOpen": {

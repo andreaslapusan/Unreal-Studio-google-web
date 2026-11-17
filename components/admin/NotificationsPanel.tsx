@@ -35,11 +35,14 @@ interface PendingVacation { id: string; employee_name: string | null; start_date
 
 // Tipos que van al feed de ACTIVIDAD (info). vacation_request es solo log: la TAREA
 // de aprobar se calcula de employee_vacations (pendientes), no de la notificación.
-const INFO_TYPES = new Set(['client_login', 'client_password_change', 'agency_application', 'agency_password_change', 'agency_login', 'agency_contract_upload', 'late_checkin', 'generic', 'vacation_request', 'listing_intake']);
+const INFO_TYPES = new Set(['client_login', 'client_password_change', 'agency_application', 'agency_password_change', 'agency_login', 'agency_contract_upload', 'agency_project_contract_request', 'agency_client_signed_upload', 'agency_assistant_handoff', 'late_checkin', 'generic', 'vacation_request', 'listing_intake']);
 const INFO_META: Record<string, { icon: string; labelKey: string; def: string; color: string }> = {
   client_login: { icon: 'login', labelKey: 'admin.notif.typeClientLogin', def: 'Acceso de cliente', color: 'text-primary bg-almond' },
   client_password_change: { icon: 'key', labelKey: 'admin.notif.typeClientPwChange', def: 'Cambio de contraseña', color: 'text-amber-700 bg-amber-50' },
   agency_application: { icon: 'storefront', labelKey: 'admin.notif.typeAgencyApp', def: 'Solicitud de agencia', color: 'text-emerald-700 bg-emerald-50' },
+  agency_assistant_handoff: { icon: 'support_agent', labelKey: 'admin.notif.typeAgencyAssistant', def: 'Asistente → equipo', color: 'text-amber-700 bg-amber-50' },
+  agency_project_contract_request: { icon: 'gavel', labelKey: 'admin.notif.typeAgencyProjReq', def: 'Acuerdo de proyecto pedido', color: 'text-amber-700 bg-amber-50' },
+  agency_client_signed_upload: { icon: 'task', labelKey: 'admin.notif.typeAgencyClientSigned', def: 'Firmado por el cliente (agencia)', color: 'text-emerald-700 bg-emerald-50' },
   agency_contract_upload: { icon: 'description', labelKey: 'admin.notif.typeAgencyContract', def: 'Contrato subido (agencia)', color: 'text-emerald-700 bg-emerald-50' },
   agency_login: { icon: 'login', labelKey: 'admin.notif.typeAgencyLogin', def: 'Acceso de agencia', color: 'text-primary bg-almond' },
   agency_password_change: { icon: 'key', labelKey: 'admin.notif.typeAgencyPwChange', def: 'Cambio de contraseña (agencia)', color: 'text-amber-700 bg-amber-50' },
@@ -57,6 +60,9 @@ const ACT_FILTERS: { value: string; def: string }[] = [
   { value: 'agency_password_change', def: 'Contraseñas de agencias' },
   { value: 'agency_login', def: 'Accesos de agencias' },
   { value: 'agency_contract_upload', def: 'Contratos de agencias' },
+  { value: 'agency_project_contract_request', def: 'Acuerdos de proyecto' },
+  { value: 'agency_assistant_handoff', def: 'Preguntas del asistente' },
+  { value: 'agency_client_signed_upload', def: 'Firmados por clientes' },
   { value: 'late_checkin', def: 'Fichajes tarde' },
   { value: 'vacation_request', def: 'Solicitudes de vacaciones' },
   { value: 'generic', def: 'Avisos' },
@@ -76,6 +82,10 @@ function locBody(n: any, t: any): string {
       return t('admin.notif.b_clientPwChange', { defaultValue: 'Ha cambiado su contraseña' });
     case 'agency_application':
       return t('admin.notif.b_agencyApp', { defaultValue: 'Nueva solicitud de alta{{country}}', country: m.country ? ` · ${m.country}` : '' });
+    case 'agency_assistant_handoff':
+    case 'agency_project_contract_request':
+    case 'agency_client_signed_upload':
+      return n.body || '';
     case 'agency_contract_upload':
       return t('admin.notif.t_contract', { defaultValue: 'Ha subido su contrato firmado' });
     case 'agency_login':
@@ -120,6 +130,7 @@ const NotificationsPanel: React.FC = () => {
   const [pendingVacs, setPendingVacs] = useState<PendingVacation[]>([]);
   const [noProp, setNoProp] = useState<ClientLite[]>([]);
   const [agencyApps, setAgencyApps] = useState<PendingAgencyApp[]>([]);
+  const [projReqs, setProjReqs] = useState<{ id: string; created_at: string; client_name: string | null; listing_partners: { agency_name: string } | null; projects: { name: string } | null }[]>([]);
   const [toSign, setToSign] = useState<{ id: string; agency_name: string; email: string; uploaded_at: string }[]>([]);
   // Filtros/orden del feed de Actividad.
   const [actType, setActType] = useState<string>('all');
@@ -137,6 +148,8 @@ const NotificationsPanel: React.FC = () => {
     ]);
     const { data: ts } = await supabase.rpc('admin_agency_contracts_to_sign');
     setToSign((ts as any[]) ?? []);
+    const { data: pr } = await supabase.from('agency_requests').select('id, created_at, client_name, listing_partners(agency_name), projects(name)').eq('type', 'project_contract').is('template_path', null).neq('status', 'cancelled').order('created_at');
+    setProjReqs((pr as any[]) ?? []);
     setItems((notifs as Notif[]) ?? []);
     const p = (panel as any) ?? {};
     setOverdue((p.overdue_payments as OverduePayment[]) ?? []);
@@ -187,7 +200,7 @@ const NotificationsPanel: React.FC = () => {
   const obraCount = missingReports.length + staleProps.length;
   const cobrosCount = overdue.length + claims.length;
   const equipoCount = pendingVacs.length; // clients_no_property es baja prioridad, no cuenta
-  const taskCount = cobrosCount + obraCount + equipoCount + agencyApps.length + toSign.length;
+  const taskCount = cobrosCount + obraCount + equipoCount + agencyApps.length + toSign.length + projReqs.length;
 
   // Resumen "empieza tu día"
   const summaryParts: string[] = [];
@@ -287,6 +300,22 @@ const NotificationsPanel: React.FC = () => {
                       <p className="font-bold text-primary text-sm break-words">{a.agency_name}</p>
                       <p className="text-sm text-primary/70 break-all">{[a.email, a.country].filter(Boolean).join(' · ')}</p>
                       <p className="text-[11px] text-primary/40 mt-0.5">{t('admin.notif.t_agencyApp', { defaultValue: 'Solicitud de alta pendiente' })} · {fmtWhen(a.created_at)}</p>
+                    </Row>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {projReqs.length > 0 && (
+              <div>
+                {groupTitle('gavel', t('admin.notif.grpProjReqs', { defaultValue: 'Acuerdos de proyecto por preparar' }), projReqs.length)}
+                <ul className="space-y-2">
+                  {projReqs.map((r) => (
+                    <Row key={`pr-${r.id}`} icon="gavel" color="text-amber-700 bg-amber-50"
+                      actions={<PrimaryBtn onClick={() => navigate('/admin?view=agencias')} label={t('admin.notif.actReview', { defaultValue: 'Revisar' })} />}>
+                      <p className="font-bold text-primary text-sm break-words">{r.listing_partners?.agency_name ?? '—'}</p>
+                      <p className="text-sm text-primary/70 break-words">{[r.projects?.name, r.client_name].filter(Boolean).join(' · ')}</p>
+                      <p className="text-[11px] text-primary/40 mt-0.5">{fmtWhen(r.created_at)}</p>
                     </Row>
                   ))}
                 </ul>

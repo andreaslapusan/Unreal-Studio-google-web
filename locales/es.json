@@ -303,7 +303,8 @@
       "payDoneA": "Según el calendario de pagos del contrato de compraventa.",
       "remoteQ": "¿Tengo que viajar a Bali?",
       "remoteA": "No. Puedes firmar a distancia con poder notarial y recibir reportes de obra con fotos."
-    }
+    },
+    "rendersType": "Renders · {{label}}"
   },
   "faq": {
     "title": "Preguntas frecuentes sobre invertir en Bali | Unreal Studio",
@@ -1430,13 +1431,15 @@
       "clientConflictReload": "Recargar",
       "assignmentStateLabel": "Asignación",
       "assignmentActive": "Activa",
-      "assignmentInactive": "Inactiva",
-      "assignmentInactiveBadge": "Inactiva",
+      "assignmentInactive": "Inactiva / Congelada",
+      "assignmentInactiveBadge": "Inactiva / Congelada",
       "assignmentActiveHint": "Inactiva: se conservan todos los datos y pagos, pero el cliente no ve este proyecto en su portal y no se envía ningún aviso automático.",
       "autoEmailsState": "Correos automáticos",
       "autoEmailsStateOn": "Activos",
       "autoEmailsStateOff": "En pausa",
-      "autoEmailsStateHint": "En pausa (rojo): no sale ningún correo AUTOMÁTICO a este cliente (recordatorios de pago, avisos de nuevo reporte de obra, bienvenida…). Los que envíes tú a mano desde el admin sí salen, tras confirmar."
+      "autoEmailsStateHint": "En pausa (rojo): no sale ningún correo AUTOMÁTICO a este cliente (recordatorios de pago, avisos de nuevo reporte de obra, bienvenida…). Los que envíes tú a mano desde el admin sí salen, tras confirmar.",
+      "inactiveReason": "Motivo (opcional)",
+      "inactiveReasonPh": "p. ej. Pagó la reserva pero no siguió adelante"
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
@@ -1631,7 +1634,14 @@
       "typeAgencyContract": "Contrato subido (agencia)",
       "f_agency_contract_upload": "Contratos de agencias",
       "grpContracts": "Contratos por contrafirmar",
-      "t_contract": "Ha subido su contrato firmado"
+      "t_contract": "Ha subido su contrato firmado",
+      "typeAgencyProjReq": "Acuerdo de proyecto pedido",
+      "typeAgencyClientSigned": "Firmado por el cliente (agencia)",
+      "f_agency_project_contract_request": "Acuerdos de proyecto",
+      "f_agency_client_signed_upload": "Firmados por clientes",
+      "grpProjReqs": "Acuerdos de proyecto por preparar",
+      "typeAgencyAssistant": "Asistente → equipo",
+      "f_agency_assistant_handoff": "Preguntas del asistente"
     },
     "perms": {
       "check_in": "Fichar entrada/salida",
@@ -2055,7 +2065,21 @@
       "uploadFinal": "Subir contrafirmado",
       "ref": "Ref WhatsApp",
       "refHint": "Código que llega al final de los WhatsApp de clientes que vienen de su enlace. Búscalo arriba para saber de qué agencia es.",
-      "refCopied": "Código copiado"
+      "refCopied": "Código copiado",
+      "internalNotes": "Notas internas",
+      "templateUploaded": "Plantilla subida. La agencia ya puede descargarla en «Acuerdos legales».",
+      "reqPending": "Pide contrato",
+      "reqTemplateSent": "Plantilla enviada",
+      "reqClientSigned": "Firmado por el cliente",
+      "reqTemplate": "Plantilla",
+      "reqClientCopy": "Copia firmada por el cliente",
+      "reqUploadTemplate": "Subir plantilla PDF",
+      "leads": "Leads (clientes registrados)",
+      "reqs": "Solicitudes",
+      "leadsTitle": "Leads de {{name}}",
+      "reqsTitle": "Solicitudes de {{name}}",
+      "projActive": "Activa",
+      "projInactive": "Inactiva"
     }
   },
   "footer": {
@@ -3221,9 +3245,23 @@
         "pending": "Pendiente",
         "rejected": "Rechazada"
       },
-      "editHint": "El email de acceso, el estado y los proyectos los gestiona Unreal: si hay que cambiarlos, escríbenos desde Ayuda y contacto.",
+      "editHint": "El estado, la comisión y los proyectos los gestiona Unreal Studio.",
       "edit": "Editar datos",
-      "whatsapp": "WhatsApp"
+      "whatsapp": "WhatsApp",
+      "nameRequired": "El nombre de la agencia es obligatorio.",
+      "emailHint": "Si lo cambias, te enviamos un enlace de confirmación al email nuevo; el acceso no cambia hasta que lo confirmes.",
+      "emailSent": "Te hemos enviado un enlace de confirmación a {{email}}. El email de acceso cambiará cuando lo confirmes.",
+      "emailPending": "Cambio de email pendiente de confirmar: {{email}}",
+      "emailConfirming": "Confirmando tu nuevo email…",
+      "emailConfirmed": "¡Listo! Ahora entras en el portal con {{email}}.",
+      "emailConfirmError": "El enlace no es válido o ha caducado. Vuelve a pedir el cambio desde «Mi agencia».",
+      "emailErr": {
+        "invalid_email": "Ese email no es válido.",
+        "email_in_use": "Ese email ya lo usa otra agencia.",
+        "same": "Es el mismo email que ya usas.",
+        "rate": "Acabamos de enviarte un enlace; espera unos minutos.",
+        "generic": "No se pudo guardar. Inténtalo de nuevo."
+      }
     },
     "help": {
       "sub": "Cómo trabajar con Unreal Studio como agencia colaboradora.",
@@ -3310,7 +3348,8 @@
         "visit": "Visita / viaje a Bali",
         "presentation": "Presentación online",
         "contract": "Contrato de colaboración",
-        "reserve": "Reservar unidad"
+        "reserve": "Reservar unidad",
+        "project_contract": "Acuerdo de proyecto"
       },
       "client": "Cliente (opcional)",
       "noClient": "Sin cliente concreto",
@@ -3380,7 +3419,7 @@
       "r4": "Metros cuadrados, licencias y temas legales concretos: pásalos al equipo en una llamada."
     },
     "contract": {
-      "sub": "Resumen de las condiciones de colaboración con Unreal Studio. El contrato firmado es el que manda.",
+      "sub": "Tu acuerdo de colaboración con Unreal Studio y los acuerdos de proyecto para tus clientes, siempre en PDF.",
       "request": "Solicitar contrato",
       "requested": "Solicitud de contrato enviada. El equipo comercial te lo enviará con los datos de tu agencia.",
       "pending": "Ya tienes una solicitud de contrato en curso.",
@@ -3402,20 +3441,43 @@
       "history": "Tus solicitudes de contrato",
       "signedDownload": "Descargar acuerdo firmado",
       "stepsTitle": "Acuerdo de colaboración",
-      "step1": "1 · Descarga el contrato",
+      "step1": "Descarga el contrato",
       "step1Sub": "Léelo, rellénalo y fírmalo (a mano o con firma digital).",
       "step1Btn": "Descargar plantilla del acuerdo",
-      "step2": "2 · Sube tu copia firmada",
+      "step2": "Sube tu copia firmada",
       "step2Sub": "PDF o foto (JPG/PNG) del contrato firmado, máx. 20 MB. Solo lo ve Unreal Studio.",
       "step2Btn": "Subir acuerdo firmado",
       "step2Again": "Volver a subir",
       "step2Done": "Recibido el {{date}}. Lo firmamos y te lo devolvemos aquí.",
       "uploading": "Subiendo…",
-      "step3": "3 · Contrato firmado por ambas partes",
+      "step3": "Contrato firmado por ambas partes",
       "step3Sub": "Pendiente de nuestra firma. Aparecerá aquí para descargar.",
       "step3Done": "Firmado por ambas partes · {{date}}",
       "uploadedOk": "¡Recibido! Te avisaremos cuando esté firmado por ambas partes.",
-      "badFile": "Sube un PDF, JPG o PNG de 20 MB como máximo."
+      "badFile": "Sube un PDF, JPG o PNG de 20 MB como máximo.",
+      "projTitle": "Acuerdos de proyecto",
+      "projSub": "Pide el contrato de un proyecto para tu cliente. Te lo preparamos aquí en PDF; después sube la copia firmada por el cliente.",
+      "projProject": "Proyecto",
+      "projChoose": "Elige un proyecto…",
+      "projClient": "Cliente (opcional)",
+      "projRequest": "Solicitar acuerdo de proyecto",
+      "projRequested": "Solicitud enviada. Te avisamos cuando el contrato esté listo aquí.",
+      "projStRequested": "Solicitado el {{date}} · lo estamos preparando",
+      "projStReady": "Contrato listo desde el {{date}} · descárgalo y sube la copia firmada por el cliente",
+      "projStClient": "Firmado por el cliente · subido el {{date}}",
+      "projDownload": "Descargar contrato (PDF)",
+      "projUpload": "Subir firmado por el cliente",
+      "projUploadedOk": "¡Recibido! Lo revisamos y te avisamos."
+    },
+    "assistant": {
+      "title": "Asistente",
+      "sub": "Respuestas al momento sobre proyectos, proceso y portal",
+      "open": "Abrir el asistente",
+      "hello": "¡Hola! Pregúntame lo que necesites sobre los proyectos, las comisiones, el proceso de venta o el portal.",
+      "typing": "Escribiendo…",
+      "placeholder": "Escribe tu pregunta…",
+      "send": "Enviar",
+      "error": "Ahora no puedo responder. Se lo paso al equipo."
     }
   },
   "reportOpen": {

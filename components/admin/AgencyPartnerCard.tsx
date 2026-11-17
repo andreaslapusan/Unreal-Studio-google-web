@@ -11,6 +11,12 @@ import { supabase } from '../../lib/supabase';
 import { uiLocale } from '../../lib/dateLocale';
 import { SheetModal, StateSwitch, Toast, closeBtnCls, fieldCls, labelCls, saveBtnCls, useErrText } from './agencyAdminUi';
 import AgencyMailCenter from './AgencyMailCenter';
+import { AgencyLeadsPanel, AgencyRequestsPanel } from './AgencyActivityPanels';
+import { shortProjectName } from '../agency/useAgencyData';
+import { fold } from '../../lib/fold';
+
+// type-to-confirm: case/accent/whitespace-insensitive (the label is shown uppercase by CSS)
+const sameName = (a: unknown, b: unknown) => fold(a).replace(/\s+/g, ' ').trim() === fold(b).replace(/\s+/g, ' ').trim();
 
 export interface CardProject { id: string; name: string; default_on: boolean; drive_url: string | null }
 export interface CardPassword { password_plain: string | null; temp_password: string | null; must_change_password: boolean }
@@ -23,8 +29,9 @@ interface Props {
   access: Record<string, boolean>; // project_id → is_active override for this partner
   password?: CardPassword;
   account?: CardAccount;
-  selected: boolean;
-  onSelect: () => void;
+  requests: any[]; // agency_requests type project_contract
+  unseen: { leads: number; reqs: number };
+  onSeen: () => void;
   onEdit: () => void;
   onSaved: () => Promise<void> | void;
   toast: Toast;
@@ -32,13 +39,13 @@ interface Props {
 
 const STATUS_STYLE: Record<string, string> = { approved: 'bg-green-50 text-green-600', suspended: 'bg-red-50 text-red-600', pending: 'bg-amber-50 text-amber-600', rejected: 'bg-red-50 text-red-600' };
 const iconBtn = 'p-2.5 rounded-xl transition';
-const subBtn = 'transition p-2 rounded-lg';
+const subBtn = 'transition p-1.5 rounded-lg';
 
-const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, access, password, account, selected, onSelect, onEdit, onSaved, toast }) => {
+const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, access, password, account, requests, unseen, onSeen, onEdit, onSaved, toast }) => {
   const { t } = useTranslation();
   const errText = useErrText();
   const saved = useMemo(() => Object.fromEntries(projects.map((pr) => [pr.id, access[pr.id] ?? pr.default_on])) as Record<string, boolean>, [projects, access]);
-  const [modal, setModal] = useState<null | 'mail' | 'assign' | 'delete' | { project: CardProject }>(null);
+  const [modal, setModal] = useState<null | 'mail' | 'assign' | 'delete' | 'leads' | 'reqs' | { project: CardProject }>(null);
   const [draft, setDraft] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
   const [typed, setTyped] = useState('');
@@ -92,6 +99,24 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
     await onSaved();
   };
 
+  // plantilla de contrato de proyecto por solicitud → agency-contracts/<partner>/requests/<request>/template-…pdf
+  const uploadTemplate = async (r: any, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (file.type !== 'application/pdf' || file.size > 20 * 1024 * 1024) { toast(t('admin.agencyCard.contractBadFile'), false); return; }
+    setBusy(true);
+    const safe = file.name.normalize('NFD').replace(/[^\w.-]+/g, '-').replace(/-+/g, '-').slice(-100);
+    const path = `${p.id}/requests/${r.id}/template-${safe}`;
+    const up = await supabase.storage.from('agency-contracts').upload(path, file, { upsert: true, contentType: 'application/pdf' });
+    const { error } = up.error ? { error: up.error } : await supabase.from('agency_requests').update({ template_path: path, template_uploaded_at: new Date().toISOString() }).eq('id', r.id);
+    if (!error && r.template_path && r.template_path !== path) await supabase.storage.from('agency-contracts').remove([r.template_path]);
+    setBusy(false);
+    if (error) { toast(errText(error), false); return; }
+    toast(t('admin.agencyCard.templateUploaded'));
+    await onSaved();
+  };
+
   const pw = password?.password_plain || password?.temp_password || null;
   const copy = (v: string, key: string) => { void navigator.clipboard?.writeText(v); toast(t(key)); };
   const wa = String(p.whatsapp || p.phone || '').replace(/[^\d]/g, '');
@@ -104,7 +129,6 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
     <div className="bg-[#f7f1ea] rounded-2xl border border-[#e4d8c9] shadow-sm overflow-hidden" data-agency-card={p.id}>
       <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3">
         <div className="flex items-start gap-3 flex-1 min-w-0">
-          <input type="checkbox" checked={selected} onChange={onSelect} className="mt-1.5 rounded border-gray-300 shrink-0" aria-label={t('admin.dash.selectClient', { defaultValue: 'Seleccionar' })} />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h3 className="text-base sm:text-lg font-bold text-primary break-words">{p.agency_name}</h3>
@@ -155,11 +179,41 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
                 </div>
               );
             })()}
-            {p.notes && <p className="text-xs text-primary/40 mt-2 italic break-words">{p.notes}</p>}
+            {requests.length > 0 && (
+              <div className="mt-2 space-y-1.5" data-agency-proj-reqs>
+                {requests.map((r) => (
+                  <div key={r.id} className="flex items-center gap-x-2 gap-y-1 flex-wrap text-[11px]">
+                    <span className="material-symbols-outlined text-sm text-primary/50">gavel</span>
+                    <span className="font-bold text-primary">{r.projects?.name ?? '—'}{r.client_name ? ` · ${r.client_name}` : ''}</span>
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${r.client_signed_path ? 'bg-green-50 text-green-600' : r.template_path ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'}`}>
+                      {t(r.client_signed_path ? 'admin.agencyCard.reqClientSigned' : r.template_path ? 'admin.agencyCard.reqTemplateSent' : 'admin.agencyCard.reqPending')}
+                    </span>
+                    {r.template_path && <button type="button" onClick={() => void viewContract(r.template_path)} className="font-bold text-primary underline underline-offset-2">{t('admin.agencyCard.reqTemplate')}</button>}
+                    {r.client_signed_path && <button type="button" onClick={() => void viewContract(r.client_signed_path)} className="font-bold text-green-700 underline underline-offset-2">{t('admin.agencyCard.reqClientCopy')}</button>}
+                    <label className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-primary cursor-pointer hover:bg-almond ${busy ? 'opacity-50 pointer-events-none' : ''}`}>
+                      {r.template_path ? t('admin.agencyCard.contractReplace') : t('admin.agencyCard.reqUploadTemplate')}
+                      <input type="file" accept="application/pdf" className="hidden" onChange={(e) => void uploadTemplate(r, e)} />
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
+            {p.notes && (
+              <details className="mt-2 text-xs text-primary/50">
+                <summary className="cursor-pointer select-none font-bold text-[10px] uppercase tracking-widest text-gray-400">{t('admin.agencyCard.internalNotes')}</summary>
+                <p className="mt-1 italic break-words">{p.notes}</p>
+              </details>
+            )}
           </div>
         </div>
         <div className="flex gap-1.5 shrink-0 flex-wrap justify-end">
           <button type="button" onClick={onEdit} className={`${iconBtn} text-primary bg-almond hover:brightness-95`} title={t('admin.agencyCard.settings')} aria-label={t('admin.agencyCard.settings')}><span className="material-symbols-outlined text-sm">edit</span></button>
+          {([['leads', 'group', unseen.leads, 'admin.agencyCard.leads'], ['reqs', 'notifications', unseen.reqs, 'admin.agencyCard.reqs']] as const).map(([k, icon, n, label]) => (
+            <button key={k} type="button" onClick={() => openModal(k)} className={`relative ${iconBtn} text-primary bg-almond hover:brightness-95`} title={t(label)} aria-label={`${t(label)}${n ? ` (${n})` : ''}`} data-agency-btn={k}>
+              <span className="material-symbols-outlined text-sm">{icon}</span>
+              {n > 0 && <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center" data-unseen={n}>{n > 99 ? '99+' : n}</span>}
+            </button>
+          ))}
           <button type="button" onClick={() => openModal('mail')} className={`${iconBtn} bg-almond text-primary hover:brightness-95`} title={t('admin.agencyCard.templates')} aria-label={t('admin.agencyCard.templates')}><span className="material-symbols-outlined text-sm">mail</span></button>
           {wa
             ? <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className={`${iconBtn} bg-green-50 text-green-600 hover:bg-green-100`} title={t('admin.dash.sendWhatsapp')} aria-label={t('admin.dash.sendWhatsapp')}><span className="material-symbols-outlined text-sm">chat</span></a>
@@ -177,18 +231,19 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
         </div>
         {projects.length === 0 ? <p className="text-xs text-gray-300 italic">{t('admin.clientsTab.noProjects')}</p> : (
           <div className="space-y-2">
-            {projects.map((pr) => {
+            {[...projects].sort((x, y) => Number(saved[y.id]) - Number(saved[x.id])).map((pr) => {
               const on = saved[pr.id];
               return (
-                <div key={pr.id} className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 rounded-xl px-4 py-3 border ${on ? 'bg-white border-gray-100' : 'bg-gray-100 border-gray-200'}`}>
-                  <div className={`flex items-center gap-x-4 gap-y-2 flex-wrap min-w-0 ${on ? '' : 'opacity-70'}`}>
-                    <span className="font-bold text-primary text-sm break-words">{pr.name}</span>
-                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${on ? 'bg-green-50 text-green-600' : 'bg-red-100 text-red-700'}`}>{on ? t('admin.dash.assignmentActive') : t('admin.dash.assignmentInactiveBadge')}</span>
+                <div key={pr.id} data-project-row={on ? 'on' : 'off'} className={`flex items-center justify-between gap-2 rounded-xl pl-3 pr-1.5 py-1.5 border ${on ? 'bg-white border-gray-100' : 'bg-gray-100 border-gray-200'}`}>
+                  <div className={`flex items-center gap-2 min-w-0 ${on ? '' : 'opacity-70'}`}>
+                    <span className="font-bold text-primary text-sm truncate" title={pr.name}>{shortProjectName(pr.name)}</span>
+                    <span className={`shrink-0 text-[9px] font-black uppercase px-2 py-0.5 rounded-full whitespace-nowrap ${on ? 'bg-green-50 text-green-600' : 'bg-red-100 text-red-700'}`}>{on ? t('admin.agencyCard.projActive') : t('admin.agencyCard.projInactive')}</span>
                   </div>
-                  <div className="flex gap-1.5 shrink-0 items-center self-end sm:self-auto">
-                    {pr.drive_url && <a href={pr.drive_url} target="_blank" rel="noopener noreferrer" className={`${subBtn} text-amber-700 bg-amber-50 hover:bg-amber-100`} title={t('admin.dash.driveFolder')} aria-label={t('admin.dash.driveFolder')}><span className="material-symbols-outlined text-xl leading-none">folder</span></a>}
-                    <button type="button" onClick={() => openModal({ project: pr })} className={`${subBtn} text-primary bg-primary/5 hover:bg-primary/15`} title={t('admin.dash.editAssignmentTitle')} aria-label={`${t('admin.dash.editAssignmentTitle')} · ${pr.name}`}><span className="material-symbols-outlined text-xl leading-none">edit</span></button>
-                    <button type="button" disabled={busy || !on} onClick={() => void saveProjects([{ project_id: pr.id, is_active: false }])} className={`${subBtn} text-red-500 bg-red-50 hover:bg-red-100 disabled:opacity-30`} title={t('admin.agencyCard.deactivate')} aria-label={`${t('admin.agencyCard.deactivate')} · ${pr.name}`}><span className="material-symbols-outlined text-xl leading-none">close</span></button>
+                  <div className="flex gap-1 shrink-0 items-center">
+                    {pr.drive_url ? <a href={pr.drive_url} target="_blank" rel="noopener noreferrer" className={`${subBtn} text-amber-700 bg-amber-50 hover:bg-amber-100`} title={t('admin.dash.driveFolder')} aria-label={t('admin.dash.driveFolder')}><span className="material-symbols-outlined text-lg leading-none">folder</span></a>
+                      : <span className={`${subBtn} invisible`} aria-hidden><span className="material-symbols-outlined text-lg leading-none">folder</span></span>}
+                    <button type="button" onClick={() => openModal({ project: pr })} className={`${subBtn} text-primary bg-primary/5 hover:bg-primary/15`} title={t('admin.dash.editAssignmentTitle')} aria-label={`${t('admin.dash.editAssignmentTitle')} · ${pr.name}`}><span className="material-symbols-outlined text-lg leading-none">edit</span></button>
+                    <button type="button" disabled={busy || !on} onClick={() => void saveProjects([{ project_id: pr.id, is_active: false }])} className={`${subBtn} text-red-500 bg-red-50 hover:bg-red-100 disabled:opacity-30`} title={t('admin.agencyCard.deactivate')} aria-label={`${t('admin.agencyCard.deactivate')} · ${pr.name}`}><span className="material-symbols-outlined text-lg leading-none">close</span></button>
                   </div>
                 </div>
               );
@@ -199,6 +254,8 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
     </div>
 
     {/* modals are siblings of the card (and portaled to <body>): iOS clips fixed elements inside it */}
+    {modal === 'leads' && <AgencyLeadsPanel partner={p} toast={toast} onClose={() => setModal(null)} onChanged={onSeen} />}
+    {modal === 'reqs' && <AgencyRequestsPanel partner={p} toast={toast} onClose={() => { setModal(null); void onSaved(); }} onChanged={onSeen} />}
     {modal === 'mail' && <AgencyMailCenter partner={p} toast={toast} onClose={() => setModal(null)} onSent={onSaved} />}
 
     {modal === 'assign' && (
@@ -210,9 +267,9 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
               <div key={pr.id} className={`flex items-center justify-between gap-4 rounded-2xl px-5 py-4 border ${on ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-200'}`}>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-primary break-words">{pr.name}</p>
-                  <p className={`text-[11px] font-bold ${on ? 'text-emerald-600' : 'text-red-600'}`}>{on ? t('admin.dash.assignmentActive') : t('admin.dash.assignmentInactive')}</p>
+                  <p className={`text-[11px] font-bold ${on ? 'text-emerald-600' : 'text-red-600'}`}>{on ? t('admin.agencyCard.projActive') : t('admin.agencyCard.projInactive')}</p>
                 </div>
-                <StateSwitch on={on} onChange={() => setDraft({ ...draft, [pr.id]: !on })} label={`${pr.name}: ${on ? t('admin.dash.assignmentActive') : t('admin.dash.assignmentInactive')}`} />
+                <StateSwitch on={on} onChange={() => setDraft({ ...draft, [pr.id]: !on })} label={`${pr.name}: ${on ? t('admin.agencyCard.projActive') : t('admin.agencyCard.projInactive')}`} />
               </div>
             );
           })}
@@ -229,7 +286,7 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
       <SheetModal title={t('admin.dash.editAssignmentTitle')} subtitle={<><strong className="text-primary">{editing.name}</strong> · {p.agency_name}</>} onClose={() => setModal(null)} guard={draftItems().length > 0}>
         <div className={`flex items-center justify-between gap-4 rounded-2xl px-5 py-4 border ${editOn ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-200'}`}>
           <div className="min-w-0">
-            <p className="text-sm font-bold text-primary">{t('admin.dash.assignmentStateLabel')}: <span className={editOn ? 'text-emerald-600' : 'text-red-600'}>{editOn ? t('admin.dash.assignmentActive') : t('admin.dash.assignmentInactive')}</span></p>
+            <p className="text-sm font-bold text-primary">{t('admin.dash.assignmentStateLabel')}: <span className={editOn ? 'text-emerald-600' : 'text-red-600'}>{editOn ? t('admin.agencyCard.projActive') : t('admin.agencyCard.projInactive')}</span></p>
             <p className="text-[11px] text-gray-400 mt-0.5">{t('admin.agencyCard.assignmentHint')}</p>
           </div>
           <StateSwitch on={editOn} onChange={() => setDraft({ ...draft, [editing.id]: !editOn })} label={t('admin.dash.assignmentStateLabel')} />
@@ -246,7 +303,7 @@ const AgencyPartnerCard: React.FC<Props> = ({ partner: p, stats: s, projects, ac
         <label className={labelCls}>{t('agencyFunnel.admin.typeName', { name: p.agency_name })}</label>
         <input value={typed} onChange={(e) => setTyped(e.target.value)} className={fieldCls} autoComplete="off" />
         <div className="flex gap-4 pt-6">
-          <button type="button" disabled={busy || typed.trim() !== String(p.agency_name).trim()} onClick={() => void remove()} className="flex-1 bg-red-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-40">{t('agencyFunnel.admin.delete')}</button>
+          <button type="button" disabled={busy || sameName(typed, p.agency_name) === false} onClick={() => void remove()} className="flex-1 bg-red-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-40">{t('agencyFunnel.admin.delete')}</button>
           <button type="button" onClick={() => setModal(null)} className="flex-1 bg-gray-100 text-primary py-4 rounded-xl font-bold uppercase tracking-widest text-xs">{t('fix.apm.cancel')}</button>
         </div>
       </SheetModal>

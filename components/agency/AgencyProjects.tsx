@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { projectSeoSlug } from '../../lib/projectUrl';
 import { useCurrency } from '../../App';
-import { AgencyData, ProjectInfo, PropertyRow, UnitRow, shortProjectName, groupUnits, copyText, isUnitAvailable, partnerParam, unitPct, renderLinks } from './useAgencyData';
+import { AgencyData, ProjectInfo, PropertyRow, UnitRow, shortProjectName, groupUnits, copyText, isUnitAvailable, partnerParam, unitPct, renderLinks, useShortLink } from './useAgencyData';
 import { card, btnGhost, Empty, ListRow, SectionTitle } from './ui';
 
 export default function AgencyProjects({ data }: { data: AgencyData }) {
@@ -40,8 +40,9 @@ const ProjectCard: React.FC<CardProps> = ({ p, info, units: all, partnerId, part
   const publicUrl = p.slug
     ? `${window.location.origin}/proyecto/${projectSeoSlug({ slug: p.slug, location: p.area ?? null })}?utm_source=lister&utm_partner=${partnerRef}&utm_property=${p.slug}`
     : null;
+  const shareUrl = useShortLink(publicUrl);
   const share = async () => {
-    if (publicUrl && await copyText(publicUrl, t('agenciasDashboard.copyPrompt'))) { setCopied(true); setTimeout(() => setCopied(false), 2200); }
+    if (shareUrl && await copyText(shareUrl, t('agenciasDashboard.copyPrompt'))) { setCopied(true); setTimeout(() => setCopied(false), 2200); }
   };
 
   return (

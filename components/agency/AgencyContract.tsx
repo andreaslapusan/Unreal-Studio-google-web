@@ -3,20 +3,19 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import { AgencyData } from './useAgencyData';
-import { createRequest, RequestRow } from './AgencyRequests';
+import { RequestRow } from './AgencyRequests';
+import AgencyProjectAgreements from './AgencyProjectAgreements';
 import { card, btnPrimary, btnGhost, SectionTitle } from './ui';
 
 export default function AgencyContract({ data }: { data: AgencyData }) {
   const { t } = useTranslation();
-  const { partner, requests, reloadRequests } = data;
-  const [saving, setSaving] = useState(false);
+  const { partner, requests } = data;
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [mine2, setMine2] = useState<{ path: string | null; at: string | null }>({ path: partner?.agency_signed_path ?? null, at: partner?.agency_signed_uploaded_at ?? null });
   const [uploading, setUploading] = useState(false);
   if (!partner) return null;
 
   const mine = requests.filter((r) => r.type === 'contract');
-  const inProgress = mine.some((r) => r.status === 'pending' || r.status === 'scheduled');
 
   // Contrato en 3 pasos (bucket PRIVADO agency-contracts, enlaces firmados de 10 min, solo su carpeta):
   // 1) plantilla (ES = PDF generado con sus condiciones; resto = plantilla EN|ID) · 2) sube su copia firmada · 3) descarga la contrafirmada
@@ -53,21 +52,11 @@ export default function AgencyContract({ data }: { data: AgencyData }) {
   };
   const fmtD = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleDateString() : '');
 
-  const request = async () => {
-    setSaving(true); setMsg(null);
-    const err = await createRequest(partner.id, { type: 'contract' });
-    setSaving(false);
-    if (err) { setMsg({ ok: false, text: err }); return; }
-    setMsg({ ok: true, text: t('agencyPortal.contract.requested') });
-    await reloadRequests();
-  };
-
   return (
     <div className="animate-in fade-in duration-500 space-y-6">
-      <SectionTitle title={t('agencyPortal.nav.contract')} sub={t('agencyPortal.contract.sub')}
-        action={<div className="flex flex-wrap gap-2"><button onClick={request} disabled={saving || inProgress} className={btnPrimary}><span className="material-symbols-outlined text-base">gavel</span>{t('agencyPortal.contract.request')}</button></div>} />
-      {(msg || inProgress) && (
-        <p className={`text-sm rounded-xl px-4 py-3 ${msg && !msg.ok ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-800'}`}>{msg?.text ?? t('agencyPortal.contract.pending')}</p>
+      <SectionTitle title={t('agencyPortal.nav.contract')} sub={t('agencyPortal.contract.sub')} />
+      {msg && (
+        <p className={`text-sm rounded-xl px-4 py-3 ${!msg.ok ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-800'}`}>{msg.text}</p>
       )}
 
       <section className={`${card} !p-0 overflow-hidden`} data-contract-steps>
@@ -95,6 +84,8 @@ export default function AgencyContract({ data }: { data: AgencyData }) {
           ))}
         </ol>
       </section>
+
+      <AgencyProjectAgreements data={data} />
 
       {mine.length > 0 && (
         <section>

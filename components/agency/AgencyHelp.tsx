@@ -2,6 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { agencyContact, agencyWhatsappUrl } from '../../constants';
+import AgencyAssistant from './AgencyAssistant';
 import { card, btnPrimary, btnGhost, SectionTitle } from './ui';
 
 export default function AgencyHelp({ agencyName, close, referral, market }: { agencyName: string; close: number; referral: number; market?: string | null }) {
@@ -56,6 +57,7 @@ export default function AgencyHelp({ agencyName, close, referral, market }: { ag
           </a>
         </div>
       </section>
+      <AgencyAssistant />
     </div>
   );
 }

@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
-import { AgencyData, catalogLink, copyText, fmtDate } from './useAgencyData';
+import { AgencyData, catalogLink, copyText, fmtDate, useShortLink } from './useAgencyData';
 import { logoFileError, uploadPartnerLogo } from './partnerLogo';
 import { card, btnPrimary, btnGhost, input, SectionTitle } from './ui';
 
-// Lo que la agencia puede editar ella misma (RLS + trigger impiden tocar estado/proyectos/email).
-// Lo único que la agencia puede cambiar (la BD aplica la misma lista: trigger protect_partner_privileged_cols).
-const EDITABLE = ['manager_name', 'phone', 'whatsapp'] as const;
+// Lo que la agencia edita ella misma (la BD aplica la misma lista: trigger protect_partner_privileged_cols).
+// El email de acceso va aparte: agency-hub request_email_change → enlace de confirmación al email NUEVO.
+// Estado, comisión y proyectos: solo admin.
+const EDITABLE = ['agency_name', 'manager_name', 'phone', 'whatsapp', 'website', 'country'] as const;
 type Editable = typeof EDITABLE[number];
 
 export default function AgencyProfile({ data, email }: { data: AgencyData; email: string | undefined }) {
@@ -20,22 +21,32 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
   const [form, setForm] = useState<Record<Editable, string> | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [emailMsg, setEmailMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const shortMine = useShortLink(partner ? catalogLink(partner) : null);
   if (!partner) return null;
 
-  const startEdit = () => { setSaveError(''); setForm(Object.fromEntries(EDITABLE.map((k) => [k, partner[k] ?? ''])) as Record<Editable, string>); };
+  const startEdit = () => { setSaveError(''); setEmailMsg(null); setNewEmail(partner.email ?? ''); setForm(Object.fromEntries(EDITABLE.map((k) => [k, partner[k] ?? ''])) as Record<Editable, string>); };
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form) return;
     setSaving(true);
     setSaveError('');
+    if (!form.agency_name.trim()) { setSaving(false); setSaveError(t('agencyPortal.profile.nameRequired')); return; }
     const patch = Object.fromEntries(EDITABLE.map((k) => [k, form[k].trim() || null])) as Record<Editable, string | null>;
     const { error } = await supabase.from('listing_partners').update(patch).eq('id', partner.id);
-    setSaving(false);
-    if (error) { setSaveError(error.message); return; }
+    if (error) { setSaving(false); setSaveError(t('agencyFunnel.err.generic')); return; }
     setPartner({ ...partner, ...patch });
+    const e2 = newEmail.trim().toLowerCase();
+    if (e2 && e2 !== String(partner.email ?? '').toLowerCase()) {
+      const { data: r, error: ee } = await supabase.functions.invoke('agency-hub', { body: { action: 'request_email_change', email: e2, lang: partner.lang } });
+      if (ee || !(r as any)?.ok) { setSaving(false); setSaveError(t(`agencyPortal.profile.emailErr.${(r as any)?.error ?? 'generic'}`, { defaultValue: t('agencyFunnel.err.generic') })); return; }
+      setEmailMsg({ ok: true, text: t('agencyPortal.profile.emailSent', { email: e2 }) });
+    }
+    setSaving(false);
     setForm(null);
   };
-  const link = catalogLink(partner);
+  const link = shortMine ?? catalogLink(partner);
 
   const copyLink = async () => {
     if (await copyText(link, t('agenciasDashboard.copyPersonalLinkPrompt'))) { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2200); }
@@ -114,11 +125,16 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
           {form ? (
             <form onSubmit={save} className="grid sm:grid-cols-2 gap-4">
               {EDITABLE.map((k) => (
-                <label key={k} className="block text-xs text-primary/60">
-                  {t(`agencyPortal.profile.${k === 'manager_name' ? 'manager' : k}`)}
-                  <input value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} type={k === 'phone' || k === 'whatsapp' ? 'tel' : 'text'} className={`${input} mt-1`} />
+                <label key={k} className="block text-xs text-primary/60 min-w-0">
+                  {t(`agencyPortal.profile.${k === 'manager_name' ? 'manager' : k === 'agency_name' ? 'agency' : k}`)}
+                  <input value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} type={k === 'phone' || k === 'whatsapp' ? 'tel' : k === 'website' ? 'url' : 'text'} required={k === 'agency_name'} className={`${input} mt-1`} />
                 </label>
               ))}
+              <label className="block text-xs text-primary/60 sm:col-span-2 min-w-0">
+                {t('agencyPortal.profile.email')}
+                <input value={newEmail} onChange={(e) => setNewEmail(e.target.value)} type="email" autoComplete="email" className={`${input} mt-1`} data-profile-email />
+                <span className="block text-[11px] text-primary/40 mt-1">{t('agencyPortal.profile.emailHint')}</span>
+              </label>
               {saveError && <p className="sm:col-span-2 text-[11px] text-red-600">{saveError}</p>}
               <div className="sm:col-span-2 flex gap-2">
                 <button type="submit" disabled={saving} className={btnPrimary}>{t('common.save')}</button>
@@ -135,6 +151,8 @@ export default function AgencyProfile({ data, email }: { data: AgencyData; email
             ))}
           </dl>
           )}
+          {emailMsg && <p className={`text-sm rounded-xl px-4 py-3 mt-4 ${emailMsg.ok ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-700'}`}>{emailMsg.text}</p>}
+          {partner.pending_email && !emailMsg && <p className="text-xs text-amber-800 bg-amber-50 rounded-xl px-4 py-3 mt-4">{t('agencyPortal.profile.emailPending', { email: partner.pending_email })}</p>}
           <p className="text-xs text-primary/40 mt-4">{t('agencyPortal.profile.editHint')}</p>
         </section>
       </div>

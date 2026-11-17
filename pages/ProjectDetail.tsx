@@ -552,6 +552,13 @@ const ProjectDetail: React.FC = () => {
                       {t('fix.pd.downloadBrochure')}
                     </a>
                   )}
+                  {/* Renders por tipo de unidad (p.ej. Deseo Type A/B/C) → carpetas públicas de Drive */}
+                  {(Array.isArray((project as any).drive_renders_links) ? (project as any).drive_renders_links : []).filter((l: any) => l?.url).map((l: any) => (
+                    <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 h-14 rounded-2xl font-bold shadow-xl border border-primary hover:bg-almond hover:text-primary transition">
+                      <span className="material-symbols-outlined">photo_library</span>
+                      {t('projectDetail.rendersType', { label: l.label })}
+                    </a>
+                  ))}
                   {((project as any).video_url || (project as any).walkthrough_url) && (
                     <a href={(project as any).video_url || (project as any).walkthrough_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-primary text-white px-6 h-14 rounded-2xl font-bold shadow-xl border border-primary hover:bg-almond hover:text-primary transition">
                       <span className="material-symbols-outlined">smart_display</span>

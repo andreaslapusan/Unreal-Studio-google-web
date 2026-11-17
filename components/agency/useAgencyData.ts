@@ -32,11 +32,14 @@ export interface PartnerRow {
   signed_contract_uploaded_at?: string | null;
   agency_signed_path?: string | null;
   agency_signed_uploaded_at?: string | null;
+  pending_email?: string | null;
 }
 
 export interface PropertyRow {
   /** properties.id (FK de agency_leads) si el proyecto está en el catálogo de agencias; si no, projects.id. */
   id: string;
+  /** projects.id (web) — FK de agency_requests.project_id */
+  project_id?: string;
   slug?: string;
   name: string;
   short_pitch: string | null;
@@ -117,7 +120,13 @@ export interface ProjectInfo {
 export interface AgencyRequest {
   id: string;
   created_at: string;
-  type: 'call' | 'visit' | 'presentation' | 'contract' | 'reserve';
+  type: 'call' | 'visit' | 'presentation' | 'contract' | 'reserve' | 'project_contract';
+  project_id?: string | null;
+  client_name?: string | null;
+  template_path?: string | null;
+  template_uploaded_at?: string | null;
+  client_signed_path?: string | null;
+  client_signed_uploaded_at?: string | null;
   lead_id: string | null;
   unit_id: string | null;
   preferred_date: string | null;
@@ -222,6 +231,24 @@ export const partnerParam = (p: PartnerRow) => p.personal_link_slug ?? p.id;
 export const catalogLink = (p: PartnerRow) =>
   `${typeof window !== 'undefined' ? window.location.origin : 'https://unrealstudiobali.com'}/proyectos?utm_source=lister&utm_partner=${partnerParam(p)}`;
 
+/** Short referral link /a/<code> (short_links) for one of the agency's own utm links; falls back to the long link. */
+const shortCache = new Map<string, string>();
+export async function shortLink(long: string): Promise<string> {
+  const target = long.replace(/^https?:\/\/[^/]+/, 'https://unrealstudiobali.com');
+  const hit = shortCache.get(target);
+  if (hit) return hit;
+  const { data, error } = await supabase.rpc('agency_short_link', { p_target: target });
+  const s = !error && typeof data === 'string' ? `https://unrealstudiobali.com/a/${data}` : long;
+  shortCache.set(target, s);
+  return s;
+}
+/** Precomputed so the copy button stays synchronous (iOS blocks clipboard writes after an await). */
+export function useShortLink(long: string | null): string | null {
+  const [s, setS] = useState(long);
+  useEffect(() => { setS(long); if (long) void shortLink(long).then(setS, () => {}); }, [long]);
+  return s;
+}
+
 export async function copyText(text: string, promptLabel: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
@@ -266,7 +293,7 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
   const loadRequests = useCallback(async (agencyId: string) => {
     const { data, error: e } = await supabase
       .from('agency_requests')
-      .select('id, created_at, type, lead_id, unit_id, preferred_date, notes, status')
+      .select('id, created_at, type, lead_id, unit_id, preferred_date, notes, status, project_id, client_name, template_path, template_uploaded_at, client_signed_path, client_signed_uploaded_at')
       .eq('agency_id', agencyId)
       .order('created_at', { ascending: false });
     if (e) throw e;
@@ -290,7 +317,7 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
       try {
         const { data: p, error: pErr } = await supabase
           .from('listing_partners')
-          .select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at, market, commission_close_pct, commission_referral_pct, lang, deleted_at, signed_contract_path, signed_contract_uploaded_at, agency_signed_path, agency_signed_uploaded_at')
+          .select('id, agency_name, manager_name, email, phone, whatsapp, website, country, status, projects_assigned, logo_url, personal_link_slug, created_at, market, commission_close_pct, commission_referral_pct, lang, deleted_at, signed_contract_path, signed_contract_uploaded_at, agency_signed_path, agency_signed_uploaded_at, pending_email')
           .eq('user_id', userId)
           .maybeSingle();
         if (pErr) throw pErr;
@@ -320,7 +347,7 @@ export function useAgencyData(userId: string | undefined, notLinkedMsg: string):
         const catalog: PropertyRow[] = web.filter(isOnSaleOnWeb).map((w) => {
           const pr = bySlug.get(w.slug);
           return {
-            id: pr?.id ?? w.id, slug: w.slug, name: w.name,
+            id: pr?.id ?? w.id, project_id: w.id, slug: w.slug, name: w.name,
             short_pitch: L === 'es' ? (pr?.short_pitch ?? loc(w, 'description')) : (loc(w, 'description') ?? pr?.short_pitch ?? null),
             area: pr?.area ?? w.location,
             pct_progress: w.completion_percent ?? pr?.pct_progress ?? null,

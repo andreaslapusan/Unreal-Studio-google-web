@@ -1,7 +1,7 @@
 /** Inicio del portal de agencias: KPIs, accesos rápidos y actividad reciente. */
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AgencyData, catalogLink, copyText, fmtDate, isUnitAvailable } from './useAgencyData';
+import { AgencyData, catalogLink, copyText, fmtDate, isUnitAvailable, useShortLink } from './useAgencyData';
 import { card, btnPrimary, btnGhost, ListRow, Stat, StatusPill } from './ui';
 
 interface Props { data: AgencyData; go: (view: string, extra?: Record<string, string>) => void }
@@ -10,6 +10,7 @@ export default function AgencyOverview({ data, go }: Props) {
   const { t } = useTranslation();
   const { partner, leads, events, units } = data;
   const [copied, setCopied] = useState(false);
+  const myLink = useShortLink(partner ? catalogLink(partner) : null);
   if (!partner) return null;
 
   const following = leads.filter((l) => l.status === 'new' || l.status === 'contacted').length;
@@ -24,7 +25,7 @@ export default function AgencyOverview({ data, go }: Props) {
   ].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8);
 
   const copyLink = async () => {
-    if (await copyText(catalogLink(partner), t('agenciasDashboard.copyPersonalLinkPrompt'))) {
+    if (await copyText(myLink ?? catalogLink(partner), t('agenciasDashboard.copyPersonalLinkPrompt'))) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2200);
     }

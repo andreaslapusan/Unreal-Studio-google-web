@@ -303,7 +303,8 @@
       "payDoneA": "Sesuai jadwal pembayaran dalam kontrak jual beli.",
       "remoteQ": "Apakah saya harus datang ke Bali?",
       "remoteA": "Tidak. Anda dapat menandatangani dari jauh dengan surat kuasa notaris dan menerima laporan pembangunan beserta foto."
-    }
+    },
+    "rendersType": "Render · {{label}}"
   },
   "faq": {
     "title": "FAQ Investasi Properti di Bali | Unreal Studio Bali",
@@ -1535,13 +1536,15 @@
       "clientConflictReload": "Muat ulang",
       "assignmentStateLabel": "Penugasan",
       "assignmentActive": "Aktif",
-      "assignmentInactive": "Nonaktif",
-      "assignmentInactiveBadge": "Nonaktif",
+      "assignmentInactive": "Nonaktif / Dibekukan",
+      "assignmentInactiveBadge": "Nonaktif / Dibekukan",
       "assignmentActiveHint": "Nonaktif: semua data dan pembayaran tetap disimpan, tetapi klien tidak melihat proyek ini di portalnya dan tidak ada pemberitahuan otomatis yang dikirim.",
       "autoEmailsState": "Email otomatis",
       "autoEmailsStateOn": "Aktif",
       "autoEmailsStateOff": "Dijeda",
-      "autoEmailsStateHint": "Dijeda (merah): tidak ada email OTOMATIS yang dikirim ke klien ini (pengingat pembayaran, pemberitahuan laporan konstruksi baru, sambutan…). Email yang Anda kirim manual dari admin tetap terkirim setelah konfirmasi."
+      "autoEmailsStateHint": "Dijeda (merah): tidak ada email OTOMATIS yang dikirim ke klien ini (pengingat pembayaran, pemberitahuan laporan konstruksi baru, sambutan…). Email yang Anda kirim manual dari admin tetap terkirim setelah konfirmasi.",
+      "inactiveReason": "Alasan (opsional)",
+      "inactiveReasonPh": "mis. Membayar reservasi tetapi tidak melanjutkan"
     },
     "mkt": {
       "sessionExpired": "Sesi habis. Silakan masuk lagi.",
@@ -1736,7 +1739,14 @@
       "typeAgencyContract": "Kontrak diunggah (agensi)",
       "f_agency_contract_upload": "Kontrak agensi",
       "grpContracts": "Kontrak perlu ditandatangani",
-      "t_contract": "Telah mengunggah kontrak bertanda tangan"
+      "t_contract": "Telah mengunggah kontrak bertanda tangan",
+      "typeAgencyProjReq": "Perjanjian proyek diminta",
+      "typeAgencyClientSigned": "Ditandatangani klien (agensi)",
+      "f_agency_project_contract_request": "Perjanjian proyek",
+      "f_agency_client_signed_upload": "Ditandatangani klien",
+      "grpProjReqs": "Perjanjian proyek untuk disiapkan",
+      "typeAgencyAssistant": "Asisten → tim",
+      "f_agency_assistant_handoff": "Pertanyaan asisten"
     },
     "perms": {
       "check_in": "Absen masuk/keluar",
@@ -2160,7 +2170,21 @@
       "uploadFinal": "Unggah versi final",
       "ref": "Ref WhatsApp",
       "refHint": "Kode di akhir pesan WhatsApp dari klien yang datang lewat tautannya. Cari di atas untuk menemukan agensinya.",
-      "refCopied": "Kode disalin"
+      "refCopied": "Kode disalin",
+      "internalNotes": "Catatan internal",
+      "templateUploaded": "Templat diunggah. Agensi kini dapat mengunduhnya di “Perjanjian hukum”.",
+      "reqPending": "Minta perjanjian",
+      "reqTemplateSent": "Templat terkirim",
+      "reqClientSigned": "Ditandatangani klien",
+      "reqTemplate": "Templat",
+      "reqClientCopy": "Salinan bertanda tangan klien",
+      "reqUploadTemplate": "Unggah templat PDF",
+      "leads": "Prospek (klien terdaftar)",
+      "reqs": "Permintaan",
+      "leadsTitle": "Prospek {{name}}",
+      "reqsTitle": "Permintaan dari {{name}}",
+      "projActive": "Aktif",
+      "projInactive": "Nonaktif"
     }
   },
   "footer": {
@@ -3220,9 +3244,23 @@
         "pending": "Menunggu",
         "rejected": "Ditolak"
       },
-      "editHint": "Email login, status, dan proyek dikelola oleh Unreal: jika perlu diubah, hubungi kami dari Bantuan & kontak.",
+      "editHint": "Status, komisi, dan proyek dikelola oleh Unreal Studio.",
       "edit": "Ubah data",
-      "whatsapp": "WhatsApp"
+      "whatsapp": "WhatsApp",
+      "nameRequired": "Nama agensi wajib diisi.",
+      "emailHint": "Jika Anda mengubahnya, kami mengirim tautan konfirmasi ke email baru; login tidak berubah sampai Anda mengonfirmasi.",
+      "emailSent": "Kami telah mengirim tautan konfirmasi ke {{email}}. Email login berubah setelah Anda mengonfirmasi.",
+      "emailPending": "Perubahan email menunggu konfirmasi: {{email}}",
+      "emailConfirming": "Mengonfirmasi email baru Anda…",
+      "emailConfirmed": "Selesai! Sekarang Anda masuk ke portal dengan {{email}}.",
+      "emailConfirmError": "Tautan tidak valid atau sudah kedaluwarsa. Minta perubahan lagi dari “Agensi saya”.",
+      "emailErr": {
+        "invalid_email": "Email tidak valid.",
+        "email_in_use": "Email sudah dipakai agensi lain.",
+        "same": "Itu email yang sudah Anda gunakan.",
+        "rate": "Kami baru saja mengirim tautan; tunggu beberapa menit.",
+        "generic": "Tidak dapat menyimpan. Coba lagi."
+      }
     },
     "help": {
       "sub": "Cara bekerja sama dengan Unreal Studio sebagai agensi mitra.",
@@ -3309,7 +3347,8 @@
         "visit": "Kunjungan / perjalanan ke Bali",
         "presentation": "Presentasi online",
         "contract": "Kontrak kerja sama",
-        "reserve": "Reservasi unit"
+        "reserve": "Reservasi unit",
+        "project_contract": "Perjanjian proyek"
       },
       "client": "Klien (opsional)",
       "noClient": "Tanpa klien tertentu",
@@ -3379,7 +3418,7 @@
       "r4": "Luas meter persegi, izin, dan masalah hukum tertentu: serahkan ke tim melalui panggilan."
     },
     "contract": {
-      "sub": "Ringkasan ketentuan kerja sama dengan Unreal Studio. Kontrak yang ditandatangani yang berlaku.",
+      "sub": "Perjanjian kerja sama Anda dengan Unreal Studio dan perjanjian proyek untuk klien Anda, selalu dalam PDF.",
       "request": "Minta kontrak",
       "requested": "Permintaan kontrak terkirim. Tim penjualan akan mengirimkannya dengan data agensi Anda.",
       "pending": "Anda sudah memiliki permintaan kontrak yang sedang diproses.",
@@ -3401,20 +3440,43 @@
       "history": "Permintaan kontrak Anda",
       "signedDownload": "Unduh perjanjian bertanda tangan",
       "stepsTitle": "Perjanjian kerja sama",
-      "step1": "1 · Unduh perjanjian",
+      "step1": "Unduh perjanjian",
       "step1Sub": "Baca, isi, dan tanda tangani (manual atau tanda tangan digital).",
       "step1Btn": "Unduh templat perjanjian",
-      "step2": "2 · Unggah salinan yang sudah ditandatangani",
+      "step2": "Unggah salinan yang sudah ditandatangani",
       "step2Sub": "PDF atau foto (JPG/PNG) perjanjian yang ditandatangani, maks. 20 MB. Hanya Unreal Studio yang melihatnya.",
       "step2Btn": "Unggah perjanjian bertanda tangan",
       "step2Again": "Unggah ulang",
       "step2Done": "Diterima pada {{date}}. Kami akan menandatanganinya dan mengembalikannya di sini.",
       "uploading": "Mengunggah…",
-      "step3": "3 · Perjanjian ditandatangani kedua pihak",
+      "step3": "Perjanjian ditandatangani kedua pihak",
       "step3Sub": "Menunggu tanda tangan kami. Akan muncul di sini untuk diunduh.",
       "step3Done": "Ditandatangani kedua pihak · {{date}}",
       "uploadedOk": "Diterima! Kami akan memberi tahu Anda setelah ditandatangani kedua pihak.",
-      "badFile": "Unggah PDF, JPG atau PNG maksimal 20 MB."
+      "badFile": "Unggah PDF, JPG atau PNG maksimal 20 MB.",
+      "projTitle": "Perjanjian proyek",
+      "projSub": "Minta perjanjian proyek untuk klien Anda. Kami menyiapkannya di sini dalam PDF; lalu unggah salinan yang ditandatangani klien.",
+      "projProject": "Proyek",
+      "projChoose": "Pilih proyek…",
+      "projClient": "Klien (opsional)",
+      "projRequest": "Minta perjanjian proyek",
+      "projRequested": "Permintaan terkirim. Kami akan memberi tahu di sini saat perjanjian siap.",
+      "projStRequested": "Diminta pada {{date}} · sedang kami siapkan",
+      "projStReady": "Perjanjian siap sejak {{date}} · unduh dan unggah salinan yang ditandatangani klien",
+      "projStClient": "Ditandatangani klien · diunggah pada {{date}}",
+      "projDownload": "Unduh perjanjian (PDF)",
+      "projUpload": "Unggah salinan bertanda tangan klien",
+      "projUploadedOk": "Diterima! Kami akan memeriksanya dan memberi tahu Anda."
+    },
+    "assistant": {
+      "title": "Asisten",
+      "sub": "Jawaban cepat tentang proyek, proses, dan portal",
+      "open": "Buka asisten",
+      "hello": "Halo! Tanyakan apa saja tentang proyek, komisi, proses penjualan, atau portal.",
+      "typing": "Mengetik…",
+      "placeholder": "Tulis pertanyaan Anda…",
+      "send": "Kirim",
+      "error": "Saya tidak bisa menjawab sekarang. Saya teruskan ke tim."
     }
   },
   "reportOpen": {
