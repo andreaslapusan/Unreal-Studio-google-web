@@ -48,6 +48,7 @@ import { portalPath } from '../lib/portalUrls';
 import i18n, { preloadAllLocales } from '../lib/i18n';
 void preloadAllLocales(); // getFixedT(idioma del cliente) necesita los 4 JSON
 import BrandLogo from '../components/BrandLogo';
+import { fuzzyIncludes } from '../lib/fold';
 
 type AdminView = 'dashboard' | 'projects' | 'intakes' | 'blogs' | 'config' | 'users' | 'clients' | 'contacts' | 'cobros' | 'gastos' | 'calendar' | 'agenda' | 'employees' | 'notifications' | 'faqs' | 'agencias' | 'arquitectura' | 'timelines' | 'pi' | 'prensa' | 'emails';
 const ADMIN_VIEWS: AdminView[] = ['dashboard', 'projects', 'intakes', 'blogs', 'config', 'users', 'clients', 'contacts', 'cobros', 'gastos', 'calendar', 'agenda', 'employees', 'notifications', 'faqs', 'agencias', 'arquitectura', 'pi', 'prensa', 'emails'];
@@ -858,7 +859,7 @@ const AMENITIES_LIST = [
     }
     if (blogSearch.trim()) {
       const q = blogSearch.toLowerCase();
-      result = result.filter(b => b.title.toLowerCase().includes(q) || b.tag?.toLowerCase().includes(q));
+      result = result.filter(b => fuzzyIncludes(`${b.title} ${b.tag || ''}`, q));
     }
     result.sort((a, b) => {
       const dateA = new Date(a.published_date).getTime();
@@ -1288,8 +1289,7 @@ const clientCurrencyOptions = Array.from(new Set(clients.flatMap((c: any) => (c.
 const filteredClients = clients
   .filter((c: any) => {
     if (clientSearch.trim()) {
-      const q = clientSearch.toLowerCase();
-      if (!((c.name || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q) || c.phone?.toLowerCase().includes(q))) return false;
+      if (!fuzzyIncludes(`${c.name || ''} ${c.email || ''} ${c.phone || ''}`, clientSearch)) return false;
     }
     if (clientFilterProjects.length && !(c.projects || []).some((cp: any) => clientFilterProjects.includes(cp.project_name || cp.project_id))) return false;
     if (clientFilterCurrency && !(c.projects || []).some((cp: any) => cp.currency === clientFilterCurrency)) return false;
@@ -1569,7 +1569,7 @@ const sendReminderEmail = async (client: Client) => {
   const userId = getAdminUserId();
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const { data } = await supabase.rpc('admin_list_client_payments', { p_user_id: userId, p_client_id: client.id });
-  const units: any[] = data?.success ? (data.units || []) : [];
+  const units: any[] = data?.success ? (data.units || []).filter((u: any) => u.is_active !== false) : [];
   const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Makassar' }));
   today.setHours(0, 0, 0, 0);
   const daysUntil = (due: string) => Math.round((new Date(due + 'T00:00:00').getTime() - today.getTime()) / 86400000);
@@ -1695,7 +1695,7 @@ const sendReportEmail = async (client: Client) => {
       }
     }
   } catch { /* seguimos con la caché */ }
-  const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name);
+  const projs = ((client as any).projects || []).filter((cp: any) => cp.project_name && cp.is_active !== false);
   if (!projs.length) { alert(t('admin.dash.reportNoProjects')); return; }
   // El admin elige PARA CUÁLES propiedades y A QUIÉN va el aviso, si hay más de una
   // opción (varias propiedades o varios destinatarios participantes).
@@ -1716,7 +1716,7 @@ const sendCalendarEmail = async (client: Client, mode: 'calendar' | 'shortfall' 
   const userId = getAdminUserId();
   if (!userId) { alert(t('admin.dash.sessionExpired')); navigate('/admin/login'); return; }
   const { data } = await supabase.rpc('admin_list_client_payments', { p_user_id: userId, p_client_id: client.id });
-  const allUnits: any[] = data?.success ? (data.units || []) : [];
+  const allUnits: any[] = data?.success ? (data.units || []).filter((u: any) => u.is_active !== false) : [];
   if (!allUnits.length) { alert(t('admin.dash.reportNoProjects')); return; }
   const shortOf = (u: any) => (u.payments || []).filter((p: any) => p.received).reduce((s: number, p: any) => s + Number(p.amount) - creditedOf(p), 0);
   const units = mode === 'shortfall' ? allUnits.filter((u) => shortOf(u) > 0.009) : allUnits;
@@ -1882,6 +1882,26 @@ const handleUnassignProject = async (clientId: string, assignmentId: string) => 
 // Deseo: un único listing para todos los tipos → el tipo va por unidad (client_projects.unit_type)
 const UNIT_TYPES = ['A', 'B', 'C', 'D'] as const;
 const isDeseoAssignment = (a: any) => /deseo/i.test(a?.project_name || '') || !!a?.unit_type;
+
+// Inactivar/activar asignación: conserva TODO (datos y pagos); inactiva = fuera del portal del cliente y sin envíos automáticos.
+const handleToggleAssignmentActive = async () => {
+    if (!editingAssignment) return;
+    const next = (editingAssignment.assignment as any).is_active === false;
+    if (!window.confirm(t(next ? 'admin.dash.assignmentActivateConfirm' : 'admin.dash.assignmentInactivateConfirm'))) return;
+    try {
+        setUploading(true);
+        const { data, error } = await supabase.rpc('admin_set_assignment_active', { p_assignment_id: editingAssignment.assignment.id, p_active: next });
+        if (error) throw error;
+        if (data && !data.success) throw new Error(data.error);
+        setEditingAssignment({ ...editingAssignment, assignment: { ...editingAssignment.assignment, is_active: next } as any });
+        await loadData();
+    } catch (error) {
+        console.error('Error toggling assignment:', error);
+        alert(t('admin.dash.updateAssignmentError'));
+    } finally {
+        setUploading(false);
+    }
+};
 
 const handleEditAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -2495,9 +2515,10 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             {client.projects && client.projects.length > 0 ? (
               <div className="space-y-2">
                 {client.projects.map((cp: any, cpIdx: number) => (
-                  <div key={cp.id || cpIdx} className="flex justify-between items-center bg-white rounded-xl px-4 py-3 border border-gray-100">
-                    <div className="flex items-center gap-4 flex-wrap">
+                  <div key={cp.id || cpIdx} className={`flex justify-between items-center rounded-xl px-4 py-3 border ${cp.is_active === false ? 'bg-gray-100 border-gray-200' : 'bg-white border-gray-100'}`}>
+                    <div className={`flex items-center gap-4 flex-wrap ${cp.is_active === false ? 'opacity-50 grayscale' : ''}`}>
                       <span className="font-bold text-primary text-sm">{cp.project_name || cp.project_id}</span>
+                      {cp.is_active === false && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-gray-300 text-gray-700">{t('admin.dash.assignmentInactiveBadge')}</span>}
                       {cp.unit_number && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">{t('admin.clientsTab.unit')}: {cp.unit_number}</span>}
                       {cp.unit_type && <span title={t(`admin.unitType.${cp.unit_type}`)} className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{t('admin.unitType.badge', { type: cp.unit_type })}</span>}
                       {cp.investment_amount > 0 && <span className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded font-bold">{formatMoney(Number(cp.investment_amount), cp.currency || 'EUR')}</span>}
@@ -3919,6 +3940,17 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
                         <span className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${(editingAssignment.assignment as any).reports_enabled !== false ? 'translate-x-6' : ''}`} />
                     </button>
                 </div>
+                <div className={`flex items-center justify-between gap-4 rounded-2xl px-5 py-4 border ${(editingAssignment.assignment as any).is_active === false ? 'bg-gray-100 border-gray-300' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="min-w-0">
+                        <p className="text-sm font-bold text-primary">{t('admin.dash.assignmentStateLabel')}: <span className={(editingAssignment.assignment as any).is_active === false ? 'text-gray-500' : 'text-emerald-600'}>{(editingAssignment.assignment as any).is_active === false ? t('admin.dash.assignmentInactive') : t('admin.dash.assignmentActive')}</span></p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">{t('admin.dash.assignmentActiveHint')}</p>
+                    </div>
+                    <button type="button" disabled={uploading} onClick={handleToggleAssignmentActive}
+                        className={`shrink-0 px-4 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition disabled:opacity-50 flex items-center gap-1.5 ${(editingAssignment.assignment as any).is_active === false ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-gray-700 text-white hover:bg-black'}`}>
+                        <span className="material-symbols-outlined text-sm">{(editingAssignment.assignment as any).is_active === false ? 'toggle_on' : 'toggle_off'}</span>
+                        {(editingAssignment.assignment as any).is_active === false ? t('admin.dash.assignmentActivateBtn') : t('admin.dash.assignmentInactivateBtn')}
+                    </button>
+                </div>
                 <div className="flex gap-4 pt-4">
                     <button type="submit" disabled={uploading} className="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-50 flex items-center justify-center gap-2">{uploading ? <><span className="material-symbols-outlined animate-spin text-sm">refresh</span> {t('admin.adminDash.savingEllipsis')}</> : t('admin.adminDash.saveChanges')}</button>
                     <button type="button" onClick={() => setEditingAssignment(null)} className="flex-1 bg-red-50 text-red-600 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-100 transition">{t('admin.dash.close')}</button>
@@ -4093,7 +4125,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
             </span>
           </button>
         ))}
-        {(mailClient.projects || []).flatMap((cp: any) => {
+        {(mailClient.projects || []).filter((cp: any) => cp.is_active !== false).flatMap((cp: any) => {
           const deseo = isDeseoAssignment(cp);
           const okFurn = FURNISHING_TYPES.includes(cp.unit_type || '');
           const unitLbl = `${unitLabel(cp.unit_number, cp.project_name)}${cp.unit_type ? ` · ${t('admin.unitType.badge', { type: cp.unit_type })}` : ''}`;

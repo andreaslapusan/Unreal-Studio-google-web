@@ -1427,7 +1427,16 @@
       "portalLoginsHint": "Each portal visit more than 1 hour after the previous one counts as a login.",
       "pausedConfirm": "This client has automatic emails paused. Send this email anyway?",
       "clientConflict": "Someone else changed this client while you had the card open. Nothing was saved, so their change is not overwritten. Press “Reload” to get the current version: what you typed stays in the form.",
-      "clientConflictReload": "Reload"
+      "clientConflictReload": "Reload",
+      "assignmentStateLabel": "Assignment",
+      "assignmentActive": "Active",
+      "assignmentInactive": "Inactive",
+      "assignmentInactiveBadge": "Inactive",
+      "assignmentActiveHint": "Inactive: all data and payments are kept, but the client does not see this project in their portal and no automatic notices are sent.",
+      "assignmentInactivateBtn": "Deactivate",
+      "assignmentActivateBtn": "Activate",
+      "assignmentInactivateConfirm": "Deactivate this assignment? Data and payments are kept, but the client will no longer see it in their portal and will not receive automatic notices.",
+      "assignmentActivateConfirm": "Activate this assignment? The client will see it again in their portal and automatic notices will resume."
     },
     "mkt": {
       "sessionExpired": "Session expired. Log in again.",

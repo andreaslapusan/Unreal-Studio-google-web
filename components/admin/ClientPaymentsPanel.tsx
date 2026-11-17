@@ -334,6 +334,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
   };
 
   return (
+    <>
     <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto overscroll-contain py-8 px-4">
       <div className="bg-white rounded-3xl ust-modal shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white rounded-t-3xl">
@@ -433,6 +434,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           })}
         </div>
       </div>
+    </div>{/* hermanos, no hijos: iOS recorta los fixed dentro de un contenedor con scroll */}
 
       {/* Add / edit payment */}
       {editing && (
@@ -581,7 +583,7 @@ const ClientPaymentsPanel: React.FC<Props> = ({ clientId, clientName, clientEmai
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

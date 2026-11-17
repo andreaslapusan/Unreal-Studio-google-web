@@ -14,6 +14,7 @@ import { supabase } from '../../lib/supabase';
 import { baliToday } from '../../lib/timezone';
 import { uiLocale } from '../../lib/dateLocale';
 import { creditedOf } from './ClientPaymentsPanel';
+import { fuzzyIncludes } from '../../lib/fold';
 
 export interface FinPay {
   id: string; label: string; amount: number; currency: string; due_date: string | null;
@@ -114,7 +115,7 @@ const FinanceControlPanel: React.FC<{ adminUserId: string | null; onOpenPayments
 
   const projects = useMemo(() => Array.from(new Set(rows.map((r) => r.project_name).filter(Boolean))).sort() as string[], [rows]);
   const scoped = useMemo(() => rows.filter((r) => (!fProject || r.project_name === fProject)
-    && (!search || `${r.client_name} ${r.project_name} ${r.unit_number || ''} ${r.label}`.toLowerCase().includes(search.toLowerCase()))), [rows, fProject, search]);
+    && (!search || fuzzyIncludes(`${r.client_name} ${r.project_name} ${r.unit_number || ''} ${r.label}`, search))), [rows, fProject, search]);
   const shortOf = (r: FinPay) => Number(r.amount) - creditedOf(r);
   const daysLate = (r: FinPay) => r.due_date ? Math.round((Date.parse(today + 'T12:00:00Z') - Date.parse(r.due_date.slice(0, 10) + 'T12:00:00Z')) / 86400000) : 0;
   const overdue = scoped.filter((r) => !r.received && r.due_date && r.due_date.slice(0, 10) < today);

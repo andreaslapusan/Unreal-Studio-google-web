@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import AsyncButton from '../AsyncButton';
+import { fuzzyIncludes } from '../../lib/fold';
 
 interface Notif {
   id: string; type: string; title: string; body: string | null; severity: string;
@@ -141,7 +142,7 @@ const NotificationsPanel: React.FC = () => {
     let arr = items.filter((n) => INFO_TYPES.has(n.type));
     if (actType !== 'all') arr = arr.filter((n) => n.type === actType);
     const q = actSearch.trim().toLowerCase();
-    if (q) arr = arr.filter((n) => `${n.title} ${n.body || ''} ${n.actor_name || ''} ${n.actor_email || ''}`.toLowerCase().includes(q));
+    if (q) arr = arr.filter((n) => fuzzyIncludes(`${n.title} ${n.body || ''} ${n.actor_name || ''} ${n.actor_email || ''}`, q));
     arr = [...arr].sort((a, b) => actOrder === 'recent' ? b.created_at.localeCompare(a.created_at) : a.created_at.localeCompare(b.created_at));
     return arr;
   }, [items, actType, actSearch, actOrder]);

@@ -58,7 +58,8 @@ Deno.serve(async (req) => {
   const { data: cps } = await supabase
     .from("client_projects")
     .select("unit_number, holder_participants, reports_enabled, clients(name,email,extra_emails,holders,preferred_language,status,is_active,auto_emails_enabled)")
-    .eq("project_id", projectId);
+    .eq("project_id", projectId)
+    .eq("is_active", true); // asignación inactiva => nunca se avisa
 
   // Independencia total entre titulares: 1 correo SEPARADO por titular, cada uno
   // con SU nombre. Si hay holders [{name,email}] se usan; si no, email principal +

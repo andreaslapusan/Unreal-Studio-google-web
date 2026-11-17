@@ -16,6 +16,7 @@ import { supabase } from '../../lib/supabase';
 import { baliToday } from '../../lib/timezone';
 import { uiLocale } from '../../lib/dateLocale';
 import { creditedOf } from './ClientPaymentsPanel';
+import { fuzzyIncludes } from '../../lib/fold';
 
 // Fecha de vencimiento formateada según el idioma de la UI (evita ISO en crudo).
 const fmtDue = (s: string | null): string => {
@@ -136,7 +137,7 @@ const CobrosPanel: React.FC<{ adminUserId: string | null; onOpenPayments?: (row:
   const scoped = useMemo(() => rows.filter((r) => {
     if (fProjects.length && !fProjects.includes(r.project_name || '')) return false;
     if (fCurrency && r.currency !== fCurrency) return false;
-    if (search && !(`${r.client_name} ${r.project_name} ${r.label}`.toLowerCase().includes(search.toLowerCase()))) return false;
+    if (search && !fuzzyIncludes(`${r.client_name} ${r.project_name} ${r.label}`, search)) return false;
     return true;
   }), [rows, fProjects, fCurrency, search]);
 

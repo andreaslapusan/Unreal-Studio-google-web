@@ -13,6 +13,7 @@ import AgencyApplicationsList from './AgencyApplicationsList';
 import AgencyPartnersList from './AgencyPartnersList';
 import AgencyLeadEventModal from './AgencyLeadEventModal';
 import { ListFilters, Modal, Pager, ilikeTerm, pillBtn, usePaged, useErrText, useToast } from './agencyAdminUi';
+import { fuzzyIncludes } from '../../lib/fold';
 
 const LEAD_COLS = 'id, agency_id, created_at, client_name, client_email, client_phone, country, property_id, budget, notes, status';
 const REQ_COLS = 'id, agency_id, created_at, type, lead_id, unit_id, preferred_date, notes, status, agency_leads(client_name), property_units(unit_name)';
@@ -44,7 +45,7 @@ const AgencyApplications: React.FC = () => {
   useEffect(() => { void loadMeta(); }, [refreshKey]);
   const changed = () => setRefreshKey((k) => k + 1);
 
-  const agencyIdsFor = (q: string) => Object.entries(names).filter(([, n]) => String(n).toLowerCase().includes(q.trim().toLowerCase())).map(([id]) => id);
+  const agencyIdsFor = (q: string) => Object.entries(names).filter(([, n]) => fuzzyIncludes(n, q)).map(([id]) => id);
   const leads = usePaged<any>(() => {
     let b = supabase.from('agency_leads').select(LEAD_COLS, { count: 'exact' }).order('created_at', { ascending: false });
     if (ls !== 'all') b = b.eq('status', ls);

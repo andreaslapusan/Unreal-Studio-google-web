@@ -10,6 +10,7 @@ import { supabase } from '../../lib/supabase';
 import { baliToday } from '../../lib/timezone';
 import { uiLocale } from '../../lib/dateLocale';
 import NumberInput from '../NumberInput';
+import { fuzzyIncludes } from '../../lib/fold';
 
 interface Expense {
   id?: string; kind: 'constructor' | 'terreno' | 'otro'; project_id: string | null; service_contact_id: string | null;
@@ -58,7 +59,7 @@ const ExpensesPanel: React.FC = () => {
   const isOverdue = (r: Expense) => r.status === 'pendiente' && !!r.due_date && r.due_date < today;
 
   const filtered = useMemo(() => rows.filter((r) => (!fProject || r.project_id === fProject) && (!fStatus || (fStatus === 'vencido' ? isOverdue(r) : r.status === fStatus)) && (!fKind || r.kind === fKind)
-    && (!search || `${r.concept} ${payeeOf(r)} ${projName(r.project_id)} ${r.notes || ''}`.toLowerCase().includes(search.toLowerCase()))), [rows, fProject, fStatus, fKind, search, projects, contacts]);
+    && (!search || fuzzyIncludes(`${r.concept} ${payeeOf(r)} ${projName(r.project_id)} ${r.notes || ''}`, search))), [rows, fProject, fStatus, fKind, search, projects, contacts]);
   const sorted = useMemo(() => {
     const v = (r: Expense): string | number => sort.k === 'due' ? (r.due_date ? Date.parse(r.due_date) : Number.POSITIVE_INFINITY)
       : sort.k === 'amount' ? Number(r.amount) : sort.k === 'payee' ? payeeOf(r).toLowerCase() : sort.k === 'status' ? (isOverdue(r) ? 0 : r.status === 'pendiente' ? 1 : 2) : r.concept.toLowerCase();

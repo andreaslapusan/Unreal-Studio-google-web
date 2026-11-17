@@ -50,8 +50,12 @@ html:has(.fixed.inset-0[class*="bg-black/"]) {
     border-radius: 0 !important;
     overflow-y: auto;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    /* botones del pie alcanzables por encima de la barra de inicio del iPhone */
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
+html.modal-open, html.modal-open body { overscroll-behavior: none; }
 
 /* Custom site styles formerly inlined in index.html. Kept here so that
    PostCSS picks them up at build time and ships a single CSS file. */
@@ -164,7 +168,10 @@ html.native-app .fixed.inset-0 { border-top: var(--sat) solid transparent; borde
   html.native-app .fixed.inset-0:is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.modal-keep) > div {
     height: calc(100dvh - var(--sat) - var(--sab));
     max-height: calc(100dvh - var(--sat) - var(--sab)) !important;
+    padding-bottom: 1.5rem; /* el borde ya aparta la barra de inicio */
   }
+  /* Franjas de barra de estado/inicio opacas: sin ellas se transparentaba la página de debajo. */
+  html.native-app .fixed.inset-0:is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.modal-keep) { border-color: #fff; }
 }
 /* Ya se aparta el body: el padding env() en línea (pensado para la PWA) sobraría dentro de la app. */
 html.native-app [style*="safe-area-inset-top"] { padding-top: 0 !important; }

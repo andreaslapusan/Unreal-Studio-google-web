@@ -1427,7 +1427,16 @@
       "portalLoginsHint": "Cuenta como acceso cada entrada al portal separada más de 1 hora de la anterior.",
       "pausedConfirm": "Este cliente tiene los correos automáticos en pausa. ¿Enviar este correo igualmente?",
       "clientConflict": "Otra persona ha cambiado este cliente mientras tenías la ficha abierta. No se ha guardado nada para no pisar su cambio. Pulsa «Recargar» para traer la versión actual: lo que has escrito se mantiene en el formulario.",
-      "clientConflictReload": "Recargar"
+      "clientConflictReload": "Recargar",
+      "assignmentStateLabel": "Asignación",
+      "assignmentActive": "Activa",
+      "assignmentInactive": "Inactiva",
+      "assignmentInactiveBadge": "Inactiva",
+      "assignmentActiveHint": "Inactiva: se conservan todos los datos y pagos, pero el cliente no ve este proyecto en su portal y no se envía ningún aviso automático.",
+      "assignmentInactivateBtn": "Inactivar",
+      "assignmentActivateBtn": "Activar",
+      "assignmentInactivateConfirm": "¿Inactivar esta asignación? Se conservan los datos y pagos, pero el cliente dejará de verla en su portal y no recibirá avisos automáticos.",
+      "assignmentActivateConfirm": "¿Activar esta asignación? El cliente volverá a verla en su portal y se reanudarán los avisos automáticos."
     },
     "mkt": {
       "sessionExpired": "Sesión expirada. Inicia sesión de nuevo.",
