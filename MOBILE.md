@@ -92,3 +92,9 @@ Face ID / código al abrirla de cero o volver tras >60 s. `NSFaceIDUsageDescript
 Ramas `feature/ios-**` = **apps BETA aparte** (`APP_BETA=1`): bundle `com.unrealstudio.<flavor>.beta`, nombre "… Beta",
 icono invertido (fondo blanco, marca negra); compila las 4 y sube a TestFlight. No sustituyen a las de trabajo.
 Requisito: las 4 fichas `.beta` deben existir en App Store Connect (bundle IDs ya registrados por API el 17-nov).
+
+## 18-nov-2026 — Capas nativas (rama `feature/ios-faceid-lock`, solo apps Beta)
+`ios/App/App/NativeLayers.swift`: Llavero + Face ID (desvía `ust_pw_*` de localStorage), pestañas nativas, push
+(permiso tras login → `register_device_token`), número del icono (`admin_unread_count`), versión mínima (`app_versions`),
+franja sin conexión, enlaces `<bundle id>://ruta`. Servidor: `supabase/functions/push-send` (APNs .p8; sin clave → skipped),
+migración `20261118000000_native_push_and_versions.sql` (aplicada). Detalle y checklist: `~/jobs/ios-native/PLAN.md`.
