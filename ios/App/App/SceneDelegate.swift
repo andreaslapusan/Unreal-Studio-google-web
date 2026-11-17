@@ -15,29 +15,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = AppViewController()
         window?.makeKeyAndVisible()
+        connectionOptions.urlContexts.forEach { native?.open($0.url) } // abierta en frío desde un enlace
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        URLContexts.forEach { native?.open($0.url) }
         SceneDelegateProxy.shared.scene(scene, openURLContexts: URLContexts)
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        if let url = userActivity.webpageURL { native?.open(url) }
         SceneDelegateProxy.shared.scene(scene, continue: userActivity)
     }
+
+    private var native: NativeLayers? { (window?.rootViewController as? AppViewController)?.native }
 }
 
 /// iOS: deslizar desde el borde = atrás/adelante en el historial de la web (secciones ?view=, "Ver proyecto"…).
 class AppViewController: CAPBridgeViewController {
     private var documents: DocumentHandler? // los delegados de WKWebView son weak: lo retenemos aquí
     private var lock: AppLock?
+    private(set) var native: NativeLayers?
 
     override func capacitorDidLoad() {
         webView?.allowsBackForwardNavigationGestures = true
         if let webView = webView {
             documents = DocumentHandler(webView: webView, owner: self)
             lock = AppLock(owner: self, webView: webView)
+            native = NativeLayers(owner: self, webView: webView) // después de AppLock: sus vistas quedan bajo la tapa
         }
     }
 }
