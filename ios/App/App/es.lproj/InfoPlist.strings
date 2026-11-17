@@ -4,3 +4,4 @@
 "NSLocationWhenInUseUsageDescription" = "Tu ubicación se registra solo en el momento de fichar la entrada o la salida, para confirmar la asistencia en el lugar de trabajo.";
 "NSPhotoLibraryUsageDescription" = "Las fotos solo se usan cuando eliges adjuntar una imagen o un documento.";
 "NSPhotoLibraryAddUsageDescription" = "Te permite guardar imágenes en Fotos cuando tú lo decidas.";
+"NSFaceIDUsageDescription" = "Face ID desbloquea la app para que solo tú veas tus datos. Nunca sale de tu iPhone.";

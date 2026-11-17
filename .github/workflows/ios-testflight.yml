@@ -9,7 +9,7 @@ name: iOS TestFlight
 
 on:
   push:
-    branches: ['apps/**']
+    branches: ['apps/**', 'feature/ios-**']   # feature/ios-** = solo compila (1 app), no sube a TestFlight
     paths: ['ios/**', 'scripts/app-assets.mjs', 'scripts/asc-profile.mjs', 'capacitor.config.ts', 'app-shell/**', 'package.json', '.github/workflows/ios-testflight.yml']
   workflow_dispatch:
     inputs:
@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        flavor: ${{ fromJSON((github.event_name == 'push' || inputs.flavor == 'all') && '["clientes","agencias","equipo","admin"]' || format('["{0}"]', inputs.flavor)) }}
+        flavor: ${{ fromJSON((github.event_name == 'push' && startsWith(github.ref_name, 'feature/ios-')) && '["admin"]' || ((github.event_name == 'push' || inputs.flavor == 'all') && '["clientes","agencias","equipo","admin"]' || format('["{0}"]', inputs.flavor))) }}
     env:
       APP_FLAVOR: ${{ matrix.flavor }}
       TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
@@ -85,6 +85,7 @@ jobs:
             -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
             CURRENT_PROJECT_VERSION="${{ github.run_number }}${{ github.run_attempt }}"
       - name: Export + subir a TestFlight
+        if: ${{ !startsWith(github.ref_name, 'feature/ios-') }}
         run: |
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>

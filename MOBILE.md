@@ -84,3 +84,9 @@ así no hace falta ningún iPhone registrado. Solo iPhone (`TARGETED_DEVICE_FAMI
 - Web (v3.871, `34b229e`, solo `html.native-app`): la página se aparta de las barras, la franja de la barra de estado
   toma el color de la cabecera y los iconos de estado se ponen claros/oscuros según ese color (`lib/nativeApp.ts`).
 - Builds: Android versionCode 4 ×4; iOS build 51 (Actions run 5) → TestFlight interno. Prueba: `~/jobs/apps/bin/edge-shots.mjs`.
+
+## 17-nov-2026 — Capa nativa 1: bloqueo Face ID (rama `feature/ios-faceid-lock`, sin merge)
+Opción 1 "nativa por capas" (plan: `~/jobs/ios-native/PLAN.md`). `AppLock` en `SceneDelegate.swift`: con sesión
+iniciada (`sb-*-auth-token` / `_ust_sh_` en localStorage, se mira al salir de la app) tapa la app en segundo plano y pide
+Face ID / código al abrirla de cero o volver tras >60 s. `NSFaceIDUsageDescription` en Info.plist + 4 idiomas.
+Ramas `feature/ios-**`: Actions solo compila (archive firmado de Admin), **no sube** a TestFlight.

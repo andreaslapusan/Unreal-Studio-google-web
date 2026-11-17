@@ -4,3 +4,4 @@
 "NSLocationWhenInUseUsageDescription" = "Lokasi Anda hanya dicatat saat absen masuk atau keluar untuk memastikan kehadiran di lokasi kerja.";
 "NSPhotoLibraryUsageDescription" = "Foto hanya digunakan saat Anda memilih untuk melampirkan gambar atau dokumen.";
 "NSPhotoLibraryAddUsageDescription" = "Memungkinkan Anda menyimpan gambar ke Foto saat Anda memilihnya.";
+"NSFaceIDUsageDescription" = "Face ID membuka kunci aplikasi agar hanya Anda yang dapat melihat data Anda. Tidak pernah keluar dari iPhone Anda.";

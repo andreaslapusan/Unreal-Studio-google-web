@@ -4,3 +4,4 @@
 "NSLocationWhenInUseUsageDescription" = "Your location is recorded only at the moment of an employee check-in or check-out to confirm attendance on site.";
 "NSPhotoLibraryUsageDescription" = "Photos are used only when you choose to attach an image or document.";
 "NSPhotoLibraryAddUsageDescription" = "Lets you save images to your Photos when you choose to.";
+"NSFaceIDUsageDescription" = "Face ID unlocks the app so only you can see your data. It never leaves your iPhone.";

@@ -4,6 +4,7 @@ import WebKit
 import SafariServices
 import QuickLook
 import UniformTypeIdentifiers
+import LocalAuthentication
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -30,10 +31,134 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 /// iOS: deslizar desde el borde = atrás/adelante en el historial de la web (secciones ?view=, "Ver proyecto"…).
 class AppViewController: CAPBridgeViewController {
     private var documents: DocumentHandler? // los delegados de WKWebView son weak: lo retenemos aquí
+    private var lock: AppLock?
 
     override func capacitorDidLoad() {
         webView?.allowsBackForwardNavigationGestures = true
-        if let webView = webView { documents = DocumentHandler(webView: webView, owner: self) }
+        if let webView = webView {
+            documents = DocumentHandler(webView: webView, owner: self)
+            lock = AppLock(owner: self, webView: webView)
+        }
+    }
+}
+
+/// Face ID. Solo con sesión iniciada en el portal: al ir a segundo plano tapa la app (tampoco se ve en el selector de
+/// apps) y al abrirla de cero o volver tras más de `grace` s pide Face ID / Touch ID / código del iPhone.
+/// Sin sesión, o sin código configurado en el iPhone, no bloquea nada. No guarda ni envía datos biométricos.
+final class AppLock: NSObject {
+    private static let sessionKey = "unreal.applock.hasSession"
+    // Sesión Supabase (todos los portales) o la antigua del admin.
+    private static let sessionJS = "(function(){try{return Object.keys(localStorage).some(function(k){return /^sb-.+-auth-token$/.test(k)||k==='_ust_sh_'})}catch(e){return false}})()"
+    private let grace: TimeInterval = 60
+    private weak var owner: UIViewController?
+    private weak var webView: WKWebView?
+    private var cover: UIView?
+    private var backgroundAt: Date?
+    private var authenticating = false
+    private var observers: [NSObjectProtocol] = []
+
+    private var hasSession: Bool {
+        get { UserDefaults.standard.bool(forKey: Self.sessionKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.sessionKey) }
+    }
+
+    init(owner: UIViewController, webView: WKWebView) {
+        self.owner = owner
+        self.webView = webView
+        super.init()
+        let nc = NotificationCenter.default
+        observers = [
+            nc.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: .main) { [weak self] _ in self?.refreshSession() },
+            nc.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in self?.didEnterBackground() },
+            nc.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in self?.didBecomeActive() },
+        ]
+        if hasSession { // arranque en frío con sesión guardada: como si volviera de un fondo largo
+            showCover()
+            backgroundAt = .distantPast
+            if UIApplication.shared.applicationState == .active { didBecomeActive() }
+        }
+    }
+
+    deinit { observers.forEach { NotificationCenter.default.removeObserver($0) } }
+
+    // El aviso de Face ID también hace "resign active": ahí no se mira nada.
+    private func refreshSession() {
+        guard !authenticating, cover == nil, let webView = webView,
+              webView.url?.host?.hasSuffix("unrealstudiobali.com") == true else { return } // página offline: se conserva el valor
+        webView.evaluateJavaScript(Self.sessionJS) { [weak self] result, _ in
+            if let value = result as? Bool { self?.hasSession = value }
+        }
+    }
+
+    private func didEnterBackground() {
+        backgroundAt = Date()
+        if hasSession { showCover() }
+    }
+
+    private func didBecomeActive() {
+        // Solo al volver de segundo plano (no tras cerrar el aviso de Face ID, que también "activa" la app: si no, bucle).
+        guard cover != nil, !authenticating, let since = backgroundAt else { return }
+        if Date().timeIntervalSince(since) < grace {
+            hideCover()
+        } else {
+            authenticate()
+        }
+        backgroundAt = nil
+    }
+
+    @objc private func authenticate() {
+        let context = LAContext()
+        var error: NSError?
+        // .deviceOwnerAuthentication = Face ID y, si falla, el código del iPhone (nunca deja a nadie fuera de su app).
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else { hideCover(); return }
+        authenticating = true
+        context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: Self.text("reason")) { ok, _ in
+            DispatchQueue.main.async {
+                self.authenticating = false
+                if ok { self.hideCover() } // si cancela, la tapa se queda con el botón "Desbloquear"
+            }
+        }
+    }
+
+    private func showCover() {
+        guard cover == nil, let host = owner?.view else { return }
+        let view = UIView(frame: host.bounds)
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.backgroundColor = UIColor(red: 243 / 255, green: 229 / 255, blue: 216 / 255, alpha: 1) // crema de marca
+        let button = UIButton(type: .system)
+        button.setTitle(Self.text("unlock"), for: .normal)
+        button.setImage(UIImage(systemName: "faceid"), for: .normal)
+        button.tintColor = UIColor(red: 63 / 255, green: 35 / 255, blue: 5 / 255, alpha: 1) // marrón de marca
+        button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.addTarget(self, action: #selector(authenticate), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
+        ])
+        host.addSubview(view)
+        cover = view
+    }
+
+    private func hideCover() {
+        guard let view = cover else { return }
+        cover = nil
+        UIView.animate(withDuration: 0.2, animations: { view.alpha = 0 }, completion: { _ in view.removeFromSuperview() })
+    }
+
+    // Textos en el idioma del iPhone (es/en/ro/id, como el resto de la app).
+    private static func text(_ key: String) -> String {
+        let strings: [String: [String: String]] = [
+            "es": ["unlock": "Desbloquear", "reason": "Desbloquea la app para ver tus datos"],
+            "en": ["unlock": "Unlock", "reason": "Unlock the app to see your data"],
+            "ro": ["unlock": "Deblochează", "reason": "Deblochează aplicația pentru a-ți vedea datele"],
+            "id": ["unlock": "Buka kunci", "reason": "Buka kunci aplikasi untuk melihat data Anda"],
+        ]
+        let lang = Locale.preferredLanguages.first.map { String($0.prefix(2)) } ?? "en"
+        return (strings[lang] ?? strings["en"]!)[key]!
     }
 }
 
