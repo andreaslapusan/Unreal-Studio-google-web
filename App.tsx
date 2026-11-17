@@ -54,6 +54,7 @@ const LandingGlobalitae = lazyWithReload(() => import('./pages/LandingGlobalitae
 const AgenciasLogin = lazyWithReload(() => import('./pages/AgenciasLogin'));
 const AgenciasPartnership = lazyWithReload(() => import('./pages/AgenciasPartnership'));
 const AgenciasRegistrar = lazyWithReload(() => import('./pages/AgenciasRegistrar'));
+const ShortLink = lazyWithReload(() => import('./pages/ShortLink'));
 const AgenciasDashboard = lazyWithReload(() => import('./pages/AgenciasDashboard'));
 const AuthFinish = lazyWithReload(() => import('./pages/AuthFinish'));
 const ReportOpen = lazyWithReload(() => import('./pages/ReportOpen'));
@@ -170,6 +171,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
     || location.pathname.startsWith('/empleados')
     || location.pathname.startsWith('/manager')
     || location.pathname.startsWith('/auth')
+    || location.pathname.startsWith('/a/')
     || location.pathname === '/lofts-globalitae'
     // Pack de agencia (/agencias/:slug): página del portal, con su propia cabecera.
     || /^\/agencias\/(?!registrar\/?$)[^/]+\/?$/.test(location.pathname);
@@ -338,6 +340,7 @@ const App: React.FC = () => {
             <Route path="/lofts-globalitae" element={<LandingGlobalitae />} />
             <Route path="/agencias/login" element={<Navigate to={portalPath('agencias')} replace />} />
             <Route path="/agencias/registrar" element={<AgenciasRegistrar />} />
+            <Route path="/a/:code" element={<ShortLink />} />
             <Route path="/agencias/dashboard" element={<AgenciasDashboard />} />
             <Route path="/agencias/stats" element={<Navigate to="/agencias/dashboard?view=stats" replace />} />
             {/* Portal Empleados (ÚNICO portal de equipo). Roster único = tabla
