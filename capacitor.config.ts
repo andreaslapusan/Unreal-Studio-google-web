@@ -20,6 +20,8 @@ const FLAVORS = {
 const flavorName = (process.env.APP_FLAVOR || 'clientes') as keyof typeof FLAVORS;
 const flavor = FLAVORS[flavorName];
 if (!flavor) throw new Error(`APP_FLAVOR desconocido: ${flavorName}`);
+// APP_BETA=1: apps de prueba aparte (otro bundle, " Beta", icono invertido) que conviven con las de trabajo.
+const beta = process.env.APP_BETA === '1';
 const START_URL = `https://unrealstudiobali.com${flavor.path}`;
 // La página offline (app-shell) necesita saber a qué portal volver al reintentar.
 writeFileSync('app-shell/start.js', `window.START_URL=${JSON.stringify(START_URL)};\n`);
@@ -27,8 +29,8 @@ writeFileSync('app-shell/start.js', `window.START_URL=${JSON.stringify(START_URL
 const BRAND_CREAM = '#f3e5d8';
 
 const config: CapacitorConfig = {
-  appId: flavor.appId,
-  appName: flavor.appName,
+  appId: beta ? `${flavor.appId}.beta` : flavor.appId,
+  appName: beta ? `${flavor.appName} Beta` : flavor.appName,
   webDir: 'app-shell',
   backgroundColor: BRAND_CREAM,
   server: {

@@ -13,6 +13,9 @@ import { homedir } from 'node:os';
 
 const SRC = 'public/img/Logos/favicon_io/android-chrome-512x512.png';
 const BROWN = '#3F2305', CREAM = '#F3E5D8';
+// APP_BETA=1: icono invertido (fondo blanco, marca negra) para distinguir las apps de prueba.
+const BETA = process.env.APP_BETA === '1';
+const ICON_BG = BETA ? '#FFFFFF' : BROWN, ICON_FG = BETA ? '#000000' : '#FFFFFF';
 const FLAVOR = process.env.APP_FLAVOR || 'clientes';
 const LABEL = { clientes: 'CLIENTES', agencias: 'AGENCIAS', equipo: 'EQUIPO', admin: 'ADMIN' }[FLAVOR];
 if (!LABEL) throw new Error(`APP_FLAVOR desconocido: ${FLAVOR}`);
@@ -46,13 +49,13 @@ const canvas = (w, h, bg) => sharp({ create: { width: w, height: h, channels: 4,
 // Icono cuadrado completo: tablas blancas sobre marrón (sin alfa: App Store lo exige).
 async function icon(size, file, round = false) {
   const a = round ? Math.round(size * 0.8) : size; // en redondo, la etiqueta no debe tocar el borde
-  let img = canvas(size, size, BROWN).composite([{ input: await art(a, '#FFFFFF'), gravity: 'center' }]);
+  let img = canvas(size, size, ICON_BG).composite([{ input: await art(a, ICON_FG), gravity: 'center' }]);
   if (round) {
     const r = size / 2;
     img = sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(`<svg width="${size}" height="${size}"><circle cx="${r}" cy="${r}" r="${r}"/></svg>`), blend: 'dest-in' }]);
     return img.png().toFile(file);
   }
-  return img.flatten({ background: BROWN }).png().toFile(file);
+  return img.flatten({ background: ICON_BG }).png().toFile(file);
 }
 // Splash: marca marrón centrada (~28 % del lado corto) sobre crema.
 async function splash(w, h, file) {

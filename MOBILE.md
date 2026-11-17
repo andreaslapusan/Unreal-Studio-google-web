@@ -89,4 +89,6 @@ así no hace falta ningún iPhone registrado. Solo iPhone (`TARGETED_DEVICE_FAMI
 Opción 1 "nativa por capas" (plan: `~/jobs/ios-native/PLAN.md`). `AppLock` en `SceneDelegate.swift`: con sesión
 iniciada (`sb-*-auth-token` / `_ust_sh_` en localStorage, se mira al salir de la app) tapa la app en segundo plano y pide
 Face ID / código al abrirla de cero o volver tras >60 s. `NSFaceIDUsageDescription` en Info.plist + 4 idiomas.
-Ramas `feature/ios-**`: Actions solo compila (archive firmado de Admin), **no sube** a TestFlight.
+Ramas `feature/ios-**` = **apps BETA aparte** (`APP_BETA=1`): bundle `com.unrealstudio.<flavor>.beta`, nombre "… Beta",
+icono invertido (fondo blanco, marca negra); compila las 4 y sube a TestFlight. No sustituyen a las de trabajo.
+Requisito: las 4 fichas `.beta` deben existir en App Store Connect (bundle IDs ya registrados por API el 17-nov).
