@@ -400,7 +400,7 @@ final class NativeLayers: NSObject, WKScriptMessageHandler, UITabBarDelegate {
 
     // MARK: Enlaces profundos
 
-    /// <bundle id>://admin?view=clients  ó  https://unrealstudiobali.com/... (enlaces universales, cuando estén activos).
+    /// <bundle id>://admin?view=clients  ó  https://unrealstudiobali.com/... (enlaces universales: AASA en la web, solo apps Beta).
     @discardableResult
     func open(_ url: URL) -> Bool {
         var target: URL?
@@ -409,7 +409,7 @@ final class NativeLayers: NSObject, WKScriptMessageHandler, UITabBarDelegate {
             let path = "/" + [c?.host, c?.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "/")
             c?.scheme = nil; c?.host = nil; c?.path = path
             target = c?.string.flatMap { Portal.url(forPath: $0) }
-        } else if url.scheme == "https", url.host?.hasSuffix("unrealstudiobali.com") == true {
+        } else if url.scheme == "https", url.host == "unrealstudiobali.com" || url.host?.hasSuffix(".unrealstudiobali.com") == true {
             target = url
         }
         guard let target = target, let webView = webView else { return false }

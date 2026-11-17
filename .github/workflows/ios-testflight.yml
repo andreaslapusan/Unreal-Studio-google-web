@@ -70,6 +70,11 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
+          # Apps Beta: enlaces universales (AASA en unrealstudiobali.com). Las de producción no tienen esa capacidad.
+          if [ "$APP_BETA" = 1 ]; then
+            /usr/libexec/PlistBuddy -c "Add :com.apple.developer.associated-domains array" \
+              -c "Add :com.apple.developer.associated-domains:0 string applinks:unrealstudiobali.com" ios/App/App/App.entitlements
+          fi
           APP_ID=$(node -p "require('./ios/App/App/capacitor.config.json').appId")
           APP_NAME=$(node -p "require('./ios/App/App/capacitor.config.json').appName")
           PROFILE=$(ASC_KEY_PATH=~/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8 node scripts/asc-profile.mjs "$APP_ID" "$RUNNER_TEMP/app.mobileprovision")

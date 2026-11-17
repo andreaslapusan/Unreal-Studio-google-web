@@ -16,6 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = AppViewController()
         window?.makeKeyAndVisible()
         connectionOptions.urlContexts.forEach { native?.open($0.url) } // abierta en frío desde un enlace
+        connectionOptions.userActivities.compactMap(\.webpageURL).forEach { native?.open($0) } // enlace universal en frío
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
     }
