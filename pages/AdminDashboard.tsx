@@ -2479,7 +2479,7 @@ const openWhatsAppTemplate = (client: Client, message: string) => {
           {/* Proyectos asignados */}
           <div className="border-t border-gray-50 bg-gray-50/50 px-6 py-4">
             <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex flex-col items-start gap-1">{/* total always under the label (Andreas 21-nov: same look on every card) */}
                 <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{t('admin.clientsTab.assignedProjects')} ({(client.projects || []).length})</p>
                 {(() => {
                   const byCur: Record<string, number> = {};
