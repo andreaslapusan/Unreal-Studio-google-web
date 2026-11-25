@@ -173,6 +173,11 @@ const ProjectDetail: React.FC = () => {
                projectData = hit;
              }
            }
+           if (!projectData) {
+             // Hidden projects: not listed anywhere, but a direct link still opens (Andreas 25-nov)
+             const { data: hidden } = await supabase.rpc('public_project_by_slug', { p_slug: slug });
+             projectData = hidden;
+           }
 
            if (projectData) {
               const rawProject = projectData as any;
